@@ -25,6 +25,7 @@
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 //Preprocessor options
+//RunAsC = Run code as c code instead of cpp(not implimented)
 /*
 AltDec_InheritMediumDec = Toggle have AltDec Inherit MediumDec class
 */
@@ -46,12 +47,14 @@ namespace BlazesRusCode
  * Other operations like Ln and Sqrt contained with decent level of accuracy
    (still loses a little accuracy because of truncation etc)
  * Operations and functions will mess up if IntValue overflows/underflows
-   or reaches exactly -2147483648 which is used to represent negative zero when it has decimal values
+ * Operations mess up if IntValue reaches exactly -2147483648,
+   which is used to represent negative zero when it has decimal values(Code added that should prevent this error occuring for integer addition and subtraction)
 */
 
     /// <summary>
     /// Fixed point based number class representing +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
-    /// (values will be lost past 9th decimal digit)(Use MediumDecV2 instead for infinity, Pi, and e features)
+    /// (values will be lost past 9th decimal digit)
+	/// (Use MediumDecV2, ExtendedMDec, AltDecV2, or AltDec instead for infinity, Pi, and e features)
     /// (8 bytes worth of Variable Storage inside class for each instance)
     /// </summary>
     class DLL_API MediumDec
@@ -2178,6 +2181,9 @@ namespace BlazesRusCode
                 self.IntValue += value;
             else
             {
+				bool selfStartedAsPositive = self.IntValue>=0;
+				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
+				
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
                     self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
@@ -2189,8 +2195,17 @@ namespace BlazesRusCode
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
                     self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+					
+				//prevent reaching MediumDec::NegativeRep IntValue
+				if(selfStartedAsPositive)
+				{
+					if(value<0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
+						throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
+				}
+				else if(startedAsNegativeZero==false&&value<0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
+					throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
+				return self;
             }
-            return self;
         }
 
         /// <summary>
@@ -2208,6 +2223,9 @@ namespace BlazesRusCode
                 self.IntValue -= value;
             else
             {
+				bool selfStartedAsPositive = self.IntValue>=0;
+				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
+				
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
                     self.IntValue = self.IntValue==MediumDec::NegativeRep ? -1 : --self.IntValue;
@@ -2219,6 +2237,15 @@ namespace BlazesRusCode
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
                     self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+					
+				//prevent reaching MediumDec::NegativeRep IntValue
+				if(selfStartedAsPositive)
+				{
+					if(value>0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
+						throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
+				}
+				else if(startedAsNegativeZero==false&&value>0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
+					throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
             }
             return self;
         }
@@ -4730,4 +4757,19 @@ namespace BlazesRusCode
         return Value;
     }
     #pragma endregion String Function Source
+	
+	class MediumDecFractional;
+    /// <summary>
+    /// (MediumDec based dividend)/(MediumDec based divisor)
+    /// </summary>
+    class DLL_API MediumDecFractional
+    {
+		MediumDec Dividend;
+		MediumDec Divisor;
+		//Balances out fractional so that Divisor is as close to a whole number as viable
+		void NormalizeFractional()
+		{
+			//Add code here later
+		}
+	}
 }
