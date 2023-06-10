@@ -249,11 +249,11 @@ namespace BlazesRusCode
                 return RepType::NaN;
 #endif
 #if defined(MixedDec_EnableImaginaryNum)
-            else if(ExtraRep==ERep)
+            else if(ExtraRep==IRep)
                 return RepType::INum;
 #endif
 #if defined(MixedDec_EnableENum)
-            else if(ExtraRep==IRep)
+            else if(ExtraRep==ERep)
                 return RepType::ENum;
 #endif
             throw "Unknown or non-enabled representation type detected from MixedDec";

@@ -160,11 +160,17 @@ namespace BlazesRusCode
         {
             NormalType = 0,//Normal Representation with no extra trailing digits
             ExtendedNormalType,//Normal Representation with extra trailing digits
+#ifndef MixedDec_DisablePIRep
             PINum,
             PIPower,
+#endif
+#ifdef MixedDec_EnableERep
             ENum,
+#endif
+#ifdef MixedDec_EnableIRep
             INum,
             ComplexIRep,
+#endif
             ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
             ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
             NaN,
@@ -201,18 +207,20 @@ namespace BlazesRusCode
                     return RepType::ApproachingTop;//Approaching from left to (IntValue-1)
             }
 #endif
+#ifndef MixedDec_DisablePIRep
             else if(ExtraRep==PIRep)
                 return RepType::PINum;
+#endif
 #if defined(MixedDec_EnableNaN)
             else if(DecimalHalf==NaNRep)
                 return RepType::NaN;
 #endif
 #if defined(MixedDec_EnableImaginaryNum)
-            else if(ExtraRep==ERep)
+            else if(ExtraRep==IRep)
                 return RepType::INum;
 #endif
 #if defined(MixedDec_EnableENum)
-            else if(ExtraRep==IRep)
+            else if(ExtraRep==ERep)
                 return RepType::ENum;
 #endif
             throw "Unknown or non-enabled representation type detected from MixedDec";
