@@ -27,7 +27,6 @@
 //Preprocessor options
 //RunAsC = Run code as c code instead of cpp(not implimented)
 /*
-AltDec_InheritMediumDec = Toggle have AltDec Inherit MediumDec class
 */
 #if defined(MediumDec_EnablePIRep) || defined(MediumDec_EnableInfinityRep) || defined(MediumDec_EnableERep)
 #define MediumDec_SpecialStatusEnabled
@@ -59,6 +58,8 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API MediumDec
     {
+#undefine MediumDecVariant
+#define MediumDecVariant MediumDec
     public:
         /// <summary>
         /// The decimal overflow
@@ -106,7 +107,7 @@ namespace BlazesRusCode
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetVal(MediumDec Value)
+        virtual void SetVal(MediumDecVariant Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
@@ -123,18 +124,18 @@ namespace BlazesRusCode
         /// Returns the value at zero
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec ZeroValue()
+        static MediumDecVariant ZeroValue()
         {
-            MediumDec NewSelf = MediumDec();
+            MediumDecVariant NewSelf = MediumDec();
             return NewSelf;
         }
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneValue()
+        static MediumDecVariant OneValue()
         {
-            MediumDec NewSelf = MediumDec(1);
+            MediumDecVariant NewSelf = MediumDec(1);
             return NewSelf;
         }
 
@@ -142,9 +143,9 @@ namespace BlazesRusCode
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec TwoValue()
+        static MediumDecVariant TwoValue()
         {
-            MediumDec NewSelf = MediumDec(2);
+            MediumDecVariant NewSelf = MediumDec(2);
             return NewSelf;
         }
 
@@ -152,9 +153,9 @@ namespace BlazesRusCode
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec NegativeOneValue()
+        static MediumDecVariant NegativeOneValue()
         {
-            MediumDec NewSelf = MediumDec(-1);
+            MediumDecVariant NewSelf = MediumDec(-1);
             return NewSelf;
         }
 
@@ -162,51 +163,51 @@ namespace BlazesRusCode
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Point5Value()
+        static MediumDecVariant Point5Value()
         {
-            MediumDec NewSelf = MediumDec(0, 500000000);
+            MediumDecVariant NewSelf = MediumDec(0, 500000000);
             return NewSelf;
         }
 
-        static MediumDec JustAboveZeroValue()
+        static MediumDecVariant JustAboveZeroValue()
         {
-            MediumDec NewSelf = MediumDec(0, 1);
+            MediumDecVariant NewSelf = MediumDec(0, 1);
             return NewSelf;
         }
 
-        static MediumDec OneMillionthValue()
+        static MediumDecVariant OneMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 1000);
+            MediumDecVariant NewSelf = MediumDec(0, 1000);
             return NewSelf;
         }
 
-        static MediumDec FiveThousandthValue()
+        static MediumDecVariant FiveThousandthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5000000);
+            MediumDecVariant NewSelf = MediumDec(0, 5000000);
             return NewSelf;
         }
 
-        static MediumDec FiveMillionthValue()
+        static MediumDecVariant FiveMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5000);
+            MediumDecVariant NewSelf = MediumDec(0, 5000);
             return NewSelf;
         }
 
-        static MediumDec TenMillionthValue()
+        static MediumDecVariant TenMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 100);
+            MediumDecVariant NewSelf = MediumDec(0, 100);
             return NewSelf;
         }
 
-        static MediumDec OneHundredMillionthValue()
+        static MediumDecVariant OneHundredMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 10);
+            MediumDecVariant NewSelf = MediumDec(0, 10);
             return NewSelf;
         }
 
-        static MediumDec FiveBillionthValue()
+        static MediumDecVariant FiveBillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5);
+            MediumDecVariant NewSelf = MediumDec(0, 5);
             return NewSelf;
         }
 
@@ -215,9 +216,9 @@ namespace BlazesRusCode
         /// (about 1.000000000448883 times actual value of PI with digits past 15th cut off)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec PIValue()
+        static MediumDecVariant PIValue()
         {
-            MediumDec NewSelf = MediumDec(3, 141592654);
+            MediumDecVariant NewSelf = MediumDec(3, 141592654);
             return NewSelf;
         }
 
@@ -225,7 +226,7 @@ namespace BlazesRusCode
         /// Returns value of -2147483647.999999999
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec MinimumValue()
+        static MediumDecVariant MinimumValue()
         {
             return MediumDec(-2147483647, 999999999);
         }
@@ -234,7 +235,7 @@ namespace BlazesRusCode
         /// Returns value of 2147483647.999999999
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec MaximumValue()
+        static MediumDecVariant MaximumValue()
         {
             return MediumDec(2147483647, 999999999);
         }
@@ -245,110 +246,110 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec EValue()
+        static MediumDecVariant EValue()
         {
             return MediumDec(2, 718281828);
         }
 
-        static MediumDec LN10Value()
+        static MediumDecVariant LN10Value()
         {
             return MediumDec(2, 302585093);
         }
 
-        static MediumDec LN10MultValue()
+        static MediumDecVariant LN10MultValue()
         {
             return MediumDec(0, 434294482);
         }
 
-        static MediumDec HalfLN10MultValue()
+        static MediumDecVariant HalfLN10MultValue()
         {
             return MediumDec(0, 868588964);
         }
 
-        static MediumDec NilValue()
+        static MediumDecVariant NilValue()
         {
             return MediumDec(-2147483648, -2147483648);
         }
     public:
-        static MediumDec PI;
+        static MediumDecVariant PI;
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Zero;
+        static MediumDecVariant Zero;
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec One;
+        static MediumDecVariant One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Two;
+        static MediumDecVariant Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec PointFive;
+        static MediumDecVariant PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec JustAboveZero;
+        static MediumDecVariant JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec FiveBillionth;
+        static MediumDecVariant FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneMillionth;
+        static MediumDecVariant OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec FiveThousandth;
+        static MediumDecVariant FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneGMillionth;
+        static MediumDecVariant OneGMillionth;
 
         //0e-7
-        static MediumDec TenMillionth;
+        static MediumDecVariant TenMillionth;
 
         /// <summary>
         /// Returns the value at "0.000005"
         /// </summary>
-        static MediumDec FiveMillionth;
+        static MediumDecVariant FiveMillionth;
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec NegativeOne;
+        static MediumDecVariant NegativeOne;
 
         /// <summary>
         /// Returns value of highest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MediumDec Maximum;
+        static MediumDecVariant Maximum;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MediumDec Minimum;
+        static MediumDecVariant Minimum;
 
         /// <summary>
         /// Euler's number
@@ -356,33 +357,33 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec E;
+        static MediumDecVariant E;
 
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        static MediumDec LN10;
+        static MediumDecVariant LN10;
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDec LN10Mult;
+        static MediumDecVariant LN10Mult;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDec HalfLN10Mult;
+        static MediumDecVariant HalfLN10Mult;
 
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
-        static MediumDec Nil;
+        static MediumDecVariant Nil;
 
         ///// <summary>
         ///// 16 x 1 Matrix with Values at Zero
         ///// </summary>
-        //static MediumDec ZeroMatrix16[16] = { Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero };
+        //static MediumDecVariant ZeroMatrix16[16] = { Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero };
     #pragma endregion ValueDefines
         /// <summary>
         /// Swaps the negative status.
@@ -414,7 +415,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        MediumDec GetValueFromString(std::string Value);
+        MediumDecVariant GetValueFromString(std::string Value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -475,12 +476,12 @@ namespace BlazesRusCode
         explicit operator std::string() { return ToString(); }
 
         ///// <summary>
-        ///// += MediumDec operation added to std::string
+        ///// += MediumDecVariant operation added to std::string
         ///// </summary>
         ///// <param name="targetString">The target string(left side).</param>
         ///// <param name="Value">The right side value</param>
         ///// <returns>string</returns>
-        //friend std::string operator+=(std::string targetString, MediumDec self) { return targetString + self.ToString(); }
+        //friend std::string operator+=(std::string targetString, MediumDecVariant self) { return targetString + self.ToString(); }
     #pragma endregion String Commands
 
     #pragma region From Standard types to this type
@@ -623,7 +624,7 @@ namespace BlazesRusCode
 
     #pragma region From this type to Standard types
         /// <summary>
-        /// MediumDec to float explicit conversion
+        /// MediumDecVariant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator float()
@@ -642,7 +643,7 @@ namespace BlazesRusCode
             return Value;
         }
         /// <summary>
-        /// MediumDec to double explicit conversion
+        /// MediumDecVariant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator double()
@@ -662,7 +663,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// MediumDec to long double explicit conversion
+        /// MediumDecVariant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator ldouble()
@@ -682,7 +683,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// MediumDec to int explicit conversion
+        /// MediumDecVariant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator int() { return IntValue; }
@@ -690,7 +691,7 @@ namespace BlazesRusCode
         explicit operator bool() { return IntValue == 0 ? false : true; }
 
         /// <summary>
-        /// MediumDec to integer type explicit conversion
+        /// MediumDecVariant to integer type explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         template<typename IntType>
@@ -704,7 +705,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator==(MediumDec self, MediumDec Value)
+        friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
         {
             return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
         }
@@ -715,7 +716,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator!=(MediumDec self, MediumDec Value)
+        friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
         {
             return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
         }
@@ -726,7 +727,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<(MediumDec self, MediumDec Value)
+        friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
@@ -794,7 +795,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<=(MediumDec self, MediumDec Value)
+        friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
@@ -862,7 +863,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The right side value.</param>
         /// <returns>bool</returns>
-        friend bool operator>(MediumDec self, MediumDec Value)
+        friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
@@ -928,7 +929,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>=(MediumDec self, MediumDec Value)
+        friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
@@ -990,7 +991,7 @@ namespace BlazesRusCode
         }
 
     #pragma endregion Comparison Operators
-    #pragma region MediumDec-To-MediumDec Operators
+    #pragma region MediumDec-To-MediumDecVariant Operators
     public:
         /// <summary>
         /// Addition Operation Between MediumDecs
@@ -1012,15 +1013,15 @@ namespace BlazesRusCode
                 {
                     bool WasNegative = self.IntValue < 0;
                     if (WasNegative)
-                        self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
+                        self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                     self.IntValue += Value.IntValue;
                     if (self.IntValue == -1)
-                        self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                        self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                     else if (self.IntValue < 0)
                         ++self.IntValue;
                     //If flips to other side of negative, invert the decimals
                     if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                        self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                        self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
                 }
             }
             else
@@ -1028,8 +1029,8 @@ namespace BlazesRusCode
                 bool WasNegative = self.IntValue < 0;
                 //Deal with Int section first
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                if (Value.IntValue != 0 && Value.IntValue != MediumDec::NegativeRep)
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
+                if (Value.IntValue != 0 && Value.IntValue != MediumDecVariant::NegativeRep)
                     self.IntValue += Value.IntValue;
                 //Now deal with the decimal section
                 if (Value.IntValue < 0)
@@ -1037,14 +1038,14 @@ namespace BlazesRusCode
                     if (WasNegative)
                     {
                         self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
                     }
                     else
                     {
                         self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
                     }
                 }
                 else
@@ -1052,23 +1053,23 @@ namespace BlazesRusCode
                     if (WasNegative)
                     {
                         self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
                     }
                     else
                     {
                         self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
                     }
                 }
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
@@ -1093,16 +1094,16 @@ namespace BlazesRusCode
                 {
                     bool WasNegative = self.IntValue < 0;
                     if (WasNegative)
-                        self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
+                        self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                     if (Value.IntValue != 0)
                         self.IntValue -= Value.IntValue;
                     if(self.IntValue==-1)
-                        self.IntValue = self.DecimalHalf == 0?0:MediumDec::NegativeRep;
+                        self.IntValue = self.DecimalHalf == 0?0:MediumDecVariant::NegativeRep;
                     else if(self.IntValue<0)
                         ++self.IntValue;
                     //If flips to other side of negative, invert the decimals
                     if ((WasNegative && self.IntValue >= 0)||(WasNegative == 0 && self.IntValue < 0))
-                        self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                        self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
                 }
             }
             else
@@ -1110,8 +1111,8 @@ namespace BlazesRusCode
                 bool WasNegative = self.IntValue < 0;
                 //Deal with Int section first
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                if(Value.IntValue!=0&&Value.IntValue!=MediumDec::NegativeRep)
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
+                if(Value.IntValue!=0&&Value.IntValue!=MediumDecVariant::NegativeRep)
                     self.IntValue -= Value.IntValue;
                 //Now deal with the decimal section
                 if (Value.IntValue < 0)
@@ -1119,14 +1120,14 @@ namespace BlazesRusCode
                     if (WasNegative)//-4.0 - -0.5 = -3.5
                     {
                         self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
                     }
                     else//4.3 -  - 1.8
                     {
                         self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
                     }
                 }
                 else
@@ -1134,23 +1135,23 @@ namespace BlazesRusCode
                     if (WasNegative)//-4.5 - 5.6
                     {
                         self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
                     }
                     else//0.995 - 1 = 
                     {
                         self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
+                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
                     }
                 }
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
@@ -1163,12 +1164,12 @@ namespace BlazesRusCode
         /// <returns>MediumDec&</returns>
         static MediumDec& MultOp(MediumDec& self, MediumDec& Value)
         {
-            if (Value == MediumDec::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
-            if (self == MediumDec::Zero || Value == MediumDec::One)
+            if (Value == MediumDecVariant::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
+            if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
                 return self;
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MediumDec::NegativeRep) { Value.IntValue = 0; }
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
@@ -1189,7 +1190,7 @@ namespace BlazesRusCode
             {
                 __int64 SRep = (__int64)self.DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MediumDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     self.DecimalHalf = (signed int)SRep;
@@ -1197,10 +1198,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)self.DecimalHalf * Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = OverflowVal;
                         self.DecimalHalf = (signed int)SRep;
                     }
@@ -1210,11 +1211,11 @@ namespace BlazesRusCode
                     }
                 }
             }
-            else if (self.IntValue == MediumDec::NegativeRep)
+            else if (self.IntValue == MediumDecVariant::NegativeRep)
             {
                 __int64 SRep = (__int64)self.DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MediumDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     self.DecimalHalf = (signed int)SRep;
@@ -1222,10 +1223,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)self.DecimalHalf * Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = -OverflowVal;
                         self.DecimalHalf = (signed int)SRep;
                     }
@@ -1244,30 +1245,30 @@ namespace BlazesRusCode
                 }
                 if (Value.IntValue == 0)
                 {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * self.IntValue + self.DecimalHalf;
                     SRep *= Value.DecimalHalf;
-                    SRep /= MediumDec::DecimalOverflowX;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    SRep /= MediumDecVariant::DecimalOverflowX;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         self.DecimalHalf = (signed int)SRep;
                     }
                     else
                     {
-                        self.IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
+                        self.IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                         self.DecimalHalf = (signed int)SRep;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * self.IntValue + self.DecimalHalf;
                     SRep *= Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = (signed int)OverflowVal;
                         self.DecimalHalf = (signed int)SRep;
                     }
@@ -1281,22 +1282,22 @@ namespace BlazesRusCode
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                    __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : MediumDecVariant::DecimalOverflowX * self.IntValue + self.DecimalHalf;
                     SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     __int64 Temp03 = (__int64)self.IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)self.DecimalHalf * (__int64)Value.DecimalHalf;
-                    Temp04 /= MediumDec::DecimalOverflow;
+                    Temp04 /= MediumDecVariant::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / MediumDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)MediumDec::DecimalOverflow;
-                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDec::NegativeRep : 0; }
+                    __int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     self.DecimalHalf = (signed int)IntegerRep;
                 }
             }
-            if (self == MediumDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
             return self;
         }
 
@@ -1308,13 +1309,13 @@ namespace BlazesRusCode
         /// <returns>MediumDec&</returns>
         static MediumDec& DivOp(MediumDec& self, MediumDec& Value)
         {
-            if (Value == MediumDec::Zero)
+            if (Value == MediumDecVariant::Zero)
                 throw "Target value can not be divided by zero";
-            if (self == MediumDec::Zero)
+            if (self == MediumDecVariant::Zero)
                 return self;
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MediumDec::NegativeRep) { Value.IntValue = 0; }
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
@@ -1328,40 +1329,40 @@ namespace BlazesRusCode
                 if (Value.DecimalHalf == 0)//Both are integers
                 {
                     if (self.IntValue < 0) { self.IntValue *= -1; }
-                    __int64 SRep = self.IntValue * MediumDec::DecimalOverflowX;
+                    __int64 SRep = self.IntValue * MediumDecVariant::DecimalOverflowX;
                     __int64 YRep = Value.IntValue;
                     SRep /= Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     }
                     else
                     {
-                        self.IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
+                        self.IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                     }
                     self.DecimalHalf = (signed int)SRep;
                 }
                 else//Only self is integer while Value has both sides
                 {
                     /* Testing calculation 2.0/2.5 = 0.8
-                    MediumDec::DecimalOverflowX * self.IntValue = 2000000000
-                    (MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf) = 2500000000
+                    MediumDecVariant::DecimalOverflowX * self.IntValue = 2000000000
+                    (MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf) = 2500000000
 
                     Converting to 2/(5/2) = 4/5
                     4/5 = 800000000
-                    2000000000/(2500000000/MediumDec::DecimalOverflowX)=800000000
+                    2000000000/(2500000000/MediumDecVariant::DecimalOverflowX)=800000000
                     */
-                    boost::multiprecision::uint128_t SRep02 = MediumDec::DecimalOverflowX * MediumDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     SRep02 *= self.IntValue;
-                    __int64 VRep = MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -1373,20 +1374,20 @@ namespace BlazesRusCode
             }
             else if (self.IntValue == 0)
             {
-                __int64 SRep = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MediumDec::DecimalOverflowX;
-                SRep -= IntHalf * MediumDec::DecimalOverflowX;
+                __int64 SRep = (__int64)self.DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
                 self.IntValue = IntHalf;
                 self.DecimalHalf = (signed int)SRep;
             }
-            else if (self.IntValue == MediumDec::NegativeRep)
+            else if (self.IntValue == MediumDecVariant::NegativeRep)
             {
-                __int64 SRep = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MediumDec::DecimalOverflowX;
-                SRep -= IntHalf * MediumDec::DecimalOverflowX;
-                self.IntValue = IntHalf == 0 ? MediumDec::NegativeRep : -IntHalf;
+                __int64 SRep = (__int64)self.DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
+                self.IntValue = IntHalf == 0 ? MediumDecVariant::NegativeRep : -IntHalf;
                 self.DecimalHalf = (signed int)SRep;
             }
             else
@@ -1398,12 +1399,12 @@ namespace BlazesRusCode
                 }
                 if (Value.DecimalHalf == 0)//Y is integer but self is not
                 {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * self.IntValue + self.DecimalHalf;
                     SRep /= Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         self.IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -1414,29 +1415,29 @@ namespace BlazesRusCode
                 }
                 else
                 {//Splitting Integer Half and Decimal Half Division
-                    __int64 SRep_DecHalf = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                    int IntHalf = SRep_DecHalf / MediumDec::DecimalOverflowX;
-                    SRep_DecHalf -= IntHalf * MediumDec::DecimalOverflowX;
+                    __int64 SRep_DecHalf = (__int64)self.DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                    int IntHalf = SRep_DecHalf / MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf -= IntHalf * MediumDecVariant::DecimalOverflowX;
 
-                    boost::multiprecision::uint128_t SRep02 = MediumDec::DecimalOverflowX * MediumDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     //std::cout << "Multi-precision as String:" << SRep02 << std::endl;
                     SRep02 *= self.IntValue;
-                    __int64 VRep = MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02 + SRep_DecHalf;
-                    if (SRep >= MediumDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntHalf += OverflowVal;
                     }
-                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDec::NegativeRep : 0; }
+                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     self.DecimalHalf = (signed int)SRep;
                 }
             }
-            if (self == MediumDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
             return self;
         }
 
@@ -1497,7 +1498,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator+(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator+(MediumDecVariant self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
         }
@@ -1508,7 +1509,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator+=(MediumDec& self, MediumDec Value)
+        friend MediumDec& operator+=(MediumDec& self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
         }
@@ -1519,7 +1520,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator+=(MediumDec* self, MediumDec Value){ return AddOp(**self, Value); }
+        friend MediumDec& operator+=(MediumDec* self, MediumDecVariant Value){ return AddOp(**self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between MediumDecs
@@ -1527,7 +1528,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator-(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator-(MediumDecVariant self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
         }
@@ -1538,7 +1539,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec& self, MediumDec Value)
+        friend MediumDec& operator-=(MediumDec& self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
         }
@@ -1549,7 +1550,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec* self, MediumDec Value){ return SubOp(**self, Value); }
+        friend MediumDec& operator-=(MediumDec* self, MediumDecVariant Value){ return SubOp(**self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDecs
@@ -1557,7 +1558,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator*(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator*(MediumDecVariant self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
         }
@@ -1568,7 +1569,7 @@ namespace BlazesRusCode
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
-        friend MediumDec& operator*=(MediumDec& self, MediumDec Value)
+        friend MediumDec& operator*=(MediumDec& self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
         }
@@ -1579,7 +1580,7 @@ namespace BlazesRusCode
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
-        friend MediumDec& operator*=(MediumDec* self, MediumDec Value){ return MultOp(**self, Value); }
+        friend MediumDec& operator*=(MediumDec* self, MediumDecVariant Value){ return MultOp(**self, Value); }
 
 
         /// <summary>
@@ -1588,7 +1589,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator/(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator/(MediumDecVariant self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
         }
@@ -1599,7 +1600,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec& self, MediumDec Value)
+        friend MediumDec& operator/=(MediumDec& self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
         }
@@ -1610,7 +1611,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec* self, MediumDec Value){ return DivOp(**self, Value); }
+        friend MediumDec& operator/=(MediumDec* self, MediumDecVariant Value){ return DivOp(**self, Value); }
 
         /// <summary>
         /// Remainder Operation Between MediumDecs
@@ -1618,7 +1619,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator%(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator%(MediumDecVariant self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
         }
@@ -1629,7 +1630,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator%=(MediumDec& self, MediumDec Value)
+        friend MediumDec& operator%=(MediumDec& self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
         }
@@ -1640,7 +1641,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec& operator%=(MediumDec* self, MediumDec Value)
+        friend MediumDec& operator%=(MediumDec* self, MediumDecVariant Value)
         {
             return RemOp(**self, Value);
         }
@@ -1651,7 +1652,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator^(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator^(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -1688,7 +1689,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator|(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator|(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -1724,7 +1725,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator&(MediumDec self, MediumDec Value)
+        friend MediumDecVariant operator&(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -1766,9 +1767,9 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// ++MediumDec Operator
+        /// ++MediumDecVariant Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MediumDec& operator ++()
         {
             if (IntValue == NegativeRep) { IntValue = 0; }
@@ -1779,9 +1780,9 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// ++MediumDec Operator
+        /// ++MediumDecVariant Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MediumDec& operator --()
         {
             if (IntValue == NegativeRep) { IntValue = -1; }
@@ -1795,9 +1796,9 @@ namespace BlazesRusCode
         /// MediumDec++ Operator
         /// </summary>
         /// <returns>MediumDec</returns>
-        MediumDec operator ++(int)
+        MediumDecVariant operator ++(int)
         {
-            MediumDec tmp(*this);
+            MediumDecVariant tmp(*this);
             ++* this;
             return tmp;
         }
@@ -1806,9 +1807,9 @@ namespace BlazesRusCode
         /// MediumDec-- Operator
         /// </summary>
         /// <returns>MediumDec</returns>
-        MediumDec operator --(int)
+        MediumDecVariant operator --(int)
         {
-            MediumDec tmp(*this);
+            MediumDecVariant tmp(*this);
             --* this;
             return tmp;
         }
@@ -1816,51 +1817,51 @@ namespace BlazesRusCode
         /// <summary>
         /// MediumDec* Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MediumDec& operator *()
         {
             return *this;
         }
 
-    #pragma endregion MediumDec-To-MediumDec Operators
+    #pragma endregion MediumDec-To-MediumDecVariant Operators
     #pragma region Other Comparison Operators
-        //friend bool operator==(MediumDec self, float Value) { return self == (MediumDec)Value; }
-        //friend bool operator!=(MediumDec self, float Value) { return self != (MediumDec)Value; }
-        //friend bool operator<(MediumDec self, float Value) { return self < (MediumDec)Value; }
-        //friend bool operator<=(MediumDec self, float Value) { return self <= (MediumDec)Value; }
-        //friend bool operator>(MediumDec self, float Value) { return self > (MediumDec)Value; }
-        //friend bool operator>=(MediumDec self, float Value) { return self >= (MediumDec)Value; }
+        //friend bool operator==(MediumDecVariant self, float Value) { return self == (MediumDec)Value; }
+        //friend bool operator!=(MediumDecVariant self, float Value) { return self != (MediumDec)Value; }
+        //friend bool operator<(MediumDecVariant self, float Value) { return self < (MediumDec)Value; }
+        //friend bool operator<=(MediumDecVariant self, float Value) { return self <= (MediumDec)Value; }
+        //friend bool operator>(MediumDecVariant self, float Value) { return self > (MediumDec)Value; }
+        //friend bool operator>=(MediumDecVariant self, float Value) { return self >= (MediumDec)Value; }
 
-        //friend bool operator==(float Value, MediumDec self) { return self == (MediumDec)Value; }
-        //friend bool operator!=(float Value, MediumDec self) { return self != (MediumDec)Value; }
-        //friend bool operator<(float Value, MediumDec self) { return (MediumDec)Value < self; }
-        //friend bool operator<=(float Value, MediumDec self) { return self > (MediumDec)Value; }
-        //friend bool operator>(float Value, MediumDec self) { return (MediumDec)Value > self; }
-        //friend bool operator>=(float Value, MediumDec self) { return self < (MediumDec)Value; }
+        //friend bool operator==(float Value, MediumDecVariant self) { return self == (MediumDec)Value; }
+        //friend bool operator!=(float Value, MediumDecVariant self) { return self != (MediumDec)Value; }
+        //friend bool operator<(float Value, MediumDecVariant self) { return (MediumDec)Value < self; }
+        //friend bool operator<=(float Value, MediumDecVariant self) { return self > (MediumDec)Value; }
+        //friend bool operator>(float Value, MediumDecVariant self) { return (MediumDec)Value > self; }
+        //friend bool operator>=(float Value, MediumDecVariant self) { return self < (MediumDec)Value; }
 
-        //friend bool operator==(MediumDec self, double Value) { return self == (MediumDec)Value; }
-        //friend bool operator!=(MediumDec self, double Value) { return self != (MediumDec)Value; }
-        //friend bool operator<(MediumDec self, double Value) { return self < (MediumDec)Value; }
-        //friend bool operator<=(MediumDec self, double Value) { return self <= (MediumDec)Value; }
-        //friend bool operator>(MediumDec self, double Value) { return self > (MediumDec)Value; }
-        //friend bool operator>=(MediumDec self, double Value) { return self >= (MediumDec)Value; }
+        //friend bool operator==(MediumDecVariant self, double Value) { return self == (MediumDec)Value; }
+        //friend bool operator!=(MediumDecVariant self, double Value) { return self != (MediumDec)Value; }
+        //friend bool operator<(MediumDecVariant self, double Value) { return self < (MediumDec)Value; }
+        //friend bool operator<=(MediumDecVariant self, double Value) { return self <= (MediumDec)Value; }
+        //friend bool operator>(MediumDecVariant self, double Value) { return self > (MediumDec)Value; }
+        //friend bool operator>=(MediumDecVariant self, double Value) { return self >= (MediumDec)Value; }
 
-        //friend bool operator==(double Value, MediumDec self) { return self == (MediumDec)Value; }
-        //friend bool operator!=(double Value, MediumDec self) { return self != (MediumDec)Value; }
-        //friend bool operator<(double Value, MediumDec self) { return (MediumDec)Value < self; }
-        //friend bool operator<=(double Value, MediumDec self) { return self > (MediumDec)Value; }
-        //friend bool operator>(double Value, MediumDec self) { return (MediumDec)Value > self; }
-        //friend bool operator>=(double Value, MediumDec self) { return self < (MediumDec)Value; }
+        //friend bool operator==(double Value, MediumDecVariant self) { return self == (MediumDec)Value; }
+        //friend bool operator!=(double Value, MediumDecVariant self) { return self != (MediumDec)Value; }
+        //friend bool operator<(double Value, MediumDecVariant self) { return (MediumDec)Value < self; }
+        //friend bool operator<=(double Value, MediumDecVariant self) { return self > (MediumDec)Value; }
+        //friend bool operator>(double Value, MediumDecVariant self) { return (MediumDec)Value > self; }
+        //friend bool operator>=(double Value, MediumDecVariant self) { return self < (MediumDec)Value; }
     #pragma endregion Other Comparison Operators
     #pragma region MediumDec-To-Int Comparison Operators
         /// <summary>
-        /// Equality Operation between <see cref="MediumDec &"/> and Integer Type.
+        /// Equality Operation between <see cref="MediumDecVariant &"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(MediumDec self, IntType Value)
+        friend bool operator==(MediumDecVariant self, IntType Value)
         {
             return (self.IntValue == Value && self.DecimalHalf == 0);
         }
@@ -1872,7 +1873,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(MediumDec self, IntType Value)
+        friend bool operator!=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf > 0) { return true; }
             else if (self.IntValue == Value && self.DecimalHalf == 0) { return false; }
@@ -1886,7 +1887,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(MediumDec self, IntType Value)
+        friend bool operator<(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -1911,7 +1912,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(MediumDec self, IntType Value)
+        friend bool operator<=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -1936,7 +1937,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(MediumDec self, IntType Value)
+        friend bool operator>(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -1961,7 +1962,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(MediumDec self, IntType Value)
+        friend bool operator>=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -1987,7 +1988,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(IntType Value, MediumDec self)
+        friend bool operator==(IntType Value, MediumDecVariant self)
         {
             return (self.IntValue == Value && self.DecimalHalf == 0);
         }
@@ -1999,7 +2000,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(IntType Value, MediumDec self)
+        friend bool operator!=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf > 0) { return true; }
             else if (self.IntValue == Value && self.DecimalHalf == 0) { return false; }
@@ -2013,7 +2014,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(IntType Value, MediumDec self)
+        friend bool operator<(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -2038,7 +2039,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(IntType Value, MediumDec self)
+        friend bool operator<=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -2063,7 +2064,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(IntType Value, MediumDec self)
+        friend bool operator>(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -2088,7 +2089,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(IntType Value, MediumDec self)
+        friend bool operator>=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -2109,65 +2110,65 @@ namespace BlazesRusCode
 
     #pragma endregion MediumDec-To-Int Comparison Operators
     #pragma region Other Operations
-        friend MediumDec operator+(MediumDec self, float Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, float Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, float Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, float Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, float Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, float Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, float Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, float Value) { return self & (MediumDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, float Value) { return self + (MediumDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, float Value) { return self - (MediumDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, float Value) { return self * (MediumDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, float Value) { return self / (MediumDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, float Value) { return self % (MediumDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, float Value) { return self ^ (MediumDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, float Value) { return self | (MediumDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, float Value) { return self & (MediumDec)Value; }
 
-        friend MediumDec operator+(float Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(float Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(float Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(float Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(float Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(float Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(float Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(float Value, MediumDec self) { return (MediumDec)Value & self; }
+        friend MediumDecVariant operator+(float Value, MediumDecVariant self) { return (MediumDec)Value + self; }
+        friend MediumDecVariant operator-(float Value, MediumDecVariant self) { return (MediumDec)Value - self; }
+        friend MediumDecVariant operator*(float Value, MediumDecVariant self) { return (MediumDec)Value * self; }
+        friend MediumDecVariant operator/(float Value, MediumDecVariant self) { return (MediumDec)Value / self; }
+        friend MediumDecVariant operator%(float Value, MediumDecVariant self) { return (MediumDec)Value % self; }
+        friend MediumDecVariant operator^(float Value, MediumDecVariant self) { return (MediumDec)Value ^ self; }
+        friend MediumDecVariant operator|(float Value, MediumDecVariant self) { return (MediumDec)Value | self; }
+        friend MediumDecVariant operator&(float Value, MediumDecVariant self) { return (MediumDec)Value & self; }
 
-        friend MediumDec operator+(MediumDec self, double Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, double Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, double Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, double Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, double Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, double Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, double Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, double Value) { return self & (MediumDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, double Value) { return self + (MediumDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, double Value) { return self - (MediumDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, double Value) { return self * (MediumDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, double Value) { return self / (MediumDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, double Value) { return self % (MediumDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, double Value) { return self ^ (MediumDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, double Value) { return self | (MediumDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, double Value) { return self & (MediumDec)Value; }
 
-        friend MediumDec operator+(double Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(double Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(double Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(double Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(double Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(double Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(double Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(double Value, MediumDec self) { return (MediumDec)Value & self; }
+        friend MediumDecVariant operator+(double Value, MediumDecVariant self) { return (MediumDec)Value + self; }
+        friend MediumDecVariant operator-(double Value, MediumDecVariant self) { return (MediumDec)Value - self; }
+        friend MediumDecVariant operator*(double Value, MediumDecVariant self) { return (MediumDec)Value * self; }
+        friend MediumDecVariant operator/(double Value, MediumDecVariant self) { return (MediumDec)Value / self; }
+        friend MediumDecVariant operator%(double Value, MediumDecVariant self) { return (MediumDec)Value % self; }
+        friend MediumDecVariant operator^(double Value, MediumDecVariant self) { return (MediumDec)Value ^ self; }
+        friend MediumDecVariant operator|(double Value, MediumDecVariant self) { return (MediumDec)Value | self; }
+        friend MediumDecVariant operator&(double Value, MediumDecVariant self) { return (MediumDec)Value & self; }
 
-        friend MediumDec operator+(MediumDec self, ldouble Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, ldouble Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, ldouble Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, ldouble Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, ldouble Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, ldouble Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, ldouble Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, ldouble Value) { return self & (MediumDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, ldouble Value) { return self + (MediumDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, ldouble Value) { return self - (MediumDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, ldouble Value) { return self * (MediumDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, ldouble Value) { return self / (MediumDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, ldouble Value) { return self % (MediumDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, ldouble Value) { return self ^ (MediumDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, ldouble Value) { return self | (MediumDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, ldouble Value) { return self & (MediumDec)Value; }
 
-        friend MediumDec operator+(ldouble Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(ldouble Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(ldouble Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(ldouble Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(ldouble Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(ldouble Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(ldouble Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(ldouble Value, MediumDec self) { return (MediumDec)Value & self; }
+        friend MediumDecVariant operator+(ldouble Value, MediumDecVariant self) { return (MediumDec)Value + self; }
+        friend MediumDecVariant operator-(ldouble Value, MediumDecVariant self) { return (MediumDec)Value - self; }
+        friend MediumDecVariant operator*(ldouble Value, MediumDecVariant self) { return (MediumDec)Value * self; }
+        friend MediumDecVariant operator/(ldouble Value, MediumDecVariant self) { return (MediumDec)Value / self; }
+        friend MediumDecVariant operator%(ldouble Value, MediumDecVariant self) { return (MediumDec)Value % self; }
+        friend MediumDecVariant operator^(ldouble Value, MediumDecVariant self) { return (MediumDec)Value ^ self; }
+        friend MediumDecVariant operator|(ldouble Value, MediumDecVariant self) { return (MediumDec)Value | self; }
+        friend MediumDecVariant operator&(ldouble Value, MediumDecVariant self) { return (MediumDec)Value & self; }
 
     #pragma endregion Other Operations
     #pragma region MediumDec-To-Integer Operations
     public:
         /// <summary>
-        /// Addition Operation Between MediumDec and Integer value
+        /// Addition Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -2182,21 +2183,21 @@ namespace BlazesRusCode
             else
             {
 				bool selfStartedAsPositive = self.IntValue>=0;
-				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
+				bool startedAsNegativeZero = self.IntValue==MediumDecVariant::NegativeRep;
 				
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue += value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
 					
-				//prevent reaching MediumDec::NegativeRep IntValue
+				//prevent reaching MediumDecVariant::NegativeRep IntValue
 				if(selfStartedAsPositive)
 				{
 					if(value<0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
@@ -2209,7 +2210,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer value
+        /// Subtraction Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -2224,21 +2225,21 @@ namespace BlazesRusCode
             else
             {
 				bool selfStartedAsPositive = self.IntValue>=0;
-				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
+				bool startedAsNegativeZero = self.IntValue==MediumDecVariant::NegativeRep;
 				
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue==MediumDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue==MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue -= value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
 					
-				//prevent reaching MediumDec::NegativeRep IntValue
+				//prevent reaching MediumDecVariant::NegativeRep IntValue
 				if(selfStartedAsPositive)
 				{
 					if(value>0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
@@ -2251,7 +2252,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2298,7 +2299,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2362,7 +2363,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2370,7 +2371,7 @@ namespace BlazesRusCode
         template<typename IntType>
         static MediumDec& IntRemOp(MediumDec& self, IntType& Value)
         {
-            if (Value == 0 || self == MediumDec::Zero) { self.SetAsZero(); return self; }
+            if (Value == 0 || self == MediumDecVariant::Zero) { self.SetAsZero(); return self; }
             if (self.DecimalHalf == 0)
             {
                 if (self.IntValue < 0)//https://www.quora.com/How-does-the-modulo-operation-work-with-negative-numbers-and-why
@@ -2409,7 +2410,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Addition Operation Between MediumDec and Integer value
+        /// Addition Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -2424,21 +2425,21 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue += value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer value
+        /// Subtraction Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -2457,21 +2458,21 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue -= value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
 
         /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2512,7 +2513,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2569,7 +2570,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2577,7 +2578,7 @@ namespace BlazesRusCode
         template<typename IntType>
         static MediumDec& UnsignedRemOp(MediumDec& self, IntType& Value)
         {
-            if(self == MediumDec::Zero) { return self; }
+            if(self == MediumDecVariant::Zero) { return self; }
             if (Value == 0){ self.IntValue=0; self.DecimalHalf = 0; return self; }
             if (self.DecimalHalf == 0)
             {
@@ -2611,215 +2612,215 @@ namespace BlazesRusCode
      //   {
         //}
     public:
-        friend MediumDec operator+(MediumDec self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned char Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned char Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned char Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned char Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned char Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned char Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned char Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned char Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned char Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDec operator+=(MediumDec& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDec& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDec& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDec& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDec& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDec& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned short Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned short Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned short Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned short Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned short Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned short Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned short Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned short Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned short Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDec operator+=(MediumDec& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDec& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDec& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDec& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDec& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDec& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned int Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned int Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned int Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned int Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned int Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned int Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned int Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned int Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDec operator+=(MediumDec& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDec& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDec& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDec& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDec& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDec& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        //friend MediumDec operator+=(MediumDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
-        //friend MediumDec operator-=(MediumDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
-        //friend MediumDec operator*=(MediumDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
-        //friend MediumDec operator/=(MediumDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
-        //friend MediumDec operator%=(MediumDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
+        //friend MediumDecVariant operator+=(MediumDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
+        //friend MediumDecVariant operator*=(MediumDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
+        //friend MediumDecVariant operator/=(MediumDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
+        //friend MediumDecVariant operator%=(MediumDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDec operator+=(MediumDec& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDec& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDec& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDec& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDec& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDec& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
 
-     //   friend MediumDec operator+=(MediumDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
-        //friend MediumDec operator-=(MediumDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
-     //   friend MediumDec operator*=(MediumDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
-        //friend MediumDec operator/=(MediumDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
-     //   friend MediumDec operator%=(MediumDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
+     //   friend MediumDecVariant operator+=(MediumDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
+     //   friend MediumDecVariant operator*=(MediumDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
+        //friend MediumDecVariant operator/=(MediumDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
+     //   friend MediumDecVariant operator%=(MediumDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
 
         /// <summary>
-        /// Addition Operation Between MediumDec and Integer Value
+        /// Addition Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator+(MediumDec self, IntType Value)
+        friend MediumDecVariant operator+(MediumDecVariant self, IntType Value)
         {
             return IntAddOp(self, Value);
         }
 
         ///// <summary>
-        ///// += Operation Between MediumDec and Integer Value
+        ///// += Operation Between MediumDecVariant and Integer Value
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator+=(MediumDec& self, IntType Value)
+        friend MediumDecVariant operator+=(MediumDec& self, IntType Value)
         {
             return IntAddOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDec operator+=(MediumDec* self, IntType Value){ return IntAddOp(**self, Value); }
+        friend MediumDecVariant operator+=(MediumDec* self, IntType Value){ return IntAddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer Value
+        /// Subtraction Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator-(MediumDec self, IntType Value)
+        friend MediumDecVariant operator-(MediumDecVariant self, IntType Value)
         {
             return IntSubOp(self, Value);
         }
 
         /// <summary>
-        /// -= Operation Between MediumDec and Integer Value
+        /// -= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator-=(MediumDec& self, IntType Value)
+        friend MediumDecVariant operator-=(MediumDec& self, IntType Value)
         {
             return IntSubOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDec operator-=(MediumDec* self, IntType Value){ return IntSubOp(**self, Value); }
+        friend MediumDecVariant operator-=(MediumDec* self, IntType Value){ return IntSubOp(**self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator*(MediumDec self, IntType Value)
+        friend MediumDecVariant operator*(MediumDecVariant self, IntType Value)
         {
             return MultOp(self, Value);
         }
 
         /// <summary>
-        /// *= Operation Between MediumDec and Integer Value
+        /// *= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator*=(MediumDec& self, IntType Value)
+        friend MediumDecVariant operator*=(MediumDec& self, IntType Value)
         {
             return MultOp(self, Value);
         }
 
         /// <summary>
-        /// *= Operation Between MediumDec and Integer Value (from pointer)
+        /// *= Operation Between MediumDecVariant and Integer Value (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator*=(MediumDec* self, IntType Value){ return MultOp(**self, Value); }
+        friend MediumDecVariant operator*=(MediumDec* self, IntType Value){ return MultOp(**self, Value); }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator/(MediumDec self, IntType Value)
+        friend MediumDecVariant operator/(MediumDecVariant self, IntType Value)
         {
             return DivOp(self, Value);
         }
 
         /// <summary>
-        /// /= Operation Between MediumDec and Integer Value
+        /// /= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator/=(MediumDec& self, IntType Value)
+        friend MediumDecVariant operator/=(MediumDec& self, IntType Value)
         {
             return DivOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDec operator/=(MediumDec* self, IntType Value){ return DivOp(**self, Value); }
+        friend MediumDecVariant operator/=(MediumDec* self, IntType Value){ return DivOp(**self, Value); }
         
         /// <summary>
-        /// Modulus Operation Between MediumDec and Integer Value
+        /// Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator%(MediumDec self, IntType Value)
+        friend MediumDecVariant operator%(MediumDecVariant self, IntType Value)
         {
             return IntRemOp(self, Value);
         }
 
         /// <summary>
-        /// %= Operation Between MediumDec and Integer Value
+        /// %= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator%=(MediumDec& self, IntType Value)
+        friend MediumDecVariant operator%=(MediumDec& self, IntType Value)
         {
             return IntRemOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDec operator%=(MediumDec* self, IntType Value){ return IntRemOp(**self, Value); }
+        friend MediumDecVariant operator%=(MediumDec* self, IntType Value){ return IntRemOp(**self, Value); }
 
         /// <summary>
-        /// Bitwise XOR Operation Between MediumDec and Integer Value
+        /// Bitwise XOR Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator^(MediumDec self, IntType Value)
+        friend MediumDecVariant operator^(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
             else
@@ -2840,13 +2841,13 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MediumDec and Integer Value
+        /// Bitwise Or Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator|(MediumDec self, IntType Value)
+        friend MediumDecVariant operator|(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
             else
@@ -2867,13 +2868,13 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise And Operation Between MediumDec and Integer Value
+        /// Bitwise And Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator&(MediumDec self, IntType Value)
+        friend MediumDecVariant operator&(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue &= Value; return self; }
             else
@@ -2893,104 +2894,104 @@ namespace BlazesRusCode
             return self;
         }
     #pragma endregion MediumDec-To-Integer Operations
-    #pragma region Integer-To-MediumDec Operations
+    #pragma region Integer-To-MediumDecVariant Operations
         /// <summary>
-        /// Addition Operation Between MediumDec and Integer Value
+        /// Addition Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator+(IntType Value, MediumDec self)
+        friend MediumDecVariant operator+(IntType Value, MediumDecVariant self)
         {
             return IntAddOp(self, Value);
         }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer Value
+        /// Subtraction Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator-(IntType Value, MediumDec self)
+        friend MediumDecVariant operator-(IntType Value, MediumDecVariant self)
         {
-            MediumDec Result = Value;
+            MediumDecVariant Result = Value;
             return SubOp(Result, self);
         }
 
         /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator*(IntType Value, MediumDec self)
+        friend MediumDecVariant operator*(IntType Value, MediumDecVariant self)
         {
             return MultOp(self, Value);
         }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator/(IntType Value, MediumDec self)
+        friend MediumDecVariant operator/(IntType Value, MediumDecVariant self)
         {
-            MediumDec Result = Value;
+            MediumDecVariant Result = Value;
             return DivOp(Result, self);
         }
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator%(IntType Value, MediumDec self)
+        friend MediumDecVariant operator%(IntType Value, MediumDecVariant self)
         {
-            MediumDec Result = Value;
+            MediumDecVariant Result = Value;
             return RemOp(Result, self);
         }
 
         /// <summary>
-        /// Bitwise XOR Operation Between MediumDec and Integer Value
+        /// Bitwise XOR Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator^(IntType Value, MediumDec self)
+        friend MediumDecVariant operator^(IntType Value, MediumDecVariant self)
         {
             return (MediumDec)Value ^ self;
         }
         /// <summary>
-        /// Bitwise Or Operation Between MediumDec and Integer Value
+        /// Bitwise Or Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator|(IntType Value, MediumDec self)
+        friend MediumDecVariant operator|(IntType Value, MediumDecVariant self)
         {
             return (MediumDec)Value | self;
         }
         /// <summary>
-        /// Bitwise And Operation Between MediumDec and Integer Value
+        /// Bitwise And Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator&(IntType Value, MediumDec self)
+        friend MediumDecVariant operator&(IntType Value, MediumDecVariant self)
         {
             return (MediumDec)Value & self;
         }
-    #pragma endregion Integer-To-MediumDec Operations
+    #pragma endregion Integer-To-MediumDecVariant Operations
     #pragma region Math/Trigonomic Etc Functions
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
@@ -3016,7 +3017,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDec&</returns>
-        static MediumDec Floor(MediumDec Value)
+        static MediumDecVariant Floor(MediumDecVariant Value)
         {
             return Value.Floor();
         }
@@ -3026,7 +3027,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
-        static MediumDec Floor(MediumDec Value, int precision)
+        static MediumDecVariant Floor(MediumDecVariant Value, int precision)
         {
             switch (precision)
             {
@@ -3068,7 +3069,7 @@ namespace BlazesRusCode
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDec&</returns>
-        static int FloorInt(MediumDec Value)
+        static int FloorInt(MediumDecVariant Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -3085,7 +3086,7 @@ namespace BlazesRusCode
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDec&</returns>
-        static int CeilInt(MediumDec Value)
+        static int CeilInt(MediumDecVariant Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -3103,7 +3104,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Ceil(MediumDec Value)
+        static MediumDecVariant Ceil(MediumDecVariant Value)
         {
             return Value.Ceil();
         }
@@ -3111,7 +3112,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
-        /// <returns>MediumDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MediumDec& Trunc()
         {
             DecimalHalf = 0;
@@ -3124,7 +3125,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Trunc(MediumDec Value)
+        static MediumDecVariant Trunc(MediumDecVariant Value)
         {
             return Value.Trunc();
         }
@@ -3145,7 +3146,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Abs(MediumDec Value)
+        static MediumDecVariant Abs(MediumDecVariant Value)
         {
             return Value.Abs();
         }
@@ -3155,7 +3156,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MediumDec PowOp(ValueType& expValue)
+        MediumDecVariant PowOp(ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -3172,7 +3173,7 @@ namespace BlazesRusCode
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MediumDec self = *this;
+                    MediumDecVariant self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
@@ -3193,7 +3194,7 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = *this;
+                MediumDecVariant self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -3213,7 +3214,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MediumDec PowConstOp(const ValueType& expValue)
+        MediumDecVariant PowConstOp(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -3232,7 +3233,7 @@ namespace BlazesRusCode
                     int expVal = expValue;
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expVal *= -1;
-                    MediumDec self = *this;
+                    MediumDecVariant self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expVal > 0)
                     {
@@ -3254,7 +3255,7 @@ namespace BlazesRusCode
             {
                 int expVal = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = *this;
+                MediumDecVariant self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expVal > 0)
                 {
@@ -3274,7 +3275,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDec PowConstOp(MediumDec& targetValue, const ValueType& expValue)
+        static MediumDecVariant PowConstOp(MediumDec& targetValue, const ValueType& expValue)
         {
             return targetValue.PowConstOp(expValue);
         }
@@ -3284,7 +3285,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDec PowOp(MediumDec& targetValue, ValueType& expValue)
+        static MediumDecVariant PowOp(MediumDec& targetValue, ValueType& expValue)
         {
             return targetValue.PowOp(expValue);
         }
@@ -3294,7 +3295,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MediumDec Pow(ValueType expValue)
+        MediumDecVariant Pow(ValueType expValue)
         {
             return this->PowOp(expValue);
         }
@@ -3304,7 +3305,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDec Pow(MediumDec targetValue, ValueType expValue)
+        static MediumDecVariant Pow(MediumDecVariant targetValue, ValueType expValue)
         {
             if (expValue == 1) { return targetValue; }//Return self
             else if (expValue == 0)
@@ -3316,13 +3317,13 @@ namespace BlazesRusCode
             {
                 if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
                 {
-                    targetValue.IntValue = 0; targetValue.DecimalHalf = MediumDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
+                    targetValue.IntValue = 0; targetValue.DecimalHalf = MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MediumDec self = targetValue;
+                    MediumDecVariant self = targetValue;
                     targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
@@ -3343,7 +3344,7 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = targetValue;
+                MediumDecVariant self = targetValue;
                 targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -3363,24 +3364,24 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDec PowRef(MediumDec& targetValue, ValueType expValue)
+        static MediumDecVariant PowRef(MediumDec& targetValue, ValueType expValue)
         {
             if (expValue == 1)
                 return targetValue;//Return self
             else if (expValue == 0)
-                return MediumDec::One;
+                return MediumDecVariant::One;
             else if (expValue < 0)//Negative Pow
             {
                 if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
                 {
-                    return MediumDec(0, MediumDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
+                    return MediumDec(0, MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MediumDec self = targetValue;
-                    MediumDec Result = MediumDec::One;
+                    MediumDecVariant self = targetValue;
+                    MediumDecVariant Result = MediumDecVariant::One;
                     while (expValue > 0)
                     {
                         // If expValue is odd, divide self with result
@@ -3398,8 +3399,8 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = targetValue;
-                MediumDec Result = MediumDec::One;
+                MediumDecVariant self = targetValue;
+                MediumDecVariant Result = MediumDecVariant::One;
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -3417,7 +3418,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDec Sqrt(MediumDec value, int precision=7)
+        static MediumDecVariant Sqrt(MediumDecVariant value, int precision=7)
         {
             if (value.DecimalHalf == 0)
             {
@@ -3453,12 +3454,12 @@ namespace BlazesRusCode
                     return value;
                 }
             }
-            MediumDec number = value;
-            MediumDec start = 0, end = number;
-            MediumDec mid;
+            MediumDecVariant number = value;
+            MediumDecVariant start = 0, end = number;
+            MediumDecVariant mid;
 
             // variable to store the answer 
-            MediumDec ans;
+            MediumDecVariant ans;
 
             // for computing integral part 
             // of square root of number 
@@ -3485,7 +3486,7 @@ namespace BlazesRusCode
 
             // For computing the fractional part 
             // of square root up to given precision 
-            MediumDec increment = "0.1";
+            MediumDecVariant increment = "0.1";
             for (int i = 0; i < precision; i++) {
                 while (ans * ans <= number) {
                     ans += increment;
@@ -3505,17 +3506,17 @@ namespace BlazesRusCode
         /// <param name="nValue">The nth value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
         /// <returns>MediumDec</returns>
-        static MediumDec NthRoot(MediumDec value, int n, MediumDec precision = MediumDec::JustAboveZero)
+        static MediumDecVariant NthRoot(MediumDecVariant value, int n, MediumDecVariant precision = MediumDecVariant::JustAboveZero)
         {
-            MediumDec xPre = 1+(value-1)/n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            MediumDecVariant xPre = 1+(value-1)/n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two 
             // roots by INT_MAX 
-            MediumDec delX = MediumDec(2147483647, 0);
+            MediumDecVariant delX = MediumDec(2147483647, 0);
 
             //  xK denotes current value of x 
-            MediumDec xK;
+            MediumDecVariant xK;
 
             //  loop until we reach desired accuracy
             do
@@ -3523,8 +3524,8 @@ namespace BlazesRusCode
                 //  calculating current value from previous
                 // value by newton's method
                 xK = (nMinus1 * xPre +
-                    value / MediumDec::Pow(xPre, nMinus1)) / n;
-                delX = MediumDec::Abs(xK - xPre);
+                    value / MediumDecVariant::Pow(xPre, nMinus1)) / n;
+                delX = MediumDecVariant::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
             return xK;
@@ -3536,14 +3537,14 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
         /// <returns></returns>
-        static MediumDec NthRootV2(MediumDec targetValue, int n, MediumDec& Precision = MediumDec::FiveBillionth)
+        static MediumDecVariant NthRootV2(MediumDecVariant targetValue, int n, MediumDec& Precision = MediumDecVariant::FiveBillionth)
         {
             int nMinus1 = n - 1;
-            MediumDec x[2] = { (MediumDec::One / n) * ((nMinus1 * targetValue) + (targetValue / MediumDec::Pow(targetValue, nMinus1))), targetValue };
-            while (MediumDec::Abs(x[0] - x[1]) > Precision)
+            MediumDecVariant x[2] = { (MediumDecVariant::One / n) * ((nMinus1 * targetValue) + (targetValue / MediumDecVariant::Pow(targetValue, nMinus1))), targetValue };
+            while (MediumDecVariant::Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = (MediumDec::One / n) * ((nMinus1 * x[1]) + (targetValue / MediumDec::Pow(x[1], nMinus1)));
+                x[0] = (MediumDecVariant::One / n) * ((nMinus1 * x[1]) + (targetValue / MediumDecVariant::Pow(x[1], nMinus1)));
             }
             return x[0];
         }
@@ -3553,7 +3554,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Exp(MediumDec x)
+        static MediumDecVariant Exp(MediumDecVariant x)
         {
             /*
              * Evaluates f(x) = e^x for any x in the interval [-709, 709].
@@ -3577,36 +3578,36 @@ namespace BlazesRusCode
              * - Var relative error = 0.0
              * - 0.88 percent of the values have less than 15 digits of precision
              * Args:
-             *      - x: (MediumDec float) power of e to evaluate
+             *      - x: (MediumDecVariant float) power of e to evaluate
              * Returns:
-             *      - (MediumDec float) approximation of e^x in MediumDec precision
+             *      - (MediumDecVariant float) approximation of e^x in MediumDecVariant precision
              */
              // Check that x is a valid input.
             assert(-709 <= x.IntValue && x.IntValue <= 709);
             // When x = 0 we already know e^x = 1.
-            if (x == MediumDec::Zero) {
-                return MediumDec::One;
+            if (x == MediumDecVariant::Zero) {
+                return MediumDecVariant::One;
             }
             // Normalize x to a non-negative value to take advantage of
             // reciprocal symmetry. But keep track of the original sign
             // in case we need to return the reciprocal of e^x later.
-            MediumDec x0 = MediumDec::Abs(x);
+            MediumDecVariant x0 = MediumDecVariant::Abs(x);
             // First term of Taylor expansion of e^x at a = 0 is 1.
             // tn is the variable we we will return for e^x, and its
             // value at any time is the sum of all currently evaluated
             // Taylor terms thus far.
-            MediumDec tn = MediumDec::One;
+            MediumDecVariant tn = MediumDecVariant::One;
             // Chose a truncation point for the Taylor series using the
             // heuristic bound 12 * ceil(|x| e), then work down from there
             // using Horner's method.
-            int n = MediumDec::CeilInt(x0 * MediumDec::E) * 12;
+            int n = MediumDecVariant::CeilInt(x0 * MediumDecVariant::E) * 12;
             for (int i = n; i > 0; --i) {
-                tn = tn * (x0 / i) + MediumDec::One;
+                tn = tn * (x0 / i) + MediumDecVariant::One;
             }
             // If the original input x is less than 0, we want the reciprocal
             // of the e^x we calculated.
             if (x < 0) {
-                tn = MediumDec::One / tn;
+                tn = MediumDecVariant::One / tn;
             }
             return tn;
         }
@@ -3617,9 +3618,9 @@ namespace BlazesRusCode
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-        static MediumDec FractionalPow(MediumDec value, int expNum, int expDenom)
+        static MediumDecVariant FractionalPow(MediumDecVariant value, int expNum, int expDenom)
         {
-            MediumDec CalcVal = MediumDec::NthRoot(MediumDec::Pow(value, expNum), expDenom);
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, expNum), expDenom);
             return CalcVal;
         }
 
@@ -3628,9 +3629,9 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MediumDec FractionalPow(MediumDec& value, boost::rational<int>& Frac)
+        static MediumDecVariant FractionalPow(MediumDec& value, boost::rational<int>& Frac)
         {
-            MediumDec CalcVal = MediumDec::NthRoot(MediumDec::Pow(value, Frac.numerator()), Frac.denominator());
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, Frac.numerator()), Frac.denominator());
             return CalcVal;
         }
 
@@ -3639,7 +3640,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec PowOp(MediumDec& value, MediumDec& expValue)
+        static MediumDecVariant PowOp(MediumDec& value, MediumDec& expValue)
         {
             if (expValue.DecimalHalf == 0)
             {
@@ -3647,26 +3648,26 @@ namespace BlazesRusCode
             }
             else
             {
-                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDec::DecimalOverflow);
+                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
                 switch (expValue.IntValue)
                 {
                     case 0:
                         return FractionalPow(value, Frac);
                         break;
-                    case MediumDec::NegativeRep:
+                    case MediumDecVariant::NegativeRep:
                         return 1 / FractionalPow(value, Frac);
                         break;
                     default:
                     {
                         if (expValue.IntValue < 0)//Negative Exponent 
                         {
-                            MediumDec CalcVal = 1 / value.Pow(expValue.IntValue * -1);
+                            MediumDecVariant CalcVal = 1 / value.Pow(expValue.IntValue * -1);
                             CalcVal /= FractionalPow(value, Frac);
                             return CalcVal;
                         }
                         else
                         {
-                            MediumDec CalcVal = value.Pow(expValue.IntValue);
+                            MediumDecVariant CalcVal = value.Pow(expValue.IntValue);
                             CalcVal *= FractionalPow(value, Frac);
                             return CalcVal;
                         }
@@ -3681,7 +3682,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec Pow(MediumDec value, MediumDec expValue)
+        static MediumDecVariant Pow(MediumDecVariant value, MediumDecVariant expValue)
         {
             return PowOp(value, expValue);
         }
@@ -3691,20 +3692,20 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::MediumDec</returns>
-        static MediumDec LnRef(MediumDec& value)
+        static MediumDecVariant LnRef(MediumDec& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if (value.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
-                MediumDec threshold = MediumDec::FiveMillionth;
-                MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveMillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDec term = base;       // First term
-                MediumDec prev;          // Previous sum
-                MediumDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
                 do
                 {
@@ -3716,23 +3717,23 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                     ++den;
-                } while (MediumDec::Abs(prev - result) > threshold);
+                } while (MediumDecVariant::Abs(prev - result) > threshold);
 
                 return result;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
         }
@@ -3742,20 +3743,20 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::MediumDec</returns>
-        static MediumDec LnRefV2(MediumDec& value)
+        static MediumDecVariant LnRefV2(MediumDec& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if(value.IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec W = (value - 1)/ (value + 1);
-                MediumDec TotalRes = W;
+                MediumDecVariant W = (value - 1)/ (value + 1);
+                MediumDecVariant TotalRes = W;
                 W.SwapNegativeStatus();
-                MediumDec LastPow = W;
-                MediumDec WSquared = W * W;
+                MediumDecVariant LastPow = W;
+                MediumDecVariant WSquared = W * W;
                 int WPow = 3;
-                MediumDec AddRes;
+                MediumDecVariant AddRes;
 
                 do
                 {
@@ -3763,18 +3764,18 @@ namespace BlazesRusCode
                     AddRes = LastPow / WPow;
                     TotalRes -= AddRes;
                     WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
             else if (value.IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
-                MediumDec threshold = MediumDec::FiveMillionth;
-                MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveMillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDec term = base;       // First term
-                MediumDec prev;          // Previous sum
-                MediumDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
                 do
                 {
@@ -3786,23 +3787,23 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                     ++den;
-                } while (MediumDec::Abs(prev - result) > threshold);
+                } while (MediumDecVariant::Abs(prev - result) > threshold);
 
                 return result;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
         }
@@ -3811,7 +3812,7 @@ namespace BlazesRusCode
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        static MediumDec Ln(MediumDec value)
+        static MediumDecVariant Ln(MediumDecVariant value)
         {
             return LnRef(value);
         }
@@ -3821,10 +3822,10 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Log10(MediumDec value)
+        static MediumDecVariant Log10(MediumDecVariant value)
         {
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if (value.DecimalHalf == 0 && value.IntValue % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
@@ -3836,15 +3837,15 @@ namespace BlazesRusCode
             }
             if (value.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MediumDec threshold = MediumDec::FiveBillionth;
-                MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveBillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDec term = base;       // First term
-                MediumDec prev = 0;          // Previous sum
-                MediumDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev = 0;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
-                while (MediumDec::Abs(prev - result) > threshold) {
+                while (MediumDecVariant::Abs(prev - result) > threshold) {
                     den++;
                     posSign = !posSign;
                     term *= base;
@@ -3854,24 +3855,24 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                 }
-                return result*MediumDec::LN10Mult;// result/MediumDec::LN10;//Using Multiplication instead of division for speed improvement
+                return result*MediumDecVariant::LN10Mult;// result/MediumDecVariant::LN10;//Using Multiplication instead of division for speed improvement
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return TotalRes * MediumDecVariant::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
             }
-            //return MediumDec::Ln(value) / MediumDec::HaLN10;//Slightly off because of truncation etc
+            //return MediumDecVariant::Ln(value) / MediumDecVariant::HaLN10;//Slightly off because of truncation etc
         }
 
         /// <summary>
@@ -3880,10 +3881,10 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename ValueType>
-        static MediumDec Log10(ValueType value)
+        static MediumDecVariant Log10(ValueType value)
         {
             if (value == 1)
-                return MediumDec::Zero;
+                return MediumDecVariant::Zero;
             else if (value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
@@ -3895,18 +3896,18 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec TotalRes = MediumDec((value - 1), 0) / MediumDec((value + 1), 0);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
+                MediumDecVariant TotalRes = MediumDec((value - 1), 0) / MediumDec((value + 1), 0);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return TotalRes * MediumDecVariant::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
             }
         }
 
@@ -3917,10 +3918,10 @@ namespace BlazesRusCode
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Log(MediumDec value, MediumDec baseVal)
+        static MediumDecVariant Log(MediumDecVariant value, MediumDecVariant baseVal)
         {
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             return Log10(value) / Log10(baseVal);
         }
 
@@ -3931,12 +3932,12 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Log(MediumDec value, int baseVal)
+        static MediumDecVariant Log(MediumDecVariant value, int baseVal)
         {
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             //Calculate Base log first
-            MediumDec baseTotalRes;
+            MediumDecVariant baseTotalRes;
             bool lnMultLog = true;
             if (baseVal % 10 == 0)
             {
@@ -3953,16 +3954,16 @@ namespace BlazesRusCode
             else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 baseTotalRes = MediumDec((baseVal - 1), 0) / MediumDec((baseVal + 1), 0);
-                MediumDec baseLastPow = baseTotalRes;
-                MediumDec baseWSquared = baseTotalRes * baseTotalRes;
-                MediumDec baseAddRes;
+                MediumDecVariant baseLastPow = baseTotalRes;
+                MediumDecVariant baseWSquared = baseTotalRes * baseTotalRes;
+                MediumDecVariant baseAddRes;
                 int baseWPow = 3;
                 do
                 {
                     baseLastPow *= baseWSquared;
                     baseAddRes = baseLastPow / baseWPow;
                     baseTotalRes += baseAddRes; baseWPow += 2;
-                } while (baseAddRes > MediumDec::JustAboveZero);
+                } while (baseAddRes > MediumDecVariant::JustAboveZero);
             }
 
             //Now calculate other log
@@ -3971,21 +3972,21 @@ namespace BlazesRusCode
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? MediumDec(index, 0) / (baseTotalRes * MediumDec::HalfLN10Mult): MediumDec(index, 0)/ baseTotalRes;
+                        return lnMultLog ? MediumDec(index, 0) / (baseTotalRes * MediumDecVariant::HalfLN10Mult): MediumDec(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? MediumDec(9, 0) / (baseTotalRes*MediumDec::HalfLN10Mult):MediumDec(9, 0)/baseTotalRes;
+                return lnMultLog? MediumDec(9, 0) / (baseTotalRes*MediumDecVariant::HalfLN10Mult):MediumDec(9, 0)/baseTotalRes;
             }
             if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MediumDec threshold = MediumDec::FiveBillionth;
-                MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveBillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDec term = base;       // First term
-                MediumDec prev = 0;          // Previous sum
-                MediumDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev = 0;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
-                while (MediumDec::Abs(prev - result) > threshold) {
+                while (MediumDecVariant::Abs(prev - result) > threshold) {
                     den++;
                     posSign = !posSign;
                     term *= base;
@@ -3999,16 +4000,16 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec W = (value - 1) / (value + 1);
-                MediumDec TotalRes = W;
-                MediumDec AddRes;
+                MediumDecVariant W = (value - 1) / (value + 1);
+                MediumDecVariant TotalRes = W;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
-                    AddRes = MediumDec::PowRef(W, WPow) / WPow;
+                    AddRes = MediumDecVariant::PowRef(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDec::HalfLN10Mult)/ baseTotalRes;
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDecVariant::HalfLN10Mult)/ baseTotalRes;
             }
             //return Log10(Value) / Log10(BaseVal);
         }
@@ -4021,7 +4022,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec SinFromAngle(MediumDec Value)
+        static MediumDecVariant SinFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -4041,7 +4042,7 @@ namespace BlazesRusCode
             {
                 Value.IntValue %= 360;
             }
-            if (Value == Zero) { return MediumDec::Zero; }
+            if (Value == Zero) { return MediumDecVariant::Zero; }
             else if (Value.IntValue == 30 && Value.DecimalHalf == 0)
             {
                 return PointFive;
@@ -4052,7 +4053,7 @@ namespace BlazesRusCode
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
@@ -4060,12 +4061,12 @@ namespace BlazesRusCode
             }
             else
             {
-                MediumDec NewValue = Zero;
+                MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MediumDec Radius = PI * Value / 180;
+                MediumDecVariant Radius = PI * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
                 }
                 return NewValue;
             }
@@ -4077,7 +4078,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns></returns>
-        static MediumDec CosFromAngle(MediumDec Value)
+        static MediumDecVariant CosFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -4100,7 +4101,7 @@ namespace BlazesRusCode
             if (Value == Zero) { return One; }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
@@ -4108,16 +4109,16 @@ namespace BlazesRusCode
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else
             {
-                MediumDec NewValue = Zero;
+                MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MediumDec Radius = PI * Value / 180;
+                MediumDecVariant Radius = PI * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
                 }
                 return NewValue;
             }
@@ -4129,12 +4130,12 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Sin(MediumDec Value)
+        static MediumDecVariant Sin(MediumDecVariant Value)
         {
-            MediumDec SinValue = Zero;
+            MediumDecVariant SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
@@ -4145,12 +4146,12 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Cos(MediumDec Value)
+        static MediumDecVariant Cos(MediumDecVariant Value)
         {
-            MediumDec CosValue = Zero;
+            MediumDecVariant CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -4161,17 +4162,17 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Tan(MediumDec Value)
+        static MediumDecVariant Tan(MediumDecVariant Value)
         {
-            MediumDec SinValue = Zero;
-            MediumDec CosValue = Zero;
+            MediumDecVariant SinValue = Zero;
+            MediumDecVariant CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -4182,7 +4183,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec TanFromAngle(MediumDec Value)
+        static MediumDecVariant TanFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -4202,18 +4203,18 @@ namespace BlazesRusCode
             {
                 Value.IntValue %= 360;
             }
-            if (Value == Zero) { return MediumDec::Zero; }
+            if (Value == Zero) { return MediumDecVariant::Zero; }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Maximum;//Positive Infinity
+                return MediumDecVariant::Maximum;//Positive Infinity
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
-                return MediumDec::Minimum;//Negative Infinity
+                return MediumDecVariant::Minimum;//Negative Infinity
             }
             else
             {
@@ -4227,18 +4228,18 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec ATan(MediumDec Value)
+        static MediumDecVariant ATan(MediumDecVariant Value)
         {
-            MediumDec SinValue = Zero;
-            MediumDec CosValue = Zero;
+            MediumDecVariant SinValue = Zero;
+            MediumDecVariant CosValue = Zero;
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             { // That's also Taylor series!!
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
@@ -4252,13 +4253,13 @@ namespace BlazesRusCode
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec ArcTan2(MediumDec y, MediumDec x)
+        static MediumDecVariant ArcTan2(MediumDecVariant y, MediumDecVariant x)
         {
-            MediumDec coeff_1 = PI / 4;
-            MediumDec coeff_2 = 3 * coeff_1;
-            MediumDec abs_y = MediumDec::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
-            MediumDec r;
-            MediumDec angle;
+            MediumDecVariant coeff_1 = PI / 4;
+            MediumDecVariant coeff_2 = 3 * coeff_1;
+            MediumDecVariant abs_y = MediumDecVariant::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            MediumDecVariant r;
+            MediumDecVariant angle;
             if (x >= 0)
             {
                 r = (x - abs_y) / (x + abs_y);
@@ -4278,26 +4279,26 @@ namespace BlazesRusCode
     };
 
     #pragma region ValueDefine Source
-    MediumDec MediumDec::PI = PIValue();
-    MediumDec MediumDec::One = OneValue();
-    MediumDec MediumDec::Two = TwoValue();
-    MediumDec MediumDec::NegativeOne = NegativeOneValue();
-    MediumDec MediumDec::Zero = ZeroValue();
-    MediumDec MediumDec::PointFive = Point5Value();
-    MediumDec MediumDec::JustAboveZero = JustAboveZeroValue();
-    MediumDec MediumDec::OneMillionth = OneMillionthValue();
-    MediumDec MediumDec::FiveThousandth = FiveThousandthValue();
-    MediumDec MediumDec::Minimum = MinimumValue();
-    MediumDec MediumDec::Maximum = MaximumValue();
-    MediumDec MediumDec::E = EValue();
-    MediumDec MediumDec::LN10 = LN10Value();
-    MediumDec MediumDec::LN10Mult = LN10MultValue();
-    MediumDec MediumDec::HalfLN10Mult = HalfLN10MultValue();
-    MediumDec MediumDec::TenMillionth = TenMillionthValue();
-    MediumDec MediumDec::FiveMillionth = FiveMillionthValue();
-    MediumDec MediumDec::FiveBillionth = FiveBillionthValue();
-    MediumDec MediumDec::OneGMillionth = OneHundredMillionthValue();
-    MediumDec MediumDec::Nil = NilValue();
+    MediumDecVariant MediumDecVariant::PI = PIValue();
+    MediumDecVariant MediumDecVariant::One = OneValue();
+    MediumDecVariant MediumDecVariant::Two = TwoValue();
+    MediumDecVariant MediumDecVariant::NegativeOne = NegativeOneValue();
+    MediumDecVariant MediumDecVariant::Zero = ZeroValue();
+    MediumDecVariant MediumDecVariant::PointFive = Point5Value();
+    MediumDecVariant MediumDecVariant::JustAboveZero = JustAboveZeroValue();
+    MediumDecVariant MediumDecVariant::OneMillionth = OneMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveThousandth = FiveThousandthValue();
+    MediumDecVariant MediumDecVariant::Minimum = MinimumValue();
+    MediumDecVariant MediumDecVariant::Maximum = MaximumValue();
+    MediumDecVariant MediumDecVariant::E = EValue();
+    MediumDecVariant MediumDecVariant::LN10 = LN10Value();
+    MediumDecVariant MediumDecVariant::LN10Mult = LN10MultValue();
+    MediumDecVariant MediumDecVariant::HalfLN10Mult = HalfLN10MultValue();
+    MediumDecVariant MediumDecVariant::TenMillionth = TenMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveMillionth = FiveMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveBillionth = FiveBillionthValue();
+    MediumDecVariant MediumDecVariant::OneGMillionth = OneHundredMillionthValue();
+    MediumDecVariant MediumDecVariant::Nil = NilValue();
 
 /*#ifdef AltDec_InheritMediumDec
     //Workaround to enable static inheritance
@@ -4309,18 +4310,18 @@ namespace BlazesRusCode
         /// Returns the value at zero
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec ZeroValue()
+        static MediumDecVariant ZeroValue()
         {
-            MediumDec NewSelf = MediumDec();
+            MediumDecVariant NewSelf = MediumDec();
             return NewSelf;
         }
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneValue()
+        static MediumDecVariant OneValue()
         {
-            MediumDec NewSelf = MediumDec(1);
+            MediumDecVariant NewSelf = MediumDec(1);
             return NewSelf;
         }
 
@@ -4328,9 +4329,9 @@ namespace BlazesRusCode
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec TwoValue()
+        static MediumDecVariant TwoValue()
         {
-            MediumDec NewSelf = MediumDec(2);
+            MediumDecVariant NewSelf = MediumDec(2);
             return NewSelf;
         }
 
@@ -4338,9 +4339,9 @@ namespace BlazesRusCode
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec NegativeOneValue()
+        static MediumDecVariant NegativeOneValue()
         {
-            MediumDec NewSelf = MediumDec(-1);
+            MediumDecVariant NewSelf = MediumDec(-1);
             return NewSelf;
         }
 
@@ -4348,51 +4349,51 @@ namespace BlazesRusCode
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Point5Value()
+        static MediumDecVariant Point5Value()
         {
-            MediumDec NewSelf = MediumDec(0, 500000000);
+            MediumDecVariant NewSelf = MediumDec(0, 500000000);
             return NewSelf;
         }
 
-        static MediumDec JustAboveZeroValue()
+        static MediumDecVariant JustAboveZeroValue()
         {
-            MediumDec NewSelf = MediumDec(0, 1);
+            MediumDecVariant NewSelf = MediumDec(0, 1);
             return NewSelf;
         }
 
-        static MediumDec OneMillionthValue()
+        static MediumDecVariant OneMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 1000);
+            MediumDecVariant NewSelf = MediumDec(0, 1000);
             return NewSelf;
         }
 
-        static MediumDec FiveThousandthValue()
+        static MediumDecVariant FiveThousandthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5000000);
+            MediumDecVariant NewSelf = MediumDec(0, 5000000);
             return NewSelf;
         }
 
-        static MediumDec FiveMillionthValue()
+        static MediumDecVariant FiveMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5000);
+            MediumDecVariant NewSelf = MediumDec(0, 5000);
             return NewSelf;
         }
 
-        static MediumDec TenMillionthValue()
+        static MediumDecVariant TenMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 100);
+            MediumDecVariant NewSelf = MediumDec(0, 100);
             return NewSelf;
         }
 
-        static MediumDec OneHundredMillionthValue()
+        static MediumDecVariant OneHundredMillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 10);
+            MediumDecVariant NewSelf = MediumDec(0, 10);
             return NewSelf;
         }
 
-        static MediumDec FiveBillionthValue()
+        static MediumDecVariant FiveBillionthValue()
         {
-            MediumDec NewSelf = MediumDec(0, 5);
+            MediumDecVariant NewSelf = MediumDec(0, 5);
             return NewSelf;
         }
 
@@ -4401,9 +4402,9 @@ namespace BlazesRusCode
         /// (about 1.000000000448883 times actual value of PI with digits past 15th cut off)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec PIValue()
+        static MediumDecVariant PIValue()
         {
-            MediumDec NewSelf = MediumDec(3, 141592654);
+            MediumDecVariant NewSelf = MediumDec(3, 141592654);
             return NewSelf;
         }
 
@@ -4411,7 +4412,7 @@ namespace BlazesRusCode
         /// Returns value of -2147483647.999999999
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec MinimumValue()
+        static MediumDecVariant MinimumValue()
         {
             return MediumDec(-2147483647, 999999999);
         }
@@ -4420,7 +4421,7 @@ namespace BlazesRusCode
         /// Returns value of 2147483647.999999999
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec MaximumValue()
+        static MediumDecVariant MaximumValue()
         {
             return MediumDec(2147483647, 999999999);
         }
@@ -4431,110 +4432,110 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MediumDec</returns>
-        virtual MediumDec EValue()
+        virtual MediumDecVariant EValue()
         {
             return MediumDec(2, 718281828);
         }
 
-        virtual MediumDec LN10Value()
+        virtual MediumDecVariant LN10Value()
         {
             return MediumDec(2, 302585093);
         }
 
-        virtual MediumDec LN10MultValue()
+        virtual MediumDecVariant LN10MultValue()
         {
             return MediumDec(0, 434294482);
         }
 
-        virtual MediumDec HalfLN10MultValue()
+        virtual MediumDecVariant HalfLN10MultValue()
         {
             return MediumDec(0, 868588964);
         }
 
-        virtual MediumDec NilValue()
+        virtual MediumDecVariant NilValue()
         {
             return MediumDec(-2147483648, -2147483648);
         }
     public:
-        static MediumDec PI;
+        static MediumDecVariant PI;
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Zero;
+        static MediumDecVariant Zero;
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec One;
+        static MediumDecVariant One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec Two;
+        static MediumDecVariant Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec PointFive;
+        static MediumDecVariant PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec JustAboveZero;
+        static MediumDecVariant JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec FiveBillionth;
+        static MediumDecVariant FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneMillionth;
+        static MediumDecVariant OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec FiveThousandth;
+        static MediumDecVariant FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec OneGMillionth;
+        static MediumDecVariant OneGMillionth;
 
         //0e-7
-        static MediumDec TenMillionth;
+        static MediumDecVariant TenMillionth;
 
         /// <summary>
         /// Returns the value at "0.000005"
         /// </summary>
-        static MediumDec FiveMillionth;
+        static MediumDecVariant FiveMillionth;
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec NegativeOne;
+        static MediumDecVariant NegativeOne;
 
         /// <summary>
         /// Returns value of highest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MediumDec Maximum;
+        static MediumDecVariant Maximum;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MediumDec Minimum;
+        static MediumDecVariant Minimum;
 
         /// <summary>
         /// Euler's number
@@ -4542,56 +4543,56 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDec E;
+        static MediumDecVariant E;
 
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        static MediumDec LN10;
+        static MediumDecVariant LN10;
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDec LN10Mult;
+        static MediumDecVariant LN10Mult;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDec HalfLN10Mult;
+        static MediumDecVariant HalfLN10Mult;
 
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
-        static MediumDec Nil;
+        static MediumDecVariant Nil;
 
         ///// <summary>
         ///// 16 x 1 Matrix with Values at Zero
         ///// </summary>
-        //static MediumDec ZeroMatrix16[16] = { Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero };
+        //static MediumDecVariant ZeroMatrix16[16] = { Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero };
     #pragma endregion ValueDefines
 	}
 
-    MediumDec MediumDecValues::PI = PIValue();
-    MediumDec MediumDecValues::One = OneValue();
-    MediumDec MediumDecValues::Two = TwoValue();
-    MediumDec MediumDecValues::NegativeOne = NegativeOneValue();
-    MediumDec MediumDecValues::Zero = ZeroValue();
-    MediumDec MediumDecValues::PointFive = Point5Value();
-    MediumDec MediumDecValues::JustAboveZero = JustAboveZeroValue();
-    MediumDec MediumDecValues::OneMillionth = OneMillionthValue();
-    MediumDec MediumDecValues::FiveThousandth = FiveThousandthValue();
-    MediumDec MediumDecValues::Minimum = MinimumValue();
-    MediumDec MediumDecValues::Maximum = MaximumValue();
-    MediumDec MediumDecValues::E = EValue();
-    MediumDec MediumDecValues::LN10 = LN10Value();
-    MediumDec MediumDecValues::LN10Mult = LN10MultValue();
-    MediumDec MediumDecValues::HalfLN10Mult = HalfLN10MultValue();
-    MediumDec MediumDecValues::TenMillionth = TenMillionthValue();
-    MediumDec MediumDecValues::FiveMillionth = FiveMillionthValue();
-    MediumDec MediumDecValues::FiveBillionth = FiveBillionthValue();
-    MediumDec MediumDecValues::OneGMillionth = OneHundredMillionthValue();
-    MediumDec MediumDecValues::Nil = NilValue();
+    MediumDecVariant MediumDecValues::PI = PIValue();
+    MediumDecVariant MediumDecValues::One = OneValue();
+    MediumDecVariant MediumDecValues::Two = TwoValue();
+    MediumDecVariant MediumDecValues::NegativeOne = NegativeOneValue();
+    MediumDecVariant MediumDecValues::Zero = ZeroValue();
+    MediumDecVariant MediumDecValues::PointFive = Point5Value();
+    MediumDecVariant MediumDecValues::JustAboveZero = JustAboveZeroValue();
+    MediumDecVariant MediumDecValues::OneMillionth = OneMillionthValue();
+    MediumDecVariant MediumDecValues::FiveThousandth = FiveThousandthValue();
+    MediumDecVariant MediumDecValues::Minimum = MinimumValue();
+    MediumDecVariant MediumDecValues::Maximum = MaximumValue();
+    MediumDecVariant MediumDecValues::E = EValue();
+    MediumDecVariant MediumDecValues::LN10 = LN10Value();
+    MediumDecVariant MediumDecValues::LN10Mult = LN10MultValue();
+    MediumDecVariant MediumDecValues::HalfLN10Mult = HalfLN10MultValue();
+    MediumDecVariant MediumDecValues::TenMillionth = TenMillionthValue();
+    MediumDecVariant MediumDecValues::FiveMillionth = FiveMillionthValue();
+    MediumDecVariant MediumDecValues::FiveBillionth = FiveBillionthValue();
+    MediumDecVariant MediumDecValues::OneGMillionth = OneHundredMillionthValue();
+    MediumDecVariant MediumDecValues::Nil = NilValue();
 #endif*/
     #pragma endregion ValueDefine Source
 
@@ -4600,7 +4601,7 @@ namespace BlazesRusCode
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void MediumDec::ReadString(std::string Value)
+    inline void MediumDecVariant::ReadString(std::string Value)
     {
         IntValue = 0; DecimalHalf = 0;
         bool IsNegative = false;
@@ -4665,14 +4666,14 @@ namespace BlazesRusCode
     /// </summary>
     /// <param name="Value">The value.</param>
     /// <returns>MediumDec</returns>
-    inline MediumDec MediumDec::GetValueFromString(std::string Value)
+    inline MediumDecVariant MediumDecVariant::GetValueFromString(std::string Value)
     {
-        MediumDec NewSelf = Zero;
+        MediumDecVariant NewSelf = Zero;
         NewSelf.ReadString(Value);
         return NewSelf;
     }
 
-    std::string MediumDec::ToString()
+    std::string MediumDecVariant::ToString()
     {
         std::string Value = "";
         int CurrentSection = IntValue;
@@ -4716,7 +4717,7 @@ namespace BlazesRusCode
         return Value;
     }
 
-    std::string MediumDec::ToFullString()
+    std::string MediumDecVariant::ToFullString()
     {
         std::string Value = "";
         int CurrentSection = IntValue;
@@ -4760,12 +4761,12 @@ namespace BlazesRusCode
 	
 	class MediumDecFractional;
     /// <summary>
-    /// (MediumDec based dividend)/(MediumDec based divisor)
+    /// (MediumDecVariant based dividend)/(MediumDecVariant based divisor)
     /// </summary>
     class DLL_API MediumDecFractional
     {
-		MediumDec Dividend;
-		MediumDec Divisor;
+		MediumDecVariant Dividend;
+		MediumDecVariant Divisor;
 		//Balances out fractional so that Divisor is as close to a whole number as viable
 		void NormalizeFractional()
 		{
