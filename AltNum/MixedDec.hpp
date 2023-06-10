@@ -61,7 +61,7 @@ namespace BlazesRusCode
     class DLL_API MixedDec
     {
 #undefine MediumDecVariant
-#define MediumDecVariant MediumDecV2
+#define MediumDecVariant MixedDec
     private:
 #if defined(MixedDec_ExtendTrailingDigits)
         using TrailingType = double;
