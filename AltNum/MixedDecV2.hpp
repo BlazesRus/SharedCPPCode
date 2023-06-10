@@ -189,7 +189,7 @@ namespace BlazesRusCode
 #ifdef MixedDec_EnableIRep
             INum,
             ComplexIRep,
-#ifndef MixedDec_DisableInfinityRep
+#ifndef MixedDec_EnableNearI
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
 #endif
@@ -1456,6 +1456,7 @@ namespace BlazesRusCode
             }
 #endif
             bool WasNegative = self.IntValue < 0;
+#ifndef MixedDec_DisableTrailingDigits
             if (Value.ExtraRep > TrailingZero)
             {
                 if (self.ExtraRep == 0)
@@ -1529,6 +1530,7 @@ namespace BlazesRusCode
                     self.DecimalHalf -= DecimalOverflow;
                 }
             }
+#endif
             if (Value.DecimalHalf == 0)
             {
                 if (Value.IntValue == 0)
