@@ -45,6 +45,8 @@ MixedDec_ExtendTrailingDigits = Replace ExtraRep usage to double instead of floa
 MixedDec_EnableApproachingMidDec = -When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
 -When DecimalHalf is -2147483644, it represents Approaching Half way point of {IntValue,IntValue+1} from right towards left (IntValue.50__1)
 -Assumes MixedDec_EnableInfinityRep is enabled
+
+MixedDec_DisableTrailingDigits = Disables the (incomplete) trailing digits feature from MixedDec variants
 */
 
 #if defined(MixedDec_EnableNearPI)||defined(MixedDec_EnableNearE)||defined(MixedDec_EnableNearI)
@@ -65,7 +67,7 @@ namespace BlazesRusCode
     ///  Fixed point based number that represents +- 2147483647.999999999
     /// (Optional support for PI*(+- 2147483647.999999999), E*(+- 2147483647.999999999), and (+- 2147483647.999999999)i)
     /// (12 bytes worth of Variable Storage inside class for each instance + 4 bytes if MixedDec_ExtendTrailingDigits enabled)
-    /// (derived class version of MixedDec plus IntNumber by divisor feature)
+    /// (derived class version of MixedDec plus some extra features)
     /// </summary>
     class DLL_API MixedDecV2 : public MediumDec
     {
@@ -169,7 +171,7 @@ namespace BlazesRusCode
         {
             NormalType = 0,//Normal Representation with no extra trailing digits
             ExtendedNormalType,//Normal Representation with extra trailing digits
-#ifndef MediumDecV2_DisablePIRep
+#ifndef MixedDec_DisablePIRep
             PIMultipliedNum,
             PiIntNumByDivisor,
 #ifndef MixedDec_EnableNearPI
@@ -213,8 +215,10 @@ namespace BlazesRusCode
         {
             if(ExtraRep==TrailingZero)
                 return RepType::NormalType;
+#ifndef MixedDec_DisableTrailingDigits
             else if(ExtraRep>TrailingZero)
                 return RepType::ExtendedNormalType;
+#endif
 #ifdef MixedDec_EnableInfinityRep
             else if (DecimalHalf == ApproachingValRep)
             {
@@ -236,8 +240,10 @@ namespace BlazesRusCode
                     return RepType::ApproachingTop;//Approaching from left to (IntValue-1)
             }
 #endif
+#ifndef MixedDec_DisablePIRep
             else if(ExtraRep==PIRep)
                 return RepType::PINum;
+#endif
 #if defined(MixedDec_EnableNaN)
             else if(DecimalHalf==NaNRep)
                 return RepType::NaN;
