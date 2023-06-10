@@ -33,13 +33,15 @@ MixedDec_EnableImaginaryNumRep = (+- 2147483647.999999999)i Representation enabl
 MixedDec_EnableENumRep = E*(+- 2147483647.999999999) Representation enabled(Not Fully Implimented)
 MixedDec_EnablePIRep = PI*(+- 2147483647.999999999) Representation enabled(Needed for some more accurate calculas operations when using radians instead of angle)(Not Fully Implimented)
 MixedDec_EnableInfinityRep = Enable to allow operations to result in Infinity or Negative Infinity(Needed for some more accurate calculas operations)(Not Fully Implimented)
-MixedDec_EnableAltFloat = Possible alternative floating point representation later(Not Implimented)
-MixedDec_ExtendTrailingDigits = Replace ExtraRep usage to double instead of float(16 bytes worth of Variable Storage inside class for each instance)
 MixedDec_EnableNaN = Enable NaN based representations and operations(Not Fully Implimented)
 MixedDec_EnableNegativeZero = (Not Fully Implimented)
 MixedDec_EnableNearPI
 MixedDec_EnableNearE
 MixedDec_EnableNearI
+
+MixedDec_EnableAltFloat = Possible alternative floating point representation later(Not Implimented)
+MixedDec_ExtendTrailingDigits = Replace ExtraRep usage to double instead of float(16 bytes worth of Variable Storage inside class for each instance)
+
 MixedDec_EnableApproachingMidDec = -When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
 -When DecimalHalf is -2147483644, it represents Approaching Half way point of {IntValue,IntValue+1} from right towards left (IntValue.50__1)
 -Assumes MixedDec_EnableInfinityRep is enabled
@@ -175,26 +177,26 @@ namespace BlazesRusCode
 #endif
             PIPower,
 #endif
-#ifdef MixedDecV2_EnableERep
+#ifdef MixedDec_EnableERep
             EMultipliedNum,
             ENumByDivisor,
 #if defined(MixedDec_EnableNearE)
             NearE,//(Approaching Away from Zero is equal to 0.9999...e)
 #endif
 #endif
-#ifdef MixedDecV2_EnableIRep
+#ifdef MixedDec_EnableIRep
             INum,
             ComplexIRep,
-#ifndef MixedDecV2_DisableInfinityRep
+#ifndef MixedDec_DisableInfinityRep
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
 #endif
-#ifndef MixedDecV2_DisableInfinityRep
+#ifndef MixedDec_DisableInfinityRep
             ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
             ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
             Infinity,
 #endif
-#ifndef MixedDecV2_DisableIntNumByDivisor
+#ifndef MixedDec_DisableIntNumByDivisor
 			//IntValue/(DecimalHalf*-1)
 			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
 			//For DecimalHalf Values:
@@ -252,36 +254,6 @@ namespace BlazesRusCode
             return RepType::UnknownType;//Catch-All Value;
         }
     public:
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
-
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
-
-        /// <summary>
-        /// long double (Extended precision double)
-        /// </summary>
-        using ldouble = long double;
-    public:
-        /// <summary>
-        /// Value when IntValue is at negative zero (when has decimal part)
-        /// </summary>
-        static signed int const NegativeRep = -2147483648;
-
-        /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-        /// </summary>
-        signed int IntValue;
-
-        /// <summary>
-        /// Stores decimal section info
-        /// </summary>
-        signed int DecimalHalf;
-
         // <summary>
         /// If ExtraRep is -1, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Left to Right side (?.999....infinitely)
         /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Right to Left side (?.000....1)
