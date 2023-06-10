@@ -60,6 +60,8 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API MixedDec
     {
+#undefine MediumDecVariant
+#define MediumDecVariant MediumDecV2
     private:
 #if defined(MixedDec_ExtendTrailingDigits)
         using TrailingType = double;
@@ -248,14 +250,14 @@ namespace BlazesRusCode
         signed int DecimalHalf;
 
         // <summary>
-        /// If ExtraRep is -1, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MixedDec represents Approaching IntValue from Left to Right side (?.999....infinitely)
-        /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MixedDec represents Approaching IntValue from Right to Left side (?.000....1)
-        /// If ExtraRep is -4 and MixedDec_EnableNegativeZero is enabled, then MixedDec represents negative zero
-        /// If ExtraRep is -3 and MixedDec_EnableImaginaryNumRep is enabled, then MixedDec represents +- 2147483647.999999999i
-        /// If ExtraRep is -2 and MixedDec_EnableENumRep is enabled, then MixedDec represents +- 2147483647.999999999 * e
-        /// If ExtraRep is -1, DecimalHalf>-2147483647, and MixedDec_EnablePIRep is enabled, then MixedDec represents +- 2147483647.999999999 * PI
-        /// If ExtraRep is zero, then MixedDec represents +- 2147483647.999999999
-        /// If ExtraRep is greater than zero, then MixedDec represents +- 2147483647.999999999...+trailing digits
+        /// If ExtraRep is -1, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Left to Right side (?.999....infinitely)
+        /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Right to Left side (?.000....1)
+        /// If ExtraRep is -4 and MixedDec_EnableNegativeZero is enabled, then MediumDecVariant represents negative zero
+        /// If ExtraRep is -3 and MixedDec_EnableImaginaryNumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
+        /// If ExtraRep is -2 and MixedDec_EnableENumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * e
+        /// If ExtraRep is -1, DecimalHalf>-2147483647, and MixedDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
+        /// If ExtraRep is zero, then MediumDecVariant represents +- 2147483647.999999999
+        /// If ExtraRep is greater than zero, then MediumDecVariant represents +- 2147483647.999999999...+trailing digits
         /// </summary>
         float ExtraRep;
 
@@ -281,7 +283,7 @@ namespace BlazesRusCode
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(MixedDec Value)
+        void SetVal(MediumDecVariant Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
@@ -327,21 +329,21 @@ namespace BlazesRusCode
             ExtraRep = TrailingNegOne;
         }
     private:
-        static MixedDec InfinityValue()
+        static MediumDecVariant InfinityValue()
         {
-            MixedDec NewSelf = MixedDec(1, InfinityRep);
+            MediumDecVariant NewSelf = MixedDec(1, InfinityRep);
             return NewSelf;
         }
 
-        static MixedDec NegativeInfinityValue()
+        static MediumDecVariant NegativeInfinityValue()
         {
-            MixedDec NewSelf = MixedDec(-1, InfinityRep);
+            MediumDecVariant NewSelf = MixedDec(-1, InfinityRep);
             return NewSelf;
         }
 
-        static MixedDec ApproachingZeroValue()
+        static MediumDecVariant ApproachingZeroValue()
         {
-            MixedDec NewSelf = MixedDec(0, ApproachingValRep);
+            MediumDecVariant NewSelf = MixedDec(0, ApproachingValRep);
             return NewSelf;
         }
     public:
@@ -366,12 +368,12 @@ namespace BlazesRusCode
             ExtraRep = TrailingZero;
         }
     private:
-        static MixedDec NegativeZeroValue()
+        static MediumDecVariant NegativeZeroValue()
         {
             return MixedDec(0, 0, -4.0f);
         }
     public:
-        static MixedDec NegativeZero;
+        static MediumDecVariant NegativeZero;
 #endif
 
         /// <summary>
@@ -405,12 +407,12 @@ namespace BlazesRusCode
 
             ExtraRep = TrailingZero;
             // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PIRepresentation
-            //Can Represent up ? before hitting Maximum MixedDec value on reconversion when MixedDec_UseLowerPrecisionPI is enabled
+            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when MixedDec_UseLowerPrecisionPI is enabled
             //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PINum*DecimalHalf/1000000000))
 #if defined(MixedDec_EnableHigherPrecisionPIConversion)
             if (IntValue > 10)
             {
-                MixedDec ValLeft = IntValue;
+                MediumDecVariant ValLeft = IntValue;
                 ValLeft.DecimalHalf = DecimalHalf;
             }
             //else if(IntValue==0)//0.XXX... * PI
@@ -538,17 +540,17 @@ namespace BlazesRusCode
 
 #pragma region ValueDefines
     private:
-        static MixedDec PINumValue()
+        static MediumDecVariant PINumValue()
         {
             return MixedDec(3, 141592654);
         }
 
-        static MixedDec ENumValue()
+        static MediumDecVariant ENumValue()
         {
             return MixedDec(2, 718281828);
         }
 
-        static MixedDec PIValue()
+        static MediumDecVariant PIValue()
         {
 #if defined(MixedDec_EnablePIRep)
             return MixedDec(3, 141592654);
@@ -557,12 +559,12 @@ namespace BlazesRusCode
 #endif
         }
 
-        static MixedDec ZeroValue()
+        static MediumDecVariant ZeroValue()
         {
             return MixedDec(0, 0);
         }
 
-        static MixedDec EValue()
+        static MediumDecVariant EValue()
         {
 #if defined(MixedDec_EnableENumRep)
             return MixedDec(1, 0, ERep);
@@ -575,9 +577,9 @@ namespace BlazesRusCode
         /// Returns the value at one
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec OneValue()
+        static MediumDecVariant OneValue()
         {
-            MixedDec NewSelf = MixedDec(1);
+            MediumDecVariant NewSelf = MixedDec(1);
             return NewSelf;
         }
 
@@ -585,9 +587,9 @@ namespace BlazesRusCode
         /// Returns the value at one
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec TwoValue()
+        static MediumDecVariant TwoValue()
         {
-            MixedDec NewSelf = MixedDec(2);
+            MediumDecVariant NewSelf = MixedDec(2);
             return NewSelf;
         }
 
@@ -595,9 +597,9 @@ namespace BlazesRusCode
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec NegativeOneValue()
+        static MediumDecVariant NegativeOneValue()
         {
-            MixedDec NewSelf = MixedDec(-1);
+            MediumDecVariant NewSelf = MixedDec(-1);
             return NewSelf;
         }
 
@@ -605,80 +607,80 @@ namespace BlazesRusCode
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec Point5Value()
+        static MediumDecVariant Point5Value()
         {
-            MixedDec NewSelf = MixedDec(0, 500000000);
+            MediumDecVariant NewSelf = MixedDec(0, 500000000);
             return NewSelf;
         }
 
-        static MixedDec JustAboveZeroValue()
+        static MediumDecVariant JustAboveZeroValue()
         {
-            MixedDec NewSelf = MixedDec(0, 1);
+            MediumDecVariant NewSelf = MixedDec(0, 1);
             return NewSelf;
         }
 
-        static MixedDec OneMillionthValue()
+        static MediumDecVariant OneMillionthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 1000);
+            MediumDecVariant NewSelf = MixedDec(0, 1000);
             return NewSelf;
         }
 
-        static MixedDec FiveThousandthValue()
+        static MediumDecVariant FiveThousandthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 5000000);
+            MediumDecVariant NewSelf = MixedDec(0, 5000000);
             return NewSelf;
         }
 
-        static MixedDec FiveMillionthValue()
+        static MediumDecVariant FiveMillionthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 5000);
+            MediumDecVariant NewSelf = MixedDec(0, 5000);
             return NewSelf;
         }
 
-        static MixedDec TenMillionthValue()
+        static MediumDecVariant TenMillionthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 100);
+            MediumDecVariant NewSelf = MixedDec(0, 100);
             return NewSelf;
         }
 
-        static MixedDec OneHundredMillionthValue()
+        static MediumDecVariant OneHundredMillionthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 10);
+            MediumDecVariant NewSelf = MixedDec(0, 10);
             return NewSelf;
         }
 
-        static MixedDec FiveBillionthValue()
+        static MediumDecVariant FiveBillionthValue()
         {
-            MixedDec NewSelf = MixedDec(0, 5);
+            MediumDecVariant NewSelf = MixedDec(0, 5);
             return NewSelf;
         }
 
-        static MixedDec LN10Value()
+        static MediumDecVariant LN10Value()
         {
             return MixedDec(2, 302585093);
         }
 
-        static MixedDec LN10MultValue()
+        static MediumDecVariant LN10MultValue()
         {
             return MixedDec(0, 434294482);
         }
 
-        static MixedDec HalfLN10MultValue()
+        static MediumDecVariant HalfLN10MultValue()
         {
             return MixedDec(0, 868588964);
         }
 
-        static MixedDec NilValue()
+        static MediumDecVariant NilValue()
         {
             return MixedDec(-2147483648, -2147483648);
         }
 
-        static MixedDec MinimumValue()
+        static MediumDecVariant MinimumValue()
         {
             return MixedDec(2147483647, 999999999);
         }
 
-        static MixedDec MaximumValue()
+        static MediumDecVariant MaximumValue()
         {
             return MixedDec(2147483647, 999999999);
         }
@@ -687,7 +689,7 @@ namespace BlazesRusCode
         /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up(3.141592654)
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec PINum;
+        static MediumDecVariant PINum;
 
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
@@ -695,19 +697,19 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec ENum;
+        static MediumDecVariant ENum;
 
 #if defined(AltDec_EnableInfinityRep)
-        static MixedDec Infinity;
-        static MixedDec NegativeInfinity;
-        static MixedDec ApproachingZero;
+        static MediumDecVariant Infinity;
+        static MediumDecVariant NegativeInfinity;
+        static MediumDecVariant ApproachingZero;
 #endif
 
         /// <summary>
         /// Returns PI Representation(3.1415926535897932384626433) with tenth digit rounded up(3.141592654)
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec PI;
+        static MediumDecVariant PI;
 
         /// <summary>
         /// Euler's number Representation
@@ -715,102 +717,102 @@ namespace BlazesRusCode
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec E;
+        static MediumDecVariant E;
 
-        static MixedDec Zero;
+        static MediumDecVariant Zero;
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec One;
+        static MediumDecVariant One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec Two;
+        static MediumDecVariant Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec PointFive;
+        static MediumDecVariant PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec JustAboveZero;
+        static MediumDecVariant JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec FiveBillionth;
+        static MediumDecVariant FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec OneMillionth;
+        static MediumDecVariant OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec FiveThousandth;
+        static MediumDecVariant FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec OneGMillionth;
+        static MediumDecVariant OneGMillionth;
 
         //0e-7
-        static MixedDec TenMillionth;
+        static MediumDecVariant TenMillionth;
 
         /// <summary>
         /// Returns the value at "0.000005"
         /// </summary>
-        static MixedDec FiveMillionth;
+        static MediumDecVariant FiveMillionth;
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MixedDec</returns>
-        static MixedDec NegativeOne;
+        static MediumDecVariant NegativeOne;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MixedDec Minimum;
+        static MediumDecVariant Minimum;
 
         /// <summary>
         /// Returns value of highest non-infinite/Special Decimal State Value that can store
         /// </summary>
-        static MixedDec Maximum;
+        static MediumDecVariant Maximum;
 
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        static MixedDec LN10;
+        static MediumDecVariant LN10;
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MixedDec LN10Mult;
+        static MediumDecVariant LN10Mult;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MixedDec HalfLN10Mult;
+        static MediumDecVariant HalfLN10Mult;
 
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
-        static MixedDec Nil;
+        static MediumDecVariant Nil;
 #pragma endregion ValueDefines
         /// <summary>
         /// Swaps the negative status.
@@ -842,7 +844,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        MixedDec GetValueFromString(std::string Value);
+        MediumDecVariant GetValueFromString(std::string Value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MixedDec"/> class from string literal
@@ -903,12 +905,12 @@ namespace BlazesRusCode
         explicit operator std::string() { return ToString(); }
 
         ///// <summary>
-        ///// += MixedDec operation added to std::string
+        ///// += MediumDecVariant operation added to std::string
         ///// </summary>
         ///// <param name="targetString">The target string(left side).</param>
         ///// <param name="Value">The right side value</param>
         ///// <returns>string</returns>
-        //friend std::string operator+=(std::string targetString, MixedDec self) { return targetString + self.ToString(); }
+        //friend std::string operator+=(std::string targetString, MediumDecVariant self) { return targetString + self.ToString(); }
 #pragma endregion String Commands
 
 #pragma region From Standard types to this type
@@ -1056,7 +1058,7 @@ namespace BlazesRusCode
 
 #pragma region From this type to Standard types
         /// <summary>
-        /// MixedDec to float explicit conversion
+        /// MediumDecVariant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator float()
@@ -1075,7 +1077,7 @@ namespace BlazesRusCode
             return Value;
         }
         /// <summary>
-        /// MixedDec to double explicit conversion
+        /// MediumDecVariant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator double()
@@ -1095,7 +1097,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// MixedDec to long double explicit conversion
+        /// MediumDecVariant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator ldouble()
@@ -1115,7 +1117,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// MixedDec to int explicit conversion
+        /// MediumDecVariant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator int() { return IntValue; }
@@ -1123,7 +1125,7 @@ namespace BlazesRusCode
         explicit operator bool() { return IntValue == 0 ? false : true; }
 
         /// <summary>
-        /// MixedDec to integer type explicit conversion
+        /// MediumDecVariant to integer type explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         template<typename IntType>
@@ -1137,7 +1139,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator==(MixedDec self, MixedDec Value)
+        friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
         {
             return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
         }
@@ -1148,7 +1150,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator!=(MixedDec self, MixedDec Value)
+        friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
         {
             return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
         }
@@ -1159,7 +1161,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<(MixedDec self, MixedDec Value)
+        friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
@@ -1227,7 +1229,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<=(MixedDec self, MixedDec Value)
+        friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
@@ -1295,7 +1297,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The right side value.</param>
         /// <returns>bool</returns>
-        friend bool operator>(MixedDec self, MixedDec Value)
+        friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
@@ -1361,7 +1363,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>=(MixedDec self, MixedDec Value)
+        friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
@@ -1749,7 +1751,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Addition Operation Between MixedDec and Integer value
+        /// Addition Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -1769,21 +1771,21 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MixedDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue += value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MixedDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MixedDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDec and Integer value
+        /// Subtraction Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -1803,21 +1805,21 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MixedDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue -= value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MixedDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MixedDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
 
         /// <summary>
-        /// Addition Operation Between MixedDec and Integer value
+        /// Addition Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -1836,21 +1838,21 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MixedDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue += value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MixedDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MixedDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDec and Integer value
+        /// Subtraction Operation Between MediumDecVariant and Integer value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
@@ -1873,15 +1875,15 @@ namespace BlazesRusCode
             {
                 bool WasNegative = self.IntValue < 0;
                 if (WasNegative)
-                    self.IntValue = self.IntValue == MixedDec::NegativeRep ? -1 : --self.IntValue;
+                    self.IntValue = self.IntValue == MediumDecVariant::NegativeRep ? -1 : --self.IntValue;
                 self.IntValue -= value;
                 if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MixedDec::NegativeRep;
+                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
                 else if (self.IntValue < 0)
                     ++self.IntValue;
                 //If flips to other side of negative, invert the decimals
                 if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MixedDec::DecimalOverflow - self.DecimalHalf;
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
             return self;
         }
@@ -1913,7 +1915,7 @@ namespace BlazesRusCode
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MixedDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -1921,10 +1923,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -1934,11 +1936,11 @@ namespace BlazesRusCode
                     }
                 }
             }
-            else if (IntValue == MixedDec::NegativeRep)
+            else if (IntValue == MediumDecVariant::NegativeRep)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MixedDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -1946,10 +1948,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -1968,30 +1970,30 @@ namespace BlazesRusCode
                 }
                 if (Value.IntValue == 0)
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.DecimalHalf;
-                    SRep /= MixedDec::DecimalOverflowX;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    SRep /= MediumDecVariant::DecimalOverflowX;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? MixedDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2005,17 +2007,17 @@ namespace BlazesRusCode
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     __int64 Temp03 = (__int64)IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
-                    Temp04 /= MixedDec::DecimalOverflow;
+                    Temp04 /= MediumDecVariant::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / MixedDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)MixedDec::DecimalOverflow;
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MixedDec::NegativeRep : 0; }
+                    __int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     DecimalHalf = (signed int)IntegerRep;
                 }
@@ -2096,7 +2098,7 @@ namespace BlazesRusCode
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MixedDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -2104,10 +2106,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2117,11 +2119,11 @@ namespace BlazesRusCode
                     }
                 }
             }
-            else if (IntValue == MixedDec::NegativeRep)
+            else if (IntValue == MediumDecVariant::NegativeRep)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
-                SRep /= MixedDec::DecimalOverflowX;
+                SRep /= MediumDecVariant::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -2129,10 +2131,10 @@ namespace BlazesRusCode
                 else
                 {
                     SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2151,30 +2153,30 @@ namespace BlazesRusCode
                 }
                 if (Value.IntValue == 0)
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.DecimalHalf;
-                    SRep /= MixedDec::DecimalOverflowX;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    SRep /= MediumDecVariant::DecimalOverflowX;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? MixedDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2188,17 +2190,17 @@ namespace BlazesRusCode
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     __int64 Temp03 = (__int64)IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
-                    Temp04 /= MixedDec::DecimalOverflow;
+                    Temp04 /= MediumDecVariant::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / MixedDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)MixedDec::DecimalOverflow;
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MixedDec::NegativeRep : 0; }
+                    __int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     DecimalHalf = (signed int)IntegerRep;
                 }
@@ -2213,8 +2215,8 @@ namespace BlazesRusCode
         /// <returns>AltDec&</returns>
         void BasicMultOp(MixedDec& Value)
         {
-            if (Value == MixedDec::Zero) { SetAsZero(); return; }
-            if ((IntValue == 0 && DecimalHalf == 0) || Value == MixedDec::One)
+            if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
+            if ((IntValue == 0 && DecimalHalf == 0) || Value == MediumDecVariant::One)
                 return;
             PartialMultOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
@@ -2238,12 +2240,12 @@ namespace BlazesRusCode
             else if (Value.DecimalHalf == -1)
                 return self;
 #endif
-            if (Value == MixedDec::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
-            if (self == MixedDec::Zero || Value == MixedDec::One)
+            if (Value == MediumDecVariant::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
+            if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
                 return self;
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MixedDec::NegativeRep) { Value.IntValue = 0; }
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
@@ -2257,7 +2259,7 @@ namespace BlazesRusCode
                 }
                 else
                     self.PartialMultOp(Value);
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2271,7 +2273,7 @@ namespace BlazesRusCode
                 }
                 else
                     self.PartialMultOp(Value);
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2287,7 +2289,7 @@ namespace BlazesRusCode
                 {
                     self.PartialMultOp(Value);
                 }
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2307,32 +2309,32 @@ namespace BlazesRusCode
                 if (Value.DecimalHalf == 0)//Both are integers
                 {
                     if (IntValue < 0) { IntValue *= -1; }
-                    __int64 SRep = IntValue * MixedDec::DecimalOverflowX;
+                    __int64 SRep = IntValue * MediumDecVariant::DecimalOverflowX;
                     __int64 YRep = Value.IntValue;
                     SRep /= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? MixedDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                     }
                     DecimalHalf = (signed int)SRep;
                 }
                 else//Only self is integer while Value has both sides
                 {
-                    boost::multiprecision::uint128_t SRep02 = MixedDec::DecimalOverflowX * MixedDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     SRep02 *= IntValue;
-                    __int64 VRep = MixedDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -2344,20 +2346,20 @@ namespace BlazesRusCode
             }
             else if (IntValue == 0)
             {
-                __int64 SRep = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MixedDec::DecimalOverflowX;
-                SRep -= IntHalf * MixedDec::DecimalOverflowX;
+                __int64 SRep = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
                 IntValue = IntHalf;
                 DecimalHalf = (signed int)SRep;
             }
-            else if (IntValue == MixedDec::NegativeRep)
+            else if (IntValue == MediumDecVariant::NegativeRep)
             {
-                __int64 SRep = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MixedDec::DecimalOverflowX;
-                SRep -= IntHalf * MixedDec::DecimalOverflowX;
-                IntValue = IntHalf == 0 ? MixedDec::NegativeRep : -IntHalf;
+                __int64 SRep = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
+                IntValue = IntHalf == 0 ? MediumDecVariant::NegativeRep : -IntHalf;
                 DecimalHalf = (signed int)SRep;
             }
             else
@@ -2369,12 +2371,12 @@ namespace BlazesRusCode
                 }
                 if (Value.DecimalHalf == 0)//Y is integer but self is not
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep /= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -2385,24 +2387,24 @@ namespace BlazesRusCode
                 }
                 else
                 {//Splitting Integer Half and Decimal Half Division
-                    __int64 SRep_DecHalf = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                    int IntHalf = SRep_DecHalf / MixedDec::DecimalOverflowX;
-                    SRep_DecHalf -= IntHalf * MixedDec::DecimalOverflowX;
+                    __int64 SRep_DecHalf = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                    int IntHalf = SRep_DecHalf / MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf -= IntHalf * MediumDecVariant::DecimalOverflowX;
 
-                    boost::multiprecision::uint128_t SRep02 = MixedDec::DecimalOverflowX * MixedDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     //std::cout << "Multi-precision as String:" << SRep02 << std::endl;
                     SRep02 *= IntValue;
-                    __int64 VRep = MixedDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02 + SRep_DecHalf;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntHalf += OverflowVal;
                     }
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MixedDec::NegativeRep : 0; }
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     DecimalHalf = (signed int)SRep;
                 }
@@ -2421,32 +2423,32 @@ namespace BlazesRusCode
                 if (Value.DecimalHalf == 0)//Both are integers
                 {
                     if (IntValue < 0) { IntValue *= -1; }
-                    __int64 SRep = IntValue * MixedDec::DecimalOverflowX;
+                    __int64 SRep = IntValue * MediumDecVariant::DecimalOverflowX;
                     __int64 YRep = Value.IntValue;
                     SRep /= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? MixedDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                     }
                     DecimalHalf = (signed int)SRep;
                 }
                 else//Only self is integer while Value has both sides
                 {
-                    boost::multiprecision::uint128_t SRep02 = MixedDec::DecimalOverflowX * MixedDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     SRep02 *= IntValue;
-                    __int64 VRep = MixedDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -2458,20 +2460,20 @@ namespace BlazesRusCode
             }
             else if (IntValue == 0)
             {
-                __int64 SRep = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MixedDec::DecimalOverflowX;
-                SRep -= IntHalf * MixedDec::DecimalOverflowX;
+                __int64 SRep = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
                 IntValue = IntHalf;
                 DecimalHalf = (signed int)SRep;
             }
-            else if (IntValue == MixedDec::NegativeRep)
+            else if (IntValue == MediumDecVariant::NegativeRep)
             {
-                __int64 SRep = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MixedDec::DecimalOverflowX;
-                SRep -= IntHalf * MixedDec::DecimalOverflowX;
-                IntValue = IntHalf == 0 ? MixedDec::NegativeRep : -IntHalf;
+                __int64 SRep = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                int IntHalf = SRep / MediumDecVariant::DecimalOverflowX;
+                SRep -= IntHalf * MediumDecVariant::DecimalOverflowX;
+                IntValue = IntHalf == 0 ? MediumDecVariant::NegativeRep : -IntHalf;
                 DecimalHalf = (signed int)SRep;
             }
             else
@@ -2483,12 +2485,12 @@ namespace BlazesRusCode
                 }
                 if (Value.DecimalHalf == 0)//Y is integer but self is not
                 {
-                    __int64 SRep = MixedDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep /= Value.IntValue;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
                     }
                     else
@@ -2499,24 +2501,24 @@ namespace BlazesRusCode
                 }
                 else
                 {//Splitting Integer Half and Decimal Half Division
-                    __int64 SRep_DecHalf = (__int64)DecimalHalf * MixedDec::DecimalOverflowX;
-                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MixedDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                    int IntHalf = SRep_DecHalf / MixedDec::DecimalOverflowX;
-                    SRep_DecHalf -= IntHalf * MixedDec::DecimalOverflowX;
+                    __int64 SRep_DecHalf = (__int64)DecimalHalf * MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDecVariant::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
+                    int IntHalf = SRep_DecHalf / MediumDecVariant::DecimalOverflowX;
+                    SRep_DecHalf -= IntHalf * MediumDecVariant::DecimalOverflowX;
 
-                    boost::multiprecision::uint128_t SRep02 = MixedDec::DecimalOverflowX * MixedDec::DecimalOverflowX;
+                    boost::multiprecision::uint128_t SRep02 = MediumDecVariant::DecimalOverflowX * MediumDecVariant::DecimalOverflowX;
                     //std::cout << "Multi-precision as String:" << SRep02 << std::endl;
                     SRep02 *= IntValue;
-                    __int64 VRep = MixedDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+                    __int64 VRep = MediumDecVariant::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
                     SRep02 /= VRep;
                     __int64 SRep = (__int64)SRep02 + SRep_DecHalf;
-                    if (SRep >= MixedDec::DecimalOverflowX)
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / MixedDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MixedDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntHalf += OverflowVal;
                     }
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MixedDec::NegativeRep : 0; }
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
                     else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     DecimalHalf = (signed int)SRep;
                 }
@@ -2537,19 +2539,19 @@ namespace BlazesRusCode
             {
                 self.SetAsZero(); return self;
             }
-            if (Value == MixedDec::Zero)
+            if (Value == MediumDecVariant::Zero)
             {
                 self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity(); return self;
             }
 #else
-            if (Value == MixedDec::Zero)
+            if (Value == MediumDecVariant::Zero)
                 throw "Target value can not be divided by zero";
 #endif
-            if (self == MixedDec::Zero)
+            if (self == MediumDecVariant::Zero)
                 return self;
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MixedDec::NegativeRep) { Value.IntValue = 0; }
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
@@ -2563,7 +2565,7 @@ namespace BlazesRusCode
                 }
                 else
                     self.PartialDivOp(Value);
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2577,7 +2579,7 @@ namespace BlazesRusCode
                 }
                 else
                     self.PartialDivOp(Value);
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2593,7 +2595,7 @@ namespace BlazesRusCode
                 {
                     self.PartialDivOp(Value);
                 }
-                if (self == MixedDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
                 return self;
             }
 #endif
@@ -2602,7 +2604,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2649,7 +2651,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Division Operation Between MixedDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2713,7 +2715,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2754,7 +2756,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Division Operation Between MixedDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2863,7 +2865,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MixedDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2871,7 +2873,7 @@ namespace BlazesRusCode
         template<typename IntType>
         static MixedDec& IntRemOp(MixedDec& self, IntType& Value)
         {
-            if (Value == 0 || self == MixedDec::Zero) { self.SetAsZero(); return self; }
+            if (Value == 0 || self == MediumDecVariant::Zero) { self.SetAsZero(); return self; }
             if (self.DecimalHalf == 0)
             {
                 if (self.IntValue < 0)//https://www.quora.com/How-does-the-modulo-operation-work-with-negative-numbers-and-why
@@ -2910,7 +2912,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MixedDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2918,7 +2920,7 @@ namespace BlazesRusCode
         template<typename IntType>
         static MixedDec& UnsignedRemOp(MixedDec& self, IntType& Value)
         {
-            if (self == MixedDec::Zero) { return self; }
+            if (self == MediumDecVariant::Zero) { return self; }
             if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
             if (self.DecimalHalf == 0)
             {
@@ -2948,7 +2950,7 @@ namespace BlazesRusCode
         }
 #pragma endregion Remainder Operations
 
-#pragma region MixedDec-To-MixedDec Operators
+#pragma region MixedDec-To-MediumDecVariant Operators
     public:
         /// <summary>
         /// Addition Operation Between MixedDecs
@@ -2956,7 +2958,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator+(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator+(MediumDecVariant self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
         }
@@ -2967,7 +2969,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator+=(MixedDec& self, MixedDec Value)
+        friend MixedDec& operator+=(MixedDec& self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
         }
@@ -2978,7 +2980,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator+=(MixedDec* self, MixedDec Value) { return AddOp(**self, Value); }
+        friend MixedDec& operator+=(MixedDec* self, MediumDecVariant Value) { return AddOp(**self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between MixedDecs
@@ -2986,7 +2988,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator-(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator-(MediumDecVariant self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
         }
@@ -2997,7 +2999,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator-=(MixedDec& self, MixedDec Value)
+        friend MixedDec& operator-=(MixedDec& self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
         }
@@ -3008,7 +3010,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator-=(MixedDec* self, MixedDec Value) { return SubOp(**self, Value); }
+        friend MixedDec& operator-=(MixedDec* self, MediumDecVariant Value) { return SubOp(**self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between MixedDecs
@@ -3016,7 +3018,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator*(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator*(MediumDecVariant self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
         }
@@ -3027,7 +3029,7 @@ namespace BlazesRusCode
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MixedDec</returns>
-        friend MixedDec& operator*=(MixedDec& self, MixedDec Value)
+        friend MixedDec& operator*=(MixedDec& self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
         }
@@ -3038,7 +3040,7 @@ namespace BlazesRusCode
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MixedDec</returns>
-        friend MixedDec& operator*=(MixedDec* self, MixedDec Value) { return MultOp(**self, Value); }
+        friend MixedDec& operator*=(MixedDec* self, MediumDecVariant Value) { return MultOp(**self, Value); }
 
 
         /// <summary>
@@ -3047,7 +3049,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator/(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator/(MediumDecVariant self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
         }
@@ -3058,7 +3060,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator/=(MixedDec& self, MixedDec Value)
+        friend MixedDec& operator/=(MixedDec& self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
         }
@@ -3069,7 +3071,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator/=(MixedDec* self, MixedDec Value) { return DivOp(**self, Value); }
+        friend MixedDec& operator/=(MixedDec* self, MediumDecVariant Value) { return DivOp(**self, Value); }
 
         /// <summary>
         /// Remainder Operation Between MixedDecs
@@ -3077,7 +3079,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator%(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator%(MediumDecVariant self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
         }
@@ -3088,7 +3090,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator%=(MixedDec& self, MixedDec Value)
+        friend MixedDec& operator%=(MixedDec& self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
         }
@@ -3099,7 +3101,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec& operator%=(MixedDec* self, MixedDec Value)
+        friend MixedDec& operator%=(MixedDec* self, MediumDecVariant Value)
         {
             return RemOp(**self, Value);
         }
@@ -3110,7 +3112,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator^(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator^(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -3147,7 +3149,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator|(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator|(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -3183,7 +3185,7 @@ namespace BlazesRusCode
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>MixedDec</returns>
-        friend MixedDec operator&(MixedDec self, MixedDec Value)
+        friend MediumDecVariant operator&(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
             {
@@ -3225,9 +3227,9 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// ++MixedDec Operator
+        /// ++MediumDecVariant Operator
         /// </summary>
-        /// <returns>MixedDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MixedDec& operator ++()
         {
             if (IntValue == NegativeRep) { IntValue = 0; }
@@ -3238,9 +3240,9 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// ++MixedDec Operator
+        /// ++MediumDecVariant Operator
         /// </summary>
-        /// <returns>MixedDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MixedDec& operator --()
         {
             if (IntValue == NegativeRep) { IntValue = -1; }
@@ -3254,9 +3256,9 @@ namespace BlazesRusCode
         /// MixedDec++ Operator
         /// </summary>
         /// <returns>MixedDec</returns>
-        MixedDec operator ++(int)
+        MediumDecVariant operator ++(int)
         {
-            MixedDec tmp(*this);
+            MediumDecVariant tmp(*this);
             ++* this;
             return tmp;
         }
@@ -3265,9 +3267,9 @@ namespace BlazesRusCode
         /// MixedDec-- Operator
         /// </summary>
         /// <returns>MixedDec</returns>
-        MixedDec operator --(int)
+        MediumDecVariant operator --(int)
         {
-            MixedDec tmp(*this);
+            MediumDecVariant tmp(*this);
             --* this;
             return tmp;
         }
@@ -3275,23 +3277,23 @@ namespace BlazesRusCode
         /// <summary>
         /// MixedDec* Operator
         /// </summary>
-        /// <returns>MixedDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MixedDec& operator *()
         {
             return *this;
         }
 
-#pragma endregion MixedDec-To-MixedDec Operators
+#pragma endregion MixedDec-To-MediumDecVariant Operators
 
 #pragma region MixedDec-To-Int Comparison Operators
         /// <summary>
-        /// Equality Operation between <see cref="MixedDec &"/> and Integer Type.
+        /// Equality Operation between <see cref="MediumDecVariant &"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(MixedDec self, IntType Value)
+        friend bool operator==(MediumDecVariant self, IntType Value)
         {
             return (self.IntValue == Value && self.DecimalHalf == 0);
         }
@@ -3303,7 +3305,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(MixedDec self, IntType Value)
+        friend bool operator!=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf > 0) { return true; }
             else if (self.IntValue == Value && self.DecimalHalf == 0) { return false; }
@@ -3317,7 +3319,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(MixedDec self, IntType Value)
+        friend bool operator<(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3342,7 +3344,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(MixedDec self, IntType Value)
+        friend bool operator<=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3367,7 +3369,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(MixedDec self, IntType Value)
+        friend bool operator>(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3392,7 +3394,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(MixedDec self, IntType Value)
+        friend bool operator>=(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3418,7 +3420,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(IntType Value, MixedDec self)
+        friend bool operator==(IntType Value, MediumDecVariant self)
         {
             return (self.IntValue == Value && self.DecimalHalf == 0);
         }
@@ -3430,7 +3432,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(IntType Value, MixedDec self)
+        friend bool operator!=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf > 0) { return true; }
             else if (self.IntValue == Value && self.DecimalHalf == 0) { return false; }
@@ -3444,7 +3446,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(IntType Value, MixedDec self)
+        friend bool operator<(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3469,7 +3471,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(IntType Value, MixedDec self)
+        friend bool operator<=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3494,7 +3496,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(IntType Value, MixedDec self)
+        friend bool operator>(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3519,7 +3521,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(IntType Value, MixedDec self)
+        friend bool operator>=(IntType Value, MediumDecVariant self)
         {
             if (self.DecimalHalf == 0)
             {
@@ -3540,272 +3542,272 @@ namespace BlazesRusCode
 
 #pragma endregion MixedDec-To-Int Comparison Operators
 #pragma region Other Operations
-        friend MixedDec operator+(MixedDec self, float Value) { return self + (MixedDec)Value; }
-        friend MixedDec operator-(MixedDec self, float Value) { return self - (MixedDec)Value; }
-        friend MixedDec operator*(MixedDec self, float Value) { return self * (MixedDec)Value; }
-        friend MixedDec operator/(MixedDec self, float Value) { return self / (MixedDec)Value; }
-        friend MixedDec operator%(MixedDec self, float Value) { return self % (MixedDec)Value; }
-        friend MixedDec operator^(MixedDec self, float Value) { return self ^ (MixedDec)Value; }
-        friend MixedDec operator|(MixedDec self, float Value) { return self | (MixedDec)Value; }
-        friend MixedDec operator&(MixedDec self, float Value) { return self & (MixedDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, float Value) { return self + (MixedDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, float Value) { return self - (MixedDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, float Value) { return self * (MixedDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, float Value) { return self / (MixedDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, float Value) { return self % (MixedDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, float Value) { return self ^ (MixedDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, float Value) { return self | (MixedDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, float Value) { return self & (MixedDec)Value; }
 
-        friend MixedDec operator+(float Value, MixedDec self) { return (MixedDec)Value + self; }
-        friend MixedDec operator-(float Value, MixedDec self) { return (MixedDec)Value - self; }
-        friend MixedDec operator*(float Value, MixedDec self) { return (MixedDec)Value * self; }
-        friend MixedDec operator/(float Value, MixedDec self) { return (MixedDec)Value / self; }
-        friend MixedDec operator%(float Value, MixedDec self) { return (MixedDec)Value % self; }
-        friend MixedDec operator^(float Value, MixedDec self) { return (MixedDec)Value ^ self; }
-        friend MixedDec operator|(float Value, MixedDec self) { return (MixedDec)Value | self; }
-        friend MixedDec operator&(float Value, MixedDec self) { return (MixedDec)Value & self; }
+        friend MediumDecVariant operator+(float Value, MediumDecVariant self) { return (MixedDec)Value + self; }
+        friend MediumDecVariant operator-(float Value, MediumDecVariant self) { return (MixedDec)Value - self; }
+        friend MediumDecVariant operator*(float Value, MediumDecVariant self) { return (MixedDec)Value * self; }
+        friend MediumDecVariant operator/(float Value, MediumDecVariant self) { return (MixedDec)Value / self; }
+        friend MediumDecVariant operator%(float Value, MediumDecVariant self) { return (MixedDec)Value % self; }
+        friend MediumDecVariant operator^(float Value, MediumDecVariant self) { return (MixedDec)Value ^ self; }
+        friend MediumDecVariant operator|(float Value, MediumDecVariant self) { return (MixedDec)Value | self; }
+        friend MediumDecVariant operator&(float Value, MediumDecVariant self) { return (MixedDec)Value & self; }
 
-        friend MixedDec operator+(MixedDec self, double Value) { return self + (MixedDec)Value; }
-        friend MixedDec operator-(MixedDec self, double Value) { return self - (MixedDec)Value; }
-        friend MixedDec operator*(MixedDec self, double Value) { return self * (MixedDec)Value; }
-        friend MixedDec operator/(MixedDec self, double Value) { return self / (MixedDec)Value; }
-        friend MixedDec operator%(MixedDec self, double Value) { return self % (MixedDec)Value; }
-        friend MixedDec operator^(MixedDec self, double Value) { return self ^ (MixedDec)Value; }
-        friend MixedDec operator|(MixedDec self, double Value) { return self | (MixedDec)Value; }
-        friend MixedDec operator&(MixedDec self, double Value) { return self & (MixedDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, double Value) { return self + (MixedDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, double Value) { return self - (MixedDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, double Value) { return self * (MixedDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, double Value) { return self / (MixedDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, double Value) { return self % (MixedDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, double Value) { return self ^ (MixedDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, double Value) { return self | (MixedDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, double Value) { return self & (MixedDec)Value; }
 
-        friend MixedDec operator+(double Value, MixedDec self) { return (MixedDec)Value + self; }
-        friend MixedDec operator-(double Value, MixedDec self) { return (MixedDec)Value - self; }
-        friend MixedDec operator*(double Value, MixedDec self) { return (MixedDec)Value * self; }
-        friend MixedDec operator/(double Value, MixedDec self) { return (MixedDec)Value / self; }
-        friend MixedDec operator%(double Value, MixedDec self) { return (MixedDec)Value % self; }
-        friend MixedDec operator^(double Value, MixedDec self) { return (MixedDec)Value ^ self; }
-        friend MixedDec operator|(double Value, MixedDec self) { return (MixedDec)Value | self; }
-        friend MixedDec operator&(double Value, MixedDec self) { return (MixedDec)Value & self; }
+        friend MediumDecVariant operator+(double Value, MediumDecVariant self) { return (MixedDec)Value + self; }
+        friend MediumDecVariant operator-(double Value, MediumDecVariant self) { return (MixedDec)Value - self; }
+        friend MediumDecVariant operator*(double Value, MediumDecVariant self) { return (MixedDec)Value * self; }
+        friend MediumDecVariant operator/(double Value, MediumDecVariant self) { return (MixedDec)Value / self; }
+        friend MediumDecVariant operator%(double Value, MediumDecVariant self) { return (MixedDec)Value % self; }
+        friend MediumDecVariant operator^(double Value, MediumDecVariant self) { return (MixedDec)Value ^ self; }
+        friend MediumDecVariant operator|(double Value, MediumDecVariant self) { return (MixedDec)Value | self; }
+        friend MediumDecVariant operator&(double Value, MediumDecVariant self) { return (MixedDec)Value & self; }
 
-        friend MixedDec operator+(MixedDec self, ldouble Value) { return self + (MixedDec)Value; }
-        friend MixedDec operator-(MixedDec self, ldouble Value) { return self - (MixedDec)Value; }
-        friend MixedDec operator*(MixedDec self, ldouble Value) { return self * (MixedDec)Value; }
-        friend MixedDec operator/(MixedDec self, ldouble Value) { return self / (MixedDec)Value; }
-        friend MixedDec operator%(MixedDec self, ldouble Value) { return self % (MixedDec)Value; }
-        friend MixedDec operator^(MixedDec self, ldouble Value) { return self ^ (MixedDec)Value; }
-        friend MixedDec operator|(MixedDec self, ldouble Value) { return self | (MixedDec)Value; }
-        friend MixedDec operator&(MixedDec self, ldouble Value) { return self & (MixedDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, ldouble Value) { return self + (MixedDec)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, ldouble Value) { return self - (MixedDec)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, ldouble Value) { return self * (MixedDec)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, ldouble Value) { return self / (MixedDec)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, ldouble Value) { return self % (MixedDec)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, ldouble Value) { return self ^ (MixedDec)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, ldouble Value) { return self | (MixedDec)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, ldouble Value) { return self & (MixedDec)Value; }
 
-        friend MixedDec operator+(ldouble Value, MixedDec self) { return (MixedDec)Value + self; }
-        friend MixedDec operator-(ldouble Value, MixedDec self) { return (MixedDec)Value - self; }
-        friend MixedDec operator*(ldouble Value, MixedDec self) { return (MixedDec)Value * self; }
-        friend MixedDec operator/(ldouble Value, MixedDec self) { return (MixedDec)Value / self; }
-        friend MixedDec operator%(ldouble Value, MixedDec self) { return (MixedDec)Value % self; }
-        friend MixedDec operator^(ldouble Value, MixedDec self) { return (MixedDec)Value ^ self; }
-        friend MixedDec operator|(ldouble Value, MixedDec self) { return (MixedDec)Value | self; }
-        friend MixedDec operator&(ldouble Value, MixedDec self) { return (MixedDec)Value & self; }
+        friend MediumDecVariant operator+(ldouble Value, MediumDecVariant self) { return (MixedDec)Value + self; }
+        friend MediumDecVariant operator-(ldouble Value, MediumDecVariant self) { return (MixedDec)Value - self; }
+        friend MediumDecVariant operator*(ldouble Value, MediumDecVariant self) { return (MixedDec)Value * self; }
+        friend MediumDecVariant operator/(ldouble Value, MediumDecVariant self) { return (MixedDec)Value / self; }
+        friend MediumDecVariant operator%(ldouble Value, MediumDecVariant self) { return (MixedDec)Value % self; }
+        friend MediumDecVariant operator^(ldouble Value, MediumDecVariant self) { return (MixedDec)Value ^ self; }
+        friend MediumDecVariant operator|(ldouble Value, MediumDecVariant self) { return (MixedDec)Value | self; }
+        friend MediumDecVariant operator&(ldouble Value, MediumDecVariant self) { return (MixedDec)Value & self; }
 
 #pragma endregion Other Operations
 #pragma region MixedDec-To-Integer Operations
     public:
-        friend MixedDec operator+(MixedDec self, unsigned char Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-(MixedDec self, unsigned char Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*(MixedDec self, unsigned char Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/(MixedDec self, unsigned char Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%(MixedDec self, unsigned char Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned char Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned char Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned char Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned char Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned char Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+=(MixedDec& self, unsigned char Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-=(MixedDec& self, unsigned char Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*=(MixedDec& self, unsigned char Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/=(MixedDec& self, unsigned char Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%=(MixedDec& self, unsigned char Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MixedDec& self, unsigned char Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MixedDec& self, unsigned char Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MixedDec& self, unsigned char Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MixedDec& self, unsigned char Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MixedDec& self, unsigned char Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+(MixedDec self, unsigned short Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-(MixedDec self, unsigned short Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*(MixedDec self, unsigned short Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/(MixedDec self, unsigned short Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%(MixedDec self, unsigned short Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned short Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned short Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned short Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned short Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned short Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+=(MixedDec& self, unsigned short Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-=(MixedDec& self, unsigned short Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*=(MixedDec& self, unsigned short Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/=(MixedDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%=(MixedDec& self, unsigned short Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MixedDec& self, unsigned short Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MixedDec& self, unsigned short Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MixedDec& self, unsigned short Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MixedDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MixedDec& self, unsigned short Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+(MixedDec self, unsigned int Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-(MixedDec self, unsigned int Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*(MixedDec self, unsigned int Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/(MixedDec self, unsigned int Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%(MixedDec self, unsigned int Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned int Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned int Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned int Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned int Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+=(MixedDec& self, unsigned int Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-=(MixedDec& self, unsigned int Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*=(MixedDec& self, unsigned int Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/=(MixedDec& self, unsigned int Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%=(MixedDec& self, unsigned int Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MixedDec& self, unsigned int Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MixedDec& self, unsigned int Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MixedDec& self, unsigned int Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MixedDec& self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MixedDec& self, unsigned int Value) { return UnsignedRemOp(self, Value); }
 
-        //friend MixedDec operator+=(MixedDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
-        //friend MixedDec operator-=(MixedDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
-        //friend MixedDec operator*=(MixedDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
-        //friend MixedDec operator/=(MixedDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
-        //friend MixedDec operator%=(MixedDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
+        //friend MediumDecVariant operator+=(MixedDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MixedDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
+        //friend MediumDecVariant operator*=(MixedDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
+        //friend MediumDecVariant operator/=(MixedDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
+        //friend MediumDecVariant operator%=(MixedDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
 
-        friend MixedDec operator+(MixedDec self, unsigned __int64 Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-(MixedDec self, unsigned __int64 Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*(MixedDec self, unsigned __int64 Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/(MixedDec self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%(MixedDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned __int64 Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned __int64 Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*(MediumDecVariant self, unsigned __int64 Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/(MediumDecVariant self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%(MediumDecVariant self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
 
-        friend MixedDec operator+=(MixedDec& self, unsigned __int64 Value) { return UnsignedAddOp(self, Value); }
-        friend MixedDec operator-=(MixedDec& self, unsigned __int64 Value) { return UnsignedSubOp(self, Value); }
-        friend MixedDec operator*=(MixedDec& self, unsigned __int64 Value) { return UnsignedMultOp(self, Value); }
-        friend MixedDec operator/=(MixedDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
-        friend MixedDec operator%=(MixedDec& self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MixedDec& self, unsigned __int64 Value) { return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MixedDec& self, unsigned __int64 Value) { return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MixedDec& self, unsigned __int64 Value) { return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MixedDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MixedDec& self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
 
-        //   friend MixedDec operator+=(MixedDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
-           //friend MixedDec operator-=(MixedDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
-        //   friend MixedDec operator*=(MixedDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
-           //friend MixedDec operator/=(MixedDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
-        //   friend MixedDec operator%=(MixedDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
+        //   friend MediumDecVariant operator+=(MixedDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
+           //friend MediumDecVariant operator-=(MixedDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
+        //   friend MediumDecVariant operator*=(MixedDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
+           //friend MediumDecVariant operator/=(MixedDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
+        //   friend MediumDecVariant operator%=(MixedDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
 
            /// <summary>
-           /// Addition Operation Between MixedDec and Integer Value
+           /// Addition Operation Between MediumDecVariant and Integer Value
            /// </summary>
            /// <param name="self">The self.</param>
            /// <param name="Value">The value.</param>
            /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator+(MixedDec self, IntType Value)
+        friend MediumDecVariant operator+(MediumDecVariant self, IntType Value)
         {
             return IntAddOp(self, Value);
         }
 
         ///// <summary>
-        ///// += Operation Between MixedDec and Integer Value
+        ///// += Operation Between MediumDecVariant and Integer Value
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator+=(MixedDec& self, IntType Value)
+        friend MediumDecVariant operator+=(MixedDec& self, IntType Value)
         {
             return IntAddOp(self, Value);
         }
 
         template<typename IntType>
-        friend MixedDec operator+=(MixedDec* self, IntType Value) { return IntAddOp(**self, Value); }
+        friend MediumDecVariant operator+=(MixedDec* self, IntType Value) { return IntAddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDec and Integer Value
+        /// Subtraction Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator-(MixedDec self, IntType Value)
+        friend MediumDecVariant operator-(MediumDecVariant self, IntType Value)
         {
             return IntSubOp(self, Value);
         }
 
         /// <summary>
-        /// -= Operation Between MixedDec and Integer Value
+        /// -= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator-=(MixedDec& self, IntType Value)
+        friend MediumDecVariant operator-=(MixedDec& self, IntType Value)
         {
             return IntSubOp(self, Value);
         }
 
         template<typename IntType>
-        friend MixedDec operator-=(MixedDec* self, IntType Value) { return IntSubOp(**self, Value); }
+        friend MediumDecVariant operator-=(MixedDec* self, IntType Value) { return IntSubOp(**self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator*(MixedDec self, IntType Value)
+        friend MediumDecVariant operator*(MediumDecVariant self, IntType Value)
         {
             return IntMultOp(self, Value);
         }
 
         /// <summary>
-        /// *= Operation Between MixedDec and Integer Value
+        /// *= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator*=(MixedDec& self, IntType Value)
+        friend MediumDecVariant operator*=(MixedDec& self, IntType Value)
         {
             return IntMultOp(self, Value);
         }
 
         /// <summary>
-        /// *= Operation Between MixedDec and Integer Value (from pointer)
+        /// *= Operation Between MediumDecVariant and Integer Value (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator*=(MixedDec* self, IntType Value) { return IntMultOp(**self, Value); }
+        friend MediumDecVariant operator*=(MixedDec* self, IntType Value) { return IntMultOp(**self, Value); }
 
         /// <summary>
-        /// Division Operation Between MixedDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator/(MixedDec self, IntType Value)
+        friend MediumDecVariant operator/(MediumDecVariant self, IntType Value)
         {
             return IntDivOp(self, Value);
         }
 
         /// <summary>
-        /// /= Operation Between MixedDec and Integer Value
+        /// /= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator/=(MixedDec& self, IntType Value)
+        friend MediumDecVariant operator/=(MixedDec& self, IntType Value)
         {
             return IntDivOp(self, Value);
         }
 
         template<typename IntType>
-        friend MixedDec operator/=(MixedDec* self, IntType Value) { return IntDivOp(**self, Value); }
+        friend MediumDecVariant operator/=(MixedDec* self, IntType Value) { return IntDivOp(**self, Value); }
 
         /// <summary>
-        /// Modulus Operation Between MixedDec and Integer Value
+        /// Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator%(MixedDec self, IntType Value)
+        friend MediumDecVariant operator%(MediumDecVariant self, IntType Value)
         {
             return IntRemOp(self, Value);
         }
 
         /// <summary>
-        /// %= Operation Between MixedDec and Integer Value
+        /// %= Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator%=(MixedDec& self, IntType Value)
+        friend MediumDecVariant operator%=(MixedDec& self, IntType Value)
         {
             return IntRemOp(self, Value);
         }
 
         template<typename IntType>
-        friend MixedDec operator%=(MixedDec* self, IntType Value) { return IntRemOp(**self, Value); }
+        friend MediumDecVariant operator%=(MixedDec* self, IntType Value) { return IntRemOp(**self, Value); }
 
         /// <summary>
-        /// Bitwise XOR Operation Between MixedDec and Integer Value
+        /// Bitwise XOR Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator^(MixedDec self, IntType Value)
+        friend MediumDecVariant operator^(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
             else
@@ -3826,13 +3828,13 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MixedDec and Integer Value
+        /// Bitwise Or Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator|(MixedDec self, IntType Value)
+        friend MediumDecVariant operator|(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
             else
@@ -3853,13 +3855,13 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise And Operation Between MixedDec and Integer Value
+        /// Bitwise And Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator&(MixedDec self, IntType Value)
+        friend MediumDecVariant operator&(MediumDecVariant self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue &= Value; return self; }
             else
@@ -3879,104 +3881,104 @@ namespace BlazesRusCode
             return self;
         }
 #pragma endregion MixedDec-To-Integer Operations
-#pragma region Integer-To-MixedDec Operations
+#pragma region Integer-To-MediumDecVariant Operations
         /// <summary>
-        /// Addition Operation Between MixedDec and Integer Value
+        /// Addition Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator+(IntType Value, MixedDec self)
+        friend MediumDecVariant operator+(IntType Value, MediumDecVariant self)
         {
             return IntAddOp(self, Value);
         }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDec and Integer Value
+        /// Subtraction Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator-(IntType Value, MixedDec self)
+        friend MediumDecVariant operator-(IntType Value, MediumDecVariant self)
         {
-            MixedDec Result = Value;
+            MediumDecVariant Result = Value;
             return SubOp(Result, self);
         }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDec and Integer Value
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator*(IntType Value, MixedDec self)
+        friend MediumDecVariant operator*(IntType Value, MediumDecVariant self)
         {
             return IntMultOp(self, Value);
         }
 
         /// <summary>
-        /// Division Operation Between MixedDec and Integer Value
+        /// Division Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator/(IntType Value, MixedDec self)
+        friend MediumDecVariant operator/(IntType Value, MediumDecVariant self)
         {
-            MixedDec Result = Value;
+            MediumDecVariant Result = Value;
             return DivOp(Result, self);
         }
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MixedDec and Integer Value
+        /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator%(IntType Value, MixedDec self)
+        friend MediumDecVariant operator%(IntType Value, MediumDecVariant self)
         {
-            MixedDec Result = Value;
+            MediumDecVariant Result = Value;
             return IntRemOp(Result, self);
         }
 
         /// <summary>
-        /// Bitwise XOR Operation Between MixedDec and Integer Value
+        /// Bitwise XOR Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator^(IntType Value, MixedDec self)
+        friend MediumDecVariant operator^(IntType Value, MediumDecVariant self)
         {
             return (MixedDec)Value ^ self;
         }
         /// <summary>
-        /// Bitwise Or Operation Between MixedDec and Integer Value
+        /// Bitwise Or Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator|(IntType Value, MixedDec self)
+        friend MediumDecVariant operator|(IntType Value, MediumDecVariant self)
         {
             return (MixedDec)Value | self;
         }
         /// <summary>
-        /// Bitwise And Operation Between MixedDec and Integer Value
+        /// Bitwise And Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename IntType>
-        friend MixedDec operator&(IntType Value, MixedDec self)
+        friend MediumDecVariant operator&(IntType Value, MediumDecVariant self)
         {
             return (MixedDec)Value & self;
         }
-#pragma endregion Integer-To-MixedDec Operations
+#pragma endregion Integer-To-MediumDecVariant Operations
 #pragma region Math/Trigonomic Etc Functions
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
@@ -4002,7 +4004,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MixedDec&</returns>
-        static MixedDec Floor(MixedDec Value)
+        static MediumDecVariant Floor(MediumDecVariant Value)
         {
             return Value.Floor();
         }
@@ -4012,7 +4014,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
-        static MixedDec Floor(MixedDec Value, int precision)
+        static MediumDecVariant Floor(MediumDecVariant Value, int precision)
         {
             switch (precision)
             {
@@ -4054,7 +4056,7 @@ namespace BlazesRusCode
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MixedDec&</returns>
-        static int FloorInt(MixedDec Value)
+        static int FloorInt(MediumDecVariant Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -4071,7 +4073,7 @@ namespace BlazesRusCode
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MixedDec&</returns>
-        static int CeilInt(MixedDec Value)
+        static int CeilInt(MediumDecVariant Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -4089,7 +4091,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Ceil(MixedDec Value)
+        static MediumDecVariant Ceil(MediumDecVariant Value)
         {
             return Value.Ceil();
         }
@@ -4097,7 +4099,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
-        /// <returns>MixedDec &</returns>
+        /// <returns>MediumDecVariant &</returns>
         MixedDec& Trunc()
         {
             DecimalHalf = 0;
@@ -4110,7 +4112,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Trunc(MixedDec Value)
+        static MediumDecVariant Trunc(MediumDecVariant Value)
         {
             return Value.Trunc();
         }
@@ -4131,7 +4133,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Abs(MixedDec Value)
+        static MediumDecVariant Abs(MediumDecVariant Value)
         {
             return Value.Abs();
         }
@@ -4141,7 +4143,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MixedDec PowOp(ValueType& expValue)
+        MediumDecVariant PowOp(ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -4158,7 +4160,7 @@ namespace BlazesRusCode
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MixedDec self = *this;
+                    MediumDecVariant self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
@@ -4179,7 +4181,7 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MixedDec self = *this;
+                MediumDecVariant self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -4199,7 +4201,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MixedDec PowConstOp(const ValueType& expValue)
+        MediumDecVariant PowConstOp(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -4218,7 +4220,7 @@ namespace BlazesRusCode
                     int expVal = expValue;
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expVal *= -1;
-                    MixedDec self = *this;
+                    MediumDecVariant self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expVal > 0)
                     {
@@ -4240,7 +4242,7 @@ namespace BlazesRusCode
             {
                 int expVal = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MixedDec self = *this;
+                MediumDecVariant self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expVal > 0)
                 {
@@ -4260,7 +4262,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MixedDec PowConstOp(MixedDec& targetValue, const ValueType& expValue)
+        static MediumDecVariant PowConstOp(MixedDec& targetValue, const ValueType& expValue)
         {
             return targetValue.PowConstOp(expValue);
         }
@@ -4270,7 +4272,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MixedDec PowOp(MixedDec& targetValue, ValueType& expValue)
+        static MediumDecVariant PowOp(MixedDec& targetValue, ValueType& expValue)
         {
             return targetValue.PowOp(expValue);
         }
@@ -4280,7 +4282,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MixedDec Pow(ValueType expValue)
+        MediumDecVariant Pow(ValueType expValue)
         {
             return this->PowOp(expValue);
         }
@@ -4290,7 +4292,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MixedDec Pow(MixedDec targetValue, ValueType expValue)
+        static MediumDecVariant Pow(MediumDecVariant targetValue, ValueType expValue)
         {
             if (expValue == 1) { return targetValue; }//Return self
             else if (expValue == 0)
@@ -4302,13 +4304,13 @@ namespace BlazesRusCode
             {
                 if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
                 {
-                    targetValue.IntValue = 0; targetValue.DecimalHalf = MixedDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
+                    targetValue.IntValue = 0; targetValue.DecimalHalf = MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MixedDec self = targetValue;
+                    MediumDecVariant self = targetValue;
                     targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
@@ -4329,7 +4331,7 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MixedDec self = targetValue;
+                MediumDecVariant self = targetValue;
                 targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -4349,24 +4351,24 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MixedDec PowRef(MixedDec& targetValue, ValueType expValue)
+        static MediumDecVariant PowRef(MixedDec& targetValue, ValueType expValue)
         {
             if (expValue == 1)
                 return targetValue;//Return self
             else if (expValue == 0)
-                return MixedDec::One;
+                return MediumDecVariant::One;
             else if (expValue < 0)//Negative Pow
             {
                 if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
                 {
-                    return MixedDec(0, MixedDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
+                    return MixedDec(0, MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
-                    MixedDec self = targetValue;
-                    MixedDec Result = MixedDec::One;
+                    MediumDecVariant self = targetValue;
+                    MediumDecVariant Result = MediumDecVariant::One;
                     while (expValue > 0)
                     {
                         // If expValue is odd, divide self with result
@@ -4384,8 +4386,8 @@ namespace BlazesRusCode
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MixedDec self = targetValue;
-                MixedDec Result = MixedDec::One;
+                MediumDecVariant self = targetValue;
+                MediumDecVariant Result = MediumDecVariant::One;
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -4403,7 +4405,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MixedDec Sqrt(MixedDec value, int precision = 7)
+        static MediumDecVariant Sqrt(MediumDecVariant value, int precision = 7)
         {
             if (value.DecimalHalf == 0)
             {
@@ -4439,12 +4441,12 @@ namespace BlazesRusCode
                     return value;
                 }
             }
-            MixedDec number = value;
-            MixedDec start = 0, end = number;
-            MixedDec mid;
+            MediumDecVariant number = value;
+            MediumDecVariant start = 0, end = number;
+            MediumDecVariant mid;
 
             // variable to store the answer 
-            MixedDec ans;
+            MediumDecVariant ans;
 
             // for computing integral part 
             // of square root of number 
@@ -4471,7 +4473,7 @@ namespace BlazesRusCode
 
             // For computing the fractional part 
             // of square root up to given precision 
-            MixedDec increment = "0.1";
+            MediumDecVariant increment = "0.1";
             for (int i = 0; i < precision; i++) {
                 while (ans * ans <= number) {
                     ans += increment;
@@ -4491,17 +4493,17 @@ namespace BlazesRusCode
         /// <param name="nValue">The nth value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
         /// <returns>MixedDec</returns>
-        static MixedDec NthRoot(MixedDec value, int n, MixedDec precision = MixedDec::JustAboveZero)
+        static MediumDecVariant NthRoot(MediumDecVariant value, int n, MediumDecVariant precision = MediumDecVariant::JustAboveZero)
         {
-            MixedDec xPre = 1 + (value - 1) / n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            MediumDecVariant xPre = 1 + (value - 1) / n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two 
             // roots by INT_MAX 
-            MixedDec delX = MixedDec(2147483647, 0);
+            MediumDecVariant delX = MixedDec(2147483647, 0);
 
             //  xK denotes current value of x 
-            MixedDec xK;
+            MediumDecVariant xK;
 
             //  loop until we reach desired accuracy
             do
@@ -4509,8 +4511,8 @@ namespace BlazesRusCode
                 //  calculating current value from previous
                 // value by newton's method
                 xK = (nMinus1 * xPre +
-                    value / MixedDec::Pow(xPre, nMinus1)) / n;
-                delX = MixedDec::Abs(xK - xPre);
+                    value / MediumDecVariant::Pow(xPre, nMinus1)) / n;
+                delX = MediumDecVariant::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
             return xK;
@@ -4522,14 +4524,14 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
         /// <returns></returns>
-        static MixedDec NthRootV2(MixedDec targetValue, int n, MixedDec& Precision = MixedDec::FiveBillionth)
+        static MediumDecVariant NthRootV2(MediumDecVariant targetValue, int n, MixedDec& Precision = MediumDecVariant::FiveBillionth)
         {
             int nMinus1 = n - 1;
-            MixedDec x[2] = { (MixedDec::One / n) * ((nMinus1 * targetValue) + (targetValue / MixedDec::Pow(targetValue, nMinus1))), targetValue };
-            while (MixedDec::Abs(x[0] - x[1]) > Precision)
+            MediumDecVariant x[2] = { (MediumDecVariant::One / n) * ((nMinus1 * targetValue) + (targetValue / MediumDecVariant::Pow(targetValue, nMinus1))), targetValue };
+            while (MediumDecVariant::Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = (MixedDec::One / n) * ((nMinus1 * x[1]) + (targetValue / MixedDec::Pow(x[1], nMinus1)));
+                x[0] = (MediumDecVariant::One / n) * ((nMinus1 * x[1]) + (targetValue / MediumDecVariant::Pow(x[1], nMinus1)));
             }
             return x[0];
         }
@@ -4539,7 +4541,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Exp(MixedDec x)
+        static MediumDecVariant Exp(MediumDecVariant x)
         {
             /*
              * Evaluates f(x) = e^x for any x in the interval [-709, 709].
@@ -4563,36 +4565,36 @@ namespace BlazesRusCode
              * - Var relative error = 0.0
              * - 0.88 percent of the values have less than 15 digits of precision
              * Args:
-             *      - x: (MixedDec float) power of e to evaluate
+             *      - x: (MediumDecVariant float) power of e to evaluate
              * Returns:
-             *      - (MixedDec float) approximation of e^x in MixedDec precision
+             *      - (MediumDecVariant float) approximation of e^x in MediumDecVariant precision
              */
              // Check that x is a valid input.
             assert(-709 <= x.IntValue && x.IntValue <= 709);
             // When x = 0 we already know e^x = 1.
-            if (x == MixedDec::Zero) {
-                return MixedDec::One;
+            if (x == MediumDecVariant::Zero) {
+                return MediumDecVariant::One;
             }
             // Normalize x to a non-negative value to take advantage of
             // reciprocal symmetry. But keep track of the original sign
             // in case we need to return the reciprocal of e^x later.
-            MixedDec x0 = MixedDec::Abs(x);
+            MediumDecVariant x0 = MediumDecVariant::Abs(x);
             // First term of Taylor expansion of e^x at a = 0 is 1.
             // tn is the variable we we will return for e^x, and its
             // value at any time is the sum of all currently evaluated
             // Taylor terms thus far.
-            MixedDec tn = MixedDec::One;
+            MediumDecVariant tn = MediumDecVariant::One;
             // Chose a truncation point for the Taylor series using the
             // heuristic bound 12 * ceil(|x| e), then work down from there
             // using Horner's method.
-            int n = MixedDec::CeilInt(x0 * MixedDec::E) * 12;
+            int n = MediumDecVariant::CeilInt(x0 * MediumDecVariant::E) * 12;
             for (int i = n; i > 0; --i) {
-                tn = tn * (x0 / i) + MixedDec::One;
+                tn = tn * (x0 / i) + MediumDecVariant::One;
             }
             // If the original input x is less than 0, we want the reciprocal
             // of the e^x we calculated.
             if (x < 0) {
-                tn = MixedDec::One / tn;
+                tn = MediumDecVariant::One / tn;
             }
             return tn;
         }
@@ -4603,9 +4605,9 @@ namespace BlazesRusCode
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-        static MixedDec FractionalPow(MixedDec value, int expNum, int expDenom)
+        static MediumDecVariant FractionalPow(MediumDecVariant value, int expNum, int expDenom)
         {
-            MixedDec CalcVal = MixedDec::NthRoot(MixedDec::Pow(value, expNum), expDenom);
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, expNum), expDenom);
             return CalcVal;
         }
 
@@ -4614,9 +4616,9 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MixedDec FractionalPow(MixedDec& value, boost::rational<int>& Frac)
+        static MediumDecVariant FractionalPow(MixedDec& value, boost::rational<int>& Frac)
         {
-            MixedDec CalcVal = MixedDec::NthRoot(MixedDec::Pow(value, Frac.numerator()), Frac.denominator());
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, Frac.numerator()), Frac.denominator());
             return CalcVal;
         }
 
@@ -4625,7 +4627,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MixedDec PowOp(MixedDec& value, MixedDec& expValue)
+        static MediumDecVariant PowOp(MixedDec& value, MixedDec& expValue)
         {
             if (expValue.DecimalHalf == 0)
             {
@@ -4633,26 +4635,26 @@ namespace BlazesRusCode
             }
             else
             {
-                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MixedDec::DecimalOverflow);
+                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
                 switch (expValue.IntValue)
                 {
                 case 0:
                     return FractionalPow(value, Frac);
                     break;
-                case MixedDec::NegativeRep:
+                case MediumDecVariant::NegativeRep:
                     return 1 / FractionalPow(value, Frac);
                     break;
                 default:
                 {
                     if (expValue.IntValue < 0)//Negative Exponent 
                     {
-                        MixedDec CalcVal = 1 / value.Pow(expValue.IntValue * -1);
+                        MediumDecVariant CalcVal = 1 / value.Pow(expValue.IntValue * -1);
                         CalcVal /= FractionalPow(value, Frac);
                         return CalcVal;
                     }
                     else
                     {
-                        MixedDec CalcVal = value.Pow(expValue.IntValue);
+                        MediumDecVariant CalcVal = value.Pow(expValue.IntValue);
                         CalcVal *= FractionalPow(value, Frac);
                         return CalcVal;
                     }
@@ -4667,7 +4669,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MixedDec Pow(MixedDec value, MixedDec expValue)
+        static MediumDecVariant Pow(MediumDecVariant value, MediumDecVariant expValue)
         {
             return PowOp(value, expValue);
         }
@@ -4677,20 +4679,20 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::MixedDec</returns>
-        static MixedDec LnRef(MixedDec& value)
+        static MediumDecVariant LnRef(MixedDec& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MixedDec::One)
-                return MixedDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
-                MixedDec threshold = MixedDec::FiveMillionth;
-                MixedDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveMillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MixedDec term = base;       // First term
-                MixedDec prev;          // Previous sum
-                MixedDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
                 do
                 {
@@ -4702,23 +4704,23 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                     ++den;
-                } while (MixedDec::Abs(prev - result) > threshold);
+                } while (MediumDecVariant::Abs(prev - result) > threshold);
 
                 return result;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MixedDec TotalRes = (value - 1) / (value + 1);
-                MixedDec LastPow = TotalRes;
-                MixedDec WSquared = TotalRes * TotalRes;
-                MixedDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
         }
@@ -4728,20 +4730,20 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::MixedDec</returns>
-        static MixedDec LnRefV2(MixedDec& value)
+        static MediumDecVariant LnRefV2(MixedDec& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MixedDec::One)
-                return MixedDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if (value.IntValue == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MixedDec W = (value - 1) / (value + 1);
-                MixedDec TotalRes = W;
+                MediumDecVariant W = (value - 1) / (value + 1);
+                MediumDecVariant TotalRes = W;
                 W.SwapNegativeStatus();
-                MixedDec LastPow = W;
-                MixedDec WSquared = W * W;
+                MediumDecVariant LastPow = W;
+                MediumDecVariant WSquared = W * W;
                 int WPow = 3;
-                MixedDec AddRes;
+                MediumDecVariant AddRes;
 
                 do
                 {
@@ -4749,18 +4751,18 @@ namespace BlazesRusCode
                     AddRes = LastPow / WPow;
                     TotalRes -= AddRes;
                     WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
             else if (value.IntValue == 1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
-                MixedDec threshold = MixedDec::FiveMillionth;
-                MixedDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveMillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MixedDec term = base;       // First term
-                MixedDec prev;          // Previous sum
-                MixedDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
                 do
                 {
@@ -4772,23 +4774,23 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                     ++den;
-                } while (MixedDec::Abs(prev - result) > threshold);
+                } while (MediumDecVariant::Abs(prev - result) > threshold);
 
                 return result;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MixedDec TotalRes = (value - 1) / (value + 1);
-                MixedDec LastPow = TotalRes;
-                MixedDec WSquared = TotalRes * TotalRes;
-                MixedDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
+                } while (AddRes > MediumDecVariant::JustAboveZero);
                 return TotalRes * 2;
             }
         }
@@ -4797,7 +4799,7 @@ namespace BlazesRusCode
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        static MixedDec Ln(MixedDec value)
+        static MediumDecVariant Ln(MediumDecVariant value)
         {
             return LnRef(value);
         }
@@ -4807,10 +4809,10 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Log10(MixedDec value)
+        static MediumDecVariant Log10(MediumDecVariant value)
         {
-            if (value == MixedDec::One)
-                return MixedDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             if (value.DecimalHalf == 0 && value.IntValue % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
@@ -4822,15 +4824,15 @@ namespace BlazesRusCode
             }
             if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MixedDec threshold = MixedDec::FiveBillionth;
-                MixedDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveBillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MixedDec term = base;       // First term
-                MixedDec prev = 0;          // Previous sum
-                MixedDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev = 0;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
-                while (MixedDec::Abs(prev - result) > threshold) {
+                while (MediumDecVariant::Abs(prev - result) > threshold) {
                     den++;
                     posSign = !posSign;
                     term *= base;
@@ -4840,24 +4842,24 @@ namespace BlazesRusCode
                     else
                         result -= term / den;
                 }
-                return result * MixedDec::LN10Mult;// result/MixedDec::LN10;//Using Multiplication instead of division for speed improvement
+                return result * MediumDecVariant::LN10Mult;// result/MediumDecVariant::LN10;//Using Multiplication instead of division for speed improvement
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MixedDec TotalRes = (value - 1) / (value + 1);
-                MixedDec LastPow = TotalRes;
-                MixedDec WSquared = TotalRes * TotalRes;
-                MixedDec AddRes;
+                MediumDecVariant TotalRes = (value - 1) / (value + 1);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
-                return TotalRes * MixedDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return TotalRes * MediumDecVariant::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
             }
-            //return MixedDec::Ln(value) / MixedDec::HaLN10;//Slightly off because of truncation etc
+            //return MediumDecVariant::Ln(value) / MediumDecVariant::HaLN10;//Slightly off because of truncation etc
         }
 
         /// <summary>
@@ -4866,10 +4868,10 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
         template<typename ValueType>
-        static MixedDec Log10(ValueType value)
+        static MediumDecVariant Log10(ValueType value)
         {
             if (value == 1)
-                return MixedDec::Zero;
+                return MediumDecVariant::Zero;
             else if (value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
@@ -4881,18 +4883,18 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MixedDec TotalRes = MixedDec((value - 1), 0) / MixedDec((value + 1), 0);
-                MixedDec LastPow = TotalRes;
-                MixedDec WSquared = TotalRes * TotalRes;
-                MixedDec AddRes;
+                MediumDecVariant TotalRes = MixedDec((value - 1), 0) / MixedDec((value + 1), 0);
+                MediumDecVariant LastPow = TotalRes;
+                MediumDecVariant WSquared = TotalRes * TotalRes;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
                     LastPow *= WSquared;
                     AddRes = LastPow / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
-                return TotalRes * MixedDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return TotalRes * MediumDecVariant::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
             }
         }
 
@@ -4903,10 +4905,10 @@ namespace BlazesRusCode
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Log(MixedDec value, MixedDec baseVal)
+        static MediumDecVariant Log(MediumDecVariant value, MediumDecVariant baseVal)
         {
-            if (value == MixedDec::One)
-                return MixedDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             return Log10(value) / Log10(baseVal);
         }
 
@@ -4917,12 +4919,12 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Log(MixedDec value, int baseVal)
+        static MediumDecVariant Log(MediumDecVariant value, int baseVal)
         {
-            if (value == MixedDec::One)
-                return MixedDec::Zero;
+            if (value == MediumDecVariant::One)
+                return MediumDecVariant::Zero;
             //Calculate Base log first
-            MixedDec baseTotalRes;
+            MediumDecVariant baseTotalRes;
             bool lnMultLog = true;
             if (baseVal % 10 == 0)
             {
@@ -4939,16 +4941,16 @@ namespace BlazesRusCode
             else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 baseTotalRes = MixedDec((baseVal - 1), 0) / MixedDec((baseVal + 1), 0);
-                MixedDec baseLastPow = baseTotalRes;
-                MixedDec baseWSquared = baseTotalRes * baseTotalRes;
-                MixedDec baseAddRes;
+                MediumDecVariant baseLastPow = baseTotalRes;
+                MediumDecVariant baseWSquared = baseTotalRes * baseTotalRes;
+                MediumDecVariant baseAddRes;
                 int baseWPow = 3;
                 do
                 {
                     baseLastPow *= baseWSquared;
                     baseAddRes = baseLastPow / baseWPow;
                     baseTotalRes += baseAddRes; baseWPow += 2;
-                } while (baseAddRes > MixedDec::JustAboveZero);
+                } while (baseAddRes > MediumDecVariant::JustAboveZero);
             }
 
             //Now calculate other log
@@ -4957,21 +4959,21 @@ namespace BlazesRusCode
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? MixedDec(index, 0) / (baseTotalRes * MixedDec::HalfLN10Mult) : MixedDec(index, 0) / baseTotalRes;
+                        return lnMultLog ? MixedDec(index, 0) / (baseTotalRes * MediumDecVariant::HalfLN10Mult) : MixedDec(index, 0) / baseTotalRes;
                 }
-                return lnMultLog ? MixedDec(9, 0) / (baseTotalRes * MixedDec::HalfLN10Mult) : MixedDec(9, 0) / baseTotalRes;
+                return lnMultLog ? MixedDec(9, 0) / (baseTotalRes * MediumDecVariant::HalfLN10Mult) : MixedDec(9, 0) / baseTotalRes;
             }
             if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MixedDec threshold = MixedDec::FiveBillionth;
-                MixedDec base = value - 1;        // Base of the numerator; exponent will be explicit
+                MediumDecVariant threshold = MediumDecVariant::FiveBillionth;
+                MediumDecVariant base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MixedDec term = base;       // First term
-                MixedDec prev = 0;          // Previous sum
-                MixedDec result = term;     // Kick it off
+                MediumDecVariant term = base;       // First term
+                MediumDecVariant prev = 0;          // Previous sum
+                MediumDecVariant result = term;     // Kick it off
 
-                while (MixedDec::Abs(prev - result) > threshold) {
+                while (MediumDecVariant::Abs(prev - result) > threshold) {
                     den++;
                     posSign = !posSign;
                     term *= base;
@@ -4985,16 +4987,16 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MixedDec W = (value - 1) / (value + 1);
-                MixedDec TotalRes = W;
-                MixedDec AddRes;
+                MediumDecVariant W = (value - 1) / (value + 1);
+                MediumDecVariant TotalRes = W;
+                MediumDecVariant AddRes;
                 int WPow = 3;
                 do
                 {
-                    AddRes = MixedDec::PowRef(W, WPow) / WPow;
+                    AddRes = MediumDecVariant::PowRef(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MixedDec::JustAboveZero);
-                return lnMultLog ? TotalRes / baseTotalRes : (TotalRes * MixedDec::HalfLN10Mult) / baseTotalRes;
+                } while (AddRes > MediumDecVariant::JustAboveZero);
+                return lnMultLog ? TotalRes / baseTotalRes : (TotalRes * MediumDecVariant::HalfLN10Mult) / baseTotalRes;
             }
             //return Log10(Value) / Log10(BaseVal);
         }
@@ -5007,7 +5009,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec SinFromAngle(MixedDec Value)
+        static MediumDecVariant SinFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -5027,7 +5029,7 @@ namespace BlazesRusCode
             {
                 Value.IntValue %= 360;
             }
-            if (Value == Zero) { return MixedDec::Zero; }
+            if (Value == Zero) { return MediumDecVariant::Zero; }
             else if (Value.IntValue == 30 && Value.DecimalHalf == 0)
             {
                 return PointFive;
@@ -5038,7 +5040,7 @@ namespace BlazesRusCode
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
@@ -5046,12 +5048,12 @@ namespace BlazesRusCode
             }
             else
             {
-                MixedDec NewValue = Zero;
+                MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MixedDec Radius = PI * Value / 180;
+                MediumDecVariant Radius = PI * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
                 }
                 return NewValue;
             }
@@ -5063,7 +5065,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns></returns>
-        static MixedDec CosFromAngle(MixedDec Value)
+        static MediumDecVariant CosFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -5086,7 +5088,7 @@ namespace BlazesRusCode
             if (Value == Zero) { return One; }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
@@ -5094,16 +5096,16 @@ namespace BlazesRusCode
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else
             {
-                MixedDec NewValue = Zero;
+                MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MixedDec Radius = PI * Value / 180;
+                MediumDecVariant Radius = PI * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
                 }
                 return NewValue;
             }
@@ -5115,12 +5117,12 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Sin(MixedDec Value)
+        static MediumDecVariant Sin(MediumDecVariant Value)
         {
-            MixedDec SinValue = Zero;
+            MediumDecVariant SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
@@ -5131,12 +5133,12 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Cos(MixedDec Value)
+        static MediumDecVariant Cos(MediumDecVariant Value)
         {
-            MixedDec CosValue = Zero;
+            MediumDecVariant CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -5147,17 +5149,17 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec Tan(MixedDec Value)
+        static MediumDecVariant Tan(MediumDecVariant Value)
         {
-            MixedDec SinValue = Zero;
-            MixedDec CosValue = Zero;
+            MediumDecVariant SinValue = Zero;
+            MediumDecVariant CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -5168,7 +5170,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec TanFromAngle(MixedDec Value)
+        static MediumDecVariant TanFromAngle(MediumDecVariant Value)
         {
             if (Value.IntValue < 0)
             {
@@ -5188,18 +5190,18 @@ namespace BlazesRusCode
             {
                 Value.IntValue %= 360;
             }
-            if (Value == Zero) { return MixedDec::Zero; }
+            if (Value == Zero) { return MediumDecVariant::Zero; }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Maximum;//Positive Infinity
+                return MediumDecVariant::Maximum;//Positive Infinity
             }
             else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Zero;
+                return MediumDecVariant::Zero;
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
-                return MixedDec::Minimum;//Negative Infinity
+                return MediumDecVariant::Minimum;//Negative Infinity
             }
             else
             {
@@ -5213,18 +5215,18 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec ATan(MixedDec Value)
+        static MediumDecVariant ATan(MediumDecVariant Value)
         {
-            MixedDec SinValue = Zero;
-            MixedDec CosValue = Zero;
+            MediumDecVariant SinValue = Zero;
+            MediumDecVariant CosValue = Zero;
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             { // That's also Taylor series!!
-                CosValue += (i % 2 == 0 ? 1 : -1) * MixedDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
@@ -5238,13 +5240,13 @@ namespace BlazesRusCode
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
         /// <returns>MixedDec</returns>
-        static MixedDec ArcTan2(MixedDec y, MixedDec x)
+        static MediumDecVariant ArcTan2(MediumDecVariant y, MediumDecVariant x)
         {
-            MixedDec coeff_1 = PI / 4;
-            MixedDec coeff_2 = 3 * coeff_1;
-            MixedDec abs_y = MixedDec::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
-            MixedDec r;
-            MixedDec angle;
+            MediumDecVariant coeff_1 = PI / 4;
+            MediumDecVariant coeff_2 = 3 * coeff_1;
+            MediumDecVariant abs_y = MediumDecVariant::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            MediumDecVariant r;
+            MediumDecVariant angle;
             if (x >= 0)
             {
                 r = (x - abs_y) / (x + abs_y);
@@ -5264,53 +5266,53 @@ namespace BlazesRusCode
     };
 
 #pragma region ValueDefine Source
-    MixedDec::TrailingType MixedDec::TrailingZero = TrailingZeroValue();
-    MixedDec::TrailingType MixedDec::TrailingOne = TrailingOneValue();
-    MixedDec::TrailingType MixedDec::TrailingTenth = TrailingTenthValue();
-    MixedDec::TrailingType MixedDec::TrailingNegOne = TrailingNegOneValue();
+    MediumDecVariant::TrailingType MediumDecVariant::TrailingZero = TrailingZeroValue();
+    MediumDecVariant::TrailingType MediumDecVariant::TrailingOne = TrailingOneValue();
+    MediumDecVariant::TrailingType MediumDecVariant::TrailingTenth = TrailingTenthValue();
+    MediumDecVariant::TrailingType MediumDecVariant::TrailingNegOne = TrailingNegOneValue();
 #if defined(MixedDec_EnablePIRep)
-    MixedDec::TrailingType MixedDec::PIRep = TrailingNegOneValue();
+    MediumDecVariant::TrailingType MediumDecVariant::PIRep = TrailingNegOneValue();
 #endif
 #if defined(MixedDec_EnableENumRep)
-    MixedDec::TrailingType MixedDec::ERep = ERepValue();
+    MediumDecVariant::TrailingType MediumDecVariant::ERep = ERepValue();
 #endif
 #if defined(MixedDec_EnableImaginaryNumRep)
-    MixedDec::TrailingType MixedDec::IRep = IRepValue();
+    MediumDecVariant::TrailingType MediumDecVariant::IRep = IRepValue();
 #endif
-    MixedDec MixedDec::PI = PIValue();
-    MixedDec MixedDec::One = OneValue();
-    MixedDec MixedDec::Two = TwoValue();
-    MixedDec MixedDec::NegativeOne = NegativeOneValue();
-    MixedDec MixedDec::Zero = ZeroValue();
-    MixedDec MixedDec::PointFive = Point5Value();
-    MixedDec MixedDec::JustAboveZero = JustAboveZeroValue();
-    MixedDec MixedDec::OneMillionth = OneMillionthValue();
-    MixedDec MixedDec::FiveThousandth = FiveThousandthValue();
-    MixedDec MixedDec::Minimum = MinimumValue();
-    MixedDec MixedDec::Maximum = MaximumValue();
-    MixedDec MixedDec::E = EValue();
-    MixedDec MixedDec::LN10 = LN10Value();
-    MixedDec MixedDec::LN10Mult = LN10MultValue();
-    MixedDec MixedDec::HalfLN10Mult = HalfLN10MultValue();
-    MixedDec MixedDec::TenMillionth = TenMillionthValue();
-    MixedDec MixedDec::FiveMillionth = FiveMillionthValue();
-    MixedDec MixedDec::FiveBillionth = FiveBillionthValue();
-    MixedDec MixedDec::OneGMillionth = OneHundredMillionthValue();
-    MixedDec MixedDec::Nil = NilValue();
-    MixedDec MixedDec::PINum = PINumValue();
-    MixedDec MixedDec::ENum = ENumValue();
+    MediumDecVariant MediumDecVariant::PI = PIValue();
+    MediumDecVariant MediumDecVariant::One = OneValue();
+    MediumDecVariant MediumDecVariant::Two = TwoValue();
+    MediumDecVariant MediumDecVariant::NegativeOne = NegativeOneValue();
+    MediumDecVariant MediumDecVariant::Zero = ZeroValue();
+    MediumDecVariant MediumDecVariant::PointFive = Point5Value();
+    MediumDecVariant MediumDecVariant::JustAboveZero = JustAboveZeroValue();
+    MediumDecVariant MediumDecVariant::OneMillionth = OneMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveThousandth = FiveThousandthValue();
+    MediumDecVariant MediumDecVariant::Minimum = MinimumValue();
+    MediumDecVariant MediumDecVariant::Maximum = MaximumValue();
+    MediumDecVariant MediumDecVariant::E = EValue();
+    MediumDecVariant MediumDecVariant::LN10 = LN10Value();
+    MediumDecVariant MediumDecVariant::LN10Mult = LN10MultValue();
+    MediumDecVariant MediumDecVariant::HalfLN10Mult = HalfLN10MultValue();
+    MediumDecVariant MediumDecVariant::TenMillionth = TenMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveMillionth = FiveMillionthValue();
+    MediumDecVariant MediumDecVariant::FiveBillionth = FiveBillionthValue();
+    MediumDecVariant MediumDecVariant::OneGMillionth = OneHundredMillionthValue();
+    MediumDecVariant MediumDecVariant::Nil = NilValue();
+    MediumDecVariant MediumDecVariant::PINum = PINumValue();
+    MediumDecVariant MediumDecVariant::ENum = ENumValue();
 
 #if defined(MixedDec_EnableInfinityRep)
-    MixedDec MixedDec::Infinity = InfinityValue();
-    MixedDec MixedDec::NegativeInfinity = NegativeInfinityValue();
-    MixedDec MixedDec::ApproachingZero = ApproachingZeroValue();
+    MediumDecVariant MediumDecVariant::Infinity = InfinityValue();
+    MediumDecVariant MediumDecVariant::NegativeInfinity = NegativeInfinityValue();
+    MediumDecVariant MediumDecVariant::ApproachingZero = ApproachingZeroValue();
 #endif
 #if defined(MixedDec_EnableNaN)
-    MixedDec MixedDec::NaN = NaNValue();
+    MediumDecVariant MediumDecVariant::NaN = NaNValue();
 #endif
 #if defined(MixedDec_EnableNegativeZero)
-    MixedDec::TrailingType MixedDec::NegativeZeroRep = NegativeZeroRepValue();
-    MixedDec MixedDec::NegativeZero = NegativeZeroValue();
+    MediumDecVariant::TrailingType MediumDecVariant::NegativeZeroRep = NegativeZeroRepValue();
+    MediumDecVariant MediumDecVariant::NegativeZero = NegativeZeroValue();
 #endif
 #pragma endregion ValueDefine Source
 
@@ -5353,7 +5355,7 @@ namespace BlazesRusCode
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void MixedDec::ReadString(std::string Value)
+    inline void MediumDecVariant::ReadString(std::string Value)
     {
         IntValue = 0; DecimalHalf = 0;
         bool IsNegative = false;
@@ -5436,14 +5438,14 @@ namespace BlazesRusCode
     /// </summary>
     /// <param name="Value">The value.</param>
     /// <returns>MixedDec</returns>
-    inline MixedDec MixedDec::GetValueFromString(std::string Value)
+    inline MediumDecVariant MediumDecVariant::GetValueFromString(std::string Value)
     {
-        MixedDec NewSelf = Zero;
+        MediumDecVariant NewSelf = Zero;
         NewSelf.ReadString(Value);
         return NewSelf;
     }
 
-    std::string MixedDec::ToString()
+    std::string MediumDecVariant::ToString()
     {
 #if defined(AltDec_EnableInfinityRep) 
         if (DecimalHalf == InfinityRep)
@@ -5501,7 +5503,7 @@ namespace BlazesRusCode
         return Value;
     }
 
-    std::string MixedDec::ToFullString()
+    std::string MediumDecVariant::ToFullString()
     {
 #if defined(AltDec_EnableInfinityRep) 
         if (DecimalHalf == InfinityRep)
@@ -5558,7 +5560,7 @@ namespace BlazesRusCode
 #pragma endregion String Function Source
 
     /// <summary>
-    /// (MixedDec Version)Performs remainder operation then saves division result
+    /// (MediumDecVariant Version)Performs remainder operation then saves division result
     /// C = A - B * (A / B)
     /// </summary>
     class DLL_API MixedModChecker : public AltNumModChecker<MixedDec>
