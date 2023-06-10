@@ -159,7 +159,7 @@ namespace BlazesRusCode
         enum class RepType: int
         {
             NormalType = 0,//Normal Representation with no extra trailing digits
-            ExtendedNormalType = 0,//Normal Representation with extra trailing digits
+            ExtendedNormalType,//Normal Representation with extra trailing digits
             PINum,
             PIPower,
             ENum,
@@ -258,6 +258,7 @@ namespace BlazesRusCode
         /// If ExtraRep is -1, DecimalHalf>-2147483647, and MixedDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// If ExtraRep is zero, then MediumDecVariant represents +- 2147483647.999999999
         /// If ExtraRep is greater than zero, then MediumDecVariant represents +- 2147483647.999999999...+trailing digits
+        /// When ExtraRep is positive number greator than zero, acts as trailing digits cut of as result of division and multiplication(not fully implimented or tested yet)
         /// </summary>
         float ExtraRep;
 
