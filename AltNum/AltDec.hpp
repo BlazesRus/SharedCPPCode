@@ -61,7 +61,7 @@ AltDec_EnableInfinityPowers =
 AltDec_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 
-//--Can't be Enabled if any EnableNear Options enabled:
+//--Can't be currently Enabled if any EnableNear Options enabled:
 AltDec_EnableApproachingDivided = (Not Implimented)
 AltDec_EnableApproachingPointFive = Enables Approaching IntValue.49_infinitely_9 and .50_infinitely_1 as ExtraRep values -1 and 1(Not Implimented)
 //--
@@ -110,8 +110,6 @@ AltDec_EnableMixedFractional =
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
       (Not Fully Implimented)
 
-//--Only one of below can be active at once:
-
 AltDec_EnableERep =
       If AltDec_UseMediumDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
@@ -136,8 +134,8 @@ AltDec_EnablePIPowers =
       (Not Fully Implimented)
 
 //----
-AltDec_EnablePublicRepType =
-      Sets GetRepType code to be public instead of private
+AltDec_EnablePrivateRepType =
+      Sets GetRepType code to be private instead of public
 
 AltDec_TogglePreferedSettings =
       Force enables AltDec_EnablePIRep, AltDec_EnableInfinityRep, AltDec_EnableByDivRep,
@@ -154,13 +152,14 @@ AltDec_EnableMediumDecBasedSetValues =
     #define AltDec_EnablePIRep
     #define AltDec_EnableInfinityRep
     #define AltDec_EnableByDivRep
-    #define AltDec_EnablePublicRepType
 #endif
 
+//if 
 #if defined(AltDec_EnablePIRep) && defined(AltDec_DisablePIRep)
     #undef AltDec_DisablePIRep
 #endif
 
+//If Pi rep is neither disabled or enabled, default to enabling PI representation
 #if !defined(AltDec_DisablePIRep) && !defined(AltDec_EnablePIRep)
     #define AltDec_EnablePIRep
 #endif
@@ -219,35 +218,35 @@ ExtraFlags treated as bitwise flag storage
 #undefine MediumDecVariant
 #define MediumDecVariant AltDec
     private:
-#if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
-        //(If AltDec_EnableImaginaryNum is enabled, then represents Value*i )||(If AltDec_EnableENum is enabled, then represents Value*e) when ExtraRep==-2147483647
-        static const signed int IERep = -2147483647;
-#endif
 #if defined(AltDec_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
         static const signed int InfinityRep = -2147483648;
-        //Is Approaching IntValue when DecimalHalf==-2147483647
-        static const signed int ApproachingValRep = -2147483647;
-        /*
-        //When DecimalHalf == -2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
-        static signed int const ApproachingTopRep = -2147483647;
+        //Is Approaching IntValue when DecimalHalf==-2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+        static const signed int ApproachingTopRep = -2147483647;
         //When DecimalHalf == -2147483646, it represents Approaching IntValue from right towards left (IntValue.0__1)
         static signed int const ApproachingBottomRep = -2147483646;
 #if defined(AltDec_EnableApproachingMidDec)
             static signed int const MidFromTopRep = -2147483644;
             static signed int const MidFromBottomRep = -2147483645;
 #endif
-        */
 #endif
 #if defined(AltDec_EnablePIRep)
         //Is PI*Value representation when ExtraRep==-2147483648
         static const signed int PIRep = -2147483648;
 #endif
+#if defined(AltDec_EnableImaginaryNum)
+        //(If AltDec_EnableImaginaryNum is enabled, then represents Value*i )||(If AltDec_EnableENum is enabled, then represents Value*e) when ExtraRep==-2147483647
+        static const signed int IRep = -2147483647;
+#endif
+#if defined(AltDec_EnableENum)
+        //(If AltDec_EnableImaginaryNum is enabled, then represents Value*i )||(If AltDec_EnableENum is enabled, then represents Value*e) when ExtraRep==-2147483647
+        static const signed int ERep = -2147483646;
+#endif
 #if defined(AltDec_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
 #endif
-#if defined(AltDec_EnablePublicRepType)
+#if defined(AltDec_EnablePrivateRepType)
     public:
 #endif
         enum class RepType: int
@@ -377,7 +376,7 @@ ExtraFlags treated as bitwise flag storage
                 return RepType::ENumByDiv;
 #endif
 #endif
-            throw "Unknown or non-enabled representation type detected from AltDec";
+            throw "Unknown or non-enabled representation type detected from MixedDec";
             return RepType::UnknownType;//Catch-All Value;
         }
     public:
@@ -413,13 +412,27 @@ ExtraFlags treated as bitwise flag storage
         signed int DecimalHalf;
 
         /// <summary>
-		/// (Used exclusively for alternative represents of numbers including imaginery numbers)
+		/// (Used exclusively for alternative represents of numbers including imaginery numbers and for fractionals)
         /// If both DecimalHalf&ExtraRep are Positive with ExtraRep as non-zero, then ExtraRep acts as denominator
-        /// If DecimalHalf is positive and ExtraRep is -2147483648, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// If DecimalHalf is negative and ExtraRep is Positive, then MediumDecVariant represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
         /// If ExtraRep is zero and DecimalHalf is positive, then MediumDecVariant represents +- 2147483647.999999999
+        ///-----------------------------------------------
+        /// If ExtraRep is negative, it acts as representation type similar to MixedDec:
+        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
+        /// If ExtraRep is -10 and AltDec_EnableNegativeZero is enabled, then MediumDecVariant represents negative zero
+        /// If ExtraRep is -4 and AltDec_EnablePIPowers is enabled, than represents (IntValue^DecimalHalf)Pi(not implimented)
+        /// If ExtraRep is -3 and AltDec_EnableINumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
+        /// If ExtraRep is -2 and AltDec_EnableENumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * e
+        /// If ExtraRep is -1, DecimalHalf>-2147483647, and AltDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// </summary>
         signed int ExtraRep;
+
+private:
+        signed int ERep = -2;
+        signed int IRep = -3;
+        signed int PiPowerRep = -4;
+        signed int NegativeZeroRep = -10;
+public:
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.
