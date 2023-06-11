@@ -318,6 +318,9 @@ ExtraFlags treated as bitwise flag storage
 #endif
             IFractional,//  IntValue/DecimalHalf*i Representation
 #endif
+//#ifdef MixedDec_EnableComplexNumbers
+//            ComplexIRep,
+//#endif
 #endif
 #if defined(AltDec_EnableMixedFractional)
             ComplexIRep,
@@ -346,6 +349,15 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltDec_EnableUndefinedButInRange)//Such as result of Cos of infinity
             UndefinedButInRange,
 #endif
+//#ifndef MixedDec_DisableIntNumByDivisor
+//			//IntValue/(DecimalHalf*-1)
+//			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
+//			//For DecimalHalf Values:
+//			//between 0 and ApproachingBottomRep if MediumDecV2_DisableInfinityRep not toggled and MediumDecV2_EnableApproachingMidDec not toggled
+//			//between 0 and MidFromBottomRep if MediumDecV2_DisableInfinityRep not toggled and MediumDecV2_EnableApproachingMidDec is toggled
+//			//between 0 and -2147483648 if no infinity representations are enabled
+//            IntNumByDivisor,
+//#endif
             UnknownType
         };
         RepType GetRepType()
@@ -500,13 +512,6 @@ ExtraFlags treated as bitwise flag storage
         /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// </summary>
         signed int ExtraRep;
-
-private:
-        signed int ERep = -2;
-        signed int IRep = -3;
-        signed int PiPowerRep = -4;
-        signed int NegativeZeroRep = -10;
-public:
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.
