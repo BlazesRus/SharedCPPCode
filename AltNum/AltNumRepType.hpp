@@ -34,7 +34,7 @@
 //#ifdef MixedDec_EnableComplexNumbers
             ComplexIRep,
 //#endif
-#endif
+//#endif
 //#if defined(AltDec_EnableMixedFractional)
             ComplexIRep,
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
