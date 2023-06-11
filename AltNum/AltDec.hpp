@@ -1136,7 +1136,7 @@ public:
         static MediumDecVariant AlmostOne;
 
         /// <summary>
-        /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up(3.141592654)
+        /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDecVariant PINum;
