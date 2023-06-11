@@ -25,75 +25,75 @@
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 
-#ifdef AltDec_EnableMediumDecBasedSetValues
+#ifdef AltNum_EnableMediumDecBasedSetValues
     #include "MediumDec.hpp"
 #endif
 
 #include "AltNumModChecker.hpp"
 //Preprocessor options
 /*
-AltDec_EnableByDecimaledFractionals =
+AltNum_EnableByDecimaledFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
-AltDec_EnableAlternativeRepFractionals =
+AltNum_EnableAlternativeRepFractionals =
       Enables integer based fractionals for alternative representations such as Pi(partially implimented)
 
-AltDec_EnableNegativeZero =
+AltNum_EnableNegativeZero =
       (Not Implimented)
 
 //--Infinity based preprocessors--
-AltDec_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
+AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
       When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
       When DecimalHalf is -2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
       When DecimalHalf is -2147483646, it represents Approaching IntValue from right towards left (IntValue.0__1)
      (Not Fully Implimented)
-AltDec_EnableApproachingMidDec = 
+AltNum_EnableApproachingMidDec = 
       When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
       When DecimalHalf is -2147483644, it represents Approaching Half way point of {IntValue,IntValue+1} from right towards left (IntValue.50__1)
-      Assumes AltDec_EnableInfinityRep is enabled
+      Assumes AltNum_EnableInfinityRep is enabled
       (Not Implimented)
 
-AltDec_EnableNearPI = (Not Implimented)
-AltDec_EnableNearE = (Not Implimented)
-AltDec_EnableNearI = (Not Implimented)
+AltNum_EnableNearPI = (Not Implimented)
+AltNum_EnableNearE = (Not Implimented)
+AltNum_EnableNearI = (Not Implimented)
 
-AltDec_EnableInfinityPowers =
+AltNum_EnableInfinityPowers =
       Allows powers of infinity for operations where infinity is somehow more infinite than normal
       (Not Implimented)
 
-AltDec_DisplayApproachingAsReal =
+AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 
 //--Can't be currently Enabled if any EnableNear Options enabled:
-AltDec_EnableApproachingDivided = (Not Implimented)
-AltDec_EnableApproachingPointFive = Enables Approaching IntValue.49_infinitely_9 and .50_infinitely_1 as ExtraRep values -1 and 1(Not Implimented)
+AltNum_EnableApproachingDivided = (Not Implimented)
+AltNum_EnableApproachingPointFive = Enables Approaching IntValue.49_infinitely_9 and .50_infinitely_1 as ExtraRep values -1 and 1(Not Implimented)
 //--
 
 //----
 
-AltDec_EnableNaN =
+AltNum_EnableNaN =
       Enable NaN based representations and operations(Not Fully Implimented)
 
-AltDec_EnableHigherPrecisionPIConversion =
+AltNum_EnableHigherPrecisionPIConversion =
       (Not Implimented)
 
-AltDec_UseMediumDecBasedRepresentations =
+AltNum_UseMediumDecBasedRepresentations =
       Forces to calculate certain representations like MediumDec does 
       (preference for storing non-normal representations within value of negative DecimalHalf)
 	  (Not Implimented Yet)
 	  
-AltDec_EnableOverflowPreventionCode =
+AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
       (Not Implimented Yet)
 	  
-AltDec_DisableInfinityRepTypeReturn =
+AltNum_DisableInfinityRepTypeReturn =
 
-AltDec_DisablePIRep =
-      Force toggles AltDec_EnablePIRep to off
-      AltDec_EnablePIRep given greator priority if both both AltDec_DisablePIRep and AltDec_EnablePIRep
+AltNum_DisablePIRep =
+      Force toggles AltNum_EnablePIRep to off
+      AltNum_EnablePIRep given greator priority if both both AltNum_DisablePIRep and AltNum_EnablePIRep
       are set by preprocessor settings of project
 
-AltDec_EnablePIRep =
-      If AltDec_UseMediumDecBasedRepresentations enabled, then
+AltNum_EnablePIRep =
+      If AltNum_UseMediumDecBasedRepresentations enabled, then
         PI*(+- 2147483647.999999999) Representation enabled
         (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*PI))
       Otherwise represents pi within format of
@@ -101,19 +101,19 @@ AltDec_EnablePIRep =
          then AltDec represents +- 2147483647.999999999 * Pi (Not Fully Implimented)
          If DecimalHalf is positive and and ExtraRep is between AlternativeFractionalLowerBound and 0,
          then AltDec represents (+- 2147483647.999999999 * Pi)/(ExtraRep*-1)
-	  (Not Fully Implimented--Enabled by default if AltDec_DisablePIRep not set)
+	  (Not Fully Implimented--Enabled by default if AltNum_DisablePIRep not set)
 
-AltDec_EnableComplexNum =
+AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
-      (Requires AltDec_EnableImaginaryNum, Not Implimented Yet)
+      (Requires AltNum_EnableImaginaryNum, Not Implimented Yet)
 
-AltDec_EnableMixedFractional =
+AltNum_EnableMixedFractional =
       If DecimalHalf is negative and ExtraRep is Positive,
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
       (Not Fully Implimented)
 
-AltDec_EnableERep =
-      If AltDec_UseMediumDecBasedRepresentations enabled, then
+AltNum_EnableERep =
+      If AltNum_UseMediumDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
     (When DecimalHalf is between -1000000001 and -2000000000 (when DecimalHalf is -2000000000 is Equal to IntValue*e))
       Otherwise represents e within format of
@@ -123,7 +123,7 @@ AltDec_EnableERep =
         represents (+- 2147483647.999999999 * e)/(ExtraRep*-1)
       (Not Fully Implimented)
 
-AltDec_EnableImaginaryNum =
+AltNum_EnableImaginaryNum =
       If DecimalHalf is positive and ExtraRep is -2147483647, then
       represents +- 2147483647.999999999i
       If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
@@ -131,79 +131,79 @@ AltDec_EnableImaginaryNum =
       (Not Fully Implimented)
 
 //----
-AltDec_EnablePrivateRepType =
+AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
-AltDec_TogglePreferedSettings =
-      Force enables AltDec_EnablePIRep, AltDec_EnableInfinityRep, AltDec_EnableByDecimaledFractionals,
-      and AltDec_EnablePublicRepType
+AltNum_TogglePreferedSettings =
+      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableByDecimaledFractionals,
+      and AltNum_EnablePublicRepType
 
-AltDec_EnableUndefinedButInRange =
+AltNum_EnableUndefinedButInRange =
 
-AltDec_DisableSwitchBasedConversion =
+AltNum_DisableSwitchBasedConversion =
 
-AltDec_EnableMediumDecBasedSetValues =
+AltNum_EnableMediumDecBasedSetValues =
 
-AltDec_EnablePIPowers =
+AltNum_EnablePIPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
-	  Can't be enabled at same time as AltDec_EnableDecimaledAlternativeFractionals
+	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
       (Not Fully Implimented)
-AltDec_EnableNormalPowers =
+AltNum_EnableNormalPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf^(ExtraRep*-1)
-	  Can't be enabled at same time as AltDec_EnableDecimaledAlternativeFractionals or AltDec_EnablePIPowers
+	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePIPowers
       (Not Implimented)
 	  
-AltDec_EnableDecimaledAlternativeFractionals = 
-   Automatically enabled if AltDec_EnableDecimaledPiFractionals, AltDec_EnableDecimaledEFractionals, or AltDec_EnableDecimaledEFractionals enabled
-   Not to be confused with AltDec_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
-AltDec_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltDec_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltDec_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledAlternativeFractionals = 
+   Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled
+   Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
+AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 */
 
 #ifdef 
 
-#if defined(AltDec_EnableDecimaledAlternativeFractionals) && defined(AltDec_EnablePIPowers)
-#undef AltDec_EnablePIPowers
+#if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePIPowers)
+#undef AltNum_EnablePIPowers
 #endif
 
-#if (defined(AltDec_EnableDecimaledAlternativeFractionals)||defined(AltDec_EnablePIPowers)) && defined(AltDec_EnableNormalPowers)
-#undef AltDec_EnableNormalPowers
+#if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePIPowers)) && defined(AltNum_EnableNormalPowers)
+#undef AltNum_EnableNormalPowers
 #endif
 
-#if defined(AltDec_TogglePreferedSettings)
-    #define AltDec_EnablePIRep
-    #define AltDec_EnableInfinityRep
+#if defined(AltNum_TogglePreferedSettings)
+    #define AltNum_EnablePIRep
+    #define AltNum_EnableInfinityRep
 #endif
 
 //if 
-#if defined(AltDec_EnablePIRep) && defined(AltDec_DisablePIRep)
-    #undef AltDec_DisablePIRep
+#if defined(AltNum_EnablePIRep) && defined(AltNum_DisablePIRep)
+    #undef AltNum_DisablePIRep
 #endif
 
 //If Pi rep is neither disabled or enabled, default to enabling PI representation
-#if !defined(AltDec_DisablePIRep) && !defined(AltDec_EnablePIRep)
-    #define AltDec_EnablePIRep
+#if !defined(AltNum_DisablePIRep) && !defined(AltNum_EnablePIRep)
+    #define AltNum_EnablePIRep
 #endif
 
-#if defined(AltDec_EnableENum) && (defined(AltDec_EnableImaginaryNum)||defined(AltDec_EnablePIPowers))
-    #undef AltDec_EnableENum
+#if defined(AltNum_EnableENum) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePIPowers))
+    #undef AltNum_EnableENum
 #endif
 
-#if defined(AltDec_EnableENum) || defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnablePIPowers)
-    #define AltDec_OtherNegativeExtraRepsDefined
+#if defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnablePIPowers)
+    #define AltNum_OtherNegativeExtraRepsDefined
 #endif
 
-#if defined(AltDec_EnableNearPI) && !defined(AltDec_EnablePIRep)
-    #undef AltDec_EnableNearPI
+#if defined(AltNum_EnableNearPI) && !defined(AltNum_EnablePIRep)
+    #undef AltNum_EnableNearPI
 #endif
 
-#if defined(AltDec_EnableNearE) && !defined(AltDec_EnableERep)
-    #undef AltDec_EnableNearE
+#if defined(AltNum_EnableNearE) && !defined(AltNum_EnableERep)
+    #undef AltNum_EnableNearE
 #endif
 
-#if defined(AltDec_EnableNearI) && !defined(AltDec_EnableImaginaryNum)
-    #undef AltDec_EnableNearI
+#if defined(AltNum_EnableNearI) && !defined(AltNum_EnableImaginaryNum)
+    #undef AltNum_EnableNearI
 #endif
 
 namespace BlazesRusCode
@@ -240,80 +240,80 @@ ExtraFlags treated as bitwise flag storage
 #undefine MediumDecVariant
 #define MediumDecVariant AltDec
     private:
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
         static const signed int InfinityRep = -2147483648;
         //Is Approaching IntValue when DecimalHalf==-2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
         static const signed int ApproachingTopRep = -2147483647;
         //When DecimalHalf == -2147483646, it represents Approaching IntValue from right towards left (IntValue.0__1)
         static signed int const ApproachingBottomRep = -2147483646;
-#if defined(AltDec_EnableApproachingMidDec)
+#if defined(AltNum_EnableApproachingMidDec)
             static signed int const MidFromTopRep = -2147483644;
             static signed int const MidFromBottomRep = -2147483645;
 #endif
 #endif
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         //Is PI*Value representation when ExtraRep==-2147483648
         static const signed int PIRep = -2147483648;
-#ifdef AltDec_EnableAlternativeRepFractionals
-        //If AltDec_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
+#ifdef AltNum_EnableAlternativeRepFractionals
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
         static const signed int PIByDivisorRep = -2147483645;
 #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
-        //If AltDec_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*i 
+#if defined(AltNum_EnableImaginaryNum)
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*i 
         static const signed int IRep = -2147483647;
-#ifdef AltDec_EnableAlternativeRepFractionals
-        //If AltDec_EnableImaginaryNum is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
+#ifdef AltNum_EnableAlternativeRepFractionals
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
         static const signed int IByDivisorRep = -2147483644;
 #endif
 #endif
-#if defined(AltDec_EnableENum)
-        //If AltDec_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*e
+#if defined(AltNum_EnableENum)
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*e
         static const signed int ERep = -2147483646;
-#ifdef AltDec_EnableAlternativeRepFractionals
-        //If AltDec_EnableImaginaryNum is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
+#ifdef AltNum_EnableAlternativeRepFractionals
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
         static const signed int EByDivisorRep = -2147483643;
 #endif
 #endif
         static const signed int AlternativeFractionalLowerBound = -2147483642;
         static const signed int MixedFractionalLowerBound = -2147483642;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
 #endif
-#if defined(AltDec_EnablePrivateRepType)
+#if defined(AltNum_EnablePrivateRepType)
     public:
 #endif
         enum class RepType: int
         {
             NormalType = 0,
             NumByDiv,
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
             PINum,
-#if defined(AltDec_EnablePIPowers)
+#if defined(AltNum_EnablePIPowers)
             PIPower,
 #endif
-#if defined(AltDec_EnableAlternativeRepFractionals)
-#if defined(AltDec_EnableDecimaledPiFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledPiFractionals)
             PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
 #endif
             PiFractional,//  IntValue/DecimalHalf*Pi Representation
 #endif
 #endif
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             ENum,
-#if defined(AltDec_EnableAlternativeRepFractionals)
-#if defined(AltDec_EnableDecimaledEFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledEFractionals)
             ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
 #endif
             EFractional,//  IntValue/DecimalHalf*e Representation
 #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             INum,
-#if defined(AltDec_EnableAlternativeRepFractionals)
-#if defined(AltDec_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv,//(Value/(ExtraRep*-1))*i Representation
 #endif
             IFractional,//  IntValue/DecimalHalf*i Representation
@@ -322,31 +322,31 @@ ExtraFlags treated as bitwise flag storage
 //            ComplexIRep,
 //#endif
 #endif
-#if defined(AltDec_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
             ComplexIRep,
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
             MixedE,
             MixedI,
 #endif
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
             ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
-#if defined(AltDec_EnableApproachingDivided)
+#if defined(AltNum_EnableApproachingDivided)
             ApproachingTopByDiv,//(Approaching Away from Zero is equal to IntValue + 0.9999.../ExtraRep if positive, IntValue - 0.9999.../ExtraRep if negative) 
 #endif
 #endif
             NaN,
             NegativeZero,
-#if defined(AltDec_EnableNearPI)
+#if defined(AltNum_EnableNearPI)
             NearPI,//(Approaching Away from Zero is equal to 0.9999...PI)
 #endif
-#if defined(AltDec_EnableNearE)
+#if defined(AltNum_EnableNearE)
             NearE,//(Approaching Away from Zero is equal to 0.9999...e)
 #endif
-#if defined(AltDec_EnableNearI)
+#if defined(AltNum_EnableNearI)
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
-#if defined(AltDec_EnableUndefinedButInRange)//Such as result of Cos of infinity
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             UndefinedButInRange,
 #endif
 //#ifndef MixedDec_DisableIntNumByDivisor
@@ -362,8 +362,8 @@ ExtraFlags treated as bitwise flag storage
         };
         RepType GetRepType()
         {
-#if defined(AltDec_EnableInfinityRep)
-#if !defined(AltDec_DisableInfinityRepTypeReturn)
+#if defined(AltNum_EnableInfinityRep)
+#if !defined(AltNum_DisableInfinityRepTypeReturn)
             if(DecimalHalf==InfinityRep)
             {
                 if(IntValue==1)//If Positive Infinity, then convert number into MaximumValue instead when need as real number
@@ -381,21 +381,21 @@ ExtraFlags treated as bitwise flag storage
             {
                 if(ExtraRep==0)
                     return RepType::ApproachingBottom;//Approaching from right to IntValue
-#if defined(AltDec_EnableApproachingDivided)
+#if defined(AltNum_EnableApproachingDivided)
 				else if(ExtraRep>0)
 				    return RepType::ApproachingTopByDiv;//Approaching from left divided by ExtraRep value
 #else
-#if defined(AltDec_EnablePIRep)
-#if defined(AltDec_EnableNearPI)
+#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnableNearPI)
                 else if (ExtraRep == PIRep)
                     return RepType::NearPI;
 #endif
 #endif
-#if defined(AltDec_EnableNearE)
+#if defined(AltNum_EnableNearE)
                 else if (ExtraRep == ERep)
                     return RepType::NearE;
 #endif
-#if defined(AltDec_EnableNearI)
+#if defined(AltNum_EnableNearI)
                 else if (ExtraRep == IRep)
                     return RepType::NearI;
 #endif
@@ -406,32 +406,32 @@ ExtraFlags treated as bitwise flag storage
 #endif
             if(ExtraRep==0)
 			{
-#if defined(AltDec_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
 				if(DecimalHalf<0)
 				 return RepType::MixedFrac;
 				
 #endif
                 return RepType::NormalType;
 			}
-#ifdef AltDec_EnablePIRep
+#ifdef AltNum_EnablePIRep
             else if(ExtraRep==PIRep)
                 return RepType::PINum;
             else if(ExtraRep==PiByDivisorRep)
 				return RepType::PiIntNumByDiv;
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
             else if(ExtraRep>0)
                 return RepType::NumByDiv;
 #endif
 
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             else if(DecimalHalf==NaNRep)
                 return RepType::NaN;
 #endif
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
-#if AltDec_EnableMixedEFractional
+#if AltNum_EnableMixedEFractional
 				if(DecimalHalf<0)
 					return RepType::MixedE;
 				else
@@ -441,10 +441,10 @@ ExtraFlags treated as bitwise flag storage
             else if(ExtraRep==EByDivisorRep)
 					return RepType::ENumByDiv;
 #endif
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
-#if AltDec_EnableMixedEFractional
+#if AltNum_EnableMixedEFractional
 				if(DecimalHalf<0)
 					return RepType::MixedE;
 				else
@@ -455,13 +455,13 @@ ExtraFlags treated as bitwise flag storage
 					return RepType::ENumByDiv;
 #endif
             else
-#if defined(AltDec_EnablePiEFractionals)
+#if defined(AltNum_EnablePiEFractionals)
                 return RepType::PiNumByDiv;
-#elif defined(AltDec_EnableDecimaledEFractionals)
+#elif defined(AltNum_EnableDecimaledEFractionals)
                 return RepType::ENumByDiv;
-#elif defined(AltDec_EnableDecimaledIFractionals)
+#elif defined(AltNum_EnableDecimaledIFractionals)
                 return RepType::INumByDiv;
-#elif defined(AltDec_EnableMixedFractional)
+#elif defined(AltNum_EnableMixedFractional)
                 return RepType::MixedFrac;
 #else
                 throw "Unknown or non-enabled representation type detected from AltDec";
@@ -509,7 +509,7 @@ ExtraFlags treated as bitwise flag storage
         ///-----------------------------------------------
         /// If ExtraRep is negative, it acts as representation type similar to AltDec:
 		/// If ExtraRep is between 0 and , it acts as representation type similar to AltDec:
-        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
+        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// </summary>
         signed int ExtraRep;
 
@@ -532,7 +532,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = 0;
         }
 
-#if defined(AltDec_EnableNegativeZero)
+#if defined(AltNum_EnableNegativeZero)
         void SetAsNegativeZero()
         {
             IntValue = NegativeRep; DecimalHalf = 0;
@@ -550,8 +550,8 @@ ExtraFlags treated as bitwise flag storage
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
         }
         
-#if defined(AltDec_EnablePIRep)
-#if defined(AltDec_EnableMediumDecBasedSetValues)
+#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnableMediumDecBasedSetValues)
         void SetPiValFromMediumDec(MediumDec Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
@@ -587,7 +587,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = Divisor;
         }
         
-#if defined(AltDec_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
         void SetMixedFractionalVal(int WholeNum, int Numerator, int Denom)
         {
             IntValue = Value.IntValue;
@@ -605,7 +605,7 @@ ExtraFlags treated as bitwise flag storage
 
 //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
 // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         void SetAsInfinity()
         {
             IntValue = 1; DecimalHalf = InfinityRep;
@@ -665,7 +665,7 @@ private:
         }
 public:
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
             IntValue = 0; DecimalHalf = NaNRep;
@@ -679,13 +679,13 @@ public:
         }
 #endif
         private:
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         void ConvertPIToNum()
         {
 
             ExtraRep = 0;
             // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PIRepresentation
-            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltDec_UseLowerPrecisionPI is enabled
+            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPI is enabled
             //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PINum*DecimalHalf/1000000000))
             //Calculations from HiPer Calc
             //683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
@@ -700,7 +700,7 @@ public:
                 //Display error/warning
                 IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
             }
-#if defined(AltDec_DisableSwitchBasedConversion)
+#if defined(AltNum_DisableSwitchBasedConversion)
             else if (IntValue == NegativeRep)//-0.XXX... * PI
             {
                 BasicMultOp(PINum);
@@ -771,7 +771,7 @@ public:
         }
 #endif
 
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
         void ConvertEToNum()
         {
             BasicMultOp(ENum);
@@ -787,7 +787,7 @@ public:
         void ConvertToNumRep()
         {
             //Check for Non-ExtraRep focused special states first
-#ifdef AltDec_EnableInfinityRep
+#ifdef AltNum_EnableInfinityRep
             if(DecimalHalf==InfinityRep)
             {
                 ExtraRep = 0;
@@ -814,7 +814,7 @@ public:
                 return;
             }
 #endif
-#if defined(AltDec_EnableNaN) && defined(AltDec_EnableNaNConversionCheck)//Disable conversion check for NaN by default(unless AltDec_EnableNaNConversionCheck preprocessor added)
+#if defined(AltNum_EnableNaN) && defined(AltNum_EnableNaNConversionCheck)//Disable conversion check for NaN by default(unless AltNum_EnableNaNConversionCheck preprocessor added)
             if(DecimalHalf==NaNRep)//Set as Zero instead of NaN
             {
                 SetAsZero(); return;
@@ -822,29 +822,29 @@ public:
 #endif
             if(ExtraRep==0)//Skip converting if already normal number state(Equal to default MediumDec format)
                 return;
-#ifdef AltDec_EnablePIRep
+#ifdef AltNum_EnablePIRep
             if(ExtraRep==PIRep)
             {
                 ConvertPIToNum(); return;
             }
             else
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(ExtraRep<0)
             {
                 IntValue = -2147483648;
             }
-#elif defined(AltDec_EnableENum)
+#elif defined(AltNum_EnableENum)
             if(ExtraRep<0)
             {
                 ConvertEToNum(); return;
             }
 #endif
-#if defined(AltDec_OtherNegativeExtraRepsDefined) || defined(AltDec_EnablePIRep)
+#if defined(AltNum_OtherNegativeExtraRepsDefined) || defined(AltNum_EnablePIRep)
             else
             {
 #endif
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                 if(DecimalHalf<0)//Mixed Fraction
                 {
                     int TempAdd = IntValue;
@@ -855,13 +855,13 @@ public:
                 else//Value Divided by ExtraRep
                 {
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
                     BasicIntDivOp(ExtraRep);
 #endif
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                 }
 #endif
-#if defined(AltDec_OtherNegativeExtraRepsDefined) || defined(AltDec_EnablePIRep)
+#if defined(AltNum_OtherNegativeExtraRepsDefined) || defined(AltNum_EnablePIRep)
             }
 #endif
             ExtraRep = 0;
@@ -870,7 +870,7 @@ public:
         //Switch based version of ConvertToNumRep
         void ConvertToNormType(RepType& repType)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
             {
                 ExtraRep = 0;
@@ -889,7 +889,7 @@ public:
             {
             case RepType::NormalType:
                 break;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             case RepType::ApproachingBottom:
                 DecimalHalf = 1; ExtraRep = 0;
                 break;
@@ -897,7 +897,7 @@ public:
                 DecimalHalf = 999999999; ExtraRep = 0;
                 break;
 #endif
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
             case RepType::PINum:
                 BasicMultOp(PINum);
                 ExtraRep = 0;
@@ -907,7 +907,7 @@ public:
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             case RepType::ENum:
                 BasicMultOp(ENum);
                 ExtraRep = 0;
@@ -941,7 +941,7 @@ public:
             IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
         }
 private:
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         static MediumDecVariant ApproachingRightRealValue(int IntValue=0)
         {
             return AltDec(IntValue, 999999999);
@@ -1014,7 +1014,7 @@ private:
         
         static MediumDecVariant EValue()
         {
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             return AltDec(1, 0, IERep);
 #else
             return AltDec(2, 718281828, 0);
@@ -1149,7 +1149,7 @@ public:
         /// <returns>MediumDec</returns>
         static MediumDecVariant ENum;
         
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         static MediumDecVariant Infinity;
         static MediumDecVariant NegativeInfinity;
         static MediumDecVariant ApproachingZero;
@@ -1600,8 +1600,8 @@ public:
         /// <returns>bool</returns>
         friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
-    #if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableInfinityRep)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PIRep))
     #else
                 if(self.DecimalHalf!=InfinityRep)
@@ -1610,7 +1610,7 @@ public:
                     self.ConvertToNumRep();
                 }
 
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PIRep))
     #else
                 if(Value.DecimalHalf!=InfinityRep)
@@ -1619,7 +1619,7 @@ public:
                     Value.ConvertToNumRep();
                 }
 #else
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(self.ExtraRep>=0||self.ExtraRep==PIRep)
                 {
                     self.ConvertToNumRep();
@@ -1628,7 +1628,7 @@ public:
                 self.ConvertToNumRep();
     #endif
 
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(Value.ExtraRep>=0||Value.ExtraRep==PIRep)
                 {
                     Value.ConvertToNumRep();
@@ -1637,7 +1637,7 @@ public:
                 Value.ConvertToNumRep();
     #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf && self.ExtraRep == Value.ExtraRep);
 #else
             return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
@@ -1652,8 +1652,8 @@ public:
         /// <returns>bool</returns>
         friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
-    #if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableInfinityRep)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PIRep))
     #else
                 if(self.DecimalHalf!=InfinityRep)
@@ -1662,7 +1662,7 @@ public:
                     self.ConvertToNumRep();
                 }
 
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PIRep))
     #else
                 if(Value.DecimalHalf!=InfinityRep)
@@ -1671,7 +1671,7 @@ public:
                     Value.ConvertToNumRep();
                 }
 #else
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(self.ExtraRep>=0||self.ExtraRep==PIRep)
                 {
                     self.ConvertToNumRep();
@@ -1680,7 +1680,7 @@ public:
                 self.ConvertToNumRep();
     #endif
 
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 if(Value.ExtraRep>=0||Value.ExtraRep==PIRep)
                 {
                     Value.ConvertToNumRep();
@@ -1689,7 +1689,7 @@ public:
                 Value.ConvertToNumRep();
     #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf || self.ExtraRep != Value.ExtraRep);
 #else
             return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
@@ -1704,7 +1704,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(Value.ExtraRep==InfinityRep)
@@ -1786,7 +1786,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==Value.IntValue||Value.IntValue==1)
@@ -1868,7 +1868,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(Value.ExtraRep==InfinityRep)
@@ -1953,7 +1953,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(Value.ExtraRep==InfinityRep)
@@ -2053,7 +2053,7 @@ public:
                             Value.ConvertPIToNum();
                             self.BasicAddOp(Value);
                             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                         case RepType::ENum:
                         case RepType::ENumByDiv:
                             Value.ConvertEToNum();
@@ -2266,7 +2266,7 @@ public:
                             break;
                     }
                     break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::ENum:
                     switch (RRep)
                     {
@@ -2293,7 +2293,7 @@ public:
                             break;
                     }
                     break;
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                     //if(RRep==RepType::INumByDiv)
                     //{
@@ -2303,7 +2303,7 @@ public:
                         throw "Can't add imaginary numbers to real numbers unless complex representation enabled.";
                     //}
                     break;
-#elif defined(AltDec_EnablePIPowers)
+#elif defined(AltNum_EnablePIPowers)
                 case RepType::PIPower:
                     switch (RRep)
                     {
@@ -2313,7 +2313,7 @@ public:
                     }
                     break;
 #endif
-#if defined(AltDec_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
                 case RepType::MixedFrac:
                     switch (RRep)
                     {
@@ -2322,7 +2322,7 @@ public:
                             break;
                     }
                     break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::MixedE:
                     switch (RRep)
                     {
@@ -2331,9 +2331,9 @@ public:
                             break;
                     }
                     break;
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                 case RepType::MixedE:
-#if defined(AltDec_EnableComplexNum)
+#if defined(AltNum_EnableComplexNum)
      //               switch (RRep)
      //               {
      //                   default:
@@ -2387,7 +2387,7 @@ public:
                             Value.ConvertPIToNum();
                             self.BasicSubOp(Value);
                             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                         case RepType::ENum:
                         case RepType::ENumByDiv:
                             Value.ConvertEToNum();
@@ -2494,7 +2494,7 @@ public:
                             break;
                     }
                     break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::ENum:
                     switch (RRep)
                     {
@@ -2508,7 +2508,7 @@ public:
                     }
                     break;
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                     throw "Can't subtract imaginary numbers from real numbers unless complex representation enabled.";
                     break;
@@ -2536,7 +2536,7 @@ public:
                             self.BasicMultOp(Value);
                             self.ExtraRep = PIRep;
                             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                         case RepType::ENum://X * (Y*e)
                             self.BasicMultOp(Value);
                             self.ExtraRep = IERep;
@@ -2561,7 +2561,7 @@ public:
                             self.BasicMultOp(Value);
                             self.BasicDivIntOp(Value.ExtraRep);
                             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                         case RepType::ENum://X * (Y*e)
                             self.BasicMultOp(Value);
                             self.ExtraRep = IERep;
@@ -2658,7 +2658,7 @@ public:
                             break;
                     }
                     break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::ENum:
                     switch (RRep)
                     {
@@ -2679,7 +2679,7 @@ public:
                             break;
                     }
                     break;
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                     switch (RRep)
                     {
@@ -2722,7 +2722,7 @@ public:
                         //	Value.ConvertPIToNum();
                         //	self.BasicDivOp(Value);
                         //	break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                         //case RepType::ENum:
                         //case RepType::ENumByDiv:
                         //	Value.ConvertEToNum();
@@ -2784,7 +2784,7 @@ public:
                             break;
                     }
                     break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::ENum:
                     switch (RRep)
                     {
@@ -2797,7 +2797,7 @@ public:
                             break;
                     }
                     break;
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                     switch (RRep)
                     {
@@ -2922,7 +2922,7 @@ public:
             }
             else if (Value == Zero)
                 return self;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf==InfinityRep)
                 return self;
             if (Value.DecimalHalf == InfinityRep)
@@ -2939,15 +2939,15 @@ public:
                 {
                     case RepType::NormalType:
                     case RepType::PINum:
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                     case RepType::ENum:
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                     case RepType::INum:
 #endif
                         self.BasicAddOp(Value);
                         break;
 
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
 #endif
                     case RepType::ApproachingBottom:
                         if (self.IntValue == NegativeRep)
@@ -3049,14 +3049,14 @@ public:
                         else
                             self.CatchAllAddition(Value, LRep, RRep);
                         break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                     case RepType::ENumByDiv:
                         if (self.ExtraRep == Value.ExtraRep)
                             self.BasicAddOp(Value);
                         else
                             self.CatchAllAddition(Value, LRep, RRep);
                         break;
-#elif defined(AltDec_EnableImaginaryNum)
+#elif defined(AltNum_EnableImaginaryNum)
                     case RepType::INumByDiv:
                         if (self.ExtraRep == Value.ExtraRep)
                             self.BasicAddOp(Value);
@@ -3172,7 +3172,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
                 return self;
             if (Value.DecimalHalf == InfinityRep)
@@ -3187,7 +3187,7 @@ public:
             {
                 if(self.ExtraRep==0||Value.ExtraRep==PIRep)
                 {
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     if(self.DecimalHalf<0)//MixedFractional
                     {
                     
@@ -3196,16 +3196,16 @@ public:
                     {
 #endif
                         self.BasicSubOp(Value);
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     }
 #endif
                 }
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
                 else if(self.ExtraRep>0)
-    #elif defined(AltDec_EnableENum)
+    #elif defined(AltNum_EnableENum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
@@ -3216,7 +3216,7 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
                 else
                 {
                 
@@ -3268,7 +3268,7 @@ public:
         {
             if (value == 0)
                 return self;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
@@ -3277,13 +3277,13 @@ public:
                 self.ConvertToNumRep();
                 self.PartialIntAddition(value);
             }
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             else if(self.ExtraRep==IERep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltDec_EnableENum)
+#elif defined(AltNum_EnableENum)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3335,7 +3335,7 @@ public:
         {
             if (value == 0)
                 return self;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
@@ -3344,13 +3344,13 @@ public:
                 self.ConvertToNumRep();
                 self.PartialIntSubtraction(value);
             }
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             else if(self.ExtraRep==IERep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltDec_EnableENum)
+#elif defined(AltNum_EnableENum)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3410,7 +3410,7 @@ public:
         {
             if (value == 0)
                 return self;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
@@ -3419,13 +3419,13 @@ public:
                 self.ConvertToNumRep();
                 self.PartialUnsignedAddition(value);
             }
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             else if(self.ExtraRep==IERep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltDec_EnableENum)
+#elif defined(AltNum_EnableENum)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3498,7 +3498,7 @@ public:
         {
             if (value == 0)
                 return self;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
@@ -3507,13 +3507,13 @@ public:
                 self.ConvertToNumRep();
                 self.PartialUnsignedSubtraction(value);
             }
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             else if(self.ExtraRep==IERep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltDec_EnableENum)
+#elif defined(AltNum_EnableENum)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3700,7 +3700,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
             {
                 if (Value.DecimalHalf == InfinityRep && self.IntValue == Value.IntValue && self.IntValue == -1)
@@ -3719,7 +3719,7 @@ public:
             {
                 if(self.ExtraRep==0)
                 {
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     if(self.DecimalHalf<0)//MixedFractional
                     {
                     
@@ -3728,7 +3728,7 @@ public:
                     {
 #endif
                         self.PartialMultOp(Value);
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     }
 #endif
                 }
@@ -3736,12 +3736,12 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
                 else if(self.ExtraRep>0)
-    #elif defined(AltDec_EnableENum)
+    #elif defined(AltNum_EnableENum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
@@ -3752,7 +3752,7 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
                 else
                 {
                 
@@ -3854,7 +3854,7 @@ public:
             {
                 self.PartialIntMultOp(Value);
             }
-#if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
             else if (self.ExtraRep == IERep)
             {
                 if (Value == self.ExtraRep)
@@ -3991,7 +3991,7 @@ public:
 
         void BasicDivOp(MediumDecVariant& Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
             {
                 SetAsZero();
@@ -4034,7 +4034,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& DivOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
             {
                 self.SetAsZero(); return self;
@@ -4061,7 +4061,7 @@ public:
             {
                 if(self.ExtraRep==0)
                 {
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     if(self.DecimalHalf<0)//MixedFractional
                     {
                     
@@ -4070,7 +4070,7 @@ public:
                     {
 #endif
                         self.PartialDivOp(Value);
-#if AltDec_EnableMixedFractional
+#if AltNum_EnableMixedFractional
                     }
 #endif
                 }
@@ -4078,12 +4078,12 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
                 else if(self.ExtraRep>0)
-    #elif defined(AltDec_EnableENum)
+    #elif defined(AltNum_EnableENum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
@@ -4094,7 +4094,7 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
                 else
                 {
                 
@@ -4158,7 +4158,7 @@ public:
         {
             if (Value == 0)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
 #else
                 throw "Target value can not be divided by zero";
@@ -4186,7 +4186,7 @@ public:
         {
             if (Value == 0)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity(); return self;
 #else
                 throw "Target value can not be divided by zero";
@@ -4208,7 +4208,7 @@ public:
             {
                 self.PartialIntDivOp(Value);
             }
-#if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
             else if (self.ExtraRep == IERep)
             {
             }
@@ -4219,7 +4219,7 @@ public:
             {
                 self.ExtraRep *= Value;
             }
-#if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
             else
             {
 
@@ -4387,12 +4387,12 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
                 else if(self.ExtraRep>0)
-    #elif defined(AltDec_EnableENum)
+    #elif defined(AltNum_EnableENum)
                 else if(self.ExtraRep==IERep)
                 {
                 }
@@ -4403,7 +4403,7 @@ public:
                 {
                 
                 }
-    #if defined(AltDec_EnableImaginaryNum) || defined(AltDec_EnableENum)
+    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
                 else
                 {
                 
@@ -4873,7 +4873,7 @@ public:
         template<typename IntType>
         friend bool operator<(MediumDecVariant self, IntType Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==-1)
@@ -4882,7 +4882,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -4917,7 +4917,7 @@ public:
         template<typename IntType>
         friend bool operator<=(MediumDecVariant self, IntType Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==-1)
@@ -4926,7 +4926,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -4961,7 +4961,7 @@ public:
         template<typename IntType>
         friend bool operator>(MediumDecVariant self, IntType Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -4970,7 +4970,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5005,7 +5005,7 @@ public:
         template<typename IntType>
         friend bool operator>=(MediumDecVariant self, IntType Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -5014,7 +5014,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5079,7 +5079,7 @@ public:
         template<typename IntType>
         friend bool operator<(IntType Value, MediumDecVariant self)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -5088,7 +5088,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5123,7 +5123,7 @@ public:
         template<typename IntType>
         friend bool operator<=(IntType Value, MediumDecVariant self)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -5132,7 +5132,7 @@ public:
                     return false;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5167,7 +5167,7 @@ public:
         template<typename IntType>
         friend bool operator>(IntType Value, MediumDecVariant self)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -5176,7 +5176,7 @@ public:
                     return true;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5211,7 +5211,7 @@ public:
         template<typename IntType>
         friend bool operator>=(IntType Value, MediumDecVariant self)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
                 if(self.IntValue==1)
@@ -5220,7 +5220,7 @@ public:
                     return true;
             }
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             if(self.ExtraRep>=0||self.ExtraRep==PIRep)
             {
                 self.ConvertToNumRep();
@@ -5850,17 +5850,17 @@ public:
                 Value.ConvertPIToNum();//return CeilInt(Value.ConvertPIToNum());
                 break;
             }
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             case RepType::ENum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
             case RepType::ENumByDiv:
 #endif
                 Value.ConvertToNumRep();
                 break;
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
             case RepType::INumByDiv:
 #endif
                 break;
@@ -5898,7 +5898,7 @@ public:
         /// <returns>MediumDecVariant &</returns>
         MediumDecVariant& Trunc()
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
                 return *this;
             else if (DecimalHalf == ApproachingValRep)
@@ -5911,7 +5911,7 @@ public:
                 ConvertToNumRep();
                 DecimalHalf = 0;
                 if (IntValue == NegativeRep) { IntValue = 0; }
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             }
 #endif
             return *this;
@@ -5933,10 +5933,10 @@ public:
         /// <returns>MediumDecVariant&</returns>
         MediumDecVariant& Abs()
         {
-/*#ifdef AltDec_EnableInfinityRep
+/*#ifdef AltNum_EnableInfinityRep
             if (DecimalHalf == InfinityRep)
             {
-#ifdef AltDec_EnableInfinityPowers//Not Reaaly needed to treat
+#ifdef AltNum_EnableInfinityPowers//Not Reaaly needed to treat
                 if (IntValue<0)//Force negative Infinity into positive Infinity
                     IntValue *= -1;
 #else
@@ -6466,7 +6466,7 @@ public:
                 case RepType::PINum:
                     //value.ConvertPIToNum();
                     break;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 //case RepType::ApproachingBottom:
                 //break;
                 //case RepType::ApproachingTop:
@@ -6475,10 +6475,10 @@ public:
                     return expType.IsZero()?AltDec.One:value;
                 break;
 #endif
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
 
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case NaNRep:
                 return value;
                 break;
@@ -6492,7 +6492,7 @@ public:
                 {
                 case RepType::NormalType:
                     break;
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 //case RepType::ApproachingBottom:
                 //break;
                 //case RepType::ApproachingTop:
@@ -6513,9 +6513,9 @@ public:
                             return ApproachingZero;//ApproachingZero
                     else
                          if(expValue.IntValue<0)//Returns result within range of Positive and NegativeInfinity or undefined or Any infinity?
-#if defined(AltDec_EnableUndefinedButInRange)
+#if defined(AltNum_EnableUndefinedButInRange)
                              throw "Returns noncoded representation infinity based value";//Return value here later
-#elif defined(AltDec_EnableNaN)
+#elif defined(AltNum_EnableNaN)
                              return NaN;
 #else
                              throw "Returns value in undefined range with current preprocessor settings.";
@@ -6525,10 +6525,10 @@ public:
                             return Infinity;//PositiveInfinity
                 break;
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
                 case RepType::NumByDiv:
                     return FractionalPow(value, AltDec(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 case RepType::ENumByDiv:
                     return FractionalPow(value, value.ExtraRep*-1);
                     break;
@@ -6617,12 +6617,12 @@ public:
             bool WithinThresholdRange = false;
             switch(DecimalHalf)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             case InfinityRep:
                 return value;
                 break;
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case NaNRep:
                 return value;
                 break;
@@ -6633,11 +6633,11 @@ public:
             default:
                 if(value.ExtraRep==PIRep)
                     ConvertPIToNum();
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -6692,12 +6692,12 @@ public:
                 return LnRef_Part02(value);
             switch(DecimalHalf)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             case InfinityRep:
                 return value;
                 break;
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case NaNRep:
                 return value;
                 break;
@@ -6795,12 +6795,12 @@ public:
             bool WithinThresholdRange = false;
             switch(DecimalHalf)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             case InfinityRep:
                 return value;
                 break;
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case NaNRep:
                 return value;
                 break;
@@ -6811,11 +6811,11 @@ public:
             default:
                 if(value.ExtraRep==PIRep)
                     ConvertPIToNum();
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -6935,12 +6935,12 @@ public:
             bool WithinThresholdRange = false;
             switch(DecimalHalf)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             case InfinityRep:
                 return value;
                 break;
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case NaNRep:
                 return value;
                 break;
@@ -6951,11 +6951,11 @@ public:
             default:
                 if(value.ExtraRep==PIRep)
                     ConvertPIToNum();
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -7056,11 +7056,11 @@ public:
         /// <returns>AltDec</returns>
         static MediumDecVariant SinFromAngle(MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
                 return NaNValue();//https://byjus.com/questions/what-is-the-value-of-sin-and-cos-infinity/
-#elif defined(AltDec_EnableUndefinedButInRange)
+#elif defined(AltNum_EnableUndefinedButInRange)
 //Return undefined value between -1 and 1
 #else
                 throw "Operation results in NaN";
@@ -7133,11 +7133,11 @@ public:
         /// <returns></returns>
         static MediumDecVariant CosFromAngle(MediumDecVariant Value)
         {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
                 return NaNValue();//https://byjus.com/questions/what-is-the-value-of-sin-and-cos-infinity/
-#elif defined(AltDec_EnableUndefinedButInRange)
+#elif defined(AltNum_EnableUndefinedButInRange)
 //Return undefined value between -1 and 1
 #else
                 throw "Operation results in NaN";
@@ -7243,11 +7243,11 @@ public:
                 return SinValue;
 
             }
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             else if(Value.DecimalHalf==InfinityRep)
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
                 return NaNValue();//https://byjus.com/questions/what-is-the-value-of-sin-and-cos-infinity/
-#elif defined(AltDec_EnableUndefinedButInRange)
+#elif defined(AltNum_EnableUndefinedButInRange)
 //Return undefined value between -1 and 1
 #else
                 throw "Operation results in NaN";
@@ -7295,11 +7295,11 @@ public:
                 if (Value.DecimalHalf == 500000000)//cos(0.5) PI = 0; cos(1.5PI) = 0;
                     return Zero;
             }
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             else if(Value.DecimalHalf==InfinityRep)
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
                 return NaNValue();//https://byjus.com/questions/what-is-the-value-of-sin-and-cos-infinity/
-#elif defined(AltDec_EnableUndefinedButInRange)
+#elif defined(AltNum_EnableUndefinedButInRange)
 //Return undefined value between -1 and 1
 #else
                 throw "Operation results in NaN";
@@ -7345,11 +7345,11 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case RepType::NaN:
                 return NaNValue();
 #endif
-#if defined(AltDec_EnableImaginaryNum) && defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableByDecimaledFractionals)
             {
                 int Divisor = Value.ExtraRep*-1;
                 Value.ExtraRep = 0;
@@ -7358,12 +7358,12 @@ public:
                 break;
             }
 #endif
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
             case RepType::RepType::PINum:
 #endif
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
             case RepType::RepType::ENum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
             case RepType::RepType::ENumByDiv:
 #endif
 #endif
@@ -7395,7 +7395,7 @@ public:
             if (Value == Zero) { return MediumDecVariant::Zero; }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 return MediumDecVariant::PositiveInfinity;
 #else
                 return MediumDecVariant::Maximum;//Positive Infinity
@@ -7407,7 +7407,7 @@ public:
             }
             else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
             {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
                 return MediumDecVariant::NegativeInfinity;
 #else
                 return MediumDecVariant::Minimum;//Negative Infinity
@@ -7430,7 +7430,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             case RepType::NaN:
                 return NaNValue();
 #endif
@@ -7463,7 +7463,7 @@ public:
         /// <returns>AltDec</returns>
         static MediumDecVariant ArcTan2(MediumDecVariant y, MediumDecVariant x)
         {
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
             MediumDecVariant coeff_1 = AltDec(0, 250000000, PIRep);//PI / 4;
 #else
             MediumDecVariant coeff_1 = PI / 4;
@@ -7491,7 +7491,7 @@ public:
     };
 
     #pragma region ValueDefine Source
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
     MediumDecVariant MediumDecVariant::AlmostOne = ApproachingRightRealValue();
 #endif
     MediumDecVariant MediumDecVariant::PI = PIValue();
@@ -7517,12 +7517,12 @@ public:
     MediumDecVariant MediumDecVariant::PINum = PINumValue();
     MediumDecVariant MediumDecVariant::ENum = ENumValue();
     
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
     MediumDecVariant MediumDecVariant::Infinity = InfinityValue();
     MediumDecVariant MediumDecVariant::NegativeInfinity = NegativeInfinityValue();
     MediumDecVariant MediumDecVariant::ApproachingZero = ApproachingZeroValue();
 #endif
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
     MediumDecVariant MediumDecVariant::NaN = NaNValue();
 #endif
     #pragma endregion ValueDefine Source
@@ -7606,7 +7606,7 @@ public:
 
     std::string MediumDecVariant::ToString()
     {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         if (DecimalHalf == InfinityRep)
         {
             if (IntValue == 1)
@@ -7619,41 +7619,41 @@ public:
         switch (repType)
         {
         case RepType::ApproachingTop:
-#ifdef AltDec_DisplayApproachingAsReal
+#ifdef AltNum_DisplayApproachingAsReal
             return IntValue == NegativeRep ? "-0.99999999999999999999" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".99999999999999999999";
 #else
             return IntValue == NegativeRep ? "-0.9___9" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".9___9";
 #endif
             break;
         case RepType::ApproachingBottom:
-#ifdef AltDec_DisplayApproachingAsReal
+#ifdef AltNum_DisplayApproachingAsReal
             return IntValue == NegativeRep ? "-0.00000000000000000001" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".00000000000000000001";
 #else
             return IntValue == NegativeRep ? "-0.0___1" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".0___1";
 #endif
             break;
         case RepType::ApproachingBottom:
-#ifdef AltDec_DisplayApproachingAsReal
+#ifdef AltNum_DisplayApproachingAsReal
             return IntValue == NegativeRep ? "-0.00000000000000000001" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".00000000000000000001";
 #else
             return IntValue == NegativeRep ? "-0.0___1" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".0___1";
 #endif
             break;
 /*
-#if defined(AltDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
         case RepType::NaN:
             return "NaN";
 #endif
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
         case RepType::ENum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
 #endif
             break;
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::INumByDiv:
 #endif
             break;
@@ -7703,26 +7703,26 @@ public:
         }
         switch (repType)
         {
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         case RepType::PINum:
             Value += "Pi";
             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
         case RepType::ENum:
             Value += "e";
             break;
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
             Value += "e/";
             Value += ExtraRep*-1;
             break;
 #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
             Value += "i";
             break;
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::INumByDiv:
             Value += "i/";
             Value += ExtraRep*-1;
@@ -7737,7 +7737,7 @@ public:
 
     std::string MediumDecVariant::ToFullString()
     {
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         if (DecimalHalf == InfinityRep)
         {
             if (IntValue == 1)
@@ -7750,30 +7750,30 @@ public:
         switch (repType)
         {
         case RepType::ApproachingTop:
-#ifdef AltDec_DisplayApproachingAsReal
+#ifdef AltNum_DisplayApproachingAsReal
             return IntValue == NegativeRep ? "-0.99999999999999999999" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".99999999999999999999";
 #else
             return IntValue == NegativeRep ? "-0.9___9" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".9___9";
 #endif
             break;
         case RepType::ApproachingBottom:
-#ifdef AltDec_DisplayApproachingAsReal
+#ifdef AltNum_DisplayApproachingAsReal
             return IntValue == NegativeRep ? "-0.00000000000000000001" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".00000000000000000001";
 #else
             return IntValue == NegativeRep ? "-0.0___1" : VariableConversionFunctions::IntToStringConversion(IntValue) + ".0___1";
 #endif
             break;
 /*
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
         case RepType::ENum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
 #endif
             break;
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::INumByDiv:
 #endif
             break;
@@ -7820,26 +7820,26 @@ public:
         }
         switch (repType)
         {
-#if defined(AltDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         case RepType::PINum:
             Value += "Pi";
             break;
-#if defined(AltDec_EnableENum)
+#if defined(AltNum_EnableENum)
         case RepType::ENum:
             Value += "e";
             break;
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
             Value += "e/";
             Value += ExtraRep*-1;
             break;
 #endif
 #endif
-#if defined(AltDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
             Value += "i";
             break;
-#if defined(AltDec_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::INumByDiv:
             Value += "i/";
             Value += ExtraRep*-1;

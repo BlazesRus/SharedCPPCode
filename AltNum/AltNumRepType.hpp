@@ -2,67 +2,67 @@
         {
             NormalType = 0,
             NumByDiv,
-//#if defined(AltDec_EnablePIRep)
+//#if defined(AltNum_EnablePIRep)
             PINum,
-//#if defined(AltDec_EnablePIPowers)
+//#if defined(AltNum_EnablePIPowers)
             PIPower,
 //#endif
-//#if defined(AltDec_EnableAlternativeRepFractionals)
-//#if defined(AltDec_EnableDecimaledPiFractionals)
+//#if defined(AltNum_EnableAlternativeRepFractionals)
+//#if defined(AltNum_EnableDecimaledPiFractionals)
             PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
 //#endif
             PiFractional,//  IntValue/DecimalHalf*Pi Representation
 //#endif
 //#endif
-//#if defined(AltDec_EnableENum)
+//#if defined(AltNum_EnableENum)
             ENum,
-//#if defined(AltDec_EnableAlternativeRepFractionals)
-//#if defined(AltDec_EnableDecimaledEFractionals)
+//#if defined(AltNum_EnableAlternativeRepFractionals)
+//#if defined(AltNum_EnableDecimaledEFractionals)
             ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
 //#endif
             EFractional,//  IntValue/DecimalHalf*e Representation
 //#endif
 //#endif
-//#if defined(AltDec_EnableImaginaryNum)
+//#if defined(AltNum_EnableImaginaryNum)
             INum,
-//#if defined(AltDec_EnableAlternativeRepFractionals)
-//#if defined(AltDec_EnableDecimaledIFractionals)
+//#if defined(AltNum_EnableAlternativeRepFractionals)
+//#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv,//(Value/(ExtraRep*-1))*i Representation
 //#endif
             IFractional,//  IntValue/DecimalHalf*i Representation
 //#endif
-//#ifdef MixedDec_EnableComplexNumbers
+//#ifdef AltNum_EnableComplexNumbers
             ComplexIRep,
 //#endif
 //#endif
-//#if defined(AltDec_EnableMixedFractional)
+//#if defined(AltNum_EnableMixedFractional)
             ComplexIRep,
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
             MixedE,
             MixedI,
 //#endif
-//#if defined(AltDec_EnableInfinityRep)
+//#if defined(AltNum_EnableInfinityRep)
             ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
             ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
-//#if defined(AltDec_EnableApproachingDivided)
+//#if defined(AltNum_EnableApproachingDivided)
             ApproachingTopByDiv,//(Approaching Away from Zero is equal to IntValue + 0.9999.../ExtraRep if positive, IntValue - 0.9999.../ExtraRep if negative) 
 //#endif
 //#endif
             NaN,
             NegativeZero,
-//#if defined(AltDec_EnableNearPI)
+//#if defined(AltNum_EnableNearPI)
             NearPI,//(Approaching Away from Zero is equal to 0.9999...PI)
 //#endif
-//#if defined(AltDec_EnableNearE)
+//#if defined(AltNum_EnableNearE)
             NearE,//(Approaching Away from Zero is equal to 0.9999...e)
 //#endif
-//#if defined(AltDec_EnableNearI)
+//#if defined(AltNum_EnableNearI)
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 //#endif
-//#if defined(AltDec_EnableUndefinedButInRange)//Such as result of Cos of infinity
+//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             UndefinedButInRange,
 //#endif
-//#ifndef MixedDec_DisableIntNumByDivisor
+//#ifndef MixedDec_DisableIntNumByDivisor//Not needed by AltDec since using NumByDivisor with ExtraRep value instead
 //			//IntValue/(DecimalHalf*-1)
 //			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
 //			//For DecimalHalf Values:

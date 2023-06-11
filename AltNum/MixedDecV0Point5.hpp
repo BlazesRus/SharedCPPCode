@@ -29,30 +29,30 @@
 
 //Preprocessor Switches
 /*
-MixedDec_EnableINumRep = (+- 2147483647.999999999)i Representation(imaginary number) enabled(Not Fully Implimented)
-MixedDec_EnableENumRep = E*(+- 2147483647.999999999) Representation enabled(Not Fully Implimented)
-MixedDec_EnablePIRep = PI*(+- 2147483647.999999999) Representation enabled(Needed for some more accurate calculas operations when using radians instead of angle)(Not Fully Implimented)
-MixedDec_EnableInfinityRep = Enable to allow operations to result in Infinity or Negative Infinity(Needed for some more accurate calculas operations)(Not Fully Implimented)
-MixedDec_EnableNaN = Enable NaN based representations and operations(Not Fully Implimented)
-MixedDec_EnableNegativeZero = (Not Fully Implimented)
-MixedDec_EnableNearPI
-MixedDec_EnableNearE
-MixedDec_EnableNearI
+AltNum_EnableINumRep = (+- 2147483647.999999999)i Representation(imaginary number) enabled(Not Fully Implimented)
+AltNum_EnableENumRep = E*(+- 2147483647.999999999) Representation enabled(Not Fully Implimented)
+AltNum_EnablePIRep = PI*(+- 2147483647.999999999) Representation enabled(Needed for some more accurate calculas operations when using radians instead of angle)(Not Fully Implimented)
+AltNum_EnableInfinityRep = Enable to allow operations to result in Infinity or Negative Infinity(Needed for some more accurate calculas operations)(Not Fully Implimented)
+AltNum_EnableNaN = Enable NaN based representations and operations(Not Fully Implimented)
+AltNum_EnableNegativeZero = (Not Fully Implimented)
+AltNum_EnableNearPI
+AltNum_EnableNearE
+AltNum_EnableNearI
 
-MixedDec_EnableAltFloat = Possible alternative floating point representation later(Not Implimented)
-MixedDec_ExtendTrailingDigits = Replace ExtraRep usage to double instead of float(16 bytes worth of Variable Storage inside class for each instance)
+AltNum_EnableAltFloat = Possible alternative floating point representation later(Not Implimented)
+AltNum_ExtendTrailingDigits = Replace ExtraRep usage to double instead of float(16 bytes worth of Variable Storage inside class for each instance)
 
-MixedDec_EnableApproachingMidDec = -When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
+AltNum_EnableApproachingMidDec = -When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
 -When DecimalHalf is -2147483644, it represents Approaching Half way point of {IntValue,IntValue+1} from right towards left (IntValue.50__1)
--Assumes MixedDec_EnableInfinityRep is enabled
+-Assumes AltNum_EnableInfinityRep is enabled
 
-MixedDec_DisableTrailingDigits = Disables the (incomplete) trailing digits feature from MixedDec variants
-MixedDec_HideOperationFunctions
-MixedDec_EnableComplexNumbers = IntValue + DecimalHalfi Representation(Not Implimented)
+AltNum_DisableTrailingDigits = Disables the (incomplete) trailing digits feature from MixedDec variants
+AltNum_HideOperationFunctions
+AltNum_EnableComplexNumbers = IntValue + DecimalHalfi Representation(Not Implimented)
 */
 
-#if defined(MixedDec_EnableNearPI)||defined(MixedDec_EnableNearE)||defined(MixedDec_EnableNearI)
-#define MixedDec_EnableInfinityRep
+#if defined(AltNum_EnableNearPI)||defined(AltNum_EnableNearE)||defined(AltNum_EnableNearI)
+#define AltNum_EnableInfinityRep
 #endif
 
 namespace BlazesRusCode
@@ -60,15 +60,15 @@ namespace BlazesRusCode
     class MixedDecV2;
 
     /*---Accuracy Tests:
-        -Aiming for accuracy greater than double when MixedDec_ExtendTrailingDigits not enabled(with speed similar or better than double)
-        and accuracy greater than decimal when MixedDec_ExtendTrailingDigits is enabled(with speed similar or better than decimal)
+        -Aiming for accuracy greater than double when AltNum_ExtendTrailingDigits not enabled(with speed similar or better than double)
+        and accuracy greater than decimal when AltNum_ExtendTrailingDigits is enabled(with speed similar or better than decimal)
         -Aiming to at least have same or better accuracy vs MediumDec (with less accuracy lost from truncation from digits getting too small)
     */
 
     /// <summary>
     ///  Fixed point based number that represents +- 2147483647.999999999
     /// (Optional support for PI*(+- 2147483647.999999999), E*(+- 2147483647.999999999), and (+- 2147483647.999999999)i)
-    /// (12 bytes worth of Variable Storage inside class for each instance + 4 bytes if MixedDec_ExtendTrailingDigits enabled)
+    /// (12 bytes worth of Variable Storage inside class for each instance + 4 bytes if AltNum_ExtendTrailingDigits enabled)
     /// (derived class version of MixedDec plus some extra features)
     /// </summary>
     class DLL_API MixedDecV2 : public MediumDec
@@ -76,7 +76,7 @@ namespace BlazesRusCode
 #undefine MediumDecVariant
 #define MediumDecVariant MixedDecV2
     private:
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
         using TrailingType = double;
 #else
         using TrailingType = float;
@@ -84,7 +84,7 @@ namespace BlazesRusCode
         static TrailingType TrailingZeroValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 0.0;
 #else
                 0.0f;
@@ -93,7 +93,7 @@ namespace BlazesRusCode
         static TrailingType TrailingOneValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 1.0;
 #else
                 1.0f;
@@ -102,7 +102,7 @@ namespace BlazesRusCode
         static TrailingType TrailingTenthValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 0.1;
 #else
                 0.1f;
@@ -114,27 +114,27 @@ namespace BlazesRusCode
         static TrailingType TrailingNegOneValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 -1.0;
 #else
                 -1.0f;
 #endif
         }
         static TrailingType TrailingNegOne;
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
         static const signed int InfinityRep = -2147483648;
         //Is Approaching IntValue when DecimalHalf==-2147483647
         static const signed int ApproachingValRep = -2147483647;
 #endif
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         static TrailingType PIRep;
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
         static TrailingType ERepValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 -2.0;
 #else
                 -2.0f;
@@ -142,11 +142,11 @@ namespace BlazesRusCode
         }
         static const TrailingType ERep;
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
         static TrailingType IRepValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 -3.0;
 #else
                 -3.0f;
@@ -154,11 +154,11 @@ namespace BlazesRusCode
         }
         static const TrailingType IRep;
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
         static TrailingType NegativeZeroRepValue()
         {
             return
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
                 -4.0;
 #else
                 -4.0f;
@@ -166,43 +166,43 @@ namespace BlazesRusCode
         }
         static const TrailingType NegativeZeroRep;
 #endif
-#if defined(MixedDec_EnablePublicRepType)
+#if defined(AltNum_EnablePublicRepType)
     public:
 #endif
         enum class RepType: int
         {
             NormalType = 0,//Normal Representation with no extra trailing digits
             ExtendedNormalType,//Normal Representation with extra trailing digits
-#ifndef MixedDec_DisablePIRep
+#ifndef AltNum_DisablePIRep
             PIMultipliedNum,
             PiIntNumByDivisor,
-#ifndef MixedDec_EnableNearPI
+#ifndef AltNum_EnableNearPI
             NearPI,//(Approaching Away from Zero is equal to 0.9999...PI)
 #endif
             PIPower,
 #endif
-#ifdef MixedDec_EnableERep
+#ifdef AltNum_EnableERep
             EMultipliedNum,
             ENumByDivisor,
-#if defined(MixedDec_EnableNearE)
+#if defined(AltNum_EnableNearE)
             NearE,//(Approaching Away from Zero is equal to 0.9999...e)
 #endif
 #endif
-#ifdef MixedDec_EnableIRep
+#ifdef AltNum_EnableIRep
             INum,
-#ifdef MixedDec_EnableComplexNumbers
+#ifdef AltNum_EnableComplexNumbers
             ComplexIRep,
 #endif
-#ifndef MixedDec_EnableNearI
+#ifndef AltNum_EnableNearI
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
 #endif
-#ifndef MixedDec_DisableInfinityRep
+#ifndef AltNum_DisableInfinityRep
             ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
             ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
             Infinity,
 #endif
-#ifndef MixedDec_DisableIntNumByDivisor
+#ifndef AltNum_DisableIntNumByDivisor
 			//IntValue/(DecimalHalf*-1)
 			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
 			//For DecimalHalf Values:
@@ -219,24 +219,24 @@ namespace BlazesRusCode
         {
             if(ExtraRep==TrailingZero)
                 return RepType::NormalType;
-#ifndef MixedDec_DisableTrailingDigits
+#ifndef AltNum_DisableTrailingDigits
             else if(ExtraRep>TrailingZero)
                 return RepType::ExtendedNormalType;
 #endif
-#ifdef MixedDec_EnableInfinityRep
+#ifdef AltNum_EnableInfinityRep
             else if (DecimalHalf == ApproachingValRep)
             {
                 if(ExtraRep==TrailingZero)
                     return RepType::ApproachingBottom;//Approaching from right to IntValue
-#if defined(MixedDec_EnableNearPI)
+#if defined(AltNum_EnableNearPI)
                 else if (ExtraRep == PIRep)
                     return RepType::NearPI;
 #endif
-#if defined(MixedDec_EnableNearE)
+#if defined(AltNum_EnableNearE)
                 else if (ExtraRep == ERep)
                     return RepType::NearE;
 #endif
-#if defined(MixedDec_EnableNearI)
+#if defined(AltNum_EnableNearI)
                 else if (ExtraRep == IRep)
                     return RepType::NearI;
 #endif
@@ -244,19 +244,19 @@ namespace BlazesRusCode
                     return RepType::ApproachingTop;//Approaching from left to (IntValue-1)
             }
 #endif
-#ifndef MixedDec_DisablePIRep
+#ifndef AltNum_DisablePIRep
             else if(ExtraRep==PIRep)
                 return RepType::PINum;
 #endif
-#if defined(MixedDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
             else if(DecimalHalf==NaNRep)
                 return RepType::NaN;
 #endif
-#if defined(MixedDec_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             else if(ExtraRep==IRep)
                 return RepType::INum;
 #endif
-#if defined(MixedDec_EnableENum)
+#if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
                 return RepType::ENum;
 #endif
@@ -265,12 +265,12 @@ namespace BlazesRusCode
         }
     public:
         // <summary>
-        /// If ExtraRep is -1, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Left to Right side (?.999....infinitely)
-        /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Right to Left side (?.000....1)
-        /// If ExtraRep is -4 and MixedDec_EnableNegativeZero is enabled, then MediumDecVariant represents negative zero
-        /// If ExtraRep is -3 and MixedDec_EnableINumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
-        /// If ExtraRep is -2 and MixedDec_EnableENumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * e
-        /// If ExtraRep is -1, DecimalHalf>-2147483647, and MixedDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
+        /// If ExtraRep is -1, DecimalHalf==-2147483647, and AltNum_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Left to Right side (?.999....infinitely)
+        /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and AltNum_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Right to Left side (?.000....1)
+        /// If ExtraRep is -4 and AltNum_EnableNegativeZero is enabled, then MediumDecVariant represents negative zero
+        /// If ExtraRep is -3 and AltNum_EnableINumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
+        /// If ExtraRep is -2 and AltNum_EnableENumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * e
+        /// If ExtraRep is -1, DecimalHalf>-2147483647, and AltNum_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// If ExtraRep is zero, then MediumDecVariant represents +- 2147483647.999999999
         /// If ExtraRep is greater than zero, then MediumDecVariant represents +- 2147483647.999999999...+trailing digits
         /// When ExtraRep is positive number greator than zero, acts as trailing digits cut of as result of division and multiplication(not fully implimented or tested yet)
@@ -284,7 +284,7 @@ namespace BlazesRusCode
         /// <param name="decVal01">The decimal val01.</param>
         /// <param name="decVal02">ExtraRep.</param>
         MixedDec(signed int intVal = 0, signed int decVal = 0, TrailingType extraVal =
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
             0.0)
 #else
             0.0f)
@@ -307,7 +307,7 @@ namespace BlazesRusCode
 
         //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
         // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         void SetAsInfinity()
         {
             IntValue = 1; DecimalHalf = InfinityRep;
@@ -364,7 +364,7 @@ namespace BlazesRusCode
         }
     public:
 #endif
-#if defined(MixedDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
             IntValue = 0; DecimalHalf = -2;
@@ -377,7 +377,7 @@ namespace BlazesRusCode
             ExtraRep = TrailingZero;
         }
 
-#if defined(MixedDec_EnableNegativeZero)
+#if defined(AltNum_EnableNegativeZero)
         void SetAsNegativeZero()
         {
             IntValue = 0; DecimalHalf = 0;
@@ -402,7 +402,7 @@ namespace BlazesRusCode
             DecimalHalf = Value.DecimalHalf; ExtraRep = TrailingZero;
         }
 
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
         void SetPiVal(MediumDec Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
@@ -423,9 +423,9 @@ namespace BlazesRusCode
 
             ExtraRep = TrailingZero;
             // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PIRepresentation
-            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when MixedDec_UseLowerPrecisionPI is enabled
+            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPI is enabled
             //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PINum*DecimalHalf/1000000000))
-#if defined(MixedDec_EnableHigherPrecisionPIConversion)
+#if defined(AltNum_EnableHigherPrecisionPIConversion)
             if (IntValue > 10)
             {
                 MediumDecVariant ValLeft = IntValue;
@@ -468,7 +468,7 @@ namespace BlazesRusCode
             }
         }
 
-#if defined(MixedDec_EnableENum)
+#if defined(AltNum_EnableENum)
         void ConvertEToNum()
         {
             /*
@@ -487,7 +487,7 @@ namespace BlazesRusCode
         void ConvertToNumRep()
         {
             //Check for Non-ExtraRep focused special states first
-#ifdef MixedDec_EnableInfinityRep
+#ifdef AltNum_EnableInfinityRep
             if (DecimalHalf == InfinityRep)
             {
                 ExtraRep = TrailingZero;
@@ -507,7 +507,7 @@ namespace BlazesRusCode
                 return;
             }
 #endif
-#if defined(MixedDec_EnableNaN) && defined(MixedDec_EnableNaNConversionCheck)//Disable conversion check for NaN by default(unless MixedDec_EnableNaNConversionCheck preprocessor added)
+#if defined(AltNum_EnableNaN) && defined(AltNum_EnableNaNConversionCheck)//Disable conversion check for NaN by default(unless AltNum_EnableNaNConversionCheck preprocessor added)
             if (DecimalHalf == NaNRep)//Set as Zero instead of NaN
             {
                 SetAsZero(); return;
@@ -521,12 +521,12 @@ namespace BlazesRusCode
                             {
                                 ConvertPIToNum(); return;
                             }
-            #if defined(MixedDec_EnableImaginaryNum)
+            #if defined(AltNum_EnableImaginaryNum)
                             else(ExtraRep < 0)
                             {
                                 IntValue = -2147483648;
                             }
-            #elif defined(MixedDec_EnableENum)
+            #elif defined(AltNum_EnableENum)
                             else(ExtraRep < 0)
                             {
                                 ConvertEToNum(); return;
@@ -534,7 +534,7 @@ namespace BlazesRusCode
             #endif
                             else
                             {
-            #if MixedDec_EnableMixedFractional
+            #if AltNum_EnableMixedFractional
                                 if (DecimalHalf < 0)//Mixed Fraction
                                 {
                                     int TempAdd = IntValue;
@@ -546,7 +546,7 @@ namespace BlazesRusCode
                                 {
             #endif
                                     BasicIntDivOp(ExtraRep);
-            #if MixedDec_EnableMixedFractional
+            #if AltNum_EnableMixedFractional
                                 }
             #endif
                             }
@@ -568,7 +568,7 @@ namespace BlazesRusCode
 
         static MediumDecVariant PIValue()
         {
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
             return MixedDec(3, 141592654);
 #else
             return MixedDec(1, 0, PIRep);
@@ -582,7 +582,7 @@ namespace BlazesRusCode
 
         static MediumDecVariant EValue()
         {
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
             return MixedDec(1, 0, ERep);
 #else
             return MixedDec(2, 718281828, 0);
@@ -715,7 +715,7 @@ namespace BlazesRusCode
         /// <returns>MixedDec</returns>
         static MediumDecVariant ENum;
 
-#if defined(AltDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
         static MediumDecVariant Infinity;
         static MediumDecVariant NegativeInfinity;
         static MediumDecVariant ApproachingZero;
@@ -1443,11 +1443,11 @@ namespace BlazesRusCode
 #pragma endregion Comparison Operators
 
 #pragma region Addition/Subtraction Operations
-#ifdef MixedDec_HideOperationFunctions
+#ifdef AltNum_HideOperationFunctions
 private:
 #endif
 
-#ifndef MixedDec_DisableTrailingDigits
+#ifndef AltNum_DisableTrailingDigits
 private:
         /// <summary>
         /// Trailing digit part of Addition Operation
@@ -1538,7 +1538,7 @@ public:
         /// <returns>MixedDec</returns>
         static MediumDecVariant& NormalAddOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
             if (Value.DecimalHalf == -1)
@@ -1547,7 +1547,7 @@ public:
             }
 #endif
             bool WasNegative = self.IntValue < 0;
-#ifndef MixedDec_DisableTrailingDigits
+#ifndef AltNum_DisableTrailingDigits
             if (Value.ExtraRep > TrailingZero)
             {
                 TrailingAddOp(Self, Value);
@@ -1657,7 +1657,7 @@ break;
                                 NormalAddOp(self, Value);
                             break;
                             case RepType::IRep:
-#ifndef MixedDec_EnableComplexNumbers
+#ifndef AltNum_EnableComplexNumbers
                                 throw "Complex number operation not enabled";
 #else
                                 if(self.DecimalHalf==0&&self.ExtraRep==TrailingZero)
@@ -1694,7 +1694,7 @@ break;
 		    return AddOp(this, Value);
 		}
 
-#ifndef MixedDec_DisableTrailingDigits
+#ifndef AltNum_DisableTrailingDigits
 private:
         /// <summary>
         /// Trailing digit part of Subtraction Operation
@@ -1786,7 +1786,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& NormalSubOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
             if (Value.DecimalHalf == -1)
@@ -1795,7 +1795,7 @@ public:
             }
 #endif
             bool WasNegative = self.IntValue < 0;
-#ifndef MixedDec_DisableTrailingDigits
+#ifndef AltNum_DisableTrailingDigits
             if (Value.ExtraRep > TrailingZero)
             {
                 TrailingSubOp(Self, Value);
@@ -1906,7 +1906,7 @@ break;
                                 NormalSubOp(self, Value);
                             break;
                             case RepType::IRep:
-#ifndef MixedDec_EnableComplexNumbers
+#ifndef AltNum_EnableComplexNumbers
                                 throw "Complex number operation not enabled";
 #else
                                 if(self.DecimalHalf==0&&self.ExtraRep==TrailingZero)
@@ -1952,7 +1952,7 @@ break;
         template<typename IntType>
         static MediumDecVariant& IntAddOp(MediumDecVariant& self, IntType& value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
 #endif
@@ -1986,7 +1986,7 @@ break;
         template<typename IntType>
         static MediumDecVariant& IntSubOp(MediumDecVariant& self, IntType& value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
 #endif
@@ -2020,7 +2020,7 @@ break;
         template<typename IntType>
         static MediumDecVariant& UnsignedAddOp(MediumDecVariant& self, IntType& value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
 #endif
@@ -2053,7 +2053,7 @@ break;
         template<typename IntType>
         static MediumDecVariant& UnsignedSubOp(MediumDecVariant& self, IntType& value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
                 return self;
 #endif
@@ -2216,7 +2216,7 @@ break;
                 }
             }
         }
-#ifdef MixedDec_HideOperationFunctions
+#ifdef AltNum_HideOperationFunctions
 public:
 #endif
 
@@ -2234,19 +2234,19 @@ public:
                     {
                         IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                         ExtraRep = Value.ExtraRep;
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
                         if (Value.ExtraRep == PIRep)//self * +-X XXX XXX XXX.XXX XXX XXX???...PI
                         {
                             ExtraRep = PIRep; return;
                         }
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
                         if (Value.ExtraRep == ERep)//self * +-X XXX XXX XXX.XXX XXX XXX???...e
                         {
                             ExtraRep = ERep; return;
                         }
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
                         if (Value.ExtraRep == IRep)//self * +-X XXX XXX XXX.XXX XXX XXX???...i
                         {
                             ExtraRep = IRep; return;
@@ -2263,19 +2263,19 @@ public:
                     {
                         //if (Value.ExtraRep == TrailingZero)
                         IntValue *= Value.IntValue;
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
                         if (Value.ExtraRep == PIRep)//self * +-X XXX XXX XXX.000 000 000???...PI
                         {
                             ExtraRep = PIRep; return;
                         }
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
                         if (Value.ExtraRep == ERep)//self * +-X XXX XXX XXX.000 000 000???...e
                         {
                             ExtraRep = ERep; return;
                         }
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
                         if (Value.ExtraRep == IRep)//self * +-X XXX XXX XXX.000 000 000???...i
                         {
                             ExtraRep = IRep; return;
@@ -2426,7 +2426,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == -1)
             {
                 if (Value.DecimalHalf == -1 && self.IntValue == Value.IntValue && self.IntValue == -1)
@@ -2445,7 +2445,7 @@ public:
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
-#if defined(MixedDec_EnablePIRep)//Treated similar to MediumDec multiplication except keeping additional PIRep flag
+#if defined(AltNum_EnablePIRep)//Treated similar to MediumDec multiplication except keeping additional PIRep flag
             if (self.ExtraRep == PIRep)
             {
                 if (Value.ExtraRep == PIRep)
@@ -2459,7 +2459,7 @@ public:
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
             if (self.ExtraRep == ERep)
             {
                 if (Value.ExtraRep == ERep)
@@ -2473,7 +2473,7 @@ public:
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
             if (self.ExtraRep == IRep)
             {
                 if (Value.ExtraRep == IRep)
@@ -2730,7 +2730,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& DivOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
             if (Value.DecimalHalf == -1)
             {
                 self.SetAsZero(); return self;
@@ -2751,7 +2751,7 @@ public:
                 else { Value.IntValue *= -1; }
                 self.SwapNegativeStatus();
             }
-#if defined(MixedDec_EnablePIRep)//Treated similar to MediumDec multiplication except keeping additional PIRep flag
+#if defined(AltNum_EnablePIRep)//Treated similar to MediumDec multiplication except keeping additional PIRep flag
             if (self.ExtraRep == PIRep)
             {
                 if (Value.ExtraRep == PIRep)
@@ -2765,7 +2765,7 @@ public:
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
             if (self.ExtraRep == ERep)
             {
                 if (Value.ExtraRep == ERep)
@@ -2779,7 +2779,7 @@ public:
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
             if (self.ExtraRep == IRep)
             {
                 if (Value.ExtraRep == IRep)
@@ -5466,13 +5466,13 @@ public:
     MediumDecVariant::TrailingType MediumDecVariant::TrailingOne = TrailingOneValue();
     MediumDecVariant::TrailingType MediumDecVariant::TrailingTenth = TrailingTenthValue();
     MediumDecVariant::TrailingType MediumDecVariant::TrailingNegOne = TrailingNegOneValue();
-#if defined(MixedDec_EnablePIRep)
+#if defined(AltNum_EnablePIRep)
     MediumDecVariant::TrailingType MediumDecVariant::PIRep = TrailingNegOneValue();
 #endif
-#if defined(MixedDec_EnableENumRep)
+#if defined(AltNum_EnableENumRep)
     MediumDecVariant::TrailingType MediumDecVariant::ERep = ERepValue();
 #endif
-#if defined(MixedDec_EnableINumRep)
+#if defined(AltNum_EnableINumRep)
     MediumDecVariant::TrailingType MediumDecVariant::IRep = IRepValue();
 #endif
     MediumDecVariant MediumDecVariant::PI = PIValue();
@@ -5498,22 +5498,22 @@ public:
     MediumDecVariant MediumDecVariant::PINum = PINumValue();
     MediumDecVariant MediumDecVariant::ENum = ENumValue();
 
-#if defined(MixedDec_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)
     MediumDecVariant MediumDecVariant::Infinity = InfinityValue();
     MediumDecVariant MediumDecVariant::NegativeInfinity = NegativeInfinityValue();
     MediumDecVariant MediumDecVariant::ApproachingZero = ApproachingZeroValue();
 #endif
-#if defined(MixedDec_EnableNaN)
+#if defined(AltNum_EnableNaN)
     MediumDecVariant MediumDecVariant::NaN = NaNValue();
 #endif
-#if defined(MixedDec_EnableNegativeZero)
+#if defined(AltNum_EnableNegativeZero)
     MediumDecVariant::TrailingType MediumDecVariant::NegativeZeroRep = NegativeZeroRepValue();
     MediumDecVariant MediumDecVariant::NegativeZero = NegativeZeroValue();
 #endif
 #pragma endregion ValueDefine Source
 
 #pragma region String Function Source
-#if defined(MixedDec_ExtendTrailingDigits)
+#if defined(AltNum_ExtendTrailingDigits)
     double CharAsFloat(char Temp)
     {
         double Value;
@@ -5643,7 +5643,7 @@ public:
 
     std::string MediumDecVariant::ToString()
     {
-#if defined(AltDec_EnableInfinityRep) 
+#if defined(AltNum_EnableInfinityRep) 
         if (DecimalHalf == InfinityRep)
         {
             if (IntValue == 1)
@@ -5701,7 +5701,7 @@ public:
 
     std::string MediumDecVariant::ToFullString()
     {
-#if defined(AltDec_EnableInfinityRep) 
+#if defined(AltNum_EnableInfinityRep) 
         if (DecimalHalf == InfinityRep)
         {
             if (IntValue == 1)
