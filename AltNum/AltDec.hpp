@@ -294,18 +294,29 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltDec_EnablePIPowers)
             PIPower,
 #endif
-            PiNumByDivisor,//  IntValue/DecimalHalf*Pi Representation
+#if defined(AltDec_EnableAlternativeRepFractionals)
+#if defined(AltDec_EnableDecimaledPiFractionals)
+            PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
+#endif
+            PiFractional,//  IntValue/DecimalHalf*Pi Representation
+#endif
 #endif
 #if defined(AltDec_EnableENum)
             ENum,
 #if defined(AltDec_EnableAlternativeRepFractionals)
-            ENumByDiv,
+#if defined(AltDec_EnableDecimaledEFractionals)
+            ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
+#endif
+            EFractional,//  IntValue/DecimalHalf*e Representation
 #endif
 #endif
 #if defined(AltDec_EnableImaginaryNum)
             INum,
 #if defined(AltDec_EnableAlternativeRepFractionals)
-            INumByDiv,
+#if defined(AltDec_EnableDecimaledIFractionals)
+            INumByDiv,//(Value/(ExtraRep*-1))*i Representation
+#endif
+            IFractional,//  IntValue/DecimalHalf*i Representation
 #endif
 #endif
 #if defined(AltDec_EnableMixedFractional)
