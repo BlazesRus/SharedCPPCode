@@ -29,7 +29,7 @@
 
 //Preprocessor Switches
 /*
-MixedDec_EnableImaginaryNumRep = (+- 2147483647.999999999)i Representation enabled(Not Fully Implimented)
+MixedDec_EnableINumRep = (+- 2147483647.999999999)i Representation(imaginary number) enabled(Not Fully Implimented)
 MixedDec_EnableENumRep = E*(+- 2147483647.999999999) Representation enabled(Not Fully Implimented)
 MixedDec_EnablePIRep = PI*(+- 2147483647.999999999) Representation enabled(Needed for some more accurate calculas operations when using radians instead of angle)(Not Fully Implimented)
 MixedDec_EnableInfinityRep = Enable to allow operations to result in Infinity or Negative Infinity(Needed for some more accurate calculas operations)(Not Fully Implimented)
@@ -47,6 +47,8 @@ MixedDec_EnableApproachingMidDec = -When DecimalHalf is -2147483645, it represen
 -Assumes MixedDec_EnableInfinityRep is enabled
 
 MixedDec_DisableTrailingDigits = Disables the (incomplete) trailing digits feature from MixedDec variants
+MixedDec_HideOperationFunctions
+MixedDec_EnableComplexNumbers = IntValue + DecimalHalfi Representation(Not Implimented)
 */
 
 #if defined(MixedDec_EnableNearPI)||defined(MixedDec_EnableNearE)||defined(MixedDec_EnableNearI)
@@ -140,7 +142,7 @@ namespace BlazesRusCode
         }
         static const TrailingType ERep;
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
         static TrailingType IRepValue()
         {
             return
@@ -152,7 +154,7 @@ namespace BlazesRusCode
         }
         static const TrailingType IRep;
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
         static TrailingType NegativeZeroRepValue()
         {
             return
@@ -188,7 +190,9 @@ namespace BlazesRusCode
 #endif
 #ifdef MixedDec_EnableIRep
             INum,
+#ifdef MixedDec_EnableComplexNumbers
             ComplexIRep,
+#endif
 #ifndef MixedDec_EnableNearI
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
@@ -264,7 +268,7 @@ namespace BlazesRusCode
         /// If ExtraRep is -1, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Left to Right side (?.999....infinitely)
         /// If ExtraRep is 0.0f, DecimalHalf==-2147483647, and MixedDec_EnableInfinityRep is enabled, then MediumDecVariant represents Approaching IntValue from Right to Left side (?.000....1)
         /// If ExtraRep is -4 and MixedDec_EnableNegativeZero is enabled, then MediumDecVariant represents negative zero
-        /// If ExtraRep is -3 and MixedDec_EnableImaginaryNumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
+        /// If ExtraRep is -3 and MixedDec_EnableINumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999i
         /// If ExtraRep is -2 and MixedDec_EnableENumRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * e
         /// If ExtraRep is -1, DecimalHalf>-2147483647, and MixedDec_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
         /// If ExtraRep is zero, then MediumDecVariant represents +- 2147483647.999999999
@@ -1146,7 +1150,7 @@ namespace BlazesRusCode
 
 #pragma region Comparison Operators
         /// <summary>
-        /// Equal to Operation Between MixedDecs
+        /// Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1157,7 +1161,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Not equal to Operation Between MixedDecs
+        /// Not equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1168,7 +1172,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Lesser than Operation Between MixedDecs
+        /// Lesser than Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1236,7 +1240,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Lesser than or Equal to Operation Between MixedDecs
+        /// Lesser than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1304,7 +1308,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Greater than Operation Between MixedDecs
+        /// Greater than Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The right side value.</param>
@@ -1370,7 +1374,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Greater than or Equal to Operation Between MixedDecs
+        /// Greater than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1439,13 +1443,100 @@ namespace BlazesRusCode
 #pragma endregion Comparison Operators
 
 #pragma region Addition/Subtraction Operations
+#ifdef MixedDec_HideOperationFunctions
+private:
+#endif
+
+#ifndef MixedDec_DisableTrailingDigits
+private:
         /// <summary>
-        /// Addition Operation Between MixedDecs
+        /// Trailing digit part of Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MixedDec</returns>
-        static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value)
+        static void TrailingAddOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
+            if (self.ExtraRep == 0)
+            {
+                if (WasNegative)
+                {
+                    if (Value.IntValue < 0)
+                    {//-0.000 000 002 0 + -0.000 000 000 1 = -0.000 000 002 1
+                        self.ExtraRep = Value.ExtraRep;
+                    }
+                    else
+                    {//-0.000 000 002 0 + 0.000 000 000 1 = -0.000 000 001 9
+                        self.ExtraRep = TrailingOne - Value.ExtraRep;
+                        --self.DecimalHalf;
+                    }
+                }
+                else
+                {
+                    if (Value.IntValue < 0)
+                    {//0.000 000 002 0 + -0.000 000 000 1 = 0.000 000 001 9
+                        self.ExtraRep = TrailingOne - Value.ExtraRep;
+                        --self.DecimalHalf;
+                    }
+                    else
+                    {//0.000 000 002 0 + 0.000 000 000 1 = 0.000 000 002 1
+                        self.ExtraRep = Value.ExtraRep;
+                    }
+                }
+            }
+            else
+            {
+                if (WasNegative)
+                {
+                    if (Value.IntValue < 0)
+                        self.ExtraRep += Value.ExtraRep;
+                    else
+                        self.ExtraRep -= Value.ExtraRep;
+                }
+                else
+                {
+                    if (Value.IntValue < 0)
+                        self.ExtraRep -= Value.ExtraRep;
+                    else
+                        self.ExtraRep += Value.ExtraRep;
+                }
+                if (self.ExtraRep < TrailingZero)
+                {
+                    self.ExtraRep += TrailingOne;
+                    --self.DecimalHalf;
+                }
+                else if (self.ExtraRep >= TrailingOne)
+                {
+                    self.ExtraRep -= TrailingOne;
+                    ++self.DecimalHalf;
+                }
+            }
+            if (self.DecimalHalf < 0)
+            {
+                if (self.IntValue == 0)
+                    self.IntValue = NegativeRep;
+                else
+                    --self.IntValue;
+                self.DecimalHalf += DecimalOverflow;
+            }
+            else if (self.DecimalHalf > DecimalOverflow)
+            {
+                if (self.IntValue == NegativeRep)
+                    self.IntValue = 0;
+                else
+                    ++self.IntValue;
+                self.DecimalHalf -= DecimalOverflow;
+            }
+        }
+public:
+#endif
+        /// <summary>
+        /// Normal Addition Operation with no conversion of Representation Types needed
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        static MediumDecVariant& NormalAddOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
 #if defined(MixedDec_EnableInfinityRep)
             if (self.DecimalHalf == -1)
@@ -1459,76 +1550,7 @@ namespace BlazesRusCode
 #ifndef MixedDec_DisableTrailingDigits
             if (Value.ExtraRep > TrailingZero)
             {
-                if (self.ExtraRep == 0)
-                {
-                    if (WasNegative)
-                    {
-                        if (Value.IntValue < 0)
-                        {//-0.000 000 002 0 + -0.000 000 000 1 = -0.000 000 002 1
-                            self.ExtraRep = Value.ExtraRep;
-                        }
-                        else
-                        {//-0.000 000 002 0 + 0.000 000 000 1 = -0.000 000 001 9
-                            self.ExtraRep = TrailingOne - Value.ExtraRep;
-                            --self.DecimalHalf;
-                        }
-                    }
-                    else
-                    {
-                        if (Value.IntValue < 0)
-                        {//0.000 000 002 0 + -0.000 000 000 1 = 0.000 000 001 9
-                            self.ExtraRep = TrailingOne - Value.ExtraRep;
-                            --self.DecimalHalf;
-                        }
-                        else
-                        {//0.000 000 002 0 + 0.000 000 000 1 = 0.000 000 002 1
-                            self.ExtraRep = Value.ExtraRep;
-                        }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)
-                    {
-                        if (Value.IntValue < 0)
-                            self.ExtraRep += Value.ExtraRep;
-                        else
-                            self.ExtraRep -= Value.ExtraRep;
-                    }
-                    else
-                    {
-                        if (Value.IntValue < 0)
-                            self.ExtraRep -= Value.ExtraRep;
-                        else
-                            self.ExtraRep += Value.ExtraRep;
-                    }
-                    if (self.ExtraRep < TrailingZero)
-                    {
-                        self.ExtraRep += TrailingOne;
-                        --self.DecimalHalf;
-                    }
-                    else if (self.ExtraRep >= TrailingOne)
-                    {
-                        self.ExtraRep -= TrailingOne;
-                        ++self.DecimalHalf;
-                    }
-                }
-                if (self.DecimalHalf < 0)
-                {
-                    if (self.IntValue == 0)
-                        self.IntValue = NegativeRep;
-                    else
-                        --self.IntValue;
-                    self.DecimalHalf += DecimalOverflow;
-                }
-                else if (self.DecimalHalf > DecimalOverflow)
-                {
-                    if (self.IntValue == NegativeRep)
-                        self.IntValue = 0;
-                    else
-                        ++self.IntValue;
-                    self.DecimalHalf -= DecimalOverflow;
-                }
+                TrailingAddOp(Self, Value);
             }
 #endif
             if (Value.DecimalHalf == 0)
@@ -1603,24 +1625,85 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value)
+        /// <returns>MixedDec</returns>
+        static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(MixedDec_EnableInfinityRep)
-            if (self.DecimalHalf == -1)
-                return self;
-            if (Value.DecimalHalf == -1)
+            RepType LRepType = self.GetRepType();
+            RepType RRepType = Value.GetRepType();
+            if(LRepType==RRepType)
             {
-                Value.IntValue == 1 ? self.SetAsInfinity() : self.SetAsNegativeInfinity(); return self;
+                switch(self.RepType)
+                {
+                    default:
+                        NormalAddOp(self, Value);
+break;
+                }
             }
-#endif
-            bool WasNegative = self.IntValue < 0;
-            if (Value.ExtraRep > TrailingZero)
+            else
             {
+                switch(self.RepType)
+                {
+                    case RepType::NormalType:
+                    case RepType::ExtendedNormalType:
+                    {
+                        switch(Value.RepType)
+                        {
+                            case RepType::NormalType:
+                            case RepType::ExtendedNormalType:
+                                NormalAddOp(self, Value);
+                            break;
+                            case RepType::IRep:
+#ifndef MixedDec_EnableComplexNumbers
+                                throw "Complex number operation not enabled";
+#else
+                                if(self.DecimalHalf==0&&self.ExtraRep==TrailingZero)
+                                {
+                                    //ToDo:add code to convert into complex number
+                                }
+                                else
+                                    throw "non-integer operations into complex numbers not enabled.";
+#endif
+                                break;
+                            default:
+                                throw "Normal representation addition with"+static_cast<RepType>(Value.RepType)+"detected";
+                            break;
+                        }
+                    }
+                    break;    
+                    //case RepType:: :
+                    default:
+                    {
+                        throw "Unknown or non-enabled representation type addition operation detected";
+                    }
+                    break;
+                }
+            }
+        }
+
+		/// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecV2</returns>
+        virtual MediumDecVariant& AddOp(MediumDecVariant& Value)
+		{
+		    return AddOp(this, Value);
+		}
+
+#ifndef MixedDec_DisableTrailingDigits
+private:
+        /// <summary>
+        /// Trailing digit part of Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        static void TrailingSubOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
                 if (self.ExtraRep == 0)
                 {
                     if (WasNegative)
@@ -1691,7 +1774,33 @@ namespace BlazesRusCode
                         ++self.IntValue;
                     self.DecimalHalf -= DecimalOverflow;
                 }
+        }
+public:
+#endif
+
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& NormalSubOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
+#if defined(MixedDec_EnableInfinityRep)
+            if (self.DecimalHalf == -1)
+                return self;
+            if (Value.DecimalHalf == -1)
+            {
+                Value.IntValue == 1 ? self.SetAsInfinity() : self.SetAsNegativeInfinity(); return self;
             }
+#endif
+            bool WasNegative = self.IntValue < 0;
+#ifndef MixedDec_DisableTrailingDigits
+            if (Value.ExtraRep > TrailingZero)
+            {
+                TrailingSubOp(Self, Value);
+            }
+#endif
             if (Value.DecimalHalf == 0)
             {
                 if (Value.IntValue == 0)
@@ -1763,6 +1872,76 @@ namespace BlazesRusCode
             }
             return self;
         }
+
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
+            RepType LRepType = self.GetRepType();
+            RepType RRepType = Value.GetRepType();
+            if(LRepType==RRepType)
+            {
+                switch(self.RepType)
+                {
+                    default:
+                        NormalSubOp(self, Value);
+break;
+                }
+            }
+            else
+            {
+                switch(self.RepType)
+                {
+                    case RepType::NormalType:
+                    case RepType::ExtendedNormalType:
+                    {
+                        switch(Value.RepType)
+                        {
+                            case RepType::NormalType:
+                            case RepType::ExtendedNormalType:
+                                NormalSubOp(self, Value);
+                            break;
+                            case RepType::IRep:
+#ifndef MixedDec_EnableComplexNumbers
+                                throw "Complex number operation not enabled";
+#else
+                                if(self.DecimalHalf==0&&self.ExtraRep==TrailingZero)
+                                {
+                                    //ToDo:add code to convert into complex number
+                                }
+                                else
+                                    throw "non-integer operations into complex numbers not enabled.";
+#endif
+                                break;
+                            default:
+                                throw "Normal representation subtraction with"+static_cast<RepType>(Value.RepType)+"detected";
+                            break;
+                        }
+                    }
+                    break;    
+                    //case RepType:: :
+                    default:
+                    {
+                        throw "Unknown or non-enabled representation type subtraction operation detected";
+                    }
+                    break;
+                }
+            }
+        }
+
+		/// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecV2</returns>
+        virtual MediumDecVariant& SubOp(MediumDecVariant& Value)
+		{
+		    return SubOp(this, Value);
+		}
 
         /// <summary>
         /// Addition Operation Between MediumDecVariant and Integer value
@@ -2037,6 +2216,9 @@ namespace BlazesRusCode
                 }
             }
         }
+#ifdef MixedDec_HideOperationFunctions
+public:
+#endif
 
     private:
         void MultOpExtension(MediumDecVariant& Value)
@@ -2064,7 +2246,7 @@ namespace BlazesRusCode
                             ExtraRep = ERep; return;
                         }
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
                         if (Value.ExtraRep == IRep)//self * +-X XXX XXX XXX.XXX XXX XXX???...i
                         {
                             ExtraRep = IRep; return;
@@ -2093,7 +2275,7 @@ namespace BlazesRusCode
                             ExtraRep = ERep; return;
                         }
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
                         if (Value.ExtraRep == IRep)//self * +-X XXX XXX XXX.000 000 000???...i
                         {
                             ExtraRep = IRep; return;
@@ -2237,7 +2419,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDecs
+        /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2291,7 +2473,7 @@ namespace BlazesRusCode
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
             if (self.ExtraRep == IRep)
             {
                 if (Value.ExtraRep == IRep)
@@ -2541,7 +2723,7 @@ namespace BlazesRusCode
 
     public:
         /// <summary>
-        /// Division Operation Between MixedDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2597,7 +2779,7 @@ namespace BlazesRusCode
                 return self;
             }
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
             if (self.ExtraRep == IRep)
             {
                 if (Value.ExtraRep == IRep)
@@ -2829,7 +3011,7 @@ namespace BlazesRusCode
 
 #pragma region Remainder Operations
         /// <summary>
-        /// Remainder Operation Between MixedDecs
+        /// Remainder Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -2967,7 +3149,7 @@ namespace BlazesRusCode
 #pragma region MixedDec-To-MediumDecVariant Operators
     public:
         /// <summary>
-        /// Addition Operation Between MixedDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2978,7 +3160,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// += Operation Between MixedDecs
+        /// += Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2989,7 +3171,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// += Operation Between MixedDecs(from pointer)
+        /// += Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2997,7 +3179,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator+=(MediumDecVariant* self, MediumDecVariant Value) { return AddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between MixedDecs
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3008,7 +3190,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// -= Operation Between MixedDecs
+        /// -= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3019,7 +3201,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// -= Operation Between MixedDecs(from pointer)
+        /// -= Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3027,7 +3209,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator-=(MediumDecVariant* self, MediumDecVariant Value) { return SubOp(**self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between MixedDecs
+        /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3038,7 +3220,7 @@ namespace BlazesRusCode
         }
 
         ///// <summary>
-        ///// *= Operation Between MixedDecs
+        ///// *= Operation
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -3049,7 +3231,7 @@ namespace BlazesRusCode
         }
 
         ///// <summary>
-        ///// *= Operation Between MixedDecs (from pointer)
+        ///// *= Operation (from pointer)
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -3058,7 +3240,7 @@ namespace BlazesRusCode
 
 
         /// <summary>
-        /// Division Operation Between MixedDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3069,7 +3251,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// /= Operation Between MixedDecs
+        /// /= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3080,7 +3262,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// /= Operation Between MixedDecs (from pointer)
+        /// /= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3088,7 +3270,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator/=(MediumDecVariant* self, MediumDecVariant Value) { return DivOp(**self, Value); }
 
         /// <summary>
-        /// Remainder Operation Between MixedDecs
+        /// Remainder Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -3099,7 +3281,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// %= Operation Between MixedDecs
+        /// %= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3110,7 +3292,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// %= Operation Between MixedDecs (from pointer)
+        /// %= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3121,7 +3303,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// XOR Operation Between MixedDecs
+        /// XOR Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -3158,7 +3340,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MixedDecs
+        /// Bitwise Or Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -3194,7 +3376,7 @@ namespace BlazesRusCode
             return self;
         }
         /// <summary>
-        /// Bitwise And Operation Between MixedDecs
+        /// Bitwise And Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -5290,7 +5472,7 @@ namespace BlazesRusCode
 #if defined(MixedDec_EnableENumRep)
     MediumDecVariant::TrailingType MediumDecVariant::ERep = ERepValue();
 #endif
-#if defined(MixedDec_EnableImaginaryNumRep)
+#if defined(MixedDec_EnableINumRep)
     MediumDecVariant::TrailingType MediumDecVariant::IRep = IRepValue();
 #endif
     MediumDecVariant MediumDecVariant::PI = PIValue();

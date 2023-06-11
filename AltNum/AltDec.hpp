@@ -1945,7 +1945,7 @@ public:
 
 #pragma region RepToRepCode_AdditionSubtraction
     private:
-        void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             switch (LRep)
             {
@@ -2280,7 +2280,7 @@ public:
             }
         }
         
-        void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             switch (LRep)
             {
@@ -2429,7 +2429,7 @@ public:
         }
 #pragma endregion RepToRepCode_AdditionSubtraction
 #pragma region RepToRepCode_MultiplicationDivision
-        void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             switch (LRep)
             {
@@ -2615,7 +2615,7 @@ public:
             }
         }
         
-        void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             switch (LRep)
             {
@@ -2733,7 +2733,7 @@ public:
         /// Basic Addition Operation Between AltDecs
         /// </summary>
         /// <param name="Value">The value.</param>
-        void BasicAddOp(AltDec& Value)
+        void BasicAddOp(MediumDecVariant& Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -2808,7 +2808,7 @@ public:
         }
 
 private:
-        void CatchAllAddition(AltDec& Value, RepType& LRep, RepType& RRep)
+        void CatchAllAddition(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
         {
             ConvertToNormType(LRep);
             Value.ConvertToNormType(RRep);
@@ -2821,7 +2821,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        static AltDec& AddOp(AltDec& self, AltDec& Value)
+        static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
             if (self == Zero)
             {
@@ -2988,7 +2988,7 @@ public:
         /// Basic Subtraction Operation Between AltDecs
         /// </summary>
         /// <param name="Value">The value.</param>
-        void BasicSubOp(AltDec& Value)
+        void BasicSubOp(MediumDecVariant& Value)
         {
             if (Value.DecimalHalf == 0)
             {
@@ -3064,7 +3064,7 @@ public:
         }
 
 private:
-    void CatchAllSubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
+    void CatchAllSubtraction(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
     {
         ConvertToNormType(LRep);
         Value.ConvertToNormType(RRep);
@@ -3077,8 +3077,8 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& SubOp(AltDec& self, AltDec& Value)
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
 #if defined(AltDec_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
@@ -3170,9 +3170,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& IntAddOp(AltDec& self, IntType& value)
+        static MediumDecVariant& IntAddOp(MediumDecVariant& self, IntType& value)
         {
             if (value == 0)
                 return self;
@@ -3239,7 +3239,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& IntSubOp(AltDec& self, IntType& value)
+        static MediumDecVariant& IntSubOp(MediumDecVariant& self, IntType& value)
         {
             if (value == 0)
                 return self;
@@ -3279,7 +3279,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
         void PartialUnsignedAddition(IntType& value)
         {
@@ -3312,9 +3312,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& UnsignedAddOp(AltDec& self, IntType& value)
+        static MediumDecVariant& UnsignedAddOp(MediumDecVariant& self, IntType& value)
         {
             if (value == 0)
                 return self;
@@ -3354,7 +3354,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
         void PartialUnsignedSubtraction(IntType& value)
         {
@@ -3402,7 +3402,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& UnsignedSubOp(AltDec& self, IntType& value)
+        static MediumDecVariant& UnsignedSubOp(MediumDecVariant& self, IntType& value)
         {
             if (value == 0)
                 return self;
@@ -3439,7 +3439,7 @@ public:
 #pragma endregion Addition/Subtraction Operations
 
 #pragma region Multiplication/Division Operations
-        void PartialMultOp(AltDec& Value)
+        void PartialMultOp(MediumDecVariant& Value)
         {
             if (Value.IntValue < 0)
             {
@@ -3582,8 +3582,8 @@ public:
         /// Basic Multiplication Operation Between AltDecs
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        void BasicMultOp(AltDec& Value)
+        /// <returns>MediumDecVariant&</returns>
+        void BasicMultOp(MediumDecVariant& Value)
         {
             if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
             if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
@@ -3593,7 +3593,7 @@ public:
         }
 
 private:
-    void CatchAllMultiplication(AltDec& Value)
+    void CatchAllMultiplication(MediumDecVariant& Value)
     {
         ConvertToNumRep();
         Value.ConvertToNumRep();
@@ -3605,8 +3605,8 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& MultOp(AltDec& self, AltDec& Value)
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
 #if defined(AltDec_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
@@ -3740,7 +3740,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& IntMultOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& IntMultOp(MediumDecVariant& self, IntType& Value)
         {
             if (Value < 0)
             {
@@ -3783,7 +3783,7 @@ public:
             return self;
         }
 
-        void PartialDivOp(AltDec& Value)
+        void PartialDivOp(MediumDecVariant& Value)
         {
             if (DecimalHalf == 0)
             {
@@ -3897,7 +3897,7 @@ public:
             }
         }
 
-        void BasicDivOp(AltDec& Value)
+        void BasicDivOp(MediumDecVariant& Value)
         {
 #if defined(AltDec_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
@@ -3927,7 +3927,7 @@ public:
         }
 
 private:
-    void CatchAllDivision(AltDec& Value)
+    void CatchAllDivision(MediumDecVariant& Value)
     {
         ConvertToNumRep();
         Value.ConvertToNumRep();
@@ -3939,8 +3939,8 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& DivOp(AltDec& self, AltDec& Value)
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& DivOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
 #if defined(AltDec_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
@@ -4088,9 +4088,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& IntDivOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& IntDivOp(MediumDecVariant& self, IntType& Value)
         {
             if (Value == 0)
             {
@@ -4144,7 +4144,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& UnsignedMultOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& UnsignedMultOp(MediumDecVariant& self, IntType& Value)
         {
             if (self == Zero) {}
             else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
@@ -4183,9 +4183,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& UnsignedDivOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& UnsignedDivOp(MediumDecVariant& self, IntType& Value)
         {
             if (Value == 0) { throw "Target value can not be divided by zero"; }
             else if (self == Zero) { return self; }
@@ -4242,8 +4242,8 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& RemOp(AltDec& self, AltDec& Value)
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& RemOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
             bool SelfIsWholeN = self.DecimalHalf == 0;
             bool ValueIsWholeN = Value.DecimalHalf == 0;
@@ -4326,9 +4326,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& IntRemOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& IntRemOp(MediumDecVariant& self, IntType& Value)
         {
             if (Value == 0 || self == MediumDecVariant::Zero) { self.SetAsZero(); return self; }
             if (self.DecimalHalf == 0)
@@ -4373,9 +4373,9 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        static AltDec& UnsignedRemOp(AltDec& self, IntType& Value)
+        static MediumDecVariant& UnsignedRemOp(MediumDecVariant& self, IntType& Value)
         {
             if (self == MediumDecVariant::Zero) { return self; }
             if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
@@ -4426,7 +4426,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator+=(AltDec& self, MediumDecVariant Value)
+        friend MediumDecVariant& operator+=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
         }
@@ -4437,7 +4437,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator+=(AltDec* self, MediumDecVariant Value){ return AddOp(**self, Value); }
+        friend MediumDecVariant& operator+=(MediumDecVariant* self, MediumDecVariant Value){ return AddOp(**self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between AltDecs
@@ -4456,7 +4456,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator-=(AltDec& self, MediumDecVariant Value)
+        friend MediumDecVariant& operator-=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
         }
@@ -4467,7 +4467,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator-=(AltDec* self, MediumDecVariant Value){ return SubOp(**self, Value); }
+        friend MediumDecVariant& operator-=(MediumDecVariant* self, MediumDecVariant Value){ return SubOp(**self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between AltDecs
@@ -4486,7 +4486,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>AltDec</returns>
-        friend AltDec& operator*=(AltDec& self, MediumDecVariant Value)
+        friend MediumDecVariant& operator*=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
         }
@@ -4497,7 +4497,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>AltDec</returns>
-        friend AltDec& operator*=(AltDec* self, MediumDecVariant Value){ return MultOp(**self, Value); }
+        friend MediumDecVariant& operator*=(MediumDecVariant* self, MediumDecVariant Value){ return MultOp(**self, Value); }
 
 
         /// <summary>
@@ -4517,7 +4517,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator/=(AltDec& self, MediumDecVariant Value)
+        friend MediumDecVariant& operator/=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
         }
@@ -4528,7 +4528,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator/=(AltDec* self, MediumDecVariant Value){ return DivOp(**self, Value); }
+        friend MediumDecVariant& operator/=(MediumDecVariant* self, MediumDecVariant Value){ return DivOp(**self, Value); }
 
         /// <summary>
         /// Remainder Operation Between AltDecs
@@ -4547,7 +4547,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator%=(AltDec& self, MediumDecVariant Value)
+        friend MediumDecVariant& operator%=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
         }
@@ -4558,7 +4558,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator%=(AltDec* self, MediumDecVariant Value)
+        friend MediumDecVariant& operator%=(MediumDecVariant* self, MediumDecVariant Value)
         {
             return RemOp(**self, Value);
         }
@@ -4678,7 +4678,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator-(AltDec& self)
+        friend MediumDecVariant& operator-(MediumDecVariant& self)
         {
             self.SwapNegativeStatus(); return self;
         }
@@ -4687,7 +4687,7 @@ public:
         /// ++MediumDecVariant Operator
         /// </summary>
         /// <returns>MediumDecVariant &</returns>
-        AltDec& operator ++()
+        MediumDecVariant& operator ++()
         {
             if (IntValue == NegativeRep) { IntValue = 0; }
             else if (DecimalHalf == 0) { ++IntValue; }
@@ -4700,7 +4700,7 @@ public:
         /// ++MediumDecVariant Operator
         /// </summary>
         /// <returns>MediumDecVariant &</returns>
-        AltDec& operator --()
+        MediumDecVariant& operator --()
         {
             if (IntValue == NegativeRep) { IntValue = -1; }
             else if (DecimalHalf == 0) { --IntValue; }
@@ -4732,10 +4732,10 @@ public:
         }
 
         /// <summary>
-        /// AltDec* Operator
+        /// MediumDecVariant* Operator
         /// </summary>
         /// <returns>MediumDecVariant &</returns>
-        AltDec& operator *()
+        MediumDecVariant& operator *()
         {
             return *this;
         }
@@ -5220,11 +5220,11 @@ public:
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned char Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned char Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(AltDec& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(AltDec& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDecVariant operator*=(AltDec& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDecVariant operator/=(AltDec& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDecVariant operator%=(AltDec& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
 
         friend MediumDecVariant operator+(MediumDecVariant self, unsigned short Value){ return UnsignedAddOp(self, Value); }
         friend MediumDecVariant operator-(MediumDecVariant self, unsigned short Value){ return UnsignedSubOp(self, Value); }
@@ -5232,11 +5232,11 @@ public:
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned short Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned short Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(AltDec& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(AltDec& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDecVariant operator*=(AltDec& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDecVariant operator/=(AltDec& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDecVariant operator%=(AltDec& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
 
         friend MediumDecVariant operator+(MediumDecVariant self, unsigned int Value){ return UnsignedAddOp(self, Value); }
         friend MediumDecVariant operator-(MediumDecVariant self, unsigned int Value){ return UnsignedSubOp(self, Value); }
@@ -5244,17 +5244,17 @@ public:
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned int Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(AltDec& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(AltDec& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDecVariant operator*=(AltDec& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDecVariant operator/=(AltDec& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDecVariant operator%=(AltDec& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        //friend MediumDecVariant operator+=(AltDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
-        //friend MediumDecVariant operator-=(AltDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
-        //friend MediumDecVariant operator*=(AltDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
-        //friend MediumDecVariant operator/=(AltDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
-        //friend MediumDecVariant operator%=(AltDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
+        //friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
+        //friend MediumDecVariant operator*=(MediumDecVariant* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
+        //friend MediumDecVariant operator/=(MediumDecVariant* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
+        //friend MediumDecVariant operator%=(MediumDecVariant* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
 
         friend MediumDecVariant operator+(MediumDecVariant self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
         friend MediumDecVariant operator-(MediumDecVariant self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
@@ -5262,17 +5262,17 @@ public:
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(AltDec& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(AltDec& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDecVariant operator*=(AltDec& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDecVariant operator/=(AltDec& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDecVariant operator%=(AltDec& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
+        friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
+        friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
 
-     //   friend MediumDecVariant operator+=(AltDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
-        //friend MediumDecVariant operator-=(AltDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
-     //   friend MediumDecVariant operator*=(AltDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
-        //friend MediumDecVariant operator/=(AltDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
-     //   friend MediumDecVariant operator%=(AltDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
+     //   friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
+     //   friend MediumDecVariant operator*=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
+        //friend MediumDecVariant operator/=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
+     //   friend MediumDecVariant operator%=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
 
         /// <summary>
         /// Addition Operation Between MediumDecVariant and Integer Value
@@ -5293,13 +5293,13 @@ public:
         ///// <param name="Value">The value.</param>
         ///// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator+=(AltDec& self, IntType Value)
+        friend MediumDecVariant operator+=(MediumDecVariant& self, IntType Value)
         {
             return IntAddOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDecVariant operator+=(AltDec* self, IntType Value){ return IntAddOp(**self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant* self, IntType Value){ return IntAddOp(**self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between MediumDecVariant and Integer Value
@@ -5320,13 +5320,13 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator-=(AltDec& self, IntType Value)
+        friend MediumDecVariant operator-=(MediumDecVariant& self, IntType Value)
         {
             return IntSubOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDecVariant operator-=(AltDec* self, IntType Value){ return IntSubOp(**self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant* self, IntType Value){ return IntSubOp(**self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDecVariant and Integer Value
@@ -5347,7 +5347,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator*=(AltDec& self, IntType Value)
+        friend MediumDecVariant operator*=(MediumDecVariant& self, IntType Value)
         {
             return IntMultOp(self, Value);
         }
@@ -5359,7 +5359,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator*=(AltDec* self, IntType Value){ return IntMultOp(**self, Value); }
+        friend MediumDecVariant operator*=(MediumDecVariant* self, IntType Value){ return IntMultOp(**self, Value); }
 
         /// <summary>
         /// Division Operation Between MediumDecVariant and Integer Value
@@ -5380,13 +5380,13 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator/=(AltDec& self, IntType Value)
+        friend MediumDecVariant operator/=(MediumDecVariant& self, IntType Value)
         {
             return IntDivOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDecVariant operator/=(AltDec* self, IntType Value){ return IntDivOp(**self, Value); }
+        friend MediumDecVariant operator/=(MediumDecVariant* self, IntType Value){ return IntDivOp(**self, Value); }
         
         /// <summary>
         /// Modulus Operation Between MediumDecVariant and Integer Value
@@ -5407,13 +5407,13 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        friend MediumDecVariant operator%=(AltDec& self, IntType Value)
+        friend MediumDecVariant operator%=(MediumDecVariant& self, IntType Value)
         {
             return IntRemOp(self, Value);
         }
 
         template<typename IntType>
-        friend MediumDecVariant operator%=(AltDec* self, IntType Value){ return IntRemOp(**self, Value); }
+        friend MediumDecVariant operator%=(MediumDecVariant* self, IntType Value){ return IntRemOp(**self, Value); }
 
         /// <summary>
         /// Bitwise XOR Operation Between MediumDecVariant and Integer Value
@@ -5599,8 +5599,8 @@ public:
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
-        /// <returns>AltDec&</returns>
-        AltDec& Floor()
+        /// <returns>MediumDecVariant&</returns>
+        MediumDecVariant& Floor()
         {
             RepType repType = GetRepType();
             switch (repType)
@@ -5638,7 +5638,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant Floor(MediumDecVariant Value)
         {
             return Value.Floor();
@@ -5672,8 +5672,8 @@ public:
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
-        /// <returns>AltDec&</returns>
-        AltDec& Ceil()
+        /// <returns>MediumDecVariant&</returns>
+        MediumDecVariant& Ceil()
         {
             RepType repType = GetRepType();
             switch (repType)
@@ -5712,7 +5712,7 @@ public:
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         static int FloorInt(MediumDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -5745,7 +5745,7 @@ public:
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecVariant&</returns>
         static int CeilInt(MediumDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -5804,7 +5804,7 @@ public:
         /// Cuts off the decimal point from number
         /// </summary>
         /// <returns>MediumDecVariant &</returns>
-        AltDec& Trunc()
+        MediumDecVariant& Trunc()
         {
 #if defined(AltDec_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
@@ -5838,8 +5838,8 @@ public:
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
-        /// <returns>AltDec&</returns>
-        AltDec& Abs()
+        /// <returns>MediumDecVariant&</returns>
+        MediumDecVariant& Abs()
         {
 /*#ifdef AltDec_EnableInfinityRep
             if (DecimalHalf == InfinityRep)
@@ -5995,7 +5995,7 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecVariant PowConstOp(AltDec& targetValue, const ValueType& expValue)
+        static MediumDecVariant PowConstOp(MediumDecVariant& targetValue, const ValueType& expValue)
         {
             return targetValue.PowConstOp(expValue);
         }
@@ -6005,7 +6005,7 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecVariant PowOp(AltDec& targetValue, ValueType& expValue)
+        static MediumDecVariant PowOp(MediumDecVariant& targetValue, ValueType& expValue)
         {
             return targetValue.PowOp(expValue);
         }
@@ -6081,7 +6081,7 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecVariant PowRef(AltDec& targetValue, ValueType expValue)
+        static MediumDecVariant PowRef(MediumDecVariant& targetValue, ValueType expValue)
         {
             if (expValue == 1)
                 return targetValue;//Return self
@@ -6254,7 +6254,7 @@ public:
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
         /// <returns></returns>
-        static MediumDecVariant NthRootV2(MediumDecVariant targetValue, int n, AltDec& Precision = MediumDecVariant::FiveBillionth)
+        static MediumDecVariant NthRootV2(MediumDecVariant targetValue, int n, MediumDecVariant& Precision = MediumDecVariant::FiveBillionth)
         {
             int nMinus1 = n - 1;
             MediumDecVariant x[2] = { (MediumDecVariant::One / n) * ((nMinus1 * targetValue) + (targetValue / MediumDecVariant::Pow(targetValue, nMinus1))), targetValue };
@@ -6347,7 +6347,7 @@ public:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MediumDecVariant FractionalPow(AltDec& value, boost::rational<int>& Frac)
+        static MediumDecVariant FractionalPow(MediumDecVariant& value, boost::rational<int>& Frac)
         {
             MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, Frac.numerator()), Frac.denominator());
             return CalcVal;
@@ -6358,7 +6358,7 @@ public:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDecVariant PowOp(AltDec& value, AltDec& expValue)
+        static MediumDecVariant PowOp(MediumDecVariant& value, MediumDecVariant& expValue)
         {
             if (expValue.DecimalHalf == 0)
             {
@@ -6495,7 +6495,7 @@ public:
         }
 
 private:
-    static MediumDecVariant LnRef_Part02(AltDec& value)
+    static MediumDecVariant LnRef_Part02(MediumDecVariant& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
         //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
         MediumDecVariant TotalRes = (value - 1) / (value + 1);
@@ -6517,7 +6517,7 @@ public:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::AltDec</returns>
-        static MediumDecVariant LnRef(AltDec& value)
+        static MediumDecVariant LnRef(MediumDecVariant& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == MediumDecVariant::One)
@@ -6591,7 +6591,7 @@ public:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <returns>BlazesRusCode::AltDec</returns>
-        static MediumDecVariant LnRefV2(AltDec& value)
+        static MediumDecVariant LnRefV2(MediumDecVariant& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == MediumDecVariant::One)
@@ -6674,7 +6674,7 @@ public:
         }
 
 private:
-    static MediumDecVariant Log10_Part02(AltDec& value)
+    static MediumDecVariant Log10_Part02(MediumDecVariant& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
         MediumDecVariant TotalRes = (value - 1) / (value + 1);
         MediumDecVariant LastPow = TotalRes;
