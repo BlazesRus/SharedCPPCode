@@ -331,10 +331,11 @@ ExtraFlags treated as bitwise flag storage
             MixedI,
 #endif
 #if defined(AltNum_EnableInfinityRep)
-            ApproachingBottom,//(Approaching Towards Zero is equal to 0.000...1)
-            ApproachingTop,//(Approaching Away from Zero is equal to 0.9999...)
+            ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+            ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 #if defined(AltNum_EnableApproachingDivided)
-            ApproachingTopByDiv,//(Approaching Away from Zero is equal to IntValue + 0.9999.../ExtraRep if positive, IntValue - 0.9999.../ExtraRep if negative) 
+            ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 #endif
 #endif
             NaN,
@@ -384,11 +385,9 @@ ExtraFlags treated as bitwise flag storage
             if (DecimalHalf == ApproachingValRep)
             {
                 if(ExtraRep==0)
-                    return RepType::ApproachingBottom;//Approaching from right to IntValue
-#if defined(AltNum_EnableApproachingDivided)
+                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
 				else if(ExtraRep==-1)
-				    return RepType::ApproachingTopByDiv;//Approaching from left divided by ExtraRep value
-#else
+				    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
 #if defined(AltNum_EnableNearPI)
                 else if (ExtraRep == PIRep)
                     return RepType::NearPI;
@@ -401,9 +400,15 @@ ExtraFlags treated as bitwise flag storage
                 else if (ExtraRep == IRep)
                     return RepType::NearI;
 #endif
-#endif
                 else
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1)
+#if defined(AltNum_EnableApproachingDivided)
+					if(ExtraRep<0)//Approaching left from right
+						return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
+					else//Approaching right from left
+						return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
+#else
+                    throw "EnableApproachingDivided feature not enabled";
+#endif            
             }
 #endif
             if(ExtraRep==0)
@@ -647,6 +652,16 @@ ExtraFlags treated as bitwise flag storage
             IntValue = value; DecimalHalf = ApproachingValRep;
             ExtraRep = -1;
         }
+		
+#if defined(AltNum_EnableApproachingDivided)
+        //If Divisor is positive, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
+		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
+        void SetAsApproachingMid(int value, int Divisor)
+        {
+            IntValue = value; DecimalHalf = ApproachingValRep;
+            ExtraRep = Divisor;
+        }
+#endif
 private:
         static MediumDecVariant InfinityValue()
         {
