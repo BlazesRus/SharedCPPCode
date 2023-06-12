@@ -964,6 +964,37 @@ public:
                 BasicMultOp(PINum);
                 ExtraRep = 0;
                 break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                BasicMultOp(PiNum);
+                ExtraRep *= -1;
+                BasicIntDivOp(ExtraRep);
+                ExtraRep = 0;
+#endif
+            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            {
+				signed _int64 FirstHalf = 3141592654;
+				FirstHalf *= IntValue;
+				signed int divRes = FirstHalf / DecimalHalf;
+#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
+				//Add output code here later
+#else
+				FirstHalf /= DecimalHalf;
+#endif
+				//convert from Int64 into normal AltNum format
+				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
+				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
+				if(IntValue<0&&FirstPart==0)//Results in -0.XXXXXXXX
+					IntValue = NegativeRep;
+				else
+					IntValue = FirstPart;
+				DecimalHalf = SecondPart;
+			    ExtraRep = 0;
+                break;
+		    }
+#endif		
 #endif
             case RepType::NumByDiv:
                 BasicIntDivOp(ExtraRep);
@@ -974,11 +1005,34 @@ public:
                 BasicMultOp(ENum);
                 ExtraRep = 0;
                 break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 BasicMultOp(ENum);
                 ExtraRep *= -1;
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
+                break;
+#endif
+            case RepType::EFractional://IntValue/DecimalHalf*e Representation
+				signed _int64 FirstHalf = 2718281828;
+				FirstHalf *= IntValue;
+				signed int divRes = FirstHalf / DecimalHalf;
+#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
+				//Add output code here later
+#else
+				FirstHalf /= DecimalHalf;
+#endif
+				//convert from Int64 into normal AltNum format
+				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
+				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
+				if(IntValue<0&&FirstPart==0)//Results in -0.XXXXXXXX
+					IntValue = NegativeRep;
+				else
+					IntValue = FirstPart;
+				DecimalHalf = SecondPart;
+			    ExtraRep = 0;
                 break;
 #endif
             default:
@@ -1077,7 +1131,7 @@ private:
         static MediumDecVariant EValue()
         {
 #if defined(AltNum_EnableENum)
-            return AltDec(1, 0, IERep);
+            return AltDec(1, 0, ERep);
 #else
             return AltDec(2, 718281828, 0);
 #endif
