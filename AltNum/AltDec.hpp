@@ -144,6 +144,7 @@ AltNum_DisableSwitchBasedConversion =
 
 AltNum_EnableMediumDecBasedSetValues =
 
+---Only one of the next set of switches can be enabled at once:
 AltNum_EnablePIPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
@@ -159,10 +160,10 @@ AltNum_EnableDecimaledAlternativeFractionals =
 AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+----
 */
 
-#ifdef 
-
+//Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
 #if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePIPowers)
 #undef AltNum_EnablePIPowers
 #endif
@@ -176,13 +177,17 @@ AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer 
     #define AltNum_EnableInfinityRep
 #endif
 
-//if 
+//If Pi rep is neither disabled or enabled, default to enabling PI representation
+#if !defined(AltNum_DisablePIRep) && !defined(AltNum_EnablePIRep)
+    #define AltNum_EnablePIRep
+#endif
+
 #if defined(AltNum_EnablePIRep) && defined(AltNum_DisablePIRep)
     #undef AltNum_DisablePIRep
 #endif
 
-//If Pi rep is neither disabled or enabled, default to enabling PI representation
-#if !defined(AltNum_DisablePIRep) && !defined(AltNum_EnablePIRep)
+//Force enable Pi features if near PI enabled
+#if defined(AltNum_EnableNearPI) && !defined(AltNum_EnablePIRep)
     #define AltNum_EnablePIRep
 #endif
 
@@ -245,7 +250,7 @@ ExtraFlags treated as bitwise flag storage
         static const signed int InfinityRep = -2147483648;
         //Is Approaching IntValue when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
-        //If ExtraRep is NegativeRep, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+        //If ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
 		//If ExtraRep between +-2 and 2147483645 and AltNum_EnableApproachingMidDec enabled, Represents approaching 1/ExtraRep point
         static const signed int ApproachingValRep = -2147483647;
 #endif
@@ -381,14 +386,12 @@ ExtraFlags treated as bitwise flag storage
                 if(ExtraRep==0)
                     return RepType::ApproachingBottom;//Approaching from right to IntValue
 #if defined(AltNum_EnableApproachingDivided)
-				else if(ExtraRep==NegativeRep)
+				else if(ExtraRep==-1)
 				    return RepType::ApproachingTopByDiv;//Approaching from left divided by ExtraRep value
 #else
-#if defined(AltNum_EnablePIRep)
 #if defined(AltNum_EnableNearPI)
                 else if (ExtraRep == PIRep)
                     return RepType::NearPI;
-#endif
 #endif
 #if defined(AltNum_EnableNearE)
                 else if (ExtraRep == ERep)
@@ -628,7 +631,7 @@ ExtraFlags treated as bitwise flag storage
         void SetAsApproachingZeroFromLeft()
         {
             IntValue = 0; DecimalHalf = ApproachingValRep;
-            ExtraRep = NegativeRep;
+            ExtraRep = -1;
         }
         
         //Approaching Towards values from right to left side(IntValue.000...1)
@@ -642,7 +645,7 @@ ExtraFlags treated as bitwise flag storage
         void SetAsApproachingBottomValue(int value)
         {
             IntValue = value; DecimalHalf = ApproachingValRep;
-            ExtraRep = NegativeRep;
+            ExtraRep = -1;
         }
 private:
         static MediumDecVariant InfinityValue()
