@@ -832,11 +832,15 @@ public:
 #if defined(AltNum_EnableApproachingDivided)
 				else if(ExtraRep<0)//ApproachingMidRight
 				{
-					DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
+					DecimalHalf = (DecimalOverflow/(ExtraRep*-1))+1; ExtraRep = 0;
 				}
 				else//ApproachingMidLeft
 				{
-					DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
+					if(ExtraRep%2==1)
+						DecimalHalf = DecimalOverflow/ExtraRep;
+					else
+						DecimalHalf = (DecimalOverflow/ExtraRep)-1;
+					ExtraRep = 0;
 				}
 #else
                     throw "EnableApproachingDivided feature not enabled";
@@ -932,7 +936,11 @@ public:
                 DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
                 break;
             case RepType::ApproachingMidLeft:
-                DecimalHalf = DecimalOverflow/ExtraRep-1; ExtraRep = 0;
+				if(ExtraRep%2==1)
+					DecimalHalf = DecimalOverflow/ExtraRep;
+				else
+					DecimalHalf = (DecimalOverflow/ExtraRep)-1;
+				ExtraRep = 0;
                 break;
 #endif
 #if defined(AltNum_EnablePIRep)
