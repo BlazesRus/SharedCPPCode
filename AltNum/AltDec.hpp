@@ -128,7 +128,7 @@ AltNum_EnableImaginaryNum =
       represents +- 2147483647.999999999i
       If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
       represents (+- 2147483647.999999999i)/(ExtraRep*-1)
-      (Not Fully Implimented)
+      (Not Fully Implimented--Giving lesser priority to finish unless I need to use)
 
 //----
 AltNum_EnablePrivateRepType =
@@ -161,7 +161,9 @@ AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-intege
 AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 
-AltNum_OutputTruncatedTrailingDigits = Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
+AltNum_OutputTruncatedTrailingDigits =
+    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
+	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
 ----
 */
 
