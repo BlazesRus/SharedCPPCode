@@ -824,10 +824,23 @@ public:
                 {
                     DecimalHalf = 1; ExtraRep = 0;
                 }
-                else
+                else if(ExtraRep==-1)
                 {
                     DecimalHalf = 999999999; ExtraRep = 0;
                 }
+				else
+#if defined(AltNum_EnableApproachingDivided)
+				else if(ExtraRep<0)//ApproachingMidRight
+				{
+					DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
+				}
+				else//ApproachingMidLeft
+				{
+					DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
+				}
+#else
+                    throw "EnableApproachingDivided feature not enabled";
+#endif			
                 return;
             }
 #endif
@@ -912,6 +925,14 @@ public:
                 break;
             case RepType::ApproachingTop:
                 DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidRight:
+                DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
+                break;
+            case RepType::ApproachingMidLeft:
+                DecimalHalf = DecimalOverflow/ExtraRep-1; ExtraRep = 0;
                 break;
 #endif
 #if defined(AltNum_EnablePIRep)
