@@ -160,6 +160,8 @@ AltNum_EnableDecimaledAlternativeFractionals =
 AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+
+AltNum_OutputTruncatedTrailingDigits = Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
 ----
 */
 
@@ -832,11 +834,16 @@ public:
 #if defined(AltNum_EnableApproachingDivided)
 				else if(ExtraRep<0)//ApproachingMidRight
 				{
-					DecimalHalf = (DecimalOverflow/(ExtraRep*-1))+1; ExtraRep = 0;
+					int InvertedExtraRep = ExtraRep*-1;
+					if(DecimalOverflow%InvertedExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
+						DecimalHalf = DecimalOverflow/InvertedExtraRep;
+					else
+						DecimalHalf = (DecimalOverflow/InvertedExtraRep)+1;
+					ExtraRep = 0;
 				}
 				else//ApproachingMidLeft
 				{
-					if(ExtraRep%2==1)
+					if(DecimalOverflow%ExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
 						DecimalHalf = DecimalOverflow/ExtraRep;
 					else
 						DecimalHalf = (DecimalOverflow/ExtraRep)-1;
@@ -933,10 +940,17 @@ public:
 #endif
 #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidRight:
-                DecimalHalf = DecimalOverflow/(ExtraRep*-1)+1; ExtraRep = 0;
-                break;
+			{
+				int InvertedExtraRep = ExtraRep*-1;
+				if(DecimalOverflow%InvertedExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
+					DecimalHalf = DecimalOverflow/InvertedExtraRep;
+				else
+					DecimalHalf = (DecimalOverflow/InvertedExtraRep)+1;
+				ExtraRep = 0;
+				break;
+			}
             case RepType::ApproachingMidLeft:
-				if(ExtraRep%2==1)
+				if(DecimalOverflow%ExtraRep==0)//Only cut off the traiing digits for those that can't have all digits stored
 					DecimalHalf = DecimalOverflow/ExtraRep;
 				else
 					DecimalHalf = (DecimalOverflow/ExtraRep)-1;
