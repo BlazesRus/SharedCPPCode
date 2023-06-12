@@ -243,14 +243,11 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
         static const signed int InfinityRep = -2147483648;
-        //Is Approaching IntValue when DecimalHalf==-2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
-        static const signed int ApproachingTopRep = -2147483647;
-        //When DecimalHalf == -2147483646, it represents Approaching IntValue from right towards left (IntValue.0__1)
-        static signed int const ApproachingBottomRep = -2147483646;
-#if defined(AltNum_EnableApproachingMidDec)
-            static signed int const MidFromTopRep = -2147483644;
-            static signed int const MidFromBottomRep = -2147483645;
-#endif
+        //Is Approaching IntValue when DecimalHalf==-2147483647:
+        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
+        //If ExtraRep is NegativeRep, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+		//If ExtraRep between +-2 and 2147483645 and AltNum_EnableApproachingMidDec enabled, Represents approaching 1/ExtraRep point
+        static const signed int ApproachingValRep = -2147483647;
 #endif
 #if defined(AltNum_EnablePIRep)
         //Is PI*Value representation when ExtraRep==-2147483648
@@ -318,9 +315,9 @@ ExtraFlags treated as bitwise flag storage
 #endif
             IFractional,//  IntValue/DecimalHalf*i Representation
 #endif
-//#ifdef MixedDec_EnableComplexNumbers
-//            ComplexIRep,
-//#endif
+#ifdef AltNum_EnableComplexNumbers
+            ComplexIRep,
+#endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
             ComplexIRep,
@@ -336,7 +333,9 @@ ExtraFlags treated as bitwise flag storage
 #endif
 #endif
             NaN,
+#if defined(AltNum_EnableNegativeZero)
             NegativeZero,
+#endif
 #if defined(AltNum_EnableNearPI)
             NearPI,//(Approaching Away from Zero is equal to 0.9999...PI)
 #endif
@@ -349,7 +348,7 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             UndefinedButInRange,
 #endif
-//#ifndef MixedDec_DisableIntNumByDivisor
+//#ifndef MixedDec_DisableIntNumByDivisor//Not needed when using ExtraRep for Divisor
 //			//IntValue/(DecimalHalf*-1)
 //			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
 //			//For DecimalHalf Values:
@@ -382,7 +381,7 @@ ExtraFlags treated as bitwise flag storage
                 if(ExtraRep==0)
                     return RepType::ApproachingBottom;//Approaching from right to IntValue
 #if defined(AltNum_EnableApproachingDivided)
-				else if(ExtraRep>0)
+				else if(ExtraRep==NegativeRep)
 				    return RepType::ApproachingTopByDiv;//Approaching from left divided by ExtraRep value
 #else
 #if defined(AltNum_EnablePIRep)
@@ -1593,7 +1592,7 @@ public:
 
     #pragma region Comparison Operators
         /// <summary>
-        /// Equal to Operation Between AltDecs
+        /// Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1645,7 +1644,7 @@ public:
         }
 
         /// <summary>
-        /// Not equal to Operation Between AltDecs
+        /// Not equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1697,7 +1696,7 @@ public:
         }
 
         /// <summary>
-        /// Lesser than Operation Between AltDecs
+        /// Lesser than Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1779,7 +1778,7 @@ public:
         }
 
         /// <summary>
-        /// Lesser than or Equal to Operation Between AltDecs
+        /// Lesser than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1861,7 +1860,7 @@ public:
         }
 
         /// <summary>
-        /// Greater than Operation Between AltDecs
+        /// Greater than Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The right side value.</param>
@@ -1946,7 +1945,7 @@ public:
         }
 
         /// <summary>
-        /// Greater than or Equal to Operation Between AltDecs
+        /// Greater than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -2822,7 +2821,7 @@ public:
 
 #pragma region Addition/Subtraction Operations
         /// <summary>
-        /// Basic Addition Operation Between AltDecs
+        /// Basic Addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicAddOp(MediumDecVariant& Value)
@@ -2908,7 +2907,7 @@ private:
         }
 public:
         /// <summary>
-        /// Addition Operation Between AltDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3077,7 +3076,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Subtraction Operation Between AltDecs
+        /// Basic Subtraction Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicSubOp(MediumDecVariant& Value)
@@ -3165,7 +3164,7 @@ private:
 public:
 
         /// <summary>
-        /// Subtraction Operation Between AltDecs
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -3671,7 +3670,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Multiplication Operation Between AltDecs
+        /// Basic Multiplication Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecVariant&</returns>
@@ -3693,7 +3692,7 @@ private:
     }
 public:
         /// <summary>
-        /// Multiplication Operation Between AltDecs
+        /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4027,7 +4026,7 @@ private:
     }
 public:
         /// <summary>
-        /// Division Operation Between AltDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4330,7 +4329,7 @@ public:
 
 #pragma region Remainder Operations
         /// <summary>
-        /// Remainder Operation Between AltDecs
+        /// Remainder Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -4502,7 +4501,7 @@ public:
 #pragma region AltDec-To-MediumDecVariant Operators
     public:
         /// <summary>
-        /// Addition Operation Between AltDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4513,7 +4512,7 @@ public:
         }
 
         /// <summary>
-        /// += Operation Between AltDecs
+        /// += Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4524,7 +4523,7 @@ public:
         }
         
         /// <summary>
-        /// += Operation Between AltDecs(from pointer)
+        /// += Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4532,7 +4531,7 @@ public:
         friend MediumDecVariant& operator+=(MediumDecVariant* self, MediumDecVariant Value){ return AddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between AltDecs
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4543,7 +4542,7 @@ public:
         }
 
         /// <summary>
-        /// -= Operation Between AltDecs
+        /// -= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4554,7 +4553,7 @@ public:
         }
         
         /// <summary>
-        /// -= Operation Between AltDecs(from pointer)
+        /// -= Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4562,7 +4561,7 @@ public:
         friend MediumDecVariant& operator-=(MediumDecVariant* self, MediumDecVariant Value){ return SubOp(**self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between AltDecs
+        /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4573,7 +4572,7 @@ public:
         }
 
         ///// <summary>
-        ///// *= Operation Between AltDecs
+        ///// *= Operation
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -4584,7 +4583,7 @@ public:
         }
 
         ///// <summary>
-        ///// *= Operation Between AltDecs (from pointer)
+        ///// *= Operation (from pointer)
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -4593,7 +4592,7 @@ public:
 
 
         /// <summary>
-        /// Division Operation Between AltDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4604,7 +4603,7 @@ public:
         }
 
         /// <summary>
-        /// /= Operation Between AltDecs
+        /// /= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4615,7 +4614,7 @@ public:
         }
         
         /// <summary>
-        /// /= Operation Between AltDecs (from pointer)
+        /// /= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4623,7 +4622,7 @@ public:
         friend MediumDecVariant& operator/=(MediumDecVariant* self, MediumDecVariant Value){ return DivOp(**self, Value); }
 
         /// <summary>
-        /// Remainder Operation Between AltDecs
+        /// Remainder Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -4634,7 +4633,7 @@ public:
         }
 
         /// <summary>
-        /// %= Operation Between AltDecs
+        /// %= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4645,7 +4644,7 @@ public:
         }
         
         /// <summary>
-        /// %= Operation Between AltDecs (from pointer)
+        /// %= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4656,7 +4655,7 @@ public:
         }
 
         /// <summary>
-        /// XOR Operation Between AltDecs
+        /// XOR Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -4693,7 +4692,7 @@ public:
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between AltDecs
+        /// Bitwise Or Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -4729,7 +4728,7 @@ public:
             return self;
         }
         /// <summary>
-        /// Bitwise And Operation Between AltDecs
+        /// Bitwise And Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -4781,6 +4780,10 @@ public:
         /// <returns>MediumDecVariant &</returns>
         MediumDecVariant& operator ++()
         {
+#if defined(AltNum_EnableInfinityRep)
+		    if(DecimalHalf==InfinityRep)
+			    return *this;
+#endif
             if (IntValue == NegativeRep) { IntValue = 0; }
             else if (DecimalHalf == 0) { ++IntValue; }
             else if (IntValue == -1) { IntValue = NegativeRep; }
@@ -4794,6 +4797,10 @@ public:
         /// <returns>MediumDecVariant &</returns>
         MediumDecVariant& operator --()
         {
+#if defined(AltNum_EnableInfinityRep)
+		    if(DecimalHalf==InfinityRep)
+			    return *this;
+#endif
             if (IntValue == NegativeRep) { IntValue = -1; }
             else if (DecimalHalf == 0) { --IntValue; }
             else if (IntValue == 0) { IntValue = NegativeRep; }
