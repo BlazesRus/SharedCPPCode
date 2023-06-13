@@ -80,11 +80,12 @@
 //                    case RepType::UndefinedButInRange:
 //						break;
 //#endif
+                    case RepType::Undefined:
                     case RepType::NaN:
-						throw "Can't perform operations with NaN";
+						throw "Can't perform operations with NaN or Undefined number";
 						break;
 #if defined(AltNum_EnableNegativeZero)
-                    case RepType::NegativeZero://Treat operation as with Zero in most cases
+                    case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
 						break;
 #endif
                     default:

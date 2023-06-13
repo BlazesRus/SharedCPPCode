@@ -292,6 +292,8 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
+        //Is NaN when DecimalHalf==2147483646
+        static const signed int UndefinedRep = 2147483646;
 #endif
 #if defined(AltNum_EnablePrivateRepType)
     public:
@@ -346,6 +348,7 @@ ExtraFlags treated as bitwise flag storage
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 #endif
 #endif
+            Undefined,
             NaN,
 #if defined(AltNum_EnableNegativeZero)
             NegativeZero,
@@ -426,6 +429,12 @@ ExtraFlags treated as bitwise flag storage
 				 return RepType::MixedFrac;
 				
 #endif
+#if defined(AltNum_EnableNaN)
+				if(DecimalHalf==NaNRep)
+					return RepType::NaN;
+				else if(DecimalHalf==UndefinedRep)
+					return RepType::Undefined;
+#endif
                 return RepType::NormalType;
 			}
 #ifdef AltNum_EnablePIRep
@@ -439,11 +448,6 @@ ExtraFlags treated as bitwise flag storage
                 return RepType::NumByDiv;
 #endif
 				throw "Non-enabled NumByDiv representation detected from AltDec";
-#if defined(AltNum_EnableNaN)
-            else if(DecimalHalf==NaNRep)
-                return RepType::NaN;
-#endif
-
 #if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
@@ -713,6 +717,18 @@ public:
         static MediumDecVariant NaNValue()
         {
             MediumDecVariant NewSelf = AltDec(0, NaNRep);
+            return NewSelf;
+        }
+		
+        void SetAsUndefined()
+        {
+            IntValue = 0; DecimalHalf = UndefinedRep;
+            ExtraRep = 0;
+        }
+
+        static MediumDecVariant UndefinedValue()
+        {
+            MediumDecVariant NewSelf = AltDec(0, UndefinedRep);
             return NewSelf;
         }
 #endif

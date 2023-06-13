@@ -51,6 +51,7 @@
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 #endif
 #endif
+            Undefined,
             NaN,
 #if defined(AltNum_EnableNegativeZero)
             NegativeZero,
