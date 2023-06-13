@@ -2165,19 +2165,43 @@ public:
                             Value.ConvertToNormType(RRep);
                             self.BasicAddOp(Value);
                             break;
+#if defined(AltNum_EnablePIRep)
                         case RepType::PINum:
                             Value.ConvertPIToNum();
                             self.BasicAddOp(Value);
                             break;
+#endif
 #if defined(AltNum_EnableENum)
                         case RepType::ENum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledEFractionals)
                         case RepType::ENumByDiv:
+#endif
+                        case RepType::EFractional:
                             Value.ConvertEToNum();
                             self.BasicAddOp(Value);
                             break;
 #endif
+#if defined(AltNum_EnableImaginaryNum)
+                        case RepType::INum:
+#ifndef AltNum_EnableComplexNumbers
+                            throw "Complex number operation not enabled";
+#else
+                            throw "Complex number operation not supported yet";
+#endif
+                            break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+                        case RepType::INumByDiv:
+#endif
+                        case RepType::IFractional:
+							throw "Normal RepType addition with"+static_cast<RepType>(RRep)+"detected not supported yet";
+                            break;
+#endif
+                        case RepType::UnknownType:
+							throw "Normal representation addition with"+static_cast<RepType>(Value.RepType)+"detected not supported yet.";
                         default:
-                            self.CatchAllAddition(Value, LRep, RRep);
+							self.CatchAllAddition(Value, LRep, RRep);
                             break;
                     }
                     break;
@@ -2189,6 +2213,24 @@ public:
                             self.ConvertPIToNum();
                             self.BasicAddOp(Value);
                             break;
+#if defined(AltNum_EnableImaginaryNum)
+                        case RepType::INum:
+#ifndef AltNum_EnableComplexNumbers
+                            throw "Complex number operation not enabled";
+#else
+                            throw "Complex number operation not supported yet";
+#endif
+                            break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+                        case RepType::INumByDiv:
+#endif
+                        case RepType::IFractional:
+							throw "Normal RepType addition with"+static_cast<RepType>(RRep)+"detected not supported yet";
+                            break;
+#endif
+                        case RepType::UnknownType:
+                            throw "Pi RepType addition with"+static_cast<RepType>(Value.RepType)+"detected not supported yet.";
                         default:
                         //case RepType::ENum: //(X.??*PI) + (Y.??*e)
                         //case RepType::ENumByDiv: //(X.??*PI) + ((Y.??*e)/(Y_ExtraRep*-1))
