@@ -487,9 +487,10 @@ ExtraFlags treated as bitwise flag storage
 #elif defined(AltNum_EnableMixedFractional)
                 return RepType::MixedFrac;
 #else
-                throw "Unknown or non-enabled representation type detected from AltDec";
+                throw "Non-enabled Negative ExtraRep representation type detected from AltDec";
 #endif
-            throw "Unknown or non-enabled representation type detected from AltDec";
+            else
+				throw "Unknown or non-enabled representation type detected from AltDec";
             return RepType::UnknownType;//Catch-All Value;
         }
     public:
