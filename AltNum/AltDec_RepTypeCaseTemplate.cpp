@@ -1,4 +1,7 @@
+                switch (LRep)
+                {
                     case RepType::NormalType:
+						self.BasicAddOp(Value);
 						break;
 //#if defined(AltNum_EnablePIRep)
 //                    case RepType::PINum:
@@ -91,6 +94,5 @@
                     default:
 						throw static_cast<RepType>(LRep)+" RepType addition not supported yet";
 						//throw static_cast<RepType>(LRep)+" RepType addition with"+static_cast<RepType>(RRep)+"not supported yet";
-                        //self.CatchAllAddition(Value, LRep, RRep);
                         break;
                 }
