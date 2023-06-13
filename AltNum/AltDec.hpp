@@ -159,12 +159,14 @@ AltNum_EnableDecimaledAlternativeFractionals =
    Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
 AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledIFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+----===============================================================================================================
 
 AltNum_OutputTruncatedTrailingDigits =
     Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
 	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
-----
+
+AltNum_UseOldDivisionCode
 */
 
 //Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
@@ -490,6 +492,10 @@ ExtraFlags treated as bitwise flag storage
         /// The decimal overflow
         /// </summary>
         static signed _int64 const DecimalOverflowX = 1000000000;
+		
+	private:
+		static signed _int64 const NegDecimalOverflowX = -1000000000;
+	public:
 
         /// <summary>
         /// long double (Extended precision double)
@@ -3572,30 +3578,21 @@ public:
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
-            if(self.ExtraRep==PIRep)//Value*Pi Representation
-            {
-                self.ConvertToNumRep();
-                self.PartialUnsignedAddition(value);
-            }
-#if defined(AltNum_EnableImaginaryNum)
-            else if(self.ExtraRep==IERep)
-            {
-                throw "Can't convert MediumDecVariant into complex number at moment";
-            }
-            else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableENum)
-            else if(self.ExtraRep==IERep)
-            {
-            }
-            else if(self.ExtraRep>0)
-#else
-            else//(Value/ExtraRep) Representation and Normal Representation
-#endif
-                self.ConvertToNumRep();
             if(self.ExtraRep==0)
             {
                 self.PartialUnsignedAddition(value);
             }
+#if defined(AltNum_EnableImaginaryNum)
+            else if(self.ExtraRep==IRep)
+            {
+                throw "Can't convert MediumDecVariant into complex number at moment";
+            }
+#endif
+			else
+			{
+                self.ConvertToNumRep();
+                self.PartialUnsignedAddition(value);
+			}
             return self;
         }
 
@@ -3875,52 +3872,9 @@ public:
             RepType RRep = Value.GetRepType();
             if(LRep==RRep)
             {
-                if(self.ExtraRep==0)
-                {
-#if AltNum_EnableMixedFractional
-                    if(self.DecimalHalf<0)//MixedFractional
-                    {
-                    
-                    }
-                    else
-                    {
-#endif
-                        self.PartialMultOp(Value);
-#if AltNum_EnableMixedFractional
-                    }
-#endif
-                }
-                else if(self.ExtraRep==NegativeRep)//Value*Pi Representation
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #elif defined(AltNum_EnableENum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #else
-                else//(Value/ExtraRep) Representation
-    #endif
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
-                else
-                {
-                
-                }
-    #endif
             }
-
-            if(self.ExtraRep!=0&&self.IntValue==0&&self.DecimalHalf==0)
-                self.ExtraRep = 0;
-            if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+            else
+				RepToRepMultOp(LRep, RRep, self, Value);
             return self;
         }
 
@@ -4033,6 +3987,7 @@ public:
             return self;
         }
 
+#ifdef AltNum_UseOldDivisionCode
         void PartialDivOp(MediumDecVariant& Value)
         {
             if (DecimalHalf == 0)
@@ -4146,6 +4101,7 @@ public:
                 }
             }
         }
+#endif
 
         void BasicDivOp(MediumDecVariant& Value)
         {
@@ -4166,6 +4122,7 @@ public:
 #endif
             if (IntValue==0&&DecimalHalf==0)
                 return;
+#if defined(AltNum_UseOldDivisionCode)
             if (Value.IntValue < 0)
             {
                 if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
@@ -4174,6 +4131,38 @@ public:
             }
             PartialDivOp(Value);
             if (IntValue==0&&DecimalHalf==0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+#else//Instead use modulus based code to divide
+			bool ResIsPositive = true;
+			signed _int64 SelfRes;
+			signed _int64 ValueRes;
+			if(IntValue<0)
+			{
+			    SelfRes = IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+DecimalHalf;
+			    if(Value<0)
+					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:Value.IntValue*NegDecimalOverflowX+Value.DecimalHalf;
+				else
+				{
+				    ResIsPositive = false;
+					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
+				}
+			}
+			else
+			{
+				SelfRes = IntValue*DecimalOverflowX+DecimalHalf;
+			    if(Value<0)
+				{
+				    ResIsPositive = false;
+					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+Value.DecimalHalf;
+				}
+				else
+					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
+			}
+			
+			signed _int64 IntHalfRes = SelfRes / ValueRes;
+			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
+#endif
         }
 
 private:
@@ -4217,50 +4206,11 @@ public:
             RepType RRep = Value.GetRepType();
             if(LRep==RRep)
             {
-                if(self.ExtraRep==0)
-                {
-#if AltNum_EnableMixedFractional
-                    if(self.DecimalHalf<0)//MixedFractional
-                    {
-                    
-                    }
-                    else
-                    {
-#endif
-                        self.PartialDivOp(Value);
-#if AltNum_EnableMixedFractional
-                    }
-#endif
-                }
-                else if(self.ExtraRep==NegativeRep)//Value*Pi Representation
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #elif defined(AltNum_EnableENum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #else
-                else//(Value/ExtraRep) Representation
-    #endif
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
-                else
-                {
-                
-                }
-    #endif
             }
-            if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
-            return self;
+			else
+			{
+			
+			}
         }
 
         template<typename IntType>
