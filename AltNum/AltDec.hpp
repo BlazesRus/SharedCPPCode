@@ -284,7 +284,10 @@ ExtraFlags treated as bitwise flag storage
         static const signed int EByDivisorRep = -2147483643;
 #endif
 #endif
-        static const signed int AlternativeFractionalLowerBound = -2147483642;
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+        static const signed int UndefinedInRangeRep = -2147483642;
+#endif
+        static const signed int AlternativeFractionalLowerBound = -2147483641;
         static const signed int MixedFractionalLowerBound = -2147483642;
 #if defined(AltNum_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
@@ -331,7 +334,6 @@ ExtraFlags treated as bitwise flag storage
 #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
-            ComplexIRep,
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
             MixedE,
             MixedI,
@@ -357,7 +359,7 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableNearI)
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
-#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 #endif
 //#ifndef MixedDec_DisableIntNumByDivisor//Not needed when using ExtraRep for Divisor
@@ -432,15 +434,16 @@ ExtraFlags treated as bitwise flag storage
             else if(ExtraRep==PiByDivisorRep)
 				return RepType::PiIntNumByDiv;
 #endif
-#if defined(AltNum_EnableByDecimaledFractionals)
             else if(ExtraRep>0)
+#if defined(AltNum_EnableByDecimaledFractionals)
                 return RepType::NumByDiv;
 #endif
-
+				throw "Non-enabled NumByDiv representation detected from AltDec";
 #if defined(AltNum_EnableNaN)
             else if(DecimalHalf==NaNRep)
                 return RepType::NaN;
 #endif
+
 #if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
@@ -454,20 +457,27 @@ ExtraFlags treated as bitwise flag storage
             else if(ExtraRep==EByDivisorRep)
 					return RepType::ENumByDiv;
 #endif
-#if defined(AltNum_EnableENum)
-            else if(ExtraRep==ERep)
+
+#if defined(AltNum_EnableImaginaryNum)
+            else if(ExtraRep==IRep)
 			{
-#if AltNum_EnableMixedEFractional
+#if AltNum_EnableMixedIFractional
 				if(DecimalHalf<0)
-					return RepType::MixedE;
+					return RepType::MixedI;
 				else
 #endif
-					return RepType::ENum;
+					return RepType::INum;
 			}
-            else if(ExtraRep==EByDivisorRep)
-					return RepType::ENumByDiv;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+            else if(ExtraRep==IByDivisorRep)
+					return RepType::INumByDiv;
 #endif
-            else
+#endif
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+           else if(ExtraRep==UndefinedButInRange)
+                return RepType::UndefinedButInRange;
+#endif
+            else if(ExtraRep<0)
 #if defined(AltNum_EnablePiEFractionals)
                 return RepType::PiNumByDiv;
 #elif defined(AltNum_EnableDecimaledEFractionals)

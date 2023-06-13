@@ -39,7 +39,6 @@
 #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
-            ComplexIRep,
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
             MixedE,
             MixedI,
