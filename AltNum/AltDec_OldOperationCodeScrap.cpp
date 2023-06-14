@@ -543,3 +543,71 @@
                 
             }
         }
+		
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (self.DecimalHalf == InfinityRep)
+                return self;
+            if (Value.DecimalHalf == InfinityRep)
+            {
+                Value.IntValue == 1 ? self.SetAsInfinity() : self.SetAsNegativeInfinity();
+                return self;
+            }
+#endif
+            RepType LRep = self.GetRepType();
+            RepType RRep = Value.GetRepType();
+            if(LRep==RRep)
+            {
+                if(self.ExtraRep==0||Value.ExtraRep==PIRep)
+                {
+//#if AltNum_EnableMixedFractional
+//                    if(self.DecimalHalf<0)//MixedFractional
+//                    {
+//                    
+//                    }
+//                    else
+//                    {
+//#endif
+//                        self.BasicSubOp(Value);
+//#if AltNum_EnableMixedFractional
+//                    }
+//#endif
+//                }
+//    #if defined(AltNum_EnableImaginaryNum)
+//                else if(self.ExtraRep==IERep)
+//                {
+//                }
+//                else if(self.ExtraRep>0)
+//    #elif defined(AltNum_EnableENum)
+//                else if(self.ExtraRep==IERep)
+//                {
+//                }
+//                else if(self.ExtraRep>0)
+//    #else
+//                else//(Value/ExtraRep) Representation
+//    #endif
+//                {
+//                
+//                }
+//    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
+//                else
+//                {
+//                
+//                }
+//    #endif
+//                if(self.ExtraRep!=0&&self.IntValue==0&&self.DecimalHalf==0)
+//                    self.ExtraRep = 0;
+            }
+            else
+            {
+                RepToRepSubOp(LRep, RRep, self, Value);
+            }
+            return self;
+        }

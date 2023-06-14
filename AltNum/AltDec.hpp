@@ -3216,8 +3216,11 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
                     case RepType::INum:
 #endif
+						self.BasicAddOp(Value);
+						break;
+						
 #if defined(AltNum_EnableMixedFractional)
-                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
 #if defined(AltNum_EnablePINum)
                     case RepType::MixedPi:
 #endif
@@ -3227,52 +3230,76 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
                     case MixedI:
 #endif
-#endif
-						self.BasicAddOp(Value);
+						throw "BasicMixedAddOp code not implimented yet";//self.BasicMixedAddOp(Value);
 						break;
+#endif
 
 #if defined(AltNum_EnableApproachingDivided)
                     case RepType::ApproachingBottom:
                         if (self.IntValue == NegativeRep)
                         {
-                            if (Value.IntValue == 0)//0.01-0.01
+                            if (Value.IntValue == 0)//-0.0..1 + 0.0..1 = 0
                                 self.SetAsZero();
-                            else if (Value.IntValue == NegativeRep)//-0.01 - 0.01
+                            else if (Value.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
                             {/*Do Nothing*/}
-                            else if (Value.IntValue < 0)//-0.01 - 1.01
+                            else if (Value.IntValue < 0)//-0.0..1 - 1.0..1 = 1.0..1
                             {
-                                self.IntValue = Value.IntValue;
+                                self.IntValue = Value.IntValue*-1;
                             }
-                            else
+                            else//-0.0..1 + 5.0..1 = 5
                             {
+								DecimalHalf = 0;
+								self.IntValue = Value.IntValue;
                             }
                         }
-                        else if (Value.IntValue == NegativeRep)
+                        if (self.IntValue == 0)
                         {
-                            if (self.IntValue == 0)//0.01-0.01
-                                self.SetAsZero();
-                            else if (self.IntValue < 0)//-1.01 - 0.01
+                            if (Value.IntValue == 0)//0.0..1 + 0.0..1 = 0.0..1
                             {/*Do Nothing*/}
-                            else
+                            else if (Value.IntValue == NegativeRep)//0.0..1 - 0.0..1 = 0
+								self.SetAsZero();
+                            else if (Value.IntValue < 0)//0.0..1 - 1.0..1 = -1
                             {
+								DecimalHalf = 0;
+                                self.IntValue = Value.IntValue*-1;
+                            }
+                            else//-0.0..1 + 5.0..1 = 5.0..1
+                            {
+								self.IntValue = Value.IntValue;
                             }
                         }
                         else if (self.IntValue < 0)
                         {
-                            if (Value.IntValue < 0)//-1.01 - 1.01
+                            if (Value.IntValue == 0)//-1.0..1 + 0.0..1  = -1
+								DecimalHalf = 0;
+                            else if (Value.IntValue == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
+							{/*Do Nothing*/}
+							else if(self.IntValue==-Value.IntValue)//-1.01 + 1.01
+                                self.SetAsZero();
+                            else if (Value.IntValue < 0)//-1.0..1 - 1.0..1
                             {
                                 self.IntValue += Value.IntValue;
                             }
-                            else
+                            else//-1.0..1 + 2.0..1
                             {
+								DecimalHalf = 0;
+								self.IntValue += Value.IntValue;
                             }
                         }
                         else
                         {
-                            if (Value.IntValue < 0)
-                            {
-                            }
-                            else//1.01+1.01
+                            if (Value.IntValue == 0)//1.0..1 + 0.0..1
+							{/*Do Nothing*/}
+                            else if (Value.IntValue == NegativeRep)//1.0..1 - 0.0..1
+								DecimalHalf = 0;
+							else if(self.IntValue==-Value.IntValue)//1.01 - 1.01
+                                self.SetAsZero();
+                            else if (Value.IntValue < 0)// 1.0..1  - 2.0..1
+							{
+								DecimalHalf = 0;
+								self.IntValue += Value.IntValue;
+							}
+                            else//1.0..1 + 1.0..1
                             {
                                 self.IntValue += Value.IntValue;
                             }
