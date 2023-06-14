@@ -1105,6 +1105,52 @@ public:
                 break;
             }
         }
+		
+        void ConvertToNormalIRep(RepType& repType)
+        {
+            switch (repType)
+            {
+#if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+				if(IntValue==0&&DecimalHalf==0)
+					ExtraRep = 0
+				break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+				if(IntValue==0&&DecimalHalf==0)
+					ExtraRep = 0
+				else
+				{
+					int Divisor = -ExtraRep;
+					ExtraRep = IRep;
+					this /= Divisor;
+				}
+				break;
+#endif
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+#endif
+				if(IntValue==0&&DecimalHalf!=0)
+					ExtraRep = 0
+				else
+				{
+					int Divisor = DecimalHalf;
+					ExtraRep = IRep; DecimalHalf = 0;
+					this /= Divisor;
+				}
+				break;
+#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+				throw "Conversion from complex number to real number not supported yet.";
+				break;
+#endif
+            default:
+                throw "Conversion not supported.";
+                break;
+			}
+		}
+		
     #pragma region ValueDefines
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
