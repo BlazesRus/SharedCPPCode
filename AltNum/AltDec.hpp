@@ -1076,6 +1076,30 @@ public:
 			    ExtraRep = 0;
                 break;
 #endif
+#if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+				if(IntValue==0&&DecimalHalf==0)
+					ExtraRep = 0
+				else
+					throw "Can't convert imaginery number into real number unless is zero.";
+				break;
+#endif
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+#endif
+				if(IntValue==0&&DecimalHalf!=0)
+					ExtraRep = 0
+				else
+					throw "Can't convert imaginery number into real number unless is zero.";
+				break;
+#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+				throw "Conversion from complex number to real number not supported yet.";
+				break;
+#endif
             default:
                 ConvertToNumRep();
                 break;
