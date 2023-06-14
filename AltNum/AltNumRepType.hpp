@@ -38,11 +38,20 @@
             ComplexIRep,
 #endif
 #endif
+
 #if defined(AltNum_EnableMixedFractional)
-            MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
+            MixedFrac,//IntValue +- (DecimalHalf*-1)
+            MixedPi,
             MixedE,
             MixedI,
+#if defined(AltNum_EnableAlternativeRepFractionals)
+            MixedFracByDiv,//IntValue +- (DecimalHalf*-1)/ExtraRep
+            MixedPiByDiv,
+            MixedEByDiv,
+            MixedIByDiv,
 #endif
+#endif
+
 #if defined(AltNum_EnableInfinityRep)
             ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
