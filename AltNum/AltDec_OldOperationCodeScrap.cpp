@@ -611,3 +611,78 @@
             }
             return self;
         }
+		
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (self.DecimalHalf == -1)
+            {
+                if (Value.DecimalHalf == -1 && self.IntValue == Value.IntValue && self.IntValue == -1)
+                    self.IntValue = 1;
+                return self;
+            }
+            else if (Value.DecimalHalf == -1)
+                return self;
+#endif
+            if (Value == MediumDecVariant::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
+            if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
+                return self;
+            if (Value.IntValue < 0)
+            {
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+                else { Value.IntValue *= -1; }
+                self.SwapNegativeStatus();
+            }
+#if defined(AltNum_EnablePIRep)//Treated similar to MediumDec multiplication except keeping additional PIRep flag
+            if (self.ExtraRep == PIRep)
+            {
+                if (Value.ExtraRep == PIRep)
+                {
+                    self.PartialMultOp(Value);
+                    self.PartialMultOp(PINum);
+                }
+                else
+                    self.PartialMultOp(Value);
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                return self;
+            }
+#endif
+#if defined(AltNum_EnableENumRep)
+            if (self.ExtraRep == ERep)
+            {
+                if (Value.ExtraRep == ERep)
+                {
+                    self.PartialMultOp(Value);
+                    self.PartialMultOp(PINum);
+                }
+                else
+                    self.PartialMultOp(Value);
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                return self;
+            }
+#endif
+#if defined(AltNum_EnableINumRep)
+            if (self.ExtraRep == IRep)
+            {
+                if (Value.ExtraRep == IRep)
+                {
+                    self.PartialMultOp(Value);
+                    self.ExtraRep = TrailingZero;
+                }
+                else
+                {
+                    self.PartialMultOp(Value);
+                }
+                if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
+                return self;
+            }
+#endif
+            self.MultOpExtension(Value);//Other Multiplication code here(attempting to lose less accuracy from truncation)
+            return self;
+        }

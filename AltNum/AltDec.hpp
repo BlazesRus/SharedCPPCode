@@ -170,6 +170,7 @@ AltNum_OutputTruncatedTrailingDigits =
 	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
 
 AltNum_UseOldDivisionCode
+AltNum_UseOldMultiplicationCode
 */
 
 //Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
@@ -4328,8 +4329,37 @@ public:
             if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
             if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
                 return;
+//#ifdef AltNum_UseOldMultiplicationCode
             PartialMultOp(Value);
-            if (IntValue==0&&DecimalHalf==0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//#else
+
+//#endif
+			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+#else
+				DecimalHalf = 1;
+#endif
+        }
+		
+        /// <summary>
+        /// Basic Multiplication Operation(without zero multiplication code)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        void BasicMultOpV2(MediumDecVariant& Value)
+        {
+//#ifdef AltNum_UseOldMultiplicationCode
+            PartialMultOp(Value);
+//#else
+
+//#endif
+			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+#else
+				DecimalHalf = 1;
+#endif
         }
 
 private:
@@ -4623,7 +4653,6 @@ public:
                 SwapNegativeStatus();
             }
             PartialDivOp(Value);
-            if (IntValue==0&&DecimalHalf==0) { DecimalHalf = 1; }//Prevent Dividing into nothing
 #else//Instead use modulus based code to divide
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
@@ -4655,6 +4684,12 @@ public:
 			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
 			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
 			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
+#endif
+			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+#else
+				DecimalHalf = 1;
 #endif
         }
 
