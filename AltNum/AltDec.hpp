@@ -3352,7 +3352,7 @@ public:
                             }
                             else//-1.9..9 + 2.9..9
                             {
-								DecimalHalf = 0;
+								DecimalHalf = 0; ExtraRep = 0;
 								self.IntValue += Value.IntValue;
                             }
                         }
