@@ -4626,7 +4626,7 @@ public:
         }
 #endif
 
-        void BasicDivOp(MediumDecVariant& Value)
+        void BasicDivOpV0(MediumDecVariant& Value)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
@@ -4685,7 +4685,57 @@ public:
 			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
 			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
 #endif
-			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+			if ((IntValue==NegativeRep||IntValue==0)&&DecimalHalf==0)//Prevent Dividing into nothing
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+#else
+				DecimalHalf = 1;
+#endif
+        }
+		
+        void BasicDivOp(MediumDecVariant& Value)
+        {
+#if defined(AltNum_UseOldDivisionCode)
+            if (Value.IntValue < 0)
+            {
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+                else { Value.IntValue *= -1; }
+                SwapNegativeStatus();
+            }
+            PartialDivOp(Value);
+#else//Instead use modulus based code to divide
+			bool ResIsPositive = true;
+			signed _int64 SelfRes;
+			signed _int64 ValueRes;
+			if(IntValue<0)
+			{
+			    SelfRes = IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+DecimalHalf;
+			    if(Value<0)
+					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:Value.IntValue*NegDecimalOverflowX+Value.DecimalHalf;
+				else
+				{
+				    ResIsPositive = false;
+					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
+				}
+			}
+			else
+			{
+				SelfRes = IntValue*DecimalOverflowX+DecimalHalf;
+			    if(Value<0)
+				{
+				    ResIsPositive = false;
+					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+Value.DecimalHalf;
+				}
+				else
+					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
+			}
+			
+			signed _int64 IntHalfRes = SelfRes / ValueRes;
+			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
+#endif
+			if ((IntValue==NegativeRep||IntValue==0)&&DecimalHalf==0)//Prevent Dividing into nothing
 #if defined(AltNum_EnableApproachingDivided)
 			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
 #else
