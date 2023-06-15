@@ -3308,48 +3308,70 @@ public:
                     case RepType::ApproachingTop:
                         if (self.IntValue == NegativeRep)
                         {
-                            if (Value.IntValue == 0)//0.9-0.9
+                            if (Value.IntValue == 0)//-0.9..9 + 0.9..9 = 0
                                 self.SetAsZero();
-                            else if (Value.IntValue == NegativeRep)//-0.9 - 0.9
-                                self.IntValue = -1;
-                            else if (Value.IntValue < 0)//-0.9 - 1.9
+                            else if (Value.IntValue == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
+								self.IntValue = -1;
+                            else if (Value.IntValue < 0)//-0.9..9 - 1.9..9 = -2.9..8
                             {
-                                self.IntValue = Value.IntValue - 1;
+                                self.IntValue = Value.IntValue-1;
                             }
-                            else
+                            else//-0.9..9 + 5.9..9 = 5
                             {
+								DecimalHalf = 0; ExtraRep = 0;
+								self.IntValue = Value.IntValue;
                             }
                         }
-                        else if (Value.IntValue == NegativeRep)
+                        if (self.IntValue == 0)
                         {
-                            if (self.IntValue == 0)//0.9-0.9
-                                self.SetAsZero();
-                            else if (self.IntValue < 0)//-1.9 - 0.9
+                            if (Value.IntValue == 0)//0.9..9 + 0.9..9 = 1.9..8
+								self.IntValue = 1;
+                            else if (Value.IntValue == NegativeRep)//0.9..9 - 0.9..9 = 0
+								self.SetAsZero();
+                            else if (Value.IntValue < 0)//0.9..9 - 1.9..9 = -1
                             {
-                                --self.IntValue;
+								DecimalHalf = 0; ExtraRep = 0;
+                                self.IntValue = Value.IntValue;
                             }
-                            else
+                            else//0.9..9 + 5.9..9 = 6.9..8
                             {
+								self.IntValue = Value.IntValue+1;
                             }
                         }
                         else if (self.IntValue < 0)
                         {
-                            if (Value.IntValue < 0)//-1.9 - 1.9
+                            if (Value.IntValue == 0)//-1.9..9 + 0.9..9  = -1
+								DecimalHalf = 0; ExtraRep = 0;
+                            else if (Value.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -1.9..9
+							{/*Do Nothing*/}
+							else if(self.IntValue==-Value.IntValue)//-1.01 + 1.01
+                                self.SetAsZero();
+                            else if (Value.IntValue < 0)//-1.9..9 - 2.9..9
                             {
-                                self.IntValue += Value.IntValue - 1;
+                                self.IntValue += Value.IntValue;
                             }
-                            else
+                            else//-1.9..9 + 2.9..9
                             {
+								DecimalHalf = 0;
+								self.IntValue += Value.IntValue;
                             }
                         }
                         else
                         {
-                            if (Value.IntValue < 0)
+                            if (Value.IntValue == 0)//1.9..9 + 0.9..9 = 2.9..8
+								self.IntValue += 1;
+                            else if (Value.IntValue == NegativeRep)//1.9..9 - 0.9..9
+							{	DecimalHalf = 0; ExtraRep = 0;}
+							else if(self.IntValue==-Value.IntValue)//1.9..9 - 1.9..9
+                                self.SetAsZero();
+                            else if (Value.IntValue < 0)// 1.9..9  - 2.9..9
+							{
+								DecimalHalf = 0;
+								self.IntValue += Value.IntValue;
+							}
+                            else//1.9..9 + 1.9..9 = 3.9..8
                             {
-                            }
-                            else
-                            {
-                                self.IntValue += Value.IntValue;
+                                self.IntValue += Value.IntValue+1;
                             }
                         }
                         break;
