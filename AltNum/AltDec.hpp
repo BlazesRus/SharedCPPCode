@@ -3242,9 +3242,9 @@ public:
                                 self.SetAsZero();
                             else if (Value.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
                             {/*Do Nothing*/}
-                            else if (Value.IntValue < 0)//-0.0..1 - 1.0..1 = 1.0..1
+                            else if (Value.IntValue < 0)//-0.0..1 - 1.0..1 = -1.0..1
                             {
-                                self.IntValue = Value.IntValue*-1;
+                                self.IntValue = Value.IntValue;
                             }
                             else//-0.0..1 + 5.0..1 = 5
                             {
@@ -3261,7 +3261,7 @@ public:
                             else if (Value.IntValue < 0)//0.0..1 - 1.0..1 = -1
                             {
 								DecimalHalf = 0;
-                                self.IntValue = Value.IntValue*-1;
+                                self.IntValue = Value.IntValue;
                             }
                             else//-0.0..1 + 5.0..1 = 5.0..1
                             {
@@ -3276,11 +3276,11 @@ public:
 							{/*Do Nothing*/}
 							else if(self.IntValue==-Value.IntValue)//-1.01 + 1.01
                                 self.SetAsZero();
-                            else if (Value.IntValue < 0)//-1.0..1 - 1.0..1
+                            else if (Value.IntValue < 0)//-1.0..1 - 2.0..1
                             {
                                 self.IntValue += Value.IntValue;
                             }
-                            else//-1.0..1 + 2.0..1
+                            else//-1.0..1 + 2.0..1 = 1
                             {
 								DecimalHalf = 0;
 								self.IntValue += Value.IntValue;
@@ -3292,7 +3292,7 @@ public:
 							{/*Do Nothing*/}
                             else if (Value.IntValue == NegativeRep)//1.0..1 - 0.0..1
 								DecimalHalf = 0;
-							else if(self.IntValue==-Value.IntValue)//1.01 - 1.01
+							else if(self.IntValue==-Value.IntValue)//1.0..1 - 1.0..1
                                 self.SetAsZero();
                             else if (Value.IntValue < 0)// 1.0..1  - 2.0..1
 							{
