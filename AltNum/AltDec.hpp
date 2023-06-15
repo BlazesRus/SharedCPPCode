@@ -3263,7 +3263,7 @@ public:
 								DecimalHalf = 0;
                                 self.IntValue = Value.IntValue;
                             }
-                            else//-0.0..1 + 5.0..1 = 5.0..1
+                            else//0.0..1 + 5.0..1 = 5.0..1
                             {
 								self.IntValue = Value.IntValue;
                             }
