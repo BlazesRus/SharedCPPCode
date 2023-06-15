@@ -105,6 +105,9 @@ AltNum_EnablePIRep =
 
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
+If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRepi
+Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
+(Might be better to just store as formula class feature or as another number class holding 2 MediumDec or other AltNum values)
       (Requires AltNum_EnableImaginaryNum, Not Implimented Yet)
 
 AltNum_EnableMixedFractional =
