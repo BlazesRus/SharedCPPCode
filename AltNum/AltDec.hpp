@@ -43,18 +43,21 @@ AltNum_EnableNegativeZero =
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
       When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
-      When DecimalHalf is -2147483647, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
-      When DecimalHalf is -2147483646, it represents Approaching IntValue from right towards left (IntValue.0__1)
+	 (Not Fully Implimented)
+AltNum_EnableApproachingValues
+      When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
+	  When DecimalHalf is -2147483647 and ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
      (Not Fully Implimented)
-AltNum_EnableApproachingMidDec = 
-      When DecimalHalf is -2147483645, it represents Approaching Half way point of {IntValue,IntValue+1} from left towards right (IntValue.49__9)
-      When DecimalHalf is -2147483644, it represents Approaching Half way point of {IntValue,IntValue+1} from right towards left (IntValue.50__1)
-      Assumes AltNum_EnableInfinityRep is enabled
-      (Not Implimented)
+AltNum_EnableNearPI = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
+AltNum_EnableNearE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
+AltNum_EnableNearI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
+AltNum_EnableApproachingDivided =
+	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
+	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
+	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
+	(Assumes AltNum_EnableInfinityRep is enabled)
+	(Partially Implimented)
 
-AltNum_EnableNearPI = (Not Implimented)
-AltNum_EnableNearE = (Not Implimented)
-AltNum_EnableNearI = (Not Implimented)
 
 AltNum_EnableInfinityPowers =
       Allows powers of infinity for operations where infinity is somehow more infinite than normal
@@ -63,9 +66,6 @@ AltNum_EnableInfinityPowers =
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 
-//--Can't be currently Enabled if any EnableNear Options enabled:
-AltNum_EnableApproachingDivided = (Not Implimented)
-AltNum_EnableApproachingPointFive = Enables Approaching IntValue.49_infinitely_9 and .50_infinitely_1 as ExtraRep values -1 and 1(Not Implimented)
 //--
 
 //----
@@ -85,7 +85,7 @@ AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
       (Not Implimented Yet)
 	  
-AltNum_DisableInfinityRepTypeReturn =
+AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully implimented)
 
 AltNum_DisablePIRep =
       Force toggles AltNum_EnablePIRep to off
