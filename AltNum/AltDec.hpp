@@ -258,11 +258,13 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
         static const signed int InfinityRep = -2147483648;
+#if defined(AltNum_EnableApproachingValues)
         //Is Approaching IntValue when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
         //If ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
 		//If ExtraRep between +-2 and 2147483645 and AltNum_EnableApproachingMidDec enabled, Represents approaching 1/ExtraRep point
         static const signed int ApproachingValRep = -2147483647;
+#endif
 #endif
 #if defined(AltNum_EnablePIRep)
         //Is PI*Value representation when ExtraRep==-2147483648
@@ -353,11 +355,15 @@ ExtraFlags treated as bitwise flag storage
 #endif
 
 #if defined(AltNum_EnableInfinityRep)
+			PositiveInfinity,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
+			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
+#if defined(AltNum_EnableApproachingValues)
             ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 #if defined(AltNum_EnableApproachingDivided)
             ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+#endif
 #endif
 #endif
             Undefined,
@@ -394,17 +400,18 @@ ExtraFlags treated as bitwise flag storage
 #if !defined(AltNum_DisableInfinityRepTypeReturn)
             if(DecimalHalf==InfinityRep)
             {
-                if(IntValue==1)//If Positive Infinity, then convert number into MaximumValue instead when need as real number
+                if(IntValue==1)
                 {
                     return RepType::PositiveInfinity;
                 }
-                else//If Negative Infinity, then convert number into MinimumValue instead when need as real number
+                else
                 {
                     return RepType::NegativeInfinity;
                 }
             }
 			else
 #endif
+#if defined(AltNum_EnableApproachingValues)
             if (DecimalHalf == ApproachingValRep)
             {
                 if(ExtraRep==0)
@@ -433,6 +440,7 @@ ExtraFlags treated as bitwise flag storage
                     throw "EnableApproachingDivided feature not enabled";
 #endif            
             }
+#endif
 #endif
             if(ExtraRep==0)
 			{
@@ -662,6 +670,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = 0;
         }
   
+  #if defined(AltNum_EnableApproachingValues)
         //Approaching Zero from Right(0.000...1)
         void SetAsApproachingZero()
         {
@@ -699,6 +708,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = Divisor;
         }
 #endif
+#endif
 private:
         static MediumDecVariant InfinityValue()
         {
@@ -712,11 +722,13 @@ private:
             return NewSelf;
         }
         
+#if defined(AltNum_EnableApproachingValues)
         static MediumDecVariant ApproachingZeroValue()
         {
             MediumDecVariant NewSelf = AltDec(0, ApproachingValRep);
             return NewSelf;
         }
+#endif
 public:
 #endif
 #if defined(AltNum_EnableNaN)
@@ -867,6 +879,7 @@ public:
                 }
                 return;
             }
+#if defined(AltNum_EnableApproachingValues)
             else if(DecimalHalf==ApproachingValRep)
             {
                 if (ExtraRep == 0)
@@ -901,6 +914,7 @@ public:
 #endif			
                 return;
             }
+#endif
 #endif
 #if defined(AltNum_EnableNaN) && defined(AltNum_EnableNaNConversionCheck)//Disable conversion check for NaN by default(unless AltNum_EnableNaNConversionCheck preprocessor added)
             if(DecimalHalf==NaNRep)//Set as Zero instead of NaN
@@ -958,36 +972,26 @@ public:
         //Switch based version of ConvertToNumRep
         void ConvertToNormType(RepType& repType)
         {
-#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-            {
-                ExtraRep = 0;
-                if (IntValue == 1)//If Positive Infinity, then convert number into MaximumValue instead
-                {
-                    IntValue = 2147483647; DecimalHalf = 999999999;
-                }
-                else//If Negative Infinity, then convert number into MinimumValue instead
-                {
-                    IntValue = -2147483647; DecimalHalf = 999999999;
-                }
-                return;
-            }
-#endif
             switch (repType)
             {
             case RepType::NormalType:
                 break;
 #if defined(AltNum_EnableInfinityRep)
+			case RepType::PositiveInfinity:
+                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+			case RepType::NegativeInfinity:
+                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+#if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottom:
                 DecimalHalf = 1; ExtraRep = 0;
                 break;
             case RepType::ApproachingTop:
                 DecimalHalf = 999999999; ExtraRep = 0;
                 break;
-#endif
 #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidRight:
-			{
 				int InvertedExtraRep = ExtraRep*-1;
 				if(DecimalOverflow%InvertedExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
 					DecimalHalf = DecimalOverflow/InvertedExtraRep;
@@ -995,7 +999,6 @@ public:
 					DecimalHalf = (DecimalOverflow/InvertedExtraRep)+1;
 				ExtraRep = 0;
 				break;
-			}
             case RepType::ApproachingMidLeft:
 				if(DecimalOverflow%ExtraRep==0)//Only cut off the traiing digits for those that can't have all digits stored
 					DecimalHalf = DecimalOverflow/ExtraRep;
@@ -1003,6 +1006,8 @@ public:
 					DecimalHalf = (DecimalOverflow/ExtraRep)-1;
 				ExtraRep = 0;
                 break;
+#endif
+#endif
 #endif
 #if defined(AltNum_EnablePIRep)
             case RepType::PINum:
@@ -1018,7 +1023,6 @@ public:
                 ExtraRep = 0;
 #endif
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            {
 				signed _int64 FirstHalf = 3141592654;
 				FirstHalf *= IntValue;
 				signed int divRes = FirstHalf / DecimalHalf;
@@ -1038,7 +1042,6 @@ public:
 				DecimalHalf = SecondPart;
 			    ExtraRep = 0;
                 break;
-		    }
 #endif		
 #endif
             case RepType::NumByDiv:
@@ -1080,6 +1083,8 @@ public:
 			    ExtraRep = 0;
                 break;
 #endif
+#endif
+
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
@@ -1093,12 +1098,12 @@ public:
 #endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 #endif
-#endif
 				if(IntValue==0&&DecimalHalf!=0)
 					ExtraRep = 0
 				else
 					throw "Can't convert imaginery number into real number unless is zero.";
 				break;
+#endif
 #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
 				throw "Conversion from complex number to real number not supported yet.";
@@ -1110,11 +1115,13 @@ public:
             }
         }
 		
-        void ConvertToNormalIRep(RepType& repType)
+		
+
+#if defined(AltNum_EnableImaginaryNum)
+		void ConvertToNormalIRep(RepType& repType)
         {
             switch (repType)
             {
-#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 				if(IntValue==0&&DecimalHalf==0)
 					ExtraRep = 0
@@ -1133,7 +1140,6 @@ public:
 				break;
 #endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
 #endif
 				if(IntValue==0&&DecimalHalf!=0)
 					ExtraRep = 0
@@ -1154,6 +1160,7 @@ public:
                 break;
 			}
 		}
+#endif
 		
     #pragma region ValueDefines
         /// <summary>
