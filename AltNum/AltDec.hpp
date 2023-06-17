@@ -4196,6 +4196,8 @@ public:
 #pragma region Multiplication/Division Operations
         void PartialMultOp(MediumDecVariant& Value)
         {
+        {//Warning:Modifies Value to make it a positive variable
+		//Only use in cases where representation types are the same
             if (Value.IntValue < 0)
             {
                 if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
@@ -4670,7 +4672,7 @@ public:
 			signed _int64 IntHalfRes = SelfRes / ValueRes;
 			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
 			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
-			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
+			DecimalHalf = DecimalRes;
 			if(IntHalfRes==0&&DecimalRes==0)
 				return true;
 			else
