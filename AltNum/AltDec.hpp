@@ -138,8 +138,8 @@ AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
 AltNum_TogglePreferedSettings =
-      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableByDecimaledFractionals
-      and AltNum_EnableApproachingDivided
+      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableApproachingDivided
+	  and later AltNum_EnableAlternativeRepFractionals & AltNum_EnableByDecimaledFractionals once get code that part of code in working condition
 
 AltNum_EnableUndefinedButInRange =
 
@@ -176,8 +176,13 @@ AltNum_UseOldRemOpCode
 #if defined(AltNum_TogglePreferedSettings)
     #define AltNum_EnablePIRep
     #define AltNum_EnableInfinityRep
-	#define AltNum_EnableByDecimaledFractionals
 	#define AltNum_EnableApproachingDivided
+	//#define AltNum_EnableByDecimaledFractionals (not enabling until get related blocks in working order)
+#endif
+
+//Force required preprocessor flag for AltNum_EnableByDecimaledFractionals
+#if defined(AltNum_EnableByDecimaledFractionals)
+#undef AltNum_EnableAlternativeRepFractionals
 #endif
 
 #if defined(AltNum_AvoidUsingLargeInt)
