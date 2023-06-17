@@ -1041,7 +1041,7 @@ public:
 				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
 				//Add output code here later
 #else
-				FirstHalf /= DecimalHalf;
+				FirstHalf = divRes;
 #endif
 				//convert from Int64 into normal AltNum format
 				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
@@ -4198,8 +4198,7 @@ public:
 #pragma endregion Addition/Subtraction Operations
 
 #pragma region Multiplication/Division Operations
-        void PartialMultOp(MediumDecVariant& Value)
-        {
+		bool PartialMultOp(MediumDecVariant& Value)
         {//Warning:Modifies Value to make it a positive variable
 		//Only use in cases where representation types are the same
             if (Value.IntValue < 0)
@@ -4213,19 +4212,17 @@ public:
                 if (IntValue == 1)
                 {
                     IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                    ExtraRep = Value.ExtraRep; return;
                 }
                 else if (Value.DecimalHalf == 0)
                 {
-                    IntValue *= Value.IntValue; return;
+                    IntValue *= Value.IntValue;
                 }
                 else
                 {
-                    //Value *= IntValue;
                     Value.PartialIntMultOp(IntValue);
                     IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                    ExtraRep = Value.ExtraRep;
                 }
+				return false;
             }
             else if (IntValue == 0)
             {
@@ -4235,6 +4232,7 @@ public:
                 if (Value.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
+					return DecimalHalf==0?true:false;
                 }
                 else
                 {
@@ -4245,10 +4243,12 @@ public:
                         SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = OverflowVal;
                         DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
                         DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
             }
@@ -4270,10 +4270,12 @@ public:
                         SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
                         DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
             }
@@ -4295,11 +4297,13 @@ public:
                         SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
                         IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
@@ -4312,11 +4316,13 @@ public:
                         SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
                         IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
-                        IntValue = 0;
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
                 else
@@ -4339,6 +4345,11 @@ public:
             }
         }
 
+		bool PartialMultOpV2(MediumDecVariant Value)
+		{
+			return PartialMultOp(Value);
+		}
+
         /// <summary>
         /// Basic Multiplication Operation
         /// </summary>
@@ -4349,12 +4360,7 @@ public:
             if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
             if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
                 return;
-//#ifdef AltNum_UseOldMultiplicationCode
-            PartialMultOp(Value);
-//#else
-
-//#endif
-			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+			if(PartialMultOp(Value))
 #if defined(AltNum_EnableApproachingDivided)
 			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
 #else
@@ -4369,12 +4375,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         void BasicMultOpV2(MediumDecVariant& Value)
         {
-//#ifdef AltNum_UseOldMultiplicationCode
-            PartialMultOp(Value);
-//#else
-
-//#endif
-			if (IntValue==0&&DecimalHalf==0)//Prevent Dividing into nothing
+			if(PartialMultOp(Value))//Prevent Dividing into nothing
 #if defined(AltNum_EnableApproachingDivided)
 			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
 #else
@@ -4421,7 +4422,13 @@ public:
             return self;
         }
 
-        /// <summary>
+		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 copies of variables)
+		static MediumDecVariant& MultOpV2(MediumDecVariant& self, MediumDecVariant Value)
+		{
+			return MultOp(self, Value);
+		}
+		
+		/// <summary>
         /// Partial Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
