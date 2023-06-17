@@ -4496,7 +4496,7 @@ public:
 #endif
 						
 #if defined(AltNum_EnableMixedFractional)
-                    case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)
+                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
 #if defined(AltNum_EnablePINum)
                     case RepType::MixedPi:
 #endif
@@ -4748,8 +4748,7 @@ public:
 						//throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
                         break;
                 }
-            }
-            }
+			}
 			else
 				RepToRepMultOp(LRep, RRep, self, Value);
             return self;
