@@ -171,6 +171,7 @@ AltNum_OutputTruncatedTrailingDigits =
 
 AltNum_UseOldDivisionCode
 AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
+AltNum_UseOldRemOpCode
 */
 #if defined(AltNum_TogglePreferedSettings)
     #define AltNum_EnablePIRep
@@ -265,6 +266,14 @@ ExtraFlags treated as bitwise flag storage
     {
 #undefine MediumDecVariant
 #define MediumDecVariant AltDec
+	public:
+		class ModRes
+		{
+			//Division Result
+			MediumDecVariant DivRes;
+			//Modulo Operation Result
+			MediumDecVariant RemRes;
+		}
     private:
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
@@ -4729,7 +4738,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& DivOp(MediumDecVariant& self, MediumDecVariant& Value)
-        {
+        {//Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 #if defined(AltNum_EnableInfinityRep)
             if (Value.DecimalHalf == InfinityRep)
             {
@@ -4994,81 +5003,98 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& RemOp(MediumDecVariant& self, MediumDecVariant& Value)
         {
+#ifdef AltNum_UseOldRemOpCode
             bool SelfIsWholeN = self.DecimalHalf == 0;
             bool ValueIsWholeN = Value.DecimalHalf == 0;
             if (Value.IntValue == 0 && ValueIsWholeN) { self.SetAsZero(); return self; }//Return zero instead of N/A
             RepType LRep = self.GetRepType();
             RepType RRep = Value.GetRepType();
-            if(LRep==RRep)
+            if(LRep==RRep&&self.DecimalHalf>=0&&Value.DecimalHalf>=0)
             {
-                if(self.ExtraRep==0)
-                {
-                    if (SelfIsWholeN && ValueIsWholeN)//WholeNumbers
-                    {
-                        self.IntValue %= Value.IntValue;
-                    }
-                    else if (ValueIsWholeN)
-                    {
-                        self %= Value.IntValue;
-                    }
-                    else
-                    {
-                        //bool ValueIsNegative = Value.IntValue < 0;
-                        if (Value.IntValue < 0)
-                        {
-                            self.IntValue *= -1;
-                            if (Value.IntValue == NegativeRep) { Value.IntValue = 0; }
-                        }
-                        bool SelfIsNegative = self.IntValue < 0;
-                        if (SelfIsNegative)
-                        {
-                            if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                            else { self.IntValue *= -1; }
-                        }
-                        __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                        __int64 SRep_DecHalf = SRep;
-                        __int64 VRep = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;;
-                        SRep %= VRep;
-                        __int64 IntResult = SRep;
-                        //Int Half Calculated now get decimal digits that got truncated off
-                        SRep_DecHalf -= IntResult * VRep;
-                        //Gives enough buffer room that doesn't lose the decimal values
-                        SRep_DecHalf *= DecimalOverflowX;
-                        SRep_DecHalf %= VRep;
-                        if (IntResult == 0) { self.IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
-                        else { self.IntValue = (signed int)SelfIsNegative ? IntResult * -1 : IntResult; }
-                        self.DecimalHalf = (signed int)SRep;
-                    }
-                }
-                else if(self.ExtraRep==NegativeRep)//Value*Pi Representation
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #elif defined(AltNum_EnableENum)
-                else if(self.ExtraRep==IERep)
-                {
-                }
-                else if(self.ExtraRep>0)
-    #else
-                else//(Value/ExtraRep) Representation
-    #endif
-                {
-                
-                }
-    #if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
-                else
-                {
-                
-                }
-    #endif
-            }
+				if (SelfIsWholeN && ValueIsWholeN)//WholeNumbers
+				{
+					self.IntValue %= Value.IntValue;
+				}
+				else if (ValueIsWholeN)
+				{
+					self %= Value.IntValue;
+				}
+				else
+				{
+					//bool ValueIsNegative = Value.IntValue < 0;
+					if (Value.IntValue < 0)
+					{
+						self.IntValue *= -1;
+						if (Value.IntValue == NegativeRep) { Value.IntValue = 0; }
+					}
+					bool SelfIsNegative = self.IntValue < 0;
+					if (SelfIsNegative)
+					{
+						if (self.IntValue == NegativeRep) { self.IntValue = 0; }
+						else { self.IntValue *= -1; }
+					}
+					__int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
+					__int64 SRep_DecHalf = SRep;
+					__int64 VRep = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;;
+					SRep %= VRep;
+					__int64 IntResult = SRep;
+					//Int Half Calculated now get decimal digits that got truncated off
+					SRep_DecHalf -= IntResult * VRep;
+					//Gives enough buffer room that doesn't lose the decimal values
+					SRep_DecHalf *= DecimalOverflowX;
+					SRep_DecHalf %= VRep;
+					if (IntResult == 0) { self.IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
+					else { self.IntValue = (signed int)SelfIsNegative ? IntResult * -1 : IntResult; }
+					self.DecimalHalf = (signed int)SRep;
+				}
+			}
+			else
+			{
+				if (self.IntValue < 0)
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+					self = Value - self;
+				}
+				else
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+				}
+			}
+			
+#else
+			if (self.IntValue < 0)
+			{
+				MediumDecVariant DivRes = Self / Value;
+				self = self - Value * IntHalfRes;//RemResult
+				self = Value - self;
+			}
+			else
+			{
+				MediumDecVariant DivRes = Self / Value;
+				self = self - Value * IntHalfRes;//RemResult
+			}
+#endif
             return self;
         }
+		
+		ModRes PerformModOp(MediumDecVariant& self, IntType& Value)
+		{
+			ModRes Result;
+			if (self.IntValue < 0)
+			{
+				ModRes.DivRes = Self / Value;
+				ModRes.RemRes = self - Value * IntHalfRes;//RemResult
+				ModRes.RemRes = Value - self;
+			}
+			else
+			{
+				ModRes.DivRes = Self / Value;
+				ModRes.RemRes = self - Value * IntHalfRes;//RemResult
+			}
+			return Result;
+		}
 
         /// <summary>
         /// Remainder/Modulus Operation Between MediumDecVariant and Integer Value
@@ -5094,6 +5120,7 @@ public:
             }
             else//leftValue is non-whole number
             {
+#ifdef AltNum_UseOldRemOpCode
                 if (Value < 0) { self.SwapNegativeStatus(); Value *= -1; }
                 bool SelfIsNegative = self.IntValue < 0;
                 if (SelfIsNegative)
@@ -5113,6 +5140,19 @@ public:
                 if (IntHalf == 0) { self.IntValue = SelfIsNegative ? (signed int)NegativeRep : 0; }
                 else { self.IntValue = (signed int)(SelfIsNegative ? IntHalf * -1 : IntHalf); }
                 self.DecimalHalf = (signed int)SRep;
+#else
+				if (self.IntValue < 0)
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+					self = Value - self;
+				}
+				else
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+				}
+#endif
             }
             return self;
         }
@@ -5134,6 +5174,7 @@ public:
             }
             else//leftValue is non-whole number
             {
+#ifdef AltNum_UseOldRemOpCode
                 __int64 SRep;
                 if (self.IntValue == NegativeRep) { SRep = (__int64)self.DecimalHalf * -1; }
                 else if (self.IntValue < 0) { SRep = DecimalOverflowX * self.IntValue - self.DecimalHalf; }
@@ -5151,6 +5192,19 @@ public:
                 if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
                 else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                 self.DecimalHalf = (signed int)SRep;
+#else
+				if (self.IntValue < 0)
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+					self = Value - self;
+				}
+				else
+				{
+					MediumDecVariant DivRes = Self / Value;
+					self = self - Value * IntHalfRes;//RemResult
+				}
+#endif
             }
             return self;
         }
@@ -8184,8 +8238,10 @@ public:
     
 #if defined(AltNum_EnableInfinityRep)
     MediumDecVariant MediumDecVariant::Infinity = InfinityValue();
+#if defined(AltNum_EnableApproachingValues)
     MediumDecVariant MediumDecVariant::NegativeInfinity = NegativeInfinityValue();
     MediumDecVariant MediumDecVariant::ApproachingZero = ApproachingZeroValue();
+#endif
 #endif
 #if defined(AltNum_EnableNaN)
     MediumDecVariant MediumDecVariant::NaN = NaNValue();
