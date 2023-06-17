@@ -172,6 +172,8 @@ AltNum_OutputTruncatedTrailingDigits =
 AltNum_UseOldDivisionCode
 AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
 AltNum_UseOldRemOpCode
+
+AltNum_EnableBoostFractionalReduction
 */
 #if defined(AltNum_TogglePreferedSettings)
     #define AltNum_EnablePIRep
@@ -649,6 +651,31 @@ ExtraFlags treated as bitwise flag storage
         {
             IntValue = Value; DecimalHalf = 0;
             ExtraRep = PIRep;
+        }
+#endif
+
+#if defined(AltNum_EnableERep)
+#if defined(AltNum_EnableMediumDecBasedSetValues)
+        void SetEValFromMediumDec(MediumDec Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            ExtraRep = ERep;
+        }
+#endif
+
+        void SetEVal(MediumDecVariant Value)
+        {
+            if(ExtraRep==0)
+            {
+                IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+                ExtraRep = ERep;
+            }
+        }
+        
+        void SetEVal(int Value)
+        {
+            IntValue = Value; DecimalHalf = 0;
+            ExtraRep = ERep;
         }
 #endif
         
