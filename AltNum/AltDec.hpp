@@ -138,8 +138,8 @@ AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
 AltNum_TogglePreferedSettings =
-      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableByDecimaledFractionals,
-      and AltNum_EnablePublicRepType
+      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableByDecimaledFractionals
+      and AltNum_EnableApproachingDivided
 
 AltNum_EnableUndefinedButInRange =
 
@@ -172,6 +172,18 @@ AltNum_OutputTruncatedTrailingDigits =
 AltNum_UseOldDivisionCode
 AltNum_UseOldMultiplicationCode
 */
+#if defined(AltNum_TogglePreferedSettings)
+    #define AltNum_EnablePIRep
+    #define AltNum_EnableInfinityRep
+	#define AltNum_EnableByDecimaledFractionals
+	#define AltNum_EnableApproachingDivided
+#endif
+
+//Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
+#if defined(AltNum_EnableApproachingDivided)
+    #define AltNum_EnableInfinityRep
+	#define AltNum_EnableApproachingValues
+#endif
 
 //Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
 #if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePIPowers)
@@ -180,11 +192,6 @@ AltNum_UseOldMultiplicationCode
 
 #if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePIPowers)) && defined(AltNum_EnableNormalPowers)
 #undef AltNum_EnableNormalPowers
-#endif
-
-#if defined(AltNum_TogglePreferedSettings)
-    #define AltNum_EnablePIRep
-    #define AltNum_EnableInfinityRep
 #endif
 
 //If Pi rep is neither disabled or enabled, default to enabling PI representation
@@ -4384,7 +4391,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
-        {
+        {//Warning:Modifies Value to make it a positive variable
 #if defined(AltNum_EnableInfinityRep)
             if (self.DecimalHalf == InfinityRep)
             {
@@ -4519,7 +4526,11 @@ public:
 
 #ifdef AltNum_UseOldDivisionCode
         void PartialDivOp(MediumDecVariant& Value)
+#else
+        bool PartialDivOp(MediumDecVariant& Value)//Return true if divide into zero
+#endif
         {
+#ifdef AltNum_UseOldDivisionCode
             if (DecimalHalf == 0)
             {
                 bool SelfIsNegative = IntValue < 0;
@@ -4529,7 +4540,6 @@ public:
                 }
                 if (Value.DecimalHalf == 0)//Both are integers
                 {
-                    if (IntValue < 0) { IntValue *= -1; }
                     __int64 SRep = IntValue * MediumDecVariant::DecimalOverflowX;
                     __int64 YRep = Value.IntValue;
                     SRep /= Value.IntValue;
@@ -4630,36 +4640,6 @@ public:
                     DecimalHalf = (signed int)SRep;
                 }
             }
-        }
-#endif
-
-        void BasicDivOpV0(MediumDecVariant& Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if (Value.DecimalHalf == InfinityRep)
-            {
-                SetAsZero();
-                return;
-            }
-            if (Value == MediumDecVariant::Zero)
-            {
-                IntValue < 0 ? SetAsNegativeInfinity():SetAsInfinity();
-                return;
-            }
-#else
-            if (Value == MediumDecVariant::Zero)
-                throw "Target value can not be divided by zero";
-#endif
-            if (IntValue==0&&DecimalHalf==0)
-                return;
-#if defined(AltNum_UseOldDivisionCode)
-            if (Value.IntValue < 0)
-            {
-                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-                else { Value.IntValue *= -1; }
-                SwapNegativeStatus();
-            }
-            PartialDivOp(Value);
 #else//Instead use modulus based code to divide
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
@@ -4691,12 +4671,10 @@ public:
 			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
 			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
 			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
-#endif
-			if ((IntValue==NegativeRep||IntValue==0)&&DecimalHalf==0)//Prevent Dividing into nothing
-#if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
-#else
-				DecimalHalf = 1;
+			if(IntHalfRes==0&&DecimalRes==0)
+				return true;
+			else
+				return false;
 #endif
         }
 		
@@ -4709,40 +4687,13 @@ public:
                 else { Value.IntValue *= -1; }
                 SwapNegativeStatus();
             }
-            PartialDivOp(Value);
-#else//Instead use modulus based code to divide
-			bool ResIsPositive = true;
-			signed _int64 SelfRes;
-			signed _int64 ValueRes;
-			if(IntValue<0)
-			{
-			    SelfRes = IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+DecimalHalf;
-			    if(Value<0)
-					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:Value.IntValue*NegDecimalOverflowX+Value.DecimalHalf;
-				else
-				{
-				    ResIsPositive = false;
-					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
-				}
-			}
-			else
-			{
-				SelfRes = IntValue*DecimalOverflowX+DecimalHalf;
-			    if(Value<0)
-				{
-				    ResIsPositive = false;
-					ValueRes = Value.IntValue==NegativeRep?DecimalHalf:IntValue*NegDecimalOverflowX+Value.DecimalHalf;
-				}
-				else
-					ValueRes = Value.IntValue*DecimalOverflowX+Value.DecimalHalf;
-			}
-			
-			signed _int64 IntHalfRes = SelfRes / ValueRes;
-			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
-			DecimalHalf = DecimalRes<0?DecimalRes*-1:DecimalRes;
 #endif
+            PartialDivOp(Value);
+#if defined(AltNum_UseOldDivisionCode)
 			if ((IntValue==NegativeRep||IntValue==0)&&DecimalHalf==0)//Prevent Dividing into nothing
+#else
+			if (PartialDivOp(Value))//Prevent Dividing into nothing
+#endif
 #if defined(AltNum_EnableApproachingDivided)
 			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
 #else
