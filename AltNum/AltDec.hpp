@@ -170,13 +170,17 @@ AltNum_OutputTruncatedTrailingDigits =
 	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
 
 AltNum_UseOldDivisionCode
-AltNum_UseOldMultiplicationCode
+AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
 */
 #if defined(AltNum_TogglePreferedSettings)
     #define AltNum_EnablePIRep
     #define AltNum_EnableInfinityRep
 	#define AltNum_EnableByDecimaledFractionals
 	#define AltNum_EnableApproachingDivided
+#endif
+
+#if defined(AltNum_AvoidUsingLargeInt)
+#undef AltNum_UseOldDivisionCode
 #endif
 
 //Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
@@ -777,12 +781,12 @@ public:
             //683565275.168866626 x 3.141592654 = 2147483647.000000001747365404
             if(IntValue>=683565275&&DecimalHalf>=168866626)//Exceeding Storage limit of NormalRep
             {
-                //Display error/warning
+                throw "Conversion of Pi multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
                 IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
             }
             else if(IntValue<=-683565275&&DecimalHalf>=168866626)//Exceeding Storage limit of NormalRep
             {
-                //Display error/warning
+                throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
                 IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
             }
 #if defined(AltNum_DisableSwitchBasedConversion)
