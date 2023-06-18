@@ -3238,6 +3238,13 @@ private:
             Value.ConvertToNormType(RRep);
             BasicAddOp(Value);
         }
+		
+        void CatchAllAddition(MediumDecVariant& Value, RepType& SameRep)
+        {
+            ConvertToNormType(SameRep);
+            Value.ConvertToNormType(SameRep);
+            BasicAddOp(Value);
+        }
 public:
         /// <summary>
         /// Addition Operation
@@ -3643,6 +3650,13 @@ private:
     {
         ConvertToNormType(LRep);
         Value.ConvertToNormType(RRep);
+        BasicSubOp(Value);
+    }
+	
+    void CatchAllSubtraction(MediumDecVariant& Value, RepType& SameRep)
+    {
+        ConvertToNormType(SameRep);
+        Value.ConvertToNormType(SameRep);
         BasicSubOp(Value);
     }
 public:
@@ -4425,12 +4439,26 @@ public:
         }
 
 private:
-    void CatchAllMultiplication(MediumDecVariant& Value)
-    {
-        ConvertToNumRep();
-        Value.ConvertToNumRep();
-        BasicMultOp(Value);
-    }
+	void CatchAllMultiplication(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
+	{
+		ConvertToNumRep(LRep);
+		Value.ConvertToNumRep(RRep);
+		BasicMultOp(Value);
+	}
+	
+	void CatchAllMultiplication(MediumDecVariant& Value, RepType& SameRep)
+	{
+		ConvertToNumRep(SameRep);
+		Value.ConvertToNumRep(SameRep);
+		BasicMultOp(Value);
+	}
+	
+ //   void CatchAllMultiplication(MediumDecVariant& Value)
+ //   {
+ //       ConvertToNumRep();
+ //       Value.ConvertToNumRep();
+ //       BasicMultOp(Value);
+ //   }
 public:
         /// <summary>
         /// Multiplication Operation
@@ -4479,9 +4507,9 @@ public:
 						break;
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-                    case RepType::INum://Xi * Xi = XX
+                    case RepType::INum://Xi * Yi = -XY
 						ExtraRep = 0;
-						self.PartialMultOp(Value);
+						self.PartialMultOp(-Value);
 						break;
 #endif
 						
@@ -4544,9 +4572,7 @@ public:
                         }
                         break;
                     case RepType::ApproachingTop://Just going to convert into normal numbers for now
-						self.ConvertToNumRep();
-						Value.ConvertToNumRep();
-						self.PartialMultOp(Value);
+						self.CatchAllMultiplication(Value, LRep);
                         break;
 
 #if defined(AltNum_EnableApproachingDivided)
@@ -4702,7 +4728,7 @@ public:
 						break;
 						
 #if defined(AltNum_EnableMixedFractional)
-/*                    case RepType::MixedFracByDiv://IntValue -- (DecimalHalf*-1)/ExtraRep
+/*                    case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
                     case RepType::MixedPiByDiv:
 #endif
@@ -5209,12 +5235,26 @@ public:
         }
 
 private:
-    void CatchAllDivision(MediumDecVariant& Value)
-    {
-        ConvertToNumRep();
-        Value.ConvertToNumRep();
-        BasicDivOp(Value);
-    }
+	void CatchAllDivision(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
+	{
+		ConvertToNumRep(LRep);
+		Value.ConvertToNumRep(RRep);
+		BasicDivOp(Value);
+	}
+	
+	void CatchAllDivision(MediumDecVariant& Value, RepType& SameRep)
+	{
+		ConvertToNumRep(SameRep);
+		Value.ConvertToNumRep(SameRep);
+		BasicDivOp(Value);
+	}
+	
+ //   void CatchAllDivision(MediumDecVariant& Value)
+ //   {
+ //       ConvertToNumRep();
+ //       Value.ConvertToNumRep();
+ //       BasicDivOp(Value);
+ //   }
 public:
         /// <summary>
         /// Division Operation
