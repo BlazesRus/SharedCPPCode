@@ -4647,8 +4647,8 @@ public:
 						int NumRes = Self.IntValue*Value.IntValue;
 						int DenomRes = self.DecimalHalf/Value.DecimalHalf;
 						//Reduce size of fractional if viable
-						signed _int64 DivRes = NumRes / DenomRes;
-						signed _int64 RemRes = NumRes - DenomRes * NumRes;
+						signed int DivRes = NumRes / DenomRes;
+						signed int RemRes = NumRes - DenomRes * NumRes;
 						if(RemRes==0)
 						{
 #ifdef AltNum_EnablePIPowers
@@ -4675,8 +4675,8 @@ public:
 						int NumRes = Self.IntValue*Value.IntValue;
 						int DenomRes = self.DecimalHalf/Value.DecimalHalf;
 						//Reduce size of fractional if viable
-						signed _int64 DivRes = NumRes / DenomRes;
-						signed _int64 RemRes = NumRes - DenomRes * NumRes;
+						signed int DivRes = NumRes / DenomRes;
+						signed int RemRes = NumRes - DenomRes * NumRes;
 						if(RemRes==0)
 						{
 							Self.SetEVal(DivRes);
