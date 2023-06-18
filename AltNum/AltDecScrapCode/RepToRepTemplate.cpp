@@ -2151,3 +2151,4 @@
 					throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
 					break;
 			}
+        }
