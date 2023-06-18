@@ -3298,7 +3298,7 @@ public:
                     case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-                    case MixedI:
+                    case RepType::MixedI:
 #endif
 						throw "BasicMixedAddOp code not implimented yet";//self.BasicMixedAddOp(Value);
 						break;
@@ -3528,7 +3528,7 @@ public:
 							self.BasicAddOp(Value);
 						}
 						break;
-                    case MixedI:
+                    case RepType::MixedI:
 						throw "BasicMixedAddOp code not implimented yet";
                         break;
 #endif
@@ -3706,7 +3706,7 @@ public:
                     case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-                    case MixedI:
+                    case RepType::MixedI:
 #endif
 						throw "BasicMixedSubOp code not implimented yet";//self.BasicMixedSubOp(Value);
 						break;
@@ -3925,7 +3925,7 @@ public:
 							self.BasicSubOp(Value);
 						}
 						break;
-                    case MixedI:
+                    case RepType::MixedI:
 						throw "BasicMixedSubOp code not implimented yet";
                         break;
 #endif
@@ -4532,7 +4532,7 @@ public:
                     case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-                    case MixedI:
+                    case RepType::MixedI:
 #endif
 						throw "BasicMixedMultOp code not implimented yet";//self.BasicMixedMultOp(Value);
 						break;
@@ -4748,7 +4748,7 @@ public:
                     case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 
 						break;
-                    case MixedI:
+                    case RepType::MixedI:
 						throw "BasicMixedMultOp code not implimented yet";
                         break;*/
 #endif
@@ -4909,7 +4909,7 @@ public:
 				case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-				case MixedI:
+				case RepType::MixedI:
 #endif
 					throw "BasicMixedMultOp code not implimented yet";//self.BasicMixedMultOp(Value);
 					break;
@@ -5028,7 +5028,7 @@ public:
 				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 
 					break;
-				case MixedI:
+				case RepType::MixedI:
 					throw "BasicMixedMultOp code not implimented yet";
 					break;*/
 #endif
@@ -5328,7 +5328,7 @@ public:
                     case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-                    case MixedI:
+                    case RepType::MixedI:
 #endif
 						throw "BasicMixedDivOp code not implimented yet";//self.BasicMixedDivOp(Value);
 						break;
@@ -5502,7 +5502,7 @@ public:
                     case RepType::INumByDiv://(Value/(ExtraRep/-1))*i Representation
 
 						break;
-                    case MixedI:
+                    case RepType::MixedI:
 						throw "BasicMixedDivOp code not implimented yet";
                         break;//
 #endif
