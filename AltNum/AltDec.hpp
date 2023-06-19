@@ -3039,6 +3039,7 @@ public:
             }
         }
         
+
 		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
 #if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
@@ -3058,14 +3059,14 @@ public:
 					{
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
+//							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
+//							break;
 //	#endif
 //	#if defined(AltNum_EnableImaginaryNum)
 //						case RepType::INum:
-//	#endif
-//	#if (defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
 //							break;
 //	#endif
 //							
@@ -3094,7 +3095,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3212,7 +3213,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3334,7 +3335,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3456,7 +3457,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3576,7 +3577,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3689,7 +3690,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3825,7 +3826,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -3909,7 +3910,7 @@ public:
 					break;
 	#endif
 
-	#if defined(AltNum_EnableApproachingDivided)
+	#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom:
 					switch (RRep)
 					{
@@ -3952,7 +3953,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingTop:
 //							break;
 //
@@ -4074,7 +4075,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //
@@ -4198,7 +4199,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4320,7 +4321,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4446,7 +4447,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4570,7 +4571,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4692,7 +4693,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4821,7 +4822,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -4948,7 +4949,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -5081,7 +5082,7 @@ public:
 //							break;
 //	#endif
 //
-//	#if defined(AltNum_EnableApproachingDivided)
+//	#if defined(AltNum_EnableApproachingValues)
 //						case RepType::ApproachingBottom:
 //							break;
 //						case RepType::ApproachingTop:
@@ -5189,7 +5190,7 @@ public:
 	//				break;
 	//#endif
 				default:
-					throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+					throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
 					break;
 			}
         }
@@ -6585,7 +6586,7 @@ public:
 						break;
 #endif
 
-#if defined(AltNum_EnableApproachingDivided)
+#if defined(AltNum_EnableApproachingValues)
                     case RepType::ApproachingBottom:
                         if (self.IntValue == NegativeRep)
                         {
@@ -7381,7 +7382,7 @@ public:
 						break;
 #endif
 
-#if defined(AltNum_EnableApproachingDivided)
+#if defined(AltNum_EnableApproachingValues)
                     case RepType::ApproachingBottom:
 						if(self.IntValue==Value.IntValue)
 						{ self.IntValue = 1; self.DecimalHalf = 0; }
