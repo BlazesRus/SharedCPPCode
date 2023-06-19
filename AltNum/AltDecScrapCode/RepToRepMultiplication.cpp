@@ -190,19 +190,28 @@
 	#endif
 //
 	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
+						case RepType::ApproachingBottom:
+                            Value.DecimalHalf = 1;
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTop:
+                            Value.DecimalHalf = 999999999;
+                            Value.ExtraRep = 0;
+                            self.BasicMultOp(Value);
+							break;
+
 	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
+						case RepType::ApproachingBottomDiv:
+                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTopDiv:
+                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                            self.BasicMultOp(Value);
+							break;
 	#endif
 	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 						case RepType::NumByDiv:
                             self /= Value.ExtraRep;
@@ -217,8 +226,11 @@
 							break;
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-//							break;
+						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                            self /= Value.DecimalHalf;
+                            self.BasicMultOp(EValue);
+                            self.BasicMultOp(Value.IntValue);
+							break;
 	#endif
 //
 	#if defined(AltNum_EnableDecimaledPiFractionals)
@@ -324,16 +336,25 @@
 	#endif
 //
 	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
+						case RepType::ApproachingBottom:
+                            Value.DecimalHalf = 1;
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTop:
+                            Value.DecimalHalf = 999999999;
+                            Value.ExtraRep = 0;
+                            self.BasicMultOp(Value);
+							break;
+
 	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
+						case RepType::ApproachingBottomDiv:
+                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTopDiv:
+                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                            self.BasicMultOp(Value);
+							break;
 	#endif
 	#endif
 //
@@ -410,15 +431,20 @@
 				case RepType::INum:
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
+                            break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
-//							break;
+						case RepType::PINum:
+                            Value.ConvertPIToNum()
+                            self.BasicMultOp(Value);
+							break;
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::ENum:
-//							break;
+						case RepType::ENum:
+                            Value.ConvertToNormType(RepType::PINum);
+                            self.BasicMultOp(Value);
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
@@ -446,16 +472,25 @@
 	#endif
 //
 	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
+						case RepType::ApproachingBottom:
+                            Value.DecimalHalf = 1;
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTop:
+                            Value.DecimalHalf = 999999999;
+                            Value.ExtraRep = 0;
+                            self.BasicMultOp(Value);
+							break;
+
 	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
+						case RepType::ApproachingBottomDiv:
+                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::ApproachingTopDiv:
+                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                            self.BasicMultOp(Value);
+							break;
 	#endif
 	#endif
 //
