@@ -951,16 +951,24 @@
 				case RepType::ApproachingBottom:
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
-//							break;
+						case RepType::PINum:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::ENum:
-//							break;
+						case RepType::ENum:
 	#endif
+                            if(Value.IntValue==0)
+                            {
+                                self.IntValue = self.IntValue<0?NegativeRep:0; self.ExtraRep = 0;
+                            }
+                            else if(Value.IntValue==NegativeRep)
+                            {
+                                self.IntValue = self.IntValue<0?0:NegativeRep; self.ExtraRep = 0;
+                            }
+                            else
+                                self.CatchAllMultiplication(Value, LRep, RRep);
+                            break;
 	#if defined(AltNum_EnableImaginaryNum)
 //						case RepType::INum:
 //							break;
@@ -991,14 +999,33 @@
 	#endif
 //
 	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingTop:
-//							break;
-//
+						case RepType::ApproachingTop:
+                            if(Value.IntValue==0)
+                            {
+                                self.IntValue = self.IntValue<0?NegativeRep:0; self.ExtraRep = 0;
+                            }
+                            else if(Value.IntValue==NegativeRep)
+                            {
+                                self.IntValue = self.IntValue<0?0:NegativeRep; self.ExtraRep = 0;
+                            }
+                            else
+                                self.CatchAllMultiplication(Value, LRep, RRep);
+							break;
+
 	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
+						case RepType::ApproachingBottomDiv:
+						case RepType::ApproachingTopDiv:
+                            if(Value.IntValue==0)
+                            {
+                                self.IntValue = self.IntValue<0?NegativeRep:0; self.ExtraRep = 0;
+                            }
+                            else if(Value.IntValue==NegativeRep)
+                            {
+                                self.IntValue = self.IntValue<0?0:NegativeRep; self.ExtraRep = 0;
+                            }
+                            else
+                                self.CatchAllMultiplication(Value, LRep, RRep);
+							break;
 	#endif
 	#endif
 //
