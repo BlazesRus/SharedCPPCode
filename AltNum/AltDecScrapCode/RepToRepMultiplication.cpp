@@ -3,18 +3,45 @@
 #if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
 			if(LRep==RepType::NegativeZero)
 			{
-				self.SetAsZero(); LRep = RepType::NormalType; 
+				self.SetAsZero(); return;//LRep = RepType::NormalType; 
 			}
 			if(RRep==RepType::NegativeZero)
 			{
-				Value.SetAsZero(); RRep = RepType::NormalType; 
+				self.SetAsZero(); return;//Value.SetAsZero();//RRep = RepType::NormalType; 
 			}
+#endif
+#if defined(AltNum_EnableApproachingValues)
+			if(RRep==RepType::ApproachingBottom
+	#if defined(AltNum_EnableImaginaryNum)
+            &&LRep!=RepType::INum
+#if defined(AltNum_EnableAlternativeRepFractionals)
+            &&LRep!=RepType::IFractional &&LRep!=RepType::INumByDiv &&LRep!=RepType::MixedI
+#endif
+    #endif
+            )
+            {
+                if(Value.IntValue==0)
+                {
+                    self.IntValue = self.IntValue<0?NegativeRep:0;
+					self.DecimalHalf = ApproachingValRep;
+					self.ExtraRep = 0;
+					return;
+                }
+                else
+                {
+                    Value.DecimalHalf = 1;
+                    RRep = RepType::NormalType;
+                }
+         }
 #endif
 			switch (LRep)
 			{
 				case RepType::NormalType:
 					switch (RRep)
 					{
+                        case RepType::NormalType://Fail safe for when converted before switch
+                            self.BasicMultOp(Value);
+                            break;
 #if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
                         case RepType::PINum://X * (Y*Pi)
                             self.BasicMultOp(Value);
@@ -1264,8 +1291,6 @@
 	#endif
 //
 	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
 //						case RepType::ApproachingTop:
 //							break;
 //
