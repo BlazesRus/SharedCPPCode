@@ -1241,8 +1241,9 @@
 				case RepType::NumByDiv:
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType://Later normalize fractional when integer when viable
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
@@ -1560,8 +1561,7 @@
 	#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)//Only one of the 2 switches can be active at once
 					switch (RRep)
 					{
-						case RepType::NormalType:
-                            
+						case RepType::NormalType://Normalize denom later
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
@@ -1661,8 +1661,7 @@
 	#endif
 					switch (RRep)
 					{
-						case RepType::NormalType:
-                            self.BasicMultOp(Value);
+//						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
@@ -1859,8 +1858,9 @@
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
