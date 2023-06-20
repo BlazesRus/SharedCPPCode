@@ -3,6 +3,11 @@
     //LRep Overrides
     switch(LRep)
     {
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+        case RepType::UndefinedButInRange:
+			throw "UndefinedButInRange operations not supported yet(from left side)";
+            break;
+#endif
 		case RepType::Undefined:
 		case RepType::NaN:
 			throw "Can't perform operations with NaN or Undefined number";
@@ -72,6 +77,11 @@
 			break;
 #endif
 #endif
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+        case RepType::UndefinedButInRange:
+			throw "UndefinedButInRange operations not supported yet(from right side)";
+            break;
+#endif
 
 		case RepType::Undefined:
 		case RepType::NaN:
@@ -139,20 +149,7 @@
 //							break;
 	#endif
 //
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 						case RepType::NumByDiv:
                             self.BasicMultOp(Value);
@@ -212,10 +209,6 @@
 //
 //	//#if defined(AltNum_EnableComplexNumbers)
 //	//                    case RepType::ComplexIRep:
-//	//						break;
-//	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
 //	//						break;
 //	//#endif
 						default:
@@ -348,20 +341,7 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -494,20 +474,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -630,20 +596,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						//case RepType::UnknownType:
-						//	throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 							break;
@@ -737,20 +689,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -789,21 +727,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -853,20 +777,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -924,21 +834,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -988,20 +884,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1059,38 +941,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-						case RepType::ApproachingTop:
-                            if(Value.IntValue==0)
-                            {
-                                self.IntValue = self.IntValue<0?NegativeRep:0; self.ExtraRep = 0;
-                            }
-                            else if(Value.IntValue==NegativeRep)
-                            {
-                                self.IntValue = self.IntValue<0?0:NegativeRep; self.ExtraRep = 0;
-                            }
-                            else
-                                self.CatchAllMultiplication(Value, LRep, RRep);
-							break;
 
-	#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingBottomDiv:
-						case RepType::ApproachingTopDiv:
-                            if(Value.IntValue==0)
-                            {
-                                self.IntValue = self.IntValue<0?NegativeRep:0; self.ExtraRep = 0;
-                            }
-                            else if(Value.IntValue==NegativeRep)
-                            {
-                                self.IntValue = self.IntValue<0?0:NegativeRep; self.ExtraRep = 0;
-                            }
-                            else
-                                self.CatchAllMultiplication(Value, LRep, RRep);
-							break;
-	#endif
-	#endif
-//
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1140,20 +991,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1200,19 +1037,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1262,20 +1087,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1384,20 +1195,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1506,20 +1303,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1632,20 +1415,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1754,20 +1523,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1816,21 +1571,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1876,20 +1617,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -1907,8 +1634,10 @@
 	#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)//Only one of the 2 switches can be active at once
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
@@ -1945,21 +1674,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -2001,20 +1716,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -2034,7 +1735,8 @@
 	#endif
 					switch (RRep)
 					{
-//						case RepType::NormalType:
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
@@ -2072,21 +1774,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -2136,20 +1824,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -2161,8 +1835,9 @@
 				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
@@ -2199,21 +1874,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -2263,22 +1924,7 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
-							//self.CatchAllMultiplication(Value, LRep, RRep);
 							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 							break;
 					}
@@ -2325,21 +1971,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -2389,20 +2021,6 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							//self.CatchAllMultiplication(Value, LRep, RRep);
 							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
@@ -2515,48 +2133,20 @@
 //	//                    case RepType::ComplexIRep:
 //	//						break;
 //	//#endif
-//	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//	//                    case RepType::UndefinedButInRange:
-//	//						break;
-//	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
-							//self.CatchAllMultiplication(Value, LRep, RRep);
 							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 							break;
 					}
 					break;
 	#endif
 
-	//#if defined(AltNum_EnableComplexNumbers)
-	//                    case RepType::ComplexIRep:
-	//						break;
-	//#endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-				case RepType::UndefinedButInRange:
-					throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
-					break;
-	#endif
-				case RepType::Undefined:
-				case RepType::NaN:
-					throw "Can't perform operations with NaN or Undefined number";
-					break;
-	//#if defined(AltNum_EnableNegativeZero)
-	//			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-	//				break;
-	//#endif
-				default:
-					throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
-					break;
+#if defined(AltNum_EnableComplexNumbers)
+//            case RepType::ComplexIRep:
+//			    break;
+#endif
+            default:
+            	throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+            	break;
 			}
         }
 		
