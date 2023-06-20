@@ -1,27 +1,36 @@
 		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
-#if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
-			if(LRep==RepType::NegativeZero)
-			{
-				self.SetAsZero(); return;//LRep = RepType::NormalType; 
-			}
-			if(RRep==RepType::NegativeZero)
-			{
-				self.SetAsZero(); return;//Value.SetAsZero();//RRep = RepType::NormalType; 
-			}
-#endif
+    //LRep Overrides
+    switch(LRep)
+    {
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+
+		case RepType::UnknownType:
+			throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+            break;
+
+        default://No nothing for most of them
+        break;
+    }
+
+    //RRep Overrides before Main RepToRep Code
+    switch(RRep)
+    {
 #if defined(AltNum_EnableApproachingValues)
-			if(RRep==RepType::ApproachingBottom
-	#if defined(AltNum_EnableImaginaryNum)
-            &&LRep!=RepType::INum
+        case RepType::ApproachingBottom:
+#if defined(AltNum_EnableImaginaryNum)
+           if((LRep==RepType::INum
 #if defined(AltNum_EnableAlternativeRepFractionals)
-            &&LRep!=RepType::IFractional &&LRep!=RepType::INumByDiv &&LRep!=RepType::MixedI
+            ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
+#else
+           ){
 #endif
-    #endif
-            )
-            {
                 if(Value.IntValue==0)
                 {
+
                     self.IntValue = self.IntValue<0?NegativeRep:0;
 					self.DecimalHalf = ApproachingValRep;
 					self.ExtraRep = 0;
@@ -32,9 +41,55 @@
                     Value.DecimalHalf = 1;
                     RRep = RepType::NormalType;
                 }
-         }
+#if defined(AltNum_EnableImaginaryNum)
+           if((LRep==RepType::INum
+#if defined(AltNum_EnableAlternativeRepFractionals)
+            ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
+#else
+           }
+           else
+           {
+               Value.DecimalHalf = 1;
+               RRep = RepType::NormalType;
+           }
 #endif
-			switch (LRep)
+            break;
+
+		case RepType::ApproachingTop:
+            Value.DecimalHalf = 999999999;
+            Value.ExtraRep = 0;
+            RRep = RepType::NormalType;
+			break;
+
+#if defined(AltNum_EnableApproachingDivided)
+		case RepType::ApproachingBottomDiv:
+            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+            RRep = RepType::NormalType;
+			break;
+		case RepType::ApproachingTopDiv:
+            Value.ConvertToNormType(RepType::ApproachingTopDiv);
+            RRep = RepType::NormalType;
+			break;
+#endif
+#endif
+
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+
+        default://No nothing for most of them
+        break;
+    }
+
+#if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
+    if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
+    {
+        self.SetAsZero(); return;
+    }
+#endif
+
+			switch (LRep)//Main switch block starts here
 			{
 				case RepType::NormalType:
 					switch (RRep)
@@ -163,16 +218,6 @@
 //	//                    case RepType::UndefinedButInRange:
 //	//						break;
 //	//#endif
-//						case RepType::Undefined:
-//						case RepType::NaN:
-//							throw "Can't perform operations with NaN or Undefined number";
-//							break;
-	#if defined(AltNum_EnableNegativeZero)
-//						case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-//							break;
-	#endif
-						case RepType::UnknownType:
-							throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
 						default:
 							self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
@@ -610,8 +655,9 @@
 				case RepType::PINum:
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
 //							break;
@@ -621,11 +667,10 @@
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PIPower:
-//							//Add Pi powers code here later
-//							break;
-	#endif
+						case RepType::PIPower:
+							self.ExtraRep = Value.ExtraRep-1;
+                            self.BasicMultOp(Value);
+							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
@@ -642,19 +687,6 @@
 //							break;
 	#endif
 //
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
 //
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
@@ -727,10 +759,13 @@
 				case RepType::PIPower:
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
-//						case RepType::PINum:
-//							break;
+						case RepType::NormalType:
+                            self.BasicMultOp(Value);
+							break;
+						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+                            --self.ExtraRep;
+                            self.BasicMultOp(Value);
+							break;
 	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
 //							break;
