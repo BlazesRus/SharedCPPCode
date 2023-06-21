@@ -254,28 +254,6 @@
 //							break;
 	#endif
 //
-	#if defined(AltNum_EnableApproachingValues)
-						case RepType::ApproachingBottom:
-                            Value.DecimalHalf = 1;
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTop:
-                            Value.DecimalHalf = 999999999;
-                            Value.ExtraRep = 0;
-                            self.BasicMultOp(Value);
-							break;
-
-	#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingBottomDiv:
-                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTopDiv:
-                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
-                            self.BasicMultOp(Value);
-							break;
-	#endif
-	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 						case RepType::NumByDiv:
@@ -393,29 +371,6 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-						case RepType::ApproachingBottom:
-                            Value.DecimalHalf = 1;
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTop:
-                            Value.DecimalHalf = 999999999;
-                            Value.ExtraRep = 0;
-                            self.BasicMultOp(Value);
-							break;
-
-	#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingBottomDiv:
-                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTopDiv:
-                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
-                            self.BasicMultOp(Value);
-							break;
-	#endif
-	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 						case RepType::NumByDiv:
@@ -523,30 +478,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-						case RepType::ApproachingBottom:
-                            Value.DecimalHalf = 1;
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTop:
-                            Value.DecimalHalf = 999999999;
-                            Value.ExtraRep = 0;
-                            self.BasicMultOp(Value);
-							break;
 
-	#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingBottomDiv:
-                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
-                            self.BasicMultOp(Value);
-							break;
-						case RepType::ApproachingTopDiv:
-                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
-                            self.BasicMultOp(Value);
-							break;
-	#endif
-	#endif
-//
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1061,17 +993,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1167,19 +1089,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1280,21 +1190,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //							
 	#if defined(AltNum_EnablePIRep)
@@ -1390,21 +1286,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
@@ -1995,21 +1877,7 @@
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
 	#endif
-//
-	#if defined(AltNum_EnableApproachingValues)
-//						case RepType::ApproachingBottom:
-//							break;
-//						case RepType::ApproachingTop:
-//							break;
-//
-	#if defined(AltNum_EnableApproachingDivided)
-//						case RepType::ApproachingBottomDiv:
-//							break;
-//						case RepType::ApproachingTopDiv:
-//							break;
-	#endif
-	#endif
-//
+
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
