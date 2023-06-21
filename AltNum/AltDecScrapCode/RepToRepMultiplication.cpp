@@ -1,103 +1,103 @@
 		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
-    //LRep Overrides
-    switch(LRep)
-    {
-#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-        case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
-            break;
-#endif
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
-			break;
-
-		case RepType::UnknownType:
-			throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
-            break;
-
-        default://No nothing for most of them
-        break;
-    }
-
-    //RRep Overrides before Main RepToRep Code
-    switch(RRep)
-    {
-#if defined(AltNum_EnableApproachingValues)
-        case RepType::ApproachingBottom:
-#if defined(AltNum_EnableImaginaryNum)
-           if((LRep==RepType::INum
-#if defined(AltNum_EnableAlternativeRepFractionals)
-            ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
-#else
-           ){
-#endif
-                if(Value.IntValue==0)
-                {
-
-                    self.IntValue = self.IntValue<0?NegativeRep:0;
-					self.DecimalHalf = ApproachingValRep;
-					self.ExtraRep = 0;
-					return;
-                }
-                else
-                {
-                    Value.DecimalHalf = 1;
+            //LRep Overrides
+            switch(LRep)
+            {
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from left side)";
+                    break;
+        #endif
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+        
+        		case RepType::UnknownType:
+        			throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+                    break;
+        
+                default://No nothing for most of them
+                break;
+            }
+        
+            //RRep Overrides before Main RepToRep Code
+            switch(RRep)
+            {
+        #if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom:
+        #if defined(AltNum_EnableImaginaryNum)
+                   if((LRep==RepType::INum
+        #if defined(AltNum_EnableAlternativeRepFractionals)
+                    ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
+        #else
+                   ){
+        #endif
+                        if(Value.IntValue==0)
+                        {
+        
+                            self.IntValue = self.IntValue<0?NegativeRep:0;
+        					self.DecimalHalf = ApproachingValRep;
+        					self.ExtraRep = 0;
+        					return;
+                        }
+                        else
+                        {
+                            Value.DecimalHalf = 1;
+                            RRep = RepType::NormalType;
+                        }
+        #if defined(AltNum_EnableImaginaryNum)
+                   if((LRep==RepType::INum
+        #if defined(AltNum_EnableAlternativeRepFractionals)
+                    ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
+        #else
+                   }
+                   else
+                   {
+                       Value.DecimalHalf = 1;
+                       RRep = RepType::NormalType;
+                   }
+        #endif
+                    break;
+        
+        		case RepType::ApproachingTop:
+                    Value.DecimalHalf = 999999999;
+                    Value.ExtraRep = 0;
                     RRep = RepType::NormalType;
-                }
-#if defined(AltNum_EnableImaginaryNum)
-           if((LRep==RepType::INum
-#if defined(AltNum_EnableAlternativeRepFractionals)
-            ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
-#else
-           }
-           else
-           {
-               Value.DecimalHalf = 1;
-               RRep = RepType::NormalType;
-           }
-#endif
-            break;
-
-		case RepType::ApproachingTop:
-            Value.DecimalHalf = 999999999;
-            Value.ExtraRep = 0;
-            RRep = RepType::NormalType;
-			break;
-
-#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
-            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
-            RRep = RepType::NormalType;
-			break;
-		case RepType::ApproachingTopDiv:
-            Value.ConvertToNormType(RepType::ApproachingTopDiv);
-            RRep = RepType::NormalType;
-			break;
-#endif
-#endif
-#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-        case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from right side)";
-            break;
-#endif
-
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
-			break;
-
-        default://No nothing for most of them
-        break;
-    }
-
-#if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
-    if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
-    {
-        self.SetAsZero(); return;
-    }
-#endif
+        			break;
+        
+        #if defined(AltNum_EnableApproachingDivided)
+        		case RepType::ApproachingBottomDiv:
+                    Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                    RRep = RepType::NormalType;
+        			break;
+        		case RepType::ApproachingTopDiv:
+                    Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                    RRep = RepType::NormalType;
+        			break;
+        #endif
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from right side)";
+                    break;
+        #endif
+        
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+        
+                default://No nothing for most of them
+                break;
+            }
+        
+        #if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
+            if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
+            {
+                self.SetAsZero(); return;
+            }
+        #endif
 
 			switch (LRep)//Main switch block starts here
 			{
