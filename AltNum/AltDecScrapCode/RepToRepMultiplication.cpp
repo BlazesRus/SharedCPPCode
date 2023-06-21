@@ -1155,17 +1155,37 @@
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
-//							break;
+						case RepType::PINum:
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+                            self.BasicMultOp(Value);
+                            self.ExtraRep *= -1;
+    #else
+                            self.CatchAllMultiplication(Value, LRep, RRep);
+    #endif
+							break;
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::ENum:
-//							break;
+						case RepType::ENum:
+	#if defined(AltNum_EnableDecimaledEFractionals)
+                            self.BasicMultOp(Value);
+                            self.ExtraRep *= -1;
+    #else
+                            self.CatchAllMultiplication(Value, LRep, RRep);
+    #endif
+							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableDecimaledIFractionals)
+						case RepType::INum:
+                            self.BasicMultOp(Value);
+                            self.ExtraRep *= -1;
+                            break;
+    #else
 //						case RepType::INum:
-//							break;
-	#endif
+//                            break;
+    #endif
+    #endif
+							
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
@@ -1248,8 +1268,12 @@
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            if(Value.DecimalHalf==0)
+                                self.IntValue *= Value.IntValue;
+                            else
+                                self.CatchAllMultiplication(Value, LRep, RRep);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
@@ -1342,8 +1366,12 @@
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					switch (RRep)
 					{
-//						case RepType::NormalType:
-//							break;
+						case RepType::NormalType:
+                            if(Value.DecimalHalf==0)
+                                self.IntValue *= Value.IntValue;
+                            else
+                                self.CatchAllMultiplication(Value, LRep, RRep);
+							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 //						case RepType::PINum:
 //							break;
@@ -1447,16 +1475,27 @@
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
-//							break;
+						case RepType::PINum:
+                            self.BasicMultOp(Value);
+                            self.BasicMultOp(PiNumValue);
+							break;
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::ENum:
-//							break;
+						case RepType::ENum:
+                            self.BasicMultOp(Value);
+                            self.BasicMultOp(ENumValue);
+							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-//						case RepType::INum:
-//							break;
+						case RepType::INum:
+                            self.BasicMultOp(Value);
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+                            self.ConvertToNormType(RepType::PiNumByDiv);
+    #else
+                            self.ConvertToNormType(RepType::ENumByDiv);
+    #endif
+                            self.ExtraRep = IRep;
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
