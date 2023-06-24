@@ -114,14 +114,15 @@
                             break;
 #endif
 #if defined(AltNum_EnableENum)
+                        case RepType::ENum:
                             self.BasicDivOp(Value);
                             self.ExtraRep = ERep;
                             break;
 #endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            self.BasicDivOp(Value);
-                            self.ExtraRep = IRep;
+                            throw "related imaginery format operation not supported yet";
+                            break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
@@ -1381,8 +1382,9 @@
 //							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-//						case RepType::INum:
-//							break;
+						case RepType::INum:
+                            throw "related imaginery format operation not supported yet";
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
@@ -1483,18 +1485,12 @@
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
                             self.BasicDivOp(Value);
-                            self.BasicDivOp(ENumValue);
+                            self.ExtraRep = 0;
 							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            self.BasicDivOp(Value);
-	#if defined(AltNum_EnableDecimaledPiFractionals)
-                            self.ConvertToNormType(RepType::PiNumByDiv);
-    #else
-                            self.ConvertToNormType(RepType::ENumByDiv);
-    #endif
-                            self.ExtraRep = IRep;
+                            throw "related imaginery format operation not supported yet";
 							break;
 	#endif
 //							

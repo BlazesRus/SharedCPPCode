@@ -2868,6 +2868,7 @@ public:
                             break;
 #endif
 #if defined(AltNum_EnableENum)
+						case RepType::ENum:
                             self.BasicMultOp(Value);
                             self.ExtraRep = ERep;
                             break;
@@ -2876,6 +2877,7 @@ public:
 						case RepType::INum:
                             self.BasicMultOp(Value);
                             self.ExtraRep = IRep;
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)

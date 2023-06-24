@@ -168,14 +168,15 @@
                             break;
 #endif
 #if defined(AltNum_EnableENum)
+                        case RepType::ENum:
+                            Value.ConvertToNormType(RepType::ENum);
                             self.BasicSubOp(Value);
-                            self.ExtraRep = ERep;
                             break;
 #endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            self.BasicSubOp(Value);
-                            self.ExtraRep = IRep;
+                            throw "related imaginery format operation not supported yet";
+                            break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
