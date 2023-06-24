@@ -109,7 +109,7 @@
                             break;
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            throw "related imaginery format operation not supported yet";
+                            throw "related imaginary format operation not supported yet";
                             break;
 	#endif
 						
@@ -197,9 +197,6 @@
                             self.BasicDivOp(Value);
 							break;
 	#if defined(AltNum_EnableENum)
-						case RepType::ENum:
-                            self.CatchAllDivision(Value, LRep, RRep);
-							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 //						case RepType::INum:
@@ -294,6 +291,7 @@
 //	//#endif
 
 						default:
+//						case RepType::ENum:
 							self.CatchAllDivision(Value, LRep, RRep);
 							break;
 					}
@@ -315,9 +313,7 @@
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-							self.BasicDivOp(Value);
-							self.ConvertEToNum();
-							self.ExtraRep = IRep;
+							throw "related imaginary format operation not supported yet";
 							break;
 	#endif
 //							
@@ -520,8 +516,9 @@
 //							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-//						case RepType::INum:
-//							break;
+						case RepType::INum:
+                            throw "related imaginary format operation not supported yet";
+							break;
 	#endif
 //							
 						case RepType::PIPower:
@@ -806,9 +803,7 @@
 						case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
 						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 #endif
-                            self.IntValue = self.IntValue<0?NegativeRep:0;
-					        self.DecimalHalf = 1;
-                            self.ExtraRep = IRep;
+                            throw "related imaginary format operation not supported yet";
 							break;
 	#endif
 
@@ -841,8 +836,9 @@
 //							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-//						case RepType::INum:
-//							break;
+						case RepType::INum:
+                            throw "related imaginary format operation not supported yet";
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
@@ -1035,8 +1031,9 @@
 //							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-//						case RepType::INum:
-//							break;
+						case RepType::INum:
+                            throw "related imaginary format operation not supported yet";
+							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
@@ -1125,7 +1122,10 @@
 					switch (RRep)
 					{
 						case RepType::NormalType://Later normalize fractional when integer when viable
-                            self.BasicDivOp(Value);
+                            if(DecimalHalf==0)
+                                ExtraRep *= Value.IntValue;
+                            else
+                                self.BasicDivOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 						case RepType::PINum:
@@ -1243,7 +1243,7 @@
 					{
 						case RepType::NormalType:
                             if(Value.DecimalHalf==0)
-                                self.IntValue *= Value.IntValue;
+                                self.DecimalHalf *= Value.IntValue;
                             else
                                 self.CatchAllDivision(Value, LRep, RRep);
 							break;
@@ -1341,7 +1341,7 @@
 					{
 						case RepType::NormalType:
                             if(Value.DecimalHalf==0)
-                                self.IntValue *= Value.IntValue;
+                                self.DecimalHalf *= Value.IntValue;
                             else
                                 self.CatchAllDivision(Value, LRep, RRep);
 							break;
@@ -1355,7 +1355,7 @@
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            throw "related imaginery format operation not supported yet";
+                            throw "related imaginary format operation not supported yet";
 							break;
 	#endif
 //							
@@ -1450,19 +1450,33 @@
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
 						case RepType::PINum:
+                            if(Value.DecimalHalf==0)
+                                self.ExtraRep *= Value.IntValue;
+                            else
+                                self.BasicDivOp(Value);
                             self.BasicDivOp(Value);
-                            self.BasicDivOp(PiNumValue);
+                            if(RRep==RepType::PiNumByDiv)
+                                self.ExtraRep *= -1;//Becomes NumByDiv instead
+                            else    
+                                self.BasicDivOp(PiNumValue);
 							break;
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
+                            if(Value.DecimalHalf==0)
+                                self.ExtraRep *= Value.IntValue;
+                            else
+                                self.BasicDivOp(Value);
                             self.BasicDivOp(Value);
-                            self.ExtraRep = 0;
+                            if(RRep==RepType::ENumByDiv)
+                                self.ExtraRep *= -1;//Becomes NumByDiv instead
+                            else    
+                                self.BasicDivOp(ENumValue);
 							break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            throw "related imaginery format operation not supported yet";
+                            throw "related imaginary format operation not supported yet";
 							break;
 	#endif
 //							

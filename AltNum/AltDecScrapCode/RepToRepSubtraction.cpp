@@ -163,7 +163,7 @@
                             break;
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-                            throw "related imaginery format operation not supported yet";
+                            throw "related imaginary format operation not supported yet";
                             break;
 	#endif
 							
