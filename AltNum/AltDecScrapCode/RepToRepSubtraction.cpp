@@ -163,7 +163,11 @@
                             break;
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
+#if defined(AltNum_EnableComplexNumbers)
+                            //place complex number operation code here later
+#else
                             throw "related imaginary format operation not supported yet";
+#endif
                             break;
 	#endif
 							
