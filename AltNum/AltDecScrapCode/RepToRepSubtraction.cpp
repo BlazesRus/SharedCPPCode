@@ -87,12 +87,18 @@
                 case RepType::ApproachingBottom:
                     if(LRep==RepType::ApproachingTop)
                     {
-                        if(LeftIsNegative&&RightIsNegative)
-                        {//X.9..9 + Y.0..1 = X+Y+1
-                        }
-                        else if(LeftIsNegative==false&&RightIsNegative==false)
-                        {//-X.9..9 + -Y.0..1 = X+Y+1
-
+                        if(LeftIsNegative^RightIsNegative)
+                        {
+                            self.DecimalHalf = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                            if(LeftIsNegative)//-X.9..9 - Y.0..1
+                                --RightSide;
+                            else//X.9..9 
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return self;
                         }
                         else
                         {
@@ -105,7 +111,6 @@
                        Value.DecimalHalf = 1;
                        RRep = RepType::NormalType;
                     }
-        #endif
                     break;
         
         		case RepType::ApproachingTop:
@@ -113,13 +118,16 @@
                     {
                         if(LeftIsNegative^RightIsNegative)
                         {
+                            self.DecimalHalf = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
                            if(LeftIsNegative)//-X.0..1 - Y.9..9 = X+Y+1
-                           {
-                           }
+                                --RightSide;
                            else//X.0..1 - -Y.9..9 = X+Y+1
-                           {
-
-                           }
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return self;
                         }
                         else
                         {
@@ -142,13 +150,17 @@
                     {
                         if(LeftIsNegative^RightIsNegative)
                         {
-                           if(LeftIsNegative)//-X.9..9 - Y.0..1 = X+Y+1
-                           {
-                           }
-                           else//X.9..9 - -Y.0..1 = X+Y+1
-                           {
-
-                           }
+                            self.DecimalHalf = 0;
+                            self.ExtraRep = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                           if(LeftIsNegative)
+                                --RightSide;
+                           else
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return self;
                         }
                         else
                         {
@@ -167,13 +179,17 @@
                     {
                         if(LeftIsNegative^RightIsNegative)
                         {
-                           if(LeftIsNegative)//-X.9..9 - Y.0..1 = X+Y+1
-                           {
-                           }
-                           else//X.9..9 - -Y.0..1 = X+Y+1
-                           {
-
-                           }
+                            self.DecimalHalf = 0;
+                            self.ExtraRep = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                           if(LeftIsNegative)
+                                --RightSide;
+                           else
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return self;
                         }
                         else
                         {
