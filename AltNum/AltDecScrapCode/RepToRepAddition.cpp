@@ -75,7 +75,7 @@
 
 #endif
         		case RepType::UnknownType:
-        			throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+                    throw "Can't perform operations with unknown/non-enabled format number";
                     break;
         
                 default://No nothing for most of them
@@ -98,7 +98,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue += RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -119,7 +119,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue += RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -143,7 +143,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue += RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -164,7 +164,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue += RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -184,7 +184,9 @@
         		case RepType::NaN:
         			throw "Can't perform operations with NaN or Undefined number";
         			break;
-        
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
+                    break;
                 default://No nothing for most of them
                 break;
             }
@@ -449,9 +451,6 @@
 				case RepType::PINum:
 					switch (RRep)
 					{
-						case RepType::NormalType:
-                            self.BasicAddOp(Value);
-							break;
 	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
 //							break;
@@ -461,10 +460,6 @@
 //							break;
 	#endif
 //							
-						case RepType::PIPower:
-							self.ExtraRep = Value.ExtraRep-1;
-                            self.BasicAddOp(Value);
-							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)

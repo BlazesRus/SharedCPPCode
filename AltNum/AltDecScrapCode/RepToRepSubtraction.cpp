@@ -1,5 +1,7 @@
 		void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
+            bool LeftIsNegative = self.IntValue<0;
+            bool RightIsNegative = Value.IntValue<0;
             //LRep Overrides
             switch(LRep)
             {
@@ -72,8 +74,8 @@
                     break;
 
 #endif
-        		case RepType::UnknownType:
-        			throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
                     break;
         
                 default://No nothing for most of them
@@ -98,7 +100,7 @@
                             if(self.IntValue==NegativeRep)
                                self.IntValue = 0;
                             self.IntValue -= RightSide;
-                            return self;
+                            return;
                         }
                         else
                         {
@@ -127,7 +129,7 @@
                             if(self.IntValue==NegativeRep)
                                self.IntValue = 0;
                             self.IntValue -= RightSide;
-                            return self;
+                            return;
                         }
                         else
                         {
@@ -158,7 +160,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue -= RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -179,7 +181,7 @@
                         if(self.IntValue==NegativeRep)
                            self.IntValue = 0;
                         self.IntValue -= RightSide;
-                        return self;
+                        return;
                     }
                     else
                     {
@@ -199,7 +201,9 @@
         		case RepType::NaN:
         			throw "Can't perform operations with NaN or Undefined number";
         			break;
-        
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
+                    break;
                 default://No nothing for most of them
                 break;
             }
@@ -464,9 +468,6 @@
 				case RepType::PINum:
 					switch (RRep)
 					{
-						case RepType::NormalType:
-                            self.BasicSubOp(Value);
-							break;
 	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
 //							break;
@@ -476,10 +477,6 @@
 //							break;
 	#endif
 //							
-						case RepType::PIPower:
-							self.ExtraRep = Value.ExtraRep-1;
-                            self.BasicSubOp(Value);
-							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
