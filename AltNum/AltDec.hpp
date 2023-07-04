@@ -2226,533 +2226,3405 @@ public:
 
 #pragma region RepToRepCode_AdditionSubtraction
     private:
-        void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
-            switch (LRep)
+            bool LeftIsNegative = self.IntValue<0;
+            bool RightIsNegative = Value.IntValue<0;
+            //LRep Overrides
+            switch(LRep)
             {
-                //X.?? + ???
-                case RepType::NormalType:
-                    switch (RRep)
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from left side)";
+                    break;
+        #endif
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+#if defined(AltNum_EnableComplexNumbers)
+        		case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+        		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+#endif
+        		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+        		case RepType::ComplexIRep:
+                    switch(RRep)
                     {
+                        case RepType::NormalType:
                         case RepType::NumByDiv:
-                            Value.ConvertToNormType(RRep);
-                            self.BasicAddOp(Value);
-                            break;
-#if defined(AltNum_EnablePIRep)
+            #if defined(AltNum_EnablePIRep)
                         case RepType::PINum:
-                            Value.ConvertPIToNum();
-                            self.BasicAddOp(Value);
-                            break;
-#endif
-#if defined(AltNum_EnableENum)
+            #if defined(AltNum_EnablePIPowers)
+                        case RepType::PIPower:
+            #endif
+            #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledPiFractionals)
+                        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            #endif
+                        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableENum)
                         case RepType::ENum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
-                        case RepType::ENumByDiv:
-#endif
-                        case RepType::EFractional:
-                            Value.ConvertEToNum();
-                            self.BasicAddOp(Value);
+            #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledEFractionals)
+                        case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+            #endif
+                        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            #endif
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableInfinityRep)
+                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            #if defined(AltNum_EnableApproachingDivided)
+                        case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableNearPI)
+                        case RepType::NearPI://(Approaching Away from Zero is equal to 0.9999...PI)
+            #endif
+            #if defined(AltNum_EnableNearE)
+                        case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
+            #endif
+                            Value.ConvertToNormalIRep(RRep);
                             break;
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-                        case RepType::INum:
-#ifndef AltNum_EnableComplexNumbers
-                            throw "Complex number operation not enabled";
-#else
-                            throw "Complex number operation not supported yet";
-#endif
-                            break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
-                        case RepType::INumByDiv:
-#endif
-                        case RepType::IFractional:
-							throw "Normal RepType addition with"+static_cast<RepType>(RRep)+"detected not supported yet";
-                            break;
-#endif
-                        case RepType::UnknownType:
-							throw "Normal representation addition with"+static_cast<RepType>(Value.RepType)+"detected not supported yet.";
                         default:
-							self.CatchAllAddition(Value, LRep, RRep);
                             break;
                     }
                     break;
-                //(X.??*PI) + ???
-                case RepType::PINum:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertPIToNum();
-                            self.BasicAddOp(Value);
-                            break;
-#if defined(AltNum_EnableImaginaryNum)
-                        case RepType::INum:
-#ifndef AltNum_EnableComplexNumbers
-                            throw "Complex number operation not enabled";
-#else
-                            throw "Complex number operation not supported yet";
+
 #endif
-                            break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
-                        case RepType::INumByDiv:
-#endif
-                        case RepType::IFractional:
-							throw "Normal RepType addition with"+static_cast<RepType>(RRep)+"detected not supported yet";
-                            break;
-#endif
-                        case RepType::UnknownType:
-                            throw "Pi RepType addition with"+static_cast<RepType>(Value.RepType)+"detected not supported yet.";
-                        default:
-                        //case RepType::ENum: //(X.??*PI) + (Y.??*e)
-                        //case RepType::ENumByDiv: //(X.??*PI) + ((Y.??*e)/(Y_ExtraRep*-1))
-                        //case RepType::ApproachingTop: //(X.??*PI) + Y.9...9
-                        //case RepType::ApproachingBottom: //(X.??*PI) + Y.0...1
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
+        		case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
                     break;
-                //(X.??/X_ExtraRep) + ???
-                case RepType::NumByDiv:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertToNormType(LRep);
-                            self.BasicAddOp(Value);
-                            break;
-                        case RepType::ApproachingTop:
-                            self.ConvertToNormType(LRep);
-                            self.BasicAddOp(AlmostOne);
-                            break;
-                        case RepType::ApproachingBottom:
-                            self.ConvertToNormType(LRep);
-                            self.BasicAddOp(JustAboveZero);
-                            break;
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::ApproachingBottom://IntValue.000...1 + ???
-                    switch (RRep)
-                    {
-                        case RepType::ApproachingTop:
-                            if(self.IntValue<0)
-                            {
-                                if (self.IntValue == NegativeRep)
-                                {
-                                    if(Value.IntValue == NegativeRep)//-0.0.......1 + -0.9.......9
-                                    {
-                                        self.IntValue = -1; self.DecimalHalf = 0;
-                                        self.ExtraRep = 0; return self;
-                                    }
-                                    else if(Value.IntValue<0)//-0.0.......1 + -?.9.......9
-                                    {
-                                        self.IntValue--;
-                                        self.ExtraRep = 0; self.DecimalHalf = 0;
-                                        self.IntValue += Value.IntValue;
-                                    }
-                                    else
-                                    {
-                                        self.CatchAllAddition(Value, LRep, RRep);
-                                    }
-                                }
-                                else
-                                {
-                                    if(Value.IntValue == NegativeRep)//-?.9.......9 + -0.0.......1
-                                    {
-                                        self.IntValue--;
-                                        self.ExtraRep = 0; self.DecimalHalf = 0;
-                                    }
-                                    else if(Value.IntValue<0)//-?.9.......9 + -?.0.......1
-                                    {
-                                        self.IntValue--;
-                                        self.ExtraRep = 0; self.DecimalHalf = 0;
-                                        self.IntValue += Value.IntValue;
-                                    }
-                                    else
-                                    {
-                                        self.CatchAllAddition(Value, LRep, RRep);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if(Value.IntValue<0)
-                                {
-                                    self.CatchAllAddition(Value, LRep, RRep);
-                                }
-                                else if(self.IntValue==0)//0.99...9 + Y.00...1
-                                {
-                                    self.IntValue = Value.IntValue+1;
-                                    self.ExtraRep = 0; self.DecimalHalf = 0;
-                                }
-                                else//X.99...9 + Y.00...1
-                                {
-                                    self.IntValue++;
-                                    self.ExtraRep = 0; self.DecimalHalf = 0;
-                                    self.IntValue += Value.IntValue;
-                                }
-                            }
-       //                     if (self.IntValue == NegativeRep)
-       //                     {
-       //                         if (Value.IntValue == NegativeRep)//-0.0.......1 + -0.9.......9
-       //                         {
-       //                             self.IntValue = -1; self.DecimalHalf = 0;
-       //                             self.ExtraRep = 0; return self;
-       //                         }
-       //                     }
-       //                     else if (Value.IntValue == NegativeRep)
-       //                     {
-       //					  	self.CatchAllAddition(Value, LRep, RRep);
-       //                     }
-       //                     else if (self.IntValue < 0)
-       //                     {
-       //                         if (Value.IntValue < 0)
-       //                         {
-       //                             self.IntValue++;
-       //                             self.ExtraRep = 0;
-       //                         }
-       //                         self.IntValue += Value.IntValue;
-       //                     }
-       //                     else
-       //                     {
-       //                         if (Value.IntValue>= 0)
-       //                         {
-       //                             self.IntValue++;
-       //                             self.ExtraRep = 0;
-       //                         }
-       //                         self.IntValue += Value.IntValue;
-       //                     }
-                            break;
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::ApproachingTop://IntValue.9999... + ???
-                    switch (RRep)
-                    {
-                        case RepType::ApproachingBottom:
-                            if(self.IntValue<0)
-                            {
-                                if (self.IntValue == NegativeRep)
-                                {
-                                    if(Value.IntValue == NegativeRep)//-0.9.......9 + -0.0.......1
-                                    {
-                                        self.IntValue = -1; self.DecimalHalf = 0;
-                                        self.ExtraRep = 0; return self;
-                                    }
-                                    else if(Value.IntValue<0)//-0.9.......9 + -?.0.......1
-                                    {
-                                        self.IntValue = Value.IntValue - 1;
-                                        self.ExtraRep = 0; self.DecimalHalf = 0;
-                                    }
-                                    else
-                                    {
-                                        self.CatchAllAddition(Value, LRep, RRep);
-                                    }
-                                }
-                                else
-                                {
-                                    if(Value.IntValue == NegativeRep)//-?.9.......9 + -0.0.......1
-                                    {
-                                        self.IntValue--;
-                                        self.ExtraRep = 0; self.DecimalHalf = 0;
-                                    }
-                                    else if(Value.IntValue<0)//-?.9.......9 + -?.0.......1
-                                    {
-                                        self.IntValue--; self.DecimalHalf = 0;
-                                        self.ExtraRep = 0;
-                                        self.IntValue += Value.IntValue;
-                                    }
-                                    else
-                                    {
-                                        self.CatchAllAddition(Value, LRep, RRep);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if(Value.IntValue<0)
-                                {
-                                    self.CatchAllAddition(Value, LRep, RRep);
-                                }
-                                else if(self.IntValue==0)//0.99...9 + Y.00...1
-                                {
-                                    self.IntValue = Value.IntValue+1;
-                                    self.ExtraRep = 0; self.DecimalHalf = 0;
-                                }
-                                else//X.99...9 + Y.00...1
-                                {
-                                    self.IntValue++;
-                                    self.ExtraRep = 0; self.DecimalHalf = 0;
-                                    self.IntValue += Value.IntValue;
-                                }
-                            }
-                            break;
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#if defined(AltNum_EnableENum)
-                case RepType::ENum:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertEToNum();
-                            self.BasicAddOp(Value);
-                            break;
-      //                  case RepType::ENumByDiv:
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::ENumByDiv:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertEToNum();
-                            self.BasicAddOp(Value);
-                            break;
-      //                  case RepType::ENum:
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#elif defined(AltNum_EnableImaginaryNum)
-                case RepType::INum:
-                    //if(RRep==RepType::INumByDiv)
-                    //{
-                    //}
-                    //else
-                    //{
-                        throw "Can't add imaginary numbers to real numbers unless complex representation enabled.";
-                    //}
-                    break;
-#elif defined(AltNum_EnablePIPowers)
-                case RepType::PIPower:
-                    switch (RRep)
-                    {
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#endif
-#if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac:
-                    switch (RRep)
-                    {
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#if defined(AltNum_EnableENum)
-                case RepType::MixedE:
-                    switch (RRep)
-                    {
-                        default:
-                            self.CatchAllAddition(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#elif defined(AltNum_EnableImaginaryNum)
-                case RepType::MixedE:
-#if defined(AltNum_EnableComplexNum)
-     //               switch (RRep)
-     //               {
-     //                   default:
-     //                       self.CatchAllAddition(Value, LRep, RRep);
-     //                       break;
-                    //}
-                    //break;
-//                case RepType::ComplexIRep:
-//                    switch (RRep)
-//                    {
-////                        case RepType::NormalType:
-////                            break;
-//                        default:
-//                            self.CatchAllAddition(Value, LRep, RRep);
-//                            break;
-//					}
-//					break;
-#else
-                    switch (RRep)
-                    {
-                        //case RepType::INum:
-                        //	break;
-                        //case RepType::INumByDiv:
-                        //	break;
-                        default:
-                            throw "Can't add imaginary numbers to real numbers unless complex representation enabled.";
-                            break;
-                    }
-                    break;
-#endif
-#endif
-                default:
-                    self.CatchAllAddition(Value, LRep, RRep);
-                    break;
-                
-            }
-        }
         
-        void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
-        {
-            switch (LRep)
+                default://No nothing for most of them
+                break;
+            }
+        
+            //RRep Overrides before Main RepToRep Code
+            switch(RRep)
             {
-                case RepType::NormalType:
-                    switch (RRep)
+        #if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom:
+                    if(LRep==RepType::ApproachingTop&&LeftIsNegative==RightIsNegative)
                     {
-                        case RepType::NumByDiv:
-                            Value.ConvertToNormType(RRep);
-                            self.BasicSubOp(Value);
+                        self.DecimalHalf = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)//&&RightIsNegative)
+                            --RightSide;
+                        else// if(LeftIsNegative==false&&RightIsNegative==false)
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue += RightSide;
+                        return;
+                    }
+                    else
+                    {
+                       Value.DecimalHalf = 1;
+                       RRep = RepType::NormalType;
+                    }
+                    break;
+        
+        		case RepType::ApproachingTop:
+                    if(LRep==RepType::ApproachingBottom&&LeftIsNegative==RightIsNegative)
+                    {
+                        self.DecimalHalf = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)//&&RightIsNegative)
+                            --RightSide;
+                        else// if(LeftIsNegative==false&&RightIsNegative==false)
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue += RightSide;
+                        return;
+                    }
+                    else
+                    {
+                        Value.DecimalHalf = 999999999;
+                        Value.ExtraRep = 0;
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        
+        #if defined(AltNum_EnableApproachingDivided)
+        		case RepType::ApproachingBottomDiv:
+                    if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
+                    {
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)//&&RightIsNegative)
+                            --RightSide;
+                        else// if(LeftIsNegative==false&&RightIsNegative==false)
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue += RightSide;
+                        return;
+                    }
+                    else
+                    {
+                        Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        		case RepType::ApproachingTopDiv:
+                    if(LRep==RepType::ApproachingBottomDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
+                    {
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)//&&RightIsNegative)
+                            --RightSide;
+                        else// if(LeftIsNegative==false&&RightIsNegative==false)
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue += RightSide;
+                        return;
+                    }
+                    else
+                    {
+                        Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        #endif
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from right side)";
+                    break;
+        #endif
+        
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
+                    break;
+                default://No nothing for most of them
+                break;
+            }
+        
+        #if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
+            if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
+            {
+                self.SetAsZero(); return;
+            }
+        #endif
+
+			switch (LRep)//Main switch block starts here
+			{
+				case RepType::NormalType:
+					switch (RRep)
+					{
+                        case RepType::NormalType://Fail safe for when converted before switch
+                            self.BasicAddOp(Value);
                             break;
-                        case RepType::PINum:
-                            Value.ConvertPIToNum();
-                            self.BasicSubOp(Value);
-                            break;
-#if defined(AltNum_EnableENum)
-                        case RepType::ENum:
-                        case RepType::ENumByDiv:
-                            Value.ConvertEToNum();
-                            self.BasicSubOp(Value);
-                            break;
+	#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+#if defined(AltNum_EnableComplexNumbers)
+                            //place complex number operation code here later
+#else
+                            throw "related imaginary format operation not supported yet";
 #endif
-                        default:
-                            self.CatchAllSubtraction(Value, LRep, RRep);
                             break;
-                    }
-                    break;
-                case RepType::PINum:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertPIToNum();
-                            self.BasicSubOp(Value);
-                            break;
-                        default://ENum,ENumByDiv,ApproachingTop,ApproachingBottom  Included
-                            self.CatchAllSubtraction(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::NumByDiv:
-                    switch (RRep)
-                    {
-                        case RepType::NormalType:
-                            self.ConvertToNormType(LRep);
-                            self.BasicSubOp(Value);
-                            break;
-                        case RepType::ApproachingTop:
-                            self.ConvertToNormType(LRep);
-                            self.BasicSubOp(AlmostOne);
-                            break;
-                        case RepType::ApproachingBottom:
-                            self.ConvertToNormType(LRep);
-                            self.BasicSubOp(JustAboveZero);
-                            break;
-                        default:
-                            self.CatchAllSubtraction(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::ApproachingBottom://IntValue.000...1
-                    switch (RRep)
-                    {
-                        case RepType::ApproachingTop:
-                            if(self.IntValue<0)
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+//						case RepType::PINum:
+//						case RepType::PIPower:
+//                      case RepType::ENum:
+//						case RepType::NumByDiv:
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+						    Value.ConvertToNormType(RRep);
+                            self.BasicAddOp(Value);
+							break;
+					}
+					break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+				case RepType::PINum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	
+	#if defined(AltNum_EnableENum)
+				case RepType::ENum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+	#endif
+					
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+				case RepType::PINum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+//
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::PIPower:
+					switch (RRep)
+					{
+						case RepType::NormalType:
+                            self.BasicAddOp(Value);
+							break;
+						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+                            --self.ExtraRep;
+                            self.BasicAddOp(Value);
+							break;
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif					
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+					
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+				case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::MixedI:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom:
+					switch (RRep)
+					{
+#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+						case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
+						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+#endif
+                            self.IntValue = self.IntValue<0?NegativeRep:0;
+					        self.DecimalHalf = 1;
+                            self.ExtraRep = IRep;
+							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::ApproachingTop:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+
+	#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingBottomDiv:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::ApproachingTopDiv:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+				case RepType::NumByDiv:
+					switch (RRep)
+					{
+						case RepType::NormalType://Later normalize fractional when integer when viable
+							if(self.IntValue>=0)
+                                self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                            else
                             {
-                                if(Value.IntValue<0)//If not positive, maybe normalize both to NormalRep
-                                {
-                                    self.CatchAllSubtraction(Value, LRep, RRep);
-                                }
-                                else//-X.000...1 - Y.99...9 = (X - Y)-1
-                                {
-                                    if (self.IntValue==NegativeRep&&Value.IntValue == 0)//-0.0.......1 - 0.9.......9
-                                    {
-                                        self.IntValue = -1; self.DecimalHalf = 0;
-                                        return self;
-                                    }
-                                    else
-                                    {
-                                        self.IntValue--;
-                                        self.DecimalHalf = 0;
-                                        self.IntValue -= Value.IntValue;
-                                    }
-                                }
+                                self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                                if(self.IntValue==0&&self.DecimalHalf==0)
+                                    self.SetAsZero();
+                            }
+                            break;
+	#if defined(AltNum_EnablePIRep)
+						case RepType::PINum:
+	#endif
+	#if defined(AltNum_EnableENum)
+						case RepType::ENum:
+	#endif
+    #if defined(AltNum_EnablePIPowers)
+                       case RepType::PIPower:
+    #endif
+#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
+                            Value.ConvertToNormType(RRep);
+							if(self.IntValue>=0)
+                                self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                            else
+                            {
+                                self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                                if(self.IntValue==0&&self.DecimalHalf==0)
+                                    self.SetAsZero();
+                            }
+							break;
+#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//                            break;
+    #endif
+													
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+    #if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
+							int ReversedVExtraRep = -ExtraRep;
+                            if(self.DecimalHalf==ReversedVExtraRep)
+                            {
+                                if(RRep==PiNumByDiv)
+                                    Value.ConvertToNormType(RepType::PINum);
+                                else
+                                    Value.ConvertToNormType(RepType::ENum);
+                                self.BasicAddOp(Value);
+                                if(self.IntValue==0&&self.DecimalHalf==0)
+                                    self.SetAsZero();
                             }
                             else
                             {
-                                if(Value.IntValue<0)//X.000...1 - -Y.99...9 = (X + Y)+1
+                                Value.ConvertToNormType(RRep);
+							    if(self.IntValue>=0)
+                                    self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                                else
                                 {
-                                    if (self.IntValue==0&&Value.IntValue == NegativeRep)//0.0.......1 + 0.9.......9
-                                    {
-                                        self.IntValue = 1; self.DecimalHalf = 0;
-                                        return self;
-                                    }
-                                    else
-                                    {
-                                        self.IntValue++;
-                                        self.DecimalHalf = 0;
-                                        self.IntValue -= Value.IntValue;
-                                    }
-                                }
-                                else//Otherwise maybe normalize both to NormalRep
-                                {
-                                    self.CatchAllSubtraction(Value, LRep, RRep);
+                                    self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
+                                    if(self.IntValue==0&&self.DecimalHalf==0)
+                                        self.SetAsZero();
                                 }
                             }
                             break;
-                        default:
-                            self.CatchAllSubtraction(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-                case RepType::ApproachingTop://IntValue.9999...
-                    switch (RRep)
-                    {
-                        case RepType::ApproachingBottom:
-\
-                            break;
-                        default:
-                            self.CatchAllSubtraction(Value, LRep, RRep);
-                            break;
-                    }
-                    break;
-#if defined(AltNum_EnableENum)
-                case RepType::ENum:
-                    switch (RRep)
-                    {
-//						case RepType::NormalType:
-//							self.ConvertEToNum();
-//							self.BasicSubOp(Value);
+    #endif
+    							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 //							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+					
+	#if defined(AltNum_EnablePIRep)
+				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+													
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+				
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)//Only one of the 2 switches can be active at once
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+                            //place complex number based code here later
+							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+						case RepType::MixedEByDiv:
+	#endif
+							throw "BasicMixedOp code not implimented yet";
+							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+#endif
+	
+					
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+				case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::MixedEByDiv:
+	#endif
+	#endif
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllAddition(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif												
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+					
+				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif
+					
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+					
+				case RepType::MixedI:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+	#endif
+
+#if defined(AltNum_EnableComplexNumbers)
+//            case RepType::ComplexIRep:
+//			    break;
+#endif
+            default:
+            	throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+            	break;
+			}
+        }
+		
+		void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+        {
+            bool LeftIsNegative = self.IntValue<0;
+            bool RightIsNegative = Value.IntValue<0;
+            //LRep Overrides
+            switch(LRep)
+            {
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from left side)";
+                    break;
+        #endif
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+#if defined(AltNum_EnableComplexNumbers)
+        		case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+        		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+#endif
+        		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+        		case RepType::ComplexIRep:
+                    switch(RRep)
+                    {
+                        case RepType::NormalType:
+                        case RepType::NumByDiv:
+            #if defined(AltNum_EnablePIRep)
+                        case RepType::PINum:
+            #if defined(AltNum_EnablePIPowers)
+                        case RepType::PIPower:
+            #endif
+            #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledPiFractionals)
+                        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            #endif
+                        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableENum)
+                        case RepType::ENum:
+            #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledEFractionals)
+                        case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+            #endif
+                        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            #endif
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableInfinityRep)
+                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            #if defined(AltNum_EnableApproachingDivided)
+                        case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+            #endif
+            #endif
+            
+            #if defined(AltNum_EnableNearPI)
+                        case RepType::NearPI://(Approaching Away from Zero is equal to 0.9999...PI)
+            #endif
+            #if defined(AltNum_EnableNearE)
+                        case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
+            #endif
+                            Value.ConvertToNormalIRep(RRep);
+                            break;
                         default:
-                            self.CatchAllSubtraction(Value, LRep, RRep);
                             break;
                     }
                     break;
+
 #endif
-#if defined(AltNum_EnableImaginaryNum)
-                case RepType::INum:
-                    throw "Can't subtract imaginary numbers from real numbers unless complex representation enabled.";
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
                     break;
-#endif
-                default:
-                    self.CatchAllSubtraction(Value, LRep, RRep);
-                    break;
-                
+        
+                default://No nothing for most of them
+                break;
             }
+        
+            //RRep Overrides before Main RepToRep Code
+            switch(RRep)
+            {
+        #if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom:
+                    if(LRep==RepType::ApproachingTop)
+                    {
+                        if(LeftIsNegative^RightIsNegative)
+                        {
+                            self.DecimalHalf = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                            if(LeftIsNegative)//-X.9..9 - Y.0..1
+                                --RightSide;
+                            else//X.9..9 
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return;
+                        }
+                        else
+                        {
+                            Value.DecimalHalf = 1;
+                            RRep = RepType::NormalType;
+                        }
+                    }
+                    else
+                    {
+                       Value.DecimalHalf = 1;
+                       RRep = RepType::NormalType;
+                    }
+                    break;
+        
+        		case RepType::ApproachingTop:
+                    if(LRep==RepType::ApproachingBottom)
+                    {
+                        if(LeftIsNegative^RightIsNegative)
+                        {
+                            self.DecimalHalf = 0;
+                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                           if(LeftIsNegative)//-X.0..1 - Y.9..9 = X+Y+1
+                                --RightSide;
+                           else//X.0..1 - -Y.9..9 = X+Y+1
+                                ++RightSide;
+                            if(self.IntValue==NegativeRep)
+                               self.IntValue = 0;
+                            self.IntValue -= RightSide;
+                            return;
+                        }
+                        else
+                        {
+                            Value.DecimalHalf = 999999999;
+                            Value.ExtraRep = 0;
+                            RRep = RepType::NormalType;
+                        }
+                    }
+                    else
+                    {
+                        Value.DecimalHalf = 999999999;
+                        Value.ExtraRep = 0;
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        
+        #if defined(AltNum_EnableApproachingDivided)
+        		case RepType::ApproachingBottomDiv:
+                    if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative^RightIsNegative)
+                    {
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)
+                            --RightSide;
+                        else
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue -= RightSide;
+                        return;
+                    }
+                    else
+                    {
+                        Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        		case RepType::ApproachingTopDiv:
+                    if(LRep==RepType::ApproachingBottomDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative^RightIsNegative)
+                    {
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)
+                            --RightSide;
+                        else
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue -= RightSide;
+                        return;
+                    }
+                    else
+                    {
+                        Value.ConvertToNormType(RepType::ApproachingTopDiv);
+                        RRep = RepType::NormalType;
+                    }
+        			break;
+        #endif
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+        			throw "UndefinedButInRange operations not supported yet(from right side)";
+                    break;
+        #endif
+        
+        		case RepType::Undefined:
+        		case RepType::NaN:
+        			throw "Can't perform operations with NaN or Undefined number";
+        			break;
+                case RepType::UnknownType:
+                    throw "Can't perform operations with unknown/non-enabled format number";
+                    break;
+                default://No nothing for most of them
+                break;
+            }
+        
+        #if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
+            if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
+            {
+                self.SetAsZero(); return;
+            }
+        #endif
+
+			switch (LRep)//Main switch block starts here
+			{
+				case RepType::NormalType:
+					switch (RRep)
+					{
+                        case RepType::NormalType://Fail safe for when converted before switch
+                            self.BasicSubOp(Value);
+                            break;
+	#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+#if defined(AltNum_EnableComplexNumbers)
+                            //place complex number operation code here later
+#else
+                            throw "related imaginary format operation not supported yet";
+#endif
+                            break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+//						case RepType::PINum:
+//						case RepType::PIPower:
+//                      case RepType::ENum:
+//						case RepType::NumByDiv:
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+						    Value.ConvertToNormType(RRep);
+                            self.BasicSubOp(Value);
+							break;
+					}
+					break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+				case RepType::PINum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	
+	#if defined(AltNum_EnableENum)
+				case RepType::ENum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+	#endif
+					
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+				case RepType::PINum:
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+//
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::PIPower:
+					switch (RRep)
+					{
+						case RepType::NormalType:
+                            self.BasicSubOp(Value);
+							break;
+						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+                            --self.ExtraRep;
+                            self.BasicSubOp(Value);
+							break;
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif					
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+					
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+				case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::MixedI:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom:
+					switch (RRep)
+					{
+#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+						case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
+						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+#endif
+                            self.IntValue = self.IntValue<0?NegativeRep:0;
+					        self.DecimalHalf = 1;
+                            self.ExtraRep = IRep;
+							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::ApproachingTop:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+
+	#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingBottomDiv:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+				case RepType::ApproachingTopDiv:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+				case RepType::NumByDiv:
+					switch (RRep)
+					{
+						case RepType::NormalType://Later normalize fractional when integer when viable
+                            if(self.IntValue<0)
+                                self.BasicSubOp(Value.BasicMultOp(self.DecimalHalf));
+                            else
+                            {
+
+                            }
+							break;
+	#if defined(AltNum_EnablePIRep)
+						case RepType::PINum:
+	#endif
+	#if defined(AltNum_EnableENum)
+						case RepType::ENum:
+	#endif
+    #if defined(AltNum_EnablePIPowers)
+                       case RepType::PIPower:
+    #endif
+#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
+                            Value.ConvertToNormType(RRep);
+							if(self.IntValue<0)
+                                self.BasicSubOp(Value.BasicMultOp(self.DecimalHalf));
+                            else
+                            {
+
+                            }
+							break;
+#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//                            break;
+    #endif
+													
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+    #if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
+							int ReversedVExtraRep = -ExtraRep;
+                            if(self.DecimalHalf==ReversedVExtraRep)
+                            {
+                                if(RRep==PiNumByDiv)
+                                    Value.ConvertToNormType(RepType::PINum);
+                                else
+                                    Value.ConvertToNormType(RepType::ENum);
+                                self.BasicSubOp(Value);
+                                if(self.IntValue==0&&self.DecimalHalf==0)
+                                    self.SetAsZero();
+                            }
+                            else
+                            {
+                                Value.ConvertToNormType(RRep);
+							    if(self.IntValue<0)
+                                    self.BasicSubOp(Value.BasicMultOp(self.DecimalHalf));
+                                else
+                                {
+                                    self.BasicSubOp(Value.BasicMultOp(self.DecimalHalf));
+                                    if(self.IntValue==0&&self.DecimalHalf==0)
+                                        self.SetAsZero();
+                                }
+                            }
+                            break;
+    #endif
+    						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+					
+	#if defined(AltNum_EnablePIRep)
+				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+				
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)//Only one of the 2 switches can be active at once
+					switch (RRep)
+					{
+	#if defined(AltNum_EnableImaginaryNum)
+						case RepType::INum:
+                            //place complex number based code here later
+							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
+						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+						case RepType::MixedEByDiv:
+	#endif
+							throw "BasicMixedOp code not implimented yet";
+							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+#endif
+	
+					
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+				case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+				case RepType::MixedEByDiv:
+	#endif
+	#endif
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							self.CatchAllSubtraction(Value, LRep, RRep);
+							break;
+					}
+					break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+					
+				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+					switch (RRep)
+					{
+#if defined(AltNum_EnableComplexNumbers)
+                        case RepType::INum:
+                              //Add Complex number operation code here later
+                              break;
+	                    case RepType::ComplexIRep:
+							break;
+#endif
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+						
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+					
+				case RepType::MixedI:
+					switch (RRep)
+					{
+//						case RepType::NormalType:
+//							break;
+	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::ENum:
+//							break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::INum:
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//						case RepType::PINum:
+//							//Add code that converts into PiPower type representation here later
+//							break;
+//						case RepType::PIPower:
+//							//Add Pi powers code here later
+//							break;
+	#endif
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPi:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedE:
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+//						case RepType::MixedI:
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;
+	#endif
+
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+//						case RepType::NumByDiv:
+//							break;
+//							
+	#if defined(AltNum_EnablePIRep)
+//						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+//							break;
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+//							break;
+	#endif
+//
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
+//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+	#endif
+//							break;
+//							
+	#if defined(AltNum_EnableMixedFractional)
+//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+	#if defined(AltNum_EnablePINum)
+//						case RepType::MixedPiByDiv:
+	#endif
+	#if defined(AltNum_EnableENum)
+//						case RepType::MixedEByDiv:
+	#endif
+	#endif
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
+//						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+//							break;
+//							
+//						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+//							break;
+//						case RepType::MixedI:
+//							throw "BasicMixedOp code not implimented yet";
+//							break;//
+	#endif
+//
+//	//#if defined(AltNum_EnableComplexNumbers)
+//	//                    case RepType::ComplexIRep:
+//	//						break;
+//	//#endif
+						default:
+							throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+							break;
+					}
+					break;
+	#endif
+
+#if defined(AltNum_EnableComplexNumbers)
+//            case RepType::ComplexIRep:
+//			    break;
+#endif
+            default:
+            	throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+            	break;
+			}
         }
-#pragma endregion RepToRepCode_AdditionSubtraction
+
+		#pragma endregion RepToRepCode_AdditionSubtraction
 #pragma region RepToRepCode_MultiplicationDivision
-		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             //LRep Overrides
             switch(LRep)
