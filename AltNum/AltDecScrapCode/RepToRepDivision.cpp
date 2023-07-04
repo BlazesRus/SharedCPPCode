@@ -47,7 +47,11 @@
                         else//PositiveValue / 0.0..1 = Infinity
                             self.IntValue = 1;
                         self.DecimalHal = InfinityRep;
+#if defined(AltNum_EnableImaginaryNum)
+//Add Infinity i value later and then place extra code here
+#else
                         self.ExtraRep = 0;
+#endif
                         return;
                     }
                     else
