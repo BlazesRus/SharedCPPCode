@@ -146,27 +146,19 @@
         
         #if defined(AltNum_EnableApproachingDivided)
         		case RepType::ApproachingBottomDiv:
-                    if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep)
+                    if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative^RightIsNegative)
                     {
-                        if(LeftIsNegative^RightIsNegative)
-                        {
-                            self.DecimalHalf = 0;
-                            self.ExtraRep = 0;
-                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-                           if(LeftIsNegative)
-                                --RightSide;
-                           else
-                                ++RightSide;
-                            if(self.IntValue==NegativeRep)
-                               self.IntValue = 0;
-                            self.IntValue -= RightSide;
-                            return self;
-                        }
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)
+                            --RightSide;
                         else
-                        {
-                            Value.ConvertToNormType(RepType::ApproachingBottomDiv);
-                            RRep = RepType::NormalType;
-                        }
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue -= RightSide;
+                        return self;
                     }
                     else
                     {
@@ -175,27 +167,19 @@
                     }
         			break;
         		case RepType::ApproachingTopDiv:
-                    if(LRep==RepType::ApproachingBottomDiv&&self.ExtraRep==-Value.ExtraRep)
+                    if(LRep==RepType::ApproachingBottomDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative^RightIsNegative)
                     {
-                        if(LeftIsNegative^RightIsNegative)
-                        {
-                            self.DecimalHalf = 0;
-                            self.ExtraRep = 0;
-                            int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-                           if(LeftIsNegative)
-                                --RightSide;
-                           else
-                                ++RightSide;
-                            if(self.IntValue==NegativeRep)
-                               self.IntValue = 0;
-                            self.IntValue -= RightSide;
-                            return self;
-                        }
+                        self.DecimalHalf = 0;
+                        self.ExtraRep = 0;
+                        int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
+                        if(LeftIsNegative)
+                            --RightSide;
                         else
-                        {
-                            Value.ConvertToNormType(RepType::ApproachingTopDiv);
-                            RRep = RepType::NormalType;
-                        }
+                            ++RightSide;
+                        if(self.IntValue==NegativeRep)
+                           self.IntValue = 0;
+                        self.IntValue -= RightSide;
+                        return self;
                     }
                     else
                     {
