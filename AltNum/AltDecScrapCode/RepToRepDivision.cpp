@@ -26,8 +26,25 @@
 #endif
                     if(RRep==RepType::ApproachingBottom)
                     {
+#if defined(AltNum_EnableImaginaryInfinity)
+                    if(Value.IntValue==0)
+                    {
+                        if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
+                            self.IntValue = -1;
+                        else//PositiveValue / 0.0..1 = Infinity
+                            self.IntValue = 1;
+                        self.DecimalHal = InfinityRep;
+                        self.ExtraRep = IRep;
+                        return;
+                    }
+                    else
+                    {
+#endif
                         Value.DecimalHalf = 1;
                         RRep = RepType::NormalType;
+#if defined(AltNum_EnableImaginaryInfinity)
+                    }
+#endif
                     }
                     break;
 #endif
@@ -47,11 +64,7 @@
                         else//PositiveValue / 0.0..1 = Infinity
                             self.IntValue = 1;
                         self.DecimalHal = InfinityRep;
-#if defined(AltNum_EnableImaginaryNum)
-//Add Infinity i value later and then place extra code here
-#else
-                        self.ExtraRep = 0;
-#endif
+                        self.ExtraRep = 0;//Not really needed because not checking this value unless imaginary infinity detected
                         return;
                     }
                     else
