@@ -16,7 +16,21 @@
         		case RepType::UnknownType:
         			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
                     break;
-        
+#if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+                case RepType::IFractional:
+                case RepType::INumByDiv:
+                case RepType::MixedI:
+
+#endif
+                    if(RRep==RepType::ApproachingBottom)
+                    {
+                        Value.DecimalHalf = 1;
+                        RRep = RepType::NormalType;
+                    }
+                    break;
+#endif
                 default://No nothing for most of them
                 break;
             }
@@ -26,38 +40,21 @@
             {
         #if defined(AltNum_EnableApproachingValues)
                 case RepType::ApproachingBottom:
-        #if defined(AltNum_EnableImaginaryNum)
-                   if((LRep==RepType::INum
-        #if defined(AltNum_EnableAlternativeRepFractionals)
-                    ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
-        #else
-                   ){
-        #endif
-                        if(Value.IntValue==0)
-                        {
-        
-                            self.IntValue = self.IntValue<0?NegativeRep:0;
-        					self.DecimalHalf = ApproachingValRep;
-        					self.ExtraRep = 0;
-        					return;
-                        }
-                        else
-                        {
-                            Value.DecimalHalf = 1;
-                            RRep = RepType::NormalType;
-                        }
-        #if defined(AltNum_EnableImaginaryNum)
-                   if((LRep==RepType::INum
-        #if defined(AltNum_EnableAlternativeRepFractionals)
-                    ||LRep==RepType::IFractional ||LRep==RepType::INumByDiv ||LRep==RepType::MixedI)
-        #else
-                   }
-                   else
-                   {
-                       Value.DecimalHalf = 1;
-                       RRep = RepType::NormalType;
-                   }
-        #endif
+                    if(Value.IntValue==0)
+                    {
+                        if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
+                            self.IntValue = -1;
+                        else//PositiveValue / 0.0..1 = Infinity
+                            self.IntValue = 1;
+                        self.DecimalHal = InfinityRep;
+                        self.ExtraRep = 0;
+                        return;
+                    }
+                    else
+                    {
+                        Value.DecimalHalf = 1;
+                        RRep = RepType::NormalType;
+                    }
                     break;
         
         		case RepType::ApproachingTop:
