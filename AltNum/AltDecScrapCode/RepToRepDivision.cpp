@@ -24,28 +24,28 @@
                 case RepType::MixedI:
 
 #endif
+#if defined(AltNum_EnableApproachingValues)&&defined(AltNum_EnableImaginaryInfinity)
                     if(RRep==RepType::ApproachingBottom)
                     {
-#if defined(AltNum_EnableImaginaryInfinity)
-                    if(Value.IntValue==0)
-                    {
-                        if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
-                            self.IntValue = -1;
-                        else//PositiveValue / 0.0..1 = Infinity
-                            self.IntValue = 1;
-                        self.DecimalHal = InfinityRep;
-                        self.ExtraRep = IRep;
-                        return;
-                    }
-                    else
-                    {
+                        if(Value.IntValue==0)
+                        {
+                            if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
+                                self.IntValue = -1;
+                            else//PositiveValue / 0.0..1 = Infinity
+                                self.IntValue = 1;
+                            self.DecimalHal = InfinityRep;
+                            self.ExtraRep = IRep;
+                            return;
+                        }
+                        else
+                        {
 #endif
-                        Value.DecimalHalf = 1;
-                        RRep = RepType::NormalType;
-#if defined(AltNum_EnableImaginaryInfinity)
+                            Value.DecimalHalf = 1;
+                            RRep = RepType::NormalType;
+#if defined(AltNum_EnableApproachingValues)&&defined(AltNum_EnableImaginaryInfinity)
+                        }
                     }
 #endif
-                    }
                     break;
 #endif
                 default://No nothing for most of them
