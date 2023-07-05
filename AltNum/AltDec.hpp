@@ -2229,7 +2229,7 @@ public:
 		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             bool LeftIsNegative = self.IntValue<0;
-            bool RightIsNegative = Value.IntValue<0;
+            const bool RightIsNegative = false;//bool RightIsNegative = Value.IntValue<0;//Should always return positive value before RepToRep method used
             //LRep Overrides
             switch(LRep)
             {
@@ -3921,7 +3921,7 @@ public:
 		void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             bool LeftIsNegative = self.IntValue<0;
-            bool RightIsNegative = Value.IntValue<0;
+            const bool RightIsNegative = false;//bool RightIsNegative = Value.IntValue<0;//Should always return positive value before RepToRep method used
             //LRep Overrides
             switch(LRep)
             {

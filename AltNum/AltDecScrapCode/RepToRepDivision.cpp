@@ -75,9 +75,17 @@
                     break;
         
         		case RepType::ApproachingTop:
-                    Value.DecimalHalf = 999999999;
-                    Value.ExtraRep = 0;
-                    RRep = RepType::NormalType;
+                    if(LRep==RepType::NormalType&&Value.IntValue)//1/0.9..9 = 1.0..1
+                    {//(For positive left side values)Techically returns self.IntValue + 0.0..self.IntValue
+                        self.ExtraRep = 0;
+                        return;
+                    }
+                    else
+                    {
+                        Value.DecimalHalf = 999999999;
+                        Value.ExtraRep = 0;
+                        RRep = RepType::NormalType;
+                    }
         			break;
         
         #if defined(AltNum_EnableApproachingDivided)
