@@ -174,7 +174,13 @@ AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces 
 AltNum_UseOldRemOpCode
 
 AltNum_EnableBoostFractionalReduction
+AltNum_EnableImaginaryInfinity
 */
+#if defined(AltNum_EnableImaginaryInfinity)
+    #define AltNum_EnableImaginaryNum
+	#define AltNum_EnableInfinityRep
+#endif
+
 #if defined(AltNum_TogglePreferedSettings)
     #define AltNum_EnablePIRep
     #define AltNum_EnableInfinityRep
@@ -407,6 +413,10 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableNearI)
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
+#if defined(AltNum_EnableImaginaryInfinity)
+            PositiveImaginaryInfinity,
+			NegativeImaginaryInfinity,
+#endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 #endif
@@ -427,14 +437,12 @@ ExtraFlags treated as bitwise flag storage
 #if !defined(AltNum_DisableInfinityRepTypeReturn)
             if(DecimalHalf==InfinityRep)
             {
-                if(IntValue==1)
-                {
-                    return RepType::PositiveInfinity;
-                }
-                else
-                {
-                    return RepType::NegativeInfinity;
-                }
+#if defined(AltNum_EnableImaginaryInfinity)
+                if (ExtraRep == IRep)
+				    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
+				else
+#endif
+					return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
             }
 			else
 #endif
