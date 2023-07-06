@@ -2242,6 +2242,13 @@ public:
 
 #pragma region RepToRepCode_AdditionSubtraction
     private:
+#if defined(AltNum_EnableMixedFractional)
+		void MixedFracRtRAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
+		}
+#endif
+	
 		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             bool LeftIsNegative = self.IntValue<0;
@@ -3933,6 +3940,13 @@ public:
             	break;
 			}
         }
+		
+#if defined(AltNum_EnableMixedFractional)
+		void MixedFracRtRSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
+		}
+#endif
 		
 		void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
@@ -5640,6 +5654,13 @@ public:
 
 		#pragma endregion RepToRepCode_AdditionSubtraction
 #pragma region RepToRepCode_MultiplicationDivision
+#if defined(AltNum_EnableMixedFractional)
+		void MixedFracRtRMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
+		}
+#endif
+		
 		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             //LRep Overrides
@@ -7620,6 +7641,13 @@ public:
             	break;
 			}
         }
+		
+#if defined(AltNum_EnableMixedFractional)
+		void MixedFracRtRDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
+		}
+#endif
 		
 		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
