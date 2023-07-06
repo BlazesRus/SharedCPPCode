@@ -371,34 +371,40 @@
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
-						case RepType::NumByDiv:
-                            self /= Value.ExtraRep;
+						case RepType::NumByDiv://(X*E) / (Y / Z) = (XZ*E)/Y
                             self.BasicDivOp(Value);
+                            self.BasicMultOp(Value.ExtraRep);
 							break;
 							
+	#if defined(AltNum_EnablePIRep)
+						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+							//(Xe) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
+                            self.BasicMultOp(Value.DecimalHalf);
+                            self.BasicDivOp(PiNumValue()*Value.IntValue);
+                            break;
+	#endif
+	#if defined(AltNum_EnableENum)
+						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                            self.ExtraRep = 0;
+                            self.BasicMultOp(Value.DecimalHalf);
+                            self.BasicDivOp(Value.IntValue);
+                            break;
+	#endif
+
 	#if defined(AltNum_EnableDecimaledPiFractionals)
 						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-                            self /= Value.ExtraRep*-1;
-                            self.BasicDivOp(PiValue);
+                            self.BasicMultOp(-Value.ExtraRep);
+                            Value.ConvertToNormType(RepType::PiNum);
                             self.BasicDivOp(Value);
                             break;
-	#endif
-	#if defined(AltNum_EnableDecimaledEFractionals)
+	#elif defined(AltNum_EnableDecimaledEFractionals)
 						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-                            self /= Value.ExtraRep*-1;
-                            self.BasicDivOp(EValue);
-                            self.BasicDivOp(Value);
+                            self.ExtraRep = 0;
+                            self.BasicDivOp(-Value.ExtraRep);
+                            self.BasicMultOp(Value);
                             break;
 	#endif
-//
-	#if defined(AltNum_EnableDecimaledPiFractionals)
-//						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-	#endif
-	#if defined(AltNum_EnableDecimaledEFractionals)
-//						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-	#endif
-//							break;
-//							
+    						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
