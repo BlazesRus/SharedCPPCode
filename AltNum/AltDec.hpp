@@ -907,6 +907,14 @@ public:
             }
 #endif
         }
+		
+        void ConvertPIPowerToNum()
+        {
+			int powerExponent = -self.ExtraRep;
+			self.ExtraRep = 0;
+			self.ConvertPIToNum();
+			self.PowOp(powerExponent);
+		}
 #endif
 
 #if defined(AltNum_EnableENum)
