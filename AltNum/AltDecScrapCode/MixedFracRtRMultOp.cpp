@@ -56,6 +56,9 @@
 					}
 					break;
 				case RepType::NumByDiv:
+                    MediumDecVariant NumSide = AltDec(self.Value*-Value.DecimalHalf);
+                    NumSide.BasicDivOp(Value.ExtraRep);//Avoid converting to NumByDiv because need to combine with (Y.IntValue*X.Value)/X.ExtraRep
+		            NumSide.BasicAddOp(Y.IntValue*X.Value);
 					switch(RRep)
 					{
 						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -63,16 +66,27 @@
                         //= Y.IntValue*(X.Value/X.ExtraRep) + (X.Value/X.ExtraRep)((-Y.DecimalHalf)/Y.ExtraRep)
                         //= (Y.IntValue*X.Value/X.ExtraRep) + (X.Value*-Y.DecimalHalf)/(X.ExtraRep*Y.ExtraRep)
                         //= ((Y.IntValue*X.Value)+((X.Value*-Y.DecimalHalf)/Y.ExtraRep))/X.ExtraRep
-                            MediumDecVariant NumSide = AltDec(self.Value*-Value.DecimalHalf);
-                            NumSide.BasicDivOp(Value.ExtraRep);//Avoid converting to NumByDiv because need to combine with (Y.IntValue*X.Value)/X.ExtraRep
-		                    NumSide.BasicAddOp(Y.IntValue*X.Value);
                             self.SetFractionalVal(NumSide, X.ExtraRep);
                             break;
         #if defined(AltNum_EnablePINum)
-						//case RepType::MixedPiByDiv:
+						case RepType::MixedPiByDiv:
+#if defined(AltNum_EnableDecimaledPiFractionals)
+                            self.SetFractionalVal(NumSide, -X.ExtraRep);
+#else
+                            NumSide.BasicDivOp(X.ExtraRep);
+                            self.IntValue = NumSide.IntValue; self.DecimalHalf = NumSide.DecimalHalf;
+                            self.ExtraRep = PiRep;
+#endif
 		#endif
 		#if defined(AltNum_EnableENum)
-						//case RepType::MixedEByDiv:
+						case RepType::MixedEByDiv:
+#if defined(AltNum_EnableDecimaledEFractionals)
+                            self.SetFractionalVal(NumSide, -X.ExtraRep);
+#else
+                            NumSide.BasicDivOp(X.ExtraRep);
+                            self.IntValue = NumSide.IntValue; self.DecimalHalf = NumSide.DecimalHalf;
+                            self.ExtraRep = ERep;
+#endif
 		#endif
 						default:
 							self.CatchAllDivision(Value, LRep, RRep);
@@ -85,6 +99,8 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+                        //(X.IntValue*Pi)/X.DecimalHalf * (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+
 		#if defined(AltNum_EnablePINum)
 						//case RepType::MixedPiByDiv:
 		#endif
@@ -103,6 +119,7 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+                        //(X.IntValue*e)/X.DecimalHalf * (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
 		#if defined(AltNum_EnablePINum)
 						//case RepType::MixedPiByDiv:
 		#endif
@@ -124,6 +141,7 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+                        //(X.Value* (Pi Or e))/-X.ExtraRep * (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
 		#if defined(AltNum_EnablePINum)
 						//case RepType::MixedPiByDiv:
 		#endif
