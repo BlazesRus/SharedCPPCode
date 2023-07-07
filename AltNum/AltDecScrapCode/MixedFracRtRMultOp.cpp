@@ -56,12 +56,19 @@
 					}
 					break;
 				case RepType::NumByDiv:
-                    //X.Value/X.ExtraRep * Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep
-                    //=
 					switch(RRep)
 					{
-						//case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
-		#if defined(AltNum_EnablePINum)
+						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+                        //X.Value/X.ExtraRep * Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep
+                        //= Y.IntValue*(X.Value/X.ExtraRep) + (X.Value/X.ExtraRep)((-Y.DecimalHalf)/Y.ExtraRep)
+                        //= (Y.IntValue*X.Value/X.ExtraRep) + (X.Value*-Y.DecimalHalf)/(X.ExtraRep*Y.ExtraRep)
+                        //= ((Y.IntValue*X.Value)+((X.Value*-Y.DecimalHalf)/Y.ExtraRep))/X.ExtraRep
+                            MediumDecVariant NumSide = AltDec(self.Value*-Value.DecimalHalf);
+                            NumSide.BasicDivOp(Value.ExtraRep);//Avoid converting to NumByDiv because need to combine with (Y.IntValue*X.Value)/X.ExtraRep
+		                    NumSide.BasicAddOp(Y.IntValue*X.Value);
+                            self.SetFractionalVal(NumSide, X.ExtraRep);
+                            break;
+        #if defined(AltNum_EnablePINum)
 						//case RepType::MixedPiByDiv:
 		#endif
 		#if defined(AltNum_EnableENum)
