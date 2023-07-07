@@ -686,7 +686,12 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = ERep;
         }
 #endif
-        
+        void SetFractionalVal(int IntHalf, int DecHalf, int Divisor)
+        {
+            IntValue = IntHalf; DecimalHalf = IntHalf;
+            ExtraRep = Divisor;
+        }
+		
         void SetFractionalVal(MediumDec Value, int Divisor)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
@@ -698,6 +703,49 @@ ExtraFlags treated as bitwise flag storage
             IntValue = Value; DecimalHalf = 0;
             ExtraRep = Divisor;
         }
+		
+#if defined(AltNum_EnableAlternativeRepFractionals)
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+        void SetDecimaledPiFractional(int IntHalf, int DecHalf, int Divisor)
+        {
+            IntValue = IntHalf; DecimalHalf = DecHalf;
+            ExtraRep = -Divisor;
+        }
+	#elif defined(AltNum_EnableDecimaledEFractionals)
+        void SetDecimaledEFractional(int IntHalf, int DecHalf, int Divisor)
+        {
+            IntValue = Value; DecimalHalf = 0;
+            ExtraRep = -Divisor;
+        }
+	#elif defined(AltNum_EnableDecimaledIFractionals)
+        void SetDecimaledIFractional(int IntHalf, int DecHalf, int Divisor)
+        {
+            IntValue = Value; DecimalHalf = 0;
+            ExtraRep = -Divisor;
+        }
+	#endif
+	#if defined(AltNum_EnablePIRep)
+        void SetPiFractional(int Num, int Divisor)//IntValue/DecimalHalf*Pi Representation
+        {
+            IntValue = Num; DecimalHalf = Divisor;
+            ExtraRep = PiRep;
+        }
+	#endif
+	#if defined(AltNum_EnableENum)
+        void SetEFractional(int Num, int Divisor)//IntValue/DecimalHalf*e Representation
+        {
+            IntValue = Num; DecimalHalf = Divisor;
+            ExtraRep = ERep;
+        }
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+        void SetIFractional(int Num, int Divisor)//IntValue/DecimalHalf*i Representation
+        {
+            IntValue = Num; DecimalHalf = Divisor;
+            ExtraRep = IRep;
+        }
+	#endif
+#endif
         
 #if defined(AltNum_EnableMixedFractional)
         void SetMixedFractionalVal(int WholeNum, int Numerator, int Denom)
