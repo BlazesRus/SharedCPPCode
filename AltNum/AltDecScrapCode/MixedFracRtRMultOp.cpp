@@ -3,6 +3,15 @@
 		    switch(LRep)
             {
 				case RepType::NormalType:
+#if defined(AltNum_EnablePIRep)
+                case RepType::PINum:
+#if defined(AltNum_EnablePIPowers)
+                case RepType::PIPower:
+#endif
+#endif
+#if defined(AltNum_EnableENum)
+                case RepType::ENum:
+#endif
 					MediumDecVariant LeftSide = self*Value.IntValue;
                     MediumDecVariant RightSide = self/Value.ExtraRep;
                     RightSide *= -Value.DecimalHalf;
