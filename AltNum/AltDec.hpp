@@ -115,6 +115,21 @@ AltNum_EnableMixedFractional =
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
       (Not Fully Implimented)
 
+Only one of alternative rep Mixed Fractional toggles can be enabled at time
+ExtraRep needs to be between 0 and AlternativeFractionalLowerBound, otherwise convert into another format at end of operation to prevent accidentally becoming another represention type 
+AltNum_EnableMixedPiFractional =
+      If DecimalHalf is negative and ExtraRep is Negative,
+      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*Pi
+      (Not Fully Implimented)
+AltNum_EnableMixedEFractional =
+      If DecimalHalf is negative and ExtraRep is Negative,
+      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*Pi
+      (Not Fully Implimented)
+AltNum_EnableMixedIFractional =
+      If DecimalHalf is negative and ExtraRep is Negative,
+      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*i
+      (Not Implimented)
+
 AltNum_EnableERep =
       If AltNum_UseMediumDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
@@ -375,15 +390,15 @@ ExtraFlags treated as bitwise flag storage
 #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
-            MixedFrac,//IntValue +- (DecimalHalf*-1)
-            MixedPi,
-            MixedE,
-            MixedI,
-#if defined(AltNum_EnableAlternativeRepFractionals)
-            MixedFracByDiv,//IntValue +- (DecimalHalf*-1)/ExtraRep
-            MixedPiByDiv,
-            MixedEByDiv,
-            MixedIByDiv,
+            MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
+#if defined(AltNum_EnableMixedPiFractional)
+            MixedPi,//IntValue +- (DecimalHalf/-ExtraRep)
+#endif
+#if defined(AltNum_EnableMixedEFractional)
+            MixedE,//IntValue +- (DecimalHalf/-ExtraRep)
+#endif
+#if defined(AltNum_EnableMixedIFractional)
+            MixedI,//IntValue +- (DecimalHalf/-ExtraRep)
 #endif
 #endif
 
@@ -506,26 +521,16 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
-#if AltNum_EnableMixedEFractional
-				if(DecimalHalf<0)
-					return RepType::MixedE;
-				else
-#endif
-					return RepType::ENum;
+				return RepType::ENum;
 			}
-            else if(ExtraRep==EByDivisorRep)
-					return RepType::ENumByDiv;
+            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
+				return RepType::ENumByDiv;
 #endif
 
 #if defined(AltNum_EnableImaginaryNum)
             else if(ExtraRep==IRep)
 			{
-#if AltNum_EnableMixedIFractional
-				if(DecimalHalf<0)
-					return RepType::MixedI;
-				else
-#endif
-					return RepType::INum;
+				return RepType::INum;
 			}
 #if defined(AltNum_EnableAlternativeRepFractionals)
             else if(ExtraRep==IByDivisorRep)
@@ -537,16 +542,30 @@ ExtraFlags treated as bitwise flag storage
                 return RepType::UndefinedButInRange;
 #endif
             else if(ExtraRep<0)
-#if defined(AltNum_EnablePiEFractionals)
-                return RepType::PiNumByDiv;
-#elif defined(AltNum_EnableDecimaledEFractionals)
-                return RepType::ENumByDiv;
-#elif defined(AltNum_EnableDecimaledIFractionals)
-                return RepType::INumByDiv;
-#elif defined(AltNum_EnableMixedFractional)
-                return RepType::MixedFrac;
+#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
+				if(DecimalHalf<0)
+#if defined(AltNum_EnableMixedPiFractional)
+					return RepType::MixedPi;
+#elif defined(AltNum_EnableMixedEFractional)
+					return RepType::MixedE;
 #else
-                throw "Non-enabled Negative ExtraRep representation type detected from AltDec";
+					return RepType::MixedI;
+#endif
+				else
+#endif
+	#if defined(AltNum_EnablePiEFractionals)
+					return RepType::PiNumByDiv;
+	#elif defined(AltNum_EnableDecimaledEFractionals)
+					return RepType::ENumByDiv;
+	#elif defined(AltNum_EnableDecimaledIFractionals)
+					return RepType::INumByDiv;
+	#elif defined(AltNum_EnableMixedFractional)
+					return RepType::MixedFrac;
+	#else
+					throw "Non-enabled Negative ExtraRep representation type detected from AltDec";
+	#endif
+#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
+
 #endif
             else
 				throw "Unknown or non-enabled representation type detected from AltDec";
@@ -2531,12 +2550,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2597,12 +2616,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2657,12 +2676,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2717,12 +2736,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2798,12 +2817,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2886,12 +2905,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -2993,12 +3012,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3122,12 +3141,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3220,12 +3239,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3316,12 +3335,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3451,12 +3470,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
     #endif
     							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3509,12 +3528,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
@@ -3566,12 +3585,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
@@ -3631,12 +3650,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-						case RepType::MixedPiByDiv:
+						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-						case RepType::MixedEByDiv:
+						case RepType::MixedE:
 	#endif
 							throw "BasicMixedOp code not implimented yet";
 							break;
@@ -3666,12 +3685,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	
 					
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 	#endif
 	#endif
 					switch (RRep)
@@ -3737,12 +3756,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3798,12 +3817,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3853,12 +3872,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -3945,12 +3964,12 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4247,12 +4266,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4313,12 +4332,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4373,12 +4392,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4433,12 +4452,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4514,12 +4533,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4602,12 +4621,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4709,12 +4728,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4838,12 +4857,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -4936,12 +4955,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5032,12 +5051,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5163,12 +5182,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
     #endif
     						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5221,12 +5240,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
@@ -5278,12 +5297,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
 //							break;
@@ -5343,12 +5362,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
-						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-						case RepType::MixedPiByDiv:
+						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-						case RepType::MixedEByDiv:
+						case RepType::MixedE:
 	#endif
 							throw "BasicMixedOp code not implimented yet";
 							break;
@@ -5378,12 +5397,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	
 					
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 	#endif
 	#endif
 					switch (RRep)
@@ -5449,12 +5468,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5510,12 +5529,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5564,12 +5583,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5656,12 +5675,12 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5891,12 +5910,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 #endif
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -5999,12 +6018,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6109,12 +6128,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6208,12 +6227,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6301,12 +6320,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6389,12 +6408,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6496,12 +6515,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6625,12 +6644,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6723,12 +6742,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6819,12 +6838,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -6938,12 +6957,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7036,12 +7055,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7134,12 +7153,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7243,12 +7262,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7279,12 +7298,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 	
 					
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 	#endif
 	#endif
 					switch (RRep)
@@ -7350,12 +7369,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7450,12 +7469,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7548,12 +7567,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7646,12 +7665,12 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -7788,12 +7807,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -7906,12 +7925,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8028,12 +8047,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8150,12 +8169,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8270,12 +8289,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8383,12 +8402,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8519,12 +8538,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8644,12 +8663,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8766,12 +8785,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -8890,12 +8909,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9012,12 +9031,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9138,12 +9157,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9260,12 +9279,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9382,12 +9401,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9507,12 +9526,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //	#endif
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9557,12 +9576,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 	
 					
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 	#endif
 	#endif
 					switch (RRep)
@@ -9642,12 +9661,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -9775,12 +9794,12 @@ self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 //							break;
 //							
 //	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 //	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 //	#endif
 //	#endif
 //							throw "BasicMixedDivOp code not implimented yet";
@@ -10199,12 +10218,12 @@ public:
 						break;
 						
 #if defined(AltNum_EnableMixedFractional)
-                    case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
-                    case RepType::MixedPiByDiv:
+                    case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
-                    case RepType::MixedEByDiv:
+                    case RepType::MixedE:
 #endif
 #endif
 						throw "BasicMixedAddOp code not implimented yet";
@@ -10596,12 +10615,12 @@ public:
 						break;
 						
 #if defined(AltNum_EnableMixedFractional)
-                    case RepType::MixedFracByDiv://IntValue -- (DecimalHalf*-1)/ExtraRep
+                    case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
-                    case RepType::MixedPiByDiv:
+                    case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
-                    case RepType::MixedEByDiv:
+                    case RepType::MixedE:
 #endif
 #endif
 						throw "BasicMixedSubOp code not implimented yet";
@@ -11433,12 +11452,12 @@ public:
 						break;
 						
 #if defined(AltNum_EnableMixedFractional)
-/*                    case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+/*                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
-                    case RepType::MixedPiByDiv:
+                    case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
-                    case RepType::MixedEByDiv:
+                    case RepType::MixedE:
 #endif
 #endif
 						throw "BasicMixedMultOp code not implimented yet";
@@ -11713,12 +11732,12 @@ public:
 					break;*/
 					
 #if defined(AltNum_EnableMixedFractional)
-/*                    case RepType::MixedFracByDiv://IntValue -- (DecimalHalf*-1)/ExtraRep
+/*                    case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 #endif
 #endif
 					throw "BasicMixedMultOp code not implimented yet";
@@ -12187,12 +12206,12 @@ public:
 						break;
 						
 #if defined(AltNum_EnableMixedFractional)
-//                    case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 #if defined(AltNum_EnablePINum)
-                    case RepType::MixedPiByDiv:
+                    case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
-                    case RepType::MixedEByDiv:
+                    case RepType::MixedE:
 #endif
 #endif
 						throw "BasicMixedDivOp code not implimented yet";
@@ -14420,8 +14439,8 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDecVariant Sqrt(MediumDecVariant value, int precision=7)
-        {
+        static MediumDecVariant BasicSqrt(MediumDecVariant& value, int precision=7)
+        {//Ignores Alternate representations use Sqrt instead to check based on RepType
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
@@ -14500,6 +14519,15 @@ public:
             }
             return ans;
         }
+		
+		/// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+		static MediumDecVariant Sqrt(MediumDecVariant value, int precision=7)
+		{
+		    ValueRep = 
+		    return 
+		}
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code

@@ -1,4 +1,4 @@
-		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
         {
             //LRep Overrides
             switch(LRep)
@@ -186,12 +186,12 @@
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -295,12 +295,12 @@
 	#endif
 							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -406,12 +406,12 @@
 	#endif
     						
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -505,12 +505,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -599,12 +599,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -687,12 +687,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -794,12 +794,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -922,12 +922,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1020,12 +1020,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1117,12 +1117,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1239,12 +1239,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1337,12 +1337,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1436,12 +1436,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1553,12 +1553,12 @@
 	#endif
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1589,12 +1589,12 @@
 	
 					
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-				case RepType::MixedPiByDiv:
+				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-				case RepType::MixedEByDiv:
+				case RepType::MixedE:
 	#endif
 	#endif
 					switch (RRep)
@@ -1660,12 +1660,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1760,12 +1760,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1858,12 +1858,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
@@ -1955,12 +1955,12 @@
 //							break;
 //							
 	#if defined(AltNum_EnableMixedFractional)
-//						case RepType::MixedFracByDiv://IntValue +- (DecimalHalf*-1)/ExtraRep
+//						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 	#if defined(AltNum_EnablePINum)
-//						case RepType::MixedPiByDiv:
+//						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
-//						case RepType::MixedEByDiv:
+//						case RepType::MixedE:
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";

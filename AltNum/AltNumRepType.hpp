@@ -40,15 +40,15 @@
 #endif
 
 #if defined(AltNum_EnableMixedFractional)
-            MixedFrac,//IntValue +- (DecimalHalf*-1)
-            MixedPi,
-            MixedE,
-            MixedI,
-#if defined(AltNum_EnableAlternativeRepFractionals)
-            MixedFracByDiv,//IntValue +- (DecimalHalf*-1)/ExtraRep
-            MixedPiByDiv,
-            MixedEByDiv,
-            MixedIByDiv,
+            MixedFrac,//IntValue +- (DecimalHalf/ExtraRep)
+#if defined(AltNum_EnableMixedPiFractional)
+            MixedPi,//IntValue +- (DecimalHalf/-ExtraRep)
+#endif
+#if defined(AltNum_EnableMixedEFractional)
+            MixedE,//IntValue +- (DecimalHalf/-ExtraRep)
+#endif
+#if defined(AltNum_EnableMixedIFractional)
+            MixedI,//IntValue +- (DecimalHalf/-ExtraRep)
 #endif
 #endif
 
