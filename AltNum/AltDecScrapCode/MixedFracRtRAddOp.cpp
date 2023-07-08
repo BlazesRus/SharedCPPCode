@@ -58,7 +58,7 @@
 					switch(RRep)
 					{
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //(self.Value/self.ExtraRep) / Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep
+                        //(AltDec(self.IntValue, self.DecimalHalf)/self.ExtraRep) / Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep
                             break;
 #if defined(AltNum_EnableMixedPiFractional)
 						case RepType::MixedPi:
@@ -90,15 +90,15 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //(X.IntValue*Pi)/X.DecimalHalf + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+                        //(self.IntValue*Pi)/self.DecimalHalf + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 
 #if defined(AltNum_EnableMixedPiFractional)
 						//case RepType::MixedPi:
-                        //(X.IntValue*Pi)/X.DecimalHalf + ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*Pi)
+                        //(self.IntValue*Pi)/self.DecimalHalf + ((Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)*Pi)
 #endif
 #if defined(AltNum_EnableMixedEFractional)
 						//case RepType::MixedE:
-                        //(X.IntValue*Pi)/X.DecimalHalf + ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*e)
+                        //(self.IntValue*Pi)/self.DecimalHalf + ((Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)*e)
 #endif
 						default:
 							self.CatchAllAddition(Value, LRep, RRep);
@@ -112,10 +112,10 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //(X.IntValue*e)/X.DecimalHalf + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+                        //(self.IntValue*e)/self.DecimalHalf + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 		#if defined(AltNum_EnablePINum)
 						//case RepType::MixedPi:
-                        //(X.IntValue*e)/X.DecimalHalf + (Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)
+                        //(self.IntValue*e)/self.DecimalHalf + (Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)
 		#endif
 		#if defined(AltNum_EnableENum)
 						//case RepType::MixedE:
@@ -135,14 +135,14 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //(X.Value* (Pi Or e))/-X.ExtraRep + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+                        //(AltDec(self.IntValue, self.DecimalHalf)* (Pi Or e))/-self.ExtraRep + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 #if defined(AltNum_EnableMixedPiFractional)
 						//case RepType::MixedPi:
-                        //(X.Value* (Pi Or e))/-X.ExtraRep + ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*Pi)
+                        //(AltDec(self.IntValue, self.DecimalHalf)* (Pi Or e))/-self.ExtraRep + ((Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)*Pi)
 #endif
 #if defined(AltNum_EnableMixedEFractional)
 						//case RepType::MixedE:
-                        //(X.Value* (Pi Or e))/-X.ExtraRep + ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*e)
+                        //(AltDec(self.IntValue, self.DecimalHalf)* (Pi Or e))/-self.ExtraRep + ((Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)*e)
 #endif
 						default:
 							self.CatchAllAddition(Value, LRep, RRep);
@@ -155,7 +155,7 @@
 					{
 		#if defined(AltNum_EnablePINum)
 						//case RepType::MixedPi:
-                        //(self.IntValue +- (self.DecimalHalf*-1)/self.ExtraRep)/-X.ExtraRep + ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*Pi)
+                        //(self.IntValue +- (self.DecimalHalf*-1)/self.ExtraRep)/-self.ExtraRep + ((Value.IntValue+(-Value.DecimalHalf)/-Value.ExtraRep)*Pi)
 		#endif
 		#if defined(AltNum_EnableENum)
 						//case RepType::MixedE:
@@ -170,10 +170,10 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-X.ExtraRep + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+                        //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-self.ExtraRep + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 		#if defined(AltNum_EnableENum)
 						//case RepType::MixedE:
-		#endif          //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-X.ExtraRep + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+		#endif          //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-self.ExtraRep + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 						default:
 							self.CatchAllAddition(Value, LRep, RRep);
 							break;
@@ -184,10 +184,10 @@
 					switch(RRep)
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                        //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-X.ExtraRep + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+                        //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-self.ExtraRep + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 		#if defined(AltNum_EnableENum)
 						//case RepType::MixedE:
-		#endif          //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-X.ExtraRep + (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
+		#endif          //((self.IntValue +- (self.DecimalHalf*-1)Pi)/-self.ExtraRep)/-self.ExtraRep + (Value.IntValue+(-Value.DecimalHalf)/Value.ExtraRep)
 						default:
 							self.CatchAllAddition(Value, LRep, RRep);
 							break;
