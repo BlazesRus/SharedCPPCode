@@ -15,11 +15,11 @@
 					switch(RRep)
 					{
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-                            
+                            // (self.Value*(1 or Pi or Pi^-self.ExtraRep or e)) / (Value.IntValue +- (Value.DecimalHalf*-1)/Value.ExtraRep)
                             break;
                         #if defined(AltNum_EnableMixedPiFractional)
 						case RepType::MixedPi:
-
+                            // (self.Value*(1 or Pi or Pi^-self.ExtraRep or e)) / ((Value.IntValue +- (Value.DecimalHalf*-1)/-Value.ExtraRep)*Pi)
                             switch(LRep)
                             {
                             #if defined(AltNum_EnablePIRep)
@@ -45,7 +45,7 @@
                     #endif
 		            #if defined(AltNum_EnableMixedEFractional)
 						case RepType::MixedE:
-
+                            //(self.Value*(1 or Pi or Pi^-self.ExtraRep or e)) / ((Value.IntValue +- (Value.DecimalHalf*-1)/-Value.ExtraRep)*e)
                             break;
 		            #endif
 						default:
