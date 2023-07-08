@@ -1,5 +1,23 @@
 		void MixedFracRtRAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
+#if defined(AltNum_EnablePIRep)|| defined(AltNum_EnableENum)
+            switch(LRep)//Force convert some representations to normal type
+            {
+#if defined(AltNum_EnablePIRep)
+                case RepType::PINum:
+#if defined(AltNum_EnablePIPowers)
+                case RepType::PIPower:
+#endif
+#endif
+#if defined(AltNum_EnableENum)
+                case RepType::ENum:
+#endif
+                    self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                    break;
+                default:
+                    break;
+            }
+#endif
 		    switch(LRep)
             {
 				case RepType::NormalType:
@@ -40,19 +58,6 @@
 							break;
 					}
 					break;
-#if defined(AltNum_EnablePIRep)
-                case RepType::PINum:
-#if defined(AltNum_EnablePIPowers)
-                case RepType::PIPower:
-#endif
-#endif
-#if defined(AltNum_EnableENum)
-                case RepType::ENum:
-#endif
-#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
-					self.CatchAllAddition(Value, LRep, RRep);
-					break;
-#endif
 				case RepType::NumByDiv:
                     
 					switch(RRep)
