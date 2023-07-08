@@ -3,15 +3,6 @@
 		    switch(LRep)
             {
 				case RepType::NormalType:
-#if defined(AltNum_EnablePIRep)
-                case RepType::PINum:
-#if defined(AltNum_EnablePIPowers)
-                case RepType::PIPower:
-#endif
-#endif
-#if defined(AltNum_EnableENum)
-                case RepType::ENum:
-#endif
 					switch(RRep)
 					{
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -49,6 +40,19 @@
 							break;
 					}
 					break;
+#if defined(AltNum_EnablePIRep)
+                case RepType::PINum:
+#if defined(AltNum_EnablePIPowers)
+                case RepType::PIPower:
+#endif
+#endif
+#if defined(AltNum_EnableENum)
+                case RepType::ENum:
+#endif
+#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
+					self.CatchAllAddition(Value, LRep, RRep);
+					break;
+#endif
 				case RepType::NumByDiv:
                     
 					switch(RRep)
