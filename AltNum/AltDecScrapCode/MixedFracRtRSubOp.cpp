@@ -5,14 +5,49 @@
             {
 #if defined(AltNum_EnablePIRep)
                 case RepType::PINum:
+                    if(RRep==RepType::MixedPi)
+                    {
+                        if(self.DecimalHalf!=0)//Convert to normal if not Integer number
+                        {
+                            self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                        }
+                    }
+                    else
+                        self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                    }
+                    break;
 #if defined(AltNum_EnablePIPowers)
                 case RepType::PIPower:
+                    if(RRep==RepType::MixedPi)//Convert to normal PiNum
+                    {
+                        ConvertPiPowerToPiRep();
+                        if(self.DecimalHalf!=0)//Convert to normal if not Integer number
+                        {
+                            self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                        }
+                        else
+                            LRep = RepType::RepType::PINum;
+                    }
+                    else
+                        self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                    }
+                    break;
 #endif
 #endif
 #if defined(AltNum_EnableENum)
                 case RepType::ENum:
 #endif
-                    self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                    if(RRep==RepType::MixedE)
+                    {
+                        if(self.DecimalHalf!=0)//Convert to normal if not Integer number
+                        {
+                            self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                        }
+                    }
+                    else
+                    {
+                        self.ConvertToNormType(LRep);LRep = RepType::NormalType;
+                    }
                     break;
                 default:
                     break;
@@ -26,30 +61,30 @@
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
                             
                             break;
-                        #if defined(AltNum_EnableMixedPiFractional)
+                    #if defined(AltNum_EnableMixedPiFractional)
 						case RepType::MixedPi:
-
+		            #elif defined(AltNum_EnableMixedEFractional)
+						case RepType::MixedE:
+                    #endif
+                    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
                             switch(LRep)
                             {
-                            #if defined(AltNum_EnablePIRep)
+                                #if defined(AltNum_EnableMixedPiFractional)
                                 case RepType::PINum:
                                     
                                     break;
-                                #if defined(AltNum_EnablePIPowers)
-                                case RepType::PIPower:
-                                   
-                                   break;
                                 #endif
-                            #endif
-                                //RepType::ENum:
+                                #if defined(AltNum_EnableMixedEFractional)
+                                case RepType::ENum:
+                                    
+                                    break;
+                                #endif
                                 default://RepType::NormalType
                                     
                                     break;
                             }
                             break;
-                    #endif
-		            #if defined(AltNum_EnableMixedEFractional)
-						case RepType::MixedE:
+
 
                             break;
 		            #endif
@@ -59,7 +94,6 @@
 					}
 					break;
 				case RepType::NumByDiv:
-                    
 					switch(RRep)
 					{
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -71,16 +105,7 @@
 						case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
-
-#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))
-                            
-#else
-                            
-                            
-#if defined(AltNum_EnableMixedPiFractional)
-                                
-#else
-                                
+                         
 #endif
 #endif
 		#endif
