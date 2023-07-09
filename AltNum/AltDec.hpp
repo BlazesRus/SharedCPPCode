@@ -2330,8 +2330,16 @@ public:
 #if defined(AltNum_EnableMixedFractional)
 		void MixedFracRtRAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
+			self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 		}
+		
+#if defined(AltNum_EnableMixedEFractional)
+		//For Imaginary number based mixed fractions
+		void MixedIFracRtRAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			throw "Imaginary MixedFraction operation code not implimented yet";
+		}
+#endif
 #endif
 	
 		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
@@ -3991,7 +3999,7 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 	#endif
 	#endif
 //							throw "BasicMixedOp code not implimented yet";
-//							break;//
+							break;
 	#endif
 //
 	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
@@ -4000,9 +4008,11 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 //							
 //						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 //							break;
+#if defined(AltNum_EnableMixedIFractional)
 //						case RepType::MixedI:
-//							throw "BasicMixedOp code not implimented yet";
+//							MixedIFracRtRSubOp(LRep, RRep, self, Value);
 //							break;//
+#endif
 	#endif
 //
 //	//#if defined(AltNum_EnableComplexNumbers)
@@ -4029,8 +4039,16 @@ self.CatchAllAddition(Value, LRep, RRep);//Placeholder for actual code
 #if defined(AltNum_EnableMixedFractional)
 		void MixedFracRtRSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
+			self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 		}
+		
+#if defined(AltNum_EnableMixedEFractional)
+		//For Imaginary number based mixed fractions
+		void MixedIFracRtRSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			throw "Imaginary MixedFraction operation code not implimented yet";
+		}
+#endif
 #endif
 		
 		void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
@@ -5742,8 +5760,16 @@ self.CatchAllSubtraction(Value, LRep, RRep);//Placeholder for actual code
 #if defined(AltNum_EnableMixedFractional)
 		void MixedFracRtRMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
+			self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 		}
+		
+#if defined(AltNum_EnableMixedEFractional)
+		//For Imaginary number based mixed fractions
+		void MixedIFracRtRMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			throw "Imaginary MixedFraction operation code not implimented yet";
+		}
+#endif
 #endif
 		
 		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
@@ -7730,8 +7756,16 @@ self.CatchAllMultiplication(Value, LRep, RRep);//Placeholder for actual code
 #if defined(AltNum_EnableMixedFractional)
 		void MixedFracRtRDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
+			self.CatchAllDivision(Value, LRep, RRep);//Placeholder for actual code
 		}
+		
+#if defined(AltNum_EnableMixedEFractional)
+		//For Imaginary number based mixed fractions
+		void MixedIFracRtRDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			throw "Imaginary MixedFraction operation code not implimented yet";
+		}
+#endif
 #endif
 		
 		void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
