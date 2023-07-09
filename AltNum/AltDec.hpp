@@ -978,9 +978,27 @@ public:
         void ConvertPIPowerToNum()
         {
 			int powerExponent = -self.ExtraRep;
-			self.ExtraRep = 0;
-			self.ConvertPIToNum();
-			self.PowOp(powerExponent);
+			ExtraRep = 0;
+			MediumDecVariant PiSide = PiNumValue();
+			PiSide.PowOp(powerExponent);
+			BasicMultOp(PiSide);
+		}
+		
+		void ConvertPiPowerToPiRep()
+		{
+			int powerExponent = -self.ExtraRep;
+			if(powerExponent==0)
+				self.ExtraRep = 0;//Pi^0 = 1
+			else
+			{
+				self.ExtraRep = PiRep;
+				if(powerExponent!=1)
+				{
+					MediumDecVariant PiSide = PiNumValue();
+					PiSide.PowOp(powerExponent-1);
+					BasicMultOp(PiSide);
+				}
+			}
 		}
 #endif
 
@@ -1015,7 +1033,7 @@ public:
                 IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
 			case RepType::NegativeInfinity:
-                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
 #if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottom:
