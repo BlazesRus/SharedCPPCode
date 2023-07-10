@@ -505,15 +505,15 @@ ExtraFlags treated as bitwise flag storage
             if (DecimalHalf == ApproachingImaginaryValRep)
             {
                 if(ExtraRep==0)
-                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
+                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
 				else if(ExtraRep==-1)
-				    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
                 else
 #if defined(AltNum_EnableApproachingDivided)
 					if(ExtraRep<0)//Approaching left from right
-						return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
+						return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
 					else//Approaching right from left
-						return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
+						return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
 #else
                     throw "EnableApproachingDivided feature not enabled";
 #endif            
@@ -1203,8 +1203,6 @@ public:
                 break;
             }
         }
-		
-		
 
 #if defined(AltNum_EnableImaginaryNum)
 		void ConvertToNormalIRep(RepType& repType)
