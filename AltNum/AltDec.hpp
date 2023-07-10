@@ -984,6 +984,14 @@ public:
 			BasicMultOp(PiSide);
 		}
 		
+		MediumDecVariant PIPowerNum(int powerExponent)
+        {
+			ExtraRep = 0;
+			MediumDecVariant PiSide = PiNumValue();
+			PiSide.PowOp(powerExponent);
+			return PiSide;
+		}
+		
 		void ConvertPiPowerToPiRep()
 		{
 			int powerExponent = -self.ExtraRep;
