@@ -523,11 +523,6 @@ ExtraFlags treated as bitwise flag storage
 #endif
             if(ExtraRep==0)
 			{
-#if defined(AltNum_EnableMixedFractional)
-				if(DecimalHalf<0)
-				 return RepType::MixedFrac;
-				
-#endif
 #if defined(AltNum_EnableNaN)
 				if(DecimalHalf==NaNRep)
 					return RepType::NaN;
@@ -543,10 +538,15 @@ ExtraFlags treated as bitwise flag storage
 				return RepType::PiIntNumByDiv;
 #endif
             else if(ExtraRep>0)
-#if defined(AltNum_EnableByDecimaledFractionals)
+			{
+			#if defined(AltNum_EnableMixedFractional)
+				if(DecimalHalf<0)
+					return RepType::MixedFrac;
+			#if defined(AltNum_EnableByDecimaledFractionals)
                 return RepType::NumByDiv;
-#endif
-				throw "Non-enabled NumByDiv representation detected from AltDec";
+			#endif
+				throw "Non-enabled representation detected from AltDec";
+			}
 #if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
 			{
@@ -588,8 +588,6 @@ ExtraFlags treated as bitwise flag storage
 					return RepType::ENumByDiv;
 	#elif defined(AltNum_EnableDecimaledIFractionals)
 					return RepType::INumByDiv;
-	#elif defined(AltNum_EnableMixedFractional)
-					return RepType::MixedFrac;
 	#else
 					throw "Non-enabled Negative ExtraRep representation type detected from AltDec";
 	#endif
