@@ -357,7 +357,7 @@ ExtraFlags treated as bitwise flag storage
             NormalType = 0,
             NumByDiv,
 #if defined(AltNum_EnablePIRep)
-            PINum,
+            PiNum,
 #if defined(AltNum_EnablePIPowers)
             PIPower,
 #endif
@@ -509,7 +509,7 @@ ExtraFlags treated as bitwise flag storage
 			}
 #ifdef AltNum_EnablePIRep
             else if(ExtraRep==PIRep)
-                return RepType::PINum;
+                return RepType::PiNum;
             else if(ExtraRep==PiByDivisorRep)
 				return RepType::PiIntNumByDiv;
 #endif
@@ -891,7 +891,7 @@ public:
             ExtraRep = 0;
             // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PIRepresentation
             //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPI is enabled
-            //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PINum*DecimalHalf/1000000000))
+            //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PiNum*DecimalHalf/1000000000))
             //Calculations from HiPer Calc
             //683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
             //683565275.168866626 x 3.141592654 = 2147483647.000000001747365404
@@ -908,7 +908,7 @@ public:
 #if defined(AltNum_DisableSwitchBasedConversion)
             else if (IntValue == NegativeRep)//-0.XXX... * PI
             {
-                BasicMultOp(PINum);
+                BasicMultOp(PiNum);
             }
             else if (DecimalHalf == 0 && IntValue == 10)
             {
@@ -916,7 +916,7 @@ public:
             }
             else
             {
-                BasicMultOp(PINum);
+                BasicMultOp(PiNum);
             }
 #else
             else
@@ -924,7 +924,7 @@ public:
                 switch (IntValue)
                 {
                 case NegativeRep:
-                    BasicMultOp(PINum);
+                    BasicMultOp(PiNum);
                     break;
                 case 5:
                     if (DecimalHalf == 0)
@@ -932,7 +932,7 @@ public:
                         IntValue = 15; DecimalHalf = 707963268;
                     }
                     else
-                        BasicMultOp(PINum);
+                        BasicMultOp(PiNum);
                     break;
                 case 10:
                     if (DecimalHalf == 0)
@@ -940,7 +940,7 @@ public:
                         IntValue = 31; DecimalHalf = 415926536;
                     }
                     else
-                        BasicMultOp(PINum);
+                        BasicMultOp(PiNum);
                     break;
                 //3.1415926535897932384626433
                 case 100:
@@ -949,7 +949,7 @@ public:
                         IntValue = 314; DecimalHalf = 159265359;
                     }
                     else
-                        BasicMultOp(PINum);
+                        BasicMultOp(PiNum);
                     break;
                 case 1000:
                     if (DecimalHalf == 0)
@@ -957,7 +957,7 @@ public:
                         IntValue = 3141; DecimalHalf = 592653590;
                     }
                     else
-                        BasicMultOp(PINum);
+                        BasicMultOp(PiNum);
                     break;
                 case -10:
                     if (DecimalHalf == 0)
@@ -965,10 +965,10 @@ public:
                         IntValue = -31; DecimalHalf = 415926536;
                     }
                     else
-                        BasicMultOp(PINum);
+                        BasicMultOp(PiNum);
                     break;
                 default:
-                    BasicMultOp(PINum);
+                    BasicMultOp(PiNum);
                     break;
                 }
             }
@@ -1062,8 +1062,8 @@ public:
 #endif
 #endif
 #if defined(AltNum_EnablePIRep)
-            case RepType::PINum:
-                BasicMultOp(PINum);
+            case RepType::PiNum:
+                BasicMultOp(PiNum);
                 ExtraRep = 0;
                 break;
 #if defined(AltNum_EnableAlternativeRepFractionals)
@@ -1264,25 +1264,25 @@ private:
         }
 
         //100,000,000xPI(Rounded to 9th decimal digit)
-        static MediumDecVariant HundredMilPINumVal()
+        static MediumDecVariant HundredMilPiNumVal()
         {
             return AltDec(314159265, 358979324, 0);
         }
 
         //10,000,000xPI(Rounded to 9th decimal digit)
-        static MediumDecVariant TenMilPINumVal()
+        static MediumDecVariant TenMilPiNumVal()
         {
             return AltDec(31415926, 535897932, 0);
         }
 
         //1,000,000xPI(Rounded to 9th decimal digit)
-        static MediumDecVariant OneMilPINumVal()
+        static MediumDecVariant OneMilPiNumVal()
         {
             return AltDec(3141592, 653589793, 0);
         }
 
         //10xPI(Rounded to 9th decimal digit)
-        static MediumDecVariant TenPINumVal()
+        static MediumDecVariant TenPiNumVal()
         {
             return AltDec(31, 415926536, 0);
         }
@@ -1429,7 +1429,7 @@ public:
         /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
         /// </summary>
         /// <returns>MediumDec</returns>
-        static MediumDecVariant PINum;
+        static MediumDecVariant PiNum;
         
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
@@ -2372,7 +2372,7 @@ public:
                         case RepType::NormalType:
                         case RepType::NumByDiv:
             #if defined(AltNum_EnablePIRep)
-                        case RepType::PINum:
+                        case RepType::PiNum:
             #if defined(AltNum_EnablePIPowers)
                         case RepType::PIPower:
             #endif
@@ -2562,7 +2562,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2577,7 +2577,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2604,7 +2604,7 @@ public:
 //	//						break;
 //	//#endif
 						default:
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //						case RepType::PIPower:
 //                      case RepType::ENum:
 //						case RepType::NumByDiv:
@@ -2618,7 +2618,7 @@ public:
 					}
 					break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 	#if defined(AltNum_EnableImaginaryNum)
@@ -2628,7 +2628,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2643,7 +2643,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2688,7 +2688,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2703,7 +2703,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2748,7 +2748,7 @@ public:
 #endif							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2763,7 +2763,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2792,7 +2792,7 @@ public:
 	#endif
 					
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 	#if defined(AltNum_EnableENum)
@@ -2807,7 +2807,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2844,7 +2844,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2881,7 +2881,7 @@ public:
 						case RepType::NormalType:
                             self.BasicAddOp(Value);
 							break;
-						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+						case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
                             --self.ExtraRep;
                             self.BasicAddOp(Value);
 							break;
@@ -2896,7 +2896,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2932,7 +2932,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2967,7 +2967,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2980,7 +2980,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -2993,7 +2993,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3003,7 +3003,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3039,7 +3039,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3109,7 +3109,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3122,7 +3122,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3132,7 +3132,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3168,7 +3168,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3207,7 +3207,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3220,7 +3220,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3230,7 +3230,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3266,7 +3266,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3303,7 +3303,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3316,7 +3316,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3326,7 +3326,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3362,7 +3362,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3411,7 +3411,7 @@ public:
                             }
                             break;
 	#if defined(AltNum_EnablePIRep)
-						case RepType::PINum:
+						case RepType::PiNum:
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
@@ -3438,7 +3438,7 @@ public:
 													
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3473,7 +3473,7 @@ public:
                             if(self.DecimalHalf==ReversedVExtraRep)
                             {
                                 if(RRep==PiNumByDiv)
-                                    Value.ConvertToNormType(RepType::PINum);
+                                    Value.ConvertToNormType(RepType::PiNum);
                                 else
                                     Value.ConvertToNormType(RepType::ENum);
                                 self.BasicAddOp(Value);
@@ -3497,7 +3497,7 @@ public:
     							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3540,7 +3540,7 @@ public:
 													
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3555,7 +3555,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3597,7 +3597,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3612,7 +3612,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3662,7 +3662,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3677,7 +3677,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3712,7 +3712,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3724,7 +3724,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3737,7 +3737,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3747,7 +3747,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3783,7 +3783,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3829,7 +3829,7 @@ public:
 #endif												
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3844,7 +3844,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3884,7 +3884,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3899,7 +3899,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3932,7 +3932,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3945,7 +3945,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -3955,7 +3955,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -3991,7 +3991,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4081,7 +4081,7 @@ public:
                         case RepType::NormalType:
                         case RepType::NumByDiv:
             #if defined(AltNum_EnablePIRep)
-                        case RepType::PINum:
+                        case RepType::PiNum:
             #if defined(AltNum_EnablePIPowers)
                         case RepType::PIPower:
             #endif
@@ -4288,7 +4288,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4303,7 +4303,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4330,7 +4330,7 @@ public:
 //	//						break;
 //	//#endif
 						default:
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //						case RepType::PIPower:
 //                      case RepType::ENum:
 //						case RepType::NumByDiv:
@@ -4344,7 +4344,7 @@ public:
 					}
 					break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 	#if defined(AltNum_EnableImaginaryNum)
@@ -4354,7 +4354,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4369,7 +4369,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4414,7 +4414,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4429,7 +4429,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4474,7 +4474,7 @@ public:
 #endif							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4489,7 +4489,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4518,7 +4518,7 @@ public:
 	#endif
 					
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 	#if defined(AltNum_EnableENum)
@@ -4533,7 +4533,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4570,7 +4570,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4607,7 +4607,7 @@ public:
 						case RepType::NormalType:
                             self.BasicSubOp(Value);
 							break;
-						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+						case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
                             --self.ExtraRep;
                             self.BasicSubOp(Value);
 							break;
@@ -4622,7 +4622,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4658,7 +4658,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4693,7 +4693,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4706,7 +4706,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4719,7 +4719,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -4729,7 +4729,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4765,7 +4765,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4835,7 +4835,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4848,7 +4848,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -4858,7 +4858,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4894,7 +4894,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4933,7 +4933,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4946,7 +4946,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -4956,7 +4956,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -4992,7 +4992,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5029,7 +5029,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5042,7 +5042,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -5052,7 +5052,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5088,7 +5088,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5135,7 +5135,7 @@ public:
                             }
 							break;
 	#if defined(AltNum_EnablePIRep)
-						case RepType::PINum:
+						case RepType::PiNum:
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
@@ -5160,7 +5160,7 @@ public:
 													
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5195,7 +5195,7 @@ public:
                             if(self.DecimalHalf==ReversedVExtraRep)
                             {
                                 if(RRep==PiNumByDiv)
-                                    Value.ConvertToNormType(RepType::PINum);
+                                    Value.ConvertToNormType(RepType::PiNum);
                                 else
                                     Value.ConvertToNormType(RepType::ENum);
                                 self.BasicSubOp(Value);
@@ -5219,7 +5219,7 @@ public:
     						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5262,7 +5262,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5277,7 +5277,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5319,7 +5319,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5334,7 +5334,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5384,7 +5384,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5399,7 +5399,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)&&defined(AltNum_EnableMixedFractional)
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5434,7 +5434,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5446,7 +5446,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5459,7 +5459,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -5469,7 +5469,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5505,7 +5505,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5551,7 +5551,7 @@ public:
 #endif							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5566,7 +5566,7 @@ public:
 							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5605,7 +5605,7 @@ public:
 #endif
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5620,7 +5620,7 @@ public:
 						
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5653,7 +5653,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5666,7 +5666,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -5676,7 +5676,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5712,7 +5712,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5876,7 +5876,7 @@ public:
                             self.BasicMultOp(Value);
                             break;
 #if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-                        case RepType::PINum://X * (Y*Pi)
+                        case RepType::PiNum://X * (Y*Pi)
                             self.BasicMultOp(Value);
                             self.ExtraRep = PIRep;
                             break;
@@ -5895,7 +5895,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -5906,7 +5906,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5955,7 +5955,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -5987,7 +5987,7 @@ public:
 					}
 					break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 						case RepType::NormalType:// X*Pi * Y
@@ -6011,7 +6011,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6063,7 +6063,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6105,7 +6105,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-						case RepType::PINum:
+						case RepType::PiNum:
                             Value.ConvertPIToNum();
                             self.BasicMultOp(Value);
 							break;
@@ -6119,7 +6119,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6129,7 +6129,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6173,7 +6173,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6213,20 +6213,20 @@ public:
                             self.BasicMultOp(Value);
                             break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-						case RepType::PINum:
+						case RepType::PiNum:
                             Value.ConvertPIToNum()
                             self.BasicMultOp(Value);
 							break;
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
-                            Value.ConvertToNormType(RepType::PINum);
+                            Value.ConvertToNormType(RepType::PiNum);
                             self.BasicMultOp(Value);
 							break;
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6236,7 +6236,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6272,7 +6272,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6306,7 +6306,7 @@ public:
 	#endif
 					
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 						case RepType::NormalType:
@@ -6328,7 +6328,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6365,7 +6365,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6402,7 +6402,7 @@ public:
 						case RepType::NormalType:
                             self.BasicMultOp(Value);
 							break;
-						case RepType::PINum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+						case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
                             --self.ExtraRep;
                             self.BasicMultOp(Value);
 							break;
@@ -6417,7 +6417,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6453,7 +6453,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6488,7 +6488,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6501,7 +6501,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6514,7 +6514,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6524,7 +6524,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6560,7 +6560,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6630,7 +6630,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6643,7 +6643,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6653,7 +6653,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6689,7 +6689,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6728,7 +6728,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6741,7 +6741,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6751,7 +6751,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6787,7 +6787,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6824,7 +6824,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6837,7 +6837,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6847,7 +6847,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6883,7 +6883,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -6925,7 +6925,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-						case RepType::PINum:
+						case RepType::PiNum:
 	#if defined(AltNum_EnableDecimaledPiFractionals)
                             self.BasicMultOp(Value);
                             self.ExtraRep *= -1;
@@ -6958,7 +6958,7 @@ public:
 							
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -6968,7 +6968,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7002,7 +7002,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7045,7 +7045,7 @@ public:
                                 self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7058,7 +7058,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7068,7 +7068,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7100,7 +7100,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7143,7 +7143,7 @@ public:
                                 self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7156,7 +7156,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7166,7 +7166,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7198,7 +7198,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7245,7 +7245,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-						case RepType::PINum:
+						case RepType::PiNum:
                             self.BasicMultOp(Value);
                             self.BasicMultOp(PiNumValue);
 							break;
@@ -7269,7 +7269,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7279,7 +7279,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7307,7 +7307,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7343,7 +7343,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7355,7 +7355,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7368,7 +7368,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7378,7 +7378,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7414,7 +7414,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7455,7 +7455,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7468,7 +7468,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7478,7 +7478,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7514,7 +7514,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7553,7 +7553,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7566,7 +7566,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7576,7 +7576,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7612,7 +7612,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7651,7 +7651,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7664,7 +7664,7 @@ public:
 	#endif
 //							
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7674,7 +7674,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7710,7 +7710,7 @@ public:
 //							
 	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -7786,7 +7786,7 @@ public:
 					switch (RRep)
 					{
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -7799,7 +7799,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -7810,7 +7810,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -7860,7 +7860,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -7906,7 +7906,7 @@ public:
 					}
 					break;
 	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 //						case RepType::NormalType:
@@ -7928,7 +7928,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -7978,7 +7978,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8031,7 +8031,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableImaginaryNum)
@@ -8040,7 +8040,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8050,7 +8050,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8100,7 +8100,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8153,7 +8153,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8162,7 +8162,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8172,7 +8172,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8222,7 +8222,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8270,7 +8270,7 @@ public:
 	#endif
 					
 	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					switch (RRep)
 					{
 //						case RepType::NormalType:
@@ -8292,7 +8292,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8342,7 +8342,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8392,7 +8392,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#if defined(AltNum_EnableENum)
 //						case RepType::ENum:
@@ -8405,7 +8405,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8455,7 +8455,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8504,7 +8504,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -8518,7 +8518,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8531,7 +8531,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8541,7 +8541,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8591,7 +8591,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8645,7 +8645,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8658,7 +8658,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8668,7 +8668,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8716,7 +8716,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8767,7 +8767,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8780,7 +8780,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8790,7 +8790,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8838,7 +8838,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8891,7 +8891,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8904,7 +8904,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -8914,7 +8914,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -8962,7 +8962,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9013,7 +9013,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9026,7 +9026,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9036,7 +9036,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9084,7 +9084,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9139,7 +9139,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9152,7 +9152,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9162,7 +9162,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9210,7 +9210,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9263,7 +9263,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9276,7 +9276,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9286,7 +9286,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9332,7 +9332,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9385,7 +9385,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9398,7 +9398,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9408,7 +9408,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9454,7 +9454,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9514,7 +9514,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9527,7 +9527,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9537,7 +9537,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9579,7 +9579,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9629,7 +9629,7 @@ public:
 					
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-	#if defined(AltNum_EnablePINum)
+	#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -9641,7 +9641,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9654,7 +9654,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9664,7 +9664,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9714,7 +9714,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9774,7 +9774,7 @@ public:
 //						case RepType::NormalType:
 //							break;
 //	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							break;
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9787,7 +9787,7 @@ public:
 //	#endif
 //							
 //	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PINum:
+//						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
 //						case RepType::PIPower:
@@ -9797,7 +9797,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -9847,7 +9847,7 @@ public:
 //							
 //	#if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-//	#if defined(AltNum_EnablePINum)
+//	#if defined(AltNum_EnablePiNum)
 //						case RepType::MixedPi:
 //	#endif
 //	#if defined(AltNum_EnableENum)
@@ -10054,7 +10054,7 @@ public:
                 {
                     case RepType::NormalType:
 #if defined(AltNum_EnablePIRep)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
                     case RepType::ENum:
@@ -10067,7 +10067,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -10271,7 +10271,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -10462,7 +10462,7 @@ public:
                 {
                     case RepType::NormalType:
 #if defined(AltNum_EnablePIRep)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
                     case RepType::ENum:
@@ -10475,7 +10475,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -10668,7 +10668,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -11271,9 +11271,9 @@ public:
 						self.PartialMultOp(Value);
 						break;
 #if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 						self.PartialMultOp(Value);
-						self.PartialMultOp(PINum);
+						self.PartialMultOp(PiNum);
 						break;		
 #endif
 #if defined(AltNum_EnableENum)
@@ -11290,7 +11290,7 @@ public:
 #endif
 						
 #if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 						//Add code that converts into PiPower type representation here later
 						break;
                     case RepType::PIPower:
@@ -11301,7 +11301,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -11505,7 +11505,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
 /*                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -11648,9 +11648,9 @@ public:
 					self.PartialMultOp(Value);
 					break;
 #if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					self.PartialMultOp(Value);
-					self.PartialMultOp(PINum);
+					self.PartialMultOp(PiNum);
 					break;		
 #endif
 #if defined(AltNum_EnableENum)
@@ -11667,7 +11667,7 @@ public:
 #endif
 					
 #if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-				case RepType::PINum:
+				case RepType::PiNum:
 					//Add code that converts into PiPower type representation here later
 					break;
 				case RepType::PIPower:
@@ -11678,7 +11678,7 @@ public:
 					
 #if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -11785,7 +11785,7 @@ public:
 					
 #if defined(AltNum_EnableMixedFractional)
 /*                    case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -12071,7 +12071,7 @@ public:
 						self.PartialDivOp(Value);
 						break;
 #if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
                     case RepType::ENum:
@@ -12086,7 +12086,7 @@ public:
 #endif
 						
 #if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-                    case RepType::PINum:
+                    case RepType::PiNum:
 						//Add code that converts into PiPower type representation here later
 						break;
                     case RepType::PIPower:
@@ -12097,7 +12097,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
                     case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -12259,7 +12259,7 @@ public:
 						
 #if defined(AltNum_EnableMixedFractional)
 //                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePINum)
+#if defined(AltNum_EnablePiNum)
                     case RepType::MixedPi:
 #endif
 #if defined(AltNum_EnableENum)
@@ -13963,7 +13963,7 @@ public:
             {
             case RepType::NormalType:
                 break;
-            case RepType::PINum:
+            case RepType::PiNum:
                 ConvertPIToNum();
                 break;
             case RepType::ApproachingBottom:
@@ -14036,7 +14036,7 @@ public:
             {
             case RepType::NormalType:
                 break;
-            case RepType::PINum:
+            case RepType::PiNum:
                 ConvertPIToNum();
                 break;
             case RepType::ApproachingBottom:
@@ -14076,7 +14076,7 @@ public:
             {
             case RepType::NormalType:
                 break;
-            case RepType::PINum:
+            case RepType::PiNum:
                 Value.ConvertPIToNum();
                 break;
             //case RepType::ApproachingTop:
@@ -14109,7 +14109,7 @@ public:
             {
             case RepType::NormalType:
                 break;
-            case RepType::PINum:
+            case RepType::PiNum:
             {
                 Value.ConvertPIToNum();//return CeilInt(Value.ConvertPIToNum());
                 break;
@@ -14736,7 +14736,7 @@ public:
                 {
                 case RepType::NormalType:
                     break;
-                case RepType::PINum:
+                case RepType::PiNum:
                     //value.ConvertPIToNum();
                     break;
 #if defined(AltNum_EnableInfinityRep)
@@ -14810,7 +14810,7 @@ public:
                     return FractionalPow(value, value.ExtraRep*-1);
                     break;
 #endif
-    //            case RepType::PINum:
+    //            case RepType::PiNum:
     //                expValue.ConvertPIToNum();
     //                break;
 /*
@@ -15342,7 +15342,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-            case RepType::PINum:
+            case RepType::PiNum:
             case RepType::ApproachingTop:
             case RepType::ApproachingBottom:
                 Value.ConvertToNumRep();
@@ -15419,7 +15419,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-            case RepType::PINum:
+            case RepType::PiNum:
             case RepType::ApproachingTop:
             case RepType::ApproachingBottom:
                 Value.ConvertToNumRep();
@@ -15632,7 +15632,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnablePIRep)
-            case RepType::RepType::PINum:
+            case RepType::RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
             case RepType::RepType::ENum:
@@ -15787,7 +15787,7 @@ public:
     MediumDecVariant MediumDecVariant::FiveBillionth = FiveBillionthValue();
     MediumDecVariant MediumDecVariant::OneGMillionth = OneHundredMillionthValue();
     MediumDecVariant MediumDecVariant::Nil = NilValue();
-    MediumDecVariant MediumDecVariant::PINum = PiNumValue();
+    MediumDecVariant MediumDecVariant::PiNum = PiNumValue();
     MediumDecVariant MediumDecVariant::ENum = ENumValue();
     
 #if defined(AltNum_EnableInfinityRep)
@@ -15979,7 +15979,7 @@ public:
         switch (repType)
         {
 #if defined(AltNum_EnablePIRep)
-        case RepType::PINum:
+        case RepType::PiNum:
             Value += "Pi";
             break;
 #if defined(AltNum_EnableENum)
@@ -16096,7 +16096,7 @@ public:
         switch (repType)
         {
 #if defined(AltNum_EnablePIRep)
-        case RepType::PINum:
+        case RepType::PiNum:
             Value += "Pi";
             break;
 #if defined(AltNum_EnableENum)
