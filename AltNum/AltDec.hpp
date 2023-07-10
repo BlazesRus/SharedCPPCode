@@ -1258,7 +1258,7 @@ private:
         /// (Stored as 3.141592654)
         /// </summary>
         /// <returns>AltDec</returns>
-        static MediumDecVariant PINumValue()
+        static MediumDecVariant PiNumValue()
         {
             return AltDec(3, 141592654, 0);
         }
@@ -11467,7 +11467,7 @@ public:
 #endif
 						}
 #ifndef AltNum_EnablePIPowers
-						Self *= PINumValue();
+						Self *= PiNumValue();
 #endif
 						break;
 #endif
@@ -15787,7 +15787,7 @@ public:
     MediumDecVariant MediumDecVariant::FiveBillionth = FiveBillionthValue();
     MediumDecVariant MediumDecVariant::OneGMillionth = OneHundredMillionthValue();
     MediumDecVariant MediumDecVariant::Nil = NilValue();
-    MediumDecVariant MediumDecVariant::PINum = PINumValue();
+    MediumDecVariant MediumDecVariant::PINum = PiNumValue();
     MediumDecVariant MediumDecVariant::ENum = ENumValue();
     
 #if defined(AltNum_EnableInfinityRep)
