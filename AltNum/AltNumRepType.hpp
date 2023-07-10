@@ -74,6 +74,17 @@
 #if defined(AltNum_EnableNearI)
             NearI,//(Approaching Away from Zero is equal to 0.9999...i)
 #endif
+#if defined(AltNum_EnableImaginaryInfinity)
+            PositiveImaginaryInfinity,
+			NegativeImaginaryInfinity,
+#if defined(AltNum_EnableApproachingValues)
+            ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+#if defined(AltNum_EnableApproachingDivided)
+            ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+#endif
+#endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             UndefinedButInRange,
 #endif

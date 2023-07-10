@@ -313,6 +313,7 @@ ExtraFlags treated as bitwise flag storage
 		//If ExtraRep between +-2 and 2147483645 and AltNum_EnableApproachingMidDec enabled, Represents approaching 1/ExtraRep point
         static const signed int ApproachingValRep = -2147483647;
 #endif
+        static const signed int ApproachingImaginaryValRep = -2147483646;
 #endif
 #if defined(AltNum_EnablePIRep)
         //Is PI*Value representation when ExtraRep==-2147483648
@@ -343,6 +344,8 @@ ExtraFlags treated as bitwise flag storage
 #endif
         static const signed int AlternativeFractionalLowerBound = -2147483641;
         static const signed int MixedFractionalLowerBound = -2147483642;
+		//Upper limit for Mixed Fractions; infinite approaching type representations after this DecimalHalf value
+		static const signed int InfinityBasedLowerBound = -2147483645;
 #if defined(AltNum_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
@@ -431,6 +434,13 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableImaginaryInfinity)
             PositiveImaginaryInfinity,
 			NegativeImaginaryInfinity,
+#if defined(AltNum_EnableApproachingValues)
+            ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+#if defined(AltNum_EnableApproachingDivided)
+            ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+#endif
 #endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
@@ -491,6 +501,25 @@ ExtraFlags treated as bitwise flag storage
 #endif            
             }
 #endif
+	#if defined(AltNum_EnableImaginaryInfinity)
+            if (DecimalHalf == ApproachingImaginaryValRep)
+            {
+                if(ExtraRep==0)
+                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
+				else if(ExtraRep==-1)
+				    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+                else
+#if defined(AltNum_EnableApproachingDivided)
+					if(ExtraRep<0)//Approaching left from right
+						return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
+					else//Approaching right from left
+						return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
+#else
+                    throw "EnableApproachingDivided feature not enabled";
+#endif            
+            }
+#endif
+	#endif
 #endif
             if(ExtraRep==0)
 			{
