@@ -5,59 +5,58 @@
             //LRep Overrides
             switch(LRep)
             {
-        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+			#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
                 case RepType::UndefinedButInRange:
         			throw "UndefinedButInRange operations not supported yet(from left side)";
                     break;
-        #endif
+			#endif
         		case RepType::Undefined:
         		case RepType::NaN:
         			throw "Can't perform operations with NaN or Undefined number";
         			break;
-#if defined(AltNum_EnableComplexNumbers)
+			#if defined(AltNum_EnableComplexNumbers)
         		case RepType::INum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+				#if defined(AltNum_EnableAlternativeRepFractionals)
+					#if defined(AltNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-#endif
+					#endif
         		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
+				#endif
         		case RepType::ComplexIRep:
                     switch(RRep)
                     {
                         case RepType::NormalType:
                         case RepType::NumByDiv:
-            #if defined(AltNum_EnablePIRep)
+				#if defined(AltNum_EnablePIRep)
                         case RepType::PINum:
-            #if defined(AltNum_EnablePIPowers)
+					#if defined(AltNum_EnablePIPowers)
                         case RepType::PIPower:
-            #endif
-            #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+					#endif
+					#if defined(AltNum_EnableAlternativeRepFractionals)
+						#if defined(AltNum_EnableDecimaledPiFractionals)
                         case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-            #endif
+						#endif
                         case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            #endif
-            #endif
+					#endif
+				#endif
             
-            #if defined(AltNum_EnableENum)
+				#if defined(AltNum_EnableENum)
                         case RepType::ENum:
-            #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledEFractionals)
+					#if defined(AltNum_EnableAlternativeRepFractionals)
+						#if defined(AltNum_EnableDecimaledEFractionals)
                         case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-            #endif
+						#endif
                         case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            #endif
-            #endif
-            #endif
+					#endif
+				#endif
             
-            #if defined(AltNum_EnableInfinityRep)
+				#if defined(AltNum_EnableInfinityRep)
                         case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                         case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-            #if defined(AltNum_EnableApproachingDivided)
+				#if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                         case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
-            #endif
+				#endif
             #endif
             
             #if defined(AltNum_EnableNearPI)
@@ -66,7 +65,7 @@
             #if defined(AltNum_EnableNearE)
                         case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
             #endif
-                            Value.ConvertToNormalIRep(RRep);
+                            Value.ConvertToNormalRep(RRep);
                             break;
                         default:
                             break;
@@ -74,7 +73,7 @@
                     break;
 
 #endif
-        		case RepType::UnknownType:
+                case RepType::UnknownType:
                     throw "Can't perform operations with unknown/non-enabled format number";
                     break;
         
@@ -208,11 +207,11 @@
                             break;
 	#if defined(AltNum_EnableImaginaryNum)
 						case RepType::INum:
-#if defined(AltNum_EnableComplexNumbers)
+        #if defined(AltNum_EnableComplexNumbers)
                             //place complex number operation code here later
-#else
+        #else
                             throw "related imaginary format operation not supported yet";
-#endif
+        #endif
                             break;
 	#endif
 							
@@ -347,13 +346,13 @@
 				case RepType::INum:
 					switch (RRep)
 					{
-#if defined(AltNum_EnableComplexNumbers)
+    #if defined(AltNum_EnableComplexNumbers)
                         case RepType::INum:
                               //Add Complex number operation code here later
                               break;
 	                    case RepType::ComplexIRep:
 							break;
-#endif										
+    #endif										
 							
 	#if defined(AltNum_EnableMixedFractional)
 						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -1627,4 +1626,3 @@
             	break;
 			}
         }
-		
