@@ -1,10 +1,10 @@
 		void MixedFracRtRSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-#if defined(AltNum_EnablePIRep)|| defined(AltNum_EnableENum)
+#if defined(AltNum_EnablePiRep)|| defined(AltNum_EnableENum)
             switch(LRep)//Force convert some representations to normal type
             {
-#if defined(AltNum_EnablePIRep)
-                case RepType::PINum:
+#if defined(AltNum_EnablePiRep)
+                case RepType::PiNum:
                     if(RRep==RepType::MixedPi)
                     {
                         if(self.DecimalHalf!=0)//Convert to normal if not Integer number
@@ -16,8 +16,8 @@
                         self.ConvertToNormType(LRep);LRep = RepType::NormalType;
                     }
                     break;
-#if defined(AltNum_EnablePIPowers)
-                case RepType::PIPower:
+#if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
                     if(RRep==RepType::MixedPi)//Convert to normal PiNum
                     {
                         ConvertPiPowerToPiRep();
@@ -26,7 +26,7 @@
                             self.ConvertToNormType(LRep);LRep = RepType::NormalType;
                         }
                         else
-                            LRep = RepType::RepType::PINum;
+                            LRep = RepType::RepType::PiNum;
                     }
                     else
                         self.ConvertToNormType(LRep);LRep = RepType::NormalType;
@@ -70,7 +70,7 @@
                             switch(LRep)
                             {
                                 #if defined(AltNum_EnableMixedPiFractional)
-                                case RepType::PINum:
+                                case RepType::PiNum:
                                     
                                     break;
                                 #endif
@@ -115,7 +115,7 @@
 					}
 					break;
 #if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch(RRep)
 					{
@@ -143,7 +143,7 @@
 					{
 						//case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
                         //(self.IntValue*e)/self.DecimalHalf - (Y.IntValue+(-Y.DecimalHalf)/Y.ExtraRep)
-		#if defined(AltNum_EnablePINum)
+		#if defined(AltNum_EnablePiNum)
 						//case RepType::MixedPi:
                         //(self.IntValue*e)/self.DecimalHalf - (Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)
 		#endif
@@ -183,7 +183,7 @@
                 case RepType::MixedFrac:
 					switch(RRep)
 					{
-		#if defined(AltNum_EnablePINum)
+		#if defined(AltNum_EnablePiNum)
 						//case RepType::MixedPi:
                         //(self.IntValue +- (self.DecimalHalf*-1)/self.ExtraRep)/-self.ExtraRep - ((Y.IntValue+(-Y.DecimalHalf)/-Y.ExtraRep)*Pi)
 		#endif

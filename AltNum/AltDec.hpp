@@ -15,7 +15,7 @@
 #endif
 #endif
 #else
-#include "..\DLLAPI.h"
+#include "..\DLLAPi.h"
 #endif
 
 #include <string>
@@ -48,7 +48,7 @@ AltNum_EnableApproachingValues
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483647 and ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
      (Not Fully Implimented)
-AltNum_EnableNearPI = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
+AltNum_EnableNearPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
 AltNum_EnableNearE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
 AltNum_EnableNearI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
 AltNum_EnableApproachingDivided =
@@ -73,7 +73,7 @@ AltNum_DisplayApproachingAsReal =
 AltNum_EnableNaN =
       Enable NaN based representations and operations(Not Fully Implimented)
 
-AltNum_EnableHigherPrecisionPIConversion =
+AltNum_EnableHigherPrecisionPiConversion =
       (Not Implimented)
 
 AltNum_UseMediumDecBasedRepresentations =
@@ -87,25 +87,25 @@ AltNum_EnableOverflowPreventionCode =
 	  
 AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully implimented)
 
-AltNum_DisablePIRep =
-      Force toggles AltNum_EnablePIRep to off
-      AltNum_EnablePIRep given greator priority if both both AltNum_DisablePIRep and AltNum_EnablePIRep
+AltNum_DisablePiRep =
+      Force toggles AltNum_EnablePiRep to off
+      AltNum_EnablePiRep given greator priority if both both AltNum_DisablePiRep and AltNum_EnablePiRep
       are set by preprocessor settings of project
 
-AltNum_EnablePIRep =
+AltNum_EnablePiRep =
       If AltNum_UseMediumDecBasedRepresentations enabled, then
-        PI*(+- 2147483647.999999999) Representation enabled
-        (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*PI))
-      Otherwise represents pi within format of
+        Pi*(+- 2147483647.999999999) Representation enabled
+        (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*Pi))
+      Otherwise represents Pi within format of
          If DecimalHalf is positive and ExtraRep is -2147483647,
          then AltDec represents +- 2147483647.999999999 * Pi (Not Fully Implimented)
          If DecimalHalf is positive and and ExtraRep is between AlternativeFractionalLowerBound and 0,
          then AltDec represents (+- 2147483647.999999999 * Pi)/(ExtraRep*-1)
-	  (Not Fully Implimented--Enabled by default if AltNum_DisablePIRep not set)
+	  (Not Fully Implimented--Enabled by default if AltNum_DisablePiRep not set)
 
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
-If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRepi
+If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
 Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
 (Might be better to just store as formula class feature or as another number class holding 2 MediumDec or other AltNum values)
       (Requires AltNum_EnableImaginaryNum, Not Implimented Yet)
@@ -153,7 +153,7 @@ AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
 AltNum_TogglePreferedSettings =
-      Force enables AltNum_EnablePIRep, AltNum_EnableInfinityRep, AltNum_EnableApproachingDivided
+      Force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep, AltNum_EnableApproachingDivided
 	  and later AltNum_EnableAlternativeRepFractionals & AltNum_EnableByDecimaledFractionals once get code that part of code in working condition
 
 AltNum_EnableUndefinedButInRange =
@@ -163,13 +163,13 @@ AltNum_DisableSwitchBasedConversion =
 AltNum_EnableMediumDecBasedSetValues =
 
 ---Only one of the next set of switches can be enabled at once:
-AltNum_EnablePIPowers =
+AltNum_EnablePiPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
       (Not Fully Implimented)
 AltNum_EnableNormalPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf^(ExtraRep*-1)
-	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePIPowers
+	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePiPowers
       (Not Implimented)
 	  
 AltNum_EnableDecimaledAlternativeFractionals = 
@@ -197,7 +197,7 @@ AltNum_EnableImaginaryInfinity
 #endif
 
 #if defined(AltNum_TogglePreferedSettings)
-    #define AltNum_EnablePIRep
+    #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
 	#define AltNum_EnableApproachingDivided
 	//#define AltNum_EnableByDecimaledFractionals (not enabling until get related blocks in working order)
@@ -219,38 +219,38 @@ AltNum_EnableImaginaryInfinity
 #endif
 
 //Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
-#if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePIPowers)
-#undef AltNum_EnablePIPowers
+#if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePiPowers)
+#undef AltNum_EnablePiPowers
 #endif
 
-#if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePIPowers)) && defined(AltNum_EnableNormalPowers)
+#if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePiPowers)) && defined(AltNum_EnableNormalPowers)
 #undef AltNum_EnableNormalPowers
 #endif
 
-//If Pi rep is neither disabled or enabled, default to enabling PI representation
-#if !defined(AltNum_DisablePIRep) && !defined(AltNum_EnablePIRep)
-    #define AltNum_EnablePIRep
+//If Pi rep is neither disabled or enabled, default to enabling Pi representation
+#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
+    #define AltNum_EnablePiRep
 #endif
 
-#if defined(AltNum_EnablePIRep) && defined(AltNum_DisablePIRep)
-    #undef AltNum_DisablePIRep
+#if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
+    #undef AltNum_DisablePiRep
 #endif
 
-//Force enable Pi features if near PI enabled
-#if defined(AltNum_EnableNearPI) && !defined(AltNum_EnablePIRep)
-    #define AltNum_EnablePIRep
+//Force enable Pi features if near Pi enabled
+#if defined(AltNum_EnableNearPi) && !defined(AltNum_EnablePiRep)
+    #define AltNum_EnablePiRep
 #endif
 
-#if defined(AltNum_EnableENum) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePIPowers))
+#if defined(AltNum_EnableENum) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePiPowers))
     #undef AltNum_EnableENum
 #endif
 
-#if defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnablePiPowers)
     #define AltNum_OtherNegativeExtraRepsDefined
 #endif
 
-#if defined(AltNum_EnableNearPI) && !defined(AltNum_EnablePIRep)
-    #undef AltNum_EnableNearPI
+#if defined(AltNum_EnableNearPi) && !defined(AltNum_EnablePiRep)
+    #undef AltNum_EnableNearPi
 #endif
 
 #if defined(AltNum_EnableNearE) && !defined(AltNum_EnableERep)
@@ -287,7 +287,7 @@ ExtraFlags treated as bitwise flag storage
     /// <summary>
     /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
     /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
-    /// plus support for some fractal operations, and other representations like PI(and optionally things like e or imaginary numbers)
+    /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltDec
@@ -315,12 +315,12 @@ ExtraFlags treated as bitwise flag storage
 #endif
         static const signed int ApproachingImaginaryValRep = -2147483646;
 #endif
-#if defined(AltNum_EnablePIRep)
-        //Is PI*Value representation when ExtraRep==-2147483648
-        static const signed int PIRep = -2147483648;
+#if defined(AltNum_EnablePiRep)
+        //Is Pi*Value representation when ExtraRep==-2147483648
+        static const signed int PiRep = -2147483648;
 #ifdef AltNum_EnableAlternativeRepFractionals
         //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
-        static const signed int PIByDivisorRep = -2147483645;
+        static const signed int PiByDivisorRep = -2147483645;
 #endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
@@ -359,10 +359,10 @@ ExtraFlags treated as bitwise flag storage
         {
             NormalType = 0,
             NumByDiv,
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
             PiNum,
-#if defined(AltNum_EnablePIPowers)
-            PIPower,
+#if defined(AltNum_EnablePiPowers)
+            PiPower,
 #endif
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledPiFractionals)
@@ -422,8 +422,8 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableNegativeZero)
             NegativeZero,
 #endif
-#if defined(AltNum_EnableNearPI)
-            NearPI,//(Approaching Away from Zero is equal to 0.9999...PI)
+#if defined(AltNum_EnableNearPi)
+            NearPi,//(Approaching Away from Zero is equal to 0.9999...Pi)
 #endif
 #if defined(AltNum_EnableNearE)
             NearE,//(Approaching Away from Zero is equal to 0.9999...e)
@@ -478,9 +478,9 @@ ExtraFlags treated as bitwise flag storage
                     return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
 				else if(ExtraRep==-1)
 				    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-#if defined(AltNum_EnableNearPI)
-                else if (ExtraRep == PIRep)
-                    return RepType::NearPI;
+#if defined(AltNum_EnableNearPi)
+                else if (ExtraRep == PiRep)
+                    return RepType::NearPi;
 #endif
 #if defined(AltNum_EnableNearE)
                 else if (ExtraRep == ERep)
@@ -531,8 +531,8 @@ ExtraFlags treated as bitwise flag storage
 #endif
                 return RepType::NormalType;
 			}
-#ifdef AltNum_EnablePIRep
-            else if(ExtraRep==PIRep)
+#ifdef AltNum_EnablePiRep
+            else if(ExtraRep==PiRep)
                 return RepType::PiNum;
             else if(ExtraRep==PiByDivisorRep)
 				return RepType::PiIntNumByDiv;
@@ -642,7 +642,7 @@ ExtraFlags treated as bitwise flag storage
         ///-----------------------------------------------
         /// If ExtraRep is negative, it acts as representation type similar to AltDec:
 		/// If ExtraRep is between 0 and , it acts as representation type similar to AltDec:
-        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePIRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * PI
+        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePiRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * Pi
         /// </summary>
         signed int ExtraRep;
 
@@ -683,12 +683,12 @@ ExtraFlags treated as bitwise flag storage
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
         }
         
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
 #if defined(AltNum_EnableMediumDecBasedSetValues)
         void SetPiValFromMediumDec(MediumDec Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-            ExtraRep = PIRep;
+            ExtraRep = PiRep;
         }
 #endif
 
@@ -697,14 +697,14 @@ ExtraFlags treated as bitwise flag storage
             if(ExtraRep==0)
             {
                 IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                ExtraRep = PIRep;
+                ExtraRep = PiRep;
             }
         }
         
         void SetPiVal(int Value)
         {
             IntValue = Value; DecimalHalf = 0;
-            ExtraRep = PIRep;
+            ExtraRep = PiRep;
         }
 #endif
 
@@ -770,7 +770,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = -Divisor;
         }
 	#endif
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
         void SetPiFractional(int Num, int Divisor)//IntValue/DecimalHalf*Pi Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
@@ -911,13 +911,13 @@ public:
         }
 #endif
         private:
-#if defined(AltNum_EnablePIRep)
-        void ConvertPIToNum()
+#if defined(AltNum_EnablePiRep)
+        void ConvertPiToNum()
         {
 
             ExtraRep = 0;
-            // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PIRepresentation
-            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPI is enabled
+            // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PiRepresentation
+            //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPi is enabled
             //otherwise can represent up to ???(when adding up value from each decimal place of IntValue + (PiNum*DecimalHalf/1000000000))
             //Calculations from HiPer Calc
             //683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
@@ -933,7 +933,7 @@ public:
                 IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
             }
 #if defined(AltNum_DisableSwitchBasedConversion)
-            else if (IntValue == NegativeRep)//-0.XXX... * PI
+            else if (IntValue == NegativeRep)//-0.XXX... * Pi
             {
                 BasicMultOp(PiNum);
             }
@@ -1002,7 +1002,7 @@ public:
 #endif
         }
 		
-        void ConvertPIPowerToNum()
+        void ConvertPiPowerToNum()
         {
 			int powerExponent = -self.ExtraRep;
 			ExtraRep = 0;
@@ -1011,7 +1011,7 @@ public:
 			BasicMultOp(PiSide);
 		}
 		
-		MediumDecVariant PIPowerNum(int powerExponent)
+		MediumDecVariant PiPowerNum(int powerExponent)
         {
 			ExtraRep = 0;
 			MediumDecVariant PiSide = PiNumValue();
@@ -1096,7 +1096,7 @@ public:
 #endif
 #endif
 #endif
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 BasicMultOp(PiNum);
                 ExtraRep = 0;
@@ -1287,7 +1287,7 @@ private:
 #endif
 
         /// <summary>
-        /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
         /// <returns>AltDec</returns>
@@ -1296,25 +1296,25 @@ private:
             return AltDec(3, 141592654, 0);
         }
 
-        //100,000,000xPI(Rounded to 9th decimal digit)
+        //100,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant HundredMilPiNumVal()
         {
             return AltDec(314159265, 358979324, 0);
         }
 
-        //10,000,000xPI(Rounded to 9th decimal digit)
+        //10,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant TenMilPiNumVal()
         {
             return AltDec(31415926, 535897932, 0);
         }
 
-        //1,000,000xPI(Rounded to 9th decimal digit)
+        //1,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant OneMilPiNumVal()
         {
             return AltDec(3141592, 653589793, 0);
         }
 
-        //10xPI(Rounded to 9th decimal digit)
+        //10xPi(Rounded to 9th decimal digit)
         static MediumDecVariant TenPiNumVal()
         {
             return AltDec(31, 415926536, 0);
@@ -1325,7 +1325,7 @@ private:
             return AltDec(2, 718281828, 0);
         }
         
-        static MediumDecVariant PIValue()
+        static MediumDecVariant PiValue()
         {
             return AltDec(1, 0, -2147483648);
         }
@@ -1459,7 +1459,7 @@ public:
         static MediumDecVariant AlmostOne;
 
         /// <summary>
-        /// Returns PI(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDecVariant PiNum;
@@ -1479,10 +1479,10 @@ public:
 #endif
         
         /// <summary>
-        /// Returns PI(3.1415926535897932384626433) Representation
+        /// Returns Pi(3.1415926535897932384626433) Representation
         /// </summary>
         /// <returns>AltDec</returns>
-        static MediumDecVariant PI;
+        static MediumDecVariant Pi;
       
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
@@ -1628,9 +1628,9 @@ public:
         AltDec(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "PI")
+            if (Value == "Pi")
             {
-                this->SetVal(PI);
+                this->SetVal(Pi);
             }
             else if (Value == "E")
             {
@@ -1648,9 +1648,9 @@ public:
         /// <param name="Value">The value.</param>
         AltDec(std::string Value)
         {
-            if (Value == "PI")
+            if (Value == "Pi")
             {
-                this->SetVal(PI);
+                this->SetVal(Pi);
             }
             else if (Value == "E")
             {
@@ -1925,7 +1925,7 @@ public:
         {
 #if defined(AltNum_EnableInfinityRep)
     #if defined(AltNum_EnableImaginaryNum)
-                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PIRep))
+                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
     #else
                 if(self.DecimalHalf!=InfinityRep)
     #endif
@@ -1934,7 +1934,7 @@ public:
                 }
 
     #if defined(AltNum_EnableImaginaryNum)
-                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PIRep))
+                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
     #else
                 if(Value.DecimalHalf!=InfinityRep)
     #endif
@@ -1943,7 +1943,7 @@ public:
                 }
 #else
     #if defined(AltNum_EnableImaginaryNum)
-                if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
                 {
                     self.ConvertToNumRep();
                 }
@@ -1952,7 +1952,7 @@ public:
     #endif
 
     #if defined(AltNum_EnableImaginaryNum)
-                if(Value.ExtraRep>=0||Value.ExtraRep==PIRep)
+                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
                 {
                     Value.ConvertToNumRep();
                 }
@@ -1977,7 +1977,7 @@ public:
         {
 #if defined(AltNum_EnableInfinityRep)
     #if defined(AltNum_EnableImaginaryNum)
-                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PIRep))
+                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
     #else
                 if(self.DecimalHalf!=InfinityRep)
     #endif
@@ -1986,7 +1986,7 @@ public:
                 }
 
     #if defined(AltNum_EnableImaginaryNum)
-                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PIRep))
+                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
     #else
                 if(Value.DecimalHalf!=InfinityRep)
     #endif
@@ -1995,7 +1995,7 @@ public:
                 }
 #else
     #if defined(AltNum_EnableImaginaryNum)
-                if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
                 {
                     self.ConvertToNumRep();
                 }
@@ -2004,7 +2004,7 @@ public:
     #endif
 
     #if defined(AltNum_EnableImaginaryNum)
-                if(Value.ExtraRep>=0||Value.ExtraRep==PIRep)
+                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
                 {
                     Value.ConvertToNumRep();
                 }
@@ -2404,10 +2404,10 @@ public:
                     {
                         case RepType::NormalType:
                         case RepType::NumByDiv:
-            #if defined(AltNum_EnablePIRep)
+            #if defined(AltNum_EnablePiRep)
                         case RepType::PiNum:
-            #if defined(AltNum_EnablePIPowers)
-                        case RepType::PIPower:
+            #if defined(AltNum_EnablePiPowers)
+                        case RepType::PiPower:
             #endif
             #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledPiFractionals)
@@ -2437,8 +2437,8 @@ public:
             #endif
             #endif
             
-            #if defined(AltNum_EnableNearPI)
-                        case RepType::NearPI://(Approaching Away from Zero is equal to 0.9999...PI)
+            #if defined(AltNum_EnableNearPi)
+                        case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
             #endif
             #if defined(AltNum_EnableNearE)
                         case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
@@ -2638,7 +2638,7 @@ public:
 //	//#endif
 						default:
 //						case RepType::PiNum:
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //                      case RepType::ENum:
 //						case RepType::NumByDiv:
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -2650,7 +2650,7 @@ public:
 							break;
 					}
 					break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -2824,7 +2824,7 @@ public:
 					break;
 	#endif
 					
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -2858,7 +2858,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -2908,7 +2908,7 @@ public:
 							break;
 					}
 					break;
-				case RepType::PIPower:
+				case RepType::PiPower:
 					switch (RRep)
 					{
 						case RepType::NormalType:
@@ -2946,7 +2946,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3012,7 +3012,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3025,11 +3025,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -3053,7 +3053,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3141,7 +3141,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3154,11 +3154,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -3182,7 +3182,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3239,7 +3239,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3252,11 +3252,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -3280,7 +3280,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3335,7 +3335,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3348,11 +3348,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -3376,7 +3376,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3443,16 +3443,16 @@ public:
                                     self.SetAsZero();
                             }
                             break;
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 						case RepType::PiNum:
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
 	#endif
-    #if defined(AltNum_EnablePIPowers)
-                       case RepType::PIPower:
+    #if defined(AltNum_EnablePiPowers)
+                       case RepType::PiPower:
     #endif
-#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
+#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)
                             Value.ConvertToNormType(RRep);
 							if(self.IntValue>=0)
                                 self.BasicAddOp(Value.BasicMultOp(self.DecimalHalf));
@@ -3486,7 +3486,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3562,7 +3562,7 @@ public:
 					}
 					break;
 					
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch (RRep)
 					{
@@ -3756,7 +3756,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3769,11 +3769,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -3797,7 +3797,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -3964,7 +3964,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -3977,11 +3977,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -4005,7 +4005,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -4113,10 +4113,10 @@ public:
                     {
                         case RepType::NormalType:
                         case RepType::NumByDiv:
-            #if defined(AltNum_EnablePIRep)
+            #if defined(AltNum_EnablePiRep)
                         case RepType::PiNum:
-            #if defined(AltNum_EnablePIPowers)
-                        case RepType::PIPower:
+            #if defined(AltNum_EnablePiPowers)
+                        case RepType::PiPower:
             #endif
             #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledPiFractionals)
@@ -4146,8 +4146,8 @@ public:
             #endif
             #endif
             
-            #if defined(AltNum_EnableNearPI)
-                        case RepType::NearPI://(Approaching Away from Zero is equal to 0.9999...PI)
+            #if defined(AltNum_EnableNearPi)
+                        case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
             #endif
             #if defined(AltNum_EnableNearE)
                         case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
@@ -4364,7 +4364,7 @@ public:
 //	//#endif
 						default:
 //						case RepType::PiNum:
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //                      case RepType::ENum:
 //						case RepType::NumByDiv:
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -4376,7 +4376,7 @@ public:
 							break;
 					}
 					break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -4550,7 +4550,7 @@ public:
 					break;
 	#endif
 					
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -4584,7 +4584,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -4634,7 +4634,7 @@ public:
 							break;
 					}
 					break;
-				case RepType::PIPower:
+				case RepType::PiPower:
 					switch (RRep)
 					{
 						case RepType::NormalType:
@@ -4672,7 +4672,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -4738,7 +4738,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -4751,11 +4751,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -4779,7 +4779,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -4867,7 +4867,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -4880,11 +4880,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -4908,7 +4908,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -4965,7 +4965,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -4978,11 +4978,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -5006,7 +5006,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -5061,7 +5061,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -5074,11 +5074,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -5102,7 +5102,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -5167,16 +5167,16 @@ public:
 
                             }
 							break;
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 						case RepType::PiNum:
 	#endif
 	#if defined(AltNum_EnableENum)
 						case RepType::ENum:
 	#endif
-    #if defined(AltNum_EnablePIPowers)
-                       case RepType::PIPower:
+    #if defined(AltNum_EnablePiPowers)
+                       case RepType::PiPower:
     #endif
-#if defined(AltNum_EnablePIRep)||defined(AltNum_EnableENum)
+#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)
                             Value.ConvertToNormType(RRep);
 							if(self.IntValue<0)
                                 self.BasicSubOp(Value.BasicMultOp(self.DecimalHalf));
@@ -5208,7 +5208,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -5284,7 +5284,7 @@ public:
 					}
 					break;
 					
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch (RRep)
 					{
@@ -5478,7 +5478,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -5491,11 +5491,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -5519,7 +5519,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -5685,7 +5685,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -5698,11 +5698,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -5726,7 +5726,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -5908,10 +5908,10 @@ public:
                         case RepType::NormalType://Fail safe for when converted before switch
                             self.BasicMultOp(Value);
                             break;
-#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
                         case RepType::PiNum://X * (Y*Pi)
                             self.BasicMultOp(Value);
-                            self.ExtraRep = PIRep;
+                            self.ExtraRep = PiRep;
                             break;
 #endif
 #if defined(AltNum_EnableENum)
@@ -5927,11 +5927,11 @@ public:
 							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //
@@ -5959,7 +5959,7 @@ public:
                             self.ExtraRep = Value.ExtraRep;
 							break;
 							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                             self.BasicMultOp(Value.IntValue);
                             self.DecimalHal = Value.DecimalHalf;
@@ -6019,7 +6019,7 @@ public:
 							break;
 					}
 					break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -6036,8 +6036,8 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PIPower:
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6064,7 +6064,7 @@ public:
                             self.BasicMultOp(Value);
 							break;
 							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                             self /= Value.DecimalHalf;
                             self.BasicMultOp(PiValue);
@@ -6137,9 +6137,9 @@ public:
 						case RepType::NormalType:
                             self.BasicMultOp(Value);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 						case RepType::PiNum:
-                            Value.ConvertPIToNum();
+                            Value.ConvertPiToNum();
                             self.BasicMultOp(Value);
 							break;
 	#endif
@@ -6151,11 +6151,11 @@ public:
 							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6245,9 +6245,9 @@ public:
 						case RepType::NormalType:
                             self.BasicMultOp(Value);
                             break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 						case RepType::PiNum:
-                            Value.ConvertPIToNum()
+                            Value.ConvertPiToNum()
                             self.BasicMultOp(Value);
 							break;
 	#endif
@@ -6258,11 +6258,11 @@ public:
 							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6286,7 +6286,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6338,7 +6338,7 @@ public:
 					break;
 	#endif
 					
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -6354,7 +6354,7 @@ public:
 //							break;
 	#endif
 //							
-						case RepType::PIPower:
+						case RepType::PiPower:
 							self.ExtraRep = Value.ExtraRep-1;
                             self.BasicMultOp(Value);
 							break;
@@ -6379,7 +6379,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6429,7 +6429,7 @@ public:
 							break;
 					}
 					break;
-				case RepType::PIPower:
+				case RepType::PiPower:
 					switch (RRep)
 					{
 						case RepType::NormalType:
@@ -6467,7 +6467,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6533,7 +6533,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -6546,11 +6546,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6574,7 +6574,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6662,7 +6662,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -6675,11 +6675,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6703,7 +6703,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6760,7 +6760,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -6773,11 +6773,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6801,7 +6801,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6856,7 +6856,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -6869,11 +6869,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -6897,7 +6897,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -6957,7 +6957,7 @@ public:
 						case RepType::NormalType://Later normalize fractional when integer when viable
                             self.BasicMultOp(Value);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 						case RepType::PiNum:
 	#if defined(AltNum_EnableDecimaledPiFractionals)
                             self.BasicMultOp(Value);
@@ -6990,11 +6990,11 @@ public:
     #endif
 							
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7016,7 +7016,7 @@ public:
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7067,7 +7067,7 @@ public:
 					}
 					break;
 					
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch (RRep)
 					{
@@ -7077,7 +7077,7 @@ public:
                             else
                                 self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7090,11 +7090,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7175,7 +7175,7 @@ public:
                             else
                                 self.CatchAllMultiplication(Value, LRep, RRep);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7188,11 +7188,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7216,7 +7216,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7277,7 +7277,7 @@ public:
 						case RepType::NormalType://Normalize denom later
                             self.BasicMultOp(Value);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 						case RepType::PiNum:
                             self.BasicMultOp(Value);
                             self.BasicMultOp(PiNumValue);
@@ -7301,11 +7301,11 @@ public:
 							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7329,7 +7329,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7387,7 +7387,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7400,11 +7400,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7428,7 +7428,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7487,7 +7487,7 @@ public:
 						case RepType::NormalType:
                             self.BasicMultOp(Value);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7500,11 +7500,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7528,7 +7528,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7585,7 +7585,7 @@ public:
 						case RepType::NormalType:
                             self.BasicMultOp(Value);
 							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7598,11 +7598,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7626,7 +7626,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7683,7 +7683,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 	#endif
@@ -7696,11 +7696,11 @@ public:
 //							break;
 	#endif
 //							
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 	#endif
@@ -7724,7 +7724,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 	#endif
@@ -7818,7 +7818,7 @@ public:
 				case RepType::NormalType:
 					switch (RRep)
 					{
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -7831,11 +7831,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //
@@ -7874,7 +7874,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -7938,7 +7938,7 @@ public:
 							break;
 					}
 					break;
-	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -7953,8 +7953,8 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PIPower:
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -7992,7 +7992,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8063,7 +8063,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8072,11 +8072,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8114,7 +8114,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8185,7 +8185,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8194,11 +8194,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8236,7 +8236,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8302,7 +8302,7 @@ public:
 					break;
 	#endif
 					
-	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					switch (RRep)
 					{
@@ -8317,8 +8317,8 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
-//						case RepType::PIPower:
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8356,7 +8356,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8420,7 +8420,7 @@ public:
 							break;
 					}
 					break;
-				case RepType::PIPower:
+				case RepType::PiPower:
 					switch (RRep)
 					{
 //						case RepType::NormalType:
@@ -8469,7 +8469,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8550,7 +8550,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8563,11 +8563,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8605,7 +8605,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8677,7 +8677,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8690,11 +8690,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8730,7 +8730,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8799,7 +8799,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8812,11 +8812,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8852,7 +8852,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -8923,7 +8923,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -8936,11 +8936,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -8976,7 +8976,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9045,7 +9045,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9058,11 +9058,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9098,7 +9098,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9171,7 +9171,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9184,11 +9184,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9224,7 +9224,7 @@ public:
 //
 //	#if defined(AltNum_EnableAlternativeRepFractionals)
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9289,13 +9289,13 @@ public:
 					}
 					break;
 					
-	#if defined(AltNum_EnablePIRep)
+	#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					switch (RRep)
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9308,11 +9308,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9417,7 +9417,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9430,11 +9430,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9472,7 +9472,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9546,7 +9546,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9559,11 +9559,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9601,7 +9601,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9673,7 +9673,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9686,11 +9686,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9728,7 +9728,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -9806,7 +9806,7 @@ public:
 					{
 //						case RepType::NormalType:
 //							break;
-//	#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							break;
 //	#endif
@@ -9819,11 +9819,11 @@ public:
 //							break;
 //	#endif
 //							
-//	#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+//	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 //						case RepType::PiNum:
 //							//Add code that converts into PiPower type representation here later
 //							break;
-//						case RepType::PIPower:
+//						case RepType::PiPower:
 //							//Add Pi powers code here later
 //							break;
 //	#endif
@@ -9861,7 +9861,7 @@ public:
 //						case RepType::NumByDiv:
 //							break;
 //							
-//	#if defined(AltNum_EnablePIRep)
+//	#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 //	#endif
@@ -10086,7 +10086,7 @@ public:
                 switch (LRep)
                 {
                     case RepType::NormalType:
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
@@ -10270,7 +10270,7 @@ public:
 
 #if defined(AltNum_EnableAlternativeRepFractionals)
                     case RepType::NumByDiv:
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 #endif
 #if defined(AltNum_EnableENum)
@@ -10342,8 +10342,8 @@ public:
                         break;
 #endif
 
-//#if defined(AltNum_EnablePIPowers)
-//                    case RepType::PIPower:
+//#if defined(AltNum_EnablePiPowers)
+//                    case RepType::PiPower:
 //						break;
 //#endif
 //#if defined(AltNum_EnableComplexNumbers)
@@ -10494,7 +10494,7 @@ public:
                 switch (LRep)
                 {
                     case RepType::NormalType:
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
@@ -10667,7 +10667,7 @@ public:
 
 #if defined(AltNum_EnableAlternativeRepFractionals)
                     case RepType::NumByDiv:
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 #endif
 #if defined(AltNum_EnableENum)
@@ -10739,8 +10739,8 @@ public:
                         break;
 #endif
 
-//#if defined(AltNum_EnablePIPowers)
-//                    case RepType::PIPower:
+//#if defined(AltNum_EnablePiPowers)
+//                    case RepType::PiPower:
 //						break;
 //#endif
 //#if defined(AltNum_EnableComplexNumbers)
@@ -10812,7 +10812,7 @@ public:
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
-            if(self.ExtraRep==PIRep)//Value*Pi Representation
+            if(self.ExtraRep==PiRep)//Value*Pi Representation
             {
                 self.ConvertToNumRep();
                 self.PartialIntAddition(value);
@@ -10879,7 +10879,7 @@ public:
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
-            if(self.ExtraRep==PIRep)//Value*Pi Representation
+            if(self.ExtraRep==PiRep)//Value*Pi Representation
             {
                 self.ConvertToNumRep();
                 self.PartialIntSubtraction(value);
@@ -10932,7 +10932,7 @@ public:
                     if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
                         DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
                 }
-                else//Don't need to check if flipping to other sign if adding positive to positive
+                else//Don't need to check if flipPing to other sign if adding positive to positive
                 {
                     IntValue += value;
                 }
@@ -11033,7 +11033,7 @@ public:
             if (self.DecimalHalf == InfinityRep)
                 return self;
 #endif
-            if(self.ExtraRep==PIRep)//Value*Pi Representation
+            if(self.ExtraRep==PiRep)//Value*Pi Representation
             {
                 self.ConvertToNumRep();
                 self.PartialUnsignedSubtraction(value);
@@ -11303,7 +11303,7 @@ public:
                     case RepType::NormalType:
 						self.PartialMultOp(Value);
 						break;
-#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
                     case RepType::PiNum:
 						self.PartialMultOp(Value);
 						self.PartialMultOp(PiNum);
@@ -11322,11 +11322,11 @@ public:
 						break;
 #endif
 						
-#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
                     case RepType::PiNum:
 						//Add code that converts into PiPower type representation here later
 						break;
-                    case RepType::PIPower:
+                    case RepType::PiPower:
 						//Add Pi powers code here later
 						break;
 
@@ -11477,7 +11477,7 @@ public:
 						break;
 						
 					//(Self.IntValue*Value.IntValue)/(self.DecimalHalf/Value.DecimalHalf)
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 						int NumRes = Self.IntValue*Value.IntValue;
 						int DenomRes = self.DecimalHalf/Value.DecimalHalf;
@@ -11486,7 +11486,7 @@ public:
 						signed int RemRes = NumRes - DenomRes * NumRes;
 						if(RemRes==0)
 						{
-#ifdef AltNum_EnablePIPowers
+#ifdef AltNum_EnablePiPowers
 							//Set as DivRes*Pi^2
 #else
 							Self.SetEVal(DivRes);
@@ -11499,7 +11499,7 @@ public:
 							Self.DecimalHalf = DenomRes;
 #endif
 						}
-#ifndef AltNum_EnablePIPowers
+#ifndef AltNum_EnablePiPowers
 						Self *= PiNumValue();
 #endif
 						break;
@@ -11589,7 +11589,7 @@ public:
             return self;
         }
 
-		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 copies of variables)
+		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 coPies of variables)
 		static MediumDecVariant& MultOpV2(MediumDecVariant& self, MediumDecVariant Value)
 		{
 			return MultOp(self, Value);
@@ -11680,7 +11680,7 @@ public:
 				case RepType::NormalType:
 					self.PartialMultOp(Value);
 					break;
-#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					self.PartialMultOp(Value);
 					self.PartialMultOp(PiNum);
@@ -11699,11 +11699,11 @@ public:
 					break;
 #endif
 					
-#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
 					//Add code that converts into PiPower type representation here later
 					break;
-				case RepType::PIPower:
+				case RepType::PiPower:
 					//Add Pi powers code here later
 					break;
 
@@ -11798,7 +11798,7 @@ public:
 
 /*#if defined(AltNum_EnableAlternativeRepFractionals)
 				case RepType::NumByDiv:
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 #endif
 #if defined(AltNum_EnableENum)
@@ -12103,7 +12103,7 @@ public:
                     case RepType::NormalType:
 						self.PartialDivOp(Value);
 						break;
-#if defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
                     case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
@@ -12112,17 +12112,17 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
                     case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
-#if (defined(AltNum_EnablePIRep)&&!defined(AltNum_EnablePIPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
+#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
 						ExtraRep = 0;
 						self.PartialDivOp(Value);
 						break;
 #endif
 						
-#if defined(AltNum_EnablePIRep)&&defined(AltNum_EnablePIPowers)
+#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
                     case RepType::PiNum:
 						//Add code that converts into PiPower type representation here later
 						break;
-                    case RepType::PIPower:
+                    case RepType::PiPower:
 						//Add Pi powers code here later
 						break;
 
@@ -12236,7 +12236,7 @@ public:
 						
 					//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
 					//(Self.IntValue/self.DecimalHalf)
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
                     case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 						int NumRes = Self.IntValue/Value.IntValue;
 						int DenomRes = self.DecimalHalf/Value.DecimalHalf;
@@ -13180,7 +13180,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13224,7 +13224,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13268,7 +13268,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13312,7 +13312,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13386,7 +13386,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13430,7 +13430,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13474,7 +13474,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13518,7 +13518,7 @@ public:
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PIRep)
+            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
             {
                 self.ConvertToNumRep();
             }
@@ -13997,7 +13997,7 @@ public:
             case RepType::NormalType:
                 break;
             case RepType::PiNum:
-                ConvertPIToNum();
+                ConvertPiToNum();
                 break;
             case RepType::ApproachingBottom:
             case RepType::ApproachingTop:
@@ -14070,7 +14070,7 @@ public:
             case RepType::NormalType:
                 break;
             case RepType::PiNum:
-                ConvertPIToNum();
+                ConvertPiToNum();
                 break;
             case RepType::ApproachingBottom:
             case RepType::ApproachingTop:
@@ -14110,7 +14110,7 @@ public:
             case RepType::NormalType:
                 break;
             case RepType::PiNum:
-                Value.ConvertPIToNum();
+                Value.ConvertPiToNum();
                 break;
             //case RepType::ApproachingTop:
             //case RepType::ApproachingBottom:
@@ -14144,7 +14144,7 @@ public:
                 break;
             case RepType::PiNum:
             {
-                Value.ConvertPIToNum();//return CeilInt(Value.ConvertPIToNum());
+                Value.ConvertPiToNum();//return CeilInt(Value.ConvertPiToNum());
                 break;
             }
 #if defined(AltNum_EnableENum)
@@ -14770,7 +14770,7 @@ public:
                 case RepType::NormalType:
                     break;
                 case RepType::PiNum:
-                    //value.ConvertPIToNum();
+                    //value.ConvertPiToNum();
                     break;
 #if defined(AltNum_EnableInfinityRep)
                 //case RepType::ApproachingBottom:
@@ -14844,7 +14844,7 @@ public:
                     break;
 #endif
     //            case RepType::PiNum:
-    //                expValue.ConvertPIToNum();
+    //                expValue.ConvertPiToNum();
     //                break;
 /*
 
@@ -14937,8 +14937,8 @@ public:
                 WithinThresholdRange = true;
                 break;
             default:
-                if(value.ExtraRep==PIRep)
-                    ConvertPIToNum();
+                if(value.ExtraRep==PiRep)
+                    ConvertPiToNum();
 #if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
@@ -15115,8 +15115,8 @@ public:
                 WithinThresholdRange = true;
                 break;
             default:
-                if(value.ExtraRep==PIRep)
-                    ConvertPIToNum();
+                if(value.ExtraRep==PiRep)
+                    ConvertPiToNum();
 #if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
@@ -15255,8 +15255,8 @@ public:
                 WithinThresholdRange = true;
                 break;
             default:
-                if(value.ExtraRep==PIRep)
-                    ConvertPIToNum();
+                if(value.ExtraRep==PiRep)
+                    ConvertPiToNum();
 #if defined(AltNum_EnableENum)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
@@ -15422,7 +15422,7 @@ public:
             {
                 MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MediumDecVariant Radius = PI * Value / 180;
+                MediumDecVariant Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
                     NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
@@ -15500,7 +15500,7 @@ public:
             {
                 MediumDecVariant NewValue = Zero;
                 //Angle as Radian
-                MediumDecVariant Radius = PI * Value / 180;
+                MediumDecVariant Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
                     NewValue += (i % 2 == 0 ? 1 : -1) * MediumDecVariant::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
@@ -15517,7 +15517,7 @@ public:
         /// <returns>AltDec</returns>
         static MediumDecVariant Sin(MediumDecVariant Value)
         {
-            if (Value.ExtraRep == PIRep)//0 to 2PI range (2PI == 0PI)
+            if (Value.ExtraRep == PiRep)//0 to 2Pi range (2Pi == 0Pi)
             {
                 if (Value.IntValue < 0)
                 {
@@ -15537,9 +15537,9 @@ public:
                 {
                     Value.IntValue %= 2;
                 }
-                if (Value.DecimalHalf == 0&&(Value.IntValue==0||Value.IntValue==1))//0 and PI
+                if (Value.DecimalHalf == 0&&(Value.IntValue==0||Value.IntValue==1))//0 and Pi
                     return Zero;
-                if (Value.DecimalHalf == 500000000)//0.5 PI = 1; 1.5PI = -1
+                if (Value.DecimalHalf == 500000000)//0.5 Pi = 1; 1.5Pi = -1
                     return Value.IntValue==0?NegativeOne:One;
                 MediumDecVariant SinValue = Zero;
                 for (int i = 0; i < 7; ++i)
@@ -15575,7 +15575,7 @@ public:
         /// <returns>AltDec</returns>
         static MediumDecVariant Cos(MediumDecVariant Value)
         {
-            if (Value.ExtraRep == PIRep)//0 to 2PI range (2PI == 0PI)
+            if (Value.ExtraRep == PiRep)//0 to 2Pi range (2Pi == 0Pi)
             {
                 if (Value.IntValue < 0)
                 {
@@ -15596,9 +15596,9 @@ public:
                     Value.IntValue %= 2;
                 }
                 //Cos table listed on https://byjus.com/maths/value-of-cos-180/
-                if (Value.DecimalHalf == 0)//cos(0) = 1;cos(PI) = -1;
+                if (Value.DecimalHalf == 0)//cos(0) = 1;cos(Pi) = -1;
                     return Value.IntValue == 0?One:NegativeOne;
-                if (Value.DecimalHalf == 500000000)//cos(0.5) PI = 0; cos(1.5PI) = 0;
+                if (Value.DecimalHalf == 500000000)//cos(0.5) Pi = 0; cos(1.5Pi) = 0;
                     return Zero;
             }
 #if defined(AltNum_EnableInfinityRep)
@@ -15664,7 +15664,7 @@ public:
                 break;
             }
 #endif
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
             case RepType::RepType::PiNum:
 #endif
 #if defined(AltNum_EnableENum)
@@ -15721,7 +15721,7 @@ public:
             }
             else
             {
-                return Tan(PI * Value / 180);
+                return Tan(Pi * Value / 180);
             }
         }
 
@@ -15769,10 +15769,10 @@ public:
         /// <returns>AltDec</returns>
         static MediumDecVariant ArcTan2(MediumDecVariant y, MediumDecVariant x)
         {
-#if defined(AltNum_EnablePIRep)
-            MediumDecVariant coeff_1 = AltDec(0, 250000000, PIRep);//PI / 4;
+#if defined(AltNum_EnablePiRep)
+            MediumDecVariant coeff_1 = AltDec(0, 250000000, PiRep);//Pi / 4;
 #else
-            MediumDecVariant coeff_1 = PI / 4;
+            MediumDecVariant coeff_1 = Pi / 4;
 #endif
             MediumDecVariant coeff_2 = 3 * coeff_1;
             MediumDecVariant abs_y = MediumDecVariant::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
@@ -15800,7 +15800,7 @@ public:
 #if defined(AltNum_EnableInfinityRep)
     MediumDecVariant MediumDecVariant::AlmostOne = ApproachingRightRealValue();
 #endif
-    MediumDecVariant MediumDecVariant::PI = PIValue();
+    MediumDecVariant MediumDecVariant::Pi = PiValue();
     MediumDecVariant MediumDecVariant::One = OneValue();
     MediumDecVariant MediumDecVariant::Two = TwoValue();
     MediumDecVariant MediumDecVariant::NegativeOne = NegativeOneValue();
@@ -15849,8 +15849,8 @@ public:
         std::string DecimalBuffer = "";
 
         bool ReadingDecimal = false;
-        int TempInt;
-        int TempInt02;
+        int TemPint;
+        int TemPint02;
         for (char const& StringChar : Value)
         {
             if (VariableConversionFunctions::IsDigit(StringChar))
@@ -15870,11 +15870,11 @@ public:
         PlaceNumber = WholeNumberBuffer.length() - 1;
         for (char const& StringChar : WholeNumberBuffer)
         {
-            TempInt = VariableConversionFunctions::CharAsInt(StringChar);
-            TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+            TemPint = VariableConversionFunctions::CharAsInt(StringChar);
+            TemPint02 = (TemPint * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TempInt02;
+                IntValue += TemPint02;
             }
             PlaceNumber--;
         }
@@ -15884,11 +15884,11 @@ public:
             //Limit stored decimal numbers to the amount it can store
             if (PlaceNumber > -1)
             {
-                TempInt = VariableConversionFunctions::CharAsInt(StringChar);
-                TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+                TemPint = VariableConversionFunctions::CharAsInt(StringChar);
+                TemPint02 = (TemPint * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
                 if (StringChar != '0')
                 {
-                    DecimalHalf += TempInt02;
+                    DecimalHalf += TemPint02;
                 }
                 PlaceNumber--;
             }
@@ -16011,7 +16011,7 @@ public:
         }
         switch (repType)
         {
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
         case RepType::PiNum:
             Value += "Pi";
             break;
@@ -16128,7 +16128,7 @@ public:
         }
         switch (repType)
         {
-#if defined(AltNum_EnablePIRep)
+#if defined(AltNum_EnablePiRep)
         case RepType::PiNum:
             Value += "Pi";
             break;
