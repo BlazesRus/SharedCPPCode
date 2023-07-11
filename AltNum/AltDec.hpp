@@ -15,7 +15,7 @@
 #endif
 #endif
 #else
-#include "..\DLLAPi.h"
+#include "..\DLLAPI.h"
 #endif
 
 #include <string>
