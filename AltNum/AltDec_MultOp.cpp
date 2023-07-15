@@ -24,7 +24,9 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 	#endif
 	if (Value<0)
 	{
-		self *= -1; Value *= -1;
+		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+		else { Value.IntValue *= -1; }
+		self.SwapNegativeStatus();
 	}
 	RepType LRep = self.GetRepType();
 	RepType RRep = Value.GetRepType();
