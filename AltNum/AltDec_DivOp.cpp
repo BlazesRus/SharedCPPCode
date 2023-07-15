@@ -11,6 +11,12 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (self == MediumDecVariant::Zero)
 		return self;
+	if (Value.IntValue < 0)
+	{
+		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+		else { Value.IntValue *= -1; }
+		self.SwapNegativeStatus();
+	}
 	#if defined(AltNum_EnableInfinityRep)
 	if (Value.DecimalHalf == InfinityRep)
 	{
@@ -24,12 +30,6 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 	if (Value == MediumDecVariant::Zero)
 		throw "Target value can not be divided by zero unless infinity enabled";
 	#endif
-	if (Value.IntValue < 0)
-	{
-		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-		else { Value.IntValue *= -1; }
-		self.SwapNegativeStatus();
-	}
 	RepType LRep = self.GetRepType();
 	RepType RRep = Value.GetRepType();
 	if(LRep==RRep)

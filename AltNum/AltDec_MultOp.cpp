@@ -12,6 +12,12 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 	if (Value == MediumDecVariant::Zero) { self.SetAsZero(); return self; }
 	if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
 		return self;
+	if (Value<0)
+	{
+		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+		else { Value.IntValue *= -1; }
+		self.SwapNegativeStatus();
+	}
 	#if defined(AltNum_EnableInfinityRep)
 	if (self.DecimalHalf == InfinityRep)
 	{
@@ -22,12 +28,6 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 	else if (Value.DecimalHalf == InfinityRep)
 		return self;
 	#endif
-	if (Value<0)
-	{
-		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-		else { Value.IntValue *= -1; }
-		self.SwapNegativeStatus();
-	}
 	RepType LRep = self.GetRepType();
 	RepType RRep = Value.GetRepType();
 	if(LRep==RRep)
