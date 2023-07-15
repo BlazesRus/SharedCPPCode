@@ -248,11 +248,13 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 
 		#if defined(AltNum_EnableImaginaryNum)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+				//(self.IntValue/self.DecimalHalf)i*(Value.IntValue/Value.DecimalHalf)i
+                //==-1*(self.IntValue/self.DecimalHalf)*(Value.IntValue/Value.DecimalHalf)
 				throw "Code not implimented yet";
 				break;
 		#endif
 
-		#if defined(AltNum_EnableDecimaledAlternativeFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 				throw "Code not implimented yet";
@@ -296,8 +298,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				break;
 	#if defined(AltNum_EnableNegativeZero)
 			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-				self.SetAsZero();
-                break;
+				break;
 	#endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType multiplication not supported yet";

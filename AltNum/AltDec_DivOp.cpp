@@ -1,7 +1,7 @@
 #include "AltDec.hpp"
 
 /// <summary>
-/// Subtraction Operation
+/// Division Operation
 /// </summary>
 /// <param name="self">The self.</param>
 /// <param name="Value">The value.</param>
@@ -9,6 +9,8 @@
 static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
+	if (self == MediumDecVariant::Zero)
+		return self;
 	#if defined(AltNum_EnableInfinityRep)
 	if (Value.DecimalHalf == InfinityRep)
 	{
@@ -22,8 +24,6 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 	if (Value == MediumDecVariant::Zero)
 		throw "Target value can not be divided by zero unless infinity enabled";
 	#endif
-	if (self == MediumDecVariant::Zero)
-		return self;
 	if (Value.IntValue < 0)
 	{
 		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
@@ -39,22 +39,22 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::NormalType:
 				self.PartialDivOp(Value);
 				break;
-#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
+    #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 			case RepType::PiNum:
-#endif
-#if defined(AltNum_EnableENum)
+    #endif
+    #if defined(AltNum_EnableENum)
 			case RepType::ENum:
-#endif
-#if defined(AltNum_EnableImaginaryNum)
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
-#endif
-#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
+    #endif
+    #if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
 				ExtraRep = 0;
 				self.PartialDivOp(Value);
 				break;
-#endif
+    #endif
 				
-#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
+    #if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
 			case RepType::PiNum:
 				//Add code that converts into PiPower type representation here later
 				break;
@@ -62,24 +62,9 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				//Add Pi powers code here later
 				break;
 
-#endif
-				
-#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-#if defined(AltNum_EnablePiNum)
-			case RepType::MixedPi:
-#endif
-#if defined(AltNum_EnableENum)
-			case RepType::MixedE:
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-			case RepType::MixedI:
-#endif
-				throw "BasicMixedDivOp code not implimented yet";//self.BasicMixedDivOp(Value);
-				break;
-#endif
+    #endif
 
-#if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproachingValues)
 			case RepType::ApproachingBottom:
 				if(self.IntValue==Value.IntValue)
 				{ self.IntValue = 1; self.DecimalHalf = 0; }
@@ -105,7 +90,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				}
 				break;
 
-#if defined(AltNum_EnableApproachingDivided)
+        #if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingBottomDiv:
 				if(self.ExtraRep==Value.ExtraRep)
 				{// 0.249..9 / 0.249..9 = 1
@@ -144,10 +129,10 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 					self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
-#endif
-#endif
+        #endif
+    #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
+    #if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
 			case RepType::NumByDiv://(IntValue.DecimalHalf)/ExtraRep
 			//(self.(IntValue.DecimalHalf)/self.ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
 			//(self.(IntValue.DecimalHalf)* Value.ExtraRep/self.ExtraRep) /(Value.IntValue.DecimalHalf)
@@ -172,7 +157,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				
 			//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
 			//(Self.IntValue/self.DecimalHalf)
-#if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiRep)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 				int NumRes = Self.IntValue/Value.IntValue;
 				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
@@ -185,16 +170,17 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				}
 				else
 				{
-#ifdef AltNum_EnableBoostFractionalReduction//Add code here to reduce size of fractional using boost library code
-#else
+            #ifdef AltNum_EnableBoostFractionalReduction
+                //Add code here to reduce size of fractional using boost library code
+            #else
 					Self.IntValue = NumRes;
 					Self.DecimalHalf = DenomRes;
 					Self.ExtraRep = 0;
-#endif
+            #endif
 				}
 				break;
-#endif
-#if defined(AltNum_EnableENum)
+        #endif
+        #if defined(AltNum_EnableENum)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 				
 				int NumRes = Self.IntValue/Value.IntValue;
@@ -208,51 +194,57 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				}
 				else
 				{
-#ifdef AltNum_EnableBoostFractionalReduction//Add code here to reduce size of fractional using boost library code
-#else
+            #ifdef AltNum_EnableBoostFractionalReduction
+                //Add code here to reduce size of fractional using boost library code
+            #else
 					Self.IntValue = NumRes;
 					Self.DecimalHalf = DenomRes;
-#endif
+            #endif
 				}
 				Self /= ENumValue();
 				break;
-#endif
+        #endif
 
-#if defined(AltNum_EnableDecimaledPiFractionals)
-			case RepType::PiNumByDiv://  (Value/(ExtraRep/-1))*Pi Representation
-#endif
-#if defined(AltNum_EnableDecimaledEFractionals)
-			case RepType::ENumByDiv://(Value/(ExtraRep/-1))*e Representation
-#endif
+		#if defined(AltNum_EnableImaginaryNum)
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+				//(self.IntValue/self.DecimalHalf)i/(Value.IntValue/Value.DecimalHalf)i
+                //==(self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf)
+                throw "Code not implimented yet";
 				break;
+		#endif
+
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+			#if defined(AltNum_EnableDecimaledPiFractionals)
+			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+				throw "Code not implimented yet";
+				break;
+			#elif defined(AltNum_EnableDecimaledEFractionals)
+			case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+				throw "Code not implimented yet";
+				break;
+			#elif defined(AltNum_EnableDecimaledIFractionals)
+			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+				self.ExtraRep = 0; Value.ExtraRep = 0;
+                self /= Value;
+				break;
+			#endif
+		#endif
+    #endif
 				
-#if defined(AltNum_EnableMixedFractional)
-//                    case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePiNum)
-			case RepType::MixedPi:
-#endif
-#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableMixedFractional)
+			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+		#if defined(AltNum_EnableMixedPiFractional)
+			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
-#endif
-#endif
-				throw "BasicMixedDivOp code not implimented yet";
-				break;//
-#endif
-
-#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
-//                    case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-
-				break;
-				
-			case RepType::INumByDiv://(Value/(ExtraRep/-1))*i Representation
-
-				break;
+		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
-				throw "BasicMixedDivOp code not implimented yet";
-				break;//
-#endif
+		#endif
+				throw "Code not implimented yet";
+				break;
+	#endif
 
-//#if defined(AltNum_EnableComplexNumbers)
+	#if defined(AltNum_EnableComplexNumbers)
 //                    //based on https://www.varsitytutors.com/sat_mathematics-help/working-with-imaginary-numbers
 //					  //(a+b)(a-b)=(a^2)-(b^2)
 //                    //(x+vi)/(y+zi) =
@@ -261,22 +253,26 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 //                    //(x-vi)/(y+zi) =
 //                    case RepType::ComplexIRep:
 //						break;
-//#endif
-//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+    #endif
+    #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 //                    case RepType::UndefinedButInRange:
 //						break;
-//#endif
+    #endif
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
-#if defined(AltNum_EnableNegativeZero)
+    #if defined(AltNum_EnableNegativeZero)
 			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
+        #if defined(AltNum_EnableInfinityRep)
+            	self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity();
+        #else
+            	throw "Target value can not be divided by zero unless infinity enabled";
+        #endif
 				break;
-#endif
+    #endif
 			default:
-				throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
-				//throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+				throw static_cast<RepType>(LRep)-" RepType division not supported yet";
 				break;
 		}
 	}
