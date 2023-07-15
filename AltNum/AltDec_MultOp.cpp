@@ -206,21 +206,21 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 					//Set as DivRes*Pi^2
 			#else
 					Self.SetEVal(DivRes);
+			#endif
 				}
 				else
 				{
-				#ifdef AltNum_EnableBoostFractionalReduction
+			#ifdef AltNum_EnableBoostFractionalReduction
 					//Add code here to reduce size of fractional using boost library code
-				#else
+			#else
 					Self.IntValue = NumRes;
 					Self.DecimalHalf = DenomRes;
-				#endif
-				}
-				#ifndef AltNum_EnablePiPowers
-				Self *= PiNumValue();
-				#endif
-				break;
 			#endif
+				}
+			#ifndef AltNum_EnablePiPowers
+				Self *= PiNumValue();
+			#endif
+				break;
 		#endif
 		#if defined(AltNum_EnableENum)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
