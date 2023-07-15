@@ -224,7 +224,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				break;
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-				self.ExtraRep = 0; Value.ExtraRep = 0;
+				self.ExtraRep = -self.ExtraRep; Value.ExtraRep = -Value.ExtraRep;
                 self /= Value;
 				break;
 			#endif
