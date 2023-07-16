@@ -144,7 +144,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				{
 					self.IntValue = NumRes.IntValue;
 					self.DecimalHalf = NumRes.DecimalHalf;
-					self.ExtraRep = 
+					self.ExtraRep = NumRes.ExtraRep;
 				}
 				else
 				{
@@ -195,20 +195,20 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#endif
-				self.ExtraRep = -self.ExtraRep; Value.ExtraRep = -Value.ExtraRep;
+				int LeftDiv = -self.ExtraRep; int RightDiv = -Value.ExtraRep;
 				AltNum NumRes = SetValue(self.IntValue, self.DecimalHalf);
-				signed int DivRes = Value.ExtraRep / self.ExtraRep;
-				signed int RemRes = Value.ExtraRep - self.ExtraRep / Value.ExtraRep;
+				signed int DivRes = RightDiv / LeftDiv;
+				signed int RemRes = RightDiv - LeftDiv / RightDiv;
 				NumRes /= SetValue(Value.IntValue, Value.DecimalHalf);
 				if(RemRes==0)
 				{
 					self.IntValue = NumRes.IntValue;
 					self.DecimalHalf = NumRes.DecimalHalf;
-					self.ExtraRep = 
+					self.ExtraRep = NumRes.ExtraRep;
 				}
 				else
 				{
-					NumRes *= Value.ExtraRep;
+					NumRes *= RightDiv;
 					self.IntValue = NumRes.IntValue;
 					self.DecimalHalf = NumRes.DecimalHalf;
 					self.PartialDivOp(Value);
