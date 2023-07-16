@@ -258,32 +258,47 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
-			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-				throw "Code not implimented yet";
-				break;
+			case RepType::PiNumByDiv://  (Value/-ExtraRep)*Pi Representation
+			//(self.Value/(-self.ExtraRep))*Pi * (Value.Value/(-Value.ExtraRep))*Pi
 			#elif defined(AltNum_EnableDecimaledEFractionals)
-			case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-				throw "Code not implimented yet";
-				break;
+			case RepType::ENumByDiv://(Value/-ExtraRep)*e Representation
 			#elif defined(AltNum_EnableDecimaledIFractionals)
-			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-				throw "Code not implimented yet";
-				break;
+			case RepType::INumByDiv://(Value/-ExtraRep)*i Representation
+			//(self.Value/(-self.ExtraRep))*i * (Value.Value/(-Value.ExtraRep))*i
 			#endif
+				self.ExtraRep *= -Value.ExtraRep;
+				self.PartialMultOp(Value);
+				#if defined(AltNum_EnableDecimaledPiFractionals)
+					#ifdef AltNum_EnablePiPowers//Convert to PiPower representation
+				self.PartialDivOp(-self.ExtraRep);
+				self.ExtraRep = -2;
+					#else
+				self.PartialMultOp(PiNum);
+					#endif
+				#elif defined(AltNum_EnableDecimaledEFractionals)
+				self.PartialMultOp(ENum);
+				#else
+				self.SwapNegativeStatus();
+				#endif
+				break;
 		#endif
 	#endif
 
 	#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+			case RepType::MixedFrac://IntValue +- -DecimalHalf/ExtraRep
+				throw "Code not implimented yet";
+				break;
 		#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+			case RepType::MixedPi://IntValue +- -DecimalHalf/-ExtraRep
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
 				throw "Code not implimented yet";
 				break;
+		#endif
 	#endif
 
 	#if defined(AltNum_EnableComplexNumbers)

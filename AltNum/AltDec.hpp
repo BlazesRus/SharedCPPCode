@@ -1111,6 +1111,11 @@ public:
                 BasicMultOp(PiNum);
                 ExtraRep = 0;
                 break;
+#if defined(AltNum_EnablePiPowers)
+			case RepType::PiPower:
+                ConvertPiPowerToNum();
+                break;
+#endif
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
