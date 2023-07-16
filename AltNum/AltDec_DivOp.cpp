@@ -9,7 +9,7 @@
 static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
-	if (self == MediumDecVariant::Zero)
+	if (self.IsZero())
 		return self;
 	if (Value.IntValue < 0)
 	{
@@ -22,12 +22,12 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 	{
 		self.SetAsZero(); return self;
 	}
-	if (Value == MediumDecVariant::Zero)
+	if (Value.IsZero())
 	{
 		self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity(); return self;
 	}
 	#else
-	if (Value == MediumDecVariant::Zero)
+	if (Value.IsZero())
 		throw "Target value can not be divided by zero unless infinity enabled";
 	#endif
 	RepType LRep = self.GetRepType();
@@ -154,11 +154,18 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 					self.PartialDivOp(Value);
 				}
 				break;
-				
 			//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
 			//(Self.IntValue/self.DecimalHalf)
         #if defined(AltNum_EnablePiRep)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+		#endif
+        #if defined(AltNum_EnableENum)
+			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+		#endif
+        #if defined(AltNum_EnableImaginaryNum)
+			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+		#endif
+		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableENum)
 				int NumRes = Self.IntValue/Value.IntValue;
 				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
 				//Reduce size of fractional if viable
@@ -180,68 +187,51 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				}
 				break;
         #endif
-        #if defined(AltNum_EnableENum)
-			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-				
-				int NumRes = Self.IntValue/Value.IntValue;
-				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
-				//Reduce size of fractional if viable
-				signed int DivRes = NumRes / DenomRes;
-				signed int RemRes = NumRes - DenomRes / NumRes;
-				if(RemRes==0)
-				{
-					Self.SetEVal(DivRes);
-				}
-				else
-				{
-            #ifdef AltNum_EnableBoostFractionalReduction
-                //Add code here to reduce size of fractional using boost library code
-            #else
-					Self.IntValue = NumRes;
-					Self.DecimalHalf = DenomRes;
-            #endif
-				}
-				Self /= ENumValue();
-				break;
-        #endif
-
-		#if defined(AltNum_EnableImaginaryNum)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-				//(self.IntValue/self.DecimalHalf)i/(Value.IntValue/Value.DecimalHalf)i
-                //==(self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf)
-                throw "Code not implimented yet";
-				break;
-		#endif
-
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-				throw "Code not implimented yet";
-				break;
 			#elif defined(AltNum_EnableDecimaledEFractionals)
 			case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-				throw "Code not implimented yet";
-				break;
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-				self.ExtraRep = -self.ExtraRep; Value.ExtraRep = -Value.ExtraRep;
-                self /= Value;
-				break;
 			#endif
+				self.ExtraRep = -self.ExtraRep; Value.ExtraRep = -Value.ExtraRep;
+				AltNum NumRes = SetValue(self.IntValue, self.DecimalHalf);
+				signed int DivRes = Value.ExtraRep / self.ExtraRep;
+				signed int RemRes = Value.ExtraRep - self.ExtraRep / Value.ExtraRep;
+				NumRes /= SetValue(Value.IntValue, Value.DecimalHalf);
+				if(RemRes==0)
+				{
+					self.IntValue = NumRes.IntValue;
+					self.DecimalHalf = NumRes.DecimalHalf;
+					self.ExtraRep = 
+				}
+				else
+				{
+					NumRes *= Value.ExtraRep;
+					self.IntValue = NumRes.IntValue;
+					self.DecimalHalf = NumRes.DecimalHalf;
+					self.PartialDivOp(Value);
+				}
+				break;
 		#endif
     #endif
 				
 	#if defined(AltNum_EnableMixedFractional)
 			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+				throw "Code not implimented yet";
+				break;
 		#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+			case RepType::MixedPi://(IntValue +- (DecimalHalf*-1)/-ExtraRep)*Pi
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
 				throw "Code not implimented yet";
 				break;
+		#endif
 	#endif
 
 	#if defined(AltNum_EnableComplexNumbers)
@@ -262,15 +252,6 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
-    #if defined(AltNum_EnableNegativeZero)
-			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-        #if defined(AltNum_EnableInfinityRep)
-            	self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity();
-        #else
-            	throw "Target value can not be divided by zero unless infinity enabled";
-        #endif
-				break;
-    #endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType division not supported yet";
 				break;

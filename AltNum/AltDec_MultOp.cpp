@@ -9,8 +9,8 @@
 static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
 //Warning:Modifies Value to make it a positive variable
-	if (Value == MediumDecVariant::Zero) { self.SetAsZero(); return self; }
-	if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
+	if (Value.IsZero()) { self.SetAsZero(); return self; }
+	if (self.IsZero() || Value == MediumDecVariant::One)
 		return self;
 	if (Value<0)
 	{
@@ -298,10 +298,6 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
-	#if defined(AltNum_EnableNegativeZero)
-			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-				break;
-	#endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType multiplication not supported yet";
 				break;

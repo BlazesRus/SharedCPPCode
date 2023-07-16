@@ -38,7 +38,7 @@ AltNum_EnableAlternativeRepFractionals =
       Enables integer based fractionals for alternative representations such as Pi(partially implimented)
 
 AltNum_EnableNegativeZero =
-      (Not Implimented)
+      (Partially Implimented)
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
@@ -658,6 +658,16 @@ ExtraFlags treated as bitwise flag storage
             DecimalHalf = decVal;
             ExtraRep = extraVal;
         }
+
+		bool IsZero()
+		{
+			return DecimalHalf==0&&ExtraRep==0
+#if defined(AltNum_EnableNegativeZero)
+			&&(IntValue==0||IntValue==NegativeRep);
+#else
+			&&IntValue==0;
+#endif
+		}
 
         void SetAsZero()
         {

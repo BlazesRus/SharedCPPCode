@@ -8,12 +8,12 @@
 /// <returns>AltDec</returns>
 static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumDecVariant& Value)
 {
-	if (self == Zero)
+	if (self.IsZero())
 	{
 		self.IntValue = Value.IntValue; self.DecimalHalf = Value.DecimalHalf;
 		self.ExtraRep = Value.ExtraRep; return self;
 	}
-	else if (Value == Zero)
+	else if (Value.IsZero())
 		return self;
 	#if defined(AltNum_EnableInfinityRep)
 	if (self.DecimalHalf==InfinityRep)
@@ -283,11 +283,6 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
-	#if defined(AltNum_EnableNegativeZero)
-			case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
-				return self;
-                break;
-	#endif
 			default:
 				throw static_cast<RepType>(LRep)+" RepType addition not supported yet";
 				break;

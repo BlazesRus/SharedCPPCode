@@ -192,13 +192,6 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		break;
 	}
 
-#if defined(AltNum_EnableNegativeZero)//Treat Negative Zero as zero
-	if(LRep==RepType::NegativeZero||RRep==RepType::NegativeZero)
-	{
-		self.SetAsZero(); return;
-	}
-#endif
-
 	switch (LRep)//Main switch block starts here
 	{
 		case RepType::NormalType:
