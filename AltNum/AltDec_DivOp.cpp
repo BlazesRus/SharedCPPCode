@@ -20,7 +20,22 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 	#if defined(AltNum_EnableInfinityRep)
 	if (Value.DecimalHalf == InfinityRep)
 	{
-		self.SetAsZero(); return self;
+        if(self.DecimalHalf== InfinityRep)//https://www.philforhumanity.com/Infinity_Divided_by_Infinity.html
+            self.DecimalHalf = NaNRep;//Infinity divided by infinity equals undefined
+        else
+#if defined(AltNum_EnableApproachingValues)
+        {
+            self.DecimalHalf = ApproachingValRep;
+            if(self.IntValue<0)
+                self.IntValue = NegativeRep;
+            else
+                self.IntValue = 0;
+            self.ExtraRep = 0;
+        }
+#else            
+		    self.SetAsZero();
+#endif
+        return self;
 	}
 	if (Value.IsZero())
 	{
