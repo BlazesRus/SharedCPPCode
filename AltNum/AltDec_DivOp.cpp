@@ -54,7 +54,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::NormalType:
 				self.PartialDivOp(Value);
 				break;
-    #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
+    #if defined(AltNum_EnablePiRep)
 			case RepType::PiNum:
     #endif
     #if defined(AltNum_EnableENum)
@@ -69,14 +69,20 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				break;
     #endif
 				
-    #if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
-			case RepType::PiNum:
-				//Add code that converts into PiPower type representation here later
-				break;
+    #if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
-				//Add Pi powers code here later
-				break;
-
+                self.PartialDivOp(Value);
+                if(Value.ExtraRep<self.ExtraRep)
+                {
+                    MediumDecVariant PiPowerDivisor = PiPowerNum(self.ExtraRep - Value.ExtraRep);
+                    self.ExtraRep = 0;
+                    self.PartialDivOp(PiPowerDivisor);
+                }
+                else
+                {
+                    self.ExtraRep -= Value.ExtraRep;
+                }
+                break;
     #endif
 
     #if defined(AltNum_EnableApproachingValues)

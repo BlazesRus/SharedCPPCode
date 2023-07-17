@@ -8,7 +8,7 @@
 /// <returns>MediumDecVariant&</returns>
 static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
-//Warning:Modifies Value to make it a positive variable
+//Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (Value.IsZero()) { self.SetAsZero(); return self; }
 	if (self.IsZero() || Value == MediumDecVariant::One)
 		return self;
@@ -37,10 +37,14 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			case RepType::NormalType:
 				self.PartialMultOp(Value);
 				break;
-	#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
+	#if defined(AltNum_EnablePiRep)
 			case RepType::PiNum:
 				self.PartialMultOp(Value);
+        #if defined(AltNum_EnablePiPowers)
+                self.ExtraRep = -2;
+        #else
 				self.PartialMultOp(PiNum);
+        #endif
 				break;		
 	#endif
 	#if defined(AltNum_EnableENum)
@@ -56,12 +60,10 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				break;
 	#endif
 				
-	#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
-			case RepType::PiNum:
-				//Add code that converts into PiPower type representation here later
-				break;
+	#if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
-				//Add Pi powers code here later
+				self.ExtraRep += Value.ExtraRep;
+                self.PartialMultOp(Value);
 				break;
 	#endif
 
