@@ -196,10 +196,13 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				self.ExtraRep *= Value.ExtraRep;
 				break;
 				
-			//(Self.IntValue*Value.IntValue)/(self.DecimalHalf/Value.DecimalHalf)
+			//(Self.IntValue*Value.IntValue)*Pi^2/(self.DecimalHalf/Value.DecimalHalf)
 		#if defined(AltNum_EnablePiRep)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-				int NumRes = Self.IntValue*Value.IntValue;
+                int NumRes = self.IntValue*Value.IntValue;
+                bool valIsPositive = true;
+                if(self.IntValue<0)
+                    valIsPositive=false;
 				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
 				//Reduce size of fractional if viable
 				signed int DivRes = NumRes / DenomRes;
@@ -208,8 +211,11 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				{
 			#ifdef AltNum_EnablePiPowers
 					//Set as DivRes*Pi^2
+                    self.IntValue = DivRes;
+                    self.ExtraRep = -2;
 			#else
-					Self.SetEVal(DivRes);
+					Self.SetPiVal(DivRes);
+                    self *= PiNum;
 			#endif
 				}
 				else
@@ -217,18 +223,33 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			#ifdef AltNum_EnableBoostFractionalReduction
 					//Add code here to reduce size of fractional using boost library code
 			#else
-					Self.IntValue = NumRes;
-					Self.DecimalHalf = DenomRes;
+                self.IntValue = valIsPositive==false&&NumRes==0?NegativeRep:NumRes;
+                self.DecimalHalf = 0;
+                #if defined(AltNum_EnableDecimaledPiFractionals)
+                    self.ExtraRep = -DenomRes;
+                    self.PartialMultOp(PiNum);
+                #else//Converting to PiNum
+					//self.DecimalHalf = DenomRes;
+                    //self *= PiNum;
+                    #ifdef AltNum_EnablePiPowers
+                        self.ExtraRep = -2;
+                        self.PartialDivOp(DenomRes);
+                    #else
+                        self.ExtraRep = PiRep;
+                        self.PartialMultOp(PiNum);
+                        self.PartialDivOp(DenomRes);
+                    #endif
+                #endif
 			#endif
 				}
-			#ifndef AltNum_EnablePiPowers
-				Self *= PiNumValue();
-			#endif
 				break;
 		#endif
 		#if defined(AltNum_EnableENum)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-				int NumRes = Self.IntValue*Value.IntValue;
+                int NumRes = self.IntValue*Value.IntValue;
+                bool valIsPositive = true;
+                if(self.IntValue<0)
+                    valIsPositive=false;
 				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
 				//Reduce size of fractional if viable
 				signed int DivRes = NumRes / DenomRes;
@@ -236,17 +257,25 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				if(RemRes==0)
 				{
 					Self.SetEVal(DivRes);
+                    self *= ENum;
 				}
 				else
 				{
-				#ifdef AltNum_EnableBoostFractionalReduction
+			#ifdef AltNum_EnableBoostFractionalReduction
 					//Add code here to reduce size of fractional using boost library code
-				#else
-					Self.IntValue = NumRes;
-					Self.DecimalHalf = DenomRes;
-				#endif
+			#else
+                self.IntValue = valIsPositive==false&&NumRes==0?NegativeRep:NumRes;
+                self.DecimalHalf = 0;
+                #if defined(AltNum_EnableDecimaledEFractionals)
+                    self.ExtraRep = -DenomRes;
+                    self.PartialMultOp(ENum);
+                #else//Converting to ENum
+                    self.ExtraRep = ERep;
+                    self.PartialMultOp(ENum);
+                    self.PartialDivOp(DenomRes);
+                #endif
+			#endif
 				}
-				Self *= ENumValue();
 				break;
 		#endif
 
@@ -254,7 +283,21 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 				//(self.IntValue/self.DecimalHalf)i*(Value.IntValue/Value.DecimalHalf)i
                 //==-1*(self.IntValue/self.DecimalHalf)*(Value.IntValue/Value.DecimalHalf)
-				throw "Code not implimented yet";
+				int NumRes = -self.IntValue*Value.IntValue;
+                int DenomRes = self.DecimalHalf*Value.DecimalHalf;
+				signed int DivRes = NumRes / DenomRes;
+				signed int RemRes = NumRes - DenomRes * NumRes;
+                self.DecimalHalf = 0;
+                if(RemRes==0)
+                {
+                    self.IntValue = DivRes;
+                    self.ExtraRep = 0;
+                }
+                else
+                {
+                    self.IntValue = NumRes;
+                    self.ExtraRep = DenomRes;
+                }
 				break;
 		#endif
 

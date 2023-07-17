@@ -156,27 +156,27 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
     #if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
 			case RepType::NumByDiv://(IntValue.DecimalHalf)/ExtraRep
 			//(self.(IntValue.DecimalHalf)/self.ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
-			//(self.(IntValue.DecimalHalf)* Value.ExtraRep/self.ExtraRep) /(Value.IntValue.DecimalHalf)
-				AltNum NumRes = SetValue(self.IntValue, self.DecimalHalf);
+			//(self.(IntValue.DecimalHalf)* Value.ExtraRep/self.ExtraRep) /(Value.(IntValue.DecimalHalf))
 				signed int DivRes = Value.ExtraRep / self.ExtraRep;
 				signed int RemRes = Value.ExtraRep - self.ExtraRep / Value.ExtraRep;
-				NumRes /= SetValue(Value.IntValue, Value.DecimalHalf);
 				if(RemRes==0)
 				{
-					self.IntValue = NumRes.IntValue;
-					self.DecimalHalf = NumRes.DecimalHalf;
-					self.ExtraRep = NumRes.ExtraRep;
+                    if(Value.DecimalHalf==0)
+                        self.ExtraRep = DivRes * Value.IntValue;
+                    else
+                    {
+                        self.ExtraRep = DivRes;
+                        self.PartialDivOp(Value);
+                    }
 				}
 				else
 				{
-					NumRes *= Value.ExtraRep;
-					self.IntValue = NumRes.IntValue;
-					self.DecimalHalf = NumRes.DecimalHalf;
-					self.PartialDivOp(Value);
+                    self.PartialMultOp(Value.ExtraRep);
+                    self.PartialDivOp(Value);
 				}
 				break;
 			//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
-			//(Self.IntValue/self.DecimalHalf)
+			//(self.IntValue*Value.DecimalHalf)/(self.DecimalHalf*Value.IntValue)
         #if defined(AltNum_EnablePiRep)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 		#endif
@@ -187,25 +187,21 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 		#endif
 		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableENum)
-				int NumRes = Self.IntValue/Value.IntValue;
-				int DenomRes = self.DecimalHalf/Value.DecimalHalf;
-				//Reduce size of fractional if viable
+				int NumRes = self.IntValue*Value.DecimalHalf;
+                int DenomRes = self.DecimalHalf*Value.IntValue;
 				signed int DivRes = NumRes / DenomRes;
-				signed int RemRes = NumRes - DenomRes / NumRes;
-				if(RemRes==0)
-				{
-					Self.SetVal(DivRes);
-				}
-				else
-				{
-            #ifdef AltNum_EnableBoostFractionalReduction
-                //Add code here to reduce size of fractional using boost library code
-            #else
-					Self.IntValue = NumRes;
-					Self.DecimalHalf = DenomRes;
-					Self.ExtraRep = 0;
-            #endif
-				}
+				signed int RemRes = NumRes - DenomRes * NumRes;
+                self.DecimalHalf = 0;
+                if(RemRes==0)
+                {
+                    self.IntValue = DivRes;
+                    self.ExtraRep = 0;
+                }
+                else
+                {
+                    self.IntValue = NumRes;
+                    self.ExtraRep = DenomRes;
+                }
 				break;
         #endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
