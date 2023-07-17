@@ -22,8 +22,10 @@
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
+#if defined(AltNum_EnableBoostFractionalReduction) || defined(AltNum_UseOldDivisionCode)
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#endif
 
 #ifdef AltNum_EnableMediumDecBasedSetValues
     #include "MediumDec.hpp"
@@ -115,21 +117,6 @@ AltNum_EnableMixedFractional =
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
       (Not Fully Implimented)
 
-Only one of alternative rep Mixed Fractional toggles can be enabled at time
-ExtraRep needs to be between 0 and AlternativeFractionalLowerBound, otherwise convert into another format at end of operation to prevent accidentally becoming another represention type 
-AltNum_EnableMixedPiFractional =
-      If DecimalHalf is negative and ExtraRep is Negative,
-      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*Pi
-      (Not Fully Implimented)
-AltNum_EnableMixedEFractional =
-      If DecimalHalf is negative and ExtraRep is Negative,
-      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*Pi
-      (Not Fully Implimented)
-AltNum_EnableMixedIFractional =
-      If DecimalHalf is negative and ExtraRep is Negative,
-      then AltDec represents mixed fraction of (-2147483648 to 2147483647 + (DecimalHalf*-1)/-ExtraRep)*i
-      (Not Implimented)
-
 AltNum_EnableERep =
       If AltNum_UseMediumDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
@@ -190,6 +177,7 @@ AltNum_UseOldRemOpCode
 
 AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
+AltNum_DisableApproachingTop =
 */
 #if defined(AltNum_EnableImaginaryInfinity)
     #define AltNum_EnableImaginaryNum
@@ -418,12 +406,12 @@ ExtraFlags treated as bitwise flag storage
 			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
 	#if defined(AltNum_EnableApproachingValues)
             ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-		#if !defined(AltNum_EnableApproachingTop)
+		#if !defined(AltNum_DisableApproachingTop)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
             ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			#if !defined(AltNum_EnableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
@@ -445,12 +433,12 @@ ExtraFlags treated as bitwise flag storage
 			NegativeImaginaryInfinity,
 	#if defined(AltNum_EnableApproachingI)
             ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-		#if !defined(AltNum_EnableApproachingTop)
+		#if !defined(AltNum_DisableApproachingTop)
             ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		#endif
 	#if defined(AltNum_EnableApproachingDivided)
             ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-		#if !defined(AltNum_EnableApproachingTop)
+		#if !defined(AltNum_DisableApproachingTop)
 			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
 		#endif
 	#endif
@@ -565,7 +553,7 @@ ExtraFlags treated as bitwise flag storage
 			#if defined(AltNum_EnableByDecimaledFractionals)
                 return RepType::NumByDiv;
 			#endif
-				throw "Non-enabled representation detected from AltDec";
+				throw "Non-enabled representation detected";
 			}
 #if defined(AltNum_EnableENum)
             else if(ExtraRep==ERep)
@@ -609,13 +597,13 @@ ExtraFlags treated as bitwise flag storage
 	#elif defined(AltNum_EnableDecimaledIFractionals)
 					return RepType::INumByDiv;
 	#else
-					throw "Non-enabled Negative ExtraRep representation type detected from AltDec";
+					throw "Non-enabled Negative ExtraRep representation type detected";
 	#endif
 #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
 
 #endif
             else
-				throw "Unknown or non-enabled representation type detected from AltDec";
+				throw "Unknown or non-enabled representation type detected";
             return RepType::UnknownType;//Catch-All Value;
         }
     public:
@@ -660,19 +648,19 @@ ExtraFlags treated as bitwise flag storage
         /// If DecimalHalf is negative and ExtraRep is Positive, then MediumDecVariant represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
         /// If ExtraRep is zero and DecimalHalf is positive, then MediumDecVariant represents +- 2147483647.999999999
         ///-----------------------------------------------
-        /// If ExtraRep is negative, it acts as representation type similar to AltDec:
-		/// If ExtraRep is between 0 and , it acts as representation type similar to AltDec:
+        /// If ExtraRep is negative, it acts as representation type similar to MediumDecVariant:
+		/// If ExtraRep is between 0 and , it acts as representation type similar to MediumDecVariant:
         /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePiRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * Pi
         /// </summary>
         signed int ExtraRep;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="intVal">The int value.</param>
         /// <param name="decVal">The decimal val01.</param>
         /// <param name="extraVal">ExtraRep.</param>
-        AltDec(signed int intVal = 0, signed int decVal = 0, signed int extraVal = 0)
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, signed int extraVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -872,24 +860,25 @@ ExtraFlags treated as bitwise flag storage
 		#endif
         }
         
+		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
 		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
-		#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
 		void SetAsApproachingTop(int value, int Divisor=0)
-		#else
+			#else
         void SetAsApproachingTop(int value)
-		#endif
+			#endif
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
-		#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
             ExtraRep = Divisor;
-		#else
+			#else
             ExtraRep = 0;
-		#endif
+			#endif
         }
 		
-		#if defined(AltNum_EnableApproachingPi)
+			#if defined(AltNum_EnableApproachingPi)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
 		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
         void SetAsApproachingTopPi(int value)
@@ -897,8 +886,8 @@ ExtraFlags treated as bitwise flag storage
             IntValue = value; DecimalHalf = ApproachingTopRep;
             ExtraRep = PiRep;
         }
-		#endif
-		#if defined(AltNum_EnableApproachingE)
+			#endif
+			#if defined(AltNum_EnableApproachingE)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
 		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
         void SetAsApproachingTopPi(int value)
@@ -906,7 +895,9 @@ ExtraFlags treated as bitwise flag storage
             IntValue = value; DecimalHalf = ApproachingTopRep;
             ExtraRep = ERep;
         }
+			#endif
 		#endif
+		
 		#if defined(AltNum_EnableApproachingI)
         //Approaching Towards values from right to left side(IntValue.000...1)i
 		//If AltNum_EnableApproachingDivided is enabled and Divisor value is greator than 1, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
@@ -924,6 +915,7 @@ ExtraFlags treated as bitwise flag storage
 			#endif
         }
         
+		#if !defined(AltNum_DisableApproachingTop)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
 		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
 			#if defined(AltNum_EnableApproachingDivided)
@@ -944,20 +936,20 @@ ExtraFlags treated as bitwise flag storage
 private:
         static MediumDecVariant InfinityValue()
         {
-            MediumDecVariant NewSelf = AltDec(1, InfinityRep);
+            MediumDecVariant NewSelf = MediumDecVariant(1, InfinityRep);
             return NewSelf;
         }
         
         static MediumDecVariant NegativeInfinityValue()
         {
-            MediumDecVariant NewSelf = AltDec(-1, InfinityRep);
+            MediumDecVariant NewSelf = MediumDecVariant(-1, InfinityRep);
             return NewSelf;
         }
         
 #if defined(AltNum_EnableApproachingValues)
         static MediumDecVariant ApproachingZeroValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, ApproachingBottomRep);
+            MediumDecVariant NewSelf = MediumDecVariant(0, ApproachingBottomRep);
             return NewSelf;
         }
 #endif
@@ -972,7 +964,7 @@ public:
 
         static MediumDecVariant NaNValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, NaNRep);
+            MediumDecVariant NewSelf = MediumDecVariant(0, NaNRep);
             return NewSelf;
         }
 		
@@ -984,7 +976,7 @@ public:
 
         static MediumDecVariant UndefinedValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, UndefinedRep);
+            MediumDecVariant NewSelf = MediumDecVariant(0, UndefinedRep);
             return NewSelf;
         }
 #endif
@@ -1350,22 +1342,22 @@ private:
 #if defined(AltNum_EnableInfinityRep)
         static MediumDecVariant ApproachingRightRealValue(int IntValue=0)
         {
-            return AltDec(IntValue, 999999999);
+            return MediumDecVariant(IntValue, 999999999);
         }
 
         static MediumDecVariant ApproachingLeftRealValue(int IntValue=0)
         {
-            return AltDec(IntValue, 1);
+            return MediumDecVariant(IntValue, 1);
         }
 
         static MediumDecVariant LeftAlmostPointFiveRealValue(int IntValue=0)
         {
-            return AltDec(IntValue, 499999999);
+            return MediumDecVariant(IntValue, 499999999);
         }
 
         static MediumDecVariant RightAlmostPointFiveRealValue(int IntValue=0)
         {
-            return AltDec(IntValue, 500000001);
+            return MediumDecVariant(IntValue, 500000001);
         }
 #endif
 
@@ -1373,170 +1365,170 @@ private:
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant PiNumValue()
         {
-            return AltDec(3, 141592654, 0);
+            return MediumDecVariant(3, 141592654, 0);
         }
 
         //100,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant HundredMilPiNumVal()
         {
-            return AltDec(314159265, 358979324, 0);
+            return MediumDecVariant(314159265, 358979324, 0);
         }
 
         //10,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant TenMilPiNumVal()
         {
-            return AltDec(31415926, 535897932, 0);
+            return MediumDecVariant(31415926, 535897932, 0);
         }
 
         //1,000,000xPi(Rounded to 9th decimal digit)
         static MediumDecVariant OneMilPiNumVal()
         {
-            return AltDec(3141592, 653589793, 0);
+            return MediumDecVariant(3141592, 653589793, 0);
         }
 
         //10xPi(Rounded to 9th decimal digit)
         static MediumDecVariant TenPiNumVal()
         {
-            return AltDec(31, 415926536, 0);
+            return MediumDecVariant(31, 415926536, 0);
         }
         
         static MediumDecVariant ENumValue()
         {
-            return AltDec(2, 718281828, 0);
+            return MediumDecVariant(2, 718281828, 0);
         }
         
         static MediumDecVariant PiValue()
         {
-            return AltDec(1, 0, -2147483648);
+            return MediumDecVariant(1, 0, -2147483648);
         }
         
         static MediumDecVariant ZeroValue()
         {
-            return AltDec(0, 0, 0);
+            return MediumDecVariant(0, 0, 0);
         }
         
         static MediumDecVariant EValue()
         {
 #if defined(AltNum_EnableENum)
-            return AltDec(1, 0, ERep);
+            return MediumDecVariant(1, 0, ERep);
 #else
-            return AltDec(2, 718281828, 0);
+            return MediumDecVariant(2, 718281828, 0);
 #endif
         }
         
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant OneValue()
         {
-            MediumDecVariant NewSelf = AltDec(1);
+            MediumDecVariant NewSelf = MediumDecVariant(1);
             return NewSelf;
         }
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant TwoValue()
         {
-            MediumDecVariant NewSelf = AltDec(2);
+            MediumDecVariant NewSelf = MediumDecVariant(2);
             return NewSelf;
         }
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant NegativeOneValue()
         {
-            MediumDecVariant NewSelf = AltDec(-1);
+            MediumDecVariant NewSelf = MediumDecVariant(-1);
             return NewSelf;
         }
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Point5Value()
         {
-            MediumDecVariant NewSelf = AltDec(0, 500000000);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 500000000);
             return NewSelf;
         }
 
         static MediumDecVariant JustAboveZeroValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 1);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 1);
             return NewSelf;
         }
 
         static MediumDecVariant OneMillionthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 1000);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 1000);
             return NewSelf;
         }
 
         static MediumDecVariant FiveThousandthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 5000000);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 5000000);
             return NewSelf;
         }
 
         static MediumDecVariant FiveMillionthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 5000);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 5000);
             return NewSelf;
         }
 
         static MediumDecVariant TenMillionthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 100);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 100);
             return NewSelf;
         }
 
         static MediumDecVariant OneHundredMillionthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 10);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 10);
             return NewSelf;
         }
 
         static MediumDecVariant FiveBillionthValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, 5);
+            MediumDecVariant NewSelf = MediumDecVariant(0, 5);
             return NewSelf;
         }
 
         static MediumDecVariant LN10Value()
         {
-            return AltDec(2, 302585093);
+            return MediumDecVariant(2, 302585093);
         }
 
         static MediumDecVariant LN10MultValue()
         {
-            return AltDec(0, 434294482);
+            return MediumDecVariant(0, 434294482);
         }
 
         static MediumDecVariant HalfLN10MultValue()
         {
-            return AltDec(0, 868588964);
+            return MediumDecVariant(0, 868588964);
         }
 
         static MediumDecVariant NilValue()
         {
-            return AltDec(-2147483648, -2147483648);
+            return MediumDecVariant(-2147483648, -2147483648);
         }
         
         static MediumDecVariant MinimumValue()
         {
-            return AltDec(2147483647, 999999999);
+            return MediumDecVariant(2147483647, 999999999);
         }
 
         static MediumDecVariant MaximumValue()
         {
-            return AltDec(2147483647, 999999999);
+            return MediumDecVariant(2147483647, 999999999);
         }
 public:
         static MediumDecVariant AlmostOne;
@@ -1564,7 +1556,7 @@ public:
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) Representation
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Pi;
       
         /// <summary>
@@ -1572,7 +1564,7 @@ public:
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant E;
         
         static MediumDecVariant Zero;
@@ -1580,49 +1572,49 @@ public:
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant OneGMillionth;
 
         //0e-7
@@ -1636,7 +1628,7 @@ public:
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant NegativeOne;
         
         /// <summary>
@@ -1701,14 +1693,14 @@ public:
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecVariant GetValueFromString(std::string Value);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class from string literal
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        AltDec(const char* strVal)
+        MediumDecVariant(const char* strVal)
         {
             std::string Value = strVal;
             if (Value == "Pi")
@@ -1726,10 +1718,10 @@ public:
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDec(std::string Value)
+        MediumDecVariant(std::string Value)
         {
             if (Value == "Pi")
             {
@@ -1880,42 +1872,42 @@ public:
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDec(float Value)
+        MediumDecVariant(float Value)
         {
             this->SetVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDec(double Value)
+        MediumDecVariant(double Value)
         {
             this->SetVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDec(ldouble Value)
+        MediumDecVariant(ldouble Value)
         {
             this->SetVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDec(bool Value)
+        MediumDecVariant(bool Value)
         {
             this->SetVal(Value);
         }
 
-        AltDec(MediumDec Value)
+        MediumDecVariant(MediumDec Value)
         {
             this->SetVal(Value);
         }
@@ -2617,7 +2609,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value);
 		
 		/// <summary>
@@ -2820,7 +2812,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         static MediumDecVariant& IntSubOp(MediumDecVariant& self, IntType& value)
         {
@@ -2974,7 +2966,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         static MediumDecVariant& UnsignedSubOp(MediumDecVariant& self, IntType& value)
         {
@@ -3238,7 +3230,7 @@ public:
         /// Partial Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         void PartialIntMultOp(IntType& Value)
         {
@@ -3275,7 +3267,7 @@ public:
         /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         void BasicIntMultOp(IntType& Value)
         {
@@ -3298,7 +3290,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         static MediumDecVariant& IntMultOp(MediumDecVariant& self, IntType& Value)
         {
@@ -3841,7 +3833,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         static MediumDecVariant& UnsignedMultOp(MediumDecVariant& self, IntType& Value)
         {
@@ -4151,14 +4143,14 @@ public:
         }
 #pragma endregion Remainder Operations
 
-#pragma region AltDec-To-MediumDecVariant Operators
+#pragma region MediumDecVariant-To-MediumDecVariant Operators
     public:
         /// <summary>
         /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator+(MediumDecVariant self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
@@ -4169,7 +4161,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator+=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return AddOp(self, Value);
@@ -4180,7 +4172,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator+=(MediumDecVariant* self, MediumDecVariant Value){ return AddOp(**self, Value); }
 
         /// <summary>
@@ -4188,7 +4180,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator-(MediumDecVariant self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
@@ -4199,7 +4191,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator-=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return SubOp(self, Value);
@@ -4210,7 +4202,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator-=(MediumDecVariant* self, MediumDecVariant Value){ return SubOp(**self, Value); }
 
         /// <summary>
@@ -4218,7 +4210,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator*(MediumDecVariant self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
@@ -4229,7 +4221,7 @@ public:
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>AltDec</returns>
+        ///// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator*=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return MultOp(self, Value);
@@ -4240,7 +4232,7 @@ public:
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>AltDec</returns>
+        ///// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator*=(MediumDecVariant* self, MediumDecVariant Value){ return MultOp(**self, Value); }
 
 
@@ -4249,7 +4241,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator/(MediumDecVariant self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
@@ -4260,7 +4252,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator/=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return DivOp(self, Value);
@@ -4271,7 +4263,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator/=(MediumDecVariant* self, MediumDecVariant Value){ return DivOp(**self, Value); }
 
         /// <summary>
@@ -4279,7 +4271,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator%(MediumDecVariant self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
@@ -4290,7 +4282,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator%=(MediumDecVariant& self, MediumDecVariant Value)
         {
             return RemOp(self, Value);
@@ -4301,7 +4293,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator%=(MediumDecVariant* self, MediumDecVariant Value)
         {
             return RemOp(**self, Value);
@@ -4312,7 +4304,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator^(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
@@ -4349,7 +4341,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator|(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
@@ -4385,7 +4377,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant operator&(MediumDecVariant self, MediumDecVariant Value)
         {
             if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
@@ -4421,7 +4413,7 @@ public:
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecVariant& operator-(MediumDecVariant& self)
         {
             self.SwapNegativeStatus(); return self;
@@ -4462,9 +4454,9 @@ public:
         }
 
         /// <summary>
-        /// AltDec++ Operator
+        /// MediumDecVariant++ Operator
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecVariant operator ++(int)
         {
             MediumDecVariant tmp(*this);
@@ -4473,9 +4465,9 @@ public:
         }
 
         /// <summary>
-        /// AltDec-- Operator
+        /// MediumDecVariant-- Operator
         /// </summary>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecVariant operator --(int)
         {
             MediumDecVariant tmp(*this);
@@ -4492,9 +4484,9 @@ public:
             return *this;
         }
 
-    #pragma endregion AltDec-To-MediumDecVariant Operators
+    #pragma endregion MediumDecVariant-To-MediumDecVariant Operators
 
-    #pragma region AltDec-To-Int Comparison Operators
+    #pragma region MediumDecVariant-To-Int Comparison Operators
         /// <summary>
         /// Equality Operation between <see cref="MediumDecVariant &"/> and Integer Type.
         /// </summary>
@@ -4508,7 +4500,7 @@ public:
         }
 
         /// <summary>
-        /// != Operation between <see cref="AltDec"/> and Integer Type.
+        /// != Operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4525,7 +4517,7 @@ public:
         }
 
         /// <summary>
-        /// Lesser than Operation between <see cref="AltDec"/> and Integer Type.
+        /// Lesser than Operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4569,7 +4561,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Lesser than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Lesser than or equal to operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4613,7 +4605,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Greater than operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4657,7 +4649,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4702,7 +4694,7 @@ public:
         }
 
         /// <summary>
-        /// Equality Operation between Integer Type and <see cref="AltDec"/>.
+        /// Equality Operation between Integer Type and <see cref="MediumDecVariant"/>.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4714,7 +4706,7 @@ public:
         }
 
         /// <summary>
-        /// != Operation between Integer Type and <see cref="AltDec"/>.
+        /// != Operation between Integer Type and <see cref="MediumDecVariant"/>.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4731,7 +4723,7 @@ public:
         }
 
         /// <summary>
-        /// Lesser than Operation between Integer Type and <see cref="AltDec"/> .
+        /// Lesser than Operation between Integer Type and <see cref="MediumDecVariant"/> .
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4775,7 +4767,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Lesser than or equal to operation between Integer Type and <see cref="AltDec"/>.
+        /// Lesser than or equal to operation between Integer Type and <see cref="MediumDecVariant"/>.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4819,7 +4811,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Greater than operation between Integer Type and <see cref="AltDec"/>.
+        /// Greater than operation between Integer Type and <see cref="MediumDecVariant"/>.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4863,7 +4855,7 @@ public:
             return false;
         }
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MediumDecVariant"/> and Integer Type.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -4907,64 +4899,64 @@ public:
             return false;
         }
 
-    #pragma endregion AltDec-To-Int Comparison Operators
+    #pragma endregion MediumDecVariant-To-Int Comparison Operators
     #pragma region Other Operations
-        friend MediumDecVariant operator+(MediumDecVariant self, float Value) { return self + (AltDec)Value; }
-        friend MediumDecVariant operator-(MediumDecVariant self, float Value) { return self - (AltDec)Value; }
-        friend MediumDecVariant operator*(MediumDecVariant self, float Value) { return self * (AltDec)Value; }
-        friend MediumDecVariant operator/(MediumDecVariant self, float Value) { return self / (AltDec)Value; }
-        friend MediumDecVariant operator%(MediumDecVariant self, float Value) { return self % (AltDec)Value; }
-        friend MediumDecVariant operator^(MediumDecVariant self, float Value) { return self ^ (AltDec)Value; }
-        friend MediumDecVariant operator|(MediumDecVariant self, float Value) { return self | (AltDec)Value; }
-        friend MediumDecVariant operator&(MediumDecVariant self, float Value) { return self & (AltDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, float Value) { return self + (MediumDecVariant)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, float Value) { return self - (MediumDecVariant)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, float Value) { return self * (MediumDecVariant)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, float Value) { return self / (MediumDecVariant)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, float Value) { return self % (MediumDecVariant)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, float Value) { return self ^ (MediumDecVariant)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, float Value) { return self | (MediumDecVariant)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, float Value) { return self & (MediumDecVariant)Value; }
 
-        friend MediumDecVariant operator+(float Value, MediumDecVariant self) { return (AltDec)Value + self; }
-        friend MediumDecVariant operator-(float Value, MediumDecVariant self) { return (AltDec)Value - self; }
-        friend MediumDecVariant operator*(float Value, MediumDecVariant self) { return (AltDec)Value * self; }
-        friend MediumDecVariant operator/(float Value, MediumDecVariant self) { return (AltDec)Value / self; }
-        friend MediumDecVariant operator%(float Value, MediumDecVariant self) { return (AltDec)Value % self; }
-        friend MediumDecVariant operator^(float Value, MediumDecVariant self) { return (AltDec)Value ^ self; }
-        friend MediumDecVariant operator|(float Value, MediumDecVariant self) { return (AltDec)Value | self; }
-        friend MediumDecVariant operator&(float Value, MediumDecVariant self) { return (AltDec)Value & self; }
+        friend MediumDecVariant operator+(float Value, MediumDecVariant self) { return (MediumDecVariant)Value + self; }
+        friend MediumDecVariant operator-(float Value, MediumDecVariant self) { return (MediumDecVariant)Value - self; }
+        friend MediumDecVariant operator*(float Value, MediumDecVariant self) { return (MediumDecVariant)Value * self; }
+        friend MediumDecVariant operator/(float Value, MediumDecVariant self) { return (MediumDecVariant)Value / self; }
+        friend MediumDecVariant operator%(float Value, MediumDecVariant self) { return (MediumDecVariant)Value % self; }
+        friend MediumDecVariant operator^(float Value, MediumDecVariant self) { return (MediumDecVariant)Value ^ self; }
+        friend MediumDecVariant operator|(float Value, MediumDecVariant self) { return (MediumDecVariant)Value | self; }
+        friend MediumDecVariant operator&(float Value, MediumDecVariant self) { return (MediumDecVariant)Value & self; }
 
-        friend MediumDecVariant operator+(MediumDecVariant self, double Value) { return self + (AltDec)Value; }
-        friend MediumDecVariant operator-(MediumDecVariant self, double Value) { return self - (AltDec)Value; }
-        friend MediumDecVariant operator*(MediumDecVariant self, double Value) { return self * (AltDec)Value; }
-        friend MediumDecVariant operator/(MediumDecVariant self, double Value) { return self / (AltDec)Value; }
-        friend MediumDecVariant operator%(MediumDecVariant self, double Value) { return self % (AltDec)Value; }
-        friend MediumDecVariant operator^(MediumDecVariant self, double Value) { return self ^ (AltDec)Value; }
-        friend MediumDecVariant operator|(MediumDecVariant self, double Value) { return self | (AltDec)Value; }
-        friend MediumDecVariant operator&(MediumDecVariant self, double Value) { return self & (AltDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, double Value) { return self + (MediumDecVariant)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, double Value) { return self - (MediumDecVariant)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, double Value) { return self * (MediumDecVariant)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, double Value) { return self / (MediumDecVariant)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, double Value) { return self % (MediumDecVariant)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, double Value) { return self ^ (MediumDecVariant)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, double Value) { return self | (MediumDecVariant)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, double Value) { return self & (MediumDecVariant)Value; }
 
-        friend MediumDecVariant operator+(double Value, MediumDecVariant self) { return (AltDec)Value + self; }
-        friend MediumDecVariant operator-(double Value, MediumDecVariant self) { return (AltDec)Value - self; }
-        friend MediumDecVariant operator*(double Value, MediumDecVariant self) { return (AltDec)Value * self; }
-        friend MediumDecVariant operator/(double Value, MediumDecVariant self) { return (AltDec)Value / self; }
-        friend MediumDecVariant operator%(double Value, MediumDecVariant self) { return (AltDec)Value % self; }
-        friend MediumDecVariant operator^(double Value, MediumDecVariant self) { return (AltDec)Value ^ self; }
-        friend MediumDecVariant operator|(double Value, MediumDecVariant self) { return (AltDec)Value | self; }
-        friend MediumDecVariant operator&(double Value, MediumDecVariant self) { return (AltDec)Value & self; }
+        friend MediumDecVariant operator+(double Value, MediumDecVariant self) { return (MediumDecVariant)Value + self; }
+        friend MediumDecVariant operator-(double Value, MediumDecVariant self) { return (MediumDecVariant)Value - self; }
+        friend MediumDecVariant operator*(double Value, MediumDecVariant self) { return (MediumDecVariant)Value * self; }
+        friend MediumDecVariant operator/(double Value, MediumDecVariant self) { return (MediumDecVariant)Value / self; }
+        friend MediumDecVariant operator%(double Value, MediumDecVariant self) { return (MediumDecVariant)Value % self; }
+        friend MediumDecVariant operator^(double Value, MediumDecVariant self) { return (MediumDecVariant)Value ^ self; }
+        friend MediumDecVariant operator|(double Value, MediumDecVariant self) { return (MediumDecVariant)Value | self; }
+        friend MediumDecVariant operator&(double Value, MediumDecVariant self) { return (MediumDecVariant)Value & self; }
 
-        friend MediumDecVariant operator+(MediumDecVariant self, ldouble Value) { return self + (AltDec)Value; }
-        friend MediumDecVariant operator-(MediumDecVariant self, ldouble Value) { return self - (AltDec)Value; }
-        friend MediumDecVariant operator*(MediumDecVariant self, ldouble Value) { return self * (AltDec)Value; }
-        friend MediumDecVariant operator/(MediumDecVariant self, ldouble Value) { return self / (AltDec)Value; }
-        friend MediumDecVariant operator%(MediumDecVariant self, ldouble Value) { return self % (AltDec)Value; }
-        friend MediumDecVariant operator^(MediumDecVariant self, ldouble Value) { return self ^ (AltDec)Value; }
-        friend MediumDecVariant operator|(MediumDecVariant self, ldouble Value) { return self | (AltDec)Value; }
-        friend MediumDecVariant operator&(MediumDecVariant self, ldouble Value) { return self & (AltDec)Value; }
+        friend MediumDecVariant operator+(MediumDecVariant self, ldouble Value) { return self + (MediumDecVariant)Value; }
+        friend MediumDecVariant operator-(MediumDecVariant self, ldouble Value) { return self - (MediumDecVariant)Value; }
+        friend MediumDecVariant operator*(MediumDecVariant self, ldouble Value) { return self * (MediumDecVariant)Value; }
+        friend MediumDecVariant operator/(MediumDecVariant self, ldouble Value) { return self / (MediumDecVariant)Value; }
+        friend MediumDecVariant operator%(MediumDecVariant self, ldouble Value) { return self % (MediumDecVariant)Value; }
+        friend MediumDecVariant operator^(MediumDecVariant self, ldouble Value) { return self ^ (MediumDecVariant)Value; }
+        friend MediumDecVariant operator|(MediumDecVariant self, ldouble Value) { return self | (MediumDecVariant)Value; }
+        friend MediumDecVariant operator&(MediumDecVariant self, ldouble Value) { return self & (MediumDecVariant)Value; }
 
-        friend MediumDecVariant operator+(ldouble Value, MediumDecVariant self) { return (AltDec)Value + self; }
-        friend MediumDecVariant operator-(ldouble Value, MediumDecVariant self) { return (AltDec)Value - self; }
-        friend MediumDecVariant operator*(ldouble Value, MediumDecVariant self) { return (AltDec)Value * self; }
-        friend MediumDecVariant operator/(ldouble Value, MediumDecVariant self) { return (AltDec)Value / self; }
-        friend MediumDecVariant operator%(ldouble Value, MediumDecVariant self) { return (AltDec)Value % self; }
-        friend MediumDecVariant operator^(ldouble Value, MediumDecVariant self) { return (AltDec)Value ^ self; }
-        friend MediumDecVariant operator|(ldouble Value, MediumDecVariant self) { return (AltDec)Value | self; }
-        friend MediumDecVariant operator&(ldouble Value, MediumDecVariant self) { return (AltDec)Value & self; }
+        friend MediumDecVariant operator+(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value + self; }
+        friend MediumDecVariant operator-(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value - self; }
+        friend MediumDecVariant operator*(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value * self; }
+        friend MediumDecVariant operator/(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value / self; }
+        friend MediumDecVariant operator%(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value % self; }
+        friend MediumDecVariant operator^(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value ^ self; }
+        friend MediumDecVariant operator|(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value | self; }
+        friend MediumDecVariant operator&(ldouble Value, MediumDecVariant self) { return (MediumDecVariant)Value & self; }
 
     #pragma endregion Other Operations
-    #pragma region AltDec-To-Integer Operations
+    #pragma region MediumDecVariant-To-Integer Operations
     public:
         friend MediumDecVariant operator+(MediumDecVariant self, unsigned char Value){ return UnsignedAddOp(self, Value); }
         friend MediumDecVariant operator-(MediumDecVariant self, unsigned char Value){ return UnsignedSubOp(self, Value); }
@@ -5031,7 +5023,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator+(MediumDecVariant self, IntType Value)
         {
@@ -5043,7 +5035,7 @@ public:
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>AltDec</returns>
+        ///// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator+=(MediumDecVariant& self, IntType Value)
         {
@@ -5058,7 +5050,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator-(MediumDecVariant self, IntType Value)
         {
@@ -5070,7 +5062,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator-=(MediumDecVariant& self, IntType Value)
         {
@@ -5085,7 +5077,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator*(MediumDecVariant self, IntType Value)
         {
@@ -5097,7 +5089,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator*=(MediumDecVariant& self, IntType Value)
         {
@@ -5109,7 +5101,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator*=(MediumDecVariant* self, IntType Value){ return IntMultOp(**self, Value); }
 
@@ -5118,7 +5110,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator/(MediumDecVariant self, IntType Value)
         {
@@ -5130,7 +5122,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator/=(MediumDecVariant& self, IntType Value)
         {
@@ -5145,7 +5137,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator%(MediumDecVariant self, IntType Value)
         {
@@ -5157,7 +5149,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator%=(MediumDecVariant& self, IntType Value)
         {
@@ -5172,7 +5164,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator^(MediumDecVariant self, IntType Value)
         {
@@ -5199,7 +5191,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator|(MediumDecVariant self, IntType Value)
         {
@@ -5226,7 +5218,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator&(MediumDecVariant self, IntType Value)
         {
@@ -5247,14 +5239,14 @@ public:
             }
             return self;
         }
-    #pragma endregion AltDec-To-Integer Operations
+    #pragma endregion MediumDecVariant-To-Integer Operations
     #pragma region Integer-To-MediumDecVariant Operations
         /// <summary>
         /// Addition Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator+(IntType Value, MediumDecVariant self)
         {
@@ -5266,7 +5258,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator-(IntType Value, MediumDecVariant self)
         {
@@ -5279,7 +5271,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator*(IntType Value, MediumDecVariant self)
         {
@@ -5291,7 +5283,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator/(IntType Value, MediumDecVariant self)
         {
@@ -5304,7 +5296,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator%(IntType Value, MediumDecVariant self)
         {
@@ -5317,33 +5309,33 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator^(IntType Value, MediumDecVariant self)
         {
-            return (AltDec)Value ^ self;
+            return (MediumDecVariant)Value ^ self;
         }
         /// <summary>
         /// Bitwise Or Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator|(IntType Value, MediumDecVariant self)
         {
-            return (AltDec)Value | self;
+            return (MediumDecVariant)Value | self;
         }
         /// <summary>
         /// Bitwise And Operation Between MediumDecVariant and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename IntType>
         friend MediumDecVariant operator&(IntType Value, MediumDecVariant self)
         {
-            return (AltDec)Value & self;
+            return (MediumDecVariant)Value & self;
         }
     #pragma endregion Integer-To-MediumDecVariant Operations
 
@@ -5546,7 +5538,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Ceil(MediumDecVariant Value)
         {
             return Value.Ceil();
@@ -5585,7 +5577,7 @@ public:
         /// Cuts off the decimal point from number
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Trunc(MediumDecVariant Value)
         {
             return Value.Trunc();
@@ -5621,7 +5613,7 @@ public:
         /// Forces Number into non-negative
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Abs(MediumDecVariant Value)
         {
             return Value.Abs();
@@ -5847,7 +5839,7 @@ public:
             {
                 if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
                 {
-                    return AltDec(0, MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
+                    return MediumDecVariant(0, MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
                 }
                 else
                 {
@@ -5868,7 +5860,7 @@ public:
                 }
             }
             else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10)
-                return AltDec(VariableConversionFunctions::PowerOfTens[expValue], 0);
+                return MediumDecVariant(VariableConversionFunctions::PowerOfTens[expValue], 0);
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
@@ -5987,7 +5979,7 @@ public:
         /// <param name="value">The target value.</param>
         /// <param name="nValue">The nth value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant NthRoot(MediumDecVariant value, int n, MediumDecVariant precision = MediumDecVariant::JustAboveZero)
         {
             MediumDecVariant xPre = 1+(value-1)/n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
@@ -5995,7 +5987,7 @@ public:
 
             // initializing difference between two 
             // roots by INT_MAX 
-            MediumDecVariant delX = AltDec(2147483647, 0);
+            MediumDecVariant delX = MediumDecVariant(2147483647, 0);
 
             //  xK denotes current value of x 
             MediumDecVariant xK;
@@ -6035,7 +6027,7 @@ public:
         /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Exp(MediumDecVariant x)
         {
             //x.ConvertToNumRep();//Prevent losing imaginary number status
@@ -6145,7 +6137,7 @@ public:
                 //case RepType::ApproachingTop:
                 //break;
                 case InfinityRep:
-                    return expType.IsZero()?AltDec.One:value;
+                    return expType.IsZero()?MediumDecVariant.One:value;
                 break;
 #endif
 #if defined(AltNum_EnableInfinityRep)
@@ -6200,7 +6192,7 @@ public:
 #endif
 #if defined(AltNum_EnableByDecimaledFractionals)
                 case RepType::NumByDiv:
-                    return FractionalPow(value, AltDec(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
+                    return FractionalPow(value, MediumDecVariant(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
 #if defined(AltNum_EnableENum)
                 case RepType::ENumByDiv:
                     return FractionalPow(value, value.ExtraRep*-1);
@@ -6281,7 +6273,7 @@ public:
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>BlazesRusCode::AltDec</returns>
+        /// <returns>BlazesRusCode::MediumDecVariant</returns>
         static MediumDecVariant LnRef(MediumDecVariant& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
@@ -6364,7 +6356,7 @@ public:
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>BlazesRusCode::AltDec</returns>
+        /// <returns>BlazesRusCode::MediumDecVariant</returns>
         static MediumDecVariant LnRefV2(MediumDecVariant& value)
         {
             //if (value <= 0) {}else//Error if equal or less than 0
@@ -6479,7 +6471,7 @@ public:
         /// Log Base 10 of Value
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Log10(MediumDecVariant value)
         {
             if (value == MediumDecVariant::One)
@@ -6532,9 +6524,9 @@ public:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return AltDec(index, 0);
+                        return MediumDecVariant(index, 0);
                 }
-                return AltDec(9, 0);
+                return MediumDecVariant(9, 0);
             }
             if (WithinThresholdRange)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -6568,7 +6560,7 @@ private:
     template<typename ValueType>
     static MediumDecVariant Log10_IntPart02(ValueType& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-        MediumDecVariant TotalRes = AltDec((value - 1), 0) / AltDec((value + 1), 0);
+        MediumDecVariant TotalRes = MediumDecVariant((value - 1), 0) / MediumDecVariant((value + 1), 0);
         MediumDecVariant LastPow = TotalRes;
         MediumDecVariant WSquared = TotalRes * TotalRes;
         MediumDecVariant AddRes;
@@ -6587,7 +6579,7 @@ public:
         /// Log Base 10 of Value(integer value variant)
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         template<typename ValueType>
         static MediumDecVariant Log10(ValueType value)
         {
@@ -6600,9 +6592,9 @@ public:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return AltDec(index, 0);
+                        return MediumDecVariant(index, 0);
                 }
-                return AltDec(9, 0);
+                return MediumDecVariant(9, 0);
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
@@ -6616,7 +6608,7 @@ public:
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Log(MediumDecVariant value, MediumDecVariant baseVal)
         {
             if (value == MediumDecVariant::One)
@@ -6630,7 +6622,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Log(MediumDecVariant value, int baseVal)
         {
             bool WithinThresholdRange = false;
@@ -6687,15 +6679,15 @@ public:
                 {
                     if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
                     {
-                        baseTotalRes = AltDec(index, 0);
+                        baseTotalRes = MediumDecVariant(index, 0);
                         break;
                     }
                 }
-                baseTotalRes = AltDec(9, 0); lnMultLog = false;
+                baseTotalRes = MediumDecVariant(9, 0); lnMultLog = false;
             }
             else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                baseTotalRes = AltDec((baseVal - 1), 0) / AltDec((baseVal + 1), 0);
+                baseTotalRes = MediumDecVariant((baseVal - 1), 0) / MediumDecVariant((baseVal + 1), 0);
                 MediumDecVariant baseLastPow = baseTotalRes;
                 MediumDecVariant baseWSquared = baseTotalRes * baseTotalRes;
                 MediumDecVariant baseAddRes;
@@ -6714,9 +6706,9 @@ public:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? AltDec(index, 0) / (baseTotalRes * MediumDecVariant::HalfLN10Mult): AltDec(index, 0)/ baseTotalRes;
+                        return lnMultLog ? MediumDecVariant(index, 0) / (baseTotalRes * MediumDecVariant::HalfLN10Mult): MediumDecVariant(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? AltDec(9, 0) / (baseTotalRes*MediumDecVariant::HalfLN10Mult):AltDec(9, 0)/baseTotalRes;
+                return lnMultLog? MediumDecVariant(9, 0) / (baseTotalRes*MediumDecVariant::HalfLN10Mult):MediumDecVariant(9, 0)/baseTotalRes;
             }
             if (WithinThresholdRange)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -6763,7 +6755,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant SinFromAngle(MediumDecVariant Value)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -6918,7 +6910,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Sin(MediumDecVariant Value)
         {
             if (Value.ExtraRep == PiRep)//0 to 2Pi range (2Pi == 0Pi)
@@ -6976,7 +6968,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Cos(MediumDecVariant Value)
         {
             if (Value.ExtraRep == PiRep)//0 to 2Pi range (2Pi == 0Pi)
@@ -7028,7 +7020,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant Tan(MediumDecVariant Value)
         {
             MediumDecVariant SinValue = Zero;
@@ -7049,7 +7041,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant TanFromAngle(MediumDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -7134,7 +7126,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant ATan(MediumDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -7170,11 +7162,11 @@ public:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>MediumDecVariant</returns>
         static MediumDecVariant ArcTan2(MediumDecVariant y, MediumDecVariant x)
         {
 #if defined(AltNum_EnablePiRep)
-            MediumDecVariant coeff_1 = AltDec(0, 250000000, PiRep);//Pi / 4;
+            MediumDecVariant coeff_1 = MediumDecVariant(0, 250000000, PiRep);//Pi / 4;
 #else
             MediumDecVariant coeff_1 = Pi / 4;
 #endif
@@ -7308,7 +7300,7 @@ public:
     /// Gets the value from string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    /// <returns>AltDec</returns>
+    /// <returns>MediumDecVariant</returns>
     inline MediumDecVariant MediumDecVariant::GetValueFromString(std::string Value)
     {
         MediumDecVariant NewSelf = Zero;
@@ -7566,10 +7558,10 @@ public:
     #pragma endregion String Function Source
 
     /// <summary>
-    /// (AltDec Version)Performs remainder operation then saves division result
+    /// (MediumDecVariant Version)Performs remainder operation then saves division result
     /// C = A - B * (A / B)
     /// </summary>
-    class DLL_API AltModChecker : public AltNumModChecker<AltDec>
+    class DLL_API AltModChecker : public AltNumModChecker<MediumDecVariant>
     {
     };
 }
