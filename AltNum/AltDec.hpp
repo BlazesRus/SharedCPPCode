@@ -48,9 +48,9 @@ AltNum_EnableApproachingValues
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483647 and ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
      (Not Fully Implimented)
-AltNum_EnableNearPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
-AltNum_EnableNearE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
-AltNum_EnableNearI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
+AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
+AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
+AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
 AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
 	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
@@ -79,7 +79,7 @@ AltNum_EnableHigherPrecisionPiConversion =
 AltNum_UseMediumDecBasedRepresentations =
       Forces to calculate certain representations like MediumDec does 
       (preference for storing non-normal representations within value of negative DecimalHalf)
-	  (Not Implimented Yet)
+	  (Not Implimented)
 	  
 AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
@@ -156,7 +156,7 @@ AltNum_TogglePreferedSettings =
       Force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep, AltNum_EnableApproachingDivided
 	  and later AltNum_EnableAlternativeRepFractionals & AltNum_EnableByDecimaledFractionals once get code that part of code in working condition
 
-AltNum_EnableUndefinedButInRange =
+AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos operation
 
 AltNum_DisableSwitchBasedConversion =
 
@@ -189,7 +189,7 @@ AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces 
 AltNum_UseOldRemOpCode
 
 AltNum_EnableBoostFractionalReduction
-AltNum_EnableImaginaryInfinity
+AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 */
 #if defined(AltNum_EnableImaginaryInfinity)
     #define AltNum_EnableImaginaryNum
@@ -237,7 +237,7 @@ AltNum_EnableImaginaryInfinity
 #endif
 
 //Force enable Pi features if near Pi enabled
-#if defined(AltNum_EnableNearPi) && !defined(AltNum_EnablePiRep)
+#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
     #define AltNum_EnablePiRep
 #endif
 
@@ -249,16 +249,16 @@ AltNum_EnableImaginaryInfinity
     #define AltNum_OtherNegativeExtraRepsDefined
 #endif
 
-#if defined(AltNum_EnableNearPi) && !defined(AltNum_EnablePiRep)
-    #undef AltNum_EnableNearPi
+#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
+    #undef AltNum_EnableApproachingPi
 #endif
 
-#if defined(AltNum_EnableNearE) && !defined(AltNum_EnableERep)
-    #undef AltNum_EnableNearE
+#if defined(AltNum_EnableApproachingE) && !defined(AltNum_EnableERep)
+    #undef AltNum_EnableApproachingE
 #endif
 
-#if defined(AltNum_EnableNearI) && !defined(AltNum_EnableImaginaryNum)
-    #undef AltNum_EnableNearI
+#if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
+    #undef AltNum_EnableApproachingI
 #endif
 
 namespace BlazesRusCode
@@ -274,10 +274,8 @@ ExtraFlags treated as bitwise flag storage
 /*---Accuracy Tests(with MediumDec based settings):
  * 100% accuracy for all integer value multiplication operations.
  * 100% accuracy for addition/subtraction operations
- * Partial but still high accuracy for non-integer representation variations of multiplication because of truncation
-   (values get lost if get too small)
- * Partial but still high accuracy for division because of truncation
-   (values get lost if get too small)
+ * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
+   (values get lost if get too small) (100% accuracy except for some truncated digits lost)
  * Other operations like Ln and Sqrt contained with decent level of accuracy
    (still loses a little accuracy because of truncation etc)
  * Operations and functions will mess up if IntValue overflows/underflows
@@ -305,15 +303,26 @@ ExtraFlags treated as bitwise flag storage
     private:
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
+		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
         static const signed int InfinityRep = -2147483648;
 #if defined(AltNum_EnableApproachingValues)
-        //Is Approaching IntValue when DecimalHalf==-2147483647:
+        //Is Approaching Bottom when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
-        //If ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
-		//If ExtraRep between +-2 and 2147483645 and AltNum_EnableApproachingMidDec enabled, Represents approaching 1/ExtraRep point
-        static const signed int ApproachingValRep = -2147483647;
+		//If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+		//If ExtraRep=PiRep, then it represents Approaching IntValue from right towards left (IntValue.0__1)Pi
+        static const signed int ApproachingBottomRep = -2147483647;
+		//Is Approaching Top i when DecimalHalf==-2147483646:
+		//If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+		//If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
+		static const signed int ApproachingTopRep = -2147483646;
 #endif
-        static const signed int ApproachingImaginaryValRep = -2147483646;
+		//Is Approaching Bottom i when DecimalHalf==-2147483645:
+		//If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)i
+        static const signed int ApproachingImaginaryBottomRep = -2147483645;
+		//Is Approaching Top i when DecimalHalf==-2147483644:
+		//If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)i
+		static const signed int ApproachingImaginaryTopRep = -2147483644;
 #endif
 #if defined(AltNum_EnablePiRep)
         //Is Pi*Value representation when ExtraRep==-2147483648
@@ -343,9 +352,8 @@ ExtraFlags treated as bitwise flag storage
         static const signed int UndefinedInRangeRep = -2147483642;
 #endif
         static const signed int AlternativeFractionalLowerBound = -2147483641;
-        static const signed int MixedFractionalLowerBound = -2147483642;
-		//Upper limit for Mixed Fractions; infinite approaching type representations after this DecimalHalf value
-		static const signed int InfinityBasedLowerBound = -2147483645;
+		//Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
+		static const signed int InfinityBasedLowerBound = -2147483644;
 #if defined(AltNum_EnableInfinityRep)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
@@ -361,86 +369,91 @@ ExtraFlags treated as bitwise flag storage
             NumByDiv,
 #if defined(AltNum_EnablePiRep)
             PiNum,
-#if defined(AltNum_EnablePiPowers)
+	#if defined(AltNum_EnablePiPowers)
             PiPower,
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
+	#endif
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
             PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
-#endif
+		#endif
             PiFractional,//  IntValue/DecimalHalf*Pi Representation
-#endif
+	#endif
 #endif
 #if defined(AltNum_EnableENum)
             ENum,
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledEFractionals)
             ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
-#endif
+		#endif
             EFractional,//  IntValue/DecimalHalf*e Representation
-#endif
+	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             INum,
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv,//(Value/(ExtraRep*-1))*i Representation
-#endif
+		#endif
             IFractional,//  IntValue/DecimalHalf*i Representation
-#endif
-#ifdef AltNum_EnableComplexNumbers
+	#endif
+	#ifdef AltNum_EnableComplexNumbers
             ComplexIRep,
-#endif
+	#endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnableMixedPiFractional)
+	#if defined(AltNum_EnableMixedPiFractional)
             MixedPi,//IntValue +- (DecimalHalf/-ExtraRep)
-#endif
-#if defined(AltNum_EnableMixedEFractional)
+	#endif
+	#if defined(AltNum_EnableMixedEFractional)
             MixedE,//IntValue +- (DecimalHalf/-ExtraRep)
-#endif
-#if defined(AltNum_EnableMixedIFractional)
+	#endif
+	#if defined(AltNum_EnableMixedIFractional)
             MixedI,//IntValue +- (DecimalHalf/-ExtraRep)
-#endif
+	#endif
 #endif
 
 #if defined(AltNum_EnableInfinityRep)
 			PositiveInfinity,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
 			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
-#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproachingValues)
             ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+		#if !defined(AltNum_EnableApproachingTop)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-#if defined(AltNum_EnableApproachingDivided)
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
             ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
-#endif
-#endif
+			#if !defined(AltNum_EnableApproachingTop)
+			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			#endif
+		#endif
+	#endif
 #endif
             Undefined,
             NaN,
 #if defined(AltNum_EnableNegativeZero)
             NegativeZero,
 #endif
-#if defined(AltNum_EnableNearPi)
-            NearPi,//(Approaching Away from Zero is equal to 0.9999...Pi)
+#if defined(AltNum_EnableApproachingPi)
+            ApproachingTopPi,//(Approaching Away from Zero is equal to 0.9999...Pi)
 #endif
-#if defined(AltNum_EnableNearE)
-            NearE,//(Approaching Away from Zero is equal to 0.9999...e)
-#endif
-#if defined(AltNum_EnableNearI)
-            NearI,//(Approaching Away from Zero is equal to 0.9999...i)
+#if defined(AltNum_EnableApproachingE)
+            ApproachingTopE,//(Approaching Away from Zero is equal to 0.9999...e)
 #endif
 #if defined(AltNum_EnableImaginaryInfinity)
             PositiveImaginaryInfinity,
 			NegativeImaginaryInfinity,
-#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproachingI)
             ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+		#if !defined(AltNum_EnableApproachingTop)
             ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-#if defined(AltNum_EnableApproachingDivided)
+		#endif
+	#if defined(AltNum_EnableApproachingDivided)
             ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
-#endif
+		#if !defined(AltNum_EnableApproachingTop)
+			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+		#endif
+	#endif
 #endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
@@ -471,50 +484,57 @@ ExtraFlags treated as bitwise flag storage
             }
 			else
 #endif
-#if defined(AltNum_EnableApproachingValues)
-            if (DecimalHalf == ApproachingValRep)
+#if defined(AltNum_EnableApproachingValues)//old value = ApproachingValRep
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+				if(ExtraRep==0)
+					return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
+				else
+	#if defined(AltNum_EnableApproachingDivided)//if(ExtraRep>1)
+					return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
+		#else
+                    throw "EnableApproachingDivided feature not enabled";
+		#endif	
+            }
+            else if (DecimalHalf == ApproachingTopRep)
             {
                 if(ExtraRep==0)
-                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-				else if(ExtraRep==-1)
-				    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-#if defined(AltNum_EnableNearPi)
+                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+	#if defined(AltNum_EnableApproachingPi)
                 else if (ExtraRep == PiRep)
-                    return RepType::NearPi;
-#endif
-#if defined(AltNum_EnableNearE)
+                    return RepType::ApproachingTopPi;
+	#endif
+	#if defined(AltNum_EnableApproachingE)
                 else if (ExtraRep == ERep)
-                    return RepType::NearE;
-#endif
-#if defined(AltNum_EnableNearI)
-                else if (ExtraRep == IRep)
-                    return RepType::NearI;
-#endif
+                    return RepType::ApproachingTopE;
+	#endif
                 else
-#if defined(AltNum_EnableApproachingDivided)
-					if(ExtraRep<0)//Approaching left from right
-						return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-					else//Approaching right from left
-						return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-#else
+	#if defined(AltNum_EnableApproachingDivided)
+					return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
+	#else
                     throw "EnableApproachingDivided feature not enabled";
-#endif            
+	#endif            
             }
-#endif
-	#if defined(AltNum_EnableImaginaryInfinity)
-            if (DecimalHalf == ApproachingImaginaryValRep)
+	#if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
+            else if (DecimalHalf == ApproachingImaginaryBottomRep)
             {
                 if(ExtraRep==0)
                     return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-				else if(ExtraRep==-1)
-				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
                 else
-#if defined(AltNum_EnableApproachingDivided)
-					if(ExtraRep<0)//Approaching left from right
-						return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-					else//Approaching right from left
-						return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-#else
+		#if defined(AltNum_EnableApproachingDivided)
+					return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
+		#else
+                    throw "EnableApproachingDivided feature not enabled";
+		#endif            
+            }
+            else if (DecimalHalf == ApproachingImaginaryTopRep)
+            {
+				if(ExtraRep==0)
+				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+				else
+	#if defined(AltNum_EnableApproachingDivided)
+					return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
+	#else
                     throw "EnableApproachingDivided feature not enabled";
 #endif            
             }
@@ -834,45 +854,93 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = 0;
         }
   
-  #if defined(AltNum_EnableApproachingValues)
-        //Approaching Zero from Right(0.000...1)
-        void SetAsApproachingZero()
-        {
-            IntValue = 0; DecimalHalf = ApproachingValRep;
-            ExtraRep = 0;
-        }
-        
-        //(0.99...9)
-        void SetAsApproachingZeroFromLeft()
-        {
-            IntValue = 0; DecimalHalf = ApproachingValRep;
-            ExtraRep = -1;
-        }
-        
+	#if defined(AltNum_EnableApproachingValues)
+		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
-        void SetAsApproachingValueFromRight(int value)
+		//If AltNum_EnableApproachingDivided is enabled and Divisor value is greator than 1, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
+		#if defined(AltNum_EnableApproachingDivided)
+		void SetAsApproachingBottom(int value=0, int Divisor=0)
+		#else
+        void SetAsApproachingBottom(int value=0)
+		#endif
         {
-            IntValue = value; DecimalHalf = ApproachingValRep;
+            IntValue = value; DecimalHalf = ApproachingBottomRep;
+		#if defined(AltNum_EnableApproachingDivided)
+            ExtraRep = Divisor;
+		#else
             ExtraRep = 0;
+		#endif
         }
         
+		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-        void SetAsApproachingBottomValue(int value)
+		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
+		#if defined(AltNum_EnableApproachingDivided)
+		void SetAsApproachingTop(int value, int Divisor=0)
+		#else
+        void SetAsApproachingTop(int value)
+		#endif
         {
-            IntValue = value; DecimalHalf = ApproachingValRep;
-            ExtraRep = -1;
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+		#if defined(AltNum_EnableApproachingDivided)
+            ExtraRep = Divisor;
+		#else
+            ExtraRep = 0;
+		#endif
         }
 		
-#if defined(AltNum_EnableApproachingDivided)
-        //If Divisor is positive, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
+		#if defined(AltNum_EnableApproachingPi)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
 		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
-        void SetAsApproachingMid(int value, int Divisor)
+        void SetAsApproachingTopPi(int value)
         {
-            IntValue = value; DecimalHalf = ApproachingValRep;
-            ExtraRep = Divisor;
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+            ExtraRep = PiRep;
         }
-#endif
-#endif
+		#endif
+		#if defined(AltNum_EnableApproachingE)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
+		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
+        void SetAsApproachingTopPi(int value)
+        {
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+            ExtraRep = ERep;
+        }
+		#endif
+		#if defined(AltNum_EnableApproachingI)
+        //Approaching Towards values from right to left side(IntValue.000...1)i
+		//If AltNum_EnableApproachingDivided is enabled and Divisor value is greator than 1, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
+			#if defined(AltNum_EnableApproachingDivided)
+		void SetAsApproachingImaginaryBottom(int value=0, int Divisor=0)
+			#else
+        void SetAsApproachingImaginaryBottom(int value=0)
+			#endif
+        {
+            IntValue = value; DecimalHalf = ApproachingImaginaryBottomRep;
+			#if defined(AltNum_EnableApproachingDivided)
+            ExtraRep = Divisor;
+			#else
+            ExtraRep = 0;
+			#endif
+        }
+        
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
+		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
+			#if defined(AltNum_EnableApproachingDivided)
+		void SetAsApproachingImaginaryTop(int value, int Divisor=0)
+			#else
+        void SetAsApproachingImaginaryTop(int value)
+			#endif
+        {
+            IntValue = value; DecimalHalf = ApproachingImaginaryTopRep;
+			#if defined(AltNum_EnableApproachingDivided)
+            ExtraRep = Divisor;
+			#else
+            ExtraRep = 0;
+			#endif
+        }
+		#endif
+	#endif
 private:
         static MediumDecVariant InfinityValue()
         {
@@ -889,7 +957,7 @@ private:
 #if defined(AltNum_EnableApproachingValues)
         static MediumDecVariant ApproachingZeroValue()
         {
-            MediumDecVariant NewSelf = AltDec(0, ApproachingValRep);
+            MediumDecVariant NewSelf = AltDec(0, ApproachingBottomRep);
             return NewSelf;
         }
 #endif
@@ -3109,7 +3177,7 @@ public:
                 return;
 			if(PartialMultOp(Value))
 #if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
 #else
 				DecimalHalf = 1;
 #endif
@@ -3124,7 +3192,7 @@ public:
         {
 			if(PartialMultOp(Value))//Prevent Dividing into nothing
 #if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
 #else
 				DecimalHalf = 1;
 #endif
@@ -3608,7 +3676,7 @@ public:
 			if (PartialDivOp(Value))//Prevent Dividing into nothing
 #endif
 #if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingValRep; ExtraRep = 0; }
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
 #else
 				DecimalHalf = 1;
 #endif
@@ -5475,7 +5543,7 @@ public:
         }
         
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the nearest integer).
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>AltDec</returns>
@@ -5493,9 +5561,13 @@ public:
 #if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
                 return *this;
-            else if (DecimalHalf == ApproachingValRep)
+            else if (DecimalHalf == ApproachingBottomRep)
             {
                 DecimalHalf = 0; ExtraRep = 0;
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+                DecimalHalf = 999999999; ExtraRep = 0;
             }
             else
             {
@@ -6228,8 +6300,17 @@ public:
                 return value;
                 break;
 #endif
-            case ApproachingValRep:
-                WithinThresholdRange = true;
+            case ApproachingBottomRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
+                break;
+            case ApproachingTopRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
                 break;
             default:
                 if(value.ExtraRep==PiRep)
@@ -6303,8 +6384,18 @@ public:
                 return value;
                 break;
 #endif
-            //case ApproachingValRep:
-            //    break;
+            case ApproachingBottomRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
+                break;
+            case ApproachingTopRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
+                break;
             default:
                 break;
             }
@@ -6406,8 +6497,17 @@ public:
                 return value;
                 break;
 #endif
-            case ApproachingValRep:
-                WithinThresholdRange = true;
+            case ApproachingBottomRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
+                break;
+            case ApproachingTopRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
                 break;
             default:
                 if(value.ExtraRep==PiRep)
@@ -6546,8 +6646,17 @@ public:
                 return value;
                 break;
 #endif
-            case ApproachingValRep:
-                WithinThresholdRange = true;
+            case ApproachingBottomRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
+                break;
+            case ApproachingTopRep:
+				if(value.IntValue < 2)
+					WithinThresholdRange = true;
+				else
+					WithinThresholdRange = false;
                 break;
             default:
                 if(value.ExtraRep==PiRep)

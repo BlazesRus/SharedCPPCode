@@ -25,7 +25,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
         else
 #if defined(AltNum_EnableApproachingValues)
         {
-            self.DecimalHalf = ApproachingValRep;
+            self.DecimalHalf = ApproachingBottomRep;
             if(self.IntValue<0)
                 self.IntValue = NegativeRep;
             else

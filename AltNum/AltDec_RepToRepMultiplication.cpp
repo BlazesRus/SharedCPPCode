@@ -45,7 +45,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 				if(Value.IntValue==0)
 				{
 					self.IntValue = self.IntValue<0?NegativeRep:0;
-					self.DecimalHalf = ApproachingValRep;
+					self.DecimalHalf = ApproachingBottomRep;
 					self.ExtraRep = 0;
 					return;
 				}
@@ -625,7 +625,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					{
 						self.IntValue = self.IntValue==0?NegativeRep:0;
 #if defined(AltNum_EnableImaginaryInfinity)
-						self.DecimalHalf = ApproachingImaginaryValRep;
+						self.DecimalHalf = ApproachingImaginaryBottomRep;
 #else
 						self.DecimalHalf = 1;
 #endif
@@ -651,7 +651,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					{
 						self.IntValue = self.IntValue==0?NegativeRep:0;
 #if defined(AltNum_EnableImaginaryInfinity)
-						self.DecimalHalf = ApproachingImaginaryValRep;
+						self.DecimalHalf = ApproachingImaginaryBottomRep;
 #else
 						self.DecimalHalf = 1;
 #endif

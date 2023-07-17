@@ -60,14 +60,15 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
     {
     #if defined(AltNum_EnableApproachingValues)
         case RepType::ApproachingBottom:
+            //Any real number / 0.0..1 = Infinity
             if(Value.IntValue==0)
             {
-                if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
+				self.DecimalHalf = InfinityRep;
+                if(self.IntValue<0)
                     self.IntValue = -1;
-                else//PositiveValue / 0.0..1 = Infinity
+                else
                     self.IntValue = 1;
-                self.DecimalHal = InfinityRep;
-                self.ExtraRep = 0;//Not really needed because not checking this value unless imaginary infinity detected
+				self.ExtraRep = 0;
                 return;
             }
             else
@@ -78,9 +79,10 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
             break;
 
 		case RepType::ApproachingTop:
-            if(LRep==RepType::NormalType&&Value.IntValue)//1/0.9..9 = 1.0..1
+            if(LRep==RepType::NormalType&&Value.IntValue==0)//1/0.9..9 = 1.0..1
             {//(For positive left side values)Techically returns self.IntValue + 0.0..self.IntValue
-                self.ExtraRep = 0;
+				self.DecimalHalf = ApproachingBottomRep;
+				self.ExtraRep = 0;
                 return;
             }
             else
