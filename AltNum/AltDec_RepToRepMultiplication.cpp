@@ -165,7 +165,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -177,7 +177,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 			#endif
 #endif
@@ -260,7 +260,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -272,7 +272,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 			#endif
 #endif
@@ -354,7 +354,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -366,7 +366,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 			#endif
 #endif
@@ -439,7 +439,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -451,7 +451,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 			#endif
 #endif
@@ -516,7 +516,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -528,7 +528,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -588,7 +588,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -600,7 +600,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -731,7 +731,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -743,7 +743,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -814,7 +814,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -826,7 +826,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -910,7 +910,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -922,7 +922,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1016,7 +1016,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1028,7 +1028,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1103,7 +1103,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1115,7 +1115,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1190,7 +1190,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1202,7 +1202,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1291,7 +1291,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1303,7 +1303,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1374,7 +1374,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #else
 				case RepType::MixedE:
 #endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1386,7 +1386,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1461,7 +1461,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1546,7 +1546,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif
@@ -1639,7 +1639,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif
@@ -1711,7 +1711,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 		#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 		#endif
-					MixedFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 	#endif
 
@@ -1723,7 +1723,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRMultOp(LRep, RRep, self, Value);
+					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif
