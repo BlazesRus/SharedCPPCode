@@ -45,18 +45,18 @@ AltNum_EnableNegativeZero =
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
       When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
-	 (Not Fully Implimented)
+	 (Mostly Implimented)
 AltNum_EnableApproachingValues
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
-	  When DecimalHalf is -2147483647 and ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
+	  When DecimalHalf is -2147483646 and ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
      (Not Fully Implimented)
-AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
-AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
-AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
+AltNum_EnableApproachingPi = Enables IntValue.9..9*Pi representation
+AltNum_EnableApproachingE = Enables IntValue.9..9*e representation
+AltNum_EnableApproachingI = Enables IntValue.9..9*i representation
 AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
-	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
-	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
+	When DecimalHalf is -2147483647 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
+	When DecimalHalf is -2147483646 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
 	(Assumes AltNum_EnableInfinityRep is enabled)
 	(Partially Implimented)
 
@@ -110,7 +110,7 @@ AltNum_EnableComplexNum =
 If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
 Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
 (Might be better to just store as formula class feature or as another number class holding 2 MediumDec or other AltNum values)
-      (Requires AltNum_EnableImaginaryNum, Not Implimented Yet)
+      (Requires AltNum_EnableImaginaryNum, Not Implimented)
 
 AltNum_EnableMixedFractional =
       If DecimalHalf is negative and ExtraRep is Positive,
@@ -177,7 +177,12 @@ AltNum_UseOldRemOpCode
 
 AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
-AltNum_DisableApproachingTop =
+AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
+
+Only one of 3 alternative mixed fraction representations can be enabled at a time(use FlaggedDec variant if need all at once):
+AltNum_EnableMixedPiFractional
+AltNum_EnableMixedEFractional
+AltNum_EnableMixedIFractional
 */
 #if defined(AltNum_EnableImaginaryInfinity)
     #define AltNum_EnableImaginaryNum
