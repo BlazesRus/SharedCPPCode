@@ -72,11 +72,6 @@ AltNum_EnableNaN =
 
 AltNum_EnableHigherPrecisionPiConversion =
       (Not Implimented)
-
-AltNum_UseMediumDecBasedRepresentations =
-      Forces to calculate certain representations like MediumDec does 
-      (preference for storing non-normal representations within value of negative DecimalHalf)
-	  (Not Implimented)
 	  
 AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
@@ -99,13 +94,6 @@ AltNum_EnablePiRep =
          If DecimalHalf is positive and and ExtraRep is between AlternativeFractionalLowerBound and 0,
          then FlaggedDec represents (+- 2147483647.999999999 * Pi)/(ExtraRep*-1)
 	  (Not Fully Implimented--Enabled by default if AltNum_DisablePiRep not set)
-
-AltNum_EnableComplexNum =
-      Enable Representation of complex numbers with Imaginary number operations
-If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
-Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
-(Might be better to just store as formula class feature or as another number class holding 2 MediumDec or other AltNum values)
-      (Requires AltNum_EnableImaginaryNum, Not Implimented Yet)
 
 FlaggedNum_EnableMixedFractional =
       If DecimalHalf is negative and ExtraRep is Positive,
@@ -219,8 +207,8 @@ Automatically toggles FlaggedNum_ExtraRepIsInactive.
 #endif
 
 #if defined(FlaggedNum_EnableByDecimaledFractionals) || defined(FlaggedNum_EnablePowers) || defined(FlaggedNum_EnableMixedFractional) || defined(AltNum_EnableApproachingDivided) || defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI) || defined(AltNum_EnableUndefinedButInRange)
-	#if !defined(FlaggedNum_ExtraRepIsInactive)//Prevent redefinition warning
-		#define FlaggedNum_ExtraRepIsInactive
+	#if !defined(FlaggedNum_ExtraRepIsActive)//Prevent redefinition warning
+		#define FlaggedNum_ExtraRepIsActive
 	#endif
 #endif
 
@@ -407,10 +395,10 @@ namespace BlazesRusCode
             Undefined,
             NaN,
 #if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi,//(Approaching Away from Zero is equal to 0.9999...Pi)
+            ApproachingTopPi,//equal to IntValue.9..9 Pi
 #endif
 #if defined(AltNum_EnableApproachingE)
-            ApproachingTopE,//(Approaching Away from Zero is equal to 0.9999...e)
+            ApproachingTopE,//equal to IntValue.9..9 e
 #endif
 #if defined(AltNum_EnableImaginaryInfinity)
             PositiveImaginaryInfinity,//IntValue == 1 and DecimalHalf==InfinityRep and flag 03 active
@@ -651,10 +639,10 @@ namespace BlazesRusCode
 	#if !defined(FlaggedNum_UseBitset)
 		unsigned char FlagsActive;
 	#else
-		std::bitset<6> FlagsActive {};
+		std::bitset<6> FlagsActive;
 	#endif
 		
-	#if defined(FlaggedNum_EnableByDecimaledFractionals) || defined(FlaggedNum_EnablePowers) || defined(FlaggedNum_EnableMixedFractional)
+	#if defined(FlaggedNum_ExtraRepIsActive)
         /// <summary>
 		/// (Used exclusively for alternative representations if FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional enabled)
         /// </summary>
@@ -667,14 +655,26 @@ namespace BlazesRusCode
         /// <param name="intVal">The int value.</param>
         /// <param name="decVal">The decimal val01.</param>
         /// <param name="extraVal">ExtraRep.</param>
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive, signed int extraVal = 0)
+	#if defined(FlaggedNum_ExtraRepIsActive)
+        #if !defined(FlaggedNum_UseBitset)
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive = 0, signed int extraVal = 0)
+        #else
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {}, signed int extraVal = 0)
+        #endif
+    #else
+        #if !defined(FlaggedNum_UseBitset)
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive=0)
+        #else
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {})
+        #endif
+    #endif
         {
             IntValue = intVal;
             DecimalHalf = decVal;
-			#if !defined(FlaggedNum_UseBitset)
 			FlagsActive = flagsActive;
-	#else
+    #if defined(FlaggedNum_ExtraRepIsActive)
             ExtraRep = extraVal;
+    #endif
         }
 
 		bool IsZero()

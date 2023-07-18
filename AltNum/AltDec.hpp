@@ -423,10 +423,10 @@ ExtraFlags treated as bitwise flag storage
             NegativeZero,
 #endif
 #if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi,//(Approaching Away from Zero is equal to 0.9999...Pi)
+            ApproachingTopPi,//equal to IntValue.9..9 Pi
 #endif
 #if defined(AltNum_EnableApproachingE)
-            ApproachingTopE,//(Approaching Away from Zero is equal to 0.9999...e)
+            ApproachingTopE,//equal to IntValue.9..9 e
 #endif
 #if defined(AltNum_EnableImaginaryInfinity)
             PositiveImaginaryInfinity,
@@ -446,15 +446,6 @@ ExtraFlags treated as bitwise flag storage
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 #endif
-//#ifndef MixedDec_DisableIntNumByDivisor//Not needed when using ExtraRep for Divisor
-//			//IntValue/(DecimalHalf*-1)
-//			//For DecimalHalf values of between 0 and ENumBreakpoint if MediumDecV2_EnableERep toggled
-//			//For DecimalHalf Values:
-//			//between 0 and ApproachingBottomRep if MediumDecV2_DisableInfinityRep not toggled and MediumDecV2_EnableApproachingMidDec not toggled
-//			//between 0 and MidFromBottomRep if MediumDecV2_DisableInfinityRep not toggled and MediumDecV2_EnableApproachingMidDec is toggled
-//			//between 0 and -2147483648 if no infinity representations are enabled
-//            IntNumByDivisor,
-//#endif
             UnknownType
         };
         RepType GetRepType()
