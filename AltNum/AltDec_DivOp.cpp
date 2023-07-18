@@ -235,18 +235,25 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
     #endif
 				
 	#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-				throw "Code not implimented yet";
+			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+				self.CatchAllDivision(Value, LRep, RRep);//Temporary until more specific code
+                //throw "Code not implimented yet";
 				break;
 		#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://(IntValue +- (DecimalHalf*-1)/-ExtraRep)*Pi
+			case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
+                //self.SwapNegativeStatus();
+                //self.ConvertFracWithInvertedExtraRep(); Value.ConvertFracWithInvertedExtraRep();
+                //self.PartialMultOp(Value);
+                throw "Code not implimented yet";
+                break;
 		#endif
-		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
-				throw "Code not implimented yet";
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+				self.CatchAllDivision(Value, LRep, RRep);//Temporary until more specific code
+                //throw "Code not implimented yet";
 				break;
 		#endif
 	#endif

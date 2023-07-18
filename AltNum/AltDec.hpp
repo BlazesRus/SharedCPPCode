@@ -1124,21 +1124,21 @@ public:
             {
             case RepType::NormalType:
                 break;
-#if defined(AltNum_EnableInfinityRep)
+	#if defined(AltNum_EnableInfinityRep)
 			case RepType::PositiveInfinity:
                 IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
 			case RepType::NegativeInfinity:
                 IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottom:
                 DecimalHalf = 1; ExtraRep = 0;
                 break;
             case RepType::ApproachingTop:
                 DecimalHalf = 999999999; ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidRight:
 				int InvertedExtraRep = ExtraRep*-1;
 				if(DecimalOverflow%InvertedExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
@@ -1154,37 +1154,37 @@ public:
 					DecimalHalf = (DecimalOverflow/ExtraRep)-1;
 				ExtraRep = 0;
                 break;
-#endif
-#endif
-#endif
-#if defined(AltNum_EnablePiRep)
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 BasicMultOp(PiNum);
                 ExtraRep = 0;
                 break;
-#if defined(AltNum_EnablePiPowers)
+		#if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
                 ConvertPiPowerToNum();
                 break;
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
+		#endif
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 BasicMultOp(PiNum);
                 ExtraRep *= -1;
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
-#endif
+			#endif
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 				signed _int64 FirstHalf = 3141592654;
 				FirstHalf *= IntValue;
 				signed int divRes = FirstHalf / DecimalHalf;
-#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+			#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
 				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
 				//Add output code here later
-#else
+			#else
 				FirstHalf = divRes;
-#endif
+			#endif
 				//convert from Int64 into normal AltNum format
 				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
 				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
@@ -1195,36 +1195,36 @@ public:
 				DecimalHalf = SecondPart;
 			    ExtraRep = 0;
                 break;
-#endif		
-#endif
+		#endif		
+	#endif
             case RepType::NumByDiv:
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableENum)
             case RepType::ENum:
                 BasicMultOp(ENum);
                 ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 BasicMultOp(ENum);
                 ExtraRep *= -1;
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
-#endif
+			#endif
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
 				signed _int64 FirstHalf = 2718281828;
 				FirstHalf *= IntValue;
 				signed int divRes = FirstHalf / DecimalHalf;
-#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+			#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
 				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
 				//Add output code here later
-#else
+			#else
 				FirstHalf /= DecimalHalf;
-#endif
+			#endif
 				//convert from Int64 into normal AltNum format
 				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
 				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
@@ -1235,38 +1235,65 @@ public:
 				DecimalHalf = SecondPart;
 			    ExtraRep = 0;
                 break;
-#endif
-#endif
+		#endif
+	#endif
 
-#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableMixedFractional)
+			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+				MediumDecVariant Res = IntValue<0?MediumDecVariant(DecimalHalf, 0):MediumDecVariant(DecimalHalf, 0);
+				Res /= ExtraRep;
+				if(IntValue!=0&&IntValue!=NegativeRep)
+					Res += IntValue;
+				IntValue = Res.IntValue;
+				DecimalHalf = Res.DecimalHalf;
+				ExtraRep = 0;
+				break;
+	#endif
+
+	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 				if(IntValue==0&&DecimalHalf==0)
 					ExtraRep = 0
 				else
 					throw "Can't convert imaginery number into real number unless is zero.";
 				break;
-#endif
+			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
+		#endif
 				if(IntValue==0&&DecimalHalf!=0)
 					ExtraRep = 0
 				else
 					throw "Can't convert imaginery number into real number unless is zero.";
 				break;
-#endif
-#ifdef AltNum_EnableComplexNumbers
+	#endif
+	#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
 				throw "Conversion from complex number to real number not supported yet.";
 				break;
-#endif
+	#endif
             default:
                 ConvertToNumRep();
                 break;
             }
         }
+		
+		void ConvertAltFracWithInvertedExtra(RepType& repType)
+        {
+            switch (repType)
+            {
+			case RepType::MixedFrac:
+				MediumDecVariant Res = IntValue<0?MediumDecVariant(DecimalHalf, 0):MediumDecVariant(DecimalHalf, 0);
+				Res /= -ExtraRep;
+				if(IntValue!=0&&IntValue!=NegativeRep)
+					Res += IntValue;
+				IntValue = Res.IntValue;
+				DecimalHalf = Res.DecimalHalf;
+				ExtraRep = 0;
+				break;
+		}
 
 #if defined(AltNum_EnableImaginaryNum)
 		void ConvertToNormalIRep(RepType& repType)

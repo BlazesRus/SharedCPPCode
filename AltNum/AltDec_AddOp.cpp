@@ -45,19 +45,6 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 	#endif
 				self.BasicAddOp(Value);
 				break;
-				
-	#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-		#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
-		#elif defined(AltNum_EnableMixedEFractional)
-			case RepType::MixedE:
-		#elif defined(AltNum_EnableMixedIFractional)
-			case RepType::MixedI:
-		#endif
-				throw "Code not implimented yet";//self.BasicMixedAddOp(Value);
-				break;
-	#endif
 
 	#if defined(AltNum_EnableApproachingValues)
 			case RepType::ApproachingBottom:

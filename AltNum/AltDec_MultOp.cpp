@@ -330,18 +330,34 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 	#endif
 
 	#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- -DecimalHalf/ExtraRep
-				throw "Code not implimented yet";
+			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+				//self.IntValue +- (-self.DecimalHalf/self.ExtraRep) * (Value.IntValue +- (-Value.DecimalHalf/Value.ExtraRep))
+                //if(self.IntValue<0)
+                //{//(self.IntValue - (-self.DecimalHalf/self.ExtraRep)) * (Value.IntValue + (-Value.DecimalHalf/Value.ExtraRep))
+                //    //self.IntValue*Value.IntValue + self.IntValue*(-Value.DecimalHalf/Value.ExtraRep) - Value.IntValue*(-self.DecimalHalf/self.ExtraRep) - (-Value.DecimalHalf/Value.ExtraRep) *(-self.DecimalHalf/self.ExtraRep)
+                //}
+                //else
+                //{   //(self.IntValue + (-self.DecimalHalf/self.ExtraRep)) * (Value.IntValue + (-Value.DecimalHalf/Value.ExtraRep))
+                //    //self.IntValue*Value.IntValue + self.IntValue*(-Value.DecimalHalf/Value.ExtraRep) + Value.IntValue*(-self.DecimalHalf/self.ExtraRep) + (-Value.DecimalHalf/Value.ExtraRep) *(-self.DecimalHalf/self.ExtraRep)
+                //}    
+                self.CatchAllMultiplication(Value, LRep, RRep);//Temporary until more specific code
+                //throw "Code not implimented yet";
 				break;
 		#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntValue +- -DecimalHalf/-ExtraRep
+			case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
+                self.SwapNegativeStatus();
+                self.ConvertAltFracWithInvertedExtra(RepType::MixedFrac); Value.ConvertAltFracWithInvertedExtra(RepType::MixedFrac);
+                self.PartialMultOp(Value);
+                throw "Code not implimented yet";
+                break;
 		#endif
-		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
-				throw "Code not implimented yet";
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+				self.CatchAllMultiplication(Value, LRep, RRep);//Temporary until more specific code
+                //throw "Code not implimented yet";
 				break;
 		#endif
 	#endif
