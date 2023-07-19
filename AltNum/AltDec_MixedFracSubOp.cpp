@@ -66,6 +66,7 @@ static void MediumDecVariant::MixedFracSubOp(RepType& LRep, RepType& RRep, Mediu
         #else
 	                throw "Complex number operation not enabled currently.";
         #endif
+                    break;
     #endif
 				default://Shouldn't be used
 					//Value.ConvertToNormType(RRep);

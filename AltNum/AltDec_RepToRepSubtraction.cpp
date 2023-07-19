@@ -228,23 +228,7 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 #endif
 											
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-					MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
-                    self.BasicMultOp(Value.ExtraRep);
-                    self -= RightSideNum;
-                    if(self.DecimalHalf==0)
-                    {
-                        if(self.IntValue!=0)//Set as Zero if both are zero
-                        {
-                            self.DecimalHalf = -self.DecimalHalf;
-                            self.ExtraRep = Value.ExtraRep;
-                        }
-                    }
-                    else
-                    {
-                        if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-                            self.DecimalHalf = -self.DecimalHalf;
-                        self.ExtraRep = Value.ExtraRep;
-                    }
+					BasicMixedFracSubOp(self, Value);
                     break;
 	#if defined(AltNum_EnableMixedPiFractional)
 				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
@@ -252,29 +236,7 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				case RepType::MixedE:
 	#endif
 	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
-					//Converting into PiNum
-					MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
-		#if defined(AltNum_EnableMixedPiFractional)
-					RightSideNum *= PiNum;
-		#else
-					RightSideNum *= ENum;
-		#endif
-					self.BasicMultOp(-Value.ExtraRep);
-					self -= RightSideNum;
-					if(self.DecimalHalf==0)
-					{
-						if(self.IntValue!=0)//Set as Zero if both are zero
-						{
-							self.DecimalHalf = -self.DecimalHalf;
-							self.ExtraRep = -Value.ExtraRep;
-						}
-					}
-					else
-					{
-						if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-							self.DecimalHalf = -self.DecimalHalf;
-						self.ExtraRep = -Value.ExtraRep;
-					}
+					BasicMixedPiFracSubOp(self, Value);
 					break;
 	#endif
 	#if defined(AltNum_EnableMixedIFractional)

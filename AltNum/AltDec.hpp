@@ -2463,6 +2463,176 @@ public:
 		void MixedFracSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		void MixedFracMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		void MixedFracDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+		
+		//Assumes NormalRep + Normal MixedFraction operation
+		void BasicMixedFracAddOp(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			if(self.DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
+			{
+				if(self.IntValue<0)
+				{
+					if(Value.IntValue==NegativeRep)
+					{
+						self.DecimalHalf = Value.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+					else if(Value.IntValue<0)
+					{
+						self.IntValue += Value.IntValue;
+						self.DecimalHalf = Value.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+					else//(Value.IntValue>0)
+					{
+						if(Value.IntValue>-self.IntValue)//check for flipping of sign
+						{
+							self.IntValue += Value.IntValue - 1;
+							self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+						}
+						else
+						{
+							self.IntValue += Value.IntValue;
+							self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+						}
+						self.ExtraRep = Value.ExtraRep;
+					}
+				}
+				else//(self.IntValue>0)
+				{
+					if(Value.IntValue==NegativeRep)
+					{
+						self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+					else if(Value.IntValue<0)
+					{
+						self.IntValue += Value.IntValue;
+						if(-Value.IntValue>self.IntValue)//check for flipping of sign
+						{
+							self.IntValue += Value.IntValue;
+							if(self.IntValue==-1)
+								self.IntValue = NegativeRep;
+							else
+								++self.IntValue;
+						}
+						self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+					else//(Value.IntValue>0)
+					{
+						self.IntValue += Value.IntValue;
+						self.DecimalHalf = Value.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+				}     
+			}
+			else
+			{
+				MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
+				self.BasicMultOp(Value.ExtraRep);
+				self += RightSideNum;
+				if(self.DecimalHalf==0)
+				{
+					if(self.IntValue!=0)//Set as Zero if both are zero
+					{
+						self.DecimalHalf = -self.DecimalHalf;
+						self.ExtraRep = Value.ExtraRep;
+					}
+				}
+				else
+				{
+					if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+						self.DecimalHalf = -self.DecimalHalf;
+					self.ExtraRep = Value.ExtraRep;
+				}
+			}
+		}
+		
+		#if defined(AltNum_EnableMixedPiFractional)
+		void BasicMixedPiFracAddOp(MediumDecVariant& self, MediumDecVariant& Value)
+		#elif defined(AltNum_EnableMixedEFractional)
+		void BasicMixedEFracAddOp(MediumDecVariant& self, MediumDecVariant& Value)
+		#endif
+		#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+		{
+			MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		#else
+			RightSideNum *= ENum;
+		#endif
+			self.BasicMultOp(-Value.ExtraRep);
+			self += RightSideNum;
+			if(self.DecimalHalf==0)
+			{
+				if(self.IntValue!=0)//Set as Zero if both are zero
+				{
+					self.DecimalHalf = -self.DecimalHalf;
+					self.ExtraRep = -Value.ExtraRep;
+				}
+			}
+			else
+			{
+				if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					self.DecimalHalf = -self.DecimalHalf;
+				self.ExtraRep = -Value.ExtraRep;
+			}
+		}
+		#endif
+		
+		//Assumes NormalRep - Normal MixedFraction operation
+		void BasicMixedFracSubOp(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
+			self.BasicMultOp(Value.ExtraRep);
+			self -= RightSideNum;
+			if(self.DecimalHalf==0)
+			{
+				if(self.IntValue!=0)//Set as Zero if both are zero
+				{
+					self.DecimalHalf = -self.DecimalHalf;
+					self.ExtraRep = Value.ExtraRep;
+				}
+			}
+			else
+			{
+				if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					self.DecimalHalf = -self.DecimalHalf;
+				self.ExtraRep = Value.ExtraRep;
+			}
+		}
+		
+		#if defined(AltNum_EnableMixedPiFractional)
+		void BasicMixedPiFracSubOp(MediumDecVariant& self, MediumDecVariant& Value)
+		#elif defined(AltNum_EnableMixedEFractional)
+		void BasicMixedEFracSubOp(MediumDecVariant& self, MediumDecVariant& Value)
+		#endif
+		#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+		{
+			MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		#else
+			RightSideNum *= ENum;
+		#endif
+			self.BasicMultOp(-Value.ExtraRep);
+			self -= RightSideNum;
+			if(self.DecimalHalf==0)
+			{
+				if(self.IntValue!=0)//Set as Zero if both are zero
+				{
+					self.DecimalHalf = -self.DecimalHalf;
+					self.ExtraRep = -Value.ExtraRep;
+				}
+			}
+			else
+			{
+				if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					self.DecimalHalf = -self.DecimalHalf;
+				self.ExtraRep = -Value.ExtraRep;
+			}
+		}
+		#endif
 #endif
 	
 		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
