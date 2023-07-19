@@ -177,7 +177,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
         #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 	    #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 	#endif
 
@@ -281,7 +281,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 			#endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 		#endif
 
@@ -393,7 +393,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 				#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 				#endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 			#endif
 
@@ -472,6 +472,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
+							
 			#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
@@ -482,9 +483,10 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#endif
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 //						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-			#endif
-			#if defined(AltNum_EnableDecimaledEFractionals)
+			#elif defined(AltNum_EnableDecimaledEFractionals)
 //						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+			#endif
+			#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
 //							break;
 			#endif
 		#endif
@@ -496,7 +498,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 			#endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 		#endif
 
@@ -527,7 +529,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#endif
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 			#endif
 		#endif
@@ -557,10 +559,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.ExtraRep = Value.ExtraRep-1;
 					self.BasicDivOp(Value);
 					break;
+
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
-//							
+							
 			#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
@@ -586,7 +589,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -648,31 +651,32 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					--self.ExtraRep;
 					self.BasicDivOp(Value);
 					break;
-#if defined(AltNum_EnableENum)
+    #if defined(AltNum_EnableENum)
 //						case RepType::ENum:
 //							break;
-#endif				
+    #endif				
 
-#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableAlternativeRepFractionals)
 //						case RepType::NumByDiv:
 //							break;
-//							
-#if defined(AltNum_EnablePiRep)
+							
+			#if defined(AltNum_EnablePiRep)
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
-#endif
-#if defined(AltNum_EnableENum)
+			#endif
+			#if defined(AltNum_EnableENum)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
-#endif
-//
-#if defined(AltNum_EnableDecimaledPiFractionals)
+			#endif
+			#if defined(AltNum_EnableDecimaledPiFractionals)
 //						case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-#elif defined(AltNum_EnableDecimaledEFractionals)
+			#elif defined(AltNum_EnableDecimaledEFractionals)
 //						case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-//								break;
-#endif
-#endif
+			#endif
+			#if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
+//							break;
+			#endif
+		#endif
 
 #if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -681,7 +685,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -817,7 +821,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -829,7 +833,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -900,7 +904,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -912,7 +916,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -997,7 +1001,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1009,7 +1013,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1136,7 +1140,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1148,7 +1152,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1223,7 +1227,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1235,7 +1239,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1311,7 +1315,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1323,7 +1327,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1421,7 +1425,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1433,7 +1437,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1516,7 +1520,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1591,7 +1595,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 #endif
@@ -1664,7 +1668,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 		#endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 	#endif
 
@@ -1676,7 +1680,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif
@@ -1757,7 +1761,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 #elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 #endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 #endif
 
@@ -1769,7 +1773,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif
@@ -1841,7 +1845,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 		#endif
-					MixedFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 	#endif
 
@@ -1853,7 +1857,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							break;
 				#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					MixedIFracRtRDivOp(LRep, RRep, self, Value);
+					MixedFracDivOp(LRep, RRep, self, Value);
 					break;
 				#endif
 	#endif

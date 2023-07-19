@@ -233,7 +233,8 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				break;
 		#endif
     #endif
-				
+	
+    //Turn MixedFrac into fractional and then apply			
 	#if defined(AltNum_EnableMixedFractional)
 			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 				self.CatchAllDivision(Value, LRep, RRep);//Temporary until more specific code
@@ -245,16 +246,11 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::MixedE:
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
-                //self.SwapNegativeStatus();
-                //self.ConvertFracWithInvertedExtraRep(); Value.ConvertFracWithInvertedExtraRep();
-                //self.PartialMultOp(Value);
-                throw "Code not implimented yet";
-                break;
 		#endif
-		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
-				self.CatchAllDivision(Value, LRep, RRep);//Temporary until more specific code
-                //throw "Code not implimented yet";
-				break;
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
+                self.ConvertAltFracWithInvertedExtra(RepType::MixedFrac); Value.ConvertAltFracWithInvertedExtra(RepType::MixedFrac);
+                self.PartialMultOp(Value);
+                break;
 		#endif
 	#endif
 
