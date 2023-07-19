@@ -32,6 +32,10 @@
 #endif
 
 #include "AltNumModChecker.hpp"
+
+#if !defined(AltNum_UseLegacyIntValueType)
+	#include "MirroredInt.hpp"
+#endif
 //Preprocessor options
 /*
 AltNum_EnableByDecimaledFractionals =
@@ -179,6 +183,8 @@ AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
 
+AltNum_UseLegacyIntValueType = Use old int value with -int32 max rep for negative zero instead of newer custom bitset/int representation (with automatic negative rep caculations for addition/subtraction)
+
 Only one of 3 alternative mixed fraction representations can be enabled at a time(use FlaggedDec variant if need all at once):
 AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
@@ -296,6 +302,7 @@ ExtraFlags treated as bitwise flag storage
     private:
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
+		//(other values only used if AltNum_EnableInfinityPowers is enabled)
 		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
         static const signed int InfinityRep = -2147483648;
 #if defined(AltNum_EnableApproachingValues)
