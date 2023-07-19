@@ -1,8 +1,8 @@
 #include "AltDec.hpp"
 
 #if defined(AltNum_EnableMixedFractional)
-//MixedFracRtRDivOp
-static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+//MixedFracRtRAddOp
+static void MediumDecVariant::MixedFracAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
 	switch(LRep)
 	{
@@ -10,48 +10,174 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 			switch(RRep)
 			{
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
-					break;
+					if(self.DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
+                    {
+                        if(self.IntValue<0)
+                        {
+                            if(Value.IntValue==NegativeRep)
+                            {
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else if(Value.IntValue<0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else//(Value.IntValue>0)
+                            {
+                                if(Value.IntValue>-self.IntValue)//check for flipping of sign
+                                {
+                                    self.IntValue += Value.IntValue - 1;
+                                    self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                }
+                                else
+                                {
+                                    self.IntValue += Value.IntValue;
+                                    self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                }
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }
+                        else//(self.IntValue>0)
+                        {
+                            if(Value.IntValue==NegativeRep)
+                            {
+                                self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else if(Value.IntValue<0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                if(-Value.IntValue>self.IntValue)//check for flipping of sign
+                                {
+                                    self.IntValue += Value.IntValue;
+                                    if(self.IntValue==-1)
+                                        self.IntValue = NegativeRep;
+                                    else
+                                        ++self.IntValue;
+                                }
+                                self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else//(Value.IntValue>0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }     
+                    }
+                    else
+                    {
+                        MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
+    					RightSideNum += self * Value.ExtraRep;
+                        if(RightSideNum==0)
+                            self.SetAsZero();
+                        else
+                        {
+                            self.IntValue = RightSideNum;
+                            self.DecimalHalf = 0;
+                            self.ExtraRep = Value.ExtraRep;
+                        }
+                    }
+                    break;
 	#if defined(AltNum_EnableMixedPiFractional)
 				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-					break;
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+					//Converting into PiNum
+                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+                    RightSideNum *= PiNum;
+        #else
+                    RightSideNum *= ENum;
+        #endif
+                    RightSideNum += self *-Value.ExtraRep;
+                    if(RightSideNum.IntValue==0&&RightSideNum.DecimalHalf==0)
+                        self.SetAsZero();
+                    else
+                    {
+                        self.IntValue = RightSideNum.IntValue;
+                        self.DecimalHalf = RightSideNum.DecimalHalf;
+                        self.ExtraRep = -Value.ExtraRep;
+                    }
+                    break;
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
+					//Value.ConvertToNormType(RRep);
+	                //self.BasicAddOp(Value);
 					break;
 			}
 			break;
 	#if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
-		#if defined(AltNum_EnablePiPowers)
-		case RepType::PiPower:
-		#endif
 			switch(RRep)
 			{
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
-					break;
+					break;//Return MixedFrac or NormalType
 	#if defined(AltNum_EnableMixedPiFractional)
 				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-					break;
+					break;//Return MixedPi
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+                    break;//Return MixedFrac or NormalType
+   #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
 			break;
+		#if defined(AltNum_EnablePiPowers)
+		case RepType::PiPower:
+			switch(RRep)
+			{
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
+					break;//Return MixedFrac or NormalType
+	#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
+					break;//Return MixedPi
+	#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
+                    break;//Return MixedFrac or NormalType
+   #endif
+    #if defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI:
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
+				default://Shouldn't be used
+					break;
+			}
+			break;
+		#endif
 	#endif
 	#if defined(AltNum_EnableENum)
 		case RepType::ENum:
@@ -67,10 +193,15 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
@@ -89,10 +220,15 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
@@ -112,10 +248,15 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
@@ -136,10 +277,15 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
@@ -169,13 +315,15 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 					#if defined(AltNum_EnableDecimaledPiFractionals)
 					#else
 					#endif
-	#elif defined(AltNum_EnableMixedIFractional)
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-					#if defined(AltNum_EnableDecimaledPiFractionals)
-					#else
-					#endif
-	#endif
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+    #endif
 				default://Shouldn't be used
 					break;
 			}
@@ -259,12 +407,17 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
 					break;
-		#elif defined(AltNum_EnableMixedIFractional)
+        #endif
+        #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
-					int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-		#endif
+            #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+            #else
+	                throw "Complex number operation not enabled currently.";
+            #endif
+        #endif
 				default:
-					self.CatchAllDivision(Value, LRep, RRep);
+					self.CatchAllAddition(Value, LRep, RRep);
 					break;
 			}
 			break;
@@ -277,9 +430,9 @@ static void MediumDecVariant::MixedFracDivOp(RepType& LRep, RepType& RRep, Mediu
 		#if defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedI:
 		#endif
-			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet from MixedFracRtR";
+			throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet from MixedFracRtR";
 		default:
-			self.CatchAllDivision(Value, LRep, RRep);
+			self.CatchAllAddition(Value, LRep, RRep);
 			break;
 	#endif
 }

@@ -1,5 +1,6 @@
 #include "AltDec.hpp"
 
+#if defined(AltNum_EnableMixedFractional)
 //MixedFracRtRMultOp
 static void MediumDecVariant::MixedFracMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
@@ -300,3 +301,4 @@ static void MediumDecVariant::MixedFracMultOp(RepType& LRep, RepType& RRep, Medi
 			break;
 	#endif
 }
+#endif
