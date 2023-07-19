@@ -6,7 +6,7 @@ static void MediumDecVariant::MixedFracAddOp(RepType& LRep, RepType& RRep, Mediu
 {
 	switch(LRep)
 	{
-		case RepType::NormalType:
+		/*case RepType::NormalType:
 			switch(RRep)
 			{
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
@@ -72,13 +72,20 @@ static void MediumDecVariant::MixedFracAddOp(RepType& LRep, RepType& RRep, Mediu
                     else
                     {
                         MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
-    					RightSideNum += self * Value.ExtraRep;
-                        if(RightSideNum==0)
-                            self.SetAsZero();
+                        self.BasicMultOp(Value.ExtraRep);
+                        self += RightSideNum;
+                        if(self.DecimalHalf==0)
+                        {
+                            if(self.IntValue!=0)//Set as Zero if both are zero
+                            {
+                                self.DecimalHalf = -self.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }
                         else
                         {
-                            self.IntValue = RightSideNum;
-                            self.DecimalHalf = 0;
+                            if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                                self.DecimalHalf = -self.DecimalHalf;
                             self.ExtraRep = Value.ExtraRep;
                         }
                     }
@@ -96,13 +103,20 @@ static void MediumDecVariant::MixedFracAddOp(RepType& LRep, RepType& RRep, Mediu
         #else
                     RightSideNum *= ENum;
         #endif
-                    RightSideNum += self *-Value.ExtraRep;
-                    if(RightSideNum.IntValue==0&&RightSideNum.DecimalHalf==0)
-                        self.SetAsZero();
+                    self.BasicMultOp(-Value.ExtraRep);
+                    self += RightSideNum;
+                    if(self.DecimalHalf==0)
+                    {
+                        if(self.IntValue!=0)//Set as Zero if both are zero
+                        {
+                            self.DecimalHalf = -self.DecimalHalf;
+                            self.ExtraRep = -Value.ExtraRep;
+                        }
+                    }
                     else
                     {
-                        self.IntValue = RightSideNum.IntValue;
-                        self.DecimalHalf = RightSideNum.DecimalHalf;
+                        if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                            self.DecimalHalf = -self.DecimalHalf;
                         self.ExtraRep = -Value.ExtraRep;
                     }
                     break;
@@ -120,7 +134,7 @@ static void MediumDecVariant::MixedFracAddOp(RepType& LRep, RepType& RRep, Mediu
 	                //self.BasicAddOp(Value);
 					break;
 			}
-			break;
+			break;*/
 	#if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
 			switch(RRep)

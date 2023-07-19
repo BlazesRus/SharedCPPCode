@@ -210,16 +210,127 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
 #endif
 					
-#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi:
-#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+					if(self.DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
+                    {
+                        if(self.IntValue<0)
+                        {
+                            if(Value.IntValue==NegativeRep)
+                            {
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else if(Value.IntValue<0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else//(Value.IntValue>0)
+                            {
+                                if(Value.IntValue>-self.IntValue)//check for flipping of sign
+                                {
+                                    self.IntValue += Value.IntValue - 1;
+                                    self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                }
+                                else
+                                {
+                                    self.IntValue += Value.IntValue;
+                                    self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                }
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }
+                        else//(self.IntValue>0)
+                        {
+                            if(Value.IntValue==NegativeRep)
+                            {
+                                self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else if(Value.IntValue<0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                if(-Value.IntValue>self.IntValue)//check for flipping of sign
+                                {
+                                    self.IntValue += Value.IntValue;
+                                    if(self.IntValue==-1)
+                                        self.IntValue = NegativeRep;
+                                    else
+                                        ++self.IntValue;
+                                }
+                                self.DecimalHalf = Value.ExtraRep - Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                            else//(Value.IntValue>0)
+                            {
+                                self.IntValue += Value.IntValue;
+                                self.DecimalHalf = Value.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }     
+                    }
+                    else
+                    {
+                        MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
+                        self.BasicMultOp(Value.ExtraRep);
+                        self += RightSideNum;
+                        if(self.DecimalHalf==0)
+                        {
+                            if(self.IntValue!=0)//Set as Zero if both are zero
+                            {
+                                self.DecimalHalf = -self.DecimalHalf;
+                                self.ExtraRep = Value.ExtraRep;
+                            }
+                        }
+                        else
+                        {
+                            if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                                self.DecimalHalf = -self.DecimalHalf;
+                            self.ExtraRep = Value.ExtraRep;
+                        }
+                    }
+                    break;
+	#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
-#endif
-					MixedFracRtRAddOp(LRep, RRep, self, Value);
-					break;
-#endif
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+					//Converting into PiNum
+                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+                    RightSideNum *= PiNum;
+        #else
+                    RightSideNum *= ENum;
+        #endif
+                    self.BasicMultOp(-Value.ExtraRep);
+                    self += RightSideNum;
+                    if(self.DecimalHalf==0)
+                    {
+                        if(self.IntValue!=0)//Set as Zero if both are zero
+                        {
+                            self.DecimalHalf = -self.DecimalHalf;
+                            self.ExtraRep = -Value.ExtraRep;
+                        }
+                    }
+                    else
+                    {
+                        if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                            self.DecimalHalf = -self.DecimalHalf;
+                        self.ExtraRep = -Value.ExtraRep;
+                    }
+                    break;
+    #endif
+    #if defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI:
+        #if defined(AltNum_EnableComplexNum)
+	                throw "Complex number code not implimented yet.";
+        #else
+	                throw "Complex number operation not enabled currently.";
+        #endif
+                    break;
+    #endif
 
 #if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
 //						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -227,11 +338,6 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							
 //						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 //							break;
-			#if defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI:
-					MixedIFracRtRAddOp(LRep, RRep, self, Value);
-					break;
-			#endif
 #endif
 #if defined(AltNum_EnableComplexNumbers)
 //	//                    case RepType::ComplexIRep:

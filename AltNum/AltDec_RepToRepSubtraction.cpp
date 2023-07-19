@@ -227,16 +227,65 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
 #endif
 											
-#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi:
-#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+					MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf);
+                    self.BasicMultOp(Value.ExtraRep);
+                    self -= RightSideNum;
+                    if(self.DecimalHalf==0)
+                    {
+                        if(self.IntValue!=0)//Set as Zero if both are zero
+                        {
+                            self.DecimalHalf = -self.DecimalHalf;
+                            self.ExtraRep = Value.ExtraRep;
+                        }
+                    }
+                    else
+                    {
+                        if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                            self.DecimalHalf = -self.DecimalHalf;
+                        self.ExtraRep = Value.ExtraRep;
+                    }
+                    break;
+	#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	#elif defined(AltNum_EnableMixedEFractional)
 				case RepType::MixedE:
-#endif
-					MixedFracRtRSubOp(LRep, RRep, self, Value);
+	#endif
+	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+					//Converting into PiNum
+					MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+					RightSideNum *= PiNum;
+		#else
+					RightSideNum *= ENum;
+		#endif
+					self.BasicMultOp(-Value.ExtraRep);
+					self -= RightSideNum;
+					if(self.DecimalHalf==0)
+					{
+						if(self.IntValue!=0)//Set as Zero if both are zero
+						{
+							self.DecimalHalf = -self.DecimalHalf;
+							self.ExtraRep = -Value.ExtraRep;
+						}
+					}
+					else
+					{
+						if(self.IntValue!=0&&self.IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+							self.DecimalHalf = -self.DecimalHalf;
+						self.ExtraRep = -Value.ExtraRep;
+					}
 					break;
-#endif
+	#endif
+	#if defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI:
+		#if defined(AltNum_EnableComplexNum)
+					throw "Complex number code not implimented yet.";
+		#else
+					throw "Complex number operation not enabled currently.";
+		#endif
+					break;
+	#endif
 
 #if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
 //						case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -244,11 +293,6 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 //							
 //						case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 //							break;
-			#if defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI:
-					MixedIFracRtRSubOp(LRep, RRep, self, Value);
-					break;
-			#endif
 #endif
 #if defined(AltNum_EnableComplexNumbers)
 //	//                    case RepType::ComplexIRep:
