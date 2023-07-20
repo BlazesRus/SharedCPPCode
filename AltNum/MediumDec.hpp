@@ -22,7 +22,7 @@
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
-#include <boost/rational.hpp>
+#include <boost/rational.hpp>//Requires boost to reduce fractional
 #include <boost/multiprecision/cpp_int.hpp>
 //Preprocessor options
 //RunAsC = Run code as c code instead of cpp(not implimented)
