@@ -30,6 +30,7 @@ BlazesMirroredInt_UsePseudoBitSet:(32nd bit used for positive/negative status Bi
 -  10000000 00000000 00000000 00000000 = Negative Zero (same bit values for negative zero as used in BlazesMirroredInt_UseLegacyValueBehavior)
 -  stores value in unsigned int
 
+BlazesMirroredInt_PreventNZeroUnderflowCheck
 */
 
 //Auto toggles to default option if not set
@@ -295,15 +296,17 @@ namespace BlazesRusCode
                 return self;
             if(self.Value==0)
                 self.Value = RValue.Value;
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
+    #if defined(BlazesMirroredInt_UsePseudoBitSet)
 			throw "Need to write code for operation";//Placeholder
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+    #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
             self.Value += RValue.Value;
+        #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
             if(RValue<0&&self.Value==NegativeRep)
                 throw "MirroredInt value has underflowed";
-#else
+        #endif
+    #else
 			throw "Need to write code for operation";//Placeholder
-#endif
+    #endif
 			return self;
         }
 
