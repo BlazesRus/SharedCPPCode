@@ -1719,6 +1719,7 @@ namespace BlazesRusCode
             }
             return self;
         }
+
         /// <summary>
         /// Bitwise And Operation Between MediumDecs
         /// </summary>
