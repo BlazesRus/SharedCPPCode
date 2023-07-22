@@ -1030,18 +1030,20 @@ namespace BlazesRusCode
         {
             if(self==NegativeZero)
                 self.Value = 0;
-
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            if(IsNegative)
-                throw "Need to write code for operation with negative number";//Placeholder
             else
-                self.Value&= RValue;
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            {
+                if(IsNegative)
+                    throw "Need to write code for operation with negative number";//Placeholder
+                else
+                    self.Value&= RValue;
+            }
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
                 self.Value^=RValue;
 #else
-            throw "Need to write code for operation with negative number";//Placeholder
+                throw "Need to write code for operation with negative number";//Placeholder
 #endif
-                return self;
+            return self;
         }
 
         /// <summary>
@@ -1068,6 +1070,223 @@ namespace BlazesRusCode
         }
 
 #pragma endregion BitwiseOperations
+
+#pragma region ComparisonOperators
+        /// <summary>
+        /// Lesser than Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<(AltDec self, AltDec RValue)
+        {
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			if(self.Value==NegativeRep)
+				return RValue.Value<0&&RValue.Value!=NegativeRep;
+			else if(RValue.Value==NegativeRep)
+			{
+				if(self.Value<0)
+					return true;
+				else
+					return false;
+			}
+			else
+				return self.Value<RValue.Value;
+	#else
+	#endif
+		}
+		
+        /// <summary>
+        /// Lesser than or Equal to Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(AltDec self, AltDec RValue)
+        {
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			if(self.Value==NegativeRep)
+				return RValue.Value<0;
+			else if(RValue.Value==NegativeRep)
+			{
+				if(self.Value>=0)
+					return false;
+				else
+					return true;
+			}
+			else
+				return self.Value<=RValue.Value;
+	#else
+	#endif
+		}
+		
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>(AltDec self, AltDec RValue)
+        {
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			if(self.Value==NegativeRep))
+			{
+				if(RValue.Value<0)
+					return false;
+				else
+					return true;
+			}
+			else if(RValue.Value==NegativeRep)
+			{
+				if(self.Value>=0)
+					return true;
+				else
+					return false;
+			}
+			else
+				return self.Value>RValue.Value;
+	#else
+	#endif
+		}
+		
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>=(AltDec self, AltDec RValue)
+        {
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			if(self.Value==RValue.Value)
+				return true;
+			if(self.Value==NegativeRep))
+			{
+				if(RValue.Value<0)
+					return false;
+				else
+					return true;
+			}
+			else if(RValue.Value==NegativeRep)
+			{
+				if(self.Value>=0)
+					return true;
+				else
+					return false;
+			}
+			else
+				return self.Value>RValue.Value;
+	#else
+	#endif
+		}
+		
+        /// <summary>
+        /// Not Equal to Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(AltDec self, AltDec RValue)
+        {
+			return self.Value!=RValue.Value;
+		}
+		
+        /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(AltDec self, AltDec RValue)
+        {
+			return self.Value==RValue.Value;
+		}
+#pragma endregion ComparisonOperators
+
+#pragma region OtherOperators
+        /// <summary>
+        /// Negative Unary Operator(Flips negative status)
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt& operator-(MirroredInt& self)
+        {
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			if(Value==0)
+				Value = NegativeRep;
+			else if(Value==NegativeRep)
+				Value = 0;
+			else if(Value>NegativeRep)
+				Value -= NegativeRep;
+			else
+				Value += NegativeRep;
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			if(Value==0)
+				Value = NegativeRep;
+			else if(Value==NegativeRep)
+				Value = 0;
+			else
+				Value *= -1;
+	#else
+	#endif
+			return self;
+        }
+
+        /// <summary>
+        /// ++Operator
+        /// </summary>
+        /// <returns>MirroredInt &</returns>
+        MirroredInt& operator ++()
+        {
+            this += 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// ++Operator
+        /// </summary>
+        /// <returns>MirroredInt &</returns>
+        MirroredInt& operator --()
+        {
+            this -= 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// MirroredInt++ Operator
+        /// </summary>
+        /// <returns>MirroredInt</returns>
+        Operator ++(int)
+        {
+            MirroredInt tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// MirroredInt-- Operator
+        /// </summary>
+        /// <returns>MirroredInt</returns>
+        Operator --(int)
+        {
+            MirroredInt tmp(*this);
+            --* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// MirroredInt* Operator
+        /// </summary>
+        /// <returns>MirroredInt &</returns>
+        MirroredInt& operator *()
+        {
+            return *this;
+        }
+#pragma endregion OtherOperators
 
 #pragma region StringOperations
 #pragma endregion StringOperations
