@@ -502,11 +502,10 @@ namespace BlazesRusCode
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0f)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    SwapNegativeStatus();
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
@@ -529,11 +528,10 @@ namespace BlazesRusCode
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    SwapNegativeStatus();
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
@@ -556,11 +554,10 @@ namespace BlazesRusCode
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0L)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    SwapNegativeStatus();
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
