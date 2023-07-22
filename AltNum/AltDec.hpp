@@ -22,8 +22,8 @@
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
-#if defined(AltNum_EnableBoostFractionalReduction) || defined(AltNum_UseOldDivisionCode)
-#include <boost/rational.hpp>
+#include <boost/rational.hpp>//Still needed for Pow operations
+#if defined(AltNum_UseOldDivisionCode)
 #include <boost/multiprecision/cpp_int.hpp>
 #endif
 
