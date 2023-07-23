@@ -22,7 +22,7 @@
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
-#include <boost/rational.hpp>//Still needed for Pow operations
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
 #if defined(AltNum_UseOldDivisionCode)
 #include <boost/multiprecision/cpp_int.hpp>
 #endif
@@ -40,6 +40,7 @@
 /*
 AltNum_EnableByDecimaledFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
+      (Enables NumByDiv etc)
 AltNum_EnableAlternativeRepFractionals =
       Enables integer based fractionals for alternative representations such as Pi(partially implimented)
 
@@ -143,17 +144,25 @@ AltNum_EnableImaginaryNum =
 AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
-AltNum_TogglePreferedSettings =
-      Force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep, AltNum_EnableApproachingDivided
-	  and later AltNum_EnableAlternativeRepFractionals & AltNum_EnableByDecimaledFractionals once get code that part of code in working condition
+AltNum_DisableAutoToggleOfPreferedSettings =
+      If not toggled, force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep,
+	  AltNum_EnableAlternativeRepFractionals & AltNum_EnableDecimaledPiFractionals
 
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos operation
 
 AltNum_DisableSwitchBasedConversion =
 
 AltNum_EnableMediumDecBasedSetValues =
+	  
+AltNum_EnableDecimaledAlternativeFractionals = 
+   Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled
+   Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
 
----Only one of the next set of switches can be enabled at once:
+---Only one of the next set of 5 switches can be enabled at once:
+AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+
 AltNum_EnablePiPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
@@ -162,13 +171,6 @@ AltNum_EnableNormalPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePiPowers
       (Not Implimented)
-	  
-AltNum_EnableDecimaledAlternativeFractionals = 
-   Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled
-   Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
-AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 ----===============================================================================================================
 
 AltNum_OutputTruncatedTrailingDigits =
@@ -190,31 +192,50 @@ AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
 */
+#if !defined(AltNum_DisableAutoToggleOfPreferedSettings)
+    #define AltNum_EnablePiRep
+    #define AltNum_EnableInfinityRep
+	#define AltNum_EnableAlternativeRepFractionals
+#endif
+
 #if defined(AltNum_EnableImaginaryInfinity)
     #define AltNum_EnableImaginaryNum
 	#define AltNum_EnableInfinityRep
 #endif
 
-#if defined(AltNum_TogglePreferedSettings)
-    #define AltNum_EnablePiRep
-    #define AltNum_EnableInfinityRep
-	#define AltNum_EnableApproachingDivided
-	//#define AltNum_EnableByDecimaledFractionals (not enabling until get related blocks in working order)
-#endif
-
-//Force required preprocessor flag for AltNum_EnableByDecimaledFractionals
-#if defined(AltNum_EnableByDecimaledFractionals)
-#undef AltNum_EnableAlternativeRepFractionals
+//Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
+#if defined(AltNum_EnableAlternativeRepFractionals)
+    #define AltNum_EnableByDecimaledFractionals
 #endif
 
 #if defined(AltNum_AvoidUsingLargeInt)
-#undef AltNum_UseOldDivisionCode
+    #undef AltNum_UseOldDivisionCode
 #endif
 
 //Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
 #if defined(AltNum_EnableApproachingDivided)
     #define AltNum_EnableInfinityRep
 	#define AltNum_EnableApproachingValues
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledIFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledEFractionals)
+    #undef AltNum_EnableDecimaledEFractionals
+#endif
+
+#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledIFractionals)
+    #undef AltNum_EnableDecimaledIFractionals
 #endif
 
 //Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
@@ -242,10 +263,6 @@ AltNum_EnableMixedIFractional
 
 #if defined(AltNum_EnableENum) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePiPowers))
     #undef AltNum_EnableENum
-#endif
-
-#if defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnablePiPowers)
-    #define AltNum_OtherNegativeExtraRepsDefined
 #endif
 
 #if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
