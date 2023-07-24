@@ -36,16 +36,28 @@
 	AltNum_EnablePrivateRepType
     MediumDecV2_EnableNilRep = Enables Nil representation(detection not in code right now)
 	AltNum_EnableInfinityRep
-	MediumDecV2_EnablePiRep = (Not fully implimented)
-	MediumDecV2_EnableERep = (Not fully implimented)
+
 	AltNum_EnableApproachingValues
 	AltNum_DisableApproachingTop
 	AltNum_EnableNaN
 	AltNum_DisableInfinityRepTypeReturn
+
+    AltNum_EnableUndefinedButInRange
+    
+	MediumDecV2_EnablePiRep = Only represents whole number varients of PiNum (when DecimalHalf value==PiRep)
+	MediumDecV2_EnableERep = Only represents whole number varients of PiNum (when DecimalHalf value==PiRep)
+    
+    Only one of the 2 following can be active at once(Represented by DecimalHalf value between -1 and -999999999)
+	MediumDecV2_EnablePiNumRep = (Not fully implimented)
+	MediumDecV2_EnableENumRep = (Not implimented)
+
 */
 
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)
+    #define AltNum_EnableInfinityRep
+    #define AltNum_EnableApproachingValues
 	#define MediumDecV2_EnablePiRep
+    #define MediumDecV2_EnablePiNumRep
 #endif
 
 namespace BlazesRusCode
@@ -67,7 +79,7 @@ namespace BlazesRusCode
     /// <summary>
     /// Fixed point based number class representing +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
     /// (values will be lost past 9th decimal digit)
-	/// (Use MediumDecV2, ExtendedMDec, AltDecV2, or AltDec instead for infinity, Pi, and e features)
+	/// Variant of MediumDec with optional support of things like infinity and Pi without increasing the size of class more
     /// (8 bytes worth of Variable Storage inside class for each instance)
     /// </summary>
     class DLL_APi MediumDecV2
@@ -131,7 +143,7 @@ namespace BlazesRusCode
 
 		bool IsZero()
 		{
-            return DecimalHalf==0&&&&IntValue.Value==0;
+            return DecimalHalf==0&&IntValue.Value==0;
 		}
 
         /// <summary>
@@ -146,22 +158,42 @@ namespace BlazesRusCode
         
         virtual void SetAsZero()
         {
-    #if defined(AltNum_UseLegacyIntValueType)
             IntValue = 0;
-    #else
-            IntValue.Value = 0;
-    #endif
             DecimalHalf = 0;
         }
         
     #pragma region Const Representation values
     private:
-
-    #if defined(MediumDecV2_EnableNilRep)
-        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
-        static signed int const NilRep = -2147483648;
+	#if defined(AltNum_EnableInfinityRep)
+        //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
+		//(other values only used if AltNum_EnableInfinityPowers is enabled)
+        static const signed int InfinityRep = -2147483648;
+		#if defined(AltNum_EnableApproachingValues)
+        //Is Approaching Bottom when DecimalHalf==-2147483647:
+        //It represents Approaching IntValue from right towards left (IntValue.0__1)
+        static const signed int ApproachingBottomRep = -2147483647;
+		//Is Approaching Top i when DecimalHalf==-2147483646:
+		//It represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+		static const signed int ApproachingTopRep = -2147483646;
+		#endif
+	#endif
+    #if defined(MediumDecV2_EnablePiRep)
+        //Is Pi*IntValue representation when DecimalHalf==-214748365
+        //Needs MediumDecV2_EnablePiNumRep active to super non-whole number variants of Pi
+        static const signed int PiRep = -2147483645;
     #endif
-
+    #if defined(MediumDecV2_EnableERep)
+        //Is Pi*IntValue representation when DecimalHalf==-214748364
+        //Needs MediumDecV2_EnablePiNumRep active to super non-whole number variants of Pi
+        static const signed int ERep = -2147483644;
+    #endif
+    #if defined(MediumDecV2_EnableNilRep)
+        //When both IntValue and DecimalHalf equal -2147483640 it is Nil
+        static signed int const NilRep = -2147483640;
+    #endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+        static const signed int UndefinedInRangeRep = -2147483642;
+	#endif
     #pragma endregion Const Representation values
 
 #if !defined(AltNum_EnablePrivateRepType)
@@ -175,9 +207,14 @@ namespace BlazesRusCode
         {
             NormalType = 0,
     #if defined(MediumDecV2_EnablePiRep)
-            PiNum,
+            PiIntNum,
     #endif
     #if defined(MediumDecV2_EnableERep)
+            EIntNum,
+    #endif
+    #if defined(MediumDecV2_EnablePiNumRep)
+            PiNum,
+    #elif defined(MediumDecV2_EnableENumRep)
             ENum,
     #endif
     #if defined(AltNum_EnableInfinityRep)
@@ -192,6 +229,12 @@ namespace BlazesRusCode
     #endif
             Undefined,
             NaN,
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+            UndefinedButInRange,
+	#endif
+    #if defined(MediumDecV2_EnableNilRep)
+            Nil,
+    #endif
             UnknownType
         }
 
@@ -391,7 +434,7 @@ namespace BlazesRusCode
     #if defined(MediumDecV2_EnableNilRep)
         static MediumDecVariant NilValue()
         {
-            return MediumDec(-2147483648, -2147483648);
+            return MediumDec(NilRep, NilRep);
         }
     #endif
     public:

@@ -548,9 +548,10 @@ ExtraFlags treated as bitwise flag storage
 			#endif
 		#endif
 	#endif
+    #if defined(AltNum_EnableNaN)
             Undefined,
             NaN,
-            //NegativeZero,
+    #endif
 	#if defined(AltNum_EnableApproachingPi)
             ApproachingTopPi,//equal to IntValue.9..9 Pi
 	#endif
@@ -576,7 +577,9 @@ ExtraFlags treated as bitwise flag storage
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 	#endif
+    #if defined(AltNum_EnableNilRep)
             Nil,
+    #endif
             UnknownType
         };
 
@@ -1620,7 +1623,7 @@ public:
     #if defined(AltNum_EnableNilRep)
         static MediumDecVariant NilValue()
         {
-            return MediumDecVariant(-2147483648, -2147483648);
+            return MediumDecVariant(NilRep, NilRep);
         }
     #endif
 
