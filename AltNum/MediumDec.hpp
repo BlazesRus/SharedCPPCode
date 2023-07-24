@@ -60,8 +60,8 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_APi MediumDec
     {
-#undefine MediumDecVariant
-#define MediumDecVariant MediumDec
+    #undefine MediumDecVariant
+    #define MediumDecVariant MediumDec
 	public:
 		class ModRes
 		{

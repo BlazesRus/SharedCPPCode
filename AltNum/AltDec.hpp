@@ -309,8 +309,8 @@ ExtraFlags treated as bitwise flag storage
 	/// </summary>
     class DLL_API AltDec
     {
-#undefine MediumDecVariant
-#define MediumDecVariant AltDec
+    #undefine MediumDecVariant
+    #define MediumDecVariant AltDec
 	public:
 		class ModRes
 		{
