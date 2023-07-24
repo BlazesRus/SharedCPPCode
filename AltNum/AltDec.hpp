@@ -2757,38 +2757,11 @@ public:
         /// <param name="Value">The value.</param>
         void BasicAddOp(MediumDecVariant& Value)
         {
-            if (Value.DecimalHalf == 0)
+            bool NegativeBeforeOperation = IntValue < 0;
+            //Deal with Int section first
+            IntValue += Value.IntValue;
+            if (Value.DecimalHalf != 0)
             {
-                if (Value.IntValue == 0)//(Value == Zero)
-                    return;
-                if (DecimalHalf == 0)
-                {
-                    IntValue += Value.IntValue;
-                }
-                else
-                {
-                    bool WasNegative = IntValue < 0;
-                    if (WasNegative)
-                        IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                    IntValue += Value.IntValue;
-                    if (IntValue == -1)
-                        IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                    else if (IntValue < 0)
-                        ++IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                        DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
-                }
-            }
-            else
-            {
-                bool WasNegative = IntValue < 0;
-                //Deal with Int section first
-                if (WasNegative)
-                    IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                if (Value.IntValue != 0 && Value.IntValue != MediumDecVariant::NegativeRep)
-                    IntValue += Value.IntValue;
-                //Now deal with the decimal section
                 if (Value.IntValue < 0)
                 {
                     if (WasNegative)
@@ -2819,14 +2792,10 @@ public:
                         else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
                     }
                 }
-                if (IntValue == -1)
-                    IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                else if (IntValue < 0)
-                    ++IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                    DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
             }
+            //If flips to other side of negative, invert the decimals
+            if(NegativeBeforeOperation^(IntValue<0))
+                DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
 private:
@@ -2858,39 +2827,12 @@ public:
         /// <param name="Value">The value.</param>
         void BasicSubOp(MediumDecVariant& Value)
         {
-            if (Value.DecimalHalf == 0)
+            bool NegativeBeforeOperation = IntValue < 0;
+            //Deal with Int section first
+            IntValue -= Value.IntValue;
+            //Now deal with the decimal section
+            if(Value.DecimalHalf!=0)
             {
-                if (Value.IntValue == 0)//(Value == Zero)
-                    return;
-                if (DecimalHalf == 0)
-                {
-                    IntValue -= Value.IntValue;
-                }
-                else
-                {
-                    bool WasNegative = IntValue < 0;
-                    if (WasNegative)
-                        IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                    if (Value.IntValue != 0)
-                        IntValue -= Value.IntValue;
-                    if(IntValue==-1)
-                        IntValue = DecimalHalf == 0?0:MediumDecVariant::NegativeRep;
-                    else if(IntValue<0)
-                        ++IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && IntValue >= 0)||(WasNegative == 0 && IntValue < 0))
-                        DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
-                }
-            }
-            else
-            {
-                bool WasNegative = IntValue < 0;
-                //Deal with Int section first
-                if (WasNegative)
-                    IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                if(Value.IntValue!=0&&Value.IntValue!=MediumDecVariant::NegativeRep)
-                    IntValue -= Value.IntValue;
-                //Now deal with the decimal section
                 if (Value.IntValue < 0)
                 {
                     if (WasNegative)//-4.0 - -0.5 = -3.5
@@ -2921,14 +2863,10 @@ public:
                         else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
                     }
                 }
-                if (IntValue == -1)
-                    IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                else if (IntValue < 0)
-                    ++IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                    DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
             }
+            //If flips to other side of negative, invert the decimals
+            if(NegativeBeforeOperation^(IntValue<0))
+                DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
 private:

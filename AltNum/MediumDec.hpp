@@ -969,6 +969,53 @@ namespace BlazesRusCode
     #pragma region MediumDec-To-MediumDecVariant Operators
     public:
         /// <summary>
+        /// Basic Addition Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicAddOp(MediumDecVariant& Value)
+        {
+            bool NegativeBeforeOperation = IntValue < 0;
+            //Deal with Int section first
+            IntValue += Value.IntValue;
+            if (Value.DecimalHalf != 0)
+            {
+                if (Value.IntValue < 0)
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(NegativeBeforeOperation^(IntValue<0))
+                DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+        }
+
+        /// <summary>
         /// Addition Operation Between MediumDecs
         /// </summary>
         /// <param name="self">The self.</param>
@@ -1048,48 +1095,58 @@ namespace BlazesRusCode
                     self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
 #else
-            bool NegativeBeforeOperation = self.IntValue < 0;
+            self.BasicAddOp(Value);
+#endif
+            return self;
+        }
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicSubOp(MediumDecVariant& Value)
+		{
+            bool NegativeBeforeOperation = IntValue < 0;
             //Deal with Int section first
-            self.IntValue.Value += Value.IntValue.Value;
-            if (Value.DecimalHalf != 0)
+            IntValue -= Value.IntValue;
+            //Now deal with the decimal section
+            if(Value.DecimalHalf!=0)
             {
                 if (Value.IntValue < 0)
                 {
-                    if (WasNegative)
+                    if (WasNegative)//-4.0 - -0.5 = -3.5
                     {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
                     }
-                    else
+                    else//4.3 -  - 1.8
                     {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
                     }
                 }
                 else
                 {
-                    if (WasNegative)
+                    if (WasNegative)//-4.5 - 5.6
                     {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
                     }
-                    else
+                    else//0.995 - 1 = 
                     {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
                     }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(NegativeBeforeOperation^(self.IntValue<0))
-                self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
-#endif
-            return self;
-        }
+            if(NegativeBeforeOperation^(IntValue<0))
+                DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+		}
 
         /// <summary>
         /// Subtraction Operation Between MediumDecs
@@ -1172,46 +1229,7 @@ namespace BlazesRusCode
                     self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
 #else
-            bool NegativeBeforeOperation = self.IntValue < 0;
-            //Deal with Int section first
-            self.IntValue.Value -= Value.IntValue.Value;
-            //Now deal with the decimal section
-            if(Value.DecimalHalf!=0)
-            {
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)//-4.0 - -0.5 = -3.5
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                    }
-                    else//4.3 -  - 1.8
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)//-4.5 - 5.6
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                    }
-                    else//0.995 - 1 = 
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDecVariant::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDecVariant::DecimalOverflow) { self.DecimalHalf -= MediumDecVariant::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(NegativeBeforeOperation^(self.IntValue<0))
-                self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
+			self.BasicSubOp(Value);
 #endif
             return self;
         }
