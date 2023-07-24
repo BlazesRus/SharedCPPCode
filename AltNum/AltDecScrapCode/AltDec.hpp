@@ -33,7 +33,9 @@
 
 #include "AltNumModChecker.hpp"
 
-#include "MirroredInt.hpp"
+#if !defined(AltNum_UseLegacyIntValueType)
+	#include "MirroredInt.hpp"
+#endif
 //Preprocessor options
 /*
 AltNum_EnableByDecimaledFractionals =
@@ -41,6 +43,9 @@ AltNum_EnableByDecimaledFractionals =
       (Enables NumByDiv etc)
 AltNum_EnableAlternativeRepFractionals =
       Enables integer based fractionals for alternative representations such as Pi(partially implimented)
+
+AltNum_EnableNegativeZero =
+      (Partially Implimented)
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
@@ -67,6 +72,9 @@ AltNum_EnableInfinityPowers =
 
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
+
+//--
+
 //----
 
 AltNum_EnableNaN =
@@ -176,6 +184,8 @@ AltNum_UseOldRemOpCode
 AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
+
+AltNum_UseLegacyIntValueType = Use old int value with -int32 max rep for negative zero instead of newer custom bitset/int representation (with automatic negative rep caculations for addition/subtraction)
 
 Only one of 3 alternative mixed fraction representations can be enabled at a time(use FlaggedDec variant if need all at once):
 AltNum_EnableMixedPiFractional
@@ -335,12 +345,24 @@ ExtraFlags treated as bitwise flag storage
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
+    #if defined(AltNum_UseLegacyIntValueType)
+        static signed int const NegativeRep = -2147483648;
+    #else
         static signed int const NegativeRep = MirroredInt::NegativeRep;
+    #endif
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
+    #if defined(AltNum_UseLegacyIntValueType)
+        signed int IntValue;
+
+        bool int IsNegative()
+        {
+            return IntValue<0;
+        }
+    #else
         MirroredInt IntValue;
 
         signed int GetIntHalf()
@@ -352,6 +374,7 @@ ExtraFlags treated as bitwise flag storage
         {
             return IntValue.IsNegative();
         }
+    #endif
 
         /// <summary>
         /// Stores decimal section info and other special info
@@ -385,7 +408,21 @@ ExtraFlags treated as bitwise flag storage
 
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue.Value==0;
+    #if defined(AltNum_UseLegacyIntValueType)
+			return DecimalHalf==0;//&&ExtraRep==0 //IntValue:0, DecimalStatus:0, and ExtraRep != 0 not used for any alternative representations 
+        #if defined(AltNum_EnableNegativeZero)
+			&&(IntValue==0||IntValue==NegativeRep);
+        #else
+			&&IntValue==0;
+        #endif
+    #else
+            return DecimalHalf==0&&
+        #if defined(AltNum_EnableNegativeZero)
+			&&IntValue.IsZero();
+        #else
+			&&IntValue.Value==0;
+        #endif
+    #endif
 		}
 
         /// <summary>
@@ -400,9 +437,21 @@ ExtraFlags treated as bitwise flag storage
 
         void SetAsZero()
         {
+    #if defined(AltNum_UseLegacyIntValueType)
             IntValue = 0;
+    #else
+            IntValue.Value = 0;
+    #endif
             DecimalHalf = 0; ExtraRep = 0;
         }
+
+    #if defined(AltNum_EnableNegativeZero)
+        void SetAsNegativeZero()
+        {
+            IntValue.Value = MirroredInt::NegativeRep; DecimalHalf = 0;
+            ExtraRep = 0;
+        }
+    #endif
 
     #pragma region Const Representation values
     private:
@@ -550,7 +599,9 @@ ExtraFlags treated as bitwise flag storage
 	#endif
             Undefined,
             NaN,
-            //NegativeZero,
+	#if defined(AltNum_EnableNegativeZero)
+            NegativeZero,
+	#endif
 	#if defined(AltNum_EnableApproachingPi)
             ApproachingTopPi,//equal to IntValue.9..9 Pi
 	#endif
@@ -3616,6 +3667,10 @@ public:
 				case RepType::NaN:
 					throw "Can't perform operations with NaN or Undefined number";
 					break;
+#if defined(AltNum_EnableNegativeZero)
+				case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
+					break;
+#endif
 				default:
 					throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
 					//throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
