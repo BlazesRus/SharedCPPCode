@@ -42,7 +42,7 @@ namespace BlazesRusCode
 {
     class MirroredInt;
 	//Int but instead with Negative Zero behind zero (for use in fixed point decimal-like format)
-    class DLL_API AltDec
+    class DLL_API MirroredInt
     {
 	#if defined(BlazesMirroredInt_UsePseudoBitSet)
 	private:
@@ -58,6 +58,7 @@ namespace BlazesRusCode
 		signed int Value;
 	#elif defined(BlazesMirroredInt_UseBitSet)
 	#endif
+	
         //Returns true if detected as either zero or negative zero value
 		bool IsZero()
 		{
@@ -103,6 +104,34 @@ namespace BlazesRusCode
 	#endif      
         }
 
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetVal(int TValue)
+        {
+            IntValue = TValue;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetVal(MirroredInt TValue)
+        {
+            IntValue = TValue.Value;
+        }
+
+        void SetAsZero()
+        {
+			Value = 0;
+        }
+
+        void SetAsNegativeZero()
+        {
+			Value = NegativeRep;
+        }
+
 #pragma region ValueDefines
         //Value at exactly zero(but not at negative side)
         static MirroredInt ZeroValue()
@@ -134,7 +163,6 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt NegativeZero;
-
 #pragma endregion ValueDefines
 
 #pragma region IntegerOperations//Including Mirrored Int Operations
@@ -1292,9 +1320,27 @@ namespace BlazesRusCode
 #pragma endregion StringOperations
 
 #pragma region ConversionToType
+        /// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int()
+		{
+			if(IsZero)
+				return 0;
+			return Value;
+		}
 #pragma endregion ConversionToType
 
 #pragma region ConversionFromType
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
+        /// </summary>
+        /// <param name="Tvalue">The value.</param>
+        MirroredInt(Int Tvalue)
+        {
+            this->SetVal(Tvalue);
+        }
 #pragma endregion ConversionFromType
 	}
 
