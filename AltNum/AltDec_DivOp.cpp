@@ -171,7 +171,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				}
 				else
 				{
-                    self.PartialMultOp(Value.ExtraRep);
+                    self.BasicMultOp(Value.ExtraRep);
                     self.PartialDivOp(Value);
 				}
 				break;
@@ -249,7 +249,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 		#endif
 		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
                 self.ConvertAltFracWithInvertedExtra(RepType::MixedFrac); Value.ConvertAltFracWithInvertedExtra(RepType::MixedFrac);
-                self.PartialMultOp(Value);
+                self.BasicMultOp(Value);
                 break;
 		#endif
 	#endif

@@ -35,35 +35,35 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 		switch (LRep)
 		{
 			case RepType::NormalType:
-				self.PartialMultOp(Value);
+				self.BasicMultOp(Value);
 				break;
 	#if defined(AltNum_EnablePiRep)
 			case RepType::PiNum:
-				self.PartialMultOp(Value);
+				self.BasicMultOp(Value);
         #if defined(AltNum_EnablePiPowers)
                 self.ExtraRep = -2;
         #else
-				self.PartialMultOp(PiNum);
+				self.BasicMultOp(PiNum);
         #endif
 				break;		
 	#endif
 	#if defined(AltNum_EnableENum)
 			case RepType::ENum:
-				self.PartialMultOp(Value);
-				self.PartialMultOp(ENum);
+				self.BasicMultOp(Value);
+				self.BasicMultOp(ENum);
 				break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum://Xi * Yi = -XY
 				ExtraRep = 0;
-				self.PartialMultOp(-Value);
+				self.BasicMultOp(-Value);
 				break;
 	#endif
 				
 	#if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
 				self.ExtraRep += Value.ExtraRep;
-                self.PartialMultOp(Value);
+                self.BasicMultOp(Value);
 				break;
 	#endif
 
@@ -192,7 +192,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			case RepType::NumByDiv://(IntValue.DecimalHalf)/ExtraRep
 			//(self.(IntValue.DecimalHalf)/self.ExtraRep) * (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
 			//(self.(IntValue.DecimalHalf)*Value.(IntValue.DecimalHalf))/(self.ExtraRep*Value.ExtraRep)
-				self.PartialMultOp(Value);
+				self.BasicMultOp(Value);
 				self.ExtraRep *= Value.ExtraRep;
 				break;
 				
@@ -227,7 +227,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
                 self.DecimalHalf = 0;
                 #if defined(AltNum_EnableDecimaledPiFractionals)
                     self.ExtraRep = -DenomRes;
-                    self.PartialMultOp(PiNum);
+                    self.BasicMultOp(PiNum);
                 #else//Converting to PiNum
 					//self.DecimalHalf = DenomRes;
                     //self *= PiNum;
@@ -236,7 +236,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
                         self.PartialDivOp(DenomRes);
                     #else
                         self.ExtraRep = PiRep;
-                        self.PartialMultOp(PiNum);
+                        self.BasicMultOp(PiNum);
                         self.PartialDivOp(DenomRes);
                     #endif
                 #endif
@@ -268,10 +268,10 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
                 self.DecimalHalf = 0;
                 #if defined(AltNum_EnableDecimaledEFractionals)
                     self.ExtraRep = -DenomRes;
-                    self.PartialMultOp(ENum);
+                    self.BasicMultOp(ENum);
                 #else//Converting to ENum
                     self.ExtraRep = ERep;
-                    self.PartialMultOp(ENum);
+                    self.BasicMultOp(ENum);
                     self.PartialDivOp(DenomRes);
                 #endif
 			#endif
@@ -312,16 +312,16 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			//(self.Value/(-self.ExtraRep))*i * (Value.Value/(-Value.ExtraRep))*i
 			#endif
 				self.ExtraRep *= -Value.ExtraRep;
-				self.PartialMultOp(Value);
+				self.BasicMultOp(Value);
 				#if defined(AltNum_EnableDecimaledPiFractionals)
 					#ifdef AltNum_EnablePiPowers//Convert to PiPower representation
 				self.PartialDivOp(-self.ExtraRep);
 				self.ExtraRep = -2;
 					#else
-				self.PartialMultOp(PiNum);
+				self.BasicMultOp(PiNum);
 					#endif
 				#elif defined(AltNum_EnableDecimaledEFractionals)
-				self.PartialMultOp(ENum);
+				self.BasicMultOp(ENum);
 				#else
 				self.SwapNegativeStatus();
 				#endif
@@ -379,7 +379,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				self.IntValue = LeftSideNum*RightSideNum;
 				self.DecimalHalf = 0;
 				self.ExtraRep = -2;
-				self.PartialMultOp(PiNum);
+				self.BasicMultOp(PiNum);
 				self.PartialDivOp(self.ExtraRep *-Value.ExtraRep);
 			#endif
 				break;
@@ -408,7 +408,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				self.IntValue = LeftSideNum*RightSideNum;
 				self.DecimalHalf = 0;
 				self.ExtraRep = -2;
-				self.PartialMultOp(PiNum);
+				self.BasicMultOp(PiNum);
 				self.PartialDivOp(self.ExtraRep *-Value.ExtraRep);
 			#endif
 				break;

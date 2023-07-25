@@ -3523,13 +3523,17 @@ public:
 #pragma endregion Addition/Subtraction Operations
 
 #pragma region Multiplication/Division Operations
-		bool PartialMultOp(MediumDecVariant& Value)
+		/// <summary>
+        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		bool BasicMultOpPt1(MediumDecVariant& Value)
         {//Warning:Modifies Value to make it a positive variable
-		//Only use in cases where representation types are the same
+        //Only checking for zero multiplication in main multiplication method
+        //Not checking for special representation variations in this method(closer to MediumDec operation code)
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-                else { Value.IntValue *= -1; }
+                Value.SwapNegativeStatus();
                 SwapNegativeStatus();
             }
             if (DecimalHalf == 0)
@@ -3668,67 +3672,42 @@ public:
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
+            if(DecimalHalf==0&&IntValue==0)
+                return true;
+            else
+                return false;
         }
 
-		bool PartialMultOpV2(MediumDecVariant Value)
+		/// <summary>
+        /// Basic Multiplication Operation(without checking for special representation variations or zero)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		void BasicMultOp(MediumDecVariant& Value)
 		{
-			return PartialMultOp(Value);
+			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
+/*#if defined(AltNum_EnableApproachingDivided)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+			{	
+				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
+			}
+#else*/
+				DecimalHalf = 1;
+//#endif
 		}
 
-        /// <summary>
-        /// Basic Multiplication Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        void BasicMultOp(MediumDecVariant& Value)
-        {
-            if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
-            if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
-                return;
-			if(PartialMultOp(Value))
-#if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
-#else
-			{	DecimalHalf = 1; }
-#endif
-        }
-		
-        /// <summary>
-        /// Basic Multiplication Operation(without zero multiplication code)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        void BasicMultOpV2(MediumDecVariant& Value)
-        {
-			if(PartialMultOp(Value))//Prevent Dividing into nothing
-#if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
-#else
-				DecimalHalf = 1;
-#endif
-        }
-
 private:
-	void CatchAllMultiplication(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
-	{
-		ConvertToNumRep(LRep);
-		Value.ConvertToNumRep(RRep);
-		BasicMultOp(Value);
-	}
-	
-	void CatchAllMultiplication(MediumDecVariant& Value, RepType& SameRep)
-	{
-		ConvertToNumRep(SameRep);
-		Value.ConvertToNumRep(SameRep);
-		BasicMultOp(Value);
-	}
-	
- //   void CatchAllMultiplication(MediumDecVariant& Value)
- //   {
- //       ConvertToNumRep();
- //       Value.ConvertToNumRep();
- //       BasicMultOp(Value);
- //   }
+		void CatchAllMultiplication(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNumRep(LRep);
+			Value.ConvertToNumRep(RRep);
+			BasicMultOp(Value);
+		}
+		
+		void CatchAllMultiplication(MediumDecVariant& Value, RepType& SameRep)
+		{
+			ConvertToNumRep(SameRep);
+			Value.ConvertToNumRep(SameRep);
+			BasicMultOp(Value);
+		}
 public:
         /// <summary>
         /// Multiplication Operation
@@ -3827,24 +3806,24 @@ public:
 			switch (LRep)
 			{
 				case RepType::NormalType:
-					self.PartialMultOp(Value);
+					self.BasicMultOp(Value);
 					break;
 #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 				case RepType::PiNum:
-					self.PartialMultOp(Value);
-					self.PartialMultOp(PiNum);
+					self.BasicMultOp(Value);
+					self.BasicMultOp(PiNum);
 					break;		
 #endif
 #if defined(AltNum_EnableERep)
 				case RepType::ENum:
-					self.PartialMultOp(Value);
-					self.PartialMultOp(ENum);
+					self.BasicMultOp(Value);
+					self.BasicMultOp(ENum);
 					break;
 #endif
 #if defined(AltNum_EnableImaginaryNum)
 				case RepType::INum://Xi * Xi = XX
 					ExtraRep = 0;
-					self.PartialMultOp(Value);
+					self.BasicMultOp(Value);
 					break;
 #endif
 					
