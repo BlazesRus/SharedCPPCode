@@ -1,446 +1,169 @@
-#define AltNum_EnableInfinityRep
-#define AltNum_EnableImaginaryNum
- 
-    #pragma region Comparison Operators
-        /// <summary>
-        /// Equal to Operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-    #if defined(AltNum_EnableImaginaryNum)
-                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
-    #else
-                if(self.DecimalHalf!=InfinityRep)
-    #endif
-                {
-                    self.ConvertToNumRep();
-                }
-
-    #if defined(AltNum_EnableImaginaryNum)
-                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
-    #else
-                if(Value.DecimalHalf!=InfinityRep)
-    #endif
-                {
-                    Value.ConvertToNumRep();
-                }
-#else
-    #if defined(AltNum_EnableImaginaryNum)
-                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-                {
-                    self.ConvertToNumRep();
-                }
-    #else
-                self.ConvertToNumRep();
-    #endif
-
-    #if defined(AltNum_EnableImaginaryNum)
-                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
-                {
-                    Value.ConvertToNumRep();
-                }
-    #else
-                Value.ConvertToNumRep();
-    #endif
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-            return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf && self.ExtraRep == Value.ExtraRep);
-#else
-            return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
-#endif
-        }
-
-        /// <summary>
-        /// Not equal to Operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-    #if defined(AltNum_EnableImaginaryNum)
-                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
-    #else
-                if(self.DecimalHalf!=InfinityRep)
-    #endif
-                {
-                    self.ConvertToNumRep();
-                }
-
-    #if defined(AltNum_EnableImaginaryNum)
-                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
-    #else
-                if(Value.DecimalHalf!=InfinityRep)
-    #endif
-                {
-                    Value.ConvertToNumRep();
-                }
-#else
-    #if defined(AltNum_EnableImaginaryNum)
-                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-                {
-                    self.ConvertToNumRep();
-                }
-    #else
-                self.ConvertToNumRep();
-    #endif
-
-    #if defined(AltNum_EnableImaginaryNum)
-                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
-                {
-                    Value.ConvertToNumRep();
-                }
-    #else
-                Value.ConvertToNumRep();
-    #endif
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-            return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf || self.ExtraRep != Value.ExtraRep);
-#else
-            return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
-#endif
-        }
-
-        /// <summary>
-        /// Lesser than Operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+		bool PartialMultOp(MediumDecVariant& Value)
+        {//Warning:Modifies Value to make it a positive variable
+		//Only use in cases where representation types are the same
+            if (Value.IntValue < 0)
             {
-                if(Value.ExtraRep==InfinityRep)
-                {
-                    return self.IntValue<Value.IntValue;
-                }
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+                else { Value.IntValue *= -1; }
+                SwapNegativeStatus();
             }
-            else if(Value.ExtraRep==InfinityRep)
+            if (DecimalHalf == 0)
             {
-            
-            }
-#endif
-            self.ConvertToNumRep(); Value.ConvertToNumRep();
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return false; }// 5 > -5
-                else if (ValueIsNegative == false && SelfIsNegative) { return true; }// -5 <5
-                else
-                {//Both are either positive or negative
-                    if (Value.DecimalHalf == 0)
-                    {
-                        if (self.DecimalHalf == 0)
-                            return self.IntValue < Value.IntValue;
-                        else
-                        {
-                            if (self.IntValue == NegativeRep)
-                            {//-0.5<0
-                                if (Value.IntValue >= 0)
-                                    return true;
-                            }
-                            else if (self.IntValue < Value.IntValue) { return true; }//5.5 < 6
-                            else if (self.IntValue == Value.IntValue) { return self.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
-                        }
-                    }
-                    else if (self.DecimalHalf == 0)
-                    {
-                        if (Value.IntValue == NegativeRep)
-                        {
-                            if (self.IntValue <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue < Value.IntValue)
-                            return true;// 5 < 6.5
-                        else if (Value.IntValue == self.IntValue)
-                            return Value.IntValue < 0 ? false : true;//5 < 5.5 vs -5 > -5.5
-                    }
-                    //Assuming both are non-whole numbers if reach here
-                    if (self.IntValue == NegativeRep)
-                        self.IntValue = 0;
-                    if (Value.IntValue == NegativeRep)
-                        Value.IntValue = 0;
-                    if (SelfIsNegative)
-                    {//Larger number = farther down into negative
-                        if (self.IntValue > Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf > Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf < Value.DecimalHalf;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Lesser than or Equal to Operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
-            {
-                if(self.IntValue==Value.IntValue||Value.IntValue==1)
-                    return true;
-                else
-                    return false;
-            }
-            else if(Value.ExtraRep==InfinityRep)
-            {
-            
-            }
-#endif
-            self.ConvertToNumRep(); Value.ConvertToNumRep();
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return false; }//5>=-5
-                else if (ValueIsNegative == false && SelfIsNegative) { return true; }//-5<=5
-                else
+                if (IntValue == 1)
                 {
-                    if (Value.DecimalHalf == 0)
-                    {
-                        if (self.DecimalHalf == 0)
-                            return self.IntValue <= Value.IntValue;
-                        else
-                        {
-                            if (self.IntValue == NegativeRep)
-                            {//-0.5<0
-                                if (Value >= 0)
-                                    return true;
-                            }
-                            else if (self.IntValue < Value) { return true; }//5.5<=6
-                            else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }
-                        }
-                    }
-                    else if (self.DecimalHalf == 0)
-                    {
-                        if (Value.IntValue == NegativeRep && self.IntValue <= 1)
-                        {//-1<-0.5
-                            if (self.IntValue <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (Value.IntValue == self.IntValue)
-                            return Value.IntValue < 0 ? false : true;//5 <= 5.5 vs -5 >= -5.5
-                    }
-                    //Assuming both are non-whole numbers if reach here
-                    if (self.IntValue == NegativeRep)
-                        self.IntValue = 0;
-                    if (Value.IntValue == NegativeRep)
-                        Value.IntValue = 0;
-                    if (SelfIsNegative)//Both are either positive or negative
-                    {//Larger number = farther down into negative
-                        if (self.IntValue > Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf > Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf < Value.DecimalHalf;
-                    }
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Greater than Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>bool</returns>
-        friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
-            {
-                if(Value.ExtraRep==InfinityRep)
-                {
-                    if(self.IntValue==Value.IntValue)
-                        return false;
-                    else if(Value.IntValue==1)
-                        return false;
-                    else
-                        return true;
-                }
-            }
-            else if(Value.ExtraRep==InfinityRep)
-            {
-            
-            }
-#endif
-            self.ConvertToNumRep(); Value.ConvertToNumRep();
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
-            else
-            {
-
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return true; }//5 > -5
-                else if (ValueIsNegative == false && SelfIsNegative) { return false; }//-5<5
                 else if (Value.DecimalHalf == 0)
                 {
-                    if (self.DecimalHalf == 0)
-                        return self.IntValue > Value.IntValue;
-                    else
-                    {
-                        if (self.IntValue == NegativeRep)
-                        {//-0.5>-1
-                            if (Value <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue > Value) { return true; }
-                        else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }
-                    }
-                }
-                else if (self.DecimalHalf == 0)
-                {
-                    if (Value.IntValue == NegativeRep)
-                    {
-                        if (self.IntValue >= 0)
-                            return true;
-                    }
-                    else if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (Value.IntValue == self.IntValue)
-                        return Value.IntValue < 0 ? true : false;//5 < 5.5 vs -5 > -5.5
-                }
-                //Assuming both are non-whole numbers if reach here
-                if (self.IntValue == NegativeRep)
-                    self.IntValue = 0;
-                if (Value.IntValue == NegativeRep)
-                    Value.IntValue = 0;
-                if (SelfIsNegative)//Both are either positive or negative
-                {//Larger number = farther down into negative
-                    if (self.IntValue < Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf < Value.DecimalHalf;
+                    IntValue *= Value.IntValue;
                 }
                 else
                 {
-                    if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf > Value.DecimalHalf;
+                    Value.PartialIntMultOp(IntValue);
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
+				return false;
             }
-            return false;
-        }
-
-        /// <summary>
-        /// Greater than or Equal to Operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+            else if (IntValue == 0)
             {
-                if(Value.ExtraRep==InfinityRep)
+                __int64 SRep = (__int64)DecimalHalf;
+                SRep *= Value.DecimalHalf;
+                SRep /= MediumDecVariant::DecimalOverflowX;
+                if (Value.IntValue == 0)
                 {
-                    if(self.IntValue==Value.IntValue||Value.IntValue==-1)
-                        return true;
-                    else
-                        return false;
+                    DecimalHalf = (signed int)SRep;
+					return DecimalHalf==0?true:false;
                 }
                 else
                 {
-                
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
+                        IntValue = OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
                 }
             }
-            else if(Value.ExtraRep==InfinityRep)
+            else if (IntValue == MediumDecVariant::NegativeRep)
             {
-            
+                __int64 SRep = (__int64)DecimalHalf;
+                SRep *= Value.DecimalHalf;
+                SRep /= MediumDecVariant::DecimalOverflowX;
+                if (Value.IntValue == 0)
+                {
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
+                        IntValue = -OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
+                }
             }
-#endif
-            self.ConvertToNumRep(); Value.ConvertToNumRep();
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return true; }
-                else if (ValueIsNegative == false && SelfIsNegative) { return false; }
-                else if (Value.DecimalHalf == 0)
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
                 {
-                    if (self.DecimalHalf == 0)
-                        return self.IntValue >= Value.IntValue;
+                    IntValue *= -1;
+                }
+                if (Value.IntValue == 0)
+                {
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.DecimalHalf;
+                    SRep /= MediumDecVariant::DecimalOverflowX;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
+                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
                     else
                     {
-                        if (self.IntValue == NegativeRep)
-                        {
-                            if (Value <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue > Value)
-                            return true;
-                        else if (self.IntValue == Value)
-                            return self.IntValue < 0 ? false : true;//-5.5<-5 vs 5.5>5
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
-                else if (self.DecimalHalf == 0)//return self.IntValue > Value;
+                else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    if (Value.IntValue == NegativeRep)
-                    {//0>-0.5
-                        if (self.IntValue >= 0)
-                            return true;
+                    __int64 SRep = MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue;
+                    if (SRep >= MediumDecVariant::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / MediumDecVariant::DecimalOverflowX;
+                        SRep -= OverflowVal * MediumDecVariant::DecimalOverflowX;
+                        IntValue = (signed int)OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
                     }
-                    else if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (Value.IntValue == self.IntValue)
-                        return Value.IntValue < 0 ? true : false;//5 <= 5.5 vs -5 >= -5.5
-                }
-                //Assuming both are non-whole numbers if reach here
-                if (self.IntValue == NegativeRep)
-                    self.IntValue = 0;
-                if (Value.IntValue == NegativeRep)
-                    Value.IntValue = 0;
-                if (SelfIsNegative)//Both are either positive or negative
-                {//Larger number = farther down into negative
-                    if (self.IntValue < Value.IntValue)//-5.5 >= -6.5
-                        return true;
-                    else if (self.IntValue == Value.IntValue)//-5.5 >= -5.6
-                        return self.DecimalHalf < Value.DecimalHalf;
+                    else
+                    {
+                        IntValue = SelfIsNegative ? MediumDecVariant::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
                 }
                 else
                 {
-                    if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf > Value.DecimalHalf;
+                    //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
+                    //X.Y *.V
+                    __int64 Temp03 = (__int64)IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
+                    __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
+                    Temp04 /= MediumDecVariant::DecimalOverflow;
+                    //Temp04 holds __int64 version of .Y * .V
+                    __int64 IntegerRep = SRep + Temp03 + Temp04;
+                    __int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDecVariant::NegativeRep : 0; }
+                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
+                    DecimalHalf = (signed int)IntegerRep;
                 }
             }
-            return false;
         }
 
-    #pragma endregion Comparison Operators
+		bool PartialMultOpV2(MediumDecVariant Value)
+		{
+			return PartialMultOp(Value);
+		}
+
+        /// <summary>
+        /// Basic Multiplication Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        void BasicMultOp(MediumDecVariant& Value)
+        {
+            if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
+            if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
+                return;
+			if(PartialMultOp(Value))
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
+#else
+			{	DecimalHalf = 1; }
+#endif
+        }
