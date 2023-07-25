@@ -33,7 +33,9 @@
 
 #include "AltNumModChecker.hpp"
 
-#include "MirroredInt.hpp"
+#if !defined(AltNum_UseLegacyIntValueType)
+	#include "MirroredInt.hpp"
+#endif
 //Preprocessor options
 /*
 AltNum_EnableByDecimaledFractionals =
@@ -41,6 +43,9 @@ AltNum_EnableByDecimaledFractionals =
       (Enables NumByDiv etc)
 AltNum_EnableAlternativeRepFractionals =
       Enables integer based fractionals for alternative representations such as Pi(partially implimented)
+
+AltNum_EnableNegativeZero =
+      (Partially Implimented)
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
@@ -67,6 +72,9 @@ AltNum_EnableInfinityPowers =
 
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
+
+//--
+
 //----
 
 AltNum_EnableNaN =
@@ -176,6 +184,8 @@ AltNum_UseOldRemOpCode
 AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
+
+AltNum_UseLegacyIntValueType = Use old int value with -int32 max rep for negative zero instead of newer custom bitset/int representation (with automatic negative rep caculations for addition/subtraction)
 
 Only one of 3 alternative mixed fraction representations can be enabled at a time(use FlaggedDec variant if need all at once):
 AltNum_EnableMixedPiFractional
@@ -335,12 +345,24 @@ ExtraFlags treated as bitwise flag storage
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
+    #if defined(AltNum_UseLegacyIntValueType)
+        static signed int const NegativeRep = -2147483648;
+    #else
         static signed int const NegativeRep = MirroredInt::NegativeRep;
+    #endif
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
+    #if defined(AltNum_UseLegacyIntValueType)
+        signed int IntValue;
+
+        bool int IsNegative()
+        {
+            return IntValue<0;
+        }
+    #else
         MirroredInt IntValue;
 
         signed int GetIntHalf()
@@ -352,6 +374,7 @@ ExtraFlags treated as bitwise flag storage
         {
             return IntValue.IsNegative();
         }
+    #endif
 
         /// <summary>
         /// Stores decimal section info and other special info
@@ -385,7 +408,21 @@ ExtraFlags treated as bitwise flag storage
 
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue.Value==0;
+    #if defined(AltNum_UseLegacyIntValueType)
+			return DecimalHalf==0;//&&ExtraRep==0 //IntValue:0, DecimalStatus:0, and ExtraRep != 0 not used for any alternative representations 
+        #if defined(AltNum_EnableNegativeZero)
+			&&(IntValue==0||IntValue==NegativeRep);
+        #else
+			&&IntValue==0;
+        #endif
+    #else
+            return DecimalHalf==0&&
+        #if defined(AltNum_EnableNegativeZero)
+			&&IntValue.IsZero();
+        #else
+			&&IntValue.Value==0;
+        #endif
+    #endif
 		}
 
         /// <summary>
@@ -400,9 +437,21 @@ ExtraFlags treated as bitwise flag storage
 
         void SetAsZero()
         {
+    #if defined(AltNum_UseLegacyIntValueType)
             IntValue = 0;
+    #else
+            IntValue.Value = 0;
+    #endif
             DecimalHalf = 0; ExtraRep = 0;
         }
+
+    #if defined(AltNum_EnableNegativeZero)
+        void SetAsNegativeZero()
+        {
+            IntValue.Value = MirroredInt::NegativeRep; DecimalHalf = 0;
+            ExtraRep = 0;
+        }
+    #endif
 
     #pragma region Const Representation values
     private:
@@ -548,10 +597,11 @@ ExtraFlags treated as bitwise flag storage
 			#endif
 		#endif
 	#endif
-    #if defined(AltNum_EnableNaN)
             Undefined,
             NaN,
-    #endif
+	#if defined(AltNum_EnableNegativeZero)
+            NegativeZero,
+	#endif
 	#if defined(AltNum_EnableApproachingPi)
             ApproachingTopPi,//equal to IntValue.9..9 Pi
 	#endif
@@ -577,9 +627,7 @@ ExtraFlags treated as bitwise flag storage
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 	#endif
-    #if defined(AltNum_EnableNilRep)
             Nil,
-    #endif
             UnknownType
         };
 
@@ -1623,7 +1671,7 @@ public:
     #if defined(AltNum_EnableNilRep)
         static MediumDecVariant NilValue()
         {
-            return MediumDecVariant(NilRep, NilRep);
+            return MediumDecVariant(-2147483648, -2147483648);
         }
     #endif
 
@@ -1856,21 +1904,22 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483647.0f)
             {
+                IntValue = 2147483647;
                 if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
+                {
+                    IntValue *= -1;
+                }
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (float)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                if(IsNegative&&WholeValue==0)
+                    IntValue = NegativeRep;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? WholeValue * -1 : WholeValue;
+                DecimalHalf = (signed int)Value * 10000000000;
             }
         }
 
@@ -1885,21 +1934,22 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483647.0)
             {
+                IntValue = 2147483647;
                 if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
+                {
+                    IntValue *= -1;
+                }
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (double)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                if(IsNegative&&WholeValue==0)
+                    IntValue = NegativeRep;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? WholeValue * -1 : WholeValue;
+                DecimalHalf = (signed int)Value * 10000000000;
             }
         }
 
@@ -1914,21 +1964,19 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0)
             {
+                IntValue = 2147483647;
                 if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
+                {
+                    IntValue *= -1;
+                }
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (ldouble)WholeValue;
+                IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = 0;
             }
         }
 
@@ -2078,85 +2126,48 @@ public:
         /// <returns>bool</returns>
         friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-			
-            return (self.IntValue.Value == Value.IntValue.Value && self.DecimalHalf == Value.DecimalHalf && self.ExtraRep==self.ExtraRep);
+#if defined(AltNum_EnableInfinityRep)
+    #if defined(AltNum_EnableImaginaryNum)
+                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
+    #else
+                if(self.DecimalHalf!=InfinityRep)
+    #endif
+                {
+                    self.ConvertToNumRep();
+                }
+
+    #if defined(AltNum_EnableImaginaryNum)
+                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
+    #else
+                if(Value.DecimalHalf!=InfinityRep)
+    #endif
+                {
+                    Value.ConvertToNumRep();
+                }
+#else
+    #if defined(AltNum_EnableImaginaryNum)
+                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
+                {
+                    self.ConvertToNumRep();
+                }
+    #else
+                self.ConvertToNumRep();
+    #endif
+
+    #if defined(AltNum_EnableImaginaryNum)
+                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
+                {
+                    Value.ConvertToNumRep();
+                }
+    #else
+                Value.ConvertToNumRep();
+    #endif
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+            return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf && self.ExtraRep == Value.ExtraRep);
+#else
+            return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
+#endif
         }
 
         /// <summary>
@@ -2167,84 +2178,48 @@ public:
         /// <returns>bool</returns>
         friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						self.ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-            return (self.IntValue.Value != Value.IntValue.Value || self.DecimalHalf != Value.DecimalHalf);
+#if defined(AltNum_EnableInfinityRep)
+    #if defined(AltNum_EnableImaginaryNum)
+                if(self.DecimalHalf!=InfinityRep&&(self.ExtraRep>=0||self.ExtraRep==PiRep))
+    #else
+                if(self.DecimalHalf!=InfinityRep)
+    #endif
+                {
+                    self.ConvertToNumRep();
+                }
+
+    #if defined(AltNum_EnableImaginaryNum)
+                if(Value.DecimalHalf!=InfinityRep&&(Value.ExtraRep>=0||Value.ExtraRep==PiRep))
+    #else
+                if(Value.DecimalHalf!=InfinityRep)
+    #endif
+                {
+                    Value.ConvertToNumRep();
+                }
+#else
+    #if defined(AltNum_EnableImaginaryNum)
+                if(self.ExtraRep>=0||self.ExtraRep==PiRep)
+                {
+                    self.ConvertToNumRep();
+                }
+    #else
+                self.ConvertToNumRep();
+    #endif
+
+    #if defined(AltNum_EnableImaginaryNum)
+                if(Value.ExtraRep>=0||Value.ExtraRep==PiRep)
+                {
+                    Value.ConvertToNumRep();
+                }
+    #else
+                Value.ConvertToNumRep();
+    #endif
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+            return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf || self.ExtraRep != Value.ExtraRep);
+#else
+            return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
+#endif
         }
 
         /// <summary>
@@ -2255,158 +2230,78 @@ public:
         /// <returns>bool</returns>
         friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						self.ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-#if defined(AltNum_EnableImaginaryNum)
-			if(self.ExtraRep!=Value.ExtraRep)
-				throw "Can't compare imaginary number with real number";
-#endif
 #if defined(AltNum_EnableInfinityRep)
-            if(self.DecimalHalf==InfinityRep)
+            if(self.ExtraRep==InfinityRep)
             {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(self.ExtraRep==IRep)//LeftSide is Imaginary infinity
-				{
-					if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-					{
-						if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
-							return true;
-						else
-							return false;
-					}
-					else if(self.IntValue==1)//Left is Positive Imaginary Infinity
-						return false;
-					else//Left Negative Imaginary Infinity
-						return true;
-				}
-	#endif
-                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-				{
-					//return self.IntValue<Value.IntValue;
-					/*
-						+inf < +inf = false
-						+inf < -inf = false
-						-inf < +inf = true
-						-inf < -inf = false
-					*/
-					if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
-						return true;
-					else
-						return false;
-				}
-				else if(self.IntValue==1)//Left is Positive Infinity
-					return false;//+inf < 99
-				else//Left is Negative Infinity
-					return true;//-inf < 99
-            }
-            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
-            {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(Value.ExtraRep==IRep)//RightSide is Imaginary infinity
-				{
-					if(self.IntValue==1)//Right is Positive Imaginary Infinity
-						return true;
-					else//Right is Negative Imaginary Infinity
-						return false;
-				}
-	#endif
-				if(Value.IntValue==1)//Right is Positive Infinity
-					return true;//99 < +inf
-				else//Right is Negative Infinity
-					return false;//99 < -inf
-            }
-#endif
-            if(self.DecimalHalf==0)
-            {
-                if(Value.DecimalHalf==0)
-                    return self.IntValue<Value.IntValue;
-                else
+                if(Value.ExtraRep==InfinityRep)
                 {
-                    if(self.IntValue<Value.IntValue)
-                        return self.DecimalHalf<Value.DecimalHalf;
-                    else
-                        return false;
+                    return self.IntValue<Value.IntValue;
                 }
             }
-            else if(self.IntValue<Value.IntValue)
-                return self.DecimalHalf<Value.DecimalHalf;
+            else if(Value.ExtraRep==InfinityRep)
+            {
+            
+            }
+#endif
+            self.ConvertToNumRep(); Value.ConvertToNumRep();
+            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
-                return false;
+            {
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValueIsNegative = Value.IntValue < 0;
+                if (ValueIsNegative && SelfIsNegative == false) { return false; }// 5 > -5
+                else if (ValueIsNegative == false && SelfIsNegative) { return true; }// -5 <5
+                else
+                {//Both are either positive or negative
+                    if (Value.DecimalHalf == 0)
+                    {
+                        if (self.DecimalHalf == 0)
+                            return self.IntValue < Value.IntValue;
+                        else
+                        {
+                            if (self.IntValue == NegativeRep)
+                            {//-0.5<0
+                                if (Value.IntValue >= 0)
+                                    return true;
+                            }
+                            else if (self.IntValue < Value.IntValue) { return true; }//5.5 < 6
+                            else if (self.IntValue == Value.IntValue) { return self.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+                        }
+                    }
+                    else if (self.DecimalHalf == 0)
+                    {
+                        if (Value.IntValue == NegativeRep)
+                        {
+                            if (self.IntValue <= -1)
+                                return true;
+                        }
+                        else if (self.IntValue < Value.IntValue)
+                            return true;// 5 < 6.5
+                        else if (Value.IntValue == self.IntValue)
+                            return Value.IntValue < 0 ? false : true;//5 < 5.5 vs -5 > -5.5
+                    }
+                    //Assuming both are non-whole numbers if reach here
+                    if (self.IntValue == NegativeRep)
+                        self.IntValue = 0;
+                    if (Value.IntValue == NegativeRep)
+                        Value.IntValue = 0;
+                    if (SelfIsNegative)
+                    {//Larger number = farther down into negative
+                        if (self.IntValue > Value.IntValue)
+                            return true;
+                        else if (self.IntValue == Value.IntValue)
+                            return self.DecimalHalf > Value.DecimalHalf;
+                    }
+                    else
+                    {
+                        if (self.IntValue < Value.IntValue)
+                            return true;
+                        else if (self.IntValue == Value.IntValue)
+                            return self.DecimalHalf < Value.DecimalHalf;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -2417,158 +2312,78 @@ public:
         /// <returns>bool</returns>
         friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						self.ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-#if defined(AltNum_EnableImaginaryNum)
-			if(self.ExtraRep!=Value.ExtraRep)
-				throw "Can't compare imaginary number with real number";
-#endif
 #if defined(AltNum_EnableInfinityRep)
-            if(self.DecimalHalf==InfinityRep)
+            if(self.ExtraRep==InfinityRep)
             {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(self.ExtraRep==IRep)//LeftSide is Imaginary infinity
-				{
-					if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-					{
-						if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
-							return false;
-						else
-							return true;
-					}
-					else if(self.IntValue==1)//Left is Positive Imaginary Infinity
-						return false;
-					else//Left Negative Imaginary Infinity
-						return true;
-				}
-	#endif
-                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-				{
-					//return self.IntValue<=Value.IntValue;
-					/*
-						(+inf <= +inf) = true
-						(+inf <= -inf) = false
-						(-inf <= +inf) = true
-						(-inf <= -inf) = true
-					*/
-					if(Value.IntValue.Value==-1&&self.IntValue.Value==1)
-						return false;
-					else
-						return true;
-				}
-				else if(self.IntValue==1)//Left is Positive Infinity
-					return false;//+inf <= 99
-				else//Left is Negative Infinity
-					return true;//-inf <= 99
+                if(self.IntValue==Value.IntValue||Value.IntValue==1)
+                    return true;
+                else
+                    return false;
             }
-            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
+            else if(Value.ExtraRep==InfinityRep)
             {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(Value.ExtraRep==IRep)//RightSide is Imaginary infinity
-				{
-					if(self.IntValue==1)//Right is Positive Imaginary Infinity
-						return true;
-					else//Right is Negative Imaginary Infinity
-						return false;
-				}
-	#endif
-				if(Value.IntValue==1)//Right is Positive Infinity
-					return true;//99 <= +inf
-				else//Right is Negative Infinity
-					return false;//99 <= -inf
+            
             }
 #endif
-            if(self.DecimalHalf==0)
+            self.ConvertToNumRep(); Value.ConvertToNumRep();
+            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
+            else
             {
-                if(Value.DecimalHalf==0)
-                    return self.IntValue<=Value.IntValue;
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValueIsNegative = Value.IntValue < 0;
+                if (ValueIsNegative && SelfIsNegative == false) { return false; }//5>=-5
+                else if (ValueIsNegative == false && SelfIsNegative) { return true; }//-5<=5
                 else
                 {
-                    if(self.IntValue<=Value.IntValue)
-                        return self.DecimalHalf<=Value.DecimalHalf;
+                    if (Value.DecimalHalf == 0)
+                    {
+                        if (self.DecimalHalf == 0)
+                            return self.IntValue <= Value.IntValue;
+                        else
+                        {
+                            if (self.IntValue == NegativeRep)
+                            {//-0.5<0
+                                if (Value >= 0)
+                                    return true;
+                            }
+                            else if (self.IntValue < Value) { return true; }//5.5<=6
+                            else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }
+                        }
+                    }
+                    else if (self.DecimalHalf == 0)
+                    {
+                        if (Value.IntValue == NegativeRep && self.IntValue <= 1)
+                        {//-1<-0.5
+                            if (self.IntValue <= -1)
+                                return true;
+                        }
+                        else if (self.IntValue < Value.IntValue)
+                            return true;
+                        else if (Value.IntValue == self.IntValue)
+                            return Value.IntValue < 0 ? false : true;//5 <= 5.5 vs -5 >= -5.5
+                    }
+                    //Assuming both are non-whole numbers if reach here
+                    if (self.IntValue == NegativeRep)
+                        self.IntValue = 0;
+                    if (Value.IntValue == NegativeRep)
+                        Value.IntValue = 0;
+                    if (SelfIsNegative)//Both are either positive or negative
+                    {//Larger number = farther down into negative
+                        if (self.IntValue > Value.IntValue)
+                            return true;
+                        else if (self.IntValue == Value.IntValue)
+                            return self.DecimalHalf > Value.DecimalHalf;
+                    }
                     else
-                        return false;
+                    {
+                        if (self.IntValue < Value.IntValue)
+                            return true;
+                        else if (self.IntValue == Value.IntValue)
+                            return self.DecimalHalf < Value.DecimalHalf;
+                    }
                 }
             }
-            else if(self.IntValue<=Value.IntValue)
-                return self.DecimalHalf<=Value.DecimalHalf;
-            else
-                return false;
+            return false;
         }
 
         /// <summary>
@@ -2579,158 +2394,81 @@ public:
         /// <returns>bool</returns>
         friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						self.ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-#if defined(AltNum_EnableImaginaryNum)
-			if(self.ExtraRep!=Value.ExtraRep)
-				throw "Can't compare imaginary number with real number";
-#endif
 #if defined(AltNum_EnableInfinityRep)
-            if(self.DecimalHalf==InfinityRep)
+            if(self.ExtraRep==InfinityRep)
             {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(self.ExtraRep==IRep)//LeftSide is Imaginary infinity
-				{
-					if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-					{
-						if(Value.IntValue.Value==-1&&self.IntValue.Value==1)
-							return true;
-						else
-							return false;
-					}
-					else if(self.IntValue==1)//Left is Positive Imaginary Infinity
-						return true;
-					else//Left Negative Imaginary Infinity
-						return false;
-				}
-	#endif
-                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-				{
-					//return self.IntValue>Value.IntValue;
-					/*
-						+inf > +inf = false
-						+inf > -inf = true
-						-inf > +inf = false
-						-inf > -inf = false
-					*/
-					if(Value.IntValue.Value==-1&&self.IntValue.Value==1)
-						return true;
-					else
-						return false;
-				}
-				else if(self.IntValue==1)//Left is Positive Infinity
-					return true;//+inf > 99
-				else//Left is Negative Infinity
-					return false;//-inf > 99
-            }
-            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
-            {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(Value.ExtraRep==IRep)//RightSide is Imaginary infinity
-				{
-					if(self.IntValue==1)//Right is Positive Imaginary Infinity
-						return false;
-					else//Right is Negative Imaginary Infinity
-						return true;
-				}
-	#endif
-				if(Value.IntValue==1)//Right is Positive Infinity
-					return false;//99 > +inf
-				else//Right is Negative Infinity
-					return true;//99 > -inf
-            }
-#endif
-            if(self.DecimalHalf==0)
-            {
-                if(Value.DecimalHalf==0)
-                    return self.IntValue>Value.IntValue;
-                else
+                if(Value.ExtraRep==InfinityRep)
                 {
-                    if(self.IntValue>Value.IntValue)
-                        return self.DecimalHalf>Value.DecimalHalf;
-                    else
+                    if(self.IntValue==Value.IntValue)
                         return false;
+                    else if(Value.IntValue==1)
+                        return false;
+                    else
+                        return true;
                 }
             }
-            else if(self.IntValue>Value.IntValue)
-                return self.DecimalHalf>Value.DecimalHalf;
+            else if(Value.ExtraRep==InfinityRep)
+            {
+            
+            }
+#endif
+            self.ConvertToNumRep(); Value.ConvertToNumRep();
+            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
             else
-                return false;
+            {
+
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValueIsNegative = Value.IntValue < 0;
+                if (ValueIsNegative && SelfIsNegative == false) { return true; }//5 > -5
+                else if (ValueIsNegative == false && SelfIsNegative) { return false; }//-5<5
+                else if (Value.DecimalHalf == 0)
+                {
+                    if (self.DecimalHalf == 0)
+                        return self.IntValue > Value.IntValue;
+                    else
+                    {
+                        if (self.IntValue == NegativeRep)
+                        {//-0.5>-1
+                            if (Value <= -1)
+                                return true;
+                        }
+                        else if (self.IntValue > Value) { return true; }
+                        else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }
+                    }
+                }
+                else if (self.DecimalHalf == 0)
+                {
+                    if (Value.IntValue == NegativeRep)
+                    {
+                        if (self.IntValue >= 0)
+                            return true;
+                    }
+                    else if (self.IntValue > Value.IntValue)
+                        return true;
+                    else if (Value.IntValue == self.IntValue)
+                        return Value.IntValue < 0 ? true : false;//5 < 5.5 vs -5 > -5.5
+                }
+                //Assuming both are non-whole numbers if reach here
+                if (self.IntValue == NegativeRep)
+                    self.IntValue = 0;
+                if (Value.IntValue == NegativeRep)
+                    Value.IntValue = 0;
+                if (SelfIsNegative)//Both are either positive or negative
+                {//Larger number = farther down into negative
+                    if (self.IntValue < Value.IntValue)
+                        return true;
+                    else if (self.IntValue == Value.IntValue)
+                        return self.DecimalHalf < Value.DecimalHalf;
+                }
+                else
+                {
+                    if (self.IntValue > Value.IntValue)
+                        return true;
+                    else if (self.IntValue == Value.IntValue)
+                        return self.DecimalHalf > Value.DecimalHalf;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -2741,158 +2479,84 @@ public:
         /// <returns>bool</returns>
         friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
         {
-			RepType LRep = self.GetRepType();
-			RepType RRep = Value.GetRepType();
-			if(LRep!=RRep)
-			{//ToDo:Check bitvalue of RepType instead maybe
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(LRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						self.ConvertToNormalIRep(LRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						self.ConvertToNormType(LRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-				switch(RRep)
-				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
-					#if defined(AltNum_EnableAlternativeRepFractionals)
-						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
-						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
-					#endif
-					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
-					#endif
-						Value.ConvertToNormalIRep(RRep);
-						break;
-					//Don't convert infinity into real number
-					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
-						break;
-					#endif
-				#endif
-				#if defined(AltNum_EnableInfinityRep)
-					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
-						break;
-				#endif
-					default:
-			#endif
-						Value.ConvertToNormType(RRep);
-			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-						break;
-				}
-			#endif
-			}
-#if defined(AltNum_EnableImaginaryNum)
-			if(self.ExtraRep!=Value.ExtraRep)
-				throw "Can't compare imaginary number with real number";
-#endif
 #if defined(AltNum_EnableInfinityRep)
-            if(self.DecimalHalf==InfinityRep)
+            if(self.ExtraRep==InfinityRep)
             {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(self.ExtraRep==IRep)//LeftSide is Imaginary infinity
-				{
-					if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-					{
-						if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
-							return false;
-						else
-							return true;
-					}
-					else if(self.IntValue==1)//Left is Positive Imaginary Infinity
-						return true;
-					else//Left Negative Imaginary Infinity
-						return false;
-				}
-	#endif
-                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
-				{
-					//return self.IntValue>=Value.IntValue;
-					/*
-						(+inf >= +inf) = true
-						(+inf >= -inf) = true
-						(-inf >= +inf) = false
-						(-inf >= -inf) = true
-					*/
-					if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
-						return false;
-					else
-						return true;
-				}
-				else if(self.IntValue==1)//Left is Positive Infinity
-					return true;//+inf >= 99 
-				else//Left is Negative Infinity
-					return false;//-inf >= 99
-            }
-            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
-            {
-	#if defined(AltNum_EnableImaginaryInfinity)
-				if(Value.ExtraRep==IRep)//RightSide is Imaginary infinity
-				{
-					if(self.IntValue==1)//Right is Positive Imaginary Infinity
-						return false;
-					else//Right is Negative Imaginary Infinity
-						return true;
-				}
-	#endif
-				if(Value.IntValue==1)//Right is Positive Infinity
-					return false;//99 >= +inf
-				else//Right is Negative Infinity
-					return true;//99 >= -inf
-            }
-#endif
-            if(self.DecimalHalf==0)
-            {
-                if(Value.DecimalHalf==0)
-                    return self.IntValue>=Value.IntValue;
-                else
+                if(Value.ExtraRep==InfinityRep)
                 {
-                    if(self.IntValue>=Value.IntValue)
-                        return self.DecimalHalf>=Value.DecimalHalf;
+                    if(self.IntValue==Value.IntValue||Value.IntValue==-1)
+                        return true;
                     else
                         return false;
                 }
+                else
+                {
+                
+                }
             }
-            else if(self.IntValue>=Value.IntValue)
-                return self.DecimalHalf>=Value.DecimalHalf;
+            else if(Value.ExtraRep==InfinityRep)
+            {
+            
+            }
+#endif
+            self.ConvertToNumRep(); Value.ConvertToNumRep();
+            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
             else
-                return false;
+            {
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValueIsNegative = Value.IntValue < 0;
+                if (ValueIsNegative && SelfIsNegative == false) { return true; }
+                else if (ValueIsNegative == false && SelfIsNegative) { return false; }
+                else if (Value.DecimalHalf == 0)
+                {
+                    if (self.DecimalHalf == 0)
+                        return self.IntValue >= Value.IntValue;
+                    else
+                    {
+                        if (self.IntValue == NegativeRep)
+                        {
+                            if (Value <= -1)
+                                return true;
+                        }
+                        else if (self.IntValue > Value)
+                            return true;
+                        else if (self.IntValue == Value)
+                            return self.IntValue < 0 ? false : true;//-5.5<-5 vs 5.5>5
+                    }
+                }
+                else if (self.DecimalHalf == 0)//return self.IntValue > Value;
+                {
+                    if (Value.IntValue == NegativeRep)
+                    {//0>-0.5
+                        if (self.IntValue >= 0)
+                            return true;
+                    }
+                    else if (self.IntValue > Value.IntValue)
+                        return true;
+                    else if (Value.IntValue == self.IntValue)
+                        return Value.IntValue < 0 ? true : false;//5 <= 5.5 vs -5 >= -5.5
+                }
+                //Assuming both are non-whole numbers if reach here
+                if (self.IntValue == NegativeRep)
+                    self.IntValue = 0;
+                if (Value.IntValue == NegativeRep)
+                    Value.IntValue = 0;
+                if (SelfIsNegative)//Both are either positive or negative
+                {//Larger number = farther down into negative
+                    if (self.IntValue < Value.IntValue)//-5.5 >= -6.5
+                        return true;
+                    else if (self.IntValue == Value.IntValue)//-5.5 >= -5.6
+                        return self.DecimalHalf < Value.DecimalHalf;
+                }
+                else
+                {
+                    if (self.IntValue > Value.IntValue)
+                        return true;
+                    else if (self.IntValue == Value.IntValue)
+                        return self.DecimalHalf > Value.DecimalHalf;
+                }
+            }
+            return false;
         }
 
     #pragma endregion Comparison Operators
@@ -3080,18 +2744,17 @@ public:
 		
 		bool RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 
-	#pragma endregion RepToRepCode_AdditionSubtraction
-
-    #pragma region RepToRepCode_MultiplicationDivision
+		#pragma endregion RepToRepCode_AdditionSubtraction
+#pragma region RepToRepCode_MultiplicationDivision
 		
 		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		
 		bool RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		
     public:
-    #pragma endregion RepToRepCode_MultiplicationDivision
+#pragma endregion RepToRepCode_MultiplicationDivision
 
-    #pragma region Addition/Subtraction Operations
+#pragma region Addition/Subtraction Operations
         /// <summary>
         /// Basic Addition Operation
         /// </summary>
@@ -3524,17 +3187,13 @@ public:
 #pragma endregion Addition/Subtraction Operations
 
 #pragma region Multiplication/Division Operations
-		/// <summary>
-        /// Basic Multiplication Operation(without checking for special representation variations or zero)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		bool BasicMultOp(MediumDecVariant& Value)
+		bool PartialMultOp(MediumDecVariant& Value)
         {//Warning:Modifies Value to make it a positive variable
-        //Only checking for zero multiplication in main multiplication method
-        //Not checking for special representation variations in this method(closer to MediumDec operation code)
+		//Only use in cases where representation types are the same
             if (Value.IntValue < 0)
             {
-                Value.SwapNegativeStatus();
+                if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
+                else { Value.IntValue *= -1; }
                 SwapNegativeStatus();
             }
             if (DecimalHalf == 0)
@@ -3673,10 +3332,44 @@ public:
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
-            if(DecimalHalf==0&&IntValue==0)
-                return true;
-            else
-                return false;
+        }
+
+		bool PartialMultOpV2(MediumDecVariant Value)
+		{
+			return PartialMultOp(Value);
+		}
+
+        /// <summary>
+        /// Basic Multiplication Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        void BasicMultOp(MediumDecVariant& Value)
+        {
+            if (Value == MediumDecVariant::Zero) { SetAsZero(); return; }
+            if ((IntValue==0&&DecimalHalf==0) || Value == MediumDecVariant::One)
+                return;
+			if(PartialMultOp(Value))
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
+#else
+			{	DecimalHalf = 1; }
+#endif
+        }
+		
+        /// <summary>
+        /// Basic Multiplication Operation(without zero multiplication code)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        void BasicMultOpV2(MediumDecVariant& Value)
+        {
+			if(PartialMultOp(Value))//Prevent Dividing into nothing
+#if defined(AltNum_EnableApproachingDivided)
+			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
+#else
+				DecimalHalf = 1;
+#endif
         }
 
 private:
@@ -3974,6 +3667,10 @@ public:
 				case RepType::NaN:
 					throw "Can't perform operations with NaN or Undefined number";
 					break;
+#if defined(AltNum_EnableNegativeZero)
+				case RepType::NegativeZero://Treat operation as with Zero in most cases(only used in very rare cases)
+					break;
+#endif
 				default:
 					throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
 					//throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";

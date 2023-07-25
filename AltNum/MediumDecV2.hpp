@@ -1222,7 +1222,25 @@ namespace BlazesRusCode
         }
 
     #pragma endregion Comparison Operators
-    #pragma region MediumDec-To-MediumDecVariant Operators
+
+    #pragma region RepToRepCode_AdditionSubtraction
+    private:
+		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+		
+		bool RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+
+	#pragma endregion RepToRepCode_AdditionSubtraction
+
+    #pragma region RepToRepCode_MultiplicationDivision
+		
+		void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+		
+		bool RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+		
+    public:
+    #pragma endregion RepToRepCode_MultiplicationDivision
+
+    #pragma region Addition/Subtraction Operations
     public:
         /// <summary>
         /// Basic Addition Operation
@@ -1647,22 +1665,6 @@ namespace BlazesRusCode
                 }
             }
 		}
-		
-        /// <summary>
-        /// Multiplication Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        static MediumDecVariant& MultOp(MediumDecVariant& self, MediumDecVariant& Value)
-        {
-            if (Value == MediumDecVariant::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
-            if (self == MediumDecVariant::Zero || Value == MediumDecVariant::One)
-                return self;
-			self.BasicMultOp(Value);
-            if (self == MediumDecVariant::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
-            return self;
-        }
 
 		/// <summary>
         /// Basic Division Operation
@@ -1708,7 +1710,7 @@ namespace BlazesRusCode
 		}
 
         /// <summary>
-        /// Division Operation Between MediumDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1776,7 +1778,7 @@ namespace BlazesRusCode
 		}
 
         /// <summary>
-        /// Remainder/Modulus Operation Between MediumDecs
+        /// Remainder/Modulus Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1789,7 +1791,7 @@ namespace BlazesRusCode
         
     public:
         /// <summary>
-        /// Addition Operation Between MediumDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1800,7 +1802,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// += Operation Between MediumDecs
+        /// += Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1811,7 +1813,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// += Operation Between MediumDecs(from pointer)
+        /// += Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1819,7 +1821,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator+=(MediumDecVariant* self, MediumDecVariant Value){ return AddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDecs
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1830,7 +1832,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// -= Operation Between MediumDecs
+        /// -= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1841,7 +1843,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// -= Operation Between MediumDecs(from pointer)
+        /// -= Operation(from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1849,7 +1851,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator-=(MediumDecVariant* self, MediumDecVariant Value){ return SubOp(**self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between MediumDecs
+        /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1860,7 +1862,7 @@ namespace BlazesRusCode
         }
 
         ///// <summary>
-        ///// *= Operation Between MediumDecs
+        ///// *= Operation
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -1871,7 +1873,7 @@ namespace BlazesRusCode
         }
 
         ///// <summary>
-        ///// *= Operation Between MediumDecs (from pointer)
+        ///// *= Operation (from pointer)
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
@@ -1880,7 +1882,7 @@ namespace BlazesRusCode
 
 
         /// <summary>
-        /// Division Operation Between MediumDecs
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1891,7 +1893,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// /= Operation Between MediumDecs
+        /// /= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1902,7 +1904,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// /= Operation Between MediumDecs (from pointer)
+        /// /= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1910,7 +1912,7 @@ namespace BlazesRusCode
         friend MediumDecVariant& operator/=(MediumDecVariant* self, MediumDecVariant Value){ return DivOp(**self, Value); }
 
         /// <summary>
-        /// Remainder Operation Between MediumDecs
+        /// Remainder Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1921,7 +1923,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// %= Operation Between MediumDecs
+        /// %= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1932,7 +1934,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// %= Operation Between MediumDecs (from pointer)
+        /// %= Operation (from pointer)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1943,7 +1945,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// XOR Operation Between MediumDecs
+        /// XOR Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -1980,7 +1982,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MediumDecs
+        /// Bitwise Or Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
@@ -2017,7 +2019,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Bitwise And Operation Between MediumDecs
+        /// Bitwise And Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
