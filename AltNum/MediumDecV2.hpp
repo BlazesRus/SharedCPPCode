@@ -891,35 +891,108 @@ namespace BlazesRusCode
 
     #pragma region Comparison Operators
         /// <summary>
-        /// Equal to Operation Between MediumDecs
+        /// Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
         friend bool operator==(MediumDecVariant self, MediumDecVariant Value)
         {
-            return (self.IntValue.Value == Value.IntValue.Value && self.DecimalHalf == Value.DecimalHalf);
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
+			
+            return (self.IntValue.Value == Value.IntValue.Value && self.DecimalHalf == Value.DecimalHalf && self.ExtraRep==self.ExtraRep);
         }
 
         /// <summary>
-        /// Not equal to Operation Between MediumDecs
+        /// Not equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
         friend bool operator!=(MediumDecVariant self, MediumDecVariant Value)
         {
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
             return (self.IntValue.Value != Value.IntValue.Value || self.DecimalHalf != Value.DecimalHalf);
         }
 
         /// <summary>
-        /// Lesser than Operation Between MediumDecs
+        /// Lesser than Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
         friend bool operator<(MediumDecVariant self, MediumDecVariant Value)
         {
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
+#if defined(AltNum_EnableInfinityRep)
+            if(self.DecimalHalf==InfinityRep)
+            {
+                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
+				{
+					//return self.IntValue<Value.IntValue;
+					/*
+						+inf < +inf = false
+						+inf < -inf = false
+						-inf < +inf = true
+						-inf < -inf = false
+					*/
+					if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
+						return true;
+					else
+						return false;
+				}
+				else if(self.IntValue==1)//Left is Positive Infinity
+					return false;//+inf < 99
+				else//Left is Negative Infinity
+					return true;//-inf < 99
+            }
+            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
+            {
+				if(Value.IntValue==1)//Right is Positive Infinity
+					return true;//99 < +inf
+				else//Right is Negative Infinity
+					return false;//99 < -inf
+            }
+#endif
             if(self.DecimalHalf==0)
             {
                 if(Value.DecimalHalf==0)
@@ -939,13 +1012,57 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Lesser than or Equal to Operation Between MediumDecs
+        /// Lesser than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
         friend bool operator<=(MediumDecVariant self, MediumDecVariant Value)
         {
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
+#if defined(AltNum_EnableInfinityRep)
+            if(self.DecimalHalf==InfinityRep)
+            {
+                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
+				{
+					//return self.IntValue<=Value.IntValue;
+					/*
+						(+inf <= +inf) = true
+						(+inf <= -inf) = false
+						(-inf <= +inf) = true
+						(-inf <= -inf) = true
+					*/
+					if(Value.IntValue.Value==-1&&self.IntValue.Value==1)
+						return false;
+					else
+						return true;
+				}
+				else if(self.IntValue==1)//Left is Positive Infinity
+					return false;//+inf <= 99
+				else//Left is Negative Infinity
+					return true;//-inf <= 99
+            }
+            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
+            {
+				if(Value.IntValue==1)//Right is Positive Infinity
+					return true;//99 <= +inf
+				else//Right is Negative Infinity
+					return false;//99 <= -inf
+            }
+#endif
             if(self.DecimalHalf==0)
             {
                 if(Value.DecimalHalf==0)
@@ -965,13 +1082,57 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Greater than Operation Between MediumDecs
+        /// Greater than Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The right side value.</param>
         /// <returns>bool</returns>
         friend bool operator>(MediumDecVariant self, MediumDecVariant Value)
         {
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
+#if defined(AltNum_EnableInfinityRep)
+            if(self.DecimalHalf==InfinityRep)
+            {
+                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
+				{
+					//return self.IntValue>Value.IntValue;
+					/*
+						+inf > +inf = false
+						+inf > -inf = true
+						-inf > +inf = false
+						-inf > -inf = false
+					*/
+					if(Value.IntValue.Value==-1&&self.IntValue.Value==1)
+						return true;
+					else
+						return false;
+				}
+				else if(self.IntValue==1)//Left is Positive Infinity
+					return true;//+inf > 99
+				else//Left is Negative Infinity
+					return false;//-inf > 99
+            }
+            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
+            {
+				if(Value.IntValue==1)//Right is Positive Infinity
+					return false;//99 > +inf
+				else//Right is Negative Infinity
+					return true;//99 > -inf
+            }
+#endif
             if(self.DecimalHalf==0)
             {
                 if(Value.DecimalHalf==0)
@@ -991,13 +1152,57 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Greater than or Equal to Operation Between MediumDecs
+        /// Greater than or Equal to Operation
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
         friend bool operator>=(MediumDecVariant self, MediumDecVariant Value)
         {
+			RepType LRep = self.GetRepType();
+			RepType RRep = Value.GetRepType();
+			if(LRep!=RRep)
+			{
+				//Don't convert infinity to real number
+	#if defined(AltNum_EnableInfinityRep)
+				if(self.DecimalHalf!=InfinityRep)
+	#endif
+					self.ConvertToNormType(LRep);
+	#if defined(AltNum_EnableInfinityRep)
+				if(Value.DecimalHalf!=InfinityRep)
+	#endif
+					Value.ConvertToNormType(RRep);
+			}
+#if defined(AltNum_EnableInfinityRep)
+            if(self.DecimalHalf==InfinityRep)
+            {
+                if(Value.DecimalHalf==InfinityRep)//both left and right are infinity types
+				{
+					//return self.IntValue>=Value.IntValue;
+					/*
+						(+inf >= +inf) = true
+						(+inf >= -inf) = true
+						(-inf >= +inf) = false
+						(-inf >= -inf) = true
+					*/
+					if(Value.IntValue.Value==1&&self.IntValue.Value==-1)
+						return false;
+					else
+						return true;
+				}
+				else if(self.IntValue==1)//Left is Positive Infinity
+					return true;//+inf >= 99 
+				else//Left is Negative Infinity
+					return false;//-inf >= 99
+            }
+            else if(Value.DecimalHalf==InfinityRep)//Right side is infinity
+            {
+				if(Value.IntValue==1)//Right is Positive Infinity
+					return false;//99 >= +inf
+				else//Right is Negative Infinity
+					return true;//99 >= -inf
+            }
+#endif
             if(self.DecimalHalf==0)
             {
                 if(Value.DecimalHalf==0)
@@ -1067,7 +1272,7 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Addition Operation Between MediumDecs
+        /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1200,7 +1405,7 @@ namespace BlazesRusCode
 		}
 
         /// <summary>
-        /// Subtraction Operation Between MediumDecs
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1284,12 +1489,14 @@ namespace BlazesRusCode
 #endif
             return self;
         }
+#pragma endregion Addition/Subtraction Operations
 
+#pragma region Multiplication/Division Operations
 		/// <summary>
-        /// Basic Multiplication Operation
+        /// Basic Multiplication Operation(without checking for special representation variations or zero)
         /// </summary>
         /// <param name="Value">The value.</param>
-        void BasicMultOp(MediumDecVariant& Value)
+        bool BasicMultOp(MediumDecVariant& Value)
 		{
             if (Value.IsNegative())
             {
