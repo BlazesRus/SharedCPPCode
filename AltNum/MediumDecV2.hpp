@@ -227,8 +227,10 @@ namespace BlazesRusCode
 		    #endif
 	    #endif
     #endif
+    #if defined(AltNum_EnableNaN)
             Undefined,
             NaN,
+    #endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
 	#endif
@@ -282,6 +284,25 @@ namespace BlazesRusCode
 			return PiSide;
 		}
     #endif
+
+        void ConvertToNumRep()
+        {
+			RepType repType = GetRepType();
+			ConvertToNormType(repType);
+        }
+        
+        //Switch based version of ConvertToNumRep
+        void ConvertToNormType(RepType& repType)
+        {
+            switch (repType)
+            {
+            case RepType::NormalType:
+                break;
+            default:
+                ConvertToNumRep();
+                break;
+            }
+        }
 
     #pragma region ValueDefines
     private:
@@ -670,8 +691,11 @@ namespace BlazesRusCode
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (float)WholeValue;
-                IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 
@@ -696,8 +720,11 @@ namespace BlazesRusCode
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (double)WholeValue;
-                IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 
@@ -722,8 +749,11 @@ namespace BlazesRusCode
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (ldouble)WholeValue;
-                IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 

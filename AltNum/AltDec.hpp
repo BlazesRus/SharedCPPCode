@@ -1856,22 +1856,21 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483647.0f)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    IntValue *= -1;
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (float)WholeValue;
-                if(IsNegative&&WholeValue==0)
-                    IntValue = NegativeRep;
-                else
-                    IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 
@@ -1886,22 +1885,21 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483647.0)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    IntValue *= -1;
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (double)WholeValue;
-                if(IsNegative&&WholeValue==0)
-                    IntValue = NegativeRep;
-                else
-                    IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 
@@ -1916,19 +1914,21 @@ public:
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0)
             {
-                IntValue = 2147483647;
                 if (IsNegative)
-                {
-                    IntValue *= -1;
-                }
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 Value -= (ldouble)WholeValue;
-                IntValue = IsNegative ? WholeValue * -1 : WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = 0;
             }
         }
 
