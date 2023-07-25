@@ -16,7 +16,6 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 		case RepType::IFractional:
 		case RepType::INumByDiv:
 		case RepType::MixedI:
-
         #endif
 			if(RRep==RepType::ApproachingBottom)
 			{
@@ -133,7 +132,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(PiNum);
 					break;
 	#endif
-	#if defined(AltNum_EnableAlternativeRepFractionals)
+	#if defined(AltNum_EnableFractionals)
 				case RepType::NumByDiv:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)//Convert result to PiNumByDiv
@@ -192,7 +191,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					break;
 		#endif
 	#endif
-	#if defined(AltNum_EnableAlternativeRepFractionals)
+	#if defined(AltNum_EnableFractionals)
 				case RepType::NumByDiv:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)//Convert result to PiNumByDiv
@@ -317,7 +316,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 		#endif
 	#endif
 #endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
 			switch (RRep)
 			{

@@ -36,7 +36,7 @@
 #include "MirroredInt.hpp"
 //Preprocessor options
 /*
-AltNum_EnableByDecimaledFractionals =
+AltNum_EnableFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
       (Enables NumByDiv etc)
 AltNum_EnableAlternativeRepFractionals =
@@ -104,7 +104,7 @@ AltNum_EnablePiRep =
 
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
-If AltNum_EnableByDecimaledFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
+If AltNum_EnableFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
 Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
 (Might be better to just store as formula class feature or as another number class holding 2 MediumDec or other AltNum values)
       (Requires AltNum_EnableImaginaryNum, Not Implimented)
@@ -199,7 +199,7 @@ AltNum_EnableNilRep = Enables Nil representation(detection not in code right now
 
 //Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
 #if defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableByDecimaledFractionals
+    #define AltNum_EnableFractionals
 #endif
 
 #if defined(AltNum_AvoidUsingLargeInt)
@@ -484,7 +484,7 @@ ExtraFlags treated as bitwise flag storage
         enum class RepType: int
         {
             NormalType = 0,
-	#if defined(AltNum_EnableByDecimaledFractionals)
+	#if defined(AltNum_EnableFractionals)
             NumByDiv,
 	#endif
 	#if defined(AltNum_EnablePiRep)
@@ -680,7 +680,7 @@ ExtraFlags treated as bitwise flag storage
 				if(DecimalHalf<0)
 					return RepType::MixedFrac;
     #endif
-	#if defined(AltNum_EnableByDecimaledFractionals)
+	#if defined(AltNum_EnableFractionals)
                 return RepType::NumByDiv;
     #endif
 				throw "Non-enabled representation detected";
@@ -1155,7 +1155,7 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = ERep;
         }
     #endif
-    #if defined(AltNum_EnableByDecimaledFractionals)
+    #if defined(AltNum_EnableFractionals)
         //Set value for NumByDiv
         void SetFractionalVal(int IntHalf, int DecHalf, int Divisor)
         {
@@ -3805,186 +3805,29 @@ public:
             }
 			switch (LRep)
 			{
-				case RepType::NormalType:
-					self.BasicMultOp(Value);
-					break;
-#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
-				case RepType::PiNum:
-					self.BasicMultOp(Value);
-					self.BasicMultOp(PiNum);
-					break;		
-#endif
-#if defined(AltNum_EnableERep)
-				case RepType::ENum:
-					self.BasicMultOp(Value);
-					self.BasicMultOp(ENum);
-					break;
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-				case RepType::INum://Xi * Xi = XX
-					ExtraRep = 0;
-					self.BasicMultOp(Value);
-					break;
-#endif
-					
-#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnablePiPowers)
-				case RepType::PiNum:
-					//Add code that converts into PiPower type representation here later
-					break;
-				case RepType::PiPower:
-					//Add Pi powers code here later
-					break;
+	#if defined(AltNum_EnablePiRep)
+		#if defined(AltNum_EnablePiPowers)
+		#endif
+	#endif
+	#if defined(AltNum_EnableERep)
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+	#endif
+	#if defined(AltNum_EnableFractionals)
+	#endif
+	#if defined(AltNum_EnableMixedFractional)
 
-#endif
-					
-#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)
-#if defined(AltNum_EnablePiRep)
-				case RepType::MixedPi:
-#endif
-#if defined(AltNum_EnableERep)
-				case RepType::MixedE:
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-				case RepType::MixedI:
-#endif
-					throw "BasicMixedMultOp code not implimented yet";//self.BasicMixedMultOp(Value);
-					break;
-#endif
-
-#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingBottom:
-					if (self.IntValue == NegativeRep)
-					{
-   //                     if (Value.IntValue == 0)//-0.0..1 * 0.0..1
-   //                     {/*Do Nothing*/}
-   //                     else//-0.0..1 * 5.0..1
-						//{/*Do Nothing*/}
-						return self;
-					}
-					if (self.IntValue == 0)
-					{
-   //                     if (Value.IntValue == 0)//0.0..1 * 0.0..1
-   //                     {/*Do Nothing*/}
-   //                     else//0.0..1 * 5.0..1
-						//{/*Do Nothing*/}
-						return self;
-					}
-					else if (self.IntValue < 0)
-					{
-						if (Value.IntValue == 0)//-1.0..1 * 0.0..1
-						{	IntValue = NegativeRep; ExtraRep = 0; }
-						else//-1.0..1 * 2.0..1
-
-					}
-					else
-					{
-						if (Value.IntValue == 0)//1.0..1 * 0.0..1
-						{	IntValue = 0; ExtraRep = 0; }
-						else//1.0..1 * 1.0..1
-
-					}
-					break;
-				case RepType::ApproachingTop:
-					if (self.IntValue == NegativeRep)
-					{
-   //                     if (Value.IntValue == 0)//-0.9..9 * 0.9..9
-						//{/*Do Nothing*/}
-   //                     else//-0.9..9 * 5.9..9
-						//{/*Do Nothing*/}
-					}
-					if (self.IntValue == 0)
-					{
-						if (Value.IntValue == 0)//0.9..9 * 0.9..9
-						{/*Do Nothing*/}
-						else//0.9..9 * 5.9..9
-
-					}
-					else if (self.IntValue < 0)
-					{
-						if (Value.IntValue == 0)//-1.9..9 * 0.9..9  = -2.9..8
-						{/*Do Nothing*/}
-						else//-1.9..9 * 2.9..9
-
-					}
-					else
-					{
-						if (Value.IntValue == 0)//1.9..9 * 0.9..9
-						{/*Do Nothing*/}
-						else//1.9..9 * 2.9..9
-
-					}
-					break;
-
-//#if defined(AltNum_EnableApproachingDivided)
-//                    case RepType::ApproachingBottom:
-//                        break;
-//                    case RepType::ApproachingTop:
-//                        break;
-//#endif
-#endif
-
-/*#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::NumByDiv:
-#if defined(AltNum_EnablePiRep)
-				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-#endif
-#if defined(AltNum_EnableERep)
-				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-#endif
-
-					break;*/
-
-/*#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-#endif
-#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-#endif
-
-					break;*/
-					
-#if defined(AltNum_EnableMixedFractional)
-/*                    case RepType::MixedFrac://IntValue -- (DecimalHalf*-1)/ExtraRep
-#if defined(AltNum_EnablePiRep)
-				case RepType::MixedPi:
-#endif
-#if defined(AltNum_EnableERep)
-				case RepType::MixedE:
-#endif
-#endif
-					throw "BasicMixedMultOp code not implimented yet";
-					break;*/
-#endif
-
-#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
-/*                    case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-
-					break;
-					
-				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-
-					break;
-				case RepType::MixedI:
-					throw "BasicMixedMultOp code not implimented yet";
-					break;*/
-#endif
-
-//#if defined(AltNum_EnableComplexNumbers)
-//                    case RepType::ComplexIRep:
-//						break;
-//#endif
-//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//                    case RepType::UndefinedButInRange:
-//						break;
-//#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
 				case RepType::Undefined:
 				case RepType::NaN:
 					throw "Can't perform operations with NaN or Undefined number";
 					break;
+	#endif			
 				default:
-					throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
-					//throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+					self.BasicIntMultOp(Value);
 					break;
 			}
             return self;
@@ -5997,7 +5840,7 @@ public:
             }
 #if defined(AltNum_EnableERep)
             case RepType::ENum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
             case RepType::ENumByDiv:
 #endif
                 Value.ConvertToNumRep();
@@ -6005,7 +5848,7 @@ public:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
             case RepType::INumByDiv:
 #endif
                 break;
@@ -6683,7 +6526,7 @@ public:
                             return Infinity;//PositiveInfinity
                 break;
 #endif
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                     return FractionalPow(value, MediumDecVariant(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
 #if defined(AltNum_EnableERep)
@@ -6804,7 +6647,7 @@ public:
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -7001,7 +6844,7 @@ public:
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -7150,7 +6993,7 @@ public:
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
                 else if(value.ExtraRep>0)
                 {
                     BasicIntDivOp(ExtraRep);
@@ -7544,7 +7387,7 @@ public:
             case RepType::NaN:
                 return NaNValue();
 #endif
-#if defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableFractionals)
             {
                 int Divisor = Value.ExtraRep*-1;
                 Value.ExtraRep = 0;
@@ -7558,7 +7401,7 @@ public:
 #endif
 #if defined(AltNum_EnableERep)
             case RepType::RepType::ENum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
             case RepType::RepType::ENumByDiv:
 #endif
 #endif
@@ -7846,14 +7689,14 @@ public:
 #endif
 #if defined(AltNum_EnableERep)
         case RepType::ENum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::ENumByDiv:
 #endif
             break;
 #endif
 #if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::INumByDiv:
 #endif
             break;
@@ -7911,7 +7754,7 @@ public:
         case RepType::ENum:
             Value += "e";
             break;
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::ENumByDiv:
             Value += "e/";
             Value += ExtraRep*-1;
@@ -7922,7 +7765,7 @@ public:
         case RepType::INum:
             Value += "i";
             break;
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::INumByDiv:
             Value += "i/";
             Value += ExtraRep*-1;
@@ -7966,14 +7809,14 @@ public:
 /*
 #if defined(AltNum_EnableERep)
         case RepType::ENum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::ENumByDiv:
 #endif
             break;
 #endif
 #if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::INumByDiv:
 #endif
             break;
@@ -8028,7 +7871,7 @@ public:
         case RepType::ENum:
             Value += "e";
             break;
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::ENumByDiv:
             Value += "e/";
             Value += ExtraRep*-1;
@@ -8039,7 +7882,7 @@ public:
         case RepType::INum:
             Value += "i";
             break;
-#if defined(AltNum_EnableByDecimaledFractionals)
+#if defined(AltNum_EnableFractionals)
         case RepType::INumByDiv:
             Value += "i/";
             Value += ExtraRep*-1;
