@@ -1,4 +1,4 @@
-#include "AltDec.hpp"
+#include "MediumDecV2.hpp"
 
 bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
