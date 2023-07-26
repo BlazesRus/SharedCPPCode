@@ -403,9 +403,46 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
             }
 #endif
 #if defined(AltNum_EnableMixedFractional)
-		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			switch (RRep)
 			{
+	#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	#elif defined(AltNum_EnableMixedEFractional)
+				//case RepType::MixedE:
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+			        MediumDecVariant LeftSideNum;
+			        if(self.IntValue==NegativeRep)
+				        LeftSideNum = MediumDecVariant(self.DecimalHalf);
+			        else if(self.IntValue<0)
+				        LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep + self.DecimalHalf);
+			        else if(self.IntValue==0)
+				        LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+			        else
+				        LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep - self.DecimalHalf);
+                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
+	#if defined(AltNum_EnableMixedPiFractional)
+                    RightSideNum *= PiNum;
+    #else
+                    RightSideNum *= ENum;
+    #endif
+                    int InvertedVDivisor = -Value.ExtraValue;
+                    if(self.ExtraRep==InvertedVDivisor)
+                    {
+                        LeftSideNum.BasicSubOp(RightSideNum);
+                        self.IntValue = LeftSide.IntValue;
+                        self.DecimalHalf = LeftSide.DecimalHalf;
+                    }
+                    else
+                    {
+                        self.ExtraRep *= InvertedVDivisor;
+                        LeftSideNum *= InvertedVDivisor;
+                        RightSideNum *= self.ExtraRep;
+                        LeftSideNum.BasicSubOp(RightSideNum);
+                        self.IntValue = LeftSide.IntValue;
+                        self.DecimalHalf = LeftSide.DecimalHalf;
+                    }
 				default:
 					self.CatchAllSubtraction(Value, LRep, RRep);
 					break;

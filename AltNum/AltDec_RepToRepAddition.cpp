@@ -237,6 +237,44 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		case RepType::PiNum:
 			switch (RRep)
 			{
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                    self.ConvertToNormType(LRep);
+					BasicMixedFracAddOp(self, Value);
+                    break;
+	    #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	    #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+	    #endif
+	    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+            #if defined(AltNum_EnableMixedPiFractional)
+                    if(self.DecimalHalf==0)
+                    {
+                        Value.IntValue += self.IntValue;
+                        self.SetVal(Value);
+                    }
+                    else
+                    {
+                        //check if value is already a fractional equivalant of Value
+                        //MediumDecVariant divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
+                        //MediumDecVariant C = self + Value.ExtraRep * divRes;
+                        //if(C==0)
+                        //{
+                        //}
+                        //else
+                        //{
+                            self.ConvertToNormType(LRep);
+					        BasicMixedPiFracAddOp(self, Value);
+                        //}
+                    }
+            #else
+                    self.ConvertToNormType(LRep);
+					BasicMixedEFracAddOp(self, Value);
+            #endif
+					break;
+	    #endif
+    #endif
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
@@ -245,6 +283,26 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		case RepType::PiPower:
 			switch (RRep)
 			{
+        #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                    self.ConvertToNormType(LRep);
+					BasicMixedFracAddOp(self, Value);
+                    break;
+	        #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	        #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+	        #endif
+	        #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+                    self.ConvertToNormType(LRep);
+                #if defined(AltNum_EnableMixedPiFractional)
+					BasicMixedPiFracAddOp(self, Value);
+                #else
+					BasicMixedEFracAddOp(self, Value);
+                #endif
+					break;
+	        #endif
+        #endif
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
@@ -254,6 +312,44 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 #if defined(AltNum_EnableENum)
 			switch (RRep)
 			{
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                    self.ConvertToNormType(LRep);
+					BasicMixedFracAddOp(self, Value);
+                    break;
+	    #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	    #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+	    #endif
+	    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+            #if defined(AltNum_EnableMixedPiFractional)
+                    self.ConvertToNormType(LRep);
+                    BasicMixedPiFracAddOp(self, Value);
+            #else
+                    if(self.DecimalHalf==0)
+                    {
+                        Value.IntValue += self.IntValue;
+                        self.SetVal(Value);
+                    }
+                    else
+                    {
+                        //check if value is already a fractional equivalant of Value
+                        //MediumDecVariant divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
+                        //MediumDecVariant C = self + Value.ExtraRep * divRes;
+                        //if(C==0)
+                        //{
+                        //}
+                        //else
+                        //{
+                            self.ConvertToNormType(LRep);
+					        BasicMixedPiFracAddOp(self, Value);
+                        //}
+                    }
+            #endif
+					break;
+	    #endif
+    #endif
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
@@ -299,6 +395,12 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		case RepType::NumByDiv:
 			switch (RRep)
 			{
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                    //self.ConvertToNormType(LRep);
+					//BasicMixedFracAddOp(self, Value);
+                    break;
+    #endif
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
@@ -329,6 +431,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
     #if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
 			switch (RRep)
 			{
+
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
@@ -358,15 +461,54 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
             }
 #endif
 #if defined(AltNum_EnableMixedFractional)
-		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			switch (RRep)
 			{
+	#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+	#elif defined(AltNum_EnableMixedEFractional)
+				//case RepType::MixedE:
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+			        int LeftSideNum;
+			        if(self.IntValue==NegativeRep)
+				        LeftSideNum = self.DecimalHalf;
+			        else if(self.IntValue<0)
+				        LeftSideNum = self.IntValue*self.ExtraRep + self.DecimalHalf;
+			        else if(self.IntValue==0)
+				        LeftSideNum = -self.DecimalHalf;
+			        else
+				        LeftSideNum = self.IntValue*self.ExtraRep - self.DecimalHalf;
+                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
+	#if defined(AltNum_EnableMixedPiFractional)
+                    RightSideNum *= PiNum;
+    #else
+                    RightSideNum *= ENum;
+    #endif
+                    int InvertedVDivisor = -Value.ExtraValue;
+                    if(self.ExtraRep==InvertedVDivisor)
+                    {
+                        RightSideNum.BasicAddOp(LeftSideNum);
+                        self.IntValue = RightSide.IntValue;
+                        self.DecimalHalf = RightSide.DecimalHalf;
+                    }
+                    else
+                    {
+                        self.ExtraRep *= InvertedVDivisor;
+                        LeftSideNum *= InvertedVDivisor;
+                        RightSideNum *= self.ExtraRep;
+                        RightSideNum.BasicAddOp(LeftSideNum);
+                        self.IntValue = RightSide.IntValue;
+                        self.DecimalHalf = RightSide.DecimalHalf;
+                    }
+                    break;//Give result as NumByDiv
+    #endif
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
     #if defined(AltNum_EnableMixedPiFractional)
-		case RepType::MixedPi:
+		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #elif defined(AltNum_EnableMixedIFractional)
@@ -374,6 +516,8 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
     #endif
 			switch (RRep)
 			{
+                case RepType::MixedFrac:
+                    break;
 				default:
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
