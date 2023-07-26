@@ -10,14 +10,6 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			throw "UndefinedButInRange operations not supported yet(from left side)";
             break;
     #endif
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
-			break;
-
-		case RepType::UnknownType:
-			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
-            break;
     #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
@@ -51,6 +43,15 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#endif
             break;
 	#endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
+		case RepType::UnknownType:
+			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
+            break;
         default://No nothing for most of them
         break;
     }

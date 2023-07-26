@@ -12,10 +12,6 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 			throw "UndefinedButInRange operations not supported yet(from left side)";
 			break;
 #endif
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
-			break;
 	#if defined(AltNum_EnableComplexNumbers)
 		case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
@@ -59,22 +55,26 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
 				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 		#endif
-	#endif
 	
-	#if defined(AltNum_EnableNearPi)
+	    #if defined(AltNum_EnableNearPi)
 				case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
-	#endif
-	#if defined(AltNum_EnableNearE)
+	    #endif
+	    #if defined(AltNum_EnableNearE)
 				case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
-	#endif
+	    #endif
 					Value.ConvertToNormalRep(RRep);
 					break;
 				default:
 					break;
 			}
 			break;
-
-#endif
+    #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 		case RepType::UnknownType:
 			throw "Can't perform operations with unknown/non-enabled format number";
 			break;
@@ -146,8 +146,7 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				RRep = RepType::NormalType;
 			}
 			break;
-
-#if defined(AltNum_EnableApproachingDivided)
+    #if defined(AltNum_EnableApproachingDivided)
 		case RepType::ApproachingBottomDiv:
 			if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative^RightIsNegative)
 			{
@@ -190,18 +189,19 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				RRep = RepType::NormalType;
 			}
 			break;
-#endif
+    #endif
 #endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 		case RepType::UndefinedButInRange:
 			throw "UndefinedButInRange operations not supported yet(from right side)";
 			break;
 #endif
-
+	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
 			throw "Can't perform operations with NaN or Undefined number";
 			break;
+	#endif
 		case RepType::UnknownType:
 			throw "Can't perform operations with unknown/non-enabled format number";
 			break;

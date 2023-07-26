@@ -524,11 +524,9 @@ ExtraFlags treated as bitwise flag storage
             MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
 		#if defined(AltNum_EnableMixedPiFractional)
             MixedPi,//IntValue +- (DecimalHalf/-ExtraRep)
-		#endif
-		#if defined(AltNum_EnableMixedEFractional)
+		#elif defined(AltNum_EnableMixedEFractional)
             MixedE,//IntValue +- (DecimalHalf/-ExtraRep)
-		#endif
-		#if defined(AltNum_EnableMixedIFractional)
+		#elif defined(AltNum_EnableMixedIFractional)
             MixedI,//IntValue +- (DecimalHalf/-ExtraRep)
 		#endif
 	#endif
@@ -667,6 +665,11 @@ ExtraFlags treated as bitwise flag storage
 					return RepType::Undefined;
 	#endif
                 return RepType::NormalType;
+			}
+			else if(IntValue==0&&DecimalHalf==0)
+			{
+				ExtraRep = 0;
+				return RepType::NormalType;
 			}
 	#ifdef AltNum_EnablePiRep
             else if(ExtraRep==PiRep)
