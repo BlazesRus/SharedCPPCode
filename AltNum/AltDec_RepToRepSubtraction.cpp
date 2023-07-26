@@ -451,15 +451,62 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 		case RepType::MixedPi:
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
-    #elif defined(AltNum_EnableMixedIFractional)
-		case RepType::MixedI:
     #endif
 			switch (RRep)
 			{
+                case RepType::MixedFrac:
+        			MediumDecVariant LeftSideNum;
+        			if(self.IntValue==NegativeRep)
+        				LeftSideNum = MediumDecVariant(self.DecimalHalf);
+        			else if(self.IntValue<0)
+        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + self.DecimalHalf);
+        			else if(self.IntValue==0)
+        				LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+        			else
+        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + -self.DecimalHalf);
+        #if defined(AltNum_EnableMixedPiFractional)
+                    LeftSideNum *= PiNum;
+        #elif defined(AltNum_EnableMixedEFractional)
+                    LeftSideNum *= ENum;
+        #endif
+                    int RightSideNum = Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
+                    self.ExtraRep = -self.ExtraRep;
+                    if(Value.ExtraRep==self.ExtraRep)
+                    {
+                        LeftSideNum.BasicSubOp(RightSideNum);
+                        self.IntValue = LeftSide.IntValue;
+                        self.DecimalHalf = LeftSide.DecimalHalf;
+                    }
+                    else
+                    {
+                        self.ExtraRep *= Value.ExtraRep;
+                        LeftSideNum *= Value.ExtraRep;
+                        RightSideNum *= self.ExtraRep;
+                        LeftSideNum.BasicSubOp(RightSideNum);
+                        self.IntValue = LeftSide.IntValue;
+                        self.DecimalHalf = LeftSide.DecimalHalf;
+                    }
+                    break;
 				default:
 					self.CatchAllSubtraction(Value, LRep, RRep);
 					break;
             }
+    #if defined(AltNum_EnableMixedIFractional)
+		case RepType::MixedI:
+			switch (RRep)
+			{
+                case RepType::MixedFrac:
+        #if defined(AltNum_EnableComplexNum)
+	            throw "Complex number code not implimented yet.";
+        #else
+	            throw "Complex number operation not enabled currently.";
+        #endif
+                    break;
+				default:
+					throw "Code not implimented yet.";
+					break;
+            }
+    #endif
 #endif
 		default:
 			throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
