@@ -217,15 +217,15 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				case RepType::NormalType://Fail safe for when converted before switch
 					self.BasicSubOp(Value);
 					break;
-#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
 				case RepType::INum:
-#if defined(AltNum_EnableComplexNumbers)
+        #if defined(AltNum_EnableComplexNumbers)
 					//place complex number operation code here later
-#else
+        #else
 					throw "related imaginary format operation not supported yet";
-#endif
+        #endif
 					break;
-#endif
+    #endif
 											
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 					BasicMixedFracSubOp(self, Value);
@@ -236,7 +236,11 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				case RepType::MixedE:
 	#endif
 	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+        #if defined(AltNum_EnableMixedPiFractional) 
 					BasicMixedPiFracSubOp(self, Value);
+        #else
+					BasicMixedEFracSubOp(self, Value);
+        #endif
 					break;
 	#endif
 	#if defined(AltNum_EnableMixedIFractional)
