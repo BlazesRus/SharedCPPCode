@@ -374,15 +374,22 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
     #if defined(AltNum_EnableDecimaledPiFractionals)||defined(AltNum_EnableDecimaledEFractionals)
 			switch (RRep)
 			{
-				default:
-					self.CatchAllSubtraction(Value, LRep, RRep);
-					break;
-            }
-    #endif
-    #if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://  (Value/(-ExtraRep))*I Representation
-			switch (RRep)
-			{
+        #if defined(AltNum_EnableMixedFractional)
+                //case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                //    break;
+            #if defined(AltNum_EnableMixedPiFractional)
+                //case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            #elif defined(AltNum_EnableMixedEFractional)
+                //case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            #endif
+            #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+                #if defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableMixedPiFractional)
+                #elif defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableMixedEFractional)
+                #else
+
+                #endif
+            #endif
+        #endif
 				default:
 					self.CatchAllSubtraction(Value, LRep, RRep);
 					break;
@@ -401,6 +408,30 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
     //#endif
 					break;
             }
+    #if defined(AltNum_EnableFractionals)
+		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+			switch (RRep)
+			{
+				default:
+    //#if defined(AltNum_EnableComplexNumbers)
+    //              throw static_cast"Complex number operations not enabled right now";
+    //#else
+                    throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+    //#endif
+					break;
+            }
+    #endif
+    #if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://  (Value/(-ExtraRep))*I Representation
+			switch (RRep)
+			{
+        #if defined(AltNum_EnableMixedFractional)
+        #endif
+				default:
+					throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+					break;
+            }
+    #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
