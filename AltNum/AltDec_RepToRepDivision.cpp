@@ -861,27 +861,75 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
         #if defined(AltNum_EnableAlternativeRepFractionals)
 				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    //(SelfNum/(-self.ExtraRep))*i / (IntValue/DecimalHalf*i)
+                    //(SelfNum/(-self.ExtraRep)) / (Value.IntValue/Value.DecimalHalf)
                     throw "ToDo:Need to add code here";
                     break;						
 			#if defined(AltNum_EnableDecimaledIFractionals)						
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    //(SelfNum/(-self.ExtraRep))*i / ((Value/(-ExtraRep))*i)
+                    //(SelfNum/(-self.ExtraRep)) / (Value/(-ExtraRep))
+                    //((SelfNum*-Value.ExtraRep)/(-self.ExtraRep)) / (Value)
                     throw "ToDo:Need to add code here";
-                    break;
+                    break;//Convert result to NumByDiv
 			#endif
 		    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
+                    //(SelfNum/(-self.ExtraRep))*i / ((IntValue +- (DecimalHalf*-1)/-ExtraRep)i)
+                    //(SelfNum/(-self.ExtraRep)) / ((IntValue +- (DecimalHalf*-1)/-ExtraRep))
+                    //(SelfNum/(-self.ExtraRep)) / (IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
                     throw "ToDo:Need to add code here";
                     break;
 		    #endif
         #endif
 				default:
 					Value.ConvertToNormType(RRep);
-					self.BasicMultOp(Value);
+					self.BasicDivOp(Value);
 			}
 			break;
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/ExtraRep)
+			switch (RRep)
+			{
+                //case RepType::NormalType:
+				//	break;
+				default:
+                    self.ConvertToNormType(LRep);
+					Value.ConvertToNormType(RRep);
+					self.BasicDivOp(Value);
+			}
+			break;
+    #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
+    #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+			switch (RRep)
+			{
+                //case RepType::NormalType:
+				//	break;
+				default:
+                    self.ConvertToNormType(LRep);
+					Value.ConvertToNormType(RRep);
+					self.BasicDivOp(Value);
+			}
+			break;
+    #endif
+    if defined(AltNum_EnableMixedIFractional)
+		case RepType::MixedI:
+			switch (RRep)
+			{
+                //case RepType::NormalType:
+				//	break;
+				default:
+                    self.ConvertToNormalIRep(LRep);
+					Value.ConvertToNormType(RRep);
+					self.BasicDivOp(Value);
+            }
+    #endif
 #endif
 		default:
 			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
