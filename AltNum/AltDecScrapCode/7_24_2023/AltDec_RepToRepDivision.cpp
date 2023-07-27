@@ -1519,11 +1519,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 			}
 			break;
 #if defined(AltNum_EnableMixedPiFractional)
-		case RepType::MixedPi:
+		case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)Pi
 #elif defined(AltNum_EnableMixedEFractional)
-		case RepType::MixedE:
+		case RepType::MixedE://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)e
 #elif defined(AltNum_EnableMixedIFractional)
-		case RepType::MixedI:
+		case RepType::MixedI://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)i
 #endif
 			switch (RRep)
 			{
