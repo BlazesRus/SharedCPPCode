@@ -412,6 +412,11 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 				//case RepType::MixedE:
     #endif
     #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+        //#if defined(AltNum_EnableMixedPiFractional)&&AltNum_EnableDecimaledPiFractionals
+        //            break;//Give result as PiByDiv
+        //#elif defined(AltNum_EnableMixedEFractional)&&AltNum_EnableDecimaledEFractionals
+        //            break;//Give result as EByDiv
+        //#else
 			        MediumDecVariant LeftSideNum;
 			        if(self.IntValue==NegativeRep)
 				        LeftSideNum = MediumDecVariant(self.DecimalHalf);
@@ -422,11 +427,11 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 			        else
 				        LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep - self.DecimalHalf);
                     MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
-	#if defined(AltNum_EnableMixedPiFractional)
+	    #if defined(AltNum_EnableMixedPiFractional)
                     RightSideNum *= PiNum;
-    #else
+        #else
                     RightSideNum *= ENum;
-    #endif
+        #endif
                     int InvertedVDivisor = -Value.ExtraValue;
                     if(self.ExtraRep==InvertedVDivisor)
                     {
@@ -443,6 +448,9 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
                         self.IntValue = LeftSide.IntValue;
                         self.DecimalHalf = LeftSide.DecimalHalf;
                     }
+                    break;//Give result as NumByDiv
+        //#endif
+    #endif
 				default:
 					self.CatchAllSubtraction(Value, LRep, RRep);
 					break;
@@ -452,8 +460,14 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
+    #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
 			switch (RRep)
 			{
+        //#if defined(AltNum_EnableMixedPiFractional)&&AltNum_EnableDecimaledPiFractionals
+        //            break;//Give result as PiByDiv
+        //#elif defined(AltNum_EnableMixedEFractional)&&AltNum_EnableDecimaledEFractionals
+        //            break;//Give result as EByDiv
+        //#else
                 case RepType::MixedFrac:
         			MediumDecVariant LeftSideNum;
         			if(self.IntValue==NegativeRep)
@@ -491,6 +505,8 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.CatchAllSubtraction(Value, LRep, RRep);
 					break;
             }
+        //#endif
+    #endif
     #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
 			switch (RRep)
