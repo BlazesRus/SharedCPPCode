@@ -333,7 +333,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 		#endif
 					break;
 	#endif
-	#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 		#if defined(AltNum_EnableDecimaledEFractionals)
 					self.BasicMultOp(Value);
@@ -375,7 +375,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 			}
 			break;
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableERep)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 			switch (RRep)
 			{
@@ -421,8 +421,22 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 			}
 			break;
 		#endif
-
-		#if defined(AltNum_EnableImaginaryNum)
+	#endif
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+		case RepType::INum:
+			switch (RRep)
+			{
+				case RepType::NormalType:
+					self.BasicMultOp(Value);
+					break;
+				default:
+					Value.ConvertToNormType(RRep);
+					self.BasicMultOp(Value);
+					break;
+			}
+			break;
+    #if defined(AltNum_EnableFractionals)
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
@@ -448,8 +462,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value);
 			}
 			break;
-
-			#if defined(AltNum_EnableDecimaledIFractionals)	
+    #if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 			switch (RRep)
 			{
@@ -469,23 +482,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value);
 			}
 			break;
-			#endif
-		#endif
-	#endif
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-		case RepType::INum:
-			switch (RRep)
-			{
-				case RepType::NormalType:
-					self.BasicMultOp(Value);
-					break;
-				default:
-					Value.ConvertToNormType(RRep);
-					self.BasicMultOp(Value);
-					break;
-			}
-			break;
+    #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)

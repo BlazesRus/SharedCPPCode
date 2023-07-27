@@ -38,7 +38,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#endif
 		#endif
 	
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				#if defined(AltNum_EnableDecimaledEFractionals)
@@ -309,7 +309,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
             }
 	#endif
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 			switch (RRep)
 			{
     #if defined(AltNum_EnableMixedFractional)
@@ -414,7 +414,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
             }
     #endif
-    #if defined(AltNum_EnableENum)
+    #if defined(AltNum_EnableERep)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 			switch (RRep)
 			{

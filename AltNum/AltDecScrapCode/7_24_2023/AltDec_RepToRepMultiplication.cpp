@@ -102,7 +102,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.ExtraRep = PiRep;
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					self.BasicMultOp(Value);
 					self.ExtraRep = ERep;
@@ -138,7 +138,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.ExtraRep = Value.ExtraRep;
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.BasicMultOp(Value.IntValue);
 					self.DecimalHal = Value.DecimalHalf;
@@ -197,7 +197,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 				case RepType::NormalType:// X*Pi * Y
 					self.BasicMultOp(Value);
 					break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;
@@ -230,7 +230,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value.IntValue);
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self /= Value.DecimalHalf;
 					self.BasicMultOp(EValue);
@@ -287,7 +287,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 			break;
 #endif
 
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 		case RepType::ENum:
 			switch (RRep)
 			{
@@ -394,7 +394,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value);
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					Value.ConvertToNormType(RepType::PiNum);
 					self.BasicMultOp(Value);
@@ -418,7 +418,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 			#endif
-			#if defined(AltNum_EnableENum)
+			#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 			#endif
@@ -474,7 +474,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 				case RepType::NormalType:
 					self.BasicMultOp(Value);
 					break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -495,7 +495,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 			#endif
-			#if defined(AltNum_EnableENum)
+			#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 			#endif
@@ -551,7 +551,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					--self.ExtraRep;
 					self.BasicMultOp(Value);
 					break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -568,7 +568,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 			#endif
-			#if defined(AltNum_EnableENum)
+			#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 			#endif
@@ -685,7 +685,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -711,7 +711,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -768,7 +768,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -794,7 +794,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -849,7 +849,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -869,10 +869,10 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //							
 #if defined(AltNum_EnableMixedFractional)
 //						case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-#if defined(AltNum_EnablePiNum)
+#if defined(AltNum_EnablePiRep)
 //						case RepType::MixedPi:
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
@@ -890,7 +890,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -956,7 +956,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 #endif
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 #if defined(AltNum_EnableDecimaledEFractionals)
 					self.BasicMultOp(Value);
@@ -996,7 +996,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1057,7 +1057,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -1083,7 +1083,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1130,7 +1130,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 			}
 			break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 			switch (RRep)
 			{
@@ -1144,7 +1144,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -1170,7 +1170,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1236,7 +1236,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(PiNum);
 					break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					self.BasicMultOp(Value);
 					self.BasicMultOp(ENum);
@@ -1271,7 +1271,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1330,7 +1330,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -1356,7 +1356,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1415,7 +1415,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 #endif
@@ -1441,7 +1441,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 #endif
@@ -1488,7 +1488,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 	#endif
-	#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 	#endif
@@ -1514,7 +1514,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 		#endif
@@ -1572,7 +1572,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 	#endif
-	#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 	#endif
@@ -1607,7 +1607,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 		#endif
@@ -1665,7 +1665,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiNum:
 //							break;
 	#endif
-	#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableERep)
 //						case RepType::ENum:
 //							break;
 	#endif
@@ -1691,7 +1691,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 //						case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 //							break;
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableERep)
 //						case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 //							break;
 		#endif
