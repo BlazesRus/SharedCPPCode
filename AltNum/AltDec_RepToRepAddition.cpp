@@ -33,8 +33,9 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				#if defined(AltNum_EnableDecimaledPiFractionals)
 				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-				#endif
+				#else
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                #endif
 			#endif
 		#endif
 	
@@ -43,8 +44,9 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				#if defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-				#endif
+				#else
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                #endif
 			#endif
 		#endif
 	
@@ -310,6 +312,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 	#endif
 #endif
 #if defined(AltNum_EnableERep)
+		case RepType::ENum:
 			switch (RRep)
 			{
     #if defined(AltNum_EnableMixedFractional)
@@ -405,7 +408,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
-    #if defined(AltNum_EnablePiRep)
+    #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 			switch (RRep)
 			{
@@ -414,7 +417,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
             }
     #endif
-    #if defined(AltNum_EnableERep)
+    #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 			switch (RRep)
 			{

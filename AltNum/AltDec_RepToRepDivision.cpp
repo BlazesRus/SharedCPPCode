@@ -134,14 +134,14 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
                     self.BasicMultOp(Value.ExtraRep);
 			        break;
 							
-	    #if defined(AltNum_EnablePiRep)
+	    #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(PiNumValue()*Value.IntValue);
 					break;
 	    #endif
-	    #if defined(AltNum_EnableERep)
+	    #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(ENumValue()*Value.IntValue);
@@ -230,7 +230,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.BasicMultOp(Value.ExtraRep);
 					break;
 							
-		#if defined(AltNum_EnablePiRep)
+		#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
 					self.ExtraRep = 0;
@@ -238,7 +238,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.BasicDivOp(Value.IntValue);
 					break;
 		#endif
-		#if defined(AltNum_EnableERep)
+		#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(ENumValue()*Value.IntValue);
@@ -383,14 +383,14 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					self.BasicMultOp(Value.ExtraRep);
 					break;
 					
-				#if defined(AltNum_EnablePiRep)
+				#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//(Xe) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(PiNumValue()*Value.IntValue);
 					break;
 				#endif
-				#if defined(AltNum_EnableERep)
+				#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.ExtraRep = 0;
 					self.BasicMultOp(Value.DecimalHalf);
@@ -597,7 +597,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 				
 			}
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 			switch (RRep)
 			{
@@ -642,7 +642,7 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
             }
         #endif
-        #if defined(AltNum_EnableERep)
+        #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 			switch (RRep)
 			{
@@ -728,14 +728,18 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
                     // /((Value.Value/(-Value.ExtraRep))*Pi) Representation
                     throw "ToDo:Need to add code here";
                     break;
+            #if !defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiFractional:
                     // /((Value.Value/(-Value.ExtraRep))*Pi) Representation
                     throw "ToDo:Need to add code here";
                     break;
+            #endif
+            #if !defined(AltNum_EnableDecimaledEFractionals)
                 case RepType::EFractional:
                     // /((Value.Value/(-Value.ExtraRep))*Pi) Representation
                     throw "ToDo:Need to add code here";
                     break;
+            #endif
             #if defined(AltNum_EnableImaginaryNum)
 				//ToDo::Add more specific operation code later
 				case RepType::INum:
@@ -909,8 +913,26 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
     #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
 			switch (RRep)
 			{
-                //case RepType::NormalType:
-				//	break;
+                case RepType::NormalType:
+                    if(Value.DecimalHalf==0)
+                    {
+                        int LeftSideAbs = self.IntValue.Abs();
+                        int divRes = LeftSideAbs / Value.IntValue;
+                        int C = LeftSideAbs - Value.IntValue * divRes;
+                        if(C==0)
+                        {
+                            if(divRes==0)//Convert into non-mixed fractional
+                            {
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
+                    else//Convert to NumByDiv
+                    {
+                    }
+					break;
 				default:
                     self.ConvertToNormType(LRep);
 					Value.ConvertToNormType(RRep);
