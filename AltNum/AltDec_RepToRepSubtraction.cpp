@@ -17,8 +17,9 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#endif
+			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            #endif
 		#endif
 		case RepType::ComplexIRep:
 			switch(RRep)
@@ -411,7 +412,19 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
     //#endif
 					break;
             }
-    #if defined(AltNum_EnableFractionals)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
+			switch (RRep)
+			{
+				default:
+    //#if defined(AltNum_EnableComplexNumbers)
+    //              throw static_cast"Complex number operations not enabled right now";
+    //#else
+                    throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+    //#endif
+					break;
+            }
+    #elif defined(AltNum_EnableFractionals)
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
@@ -419,19 +432,8 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
     //#else
-                    throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+                    throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
     //#endif
-					break;
-            }
-    #endif
-    #if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://  (Value/(-ExtraRep))*I Representation
-			switch (RRep)
-			{
-        #if defined(AltNum_EnableMixedFractional)
-        #endif
-				default:
-					throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
 					break;
             }
     #endif

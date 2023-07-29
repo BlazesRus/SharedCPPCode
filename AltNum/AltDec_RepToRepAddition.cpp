@@ -17,8 +17,9 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#endif
+			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            #endif
 		#endif
 		case RepType::ComplexIRep:
 			switch(RRep)
@@ -468,8 +469,8 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
     //#endif
 					break;
             }
-    #if defined(AltNum_EnableFractionals)
-		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+    #if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
 			switch (RRep)
 			{
 				default:
@@ -480,9 +481,8 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
     //#endif
 					break;
             }
-    #endif
-    #if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
+    #elif defined(AltNum_EnableFractionals)
+		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
 				default:

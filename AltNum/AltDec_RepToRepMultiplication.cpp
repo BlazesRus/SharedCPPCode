@@ -13,8 +13,11 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
     #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-		case RepType::IFractional:
-		case RepType::INumByDiv:
+            #if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+            #else
+		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            #endif
 		case RepType::MixedI:
         #endif
 			if(RRep==RepType::ApproachingBottom)
@@ -253,10 +256,11 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					}
 					break;
 	#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-		#if defined(AltNum_EnableDecimaledIFractionals)						
+        #if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-		#endif
+        #else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation	
+        #endif
 	#endif
 	#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -437,6 +441,27 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 			}
 			break;
     #if defined(AltNum_EnableFractionals)
+        #if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+			switch (RRep)
+			{
+				case RepType::NormalType:
+					self.BasicMultOp(Value);
+					break;
+				case RepType::INum://Convert result into NumByDiv
+					self.BasicMultOp(-Value);
+					self.ExtraRep = -self.ExtraRep;
+					break;
+				case RepType::IFractional://Convert result into NumByDiv
+					self.BasicMultOp(-Value.IntValue);
+					self.ExtraRep *= -Value.DecimalHalf;
+					break;
+				default:
+					Value.ConvertToNormType(RRep);
+					self.BasicMultOp(Value);
+			}
+			break;
+        #else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
@@ -462,27 +487,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value);
 			}
 			break;
-    #if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			switch (RRep)
-			{
-				case RepType::NormalType:
-					self.BasicMultOp(Value);
-					break;
-				case RepType::INum://Convert result into NumByDiv
-					self.BasicMultOp(-Value);
-					self.ExtraRep = -self.ExtraRep;
-					break;
-				case RepType::IFractional://Convert result into NumByDiv
-					self.BasicMultOp(-Value.IntValue);
-					self.ExtraRep *= -Value.DecimalHalf;
-					break;
-				default:
-					Value.ConvertToNormType(RRep);
-					self.BasicMultOp(Value);
-			}
-			break;
-    #endif
+        #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)

@@ -192,16 +192,16 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 			case RepType::NumByDiv:
-		#if defined(AltNum_EnablePiRep)
+		#if defined(AltNum_EnablePiFractional)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableEFractional)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 		#endif
-		#if defined(AltNum_EnableINum)
+		#if defined(AltNum_EnableIFractional)
 			case RepType::IFractional://  IntValue/DecimalHalf*e Representation
 		#endif
-		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableINum)
+		#if defined(AltNum_EnablePiFractional)||defined(AltNum_EnableEFractional)||defined(AltNum_EnableIFractional)
 				if (self.DecimalHalf == Value.DecimalHalf)
 				{
 					self -= Value.IntValue;

@@ -271,6 +271,16 @@ AltNum_EnableNilRep = Enables Nil representation(detection not in code right now
     #undef AltNum_EnableApproachingI
 #endif
 
+#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+    #define AltNum_EnablePiFractional
+#endif
+#if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_EnableEFractional
+#endif
+#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
+    #define AltNum_EnableIFractional
+#endif
+
 namespace BlazesRusCode
 {
     class AltDec;

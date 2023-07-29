@@ -13,8 +13,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
     #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledIFractionals)
+        case RepType::INumByDiv:
+            #else
 		case RepType::IFractional:
-		case RepType::INumByDiv:
+		    #endif
         #endif
         #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedI:
@@ -176,9 +179,10 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
                     self.ExtraRep = IRep;
         #if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
 	        #if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+            #else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             #endif
         #endif
         #if defined(AltNum_EnableMixedIFractional)
@@ -273,10 +277,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
 					self.ExtraRep = IRep;
 			#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
 				#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-				#endif
+				#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
 			#endif
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -329,10 +334,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
 					self.ExtraRep = IRep;
 			#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
 				#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-				#endif
+				#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
 			#endif
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -425,11 +431,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 					break;
 					self.ExtraRep = IRep;
 				#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
-					#if defined(AltNum_EnableDecimaledIFractionals)
+				    #if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-					#endif
-				#endif
+				    #else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #endif
 			#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
 			#endif
@@ -461,10 +467,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 				//ToDo::Add more specific operation code later
 				case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
-			#if defined(AltNum_EnableDecimaledIFractionals)						
+				#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			#endif
+				#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
 		#endif
 		#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -486,10 +493,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 				//ToDo::Add more specific operation code later
 				case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
-			#if defined(AltNum_EnableDecimaledIFractionals)						
+				#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			#endif
+				#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
 		#endif
 		#if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -513,10 +521,11 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 				//ToDo::Add more specific operation code later
 				case RepType::INum:
 			#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
-			    #if defined(AltNum_EnableDecimaledIFractionals)						
+				#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			    #endif
+				#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
 		    #endif
 		    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
@@ -537,11 +546,12 @@ void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVari
 		#if defined(AltNum_EnableImaginaryNum)
 				//ToDo::Add more specific operation code later
 				case RepType::INum:
-			#if defined(AltNum_EnableAlternativeRepFractionals)
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation							
-			    #if defined(AltNum_EnableDecimaledIFractionals)						
+			#if defined(AltNum_EnableAlternativeRepFractionals)						
+			    #if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			    #endif
+			    #else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation	
+                #endif
 		    #endif
 		    #if defined(AltNum_EnableMixedIFractional)
 				case RepType::MixedI:
