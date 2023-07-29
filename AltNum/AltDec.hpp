@@ -495,8 +495,9 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
             PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
-			#endif
+			#else
             PiFractional,//  IntValue/DecimalHalf*Pi Representation
+			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableERep)
@@ -504,8 +505,9 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
             ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
-			#endif
+			#else
             EFractional,//  IntValue/DecimalHalf*e Representation
+			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
@@ -513,8 +515,9 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv,//(Value/(ExtraRep*-1))*i Representation
-			#endif
+			#else
             IFractional,//  IntValue/DecimalHalf*i Representation
+			#endif
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             ComplexIRep,
