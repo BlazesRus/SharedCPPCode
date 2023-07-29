@@ -12,10 +12,13 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 	if (Value.IsZero()) { self.SetAsZero(); return self; }
 	if (self.IsZero() || Value == MediumDecVariant::One)
 		return self;
-	if (Value<0)
+#if defined(AltNum_EnableUndefinedButinMinMaxRange)
+	if (Value.ExtraRep!=UndefinedInMinMaxRangeRep&&Value.IntValue<0)
+#else
+	if (Value.IntValue<0)
+#endif
 	{
-		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-		else { Value.IntValue *= -1; }
+		Value.SwapNegativeStatus();
 		self.SwapNegativeStatus();
 	}
 	#if defined(AltNum_EnableInfinityRep)
@@ -197,7 +200,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				break;
 				
 			//(Self.IntValue*Value.IntValue)*Pi^2/(self.DecimalHalf/Value.DecimalHalf)
-		#if defined(AltNum_EnablePiRep)
+		#if defined(AltNum_EnablePiFractional)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 int NumRes = self.IntValue*Value.IntValue;
                 bool valIsPositive = true;
@@ -225,26 +228,21 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			#else
                 self.IntValue = valIsPositive==false&&NumRes==0?NegativeRep:NumRes;
                 self.DecimalHalf = 0;
-                #if defined(AltNum_EnableDecimaledPiFractionals)
-                    self.ExtraRep = -DenomRes;
+                //Converting to PiNum
+	            //self.DecimalHalf = DenomRes;
+                //self *= PiNum;
+                #ifdef AltNum_EnablePiPowers
+                    self.ExtraRep = -2;
+                    self.PartialDivOp(DenomRes);
+                #else
+                    self.ExtraRep = PiRep;
                     self.BasicMultOp(PiNum);
-                #else//Converting to PiNum
-					//self.DecimalHalf = DenomRes;
-                    //self *= PiNum;
-                    #ifdef AltNum_EnablePiPowers
-                        self.ExtraRep = -2;
-                        self.PartialDivOp(DenomRes);
-                    #else
-                        self.ExtraRep = PiRep;
-                        self.BasicMultOp(PiNum);
-                        self.PartialDivOp(DenomRes);
-                    #endif
-                #endif
+                    self.PartialDivOp(DenomRes);
 			#endif
 				}
 				break;
 		#endif
-		#if defined(AltNum_EnableENum)
+		#if defined(AltNum_EnableEFractional)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 int NumRes = self.IntValue*Value.IntValue;
                 bool valIsPositive = true;
@@ -266,14 +264,10 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 			#else
                 self.IntValue = valIsPositive==false&&NumRes==0?NegativeRep:NumRes;
                 self.DecimalHalf = 0;
-                #if defined(AltNum_EnableDecimaledEFractionals)
-                    self.ExtraRep = -DenomRes;
-                    self.BasicMultOp(ENum);
-                #else//Converting to ENum
-                    self.ExtraRep = ERep;
-                    self.BasicMultOp(ENum);
-                    self.PartialDivOp(DenomRes);
-                #endif
+                //Converting to ENum
+                self.ExtraRep = ERep;
+                self.BasicMultOp(ENum);
+                self.PartialDivOp(DenomRes);
 			#endif
 				}
 				break;
@@ -432,15 +426,18 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 				break;
 		#endif
 	#endif
-
-	#if defined(AltNum_EnableComplexNumbers)
-//                    case RepType::ComplexIRep:
-//						break;
-	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//                    case RepType::UndefinedButInRange:
-//						break;
+                case RepType::UndefinedButInRange:
+                    self.BasicMultOp(Value);
+                    break;
+        #if defined(AltNum_EnableUndefinedButinMinMaxRange)
+                case RepType::UndefinedButInRange:
+                    self.IntValue *= Value.IntValue.Abs();
+                    self.DecimalHalf *= Value.DecimalHalf.Abs();
+                    break;
+        #endif
 	#endif
+
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";

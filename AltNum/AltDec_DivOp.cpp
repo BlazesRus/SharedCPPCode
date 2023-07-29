@@ -11,10 +11,13 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (self.IsZero())
 		return self;
-	if (Value.IntValue < 0)
+#if defined(AltNum_EnableUndefinedButinMinMaxRange)
+	if (Value.ExtraRep!=UndefinedInMinMaxRangeRep&&Value.IntValue<0)
+#else
+	if (Value.IntValue<0)
+#endif
 	{
-		if (Value.IntValue == MediumDecVariant::NegativeRep) { Value.IntValue = 0; }
-		else { Value.IntValue *= -1; }
+		Value.SwapNegativeStatus();
 		self.SwapNegativeStatus();
 	}
 	#if defined(AltNum_EnableInfinityRep)
@@ -177,13 +180,13 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 				break;
 			//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
 			//(self.IntValue*Value.DecimalHalf)/(self.DecimalHalf*Value.IntValue)
-        #if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiFractional)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 		#endif
-        #if defined(AltNum_EnableENum)
+        #if defined(AltNum_EnableEFractional)
 			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 		#endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIFractional)
 			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 		#endif
 		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableENum)
@@ -253,21 +256,6 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
                 break;
 		#endif
 	#endif
-
-	#if defined(AltNum_EnableComplexNumbers)
-//                    //based on https://www.varsitytutors.com/sat_mathematics-help/working-with-imaginary-numbers
-//					  //(a+b)(a-b)=(a^2)-(b^2)
-//                    //(x+vi)/(y+zi) =
-//                    //(x-vi)/(y-zi) =
-//                    //(x+vi)/(y-zi) =
-//                    //(x-vi)/(y+zi) =
-//                    case RepType::ComplexIRep:
-//						break;
-    #endif
-    #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//                    case RepType::UndefinedButInRange:
-//						break;
-    #endif
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";

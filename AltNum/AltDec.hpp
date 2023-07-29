@@ -140,8 +140,6 @@ AltNum_DisableAutoToggleOfPreferedSettings =
       If not toggled, force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep,
 	  AltNum_EnableAlternativeRepFractionals & AltNum_EnableDecimaledPiFractionals
 
-AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos operation
-
 AltNum_DisableSwitchBasedConversion =
 
 AltNum_EnableMediumDecBasedSetValues =
@@ -183,6 +181,10 @@ AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
 
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
+
+
+AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos operation
+AltNum_EnableUndefinedButinMinMaxRange
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -464,10 +466,16 @@ ExtraFlags treated as bitwise flag storage
         static const signed int EByDivisorRep = -2147483643;
 		#endif
 	#endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+	#if defined(AltNum_EnableUndefinedButInRange)
+		//Such as result of Cos of infinity
         static const signed int UndefinedInRangeRep = -2147483642;
+		
+		#if defined(AltNum_EnableUndefinedButinMinMaxRange)
+		//Undefined but in ranged of IntValue to DecimalHalf
+        static const signed int UndefinedInMinMaxRangeRep = -2147483642;
+		#endif
 	#endif
-        static const signed int AlternativeFractionalLowerBound = -2147483641;
+        static const signed int AlternativeFractionalLowerBound = -2147483640;
 		//Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
 		static const signed int InfinityBasedLowerBound = -2147483644;
 	#if defined(AltNum_EnableInfinityRep)
@@ -587,6 +595,9 @@ ExtraFlags treated as bitwise flag storage
     #endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
+		#if defined(AltNum_EnableUndefinedButinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+			UndefinedButInMinMaxRange,
+		#endif
 	#endif
     #if defined(AltNum_EnableNilRep)
             Nil,
