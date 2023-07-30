@@ -234,16 +234,57 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 	#endif
 			
 	#if defined(AltNum_EnableMixedFractional)
+            //Ignoring the fact that mixed fraction could be improperly formatted for spend
+            //because should be corrected after every operation
 			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+				if(self.ExtraRep==Value.ExtraRep)
+                {
+                    self.IntValue -= Value.IntValue;
+                    self.DecimalHalf -= Value.DecimalHalf;
+                    if(self.DecimalHalf<0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                }
+                else
+                {//Convert to NumByDiv to make simpler?
+                    throw "Code not implimented yet";
+                }
+				break;
 		#if defined(AltNum_EnableMixedPiFractional)
 			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
-		#elif defined(AltNum_EnableMixedIFractional)
+        #elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
-				throw "Code not implimented yet";
+				if(self.ExtraRep==Value.ExtraRep)
+                {
+                    self.IntValue -= Value.IntValue;
+                    self.DecimalHalf -= Value.DecimalHalf;
+                    if(self.DecimalHalf>0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                }
+                else
+                {//Convert to NumByDiv to make simpler?
+                    throw "Code not implimented yet";
+                }
 				break;
+        #endif
 	#endif
 
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
