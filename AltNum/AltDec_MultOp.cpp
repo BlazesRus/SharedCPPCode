@@ -427,21 +427,24 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
 		#endif
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-                case RepType::UndefinedButInRange:
+            case RepType::UndefinedButInRange:
+                if(Value.DecimalHalf==InfinityRep)
+                    self.DecimalHalf = InfinityRep;
+                else
                     self.BasicMultOp(Value);
-                    break;
-        #if defined(AltNum_EnableUndefinedButinMinMaxRange)
-                case RepType::UndefinedButInRange:
-                    self.IntValue *= Value.IntValue.Abs();
-                    self.DecimalHalf *= Value.DecimalHalf.Abs();
-                    break;
+                break;
+        #if defined(AltNum_EnableWithinMinMaxRange)
+			case RepType::WithinMinMaxRange:
+                throw "Uncertain how to perform operation with unbalanced ranged";
+                break;
         #endif
 	#endif
-
+    #if defined(AltNum_EnableNaN)
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
+    #endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType multiplication not supported yet";
 				break;

@@ -183,8 +183,9 @@ AltNum_EnableMixedIFractional
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
 
 
-AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos operation
-AltNum_EnableUndefinedButinMinMaxRange
+AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc
+AltNum_EnableWithinMinMaxRange
+AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -468,11 +469,12 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)
 		//Such as result of Cos of infinity
+		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
         static const signed int UndefinedInRangeRep = -2147483642;
 		
-		#if defined(AltNum_EnableUndefinedButinMinMaxRange)
+		#if defined(AltNum_EnableWithinMinMaxRange)
 		//Undefined but in ranged of IntValue to DecimalHalf
-        static const signed int UndefinedInMinMaxRangeRep = -2147483642;
+        static const signed int WithinMinMaxRangeRep = -2147483642;
 		#endif
 	#endif
         static const signed int AlternativeFractionalLowerBound = -2147483640;
@@ -595,8 +597,8 @@ ExtraFlags treated as bitwise flag storage
     #endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
-		#if defined(AltNum_EnableUndefinedButinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-			UndefinedButInMinMaxRange,
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+			WithinMinMaxRange,
 		#endif
 	#endif
     #if defined(AltNum_EnableNilRep)
@@ -617,6 +619,16 @@ ExtraFlags treated as bitwise flag storage
 			#if defined(AltNum_EnableImaginaryInfinity)
                 if (ExtraRep == IRep)
 				    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
+				else
+			#endif
+			#if defined(AltNum_EnableUndefinedButInRange)
+                if (ExtraRep == UndefinedInRangeRep)
+				    return RepType::UndefinedButInRange;
+				else
+			#endif
+			#if defined(WithinMinMaxRangeRep)
+                if (ExtraRep == WithinMinMaxRangeRep)
+				    return RepType::WithinMinMaxRange;
 				else
 			#endif
 					return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
@@ -733,7 +745,13 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
            else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;
+                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			//If IntValue==NegativeRep, then left side range value equals negative infinity
+			//If DecimalHalf==InfinityRep, then right side range value equals positive infinity
+           else if(ExtraRep==WithinMinMaxRangeRep)
+                return RepType::WithinMinMaxRange;
+		#endif
 	#endif
             else if(ExtraRep<0)
 	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)

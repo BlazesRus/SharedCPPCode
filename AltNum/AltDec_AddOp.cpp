@@ -258,18 +258,23 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 				break;
 	#endif
 
-	#if defined(AltNum_EnableComplexNumbers)
-//                    case RepType::ComplexIRep:
-//						break;
-	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//                    case RepType::UndefinedButInRange:
-//						break;
+			case RepType::UndefinedButInRange:
+                self.BasicAddOp(Value);
+				break;
+        #if defined(AltNum_EnableWithinMinMaxRange)
+			case RepType::WithinMinMaxRange:
+                self.IntValue += Value.IntValue;
+                self.DecimalHalf += Value.DecimalHalf;
+                break;
+        #endif
 	#endif
+    #if defined(AltNum_EnableNaN)
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
+    #endif
 			default:
 				throw static_cast<RepType>(LRep)+" RepType addition not supported yet";
 				break;

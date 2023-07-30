@@ -256,10 +256,34 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
                 break;
 		#endif
 	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            case RepType::UndefinedButInRange:
+                if(Value.DecimalHalf==InfinityRep)
+                {
+                    if(self.DecimalHalf==InfinityRep)
+                        self.SetVal(One);
+                    else
+#if defined(AltNum_EnableNaN)
+                        self.DecimalHalf = UndefinedRep;
+#else
+                        throw "Undefined result(results in undefined expression)";
+#endif
+                }
+                else
+                    self.BasicDivOp(Value);
+                break;
+        #if defined(AltNum_EnableWithinMinMaxRange)
+			case RepType::WithinMinMaxRange:
+                throw "Uncertain how to perform operation with unbalanced ranged";
+                break;
+        #endif
+	#endif
+    #if defined(AltNum_EnableNaN)
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
+    #endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType division not supported yet";
 				break;

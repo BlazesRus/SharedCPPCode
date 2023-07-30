@@ -246,13 +246,15 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 				break;
 	#endif
 
-	#if defined(AltNum_EnableComplexNumbers)
-//                    case RepType::ComplexIRep:
-//						break;
-	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 //                    case RepType::UndefinedButInRange:
 //						break;
+        #if defined(AltNum_EnableUndefinedButinMinMaxRange)
+                case RepType::UndefinedButInRange:
+                    self.IntValue -= Value.IntValue;
+                    self.DecimalHalf -= Value.DecimalHalf;
+                    break;
+        #endif
 	#endif
 			case RepType::Undefined:
 			case RepType::NaN:
