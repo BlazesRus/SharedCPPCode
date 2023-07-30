@@ -251,8 +251,8 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
 				if(self.ExtraRep==Value.ExtraRep)
                 {
-                    self.IntValue -= Value.IntValue;
-                    self.DecimalHalf -= Value.DecimalHalf;
+                    self.IntValue += Value.IntValue;
+                    self.DecimalHalf += Value.DecimalHalf;
                     if(self.DecimalHalf<0)//Subtract the overflow
                     {
                         self.DecimalHalf += self.ExtraRep;
@@ -265,8 +265,21 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
                     }
                 }
                 else
-                {//Convert to NumByDiv to make simpler?
-                    throw "Code not implimented yet";
+                {
+                    self.IntValue *= Value.ExtraRep;
+                    self.IntValue += Value.IntValue*self.ExtraRep;
+                    self.DecimalHalf += Value.DecimalHalf*self.ExtraRep;
+                    if(self.DecimalHalf<0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                    self.ExtraRep *= Value.ExtraRep;
                 }
 				break;
 		#if defined(AltNum_EnableMixedPiFractional)
@@ -278,8 +291,8 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 		#endif
 				if(self.ExtraRep==Value.ExtraRep)
                 {
-                    self.IntValue -= Value.IntValue;
-                    self.DecimalHalf -= Value.DecimalHalf;
+                    self.IntValue += Value.IntValue;
+                    self.DecimalHalf += Value.DecimalHalf;
                     if(self.DecimalHalf>0)//Subtract the overflow
                     {
                         self.DecimalHalf += self.ExtraRep;
@@ -292,8 +305,21 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
                     }
                 }
                 else
-                {//Convert to NumByDiv to make simpler?
-                    throw "Code not implimented yet";
+                {
+                    self.IntValue *= -Value.ExtraRep;
+                    self.IntValue += Value.IntValue*-self.ExtraRep;
+                    self.DecimalHalf += Value.DecimalHalf*-self.ExtraRep;
+                    if(self.DecimalHalf>0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                    self.ExtraRep *= -Value.ExtraRep;
                 }
 				break;
         #endif

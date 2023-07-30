@@ -253,8 +253,21 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
                     }
                 }
                 else
-                {//Convert to NumByDiv to make simpler?
-                    throw "Code not implimented yet";
+                {
+                    self.IntValue *= Value.ExtraRep;
+                    self.IntValue -= Value.IntValue*self.ExtraRep;
+                    self.DecimalHalf -= Value.DecimalHalf*self.ExtraRep;
+                    if(self.DecimalHalf<0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                    self.ExtraRep *= Value.ExtraRep;
                 }
 				break;
 		#if defined(AltNum_EnableMixedPiFractional)
@@ -280,8 +293,21 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
                     }
                 }
                 else
-                {//Convert to NumByDiv to make simpler?
-                    throw "Code not implimented yet";
+                {
+                    self.IntValue *= -Value.ExtraRep;
+                    self.IntValue -= Value.IntValue*-self.ExtraRep;
+                    self.DecimalHalf -= Value.DecimalHalf*-self.ExtraRep;
+                    if(self.DecimalHalf>0)//Subtract the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        --self.IntValue;
+                    }
+                    else//Add the overflow
+                    {
+                        self.DecimalHalf += self.ExtraRep;
+                        ++self.IntValue;
+                    }
+                    self.ExtraRep *= -Value.ExtraRep;
                 }
 				break;
         #endif
