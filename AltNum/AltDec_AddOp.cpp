@@ -264,9 +264,27 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 				break;
         #if defined(AltNum_EnableWithinMinMaxRange)
 			case RepType::WithinMinMaxRange:
-                self.IntValue += Value.IntValue;
-                self.DecimalHalf += Value.DecimalHalf;
-                break;
+                if(self.IntValue==NegativeRep)
+                {
+                    //Do nothing?
+                }
+                else if(Value.IntValue==NegativeRep)
+                {
+                    self.IntValue = NegativeRep;
+                }
+                else
+                    self.IntValue += Value.IntValue;
+                if(self.DecimalHalf==InfinityRep)
+                {
+                   //Do Nothing?
+                }
+                else if(Value.DecimalHalf==InfinityRep)
+                {// + positive infinity to right side
+                    self.DecimalHalf = InfinityRep;
+                }
+                else
+                    self.DecimalHalf += Value.DecimalHalf;
+				break;
         #endif
 	#endif
     #if defined(AltNum_EnableNaN)

@@ -247,19 +247,50 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 	#endif
 
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-//                    case RepType::UndefinedButInRange:
-//						break;
-        #if defined(AltNum_EnableUndefinedButinMinMaxRange)
-                case RepType::UndefinedButInRange:
+			case RepType::UndefinedButInRange:
+                self.BasicSubOp(Value);
+				break;
+        #if defined(AltNum_EnableWithinMinMaxRange)
+			case RepType::WithinMinMaxRange:
+                if(self.IntValue==NegativeRep)
+                {
+                    if(Value.IntValue==NegativeRep)
+                        self.IntValue = 0;
+                }
+                else if(Value.IntValue==NegativeRep)
+                {//+positive infinity to left side
+            #if defined(AltNum_EnableNaN)
+                    self.DecimalHalf = UndefinedRep;
+            #else
+                throw "Uncertain result";
+            #endif
+                }
+                else
                     self.IntValue -= Value.IntValue;
+                if(self.DecimalHalf==InfinityRep)
+                {
+                    if(Value.DecimalHalf==InfinityRep)
+                        self.DecimalHalf = 0;
+                }
+                else if(Value.DecimalHalf==InfinityRep)
+                {// subtractive infinity from real number
+            #if defined(AltNum_EnableNaN)
+                    self.DecimalHalf = UndefinedRep;
+            #else
+                    throw "Uncertain result";
+            #endif
+                }
+                else
                     self.DecimalHalf -= Value.DecimalHalf;
-                    break;
+				break;
         #endif
 	#endif
+    #if defined(AltNum_EnableNaN)
 			case RepType::Undefined:
 			case RepType::NaN:
 				throw "Can't perform operations with NaN or Undefined number";
 				break;
+    #endif
 			default:
 				throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
 				break;
