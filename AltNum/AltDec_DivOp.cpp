@@ -240,19 +240,54 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
     //Turn MixedFrac into fractional and then apply			
 	#if defined(AltNum_EnableMixedFractional)
 			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-				self.CatchAllDivision(Value, LRep, RRep);//Temporary until more specific code
-                //throw "Code not implimented yet";
-				break;
+                //=LeftSideNum*Value.ExtraRep / RightSideNum;
+				MediumDecVariant LeftSideNum;
+				if(self.IntValue==NegativeRep)
+					LeftSideNum = MediumDecVariant(self.DecimalHalf);
+				else if(self.IntValue<0)
+					LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep + self.DecimalHalf);
+				else if(self.IntValue==0)
+					LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+				else
+					LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep - self.DecimalHalf);
+                LeftSideNum.PartialMultOp(Value.ExtraRep);
+                if(LeftSideNum.IsZero())
+                    self.SetAsZero();
+                else
+                {
+                    self.IntValue = LeftSideNum.IntValue;
+                    self.DecimalHalf = LeftSideNum.DecimalHalf;
+                    self.ExtraRep *= Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
+                }
+                break;//Result as NumByDiv
 		#if defined(AltNum_EnableMixedPiFractional)
 			case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
-		#elif defined(AltNum_EnableMixedIFractional)
+        #if defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
-		#endif
-		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
-                self.ConvertAltFracWithInvertedExtra(RepType::MixedFrac); Value.ConvertAltFracWithInvertedExtra(RepType::MixedFrac);
-                self.BasicMultOp(Value);
+        #endif
+		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+                //=LeftSideNum*-Value.ExtraRep / RightSideNum;
+				int LeftSideNum;
+				if(self.IntValue==NegativeRep)
+					LeftSideNum = self.DecimalHalf;
+				else if(self.IntValue<0)
+					LeftSideNum = self.IntValue*-self.ExtraRep + self.DecimalHalf;
+				else if(self.IntValue==0)
+					LeftSideNum = -self.DecimalHalf;
+				else
+					LeftSideNum = self.IntValue*-self.ExtraRep + -self.DecimalHalf;
+                LeftSideNum.PartialMultOp(-Value.ExtraRep);
+                if(LeftSideNum.IsZero())
+                    self.SetAsZero();
+                else//Result as NumByDiv
+                {   //Need to have positive ExtraRep value
+				    //int RightSideNum = Value.IntValue==0?-DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
+                    self.IntValue = LeftSideNum.IntValue;
+                    self.DecimalHalf = LeftSideNum.DecimalHalf;
+                    self.ExtraRep *= Value.IntValue==0?DecimalHalf:(Value.IntValue*Value.ExtraRep)+Value.DecimalHalf;
+                } 
                 break;
 		#endif
 	#endif

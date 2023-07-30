@@ -1090,21 +1090,6 @@ ExtraFlags treated as bitwise flag storage
                 break;
             }
         }
-		
-		void ConvertAltFracWithInvertedExtra(RepType& repType)
-        {
-            switch (repType)
-            {
-			case RepType::MixedFrac:
-				MediumDecVariant Res = IntValue<0?MediumDecVariant(DecimalHalf, 0):MediumDecVariant(DecimalHalf, 0);
-				Res /= -ExtraRep;
-				if(IntValue!=0&&IntValue!=NegativeRep)
-					Res += IntValue;
-				IntValue = Res.IntValue;
-				DecimalHalf = Res.DecimalHalf;
-				ExtraRep = 0;
-				break;
-		}
 
     #if defined(AltNum_EnableImaginaryNum)
 		void ConvertToNormalIRep(RepType& repType)
