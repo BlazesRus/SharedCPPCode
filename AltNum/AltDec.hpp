@@ -186,13 +186,18 @@ AltNum_EnableNilRep = Enables Nil representation(detection not in code right now
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc
 AltNum_EnableWithinMinMaxRange
 AltNum_EnableUnknownTrigExpressions = (Not Implimented)
+
+AltNum_EnableMorePrecisePi
+AltNum_EnableMorePreciseE
 */
-#if !defined(AltNum_DisableAutoToggleOfPreferedSettings)
+#if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
+	//#define AltNum_EnableMorePrecisePi
+	//#define AltNum_EnableMorePreciseE
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -804,7 +809,9 @@ ExtraFlags treated as bitwise flag storage
                 throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
                 IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
             }
-		#if defined(AltNum_DisableSwitchBasedConversion)
+		#if defined(AltNum_EnableMorePrecisePi)
+			ConvertFromPiNumToNorm();
+		#elif defined(AltNum_DisableSwitchBasedConversion)
             else if (IntValue == NegativeRep)//-0.XXX... * Pi
             {
                 BasicMultOp(PiNum);
@@ -970,8 +977,12 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
+		#if defined(AltNum_EnableMorePrecisePi)
+				ConvertFromPiNumToNorm();
+		#else
                 BasicMultOp(PiNum);
-                ExtraRep = 0;
+				ExtraRep = 0;
+		#endif
                 break;
 		#if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
@@ -981,21 +992,28 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+				#if defined(AltNum_EnableMorePrecisePi)
+				ConvertFromPiByDivToNorm();
+				#else
                 BasicMultOp(PiNum);
                 ExtraRep *= -1;
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
-			#endif
+				#endif
+			#else
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+				#if defined(AltNum_EnableMorePrecisePi)
+				ConvertFromPiFractionalToNorm();
+				#else
 				signed _int64 FirstHalf = 3141592654;
 				FirstHalf *= IntValue;
 				signed int divRes = FirstHalf / DecimalHalf;
-			#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+					#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
 				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
 				//Add output code here later
-			#else
+					#else
 				FirstHalf = divRes;
-			#endif
+					#endif
 				//convert from Int64 into normal AltNum format
 				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
 				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
@@ -1005,7 +1023,9 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = FirstPart;
 				DecimalHalf = SecondPart;
 			    ExtraRep = 0;
+				#endif
                 break;
+			#endif
 		#endif		
 	#endif
             case RepType::NumByDiv:
@@ -1020,22 +1040,29 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
+				#if defined(AltNum_EnableMorePreciseE)
+				ConvertFromEByDivToNorm();
+				#else
                 BasicMultOp(ENum);
                 ExtraRep *= -1;
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
+				#endif
                 break;
-			#endif
+			#else
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
+				#if defined(AltNum_EnableMorePreciseE)
+				ConvertFromEFractionalToNorm();
+				#else
 				signed _int64 FirstHalf = 2718281828;
 				FirstHalf *= IntValue;
 				signed int divRes = FirstHalf / DecimalHalf;
-			#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
+					#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
 				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
 				//Add output code here later
-			#else
+					#else
 				FirstHalf /= DecimalHalf;
-			#endif
+					#endif
 				//convert from Int64 into normal AltNum format
 				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
 				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
@@ -1046,6 +1073,8 @@ ExtraFlags treated as bitwise flag storage
 				DecimalHalf = SecondPart;
 			    ExtraRep = 0;
                 break;
+				#endif
+			#endif
 		#endif
 	#endif
 
@@ -5951,33 +5980,43 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-            case RepType::NormalType:
-                break;
-            case RepType::PiNum:
-            {
-                Value.ConvertPiToNum();//return CeilInt(Value.ConvertPiToNum());
-                break;
-            }
-#if defined(AltNum_EnableERep)
-            case RepType::ENum:
-#if defined(AltNum_EnableFractionals)
-            case RepType::ENumByDiv:
-#endif
-                Value.ConvertToNumRep();
-                break;
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-            case RepType::INum:
-#if defined(AltNum_EnableFractionals)
-            case RepType::INumByDiv:
-#endif
-                break;
-#endif
-            //case RepType::ApproachingTop:
-            //case RepType::ApproachingBottom:
-            default:
-                Value.ConvertToNumRep();
-                break;
+				case RepType::NormalType:
+					break;
+				case RepType::PiNum:
+				{
+					Value.ConvertPiToNum();//return CeilInt(Value.ConvertPiToNum());
+					break;
+				}
+	#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledEFractionals)
+				case ENumByDiv://(Value/(ExtraRep*-1))*E Representation
+			#else
+				case EFractional://  IntValue/DecimalHalf*E Representation
+			#endif
+		#endif
+					Value.ConvertToNormType(repType);
+					break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+					break;
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledIFractionals)
+				case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+			#else
+				case IFractional://  IntValue/DecimalHalf*i Representation
+			#endif
+					Value.ConvertToNormalIRep();
+					break;
+		#endif
+	#endif
+				//case RepType::ApproachingTop:
+				//case RepType::ApproachingBottom:
+				default:
+					Value.ConvertToNormType(repType);
+					break;
             }
             if (Value.DecimalHalf == 0)
             {
@@ -6045,23 +6084,7 @@ public:
         /// <returns>MediumDecVariant&</returns>
         MediumDecVariant& Abs()
         {
-/*#ifdef AltNum_EnableInfinityRep
-            if (DecimalHalf == InfinityRep)
-            {
-#ifdef AltNum_EnableInfinityPowers//Not Reaaly needed to treat
-                if (IntValue<0)//Force negative Infinity into positive Infinity
-                    IntValue *= -1;
-#else
-                if (IntValue == -1)
-                    IntValue = 1;
-#endif
-                return *this;
-            }
-#endif*/
-            if (IntValue == NegativeRep)
-                IntValue = 0;
-            else if (IntValue < 0)
-                IntValue = -IntValue;//IntValue *= -1;
+            IntValue.Abs();
             return *this;
         }
         
@@ -6229,9 +6252,9 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecVariant Pow(MediumDecVariant targetValue, ValueType expValue)
+        static MediumDecVariant PowRef(MediumDecVariant& targetValue, ValueType& expValue)
         {
-            if (expValue == 1) { return targetValue; }//Return self
+            if (expValue == One) { return targetValue; }//Return self
             else if (expValue == 0)
                 return MediumDecVariant::One;
             else if (expValue < 0)//Negative Pow
@@ -6258,7 +6281,7 @@ public:
                     return targetValue;
                 }
             }
-            else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10)
+            else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && targetValue.ExtraRep==0)
             {
                 targetValue.IntValue = VariableConversionFunctions::PowerOfTens[expValue];
             }
@@ -6279,62 +6302,26 @@ public:
             }
             return targetValue;
         }
-
-        /// <summary>
+		
+		/// <summary>
         /// Applies Power of operation (for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecVariant PowRef(MediumDecVariant& targetValue, ValueType expValue)
+        static MediumDecVariant Pow(MediumDecVariant targetValue, ValueType expValue)
         {
-            if (expValue == 1)
-                return targetValue;//Return self
-            else if (expValue == 0)
-                return MediumDecVariant::One;
-            else if (expValue < 0)//Negative Pow
-            {
-                if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
-                {
-                    return MediumDecVariant(0, MediumDecVariant::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
-                    MediumDecVariant self = targetValue;
-                    MediumDecVariant Result = MediumDecVariant::One;
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, divide self with result
-                        if (expValue % 2 == 1)
-                            Result /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return Result;
-                }
-            }
-            else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10)
-                return MediumDecVariant(VariableConversionFunctions::PowerOfTens[expValue], 0);
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDecVariant self = targetValue;
-                MediumDecVariant Result = MediumDecVariant::One;
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        Result *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-                return Result;
-            }
-            return targetValue;
-        }
+			PowRef(targetValue, expValue);
+		}
+
+		/// <summary>
+        /// Applies Power of operation (for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        static MediumDecVariant Pow(ValueType expValue)
+        {
+			PowRef(this, expValue);
+		}
 
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
@@ -6425,8 +6412,8 @@ public:
         /// </summary>
 		static MediumDecVariant Sqrt(MediumDecVariant value, int precision=7)
 		{
-		    ValueRep = 
-		    return 
+		    value.ConvertToNumRep();
+			BasicSqrt(value, precision);
 		}
 
         /// <summary>
