@@ -109,7 +109,17 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.BasicMultOp(Value);
 					break;
 		#endif
-	#endif						
+	#endif
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+        #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi:
+        #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+        #endif
+					MixedFracMultOp(LRep, RRep, self, Value);
+					break;
+    #endif						
 				default:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;
@@ -167,11 +177,52 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.ExtraRep = IRep;
 					break;
 	#endif
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    MixedFracRtRMult_WithNormal(self, Value);
+                    break;
+        #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi:
+        #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+        #endif
+					MixedAltFracRtRMult_WithPi(self, Value);
+					break;
+    #endif
 				default:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;
 			}
 			break;
+    #if defined(AltNum_EnablePiPowers)
+		case RepType::PiPower:
+			switch (RRep)
+			{
+				case RepType::NormalType:
+					self.BasicMultOp(Value);
+					break;
+				case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+					--self.ExtraRep;
+					self.BasicMultOp(Value);
+					break;
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    MixedFracRtRMult_WithNormal(self, Value);
+                    break;
+        #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi:
+        #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+        #endif
+					MixedAltFracRtRMult_WithPiPower(self, Value);
+					break;
+    #endif
+				default:
+					self.CatchAllMultiplication(Value, LRep, RRep);
+					break;
+			}
+			break;
+    #endif
 #endif
 #if defined(AltNum_EnableERep)
 		case RepType::ENum:
@@ -226,6 +277,18 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					self.ExtraRep = IRep;
 					break;
 	#endif
+    #if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    MixedFracRtRMult_WithNormal(self, Value);
+                    break;
+        #if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi:
+        #elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE:
+        #endif
+					MixedAltFracRtRMult_WithNormal(self, Value);
+					break;
+    #endif
 				default:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;

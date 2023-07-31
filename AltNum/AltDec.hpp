@@ -2932,6 +2932,7 @@ public:
 #if defined(AltNum_EnableMixedFractional)
 		void MixedFracAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		void MixedFracSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
+		
 		void MixedFracMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		void MixedFracDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
 		
@@ -3019,12 +3020,12 @@ public:
 			}
 		}
 		
-		#if defined(AltNum_EnableMixedPiFractional)
+	#if defined(AltNum_EnableMixedPiFractional)
 		void BasicMixedPiFracAddOp(MediumDecVariant& self, MediumDecVariant& Value)
-		#elif defined(AltNum_EnableMixedEFractional)
+	#elif defined(AltNum_EnableMixedEFractional)
 		void BasicMixedEFracAddOp(MediumDecVariant& self, MediumDecVariant& Value)
-		#endif
-		#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+	#endif
+	#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
 		{
 			MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep) - Value.DecimalHalf);
 		#if defined(AltNum_EnableMixedPiFractional)
@@ -3049,7 +3050,7 @@ public:
 				self.ExtraRep = -Value.ExtraRep;
 			}
 		}
-		#endif
+	#endif
 		
 		//Assumes NormalRep - Normal MixedFraction operation
 		void BasicMixedFracSubOp(MediumDecVariant& self, MediumDecVariant& Value)
@@ -3104,6 +3105,95 @@ public:
 			}
 		}
 		#endif
+		
+		/*
+			case RepType::NormalType:
+		#if defined(AltNum_EnablePiRep)
+			case RepType::PiNum:
+			#if defined(AltNum_EnablePiPowers)
+			case RepType::PiPower:
+			#endif
+		#endif
+		#if defined(AltNum_EnableENum)
+			case RepType::ENum:
+		#endif
+		    multiplied by MixedFrac
+		*/
+		void MixedFracRtRMult_WithNormal(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+		}
+		
+	#if defined(AltNum_EnableMixedPiFractional)|| defined(AltNum_EnableMixedEFractional)
+		// RepType::PiNum: multiplied by MixedPi/MixedE
+		void MixedAltFracRtRMult_WithPi(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+		#if defined(AltNum_EnableMixedPiFractional)
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			#if defined(AltNum_EnablePiPowers)//Become Value*Pi^2
+			self.ExtraRep = -1;
+			#else
+			self.BasicDivOp(PiNumValue());
+			#endif
+		#else
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			self.BasicMultOp(ENumValue());	
+		#endif
+		}
+		
+		#if defined(AltNum_EnablePiPowers)	
+		// RepType::PiPower: multiplied by MixedPi/MixedE
+		void MixedAltFracRtRMult_WithPiPower(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+			#if defined(AltNum_EnableMixedPiFractional)
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			++self.ExtraRep;
+			#else
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			self.BasicMultOp(ENumValue());	
+			#endif
+		}
+		#endif
+		
+		/*
+			case RepType::NormalType:
+		#if defined(AltNum_EnableENum)
+			case RepType::ENum:
+		#endif
+		    multiplied by MixedPi/MixedE
+		*/
+		void MixedAltFracRtRMult_WithNormal(MediumDecVariant& self, MediumDecVariant& Value)
+		{
+		#if defined(AltNum_EnableMixedPiFractional)
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			self.BasicMultOp(PiNumValue());
+		#else
+			MediumDecVariant LeftSide = self*Value.IntValue;
+			MediumDecVariant RightSide = self/-Value.ExtraRep;
+			RightSide *= -Value.DecimalHalf;
+			self = LeftSide+RightSide;
+			self.BasicMultOp(ENumValue());
+		#endif
+		}
+	#endif
 #endif
 	
 		void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value);
