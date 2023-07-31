@@ -238,6 +238,7 @@ static MediumDecVariant& MediumDecVariant::MultOp(RepType& LRep, RepType& RRep, 
                     self.ExtraRep = PiRep;
                     self.BasicMultOp(PiNum);
                     self.PartialDivOp(DenomRes);
+                #endif
 			#endif
 				}
 				break;
