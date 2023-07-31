@@ -40,9 +40,6 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 	#if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum:
 	#endif
-	#if defined(AltNum_EnablePiPowers)
-            case RepType::PiPower:
-	#endif
 				self.BasicSubOp(Value);
 				break;
 
@@ -183,10 +180,12 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
-//			case RepType::ApproachingBottomDiv:
-//                        break;
-//			case RepType::ApproachingTopDiv:
-//                        break;
+			case RepType::ApproachingBottomDiv:
+                self.CatchAllSubtraction(Value, RepType::ApproachingBottomDiv);
+                break;
+			case RepType::ApproachingTopDiv:
+                self.CatchAllSubtraction(Value, RepType::ApproachingTopDiv);    
+                break;
 		#endif
 	#endif
 
@@ -231,6 +230,16 @@ static MediumDecVariant& MediumDecVariant::SubOp(RepType& LRep, RepType& RRep, M
 				}
 				break;
 		#endif
+	#endif
+
+	#if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                if(self.ExtraRep!=Value.ExtraRep)
+                {
+                    self.ConvertPiPowerToPiRep(); value.ConvertPiPowerToPiRep();
+                }
+				self.BasicSubOp(Value);
+				break;
 	#endif
 			
 	#if defined(AltNum_EnableMixedFractional)

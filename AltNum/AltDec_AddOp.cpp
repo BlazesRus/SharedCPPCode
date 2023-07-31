@@ -40,9 +40,6 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 	#if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum:
 	#endif
-	#if defined(AltNum_EnablePiPowers)
-            case RepType::PiPower:
-	#endif
 				self.BasicAddOp(Value);
 				break;
 
@@ -194,10 +191,12 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
-//			case RepType::ApproachingBottomDiv:
-//                        break;
-//			case RepType::ApproachingTopDiv:
-//                        break;
+			case RepType::ApproachingBottomDiv:
+                self.CatchAllAddition(Value, RepType::ApproachingBottomDiv);
+                break;
+			case RepType::ApproachingTopDiv:
+                self.CatchAllAddition(Value, RepType::ApproachingTopDiv);
+                break;
 		#endif
 	#endif
 
@@ -244,7 +243,17 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 				break;
 		#endif
 	#endif
-				
+	
+	#if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                if(self.ExtraRep!=Value.ExtraRep)
+                {
+                    self.ConvertPiPowerToPiRep(); value.ConvertPiPowerToPiRep();
+                }
+				self.BasicAddOp(Value);
+				break;
+	#endif    
+    			
 	#if defined(AltNum_EnableMixedFractional)
             //Ignoring the fact that mixed fraction could be improperly formatted for spend
             //because should be corrected after every operation
