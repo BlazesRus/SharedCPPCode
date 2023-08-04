@@ -917,15 +917,31 @@ ExtraFlags treated as bitwise flag storage
 		
 		#if defined(AltNum_EnableMorePrecisePi)
         void  ConvertFromPiNumToNorm()
-		{
-			if(self.IntValue==IsZero())
+		{//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
+			if(self.DecimalHalf==0)
 			{
+				if(self.IntValue<0)
+				{
+				}
+				else
+				{
+				}
 			}
-			else if(self.DecimalHalf==0)
+			else if(self.IntValue.Value==0)
+			{
+
+			}
+			else if(self.IntValue==NegativeRep)
 			{
 			}
 			else
 			{
+				if(self.IntValue<0)
+				{
+				}
+				else
+				{
+				}
 			}
 		}
 		
@@ -943,16 +959,32 @@ ExtraFlags treated as bitwise flag storage
 
 	#if defined(AltNum_EnableERep)
         void ConvertENumToNum()
-        {
+        {//2.71828182845904523536028747135266249775724709369995 *selfNum
 		#if defined(AltNum_EnableMorePrecisePi)
-			if(self.IntValue==IsZero())
+			if(self.DecimalHalf==0)
 			{
+				if(self.IntValue<0)
+				{
+				}
+				else
+				{
+				}
 			}
-			else if(self.DecimalHalf==0)
+			else if(self.IntValue.Value==0)
+			{
+
+			}
+			else if(self.IntValue==NegativeRep)
 			{
 			}
 			else
 			{
+				if(self.IntValue<0)
+				{
+				}
+				else
+				{
+				}
 			}
 		#else
             BasicMultOp(ENum);
