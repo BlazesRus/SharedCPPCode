@@ -914,19 +914,77 @@ ExtraFlags treated as bitwise flag storage
 				}
 			}
 		}
+		
+		#if defined(AltNum_EnableMorePrecisePi)
+        void  ConvertFromPiNumToNorm()
+		{
+			if(self.IntValue==IsZero())
+			{
+			}
+			else if(self.DecimalHalf==0)
+			{
+			}
+			else
+			{
+			}
+		}
+		
+			#if defined(AltNum_EnableDecimaledPiFractionals)
+		void ConvertFromPiByDivToNorm()
+		{
+		}
+			#else
+		void ConvertFromPiFractionalToNorm()
+		{
+		}
+			#endif
+		#endif
 	#endif
 
 	#if defined(AltNum_EnableERep)
-        void ConvertEToNum()
+        void ConvertENumToNum()
         {
+		#if defined(AltNum_EnableMorePrecisePi)
+			if(self.IntValue==IsZero())
+			{
+			}
+			else if(self.DecimalHalf==0)
+			{
+			}
+			else
+			{
+			}
+		#else
             BasicMultOp(ENum);
-            if(ExtraRep!=IERep)
-            {
-                int TempDiv = ExtraRep*-1;
-                BasicIntDivOp(TempDiv);
-            }
             ExtraRep = 0;
+		#endif
         }
+		
+        void ConvertENumByDivToNum()
+        {
+
+        }
+		
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+		void ConvertEByDivToNorm()
+		{
+			#if defined(AltNum_EnableMorePrecisePi)
+		
+			#else
+            BasicMultOp(ENum);
+            BasicIntDivOp(-ExtraRep);
+            ExtraRep = 0;
+			#endif
+		}
+		#else
+		void ConvertFromPiFractionalToNorm()
+		{
+			#if defined(AltNum_EnableMorePrecisePi)
+		
+			#else
+			#endif
+		}
+		#endif
 	#endif
         public:
         void ConvertToNumRep()
@@ -978,7 +1036,7 @@ ExtraFlags treated as bitwise flag storage
 	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
 		#if defined(AltNum_EnableMorePrecisePi)
-				ConvertFromPiNumToNorm();
+				ConvertPiNumToNorm();
 		#else
                 BasicMultOp(PiNum);
 				ExtraRep = 0;
@@ -1034,25 +1092,28 @@ ExtraFlags treated as bitwise flag storage
                 break;
 	#if defined(AltNum_EnableERep)
             case RepType::ENum:
+		#if defined(AltNum_EnableMorePreciseE)
+				ConvertENumToNorm();
+		#else
                 BasicMultOp(ENum);
                 ExtraRep = 0;
+		#endif
                 break;
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
 				#if defined(AltNum_EnableMorePreciseE)
-				ConvertFromEByDivToNorm();
+				ConvertEByDivToNorm();
 				#else
                 BasicMultOp(ENum);
-                ExtraRep *= -1;
-                BasicIntDivOp(ExtraRep);
+                BasicIntDivOp(-ExtraRep);
                 ExtraRep = 0;
 				#endif
                 break;
 			#else
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
 				#if defined(AltNum_EnableMorePreciseE)
-				ConvertFromEFractionalToNorm();
+				ConvertEFractionalToNorm();
 				#else
 				signed _int64 FirstHalf = 2718281828;
 				FirstHalf *= IntValue;
