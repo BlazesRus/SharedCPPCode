@@ -1008,11 +1008,145 @@ ExtraFlags treated as bitwise flag storage
 				else
 					IntValue = (int)IntHalf;
 			}
+			ExtraRep = 0;
 		}
 		
 			#if defined(AltNum_EnableDecimaledPiFractionals)
+		void ConvertPiByDivToNumByDiv()
+		{
+			__int64 SRep;
+			__int64 divRes;
+			if(self.DecimalHalf==0)
+			{
+			    SRep = 3141592654;
+                SRep *= self.IntValue;
+				if(self.IntValue<0)
+				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
+				}
+				else
+				{
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
+				}
+			}
+			else if(self.IntValue.Value==0)
+			{
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+			}
+			else if(self.IntValue==NegativeRep)
+			{
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
+			}
+			else
+			{
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
+				{
+					IntValue = NegativeRep;
+				}
+				else
+					IntValue = (int)IntHalf;
+			}
+			ExtraRep = -ExtraRep;
+		}
+		
 		void ConvertFromPiByDivToNorm()
 		{
+            BasicIntDivOp(-ExtraRep);
+            ExtraRep = 0;
+			__int64 SRep;
+			__int64 divRes;
+			if(self.DecimalHalf==0)
+			{
+			    SRep = 3141592654;
+                SRep *= self.IntValue;
+				if(self.IntValue<0)
+				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
+				}
+				else
+				{
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
+				}
+			}
+			else if(self.IntValue.Value==0)
+			{
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+			}
+			else if(self.IntValue==NegativeRep)
+			{
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
+			}
+			else
+			{
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
+				{
+					IntValue = NegativeRep;
+				}
+				else
+					IntValue = (int)IntHalf;
+			}
 		}
 			#else
 		void ConvertFromPiFractionalToNorm()
@@ -1096,16 +1230,143 @@ ExtraFlags treated as bitwise flag storage
 		#endif
         }
 		
-        void ConvertENumByDivToNum()
-        {
-
-        }
-		
 		#if defined(AltNum_EnableDecimaledPiFractionals)
+		void ConvertEByDivToNumByDiv()
+		{
+			__int64 SRep;
+			__int64 divRes;
+			if(self.DecimalHalf==0)
+			{
+			    SRep = 2718281828;				       
+                SRep *= self.IntValue;
+				if(self.IntValue<0)
+				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
+				}
+				else
+				{
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
+				}
+			}
+			else if(self.IntValue.Value==0)
+			{
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+			}
+			else if(self.IntValue==NegativeRep)
+			{
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
+			}
+			else
+			{
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
+				{
+					IntValue = NegativeRep;
+				}
+				else
+					IntValue = (int)IntHalf;
+			}
+			ExtraRep = -ExtraRep;
+		}
+		
 		void ConvertEByDivToNorm()
 		{
 			#if defined(AltNum_EnableMorePrecisePi)
-		
+            BasicIntDivOp(-ExtraRep);
+            ExtraRep = 0;
+			__int64 SRep;
+			__int64 divRes;
+			if(self.DecimalHalf==0)
+			{
+			    SRep = 2718281828;				       
+                SRep *= self.IntValue;
+				if(self.IntValue<0)
+				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
+				}
+				else
+				{
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
+				}
+			}
+			else if(self.IntValue.Value==0)
+			{
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+			}
+			else if(self.IntValue==NegativeRep)
+			{
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
+			}
+			else
+			{
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
+				{
+					IntValue = NegativeRep;
+				}
+				else
+					IntValue = (int)IntHalf;
+			}
 			#else
             BasicMultOp(ENum);
             BasicIntDivOp(-ExtraRep);
