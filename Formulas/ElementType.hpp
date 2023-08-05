@@ -62,8 +62,8 @@ namespace BlazesRusCode
         BuildInVariable,
         IntNumber//Integer number(for derivative classes that use more than one storage type)
 	#else
+		FormulaEnd = 3,
 		Operator = 4,
-		FormulaEnd = 5,
 		Function = 8,
 		FunctionEnd = 9
 	#endif
