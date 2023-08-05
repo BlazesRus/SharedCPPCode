@@ -197,7 +197,7 @@ AltNum_EnableMorePreciseE
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
 	#define AltNum_EnableMorePrecisePi
-	//#define AltNum_EnableMorePreciseE
+	#define AltNum_EnableMorePreciseE
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
