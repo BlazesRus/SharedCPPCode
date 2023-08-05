@@ -7,6 +7,7 @@
 
 namespace BlazesRusCode
 {
+
     /// <summary>
     /// Element Category Type for Formula Elements
     /// </summary>
@@ -15,9 +16,10 @@ namespace BlazesRusCode
         //Stored number
         Num = 0,
         //Variable Reference
-        Variable,
+        Variable = 1,
         //Another Formula within
-        Formula,
+        Formula = 2,
+	#if defined(BlazesFormulaCode_EnableOldElementFields)
         // True or False Boolean
         trueVal, falseVal,
         //Power of Operation
@@ -59,5 +61,11 @@ namespace BlazesRusCode
         BaseNLog,
         BuildInVariable,
         IntNumber//Integer number(for derivative classes that use more than one storage type)
+	#else
+		Operator = 4,
+		FormulaEnd = 5,
+		Function = 8,
+		FunctionEnd = 9
+	#endif
     };
 }
