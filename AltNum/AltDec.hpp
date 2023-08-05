@@ -196,7 +196,7 @@ AltNum_EnableMorePreciseE
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
-	//#define AltNum_EnableMorePrecisePi
+	#define AltNum_EnableMorePrecisePi
 	//#define AltNum_EnableMorePreciseE
 #endif
 
@@ -916,23 +916,77 @@ ExtraFlags treated as bitwise flag storage
 		}
 		
 		#if defined(AltNum_EnableMorePrecisePi)
+		//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
         void  ConvertFromPiNumToNorm()
-		{//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
+		{
+			//Maximum result value              = 2147483647.999999999
+			//Pi * 2147483647              =   6,746,518,849.1194168257096980859855
+			//Int32 Max=
+			//2147483647
+			//683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
+			//Pi * 683565275                    = 2147483646.189086752242857401518383790899531254705429038668838768350655406412544182854647248094561223
+			//Int64Max                 = 9223372036854775807
+			//                     9,223,372,036,854,775,807
+			//3,141,592653.5897932384626433832795 * 2147483647
+			//                          =6746518849119416825.7096980859855
+			//Pi =
+			//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844
+			//For X.0 * Pi results
+			//3141592653 * 683565275    =2147483645785924575
+			//IntValue = 2147483645 (Res / 1000000000)
+			//DecimalHalf = 785924575
+			//3141592654 * 683565275    =2147483646469489850
+			//IntValue = 2147483646 (Res / 1000000000)
+			//DecimalHalf = 469489850
+			//For 0.X * Pi results
+			//Pi * 0.999999999        = 3.141592650448200584872850144816859500917666515177936421599838771332871813978392592341825826714082243
+			//3141592654 * 999999999    =3141592650858407346
+			//IntValue = 3 (Res / 1000000000000000000)
+			//DecimalHalf = 141592650 (Rounded up techically equals 141592651) ((SRep - 1000000000000000000 * divRes)/DecimalOverflowX)
+			__int64 SRep;
+			__int64 divRes;
 			if(self.DecimalHalf==0)
 			{
+			    SRep = 3141592654;
+                SRep *= self.IntValue;
 				if(self.IntValue<0)
 				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
 				}
 				else
 				{
+					//__int64 divRes = SRep / DecimalOverflowX;
+					//__int64 C = SRep - DecimalOverflowX * divRes;
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
 				}
 			}
 			else if(self.IntValue.Value==0)
 			{
-
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
 			else if(self.IntValue==NegativeRep)
 			{
+			    SRep = 3141592654;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
 			}
 			else
 			{
@@ -3922,18 +3976,23 @@ public:
 
 		/// <summary>
         /// Basic Multiplication Operation(without checking for special representation variations or zero)
+		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicMultOp(MediumDecVariant& Value)
+		bool BasicMultOp(MediumDecVariant& Value)
 		{
 			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
+			{
 /*#if defined(AltNum_EnableApproachingDivided)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
 #else*/
 				DecimalHalf = 1;
+			else
+				return false;
 //#endif
+			return true;
 		}
 
 private:
@@ -3948,6 +4007,13 @@ private:
 		{
 			ConvertToNumRep(SameRep);
 			Value.ConvertToNumRep(SameRep);
+			BasicMultOp(Value);
+		}
+		
+		void CatchAllMultiplication(MediumDecVariant& Value)
+		{
+			ConvertToNumRep();
+			Value.ConvertToNumRep();
 			BasicMultOp(Value);
 		}
 public:
