@@ -1012,24 +1012,52 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 
 	#if defined(AltNum_EnableERep)
+		//2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
         void ConvertENumToNum()
         {//2.71828182845904523536028747135266249775724709369995 *selfNum
 		#if defined(AltNum_EnableMorePrecisePi)
+			__int64 SRep;
+			__int64 divRes;
 			if(self.DecimalHalf==0)
 			{
+			    SRep = 2718281828;				       
+                SRep *= self.IntValue;
 				if(self.IntValue<0)
 				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
 				}
 				else
 				{
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
 				}
 			}
 			else if(self.IntValue.Value==0)
 			{
-
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
 			else if(self.IntValue==NegativeRep)
 			{
+			    SRep = 2718281828;
+                SRep *= self.DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
 			}
 			else
 			{
