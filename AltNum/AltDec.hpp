@@ -990,12 +990,23 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
-				if(self.IntValue<0)
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
 				{
+					IntValue = NegativeRep;
 				}
 				else
-				{
-				}
+					IntValue = (int)IntHalf;
 			}
 		}
 		
@@ -1061,12 +1072,23 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
-				if(self.IntValue<0)
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
 				{
+					IntValue = NegativeRep;
 				}
 				else
-				{
-				}
+					IntValue = (int)IntHalf;
 			}
 		#else
             BasicMultOp(ENum);
