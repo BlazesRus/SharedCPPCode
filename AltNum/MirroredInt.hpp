@@ -1330,6 +1330,17 @@ namespace BlazesRusCode
 				return 0;
 			return Value;
 		}
+		
+		/// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator std::string()
+		{
+			if(Value==NegativeRep)
+				return "-0";
+			return VariableConversionFunctions::IntToStringConversion(IntValue);
+		}
 #pragma endregion ConversionToType
 
 #pragma region ConversionFromType
