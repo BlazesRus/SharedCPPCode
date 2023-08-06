@@ -1484,7 +1484,7 @@ ExtraFlags treated as bitwise flag storage
 				break;
 	#endif
             default:
-                ConvertToNumRep();
+                throw "Conversion to normal number not supported yet?";
                 break;
             }
         }
