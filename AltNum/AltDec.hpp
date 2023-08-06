@@ -186,9 +186,6 @@ AltNum_EnableNilRep = Enables Nil representation(detection not in code right now
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc
 AltNum_EnableWithinMinMaxRange
 AltNum_EnableUnknownTrigExpressions = (Not Implimented)
-
-AltNum_EnableMorePrecisePi
-AltNum_EnableMorePreciseE
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -196,8 +193,6 @@ AltNum_EnableMorePreciseE
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
-	#define AltNum_EnableMorePrecisePi
-	#define AltNum_EnableMorePreciseE
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -789,9 +784,9 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 
 	#if defined(AltNum_EnablePiRep)
+		//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
         void ConvertPiToNum()
         {
-
             ExtraRep = 0;
             // Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PiRepresentation
             //Can Represent up ? before hitting Maximum MediumDecVariant value on reconversion when AltNum_UseLowerPrecisionPi is enabled
@@ -809,76 +804,95 @@ ExtraFlags treated as bitwise flag storage
                 throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
                 IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
             }
-		#if defined(AltNum_EnableMorePrecisePi)
-			ConvertFromPiNumToNorm();
-		#elif defined(AltNum_DisableSwitchBasedConversion)
-            else if (IntValue == NegativeRep)//-0.XXX... * Pi
-            {
-                BasicMultOp(PiNum);
-            }
-            else if (DecimalHalf == 0 && IntValue == 10)
-            {
-                IntValue = 31; DecimalHalf = 415926536; 
-            }
-            else
-            {
-                BasicMultOp(PiNum);
-            }
-		#else
-            else
-            {
-                switch (IntValue)
-                {
-                case NegativeRep:
-                    BasicMultOp(PiNum);
-                    break;
-                case 5:
-                    if (DecimalHalf == 0)
-                    {
-                        IntValue = 15; DecimalHalf = 707963268;
-                    }
-                    else
-                        BasicMultOp(PiNum);
-                    break;
-                case 10:
-                    if (DecimalHalf == 0)
-                    {
-                        IntValue = 31; DecimalHalf = 415926536;
-                    }
-                    else
-                        BasicMultOp(PiNum);
-                    break;
-                //3.1415926535897932384626433
-                case 100:
-                    if (DecimalHalf == 0)
-                    {
-                        IntValue = 314; DecimalHalf = 159265359;
-                    }
-                    else
-                        BasicMultOp(PiNum);
-                    break;
-                case 1000:
-                    if (DecimalHalf == 0)
-                    {
-                        IntValue = 3141; DecimalHalf = 592653590;
-                    }
-                    else
-                        BasicMultOp(PiNum);
-                    break;
-                case -10:
-                    if (DecimalHalf == 0)
-                    {
-                        IntValue = -31; DecimalHalf = 415926536;
-                    }
-                    else
-                        BasicMultOp(PiNum);
-                    break;
-                default:
-                    BasicMultOp(PiNum);
-                    break;
-                }
-            }
-		#endif
+			//Maximum result value              = 2147483647.999999999
+			//Pi * 2147483647              =   6,746,518,849.1194168257096980859855
+			//Int32 Max=
+			//2147483647
+			//683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
+			//Pi * 683565275                    = 2147483646.189086752242857401518383790899531254705429038668838768350655406412544182854647248094561223
+			//Int64Max                 = 9223372036854775807
+			//                     9,223,372,036,854,775,807
+			//3,141,592653.5897932384626433832795 * 2147483647
+			//                          =6746518849119416825.7096980859855
+			//Pi =
+			//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844
+			//For X.0 * Pi results
+			//3141592653 * 683565275    =2147483645785924575
+			//IntValue = 2147483645 (Res / 1000000000)
+			//DecimalHalf = 785924575
+			//3141592654 * 683565275    =2147483646469489850
+			//IntValue = 2147483646 (Res / 1000000000)
+			//DecimalHalf = 469489850
+			//For 0.X * Pi results
+			//Pi * 0.999999999        = 3.141592650448200584872850144816859500917666515177936421599838771332871813978392592341825826714082243
+			//3141592654 * 999999999    =3141592650858407346
+			//IntValue = 3 (Res / 1000000000000000000)
+			//DecimalHalf = 141592650 (Rounded up techically equals 141592651) ((SRep - 1000000000000000000 * divRes)/DecimalOverflowX)
+			__int64 SRep;
+			__int64 divRes;
+			if(DecimalHalf==0)
+			{
+			    SRep = 3141592654;
+                SRep *= IntValue;
+				if(IntValue<0)
+				{
+					__int64 divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					if(disRes==0)
+					{
+						if(DecimalHalf==0)
+							IntValue = 0;
+						else
+							IntValue = NegativeRep;
+					}
+				}
+				else
+				{
+					//__int64 divRes = SRep / DecimalOverflowX;
+					//__int64 C = SRep - DecimalOverflowX * divRes;
+					divRes = SRep / DecimalOverflowX;
+					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+					IntValue = (int)divRes;
+				}
+			}
+			else if(IntValue.Value==0)
+			{
+			    SRep = 3141592654;
+                SRep *= DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+			}
+			else if(IntValue==NegativeRep)
+			{
+			    SRep = 3141592654;
+                SRep *= DecimalHalf;
+				divRes = SRep / 1000000000000000000;
+				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+				if(divRes==0)
+					IntValue = NegativeRep;
+				else
+					IntValue = (int)-divRes;
+			}
+			else
+			{
+				SRep = DecimalOverflowX * IntValue + DecimalHalf;
+				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
+				//X.Y *.V
+				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
+				Temp04 /= MediumDecVariant::DecimalOverflow;
+				//Temp04 holds __int64 version of .Y * .V
+				__int64 IntegerRep = SRep + Temp03 + Temp04;
+				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
+				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
+				DecimalHalf = (signed int)IntegerRep;
+				if(IntHalf == 0&&IntValue<0)
+				{
+					IntValue = NegativeRep;
+				}
+				else
+					IntValue = (int)IntHalf;
+			}
         }
 		
         void ConvertPiPowerToNum()
@@ -915,112 +929,16 @@ ExtraFlags treated as bitwise flag storage
 			}
 		}
 		
-		#if defined(AltNum_EnableMorePrecisePi)
-		//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
-        void  ConvertFromPiNumToNorm()
-		{
-			//Maximum result value              = 2147483647.999999999
-			//Pi * 2147483647              =   6,746,518,849.1194168257096980859855
-			//Int32 Max=
-			//2147483647
-			//683565275.168866625 x 3.141592654 = 2147483646.99999999860577275
-			//Pi * 683565275                    = 2147483646.189086752242857401518383790899531254705429038668838768350655406412544182854647248094561223
-			//Int64Max                 = 9223372036854775807
-			//                     9,223,372,036,854,775,807
-			//3,141,592653.5897932384626433832795 * 2147483647
-			//                          =6746518849119416825.7096980859855
-			//Pi =
-			//3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844
-			//For X.0 * Pi results
-			//3141592653 * 683565275    =2147483645785924575
-			//IntValue = 2147483645 (Res / 1000000000)
-			//DecimalHalf = 785924575
-			//3141592654 * 683565275    =2147483646469489850
-			//IntValue = 2147483646 (Res / 1000000000)
-			//DecimalHalf = 469489850
-			//For 0.X * Pi results
-			//Pi * 0.999999999        = 3.141592650448200584872850144816859500917666515177936421599838771332871813978392592341825826714082243
-			//3141592654 * 999999999    =3141592650858407346
-			//IntValue = 3 (Res / 1000000000000000000)
-			//DecimalHalf = 141592650 (Rounded up techically equals 141592651) ((SRep - 1000000000000000000 * divRes)/DecimalOverflowX)
-			__int64 SRep;
-			__int64 divRes;
-			if(self.DecimalHalf==0)
-			{
-			    SRep = 3141592654;
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
-				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
-				}
-				else
-				{
-					//__int64 divRes = SRep / DecimalOverflowX;
-					//__int64 C = SRep - DecimalOverflowX * divRes;
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					IntValue = (int)divRes;
-				}
-			}
-			else if(self.IntValue.Value==0)
-			{
-			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
-				divRes = SRep / 1000000000000000000;
-				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
-			}
-			else if(self.IntValue==NegativeRep)
-			{
-			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
-				divRes = SRep / 1000000000000000000;
-				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
-				if(divRes==0)
-					IntValue = NegativeRep;
-				else
-					IntValue = (int)-divRes;
-			}
-			else
-			{
-				SRep = DecimalOverflowX * IntValue + DecimalHalf;
-				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
-				//X.Y *.V
-				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
-				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
-				Temp04 /= MediumDecVariant::DecimalOverflow;
-				//Temp04 holds __int64 version of .Y * .V
-				__int64 IntegerRep = SRep + Temp03 + Temp04;
-				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
-				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
-				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
-				{
-					IntValue = NegativeRep;
-				}
-				else
-					IntValue = (int)IntHalf;
-			}
-			ExtraRep = 0;
-		}
-		
-			#if defined(AltNum_EnableDecimaledPiFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
 		void ConvertPiByDivToNumByDiv()
 		{
 			__int64 SRep;
 			__int64 divRes;
-			if(self.DecimalHalf==0)
+			if(DecimalHalf==0)
 			{
 			    SRep = 3141592654;
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
+                SRep *= IntValue;
+				if(IntValue<0)
 				{
 					__int64 divRes = SRep / DecimalOverflowX;
 					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1039,17 +957,17 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)divRes;
 				}
 			}
-			else if(self.IntValue.Value==0)
+			else if(IntValue.Value==0)
 			{
 			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
-			else if(self.IntValue==NegativeRep)
+			else if(IntValue==NegativeRep)
 			{
 			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 				if(divRes==0)
@@ -1086,11 +1004,11 @@ ExtraFlags treated as bitwise flag storage
             ExtraRep = 0;
 			__int64 SRep;
 			__int64 divRes;
-			if(self.DecimalHalf==0)
+			if(DecimalHalf==0)
 			{
 			    SRep = 3141592654;
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
+                SRep *= IntValue;
+				if(IntValue<0)
 				{
 					__int64 divRes = SRep / DecimalOverflowX;
 					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1109,17 +1027,17 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)divRes;
 				}
 			}
-			else if(self.IntValue.Value==0)
+			else if(IntValue.Value==0)
 			{
 			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
-			else if(self.IntValue==NegativeRep)
+			else if(IntValue==NegativeRep)
 			{
 			    SRep = 3141592654;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 				if(divRes==0)
@@ -1148,16 +1066,16 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)IntHalf;
 			}
 		}
-			#else
+		#else
 		void ConvertFromPiFractionalToNorm()
 		{
 			int divisor = DecimalHalf;
 			DecimalHalf = 0;
             ExtraRep = 0;
 			__int64 SRep = 3141592654ll;
-			SRep *= self.IntValue;
+			SRep *= IntValue;
 			__int64 divRes;
-			if(self.IntValue<0)
+			if(IntValue<0)
 			{
 				__int64 divRes = SRep / DecimalOverflowX;
 				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1177,22 +1095,30 @@ ExtraFlags treated as bitwise flag storage
 			}
 		}
 		BasicIntDivOp(divisor);
-			#endif
 		#endif
 	#endif
 
 	#if defined(AltNum_EnableERep)
 		//2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
         void ConvertENumToNum()
-        {//2.71828182845904523536028747135266249775724709369995 *selfNum
-		#if defined(AltNum_EnableMorePrecisePi)
+        {
+            if(IntValue>=790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
+                IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+            }
+            else if(IntValue<=-790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
+                IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+            }
 			__int64 SRep;
 			__int64 divRes;
-			if(self.DecimalHalf==0)
+			if(DecimalHalf==0)
 			{
 			    SRep = 2718281828;				       
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
+                SRep *= IntValue;
+				if(IntValue<0)
 				{
 					__int64 divRes = SRep / DecimalOverflowX;
 					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1211,17 +1137,17 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)divRes;
 				}
 			}
-			else if(self.IntValue.Value==0)
+			else if(IntValue.Value==0)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
-			else if(self.IntValue==NegativeRep)
+			else if(IntValue==NegativeRep)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 				if(divRes==0)
@@ -1249,22 +1175,21 @@ ExtraFlags treated as bitwise flag storage
 				else
 					IntValue = (int)IntHalf;
 			}
-		#else
-            BasicMultOp(ENum);
-            ExtraRep = 0;
-		#endif
+			ExtraRep = 0;
         }
 		
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		void ConvertEByDivToNumByDiv()
 		{
+			BasicIntDivOp(-ExtraRep);
+            ExtraRep = 0;
 			__int64 SRep;
 			__int64 divRes;
-			if(self.DecimalHalf==0)
+			if(DecimalHalf==0)
 			{
 			    SRep = 2718281828;				       
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
+                SRep *= IntValue;
+				if(IntValue<0)
 				{
 					__int64 divRes = SRep / DecimalOverflowX;
 					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1283,17 +1208,17 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)divRes;
 				}
 			}
-			else if(self.IntValue.Value==0)
+			else if(IntValue.Value==0)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
-			else if(self.IntValue==NegativeRep)
+			else if(IntValue==NegativeRep)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 				if(divRes==0)
@@ -1326,16 +1251,13 @@ ExtraFlags treated as bitwise flag storage
 		
 		void ConvertEByDivToNorm()
 		{
-			#if defined(AltNum_EnableMorePrecisePi)
-            BasicIntDivOp(-ExtraRep);
-            ExtraRep = 0;
 			__int64 SRep;
 			__int64 divRes;
-			if(self.DecimalHalf==0)
+			if(DecimalHalf==0)
 			{
 			    SRep = 2718281828;				       
-                SRep *= self.IntValue;
-				if(self.IntValue<0)
+                SRep *= IntValue;
+				if(IntValue<0)
 				{
 					__int64 divRes = SRep / DecimalOverflowX;
 					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1354,17 +1276,17 @@ ExtraFlags treated as bitwise flag storage
 					IntValue = (int)divRes;
 				}
 			}
-			else if(self.IntValue.Value==0)
+			else if(IntValue.Value==0)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 			}
-			else if(self.IntValue==NegativeRep)
+			else if(IntValue==NegativeRep)
 			{
 			    SRep = 2718281828;
-                SRep *= self.DecimalHalf;
+                SRep *= DecimalHalf;
 				divRes = SRep / 1000000000000000000;
 				DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
 				if(divRes==0)
@@ -1392,11 +1314,6 @@ ExtraFlags treated as bitwise flag storage
 				else
 					IntValue = (int)IntHalf;
 			}
-			#else
-            BasicMultOp(ENum);
-            BasicIntDivOp(-ExtraRep);
-            ExtraRep = 0;
-			#endif
 		}
 		#else
 		void ConvertFromEFractionalToNorm()
@@ -1404,11 +1321,10 @@ ExtraFlags treated as bitwise flag storage
 			int divisor = DecimalHalf;
 			DecimalHalf = 0;
             ExtraRep = 0;
-			#if defined(AltNum_EnableMorePrecisePi)
 			__int64 SRep = 2718281828ll;				       
-			SRep *= self.IntValue;
+			SRep *= IntValue;
 			__int64 divRes;
-			if(self.IntValue<0)
+			if(IntValue<0)
 			{
 				__int64 divRes = SRep / DecimalOverflowX;
 				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
@@ -1427,10 +1343,6 @@ ExtraFlags treated as bitwise flag storage
 				IntValue = (int)divRes;
 			}
 			BasicIntDivOp(divisor);
-			#else
-			BasicIntDivOp(divisor);
-			BasicMultOp(ENum);
-			#endif
 		}
 		#endif
 	#endif
@@ -1483,12 +1395,7 @@ ExtraFlags treated as bitwise flag storage
 	#endif
 	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
-		#if defined(AltNum_EnableMorePrecisePi)
 				ConvertPiNumToNorm();
-		#else
-                BasicMultOp(PiNum);
-				ExtraRep = 0;
-		#endif
                 break;
 		#if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
@@ -1498,40 +1405,12 @@ ExtraFlags treated as bitwise flag storage
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-				#if defined(AltNum_EnableMorePrecisePi)
 				ConvertFromPiByDivToNorm();
-				#else
-                BasicMultOp(PiNum);
-                ExtraRep *= -1;
-                BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
-				#endif
 			#else
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-				#if defined(AltNum_EnableMorePrecisePi)
 				ConvertFromPiFractionalToNorm();
-				#else
-				signed _int64 FirstHalf = 3141592654;
-				FirstHalf *= IntValue;
-				signed int divRes = FirstHalf / DecimalHalf;
-					#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
-				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
-				//Add output code here later
-					#else
-				FirstHalf = divRes;
-					#endif
-				//convert from Int64 into normal AltNum format
-				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
-				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
-				if(IntValue<0&&FirstPart==0)//Results in -0.XXXXXXXX
-					IntValue = NegativeRep;
-				else
-					IntValue = FirstPart;
-				DecimalHalf = SecondPart;
-			    ExtraRep = 0;
-				#endif
-                break;
 			#endif
+                break;
 		#endif		
 	#endif
             case RepType::NumByDiv:
@@ -1540,50 +1419,17 @@ ExtraFlags treated as bitwise flag storage
                 break;
 	#if defined(AltNum_EnableERep)
             case RepType::ENum:
-		#if defined(AltNum_EnableMorePreciseE)
 				ConvertENumToNorm();
-		#else
-                BasicMultOp(ENum);
-                ExtraRep = 0;
-		#endif
                 break;
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
-				#if defined(AltNum_EnableMorePreciseE)
 				ConvertEByDivToNorm();
-				#else
-                BasicMultOp(ENum);
-                BasicIntDivOp(-ExtraRep);
-                ExtraRep = 0;
-				#endif
-                break;
 			#else
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
-				#if defined(AltNum_EnableMorePreciseE)
 				ConvertEFractionalToNorm();
-				#else
-				signed _int64 FirstHalf = 2718281828;
-				FirstHalf *= IntValue;
-				signed int divRes = FirstHalf / DecimalHalf;
-					#ifdef AltNum_OutputTruncatedTrailingDigits//keep remainder after dividing and output to console
-				signed _int64 TruncatedDigits = FirstHalf - DecimalHalf * divRes;
-				//Add output code here later
-					#else
-				FirstHalf /= DecimalHalf;
-					#endif
-				//convert from Int64 into normal AltNum format
-				signed  _int64 FirstPart =  FirstHalf/DecimalOverflowX;
-				signed _int64 SecondPart = FirstHalf - DecimalOverflowX * FirstPart;
-				if(IntValue<0&&FirstPart==0)//Results in -0.XXXXXXXX
-					IntValue = NegativeRep;
-				else
-					IntValue = FirstPart;
-				DecimalHalf = SecondPart;
-			    ExtraRep = 0;
-                break;
-				#endif
 			#endif
+				break;
 		#endif
 	#endif
 
