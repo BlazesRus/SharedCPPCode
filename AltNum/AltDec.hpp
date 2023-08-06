@@ -832,28 +832,26 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 3141592654;
                 SRep *= IntValue;
-				if(IntValue<0)
+				//__int64 divRes = SRep / DecimalOverflowX;
+				//__int64 C = SRep - DecimalOverflowX * divRes;
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					//__int64 divRes = SRep / DecimalOverflowX;
-					//__int64 C = SRep - DecimalOverflowX * divRes;
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -875,6 +873,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -886,10 +887,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -936,26 +939,26 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 3141592654;
                 SRep *= IntValue;
-				if(IntValue<0)
+				//__int64 divRes = SRep / DecimalOverflowX;
+				//__int64 C = SRep - DecimalOverflowX * divRes;
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -977,6 +980,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -988,10 +994,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -1006,26 +1014,24 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 3141592654;
                 SRep *= IntValue;
-				if(IntValue<0)
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -1047,6 +1053,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -1058,10 +1067,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -1072,27 +1083,24 @@ ExtraFlags treated as bitwise flag storage
 			int divisor = DecimalHalf;
 			DecimalHalf = 0;
             ExtraRep = 0;
+			bool IsNegative = IntValue<0;
+			if(IsNegative)
+				IntValue *= -1;
 			__int64 SRep = 3141592654ll;
 			SRep *= IntValue;
-			__int64 divRes;
-			if(IntValue<0)
+			__int64 divRes = SRep / DecimalOverflowX;
+			DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+			if(divRes==0&&IsNegative)
 			{
-				__int64 divRes = SRep / DecimalOverflowX;
-				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-				if(disRes==0)
-				{
-					if(DecimalHalf==0)
-						IntValue = 0;
-					else
-						IntValue = NegativeRep;
-				}
+				if(DecimalHalf==0)
+					IntValue = 0;
+				else
+					IntValue = NegativeRep;
 			}
+			else if(IsNegative)
+				IntValue = (int)-divRes;
 			else
-			{
-				divRes = SRep / DecimalOverflowX;
-				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 				IntValue = (int)divRes;
-			}
 		}
 		BasicIntDivOp(divisor);
 		#endif
@@ -1116,26 +1124,24 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 2718281828;				       
                 SRep *= IntValue;
-				if(IntValue<0)
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -1157,6 +1163,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -1168,10 +1177,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -1187,26 +1198,24 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 2718281828;				       
                 SRep *= IntValue;
-				if(IntValue<0)
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -1228,6 +1237,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -1239,10 +1251,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -1255,26 +1269,24 @@ ExtraFlags treated as bitwise flag storage
 			__int64 divRes;
 			if(DecimalHalf==0)
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 			    SRep = 2718281828;				       
                 SRep *= IntValue;
-				if(IntValue<0)
+				divRes = SRep / DecimalOverflowX;
+				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+				if(divRes==0&&IsNegative)
 				{
-					__int64 divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-					if(disRes==0)
-					{
-						if(DecimalHalf==0)
-							IntValue = 0;
-						else
-							IntValue = NegativeRep;
-					}
+					if(DecimalHalf==0)
+						IntValue = 0;
+					else
+						IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-divRes;
 				else
-				{
-					divRes = SRep / DecimalOverflowX;
-					DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 					IntValue = (int)divRes;
-				}
 			}
 			else if(IntValue.Value==0)
 			{
@@ -1296,6 +1308,9 @@ ExtraFlags treated as bitwise flag storage
 			}
 			else
 			{
+				bool IsNegative = IntValue<0;
+				if(IsNegative)
+					IntValue *= -1;
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
@@ -1307,10 +1322,12 @@ ExtraFlags treated as bitwise flag storage
 				__int64 IntHalf = IntegerRep / MediumDecVariant::DecimalOverflow;
 				IntegerRep -= IntHalf * (__int64)MediumDecVariant::DecimalOverflow;
 				DecimalHalf = (signed int)IntegerRep;
-				if(IntHalf == 0&&IntValue<0)
+				if(IntHalf == 0&&IsNegative)
 				{
 					IntValue = NegativeRep;
 				}
+				else if(IsNegative)
+					IntValue = (int)-IntHalf;
 				else
 					IntValue = (int)IntHalf;
 			}
@@ -1321,27 +1338,24 @@ ExtraFlags treated as bitwise flag storage
 			int divisor = DecimalHalf;
 			DecimalHalf = 0;
             ExtraRep = 0;
+			bool IsNegative = IntValue<0;
+			if(IsNegative)
+				IntValue *= -1;
 			__int64 SRep = 2718281828ll;				       
 			SRep *= IntValue;
-			__int64 divRes;
-			if(IntValue<0)
+			__int64 divRes = SRep / DecimalOverflowX;
+			DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+			if(divRes==0&&IsNegative)
 			{
-				__int64 divRes = SRep / DecimalOverflowX;
-				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-				if(disRes==0)
-				{
-					if(DecimalHalf==0)
-						IntValue = 0;
-					else
-						IntValue = NegativeRep;
-				}
+				if(DecimalHalf==0)
+					IntValue = 0;
+				else
+					IntValue = NegativeRep;
 			}
+			else if(IsNegative)
+				IntValue = (int)-divRes;
 			else
-			{
-				divRes = SRep / DecimalOverflowX;
-				DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 				IntValue = (int)divRes;
-			}
 			BasicIntDivOp(divisor);
 		}
 		#endif
