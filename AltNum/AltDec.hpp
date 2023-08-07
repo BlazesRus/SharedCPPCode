@@ -3677,6 +3677,13 @@ private:
             Value.ConvertToNormType(SameRep);
             BasicAddOp(Value);
         }
+		
+		void CatchAllAddition(MediumDecVariant& Value)
+		{
+			ConvertToNumRep();
+			Value.ConvertToNumRep();
+            BasicAddOp(Value);
+        }
 public:
         /// <summary>
         /// Addition Operation
@@ -3735,19 +3742,26 @@ public:
         }
 
 private:
-    void CatchAllSubtraction(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
-    {
-        ConvertToNormType(LRep);
-        Value.ConvertToNormType(RRep);
-        BasicSubOp(Value);
-    }
-	
-    void CatchAllSubtraction(MediumDecVariant& Value, RepType& SameRep)
-    {
-        ConvertToNormType(SameRep);
-        Value.ConvertToNormType(SameRep);
-        BasicSubOp(Value);
-    }
+		void CatchAllSubtraction(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			Value.ConvertToNormType(RRep);
+			BasicSubOp(Value);
+		}
+		
+		void CatchAllSubtraction(MediumDecVariant& Value, RepType& SameRep)
+		{
+			ConvertToNormType(SameRep);
+			Value.ConvertToNormType(SameRep);
+			BasicSubOp(Value);
+		}
+		
+		void CatchAllSubtraction(MediumDecVariant& Value)
+		{
+			ConvertToNumRep();
+			Value.ConvertToNumRep();
+			BasicSubOp(Value);
+		}
 public:
 
         /// <summary>
@@ -4391,26 +4405,26 @@ public:
         }
 
 private:
-	void CatchAllDivision(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
-	{
-		ConvertToNumRep(LRep);
-		Value.ConvertToNumRep(RRep);
-		BasicDivOp(Value);
-	}
+		void CatchAllDivision(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNumRep(LRep);
+			Value.ConvertToNumRep(RRep);
+			BasicDivOp(Value);
+		}
+		
+		void CatchAllDivision(MediumDecVariant& Value, RepType& SameRep)
+		{
+			ConvertToNumRep(SameRep);
+			Value.ConvertToNumRep(SameRep);
+			BasicDivOp(Value);
+		}
 	
-	void CatchAllDivision(MediumDecVariant& Value, RepType& SameRep)
-	{
-		ConvertToNumRep(SameRep);
-		Value.ConvertToNumRep(SameRep);
-		BasicDivOp(Value);
-	}
-	
- //   void CatchAllDivision(MediumDecVariant& Value)
- //   {
- //       ConvertToNumRep();
- //       Value.ConvertToNumRep();
- //       BasicDivOp(Value);
- //   }
+	   void CatchAllDivision(MediumDecVariant& Value)
+	   {
+		   ConvertToNumRep();
+		   Value.ConvertToNumRep();
+		   BasicDivOp(Value);
+	   }
 public:
         /// <summary>
         /// Division Operation
