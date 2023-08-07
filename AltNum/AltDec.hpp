@@ -57,7 +57,6 @@ AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
 	When DecimalHalf is -2147483647 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
 	When DecimalHalf is -2147483646 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
-	(Assumes AltNum_EnableInfinityRep is enabled)
 	(Partially Implimented)
 
 
@@ -212,7 +211,6 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 
 //Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
 #if defined(AltNum_EnableApproachingDivided)
-    #define AltNum_EnableInfinityRep
 	#define AltNum_EnableApproachingValues
 #endif
 
@@ -429,7 +427,8 @@ ExtraFlags treated as bitwise flag storage
 		//(other values only used if AltNum_EnableInfinityPowers is enabled)
 		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
         static const signed int InfinityRep = -2147483648;
-		#if defined(AltNum_EnableApproachingValues)
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
         //Is Approaching Bottom when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
 		//If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
@@ -562,15 +561,17 @@ ExtraFlags treated as bitwise flag storage
 	#if defined(AltNum_EnableInfinityRep)
 			PositiveInfinity,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
 			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
+	#endif
 	#if defined(AltNum_EnableApproachingValues)
             ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 		#if !defined(AltNum_DisableApproachingTop)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
-		#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
             ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			#if !defined(AltNum_DisableApproachingTop)
+				#if !defined(AltNum_DisableApproachingTop)
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				#endif
 			#endif
 		#endif
 	#endif
@@ -587,18 +588,18 @@ ExtraFlags treated as bitwise flag storage
 	#if defined(AltNum_EnableImaginaryInfinity)
             PositiveImaginaryInfinity,
 			NegativeImaginaryInfinity,
-		#if defined(AltNum_EnableApproachingI)
+	#endif
+	#if defined(AltNum_EnableApproachingI)
             ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-			#if !defined(AltNum_DisableApproachingTop)
+		#if !defined(AltNum_DisableApproachingTop)
             ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-			#endif
-		    #if defined(AltNum_EnableApproachingDivided)
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
             ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			    #if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-			    #endif
-		    #endif
-	    #endif
+			#endif
+		#endif
     #endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange,
@@ -617,8 +618,7 @@ ExtraFlags treated as bitwise flag storage
         /// </summary>
         RepType GetRepType()
         {
-	#if defined(AltNum_EnableInfinityRep)
-		#if !defined(AltNum_DisableInfinityRepTypeReturn)
+		#if defined(AltNum_EnableInfinityRep)
             if(DecimalHalf==InfinityRep)
             {
 			#if defined(AltNum_EnableImaginaryInfinity)
@@ -696,7 +696,6 @@ ExtraFlags treated as bitwise flag storage
             }
 		    #endif
 	    #endif
-    #endif
             if(ExtraRep==0)
 			{
 	#if defined(AltNum_EnableNaN)
