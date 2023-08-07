@@ -291,6 +291,14 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 	#define AltNum_EnableAlternativeMixedFrac
 #endif
 
+#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
+	#define AltNum_MixedAltFracHasFractionalAccess
+#endif
+
+#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
+	#define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#endif
+
 namespace BlazesRusCode
 {
     class AltDec;
@@ -4809,11 +4817,9 @@ public:
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
                         if(C==0)
                         {
-			//Become Non-Decimaled Fractional
-            #if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
+            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
                             throw "ToDo: Impliment code here";
-			//Become Decimaled Fractional
-			#elif (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
+			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
                             throw "ToDo: Impliment code here";
 			#else if(AltNum_EnableMixedPiFractional)//Become NumByDiv
                             throw "ToDo: Impliment code here";
@@ -4825,11 +4831,9 @@ public:
                         }
                         else
                         {
-			//Become Non-Decimaled Fractional
-            #if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
+            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
                             throw "ToDo: Impliment code here";
-			//Become Decimaled Fractional
-			#elif (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
+			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
                             throw "ToDo: Impliment code here";
 			#else if(AltNum_EnableMixedPiFractional)//Become NumByDiv
                             throw "ToDo: Impliment code here";
