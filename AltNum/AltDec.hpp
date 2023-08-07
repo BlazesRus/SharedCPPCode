@@ -3780,16 +3780,17 @@ private:
         {
             if (value == 0)
                 return;
-#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-                return;
-#endif
-#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableImaginaryNum)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
 				return;
             }
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return;
+	#endif
 	#if defined(AltNum_EnableMixedFractional)
             if(DecimalHalf<0)//Mixed Fraction detected
             {}
@@ -3816,7 +3817,7 @@ private:
 					DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ IntValue >= 0))
+            if(WasNegative ^ IntValue >= 0)
 				DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
 	#endif
             return;
@@ -3845,16 +3846,17 @@ private:
         {
             if (value == 0)
                 return;
-#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-                return;
-#endif
-#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableImaginaryNum)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
 				return;
             }
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return;
+	#endif
 	#if defined(AltNum_EnableMixedFractional)
             if(DecimalHalf<0)//Mixed Fraction detected
             {}
