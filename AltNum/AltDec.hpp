@@ -3663,6 +3663,13 @@ public:
                 DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value);
 private:
         void CatchAllAddition(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
         {
@@ -3684,15 +3691,7 @@ private:
 			Value.ConvertToNumRep();
             BasicAddOp(Value);
         }
-public:
-        /// <summary>
-        /// Addition Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        static MediumDecVariant& AddOp(MediumDecVariant& self, MediumDecVariant& Value);
-		
+public:	
 		/// <summary>
         /// Basic Subtraction Operation
         /// </summary>
@@ -3741,6 +3740,13 @@ public:
                 DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
+        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value);
 private:
 		void CatchAllSubtraction(MediumDecVariant& Value, RepType& LRep, RepType& RRep)
 		{
@@ -3762,16 +3768,6 @@ private:
 			Value.ConvertToNumRep();
 			BasicSubOp(Value);
 		}
-public:
-
-        /// <summary>
-        /// Subtraction Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value);
-
 private:
         /// <summary>
         /// Addition Operation Between MediumDecVariant and Integer value
