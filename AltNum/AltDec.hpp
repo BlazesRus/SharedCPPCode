@@ -179,6 +179,7 @@ Only one of 3 alternative mixed fraction representations can be enabled at a tim
 AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
+Autotoggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
 
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
 
@@ -282,6 +283,10 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 #endif
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
     #define AltNum_EnableIFractional
+#endif
+
+#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
+	#define AltNum_EnableAlternativeMixedFrac
 #endif
 
 namespace BlazesRusCode
@@ -710,8 +715,10 @@ ExtraFlags treated as bitwise flag storage
 	#ifdef AltNum_EnablePiRep
             else if(ExtraRep==PiRep)
                 return RepType::PiNum;
+		#if defined(AltNum_EnablePiFractional)
             else if(ExtraRep==PiByDivisorRep)
 				return RepType::PiIntNumByDiv;
+		#endif
 	#endif
             else if(ExtraRep>0)
 			{
@@ -729,8 +736,10 @@ ExtraFlags treated as bitwise flag storage
 			{
 				return RepType::ENum;
 			}
+		#if defined(AltNum_EnableEFractional)
             else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
 				return RepType::ENumByDiv;
+		#endif
     #endif
 
 	#if defined(AltNum_EnableImaginaryNum)
@@ -738,7 +747,7 @@ ExtraFlags treated as bitwise flag storage
 			{
 				return RepType::INum;
 			}
-		#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableIFractional)
             else if(ExtraRep==IByDivisorRep)
 					return RepType::INumByDiv;
 		#endif
@@ -754,7 +763,7 @@ ExtraFlags treated as bitwise flag storage
 		#endif
 	#endif
             else if(ExtraRep<0)
-	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)||defined(AltNum_EnableMixedIFractional)
+	#if defined(AltNum_EnableAlternativeMixedFrac)
 				if(DecimalHalf<0)
 		#if defined(AltNum_EnableMixedPiFractional)
 					return RepType::MixedPi;
@@ -3749,29 +3758,58 @@ public:
         /// <returns>MediumDecVariant&</returns>
         static MediumDecVariant& SubOp(MediumDecVariant& self, MediumDecVariant& Value);
 
+private:
         /// <summary>
-        /// Partial Addition Operation Between MediumDecVariant and Integer value
+        /// Addition Operation Between MediumDecVariant and Integer value
         /// </summary>
+        /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
+        /// <returns>MediumDecVariant&</returns>
         template<typename IntType>
-        void PartialIntAddition(IntType& value)
+        static MediumDecVariant& IntAddOp(IntType& value)
         {
-            if (DecimalHalf == 0)
-                IntValue += value;
-            else
+            if (value == 0)
+                return;
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return;
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+            if(ExtraRep==IRep)
             {
-                bool WasNegative = IntValue < 0;
-                if (WasNegative)
-                    IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                IntValue += value;
-                if (IntValue == -1)
-                    IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                else if (IntValue < 0)
-                    ++IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                    DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+                throw "Can't convert MediumDecVariant into complex number at moment";
+				return;
             }
+	#if defined(AltNum_EnableMixedFractional)
+            if(DecimalHalf<0)//Mixed Fraction detected
+            {}
+			else
+	#endif
+			if(ExtraRep!=0)//Don't convert if mixed fraction
+				ConvertToNumRep();
+			bool WasNegative = IntValue < 0;
+			IntValue += value;
+			//If flips to other side of negative, invert the decimals
+	#if defined(AltNum_EnableMixedFractional)
+			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			{
+				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
+				{
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
+						DecimalHalf = ExtraRep - DecimalHalf;
+					else
+		#endif			
+						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
+				}
+				else
+					DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+			}
+	#else
+            if(WasNegative ^ IntValue >= 0))
+				DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+	#endif
+            return;
         }
 
         /// <summary>
@@ -3783,62 +3821,7 @@ public:
         template<typename IntType>
         static MediumDecVariant& IntAddOp(MediumDecVariant& self, IntType& value)
         {
-            if (value == 0)
-                return self;
-#if defined(AltNum_EnableInfinityRep)
-            if (self.DecimalHalf == InfinityRep)
-                return self;
-#endif
-            if(self.ExtraRep==PiRep)//Value*Pi Representation
-            {
-                self.ConvertToNumRep();
-                self.PartialIntAddition(value);
-            }
-#if defined(AltNum_EnableImaginaryNum)
-            else if(self.ExtraRep==IERep)
-            {
-                throw "Can't convert MediumDecVariant into complex number at moment";
-            }
-            else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableERep)
-            else if(self.ExtraRep==IERep)
-            {
-            }
-            else if(self.ExtraRep>0)
-#else
-            else//(Value/ExtraRep) Representation and Normal Representation
-#endif
-                self.ConvertToNumRep();
-            if(self.ExtraRep==0)
-            {
-                self.PartialIntAddition(value);
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Partial Subtraction Operation Between MediumDecVariant and Integer value
-        /// </summary>
-        /// <param name="value">The value.</param>
-        template<typename IntType>
-        void PartialIntSubtraction(IntType& value)
-        {
-            if (DecimalHalf == 0)
-                IntValue -= value;
-            else
-            {
-                bool WasNegative = IntValue < 0;
-                if (WasNegative)
-                    IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                IntValue -= value;
-                if (IntValue == -1)
-                    IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                else if (IntValue < 0)
-                    ++IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                    DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
-            }
+            return self.IntAddOp(value);
         }
         
         /// <summary>
@@ -3848,153 +3831,52 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static MediumDecVariant& IntSubOp(MediumDecVariant& self, IntType& value)
+        static MediumDecVariant& IntSubOp(IntType& value)
         {
             if (value == 0)
-                return self;
+                return;
 #if defined(AltNum_EnableInfinityRep)
-            if (self.DecimalHalf == InfinityRep)
-                return self;
+            if (DecimalHalf == InfinityRep)
+                return;
 #endif
-            if(self.ExtraRep==PiRep)//Value*Pi Representation
-            {
-                self.ConvertToNumRep();
-                self.PartialIntSubtraction(value);
-            }
 #if defined(AltNum_EnableImaginaryNum)
-            else if(self.ExtraRep==IERep)
+            if(ExtraRep==IRep)
             {
                 throw "Can't convert MediumDecVariant into complex number at moment";
+				return;
             }
-            else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableERep)
-            else if(self.ExtraRep==IERep)
-            {
-            }
-            else if(self.ExtraRep>0)
-#else
-            else//(Value/ExtraRep) Representation and Normal Representation
-#endif
-                self.ConvertToNumRep();
-            if(self.ExtraRep==0)
-            {
-                self.PartialIntSubtraction(value);
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Addition Operation Between MediumDecVariant and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<typename IntType>
-        void PartialUnsignedAddition(IntType& value)
-        {
-            if (DecimalHalf == 0 || IntValue > 0)
-                IntValue += value;
-            else
-            {
-                bool WasNegative = IntValue < 0;
-                if (WasNegative)
-                {
-                    IntValue = IntValue == MediumDecVariant::NegativeRep ? -1 : --IntValue;
-                    IntValue += value;
-                    if (IntValue == -1)
-                        IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                    else if (IntValue < 0)
-                        ++IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                        DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
-                }
-                else//Don't need to check if flipPing to other sign if adding positive to positive
-                {
-                    IntValue += value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Addition Operation Between MediumDecVariant and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<typename IntType>
-        static MediumDecVariant& UnsignedAddOp(MediumDecVariant& self, IntType& value)
-        {
-            if (value == 0)
-                return self;
-#if defined(AltNum_EnableInfinityRep)
-            if (self.DecimalHalf == InfinityRep)
-                return self;
-#endif
-            if(self.ExtraRep==0)
-            {
-                self.PartialUnsignedAddition(value);
-            }
-#if defined(AltNum_EnableImaginaryNum)
-            else if(self.ExtraRep==IRep)
-            {
-                throw "Can't convert MediumDecVariant into complex number at moment";
-            }
-#endif
+	#if defined(AltNum_EnableMixedFractional)
+            if(DecimalHalf<0)//Mixed Fraction detected
+            {}
 			else
+	#endif
+			if(ExtraRep!=0)//Don't convert if mixed fraction
+				ConvertToNumRep();
+			bool WasNegative = IntValue < 0;
+			IntValue += value;
+			//If flips to other side of negative, invert the decimals
+	#if defined(AltNum_EnableMixedFractional)
+			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
 			{
-                self.ConvertToNumRep();
-                self.PartialUnsignedAddition(value);
+				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
+				{
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
+						DecimalHalf = ExtraRep - DecimalHalf;
+					else
+		#endif			
+						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
+				}
+				else
+					DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
 			}
-            return self;
+	#else
+            if(WasNegative ^ IntValue >= 0))
+				DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+	#endif
+            return;
         }
-
-        /// <summary>
-        /// Addition Operation Between MediumDecVariant and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<typename IntType>
-        void PartialUnsignedSubtraction(IntType& value)
-        {
-            if (DecimalHalf == 0)
-                IntValue -= value;
-            else if (IntValue == NegativeRep)
-                IntValue = (signed int)value * -1;
-            else if (IntValue < 0)
-                IntValue -= value;
-            else
-            {
-                bool WasNegative = IntValue < 0;
-                if (WasNegative)//Don't need to check if negative value if going farther negative
-                {
-                    if(IntValue == MediumDecVariant::NegativeRep)
-                    {
-                        if(value==1)
-                            IntValue = 0;
-                        else
-                            IntValue = ((signed int) value)*-1;
-                    }
-                    else
-                    {
-                        IntValue -= value;
-                    }
-                }
-                else
-                {
-                    IntValue -= value;
-                    if (IntValue == -1)
-                        IntValue = DecimalHalf == 0 ? 0 : MediumDecVariant::NegativeRep;
-                    else if (IntValue < 0)
-                        ++IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0))
-                        DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
-                }
-            }
-        }
-
+		
         /// <summary>
         /// Subtraction Operation Between MediumDecVariant and Integer value
         /// </summary>
@@ -4002,39 +3884,9 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static MediumDecVariant& UnsignedSubOp(MediumDecVariant& self, IntType& value)
+        static MediumDecVariant& IntSubOp(MediumDecVariant& self, IntType& value)
         {
-            if (value == 0)
-                return self;
-#if defined(AltNum_EnableInfinityRep)
-            if (self.DecimalHalf == InfinityRep)
-                return self;
-#endif
-            if(self.ExtraRep==PiRep)//Value*Pi Representation
-            {
-                self.ConvertToNumRep();
-                self.PartialUnsignedSubtraction(value);
-            }
-#if defined(AltNum_EnableImaginaryNum)
-            else if(self.ExtraRep==IERep)
-            {
-                throw "Can't convert MediumDecVariant into complex number at moment";
-            }
-            else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableERep)
-            else if(self.ExtraRep==IERep)
-            {
-            }
-            else if(self.ExtraRep>0)
-#else
-            else//(Value/ExtraRep) Representation and Normal Representation
-#endif
-                self.ConvertToNumRep();
-            if(self.ExtraRep==0)
-            {
-                self.PartialUnsignedSubtraction(value);
-            }
-            return self;
+            return self.IntSubOp(value);
         }
 #pragma endregion Addition/Subtraction Operations
 
@@ -5822,62 +5674,62 @@ public:
     #pragma endregion Other Operations
     #pragma region MediumDecVariant-To-Integer Operations
     public:
-        friend MediumDecVariant operator+(MediumDecVariant self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-(MediumDecVariant self, unsigned char Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned char Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned char Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*(MediumDecVariant self, unsigned char Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned char Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned char Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned char Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned char Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
 
-        friend MediumDecVariant operator+(MediumDecVariant self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-(MediumDecVariant self, unsigned short Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned short Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned short Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*(MediumDecVariant self, unsigned short Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned short Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned short Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned short Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned short Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
 
-        friend MediumDecVariant operator+(MediumDecVariant self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-(MediumDecVariant self, unsigned int Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned int Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned int Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*(MediumDecVariant self, unsigned int Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned int Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned int Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned int Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
         
-        //friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
-        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
+        //friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned int Value) { return IntAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned int Value) { return IntSubOp(**self, Value); }
         //friend MediumDecVariant operator*=(MediumDecVariant* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
         //friend MediumDecVariant operator/=(MediumDecVariant* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
         //friend MediumDecVariant operator%=(MediumDecVariant* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
 
-        friend MediumDecVariant operator+(MediumDecVariant self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-(MediumDecVariant self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+(MediumDecVariant self, unsigned __int64 Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-(MediumDecVariant self, unsigned __int64 Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*(MediumDecVariant self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/(MediumDecVariant self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%(MediumDecVariant self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
         
-        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
+        friend MediumDecVariant operator+=(MediumDecVariant& self, unsigned __int64 Value){ return IntAddOp(self, Value); }
+        friend MediumDecVariant operator-=(MediumDecVariant& self, unsigned __int64 Value){ return IntSubOp(self, Value); }
         friend MediumDecVariant operator*=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
         friend MediumDecVariant operator/=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
         friend MediumDecVariant operator%=(MediumDecVariant& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
 
-     //   friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
-        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
+     //   friend MediumDecVariant operator+=(MediumDecVariant* self, unsigned __int64 Value){ return IntAddOp(**self, Value); }
+        //friend MediumDecVariant operator-=(MediumDecVariant* self, unsigned __int64 Value){ return IntSubOp(**self, Value); }
      //   friend MediumDecVariant operator*=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
         //friend MediumDecVariant operator/=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
      //   friend MediumDecVariant operator%=(MediumDecVariant* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
