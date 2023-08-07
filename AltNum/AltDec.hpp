@@ -4067,7 +4067,7 @@ private:
 		{
 			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
 			{
-/*#if defined(AltNum_EnableApproachingDivided)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
