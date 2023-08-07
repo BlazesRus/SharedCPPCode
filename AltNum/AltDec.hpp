@@ -4809,18 +4809,34 @@ public:
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
                         if(C==0)
                         {
+			//Become Non-Decimaled Fractional
             #if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
                             throw "ToDo: Impliment code here";
-            #else//DecimalFractional
+			//Become Decimaled Fractional
+			#elif (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
                             throw "ToDo: Impliment code here";
+			#else if(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+            #else if(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+			
             #endif
                         }
                         else
                         {
+			//Become Non-Decimaled Fractional
             #if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
                             throw "ToDo: Impliment code here";
-            #else//DecimalFractional
+			//Become Decimaled Fractional
+			#elif (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
                             throw "ToDo: Impliment code here";
+			#else if(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+            #else if(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+			
             #endif
                         }
                         //return;
