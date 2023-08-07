@@ -202,7 +202,11 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 
 //Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
 #if defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableFractionals
+	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableIRep)
+		#undef AltNum_EnableAlternativeRepFractionals//Alternative Fractionals require the related representations enabled
+	#elif !defined(AltNum_EnableFractionals
+		#define AltNum_EnableFractionals
+	#endif
 #endif
 
 #if defined(AltNum_AvoidUsingLargeInt)
@@ -273,13 +277,13 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
     #undef AltNum_EnableApproachingI
 #endif
 
-#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnablePiFractional
 #endif
-#if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+#if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnableEFractional
 #endif
-#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
+#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnableIFractional
 #endif
 
@@ -548,13 +552,13 @@ ExtraFlags treated as bitwise flag storage
 		#endif
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
-            MixedFrac,//IntValue +- (DecimalHalf*-1)/ExtraRep
+            MixedFrac,//IntValue +- (-DecimalHalf)/ExtraRep
 		#if defined(AltNum_EnableMixedPiFractional)
-            MixedPi,//IntValue +- (DecimalHalf/-ExtraRep)
+            MixedPi,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-            MixedE,//IntValue +- (DecimalHalf/-ExtraRep)
+            MixedE,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-            MixedI,//IntValue +- (DecimalHalf/-ExtraRep)
+            MixedI,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#endif
 	#endif
 
@@ -4176,40 +4180,129 @@ public:
         /// <summary>
         /// Multiplication Operation Between MediumDecVariant and Integer Value
         /// </summary>
-        /// <param name="self">The self.</param>
+        /// <param name="self">The </param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static MediumDecVariant& IntMultOp(MediumDecVariant& self, IntType& Value)
+        static MediumDecVariant& IntMultOp(IntType& Value)
         {
-            if (Value < 0)
-            {
-                if (Value == NegativeRep) { Value = 0; }
-                else { Value *= -1; }
-                self.SwapNegativeStatus();
-            }
-            if (self == Zero)
-                return self;
+            if (self == Zero||Value==1)
+                return;
+			if(Value==-1)
+				SwapNegativeStatus();
+				return;
             if (Value == 0)
             {
-                self.SetAsZero(); return self;
+                SetAsZero(); return;
             }
 			switch (LRep)
 			{
-	#if defined(AltNum_EnablePiRep)
-		#if defined(AltNum_EnablePiPowers)
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv:
+		#elif defined(AltNum_EnablePiFractional)
+				case RepType::PiFractional:
 		#endif
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::EFractional:
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOp(Value);
+					break;
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::INumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::IFractional:
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOp(Value);
+					break;
 	#endif
-	#if defined(AltNum_EnableERep)
-	#endif
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
 	#if defined(AltNum_EnableImaginaryNum)
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+	#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+	#endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			#endif
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOp(Value);
+					break;
 	#endif
 	#if defined(AltNum_EnableFractionals)
 	#endif
+	#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
+		#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+			#endif
+		    #if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			    #if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			    #endif
+		    #endif
+					ConvertToNormalIRep(LRep);
+					BasicIntMultOp(Value);
+					break;
+	    #endif
+    #endif
 	#if defined(AltNum_EnableMixedFractional)
-
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+					BasicIntMultOp(Value);
+					DecimalHalf *= Value;
+					int divRes = DecimalHalf / -ExtraRep;
+					if(divRes>0)
+					{
+						int increment = ExtraRep * divRes;
+						if(IntValue<0)
+							IntValue -= increment;
+						else
+							IntValue += increment;
+						DecimalHalf = DecimalHalf + increment;
+					}
+					break;
+		#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+		#endif
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					BasicIntMultOp(Value);
+					if(Value<0)
+						DecimalHalf *= -Value;
+					else
+						DecimalHalf *= Value;
+					int divRes = DecimalHalf / ExtraRep;
+					if(divRes>0)
+					{
+						int increment = ExtraRep * divRes;
+						if(IntValue<0)
+							IntValue -= increment;
+						else
+							IntValue += increment;
+						DecimalHalf = DecimalHalf - increment;
+					}
+					break;
+		#endif
 	#endif
 	#if defined(AltNum_EnableNaN)
 				case RepType::Undefined:
@@ -4218,10 +4311,22 @@ public:
 					break;
 	#endif			
 				default:
-					self.BasicIntMultOp(Value);
+					BasicIntMultOp(Value);
 					break;
 			}
-            return self;
+            return;
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between MediumDecVariant and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType>
+        static MediumDecVariant& IntMultOp(MediumDecVariant& self, IntType& Value)
+        {
+            return self.IntMultOp(Value);
         }
 
 #ifdef AltNum_UseOldDivisionCode
