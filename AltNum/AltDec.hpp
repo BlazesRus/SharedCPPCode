@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -3907,18 +3907,11 @@ private:
 
 #pragma region Multiplication/Division Operations
 		/// <summary>
-        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
+        /// Basic Multiplication Operation(main code block)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOpPt1(MediumDecVariant& Value)
-        {//Warning:Modifies Value to make it a positive variable
-        //Only checking for zero multiplication in main multiplication method
-        //Not checking for special representation variations in this method(closer to MediumDec operation code)
-            if (Value.IntValue < 0)
-            {
-                Value.SwapNegativeStatus();
-                SwapNegativeStatus();
-            }
+		bool BasicMultOpPt2(MediumDecVariant& Value)
+		{
             if (DecimalHalf == 0)
             {
                 if (IntValue == 1)
@@ -4059,6 +4052,22 @@ private:
                 return true;
             else
                 return false;
+		}
+		
+		/// <summary>
+        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		bool BasicMultOpPt1(MediumDecVariant& Value)
+        {//Warning:Modifies Value to make it a positive variable
+        //Only checking for zero multiplication in main multiplication method
+        //Not checking for special representation variations in this method(closer to MediumDec operation code)
+            if (Value.IntValue < 0)
+            {
+                Value.SwapNegativeStatus();
+                SwapNegativeStatus();
+            }
+			BasicMultOpPt2(Value);
         }
 
 		/// <summary>
@@ -4165,10 +4174,25 @@ public:
         {
             if (Value < 0)
             {
-                if (Value == NegativeRep) { Value = 0; }
-                else { Value *= -1; }
+                Value *= -1;
                 SwapNegativeStatus();
             }
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (Value == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+		
+        /// <summary>
+        /// Multiplication Operation Between MediumDecVariant and Integer Value(Without negative flipping)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType>
+        void BasicIntMultOpV2(IntType& Value)
+        {
             if (IntValue == 0 && DecimalHalf == 0)
                 return;
             if (Value == 0)
@@ -4186,11 +4210,13 @@ public:
         template<typename IntType>
         static MediumDecVariant& IntMultOp(IntType& Value)
         {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
             if (self == Zero||Value==1)
                 return;
-			if(Value==-1)
-				SwapNegativeStatus();
-				return;
             if (Value == 0)
             {
                 SetAsZero(); return;
@@ -4209,7 +4235,7 @@ public:
 				case RepType::EFractional:
 		#endif
 					ConvertToNormType(LRep);
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					break;
 		#if defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::INumByDiv:
@@ -4217,7 +4243,7 @@ public:
 				case RepType::IFractional:
 		#endif
 					ConvertToNormType(LRep);
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					break;
 	#endif
 				case RepType::PositiveImaginaryInfinity:
@@ -4228,6 +4254,11 @@ public:
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+					if(self.IsZero())
+						return;
+					ConvertToNormType(LRep);
+					BasicIntMultOpV2(Value);
+					break;
 	#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 	#endif
@@ -4237,7 +4268,7 @@ public:
 			#endif
 		#endif
 					ConvertToNormType(LRep);
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					break;
 	#endif
 	#if defined(AltNum_EnableFractionals)
@@ -4259,13 +4290,13 @@ public:
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					break;
 	    #endif
     #endif
 	#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					DecimalHalf *= Value;
 					int divRes = DecimalHalf / -ExtraRep;
 					if(divRes>0)
@@ -4286,11 +4317,8 @@ public:
 				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
 		#endif
 		#if defined(AltNum_EnableAlternativeMixedFrac)
-					BasicIntMultOp(Value);
-					if(Value<0)
-						DecimalHalf *= -Value;
-					else
-						DecimalHalf *= Value;
+					BasicIntMultOpV2(Value);
+					DecimalHalf *= Value;
 					int divRes = DecimalHalf / ExtraRep;
 					if(divRes>0)
 					{
@@ -4311,7 +4339,7 @@ public:
 					break;
 	#endif			
 				default:
-					BasicIntMultOp(Value);
+					BasicIntMultOpV2(Value);
 					break;
 			}
             return;
@@ -4595,6 +4623,20 @@ public:
                 throw "Target value can not be divided by zero";
 #endif
             }
+            else if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (IntValue < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+        }
+		
+        template<typename IntType>
+        void BasicIntDivOpV2(IntType& Value)
+        {
             else if (IntValue == 0 && DecimalHalf == 0)
                 return;
             if (IntValue < 0)
