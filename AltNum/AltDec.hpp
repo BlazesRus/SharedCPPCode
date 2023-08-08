@@ -327,16 +327,8 @@ ExtraFlags treated as bitwise flag storage
 	/// </summary>
     class DLL_API AltDec
     {
-    #undefine MediumDecVariant
+    #undef MediumDecVariant
     #define MediumDecVariant AltDec
-	public:
-		class ModRes
-		{
-			//Division Result
-			MediumDecVariant DivRes;
-			//Modulo Operation Result
-			MediumDecVariant RemRes;
-		}
     public:
         /// <summary>
         /// The decimal overflow
@@ -376,7 +368,7 @@ ExtraFlags treated as bitwise flag storage
             return IntValue.GetValue();
         }
 
-        bool int IsNegative()
+        bool IsNegative()
         {
             return IntValue.IsNegative();
         }
@@ -579,11 +571,10 @@ ExtraFlags treated as bitwise flag storage
 		#if !defined(AltNum_DisableApproachingTop)
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
-			#if defined(AltNum_EnableApproachingDivided)
+		#if defined(AltNum_EnableApproachingDivided)
             ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-				#if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-				#endif
 			#endif
 		#endif
 	#endif

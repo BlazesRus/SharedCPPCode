@@ -1517,4 +1517,3 @@ public:
     MirroredInt MirroredInt::One = MirroredInt::OneValue();
 #pragma endregion ValueDefine Source
 }
-	
