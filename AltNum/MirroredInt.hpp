@@ -42,6 +42,7 @@ namespace BlazesRusCode
 {
     class MirroredInt;
 	//Int but instead with Negative Zero behind zero (for use in fixed point decimal-like format)
+    //(Most) LeftSide Int operations return int value instead of MirroredInt
     class DLL_API MirroredInt
     {
 	public:
@@ -82,6 +83,19 @@ namespace BlazesRusCode
                 return true;
             return false;
 		}
+
+        bool IsNotZero()
+        {
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            if (Value != 0 && Value != 2147483648)
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            if (Value != 0 && Value != -2147483648)
+#else
+            //If bits# 1 - 31(index 0 - 30) are zero, then value is zero or Negative Zero
+#endif
+                return true;
+            return false;
+        }
 		
 		bool IsNegative()
 		{
@@ -270,6 +284,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
+        template<typename IntType>
         friend bool operator>=(MirroredInt LValue, MirroredInt RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
@@ -324,7 +339,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator<(MirroredInt LValue, IntType RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -342,7 +358,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<=(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator<=(MirroredInt LValue, IntType RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -360,7 +377,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator>(MirroredInt LValue, IntType RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -383,7 +401,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>=(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator>=(MirroredInt LValue, IntType RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -408,7 +427,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator!=(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator!=(MirroredInt LValue, IntType RValue)
         {
             return LValue.Value != RValue;
         }
@@ -419,37 +439,44 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator==(MirroredInt LValue, int RValue)
+        template<typename IntType>
+        friend bool operator==(MirroredInt LValue, IntType RValue)
         {
             return LValue.Value == RValue;
         }
 
-        friend bool operator!=(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator!=(IntType LValue, MirroredInt RValue)
         {
             return RValue != LValue;
         }
 
-        friend bool operator==(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator==(IntType LValue, MirroredInt RValue)
         {
             return RValue == LValue;
         }
 
-        friend bool operator<(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator<(IntType LValue, MirroredInt RValue)
         {
             return RValue > LValue;
         }
 
-        friend bool operator<=(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator<=(IntType LValue, MirroredInt RValue)
         {
             return RValue >= LValue;
         }
 
-        friend bool operator>(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator>(IntType LValue, MirroredInt RValue)
         {
             return RValue < LValue;
         }
 
-        friend bool operator>=(int LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend bool operator>=(IntType LValue, MirroredInt RValue)
         {
             return RValue <= LValue;
         }
@@ -701,16 +728,19 @@ namespace BlazesRusCode
         }
 
         template<typename IntType>
-        friend MirroredInt operator+(IntType LValue, MirroredInt RValue)
+        friend int operator+(IntType LValue, MirroredInt RValue)
         {
-            MirroredInt Res = MirroredInt(LValue) + RValue;
-            return RValue;
+            if (RValue.IsNotZero())
+                LValue = LValue + RValue.Value;
+            return LValue;
         }
 
         template<typename IntType>
-        friend MirroredInt operator+=(IntType& LValue, MirroredInt RValue)
+        friend int operator+=(IntType& LValue, MirroredInt RValue)
         {
-            LValue = LValue + RValue;
+            if(RValue.IsNotZero())
+                LValue = LValue + RValue.Value;
+            return LValue;
         }
 
         /// <summary>
@@ -944,10 +974,11 @@ namespace BlazesRusCode
         }
 
         template<typename IntType>
-        friend MirroredInt operator-(IntType LValue, MirroredInt RValue)
+        friend int operator-(IntType LValue, MirroredInt RValue)
         {
-            MirroredInt Res = MirroredInt(LValue) - RValue;
-            return Res;
+            if (RValue.IsNotZero())
+                LValue -= RValue.Value;
+            return LValue;
         }
 
         /// <summary>
@@ -962,9 +993,11 @@ namespace BlazesRusCode
         }
 
         template<typename IntType>
-        friend MirroredInt operator-=(IntType& LValue, MirroredInt RValue)
+        friend int operator-=(IntType& LValue, MirroredInt RValue)
         {
-            LValue = RValue - LValue;
+            if (RValue.IsNotZero())
+                LValue -= RValue.Value;
+            return LValue;
         }
 
         /// <summary>
@@ -1022,8 +1055,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator*(MirroredInt LValue, IntType RValue)
+        friend MirroredInt operator*(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue*=RValue;
         }
@@ -1034,18 +1066,30 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator*(MirroredInt LValue, MirroredInt RValue)
+        template<typename IntType>
+        friend MirroredInt operator*(MirroredInt LValue, IntType RValue)
         {
-            return LValue*=RValue;
+            return LValue *= RValue;
         }
 
         template<typename IntType>
-        friend MirroredInt operator*=(IntType& LValue, MirroredInt RValue)
+        friend int operator*(IntType LValue, MirroredInt RValue)
+        {
+            if (RValue.IsNotZero())
+                LValue *= RValue.Value;
+            else
+                LValue = 0;
+            return LValue;
+        }
+
+        template<typename IntType>
+        friend int operator*=(IntType& LValue, MirroredInt RValue)
         {
             if (RValue.IsZero())
                 LValue = 0;
             else
                 LValue *= RValue.Value;
+            return LValue;
         }
 
         /// <summary>
@@ -1081,6 +1125,7 @@ namespace BlazesRusCode
             if (RValue.IsZero())
                 throw "Can't divide by zero without infinity result";
             LValue /= RValue.Value;
+            return LValue;
         }
 
         /// <summary>
