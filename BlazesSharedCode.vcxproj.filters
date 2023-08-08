@@ -186,6 +186,12 @@
     <ClInclude Include="DLLAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AltNum\AltNumConversions.hpp">
+      <Filter>Header Files\AltNum</Filter>
+    </ClInclude>
+    <ClInclude Include="AltNum\MirroredInt.hpp">
+      <Filter>Header Files\AltNum</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NodeTrees\TagNodeTreeTemplate.cpp">
@@ -229,6 +235,30 @@
     </ClCompile>
     <ClCompile Include="OtherFunctions\MiscFunctions.cpp">
       <Filter>Source Files\OtherFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_AddOp.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_DivOp.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_MultOp.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_RepToRepAddition.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_RepToRepDivision.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_RepToRepMultiplication.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_RepToRepSubtraction.cpp">
+      <Filter>Source Files\AltNum</Filter>
+    </ClCompile>
+    <ClCompile Include="AltNum\AltDec_SubOp.cpp">
+      <Filter>Source Files\AltNum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

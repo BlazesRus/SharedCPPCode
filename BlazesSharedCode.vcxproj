@@ -38,7 +38,7 @@
     <ProjectGuid>{4EB28D56-F4EE-4139-AE46-074B01E7FDE3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BlazesSharedCode</RootNamespace>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -214,10 +214,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AltNum\AltDec.hpp" />
+    <ClInclude Include="AltNum\AltNumConversions.hpp" />
     <ClInclude Include="AltNum\AltNumDebug.hpp" />
     <ClInclude Include="AltNum\FloatingOperations.hpp" />
     <ClInclude Include="AltNum\MediumDec.hpp" />
     <ClInclude Include="AltNum\MediumDec_OtherMath.hpp" />
+    <ClInclude Include="AltNum\MirroredInt.hpp" />
     <ClInclude Include="AltNum\MixedDec.hpp" />
     <ClInclude Include="AltNum\AltNumModChecker.hpp" />
     <ClInclude Include="Databases\CustomDictionary.h" />
@@ -255,6 +257,14 @@
     <ClInclude Include="VariableLists\VariableVectorFunctions.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AltNum\AltDec_AddOp.cpp" />
+    <ClCompile Include="AltNum\AltDec_DivOp.cpp" />
+    <ClCompile Include="AltNum\AltDec_MultOp.cpp" />
+    <ClCompile Include="AltNum\AltDec_RepToRepAddition.cpp" />
+    <ClCompile Include="AltNum\AltDec_RepToRepDivision.cpp" />
+    <ClCompile Include="AltNum\AltDec_RepToRepMultiplication.cpp" />
+    <ClCompile Include="AltNum\AltDec_RepToRepSubtraction.cpp" />
+    <ClCompile Include="AltNum\AltDec_SubOp.cpp" />
     <ClCompile Include="Databases\IniData.cpp" />
     <ClCompile Include="Databases\IniDataV2.cpp" />
     <ClCompile Include="OtherFunctions\MiscFunctions.cpp" />
