@@ -1604,7 +1604,7 @@ ExtraFlags treated as bitwise flag storage
         }
 		
         //Set value for NumByDiv
-        void SetFractionalVal(MediumDec Value, int Divisor)
+        void SetFractionalVal(MediumDecVariant Value, int Divisor)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
             ExtraRep = Divisor;
@@ -2524,29 +2524,29 @@ public:
 				switch(LRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2560,29 +2560,29 @@ public:
 				switch(RRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2613,29 +2613,29 @@ public:
 				switch(LRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						self.ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2649,29 +2649,29 @@ public:
 				switch(RRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2701,29 +2701,29 @@ public:
 				switch(LRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						self.ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2737,29 +2737,29 @@ public:
 				switch(RRep)
 				{
 				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2862,30 +2862,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(LRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						self.ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -2898,30 +2898,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(RRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -3024,30 +3024,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(LRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						self.ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -3060,30 +3060,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(RRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -3186,30 +3186,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(LRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						self.ConvertToNormalIRep(LRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -3222,30 +3222,30 @@ public:
 			#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
 				switch(RRep)
 				{
-				#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
-					case INum:
+				#if defined(AltNum_EnableImaginaryNum)
+					case RepType::INum:
 					#if defined(AltNum_EnableAlternativeRepFractionals)
 						#if defined(AltNum_EnableDecimaledIFractionals)
-					case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 						#endif
-					case IFractional://  IntValue/DecimalHalf*i Representation
+					case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 					#endif
 					#ifdef AltNum_EnableComplexNumbers
-					case ComplexIRep:
+					case RepType::ComplexIRep:
 					#endif
 						Value.ConvertToNormalIRep(RRep);
 						break;
 					//Don't convert infinity into real number
 					#if defined(AltNum_EnableImaginaryInfinity)
-					case PositiveImaginaryInfinity:
-					case NegativeImaginaryInfinity:
+					case RepType::PositiveImaginaryInfinity:
+					case RepType::NegativeImaginaryInfinity:
 						break;
 					#endif
 				#endif
 				#if defined(AltNum_EnableInfinityRep)
 					//Don't convert infinity into real number
-					case PositiveInfinity:
-					case NegativeInfinity:
+					case RepType::PositiveInfinity:
+					case RepType::NegativeInfinity:
 						break;
 				#endif
 					default:
@@ -3625,7 +3625,7 @@ public:
         /// <param name="Value">The value.</param>
         void BasicAddOp(MediumDecVariant& Value)
         {
-            bool NegativeBeforeOperation = IntValue < 0;
+            bool WasNegative = IntValue < 0;
             //Deal with Int section first
             IntValue += Value.IntValue;
             if (Value.DecimalHalf != 0)
@@ -3662,7 +3662,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(NegativeBeforeOperation^(IntValue<0))
+            if(WasNegative ^(IntValue<0))
                 DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
@@ -3701,7 +3701,7 @@ public:
         /// <param name="Value">The value.</param>
         void BasicSubOp(MediumDecVariant& Value)
         {
-            bool NegativeBeforeOperation = IntValue < 0;
+            bool WasNegative = IntValue < 0;
             //Deal with Int section first
             IntValue -= Value.IntValue;
             //Now deal with the decimal section
@@ -3739,7 +3739,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(NegativeBeforeOperation^(IntValue<0))
+            if(WasNegative ^(IntValue<0))
                 DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
         }
 
@@ -6560,9 +6560,9 @@ public:
 				case RepType::ENum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
-				case ENumByDiv://(Value/(ExtraRep*-1))*E Representation
+				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*E Representation
 			#else
-				case EFractional://  IntValue/DecimalHalf*E Representation
+				case RepType::EFractional://  IntValue/DecimalHalf*E Representation
 			#endif
 		#endif
 					Value.ConvertToNormType(repType);
@@ -6573,9 +6573,9 @@ public:
 					break;
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
-				case INumByDiv://(Value/(ExtraRep*-1))*i Representation
+				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#else
-				case IFractional://  IntValue/DecimalHalf*i Representation
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			#endif
 					Value.ConvertToNormalIRep();
 					break;
@@ -7148,7 +7148,7 @@ public:
                 //break;
                 //case RepType::ApproachingTop:
                 //break;
-                case InfinityRep:
+                case RepType::InfinityRep:
                     return expType.IsZero()?MediumDecVariant.One:value;
                 break;
 #endif
@@ -7156,7 +7156,7 @@ public:
 
 #endif
 #if defined(AltNum_EnableNaN)
-            case NaNRep:
+            case RepType::NaNRep:
                 return value;
                 break;
 #endif
@@ -7174,7 +7174,7 @@ public:
                 //break;
                 //case RepType::ApproachingTop:
                 //break;
-                case InfinityRep:
+                case RepType::InfinityRep:
                     //0^Infinity = 0
                     //2^PositiveInfinity = PositiveInfinity
                     //-2^PositiveInfinity = Within range of Positive and NegativeInfinity(undefined?)
@@ -7295,22 +7295,22 @@ public:
             switch(DecimalHalf)
             {
 #if defined(AltNum_EnableInfinityRep)
-            case InfinityRep:
+            case RepType::InfinityRep:
                 return value;
                 break;
 #endif
 #if defined(AltNum_EnableNaN)
-            case NaNRep:
+            case RepType::NaNRep:
                 return value;
                 break;
 #endif
-            case ApproachingBottomRep:
+            case RepType::ApproachingBottomRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
 					WithinThresholdRange = false;
                 break;
-            case ApproachingTopRep:
+            case RepType::ApproachingTopRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
@@ -7379,22 +7379,22 @@ public:
             switch(DecimalHalf)
             {
 #if defined(AltNum_EnableInfinityRep)
-            case InfinityRep:
+            case RepType::InfinityRep:
                 return value;
                 break;
 #endif
 #if defined(AltNum_EnableNaN)
-            case NaNRep:
+            case RepType::NaNRep:
                 return value;
                 break;
 #endif
-            case ApproachingBottomRep:
+            case RepType::ApproachingBottomRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
 					WithinThresholdRange = false;
                 break;
-            case ApproachingTopRep:
+            case RepType::ApproachingTopRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
@@ -7492,22 +7492,22 @@ public:
             switch(DecimalHalf)
             {
 #if defined(AltNum_EnableInfinityRep)
-            case InfinityRep:
+            case RepType::InfinityRep:
                 return value;
                 break;
 #endif
 #if defined(AltNum_EnableNaN)
-            case NaNRep:
+            case RepType::NaNRep:
                 return value;
                 break;
 #endif
-            case ApproachingBottomRep:
+            case RepType::ApproachingBottomRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
 					WithinThresholdRange = false;
                 break;
-            case ApproachingTopRep:
+            case RepType::ApproachingTopRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
@@ -7641,22 +7641,22 @@ public:
             switch(DecimalHalf)
             {
 #if defined(AltNum_EnableInfinityRep)
-            case InfinityRep:
+            case RepType::InfinityRep:
                 return value;
                 break;
 #endif
 #if defined(AltNum_EnableNaN)
-            case NaNRep:
+            case RepType::NaNRep:
                 return value;
                 break;
 #endif
-            case ApproachingBottomRep:
+            case RepType::ApproachingBottomRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
 					WithinThresholdRange = false;
                 break;
-            case ApproachingTopRep:
+            case RepType::ApproachingTopRep:
 				if(value.IntValue < 2)
 					WithinThresholdRange = true;
 				else
@@ -8531,11 +8531,11 @@ public:
             return "NaN";
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-        case UndefinedButInRange:
+        case RepType::UndefinedButInRange:
             return "UndefinedButInRange";
             break;
 		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-        case WithinMinMaxRange:
+        case RepType::WithinMinMaxRange:
 		    return "WithinMinMaxRange";
             break;
         #endif
@@ -8755,11 +8755,11 @@ public:
             return "NaN";
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-        case UndefinedButInRange:
+        case RepType::UndefinedButInRange:
             return "UndefinedButInRange";
             break;
 		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-        case WithinMinMaxRange:
+        case RepType::WithinMinMaxRange:
 		    return "WithinMinMaxRange";
             break;
         #endif
