@@ -891,7 +891,7 @@ ExtraFlags treated as bitwise flag storage
 				SRep = DecimalOverflowX * IntValue + DecimalHalf;
 				SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 				//X.Y *.V
-				__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+				__int64 Temp03 = (__int64)141592654ll * IntValue;//Temp03 holds __int64 version of X *.V
 				__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
 				Temp04 /= MediumDecVariant::DecimalOverflow;
 				//Temp04 holds __int64 version of .Y * .V
@@ -912,32 +912,32 @@ ExtraFlags treated as bitwise flag storage
 		
         void ConvertPiPowerToNum()
         {
-			int powerExponent = -self.ExtraRep;
+			int powerExponent = -ExtraRep;
 			ExtraRep = 0;
-			MediumDecVariant PiSide = PiNumValue();
-			PiSide.PowOp(powerExponent);
+			MediumDecVariant PiSide = PiNum;
+            PiSide.PowOp(powerExponent);
 			BasicMultOp(PiSide);
 		}
 		
 		MediumDecVariant PiPowerNum(int powerExponent)
         {
 			ExtraRep = 0;
-			MediumDecVariant PiSide = PiNumValue();
+			MediumDecVariant PiSide = PiNum;
 			PiSide.PowOp(powerExponent);
 			return PiSide;
 		}
 		
 		void ConvertPiPowerToPiRep()
 		{
-			int powerExponent = -self.ExtraRep;
+			int powerExponent = -ExtraRep;
 			if(powerExponent==0)
-				self.ExtraRep = 0;//Pi^0 = 1
+				ExtraRep = 0;//Pi^0 = 1
 			else
 			{
-				self.ExtraRep = PiRep;
+				ExtraRep = PiRep;
 				if(powerExponent!=1)
 				{
-					MediumDecVariant PiSide = PiNumValue();
+					MediumDecVariant PiSide = PiNum;
 					PiSide.PowOp(powerExponent-1);
 					BasicMultOp(PiSide);
 				}
@@ -4036,7 +4036,7 @@ private:
                     __int64 SRep = IntValue == 0 ? DecimalHalf : MediumDecVariant::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    __int64 Temp03 = (__int64)IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
+                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
                     Temp04 /= MediumDecVariant::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
@@ -6668,6 +6668,170 @@ public:
         }
 
         /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expNum">The numerator of the exponent value.</param>
+        /// <param name="expDenom">The denominator of the exponent value.</param>
+        static MediumDecVariant FractionalPow(MediumDecVariant value, int expNum, int expDenom)
+        {
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, expNum), expDenom);
+            return CalcVal;
+        }
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="Frac">The exponent value to raise the value to power of.</param>
+        static MediumDecVariant FractionalPow(MediumDecVariant& value, boost::rational<int>& Frac)
+        {
+            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, Frac.numerator()), Frac.denominator());
+            return CalcVal;
+        }
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDecVariant PowOp(MediumDecVariant& value, MediumDecVariant& expValue)
+        {
+            if (expValue.DecimalHalf == 0)
+            {
+                return value.Pow(expValue.IntValue);
+            }
+            else
+            {
+                RepType repType = value.GetRepType();
+                switch (repType)
+                {
+                case RepType::NormalType:
+                    break;
+                case RepType::PiNum:
+                    //value.ConvertPiToNum();
+                    break;
+#if defined(AltNum_EnableInfinityRep)
+                //case RepType::ApproachingBottom:
+                //break;
+                //case RepType::ApproachingTop:
+                //break;
+                case RepType::InfinityRep:
+                    return expType.IsZero()?MediumDecVariant.One:value;
+                break;
+#endif
+#if defined(AltNum_EnableInfinityRep)
+
+#endif
+#if defined(AltNum_EnableNaN)
+            case RepType::NaNRep:
+                return value;
+                break;
+#endif
+                default:
+                    //value.ConvertToNumRep();
+                    break;
+                }
+                RepType expType = expValue.GetRepType();
+                switch (expType)
+                {
+                case RepType::NormalType:
+                    break;
+#if defined(AltNum_EnableInfinityRep)
+                //case RepType::ApproachingBottom:
+                //break;
+                //case RepType::ApproachingTop:
+                //break;
+                case RepType::InfinityRep:
+                    //0^Infinity = 0
+                    //2^PositiveInfinity = PositiveInfinity
+                    //-2^PositiveInfinity = Within range of Positive and NegativeInfinity(undefined?)
+                    //2^NegativeInfinity = ApproachingZero
+                    //-2^NegativeInfinity = -Approaching Zero
+                    //return value.IsZero()?value:(IntValue==1?expValue:);
+                    if(value.IsZero())
+                        return value;
+                    if(value.IntValue<0)
+                        if(expValue.IntValue<0)
+                            return NegativeApproachingZero;//-Approaching Zero
+                        else
+                            return ApproachingZero;//ApproachingZero
+                    else
+                         if(expValue.IntValue<0)//Returns result within range of Positive and NegativeInfinity or undefined or Any infinity?
+#if defined(AltNum_EnableUndefinedButInRange)
+                             throw "Returns noncoded representation infinity based value";//Return value here later
+#elif defined(AltNum_EnableNaN)
+                             return NaN;
+#else
+                             throw "Returns value in undefined range with current preprocessor settings.";
+#endif
+                            
+                        else
+                            return Infinity;//PositiveInfinity
+                break;
+#endif
+#if defined(AltNum_EnableFractionals)
+                case RepType::NumByDiv:
+                    return FractionalPow(value, MediumDecVariant(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
+#if defined(AltNum_EnableERep)
+                case RepType::ENumByDiv:
+                    return FractionalPow(value, value.ExtraRep*-1);
+                    break;
+#endif
+                case RepType::INumByDiv:
+                    return FractionalPow(value, value.ExtraRep*-1);
+                    break;
+#endif
+    //            case RepType::PiNum:
+    //                expValue.ConvertPiToNum();
+    //                break;
+/*
+
+*/
+                default:
+                    //expValue.ConvertToNumRep();
+                    break;
+                }
+                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
+                switch (expValue.IntValue)
+                {
+                    case 0:
+                        return FractionalPow(value, Frac);
+                        break;
+                    case MediumDecVariant::NegativeRep:
+                        return 1 / FractionalPow(value, Frac);
+                        break;
+                    default:
+                    {
+                        if (expValue.IntValue < 0)//Negative Exponent 
+                        {
+                            MediumDecVariant CalcVal = 1 / value.Pow(expValue.IntValue * -1);
+                            CalcVal /= FractionalPow(value, Frac);
+                            return CalcVal;
+                        }
+                        else
+                        {
+                            MediumDecVariant CalcVal = value.Pow(expValue.IntValue);
+                            CalcVal *= FractionalPow(value, Frac);
+                            return CalcVal;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDecVariant Pow(MediumDecVariant value, MediumDecVariant expValue)
+        {
+            return PowOp(value, expValue);
+        }
+
+        /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
@@ -7098,171 +7262,6 @@ public:
             }
             return tn;
         }
-
-        /// <summary>
-        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expNum">The numerator of the exponent value.</param>
-        /// <param name="expDenom">The denominator of the exponent value.</param>
-        static MediumDecVariant FractionalPow(MediumDecVariant value, int expNum, int expDenom)
-        {
-            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, expNum), expDenom);
-            return CalcVal;
-        }
-
-        /// <summary>
-        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MediumDecVariant FractionalPow(MediumDecVariant& value, boost::rational<int>& Frac)
-        {
-            MediumDecVariant CalcVal = MediumDecVariant::NthRoot(MediumDecVariant::Pow(value, Frac.numerator()), Frac.denominator());
-            return CalcVal;
-        }
-
-        /// <summary>
-        /// Applies Power of operation
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expValue">The exponent value.</param>
-        static MediumDecVariant PowOp(MediumDecVariant& value, MediumDecVariant& expValue)
-        {
-            if (expValue.DecimalHalf == 0)
-            {
-                return value.Pow(expValue.IntValue);
-            }
-            else
-            {
-                RepType repType = value.GetRepType();
-                switch (repType)
-                {
-                case RepType::NormalType:
-                    break;
-                case RepType::PiNum:
-                    //value.ConvertPiToNum();
-                    break;
-#if defined(AltNum_EnableInfinityRep)
-                //case RepType::ApproachingBottom:
-                //break;
-                //case RepType::ApproachingTop:
-                //break;
-                case RepType::InfinityRep:
-                    return expType.IsZero()?MediumDecVariant.One:value;
-                break;
-#endif
-#if defined(AltNum_EnableInfinityRep)
-
-#endif
-#if defined(AltNum_EnableNaN)
-            case RepType::NaNRep:
-                return value;
-                break;
-#endif
-                default:
-                    //value.ConvertToNumRep();
-                    break;
-                }
-                RepType expType = expValue.GetRepType();
-                switch (expType)
-                {
-                case RepType::NormalType:
-                    break;
-#if defined(AltNum_EnableInfinityRep)
-                //case RepType::ApproachingBottom:
-                //break;
-                //case RepType::ApproachingTop:
-                //break;
-                case RepType::InfinityRep:
-                    //0^Infinity = 0
-                    //2^PositiveInfinity = PositiveInfinity
-                    //-2^PositiveInfinity = Within range of Positive and NegativeInfinity(undefined?)
-                    //2^NegativeInfinity = ApproachingZero
-                    //-2^NegativeInfinity = -Approaching Zero
-                    //return value.IsZero()?value:(IntValue==1?expValue:);
-                    if(value.IsZero())
-                        return value;
-                    if(value.IntValue<0)
-                        if(expValue.IntValue<0)
-                            return NegativeApproachingZero;//-Approaching Zero
-                        else
-                            return ApproachingZero;//ApproachingZero
-                    else
-                         if(expValue.IntValue<0)//Returns result within range of Positive and NegativeInfinity or undefined or Any infinity?
-#if defined(AltNum_EnableUndefinedButInRange)
-                             throw "Returns noncoded representation infinity based value";//Return value here later
-#elif defined(AltNum_EnableNaN)
-                             return NaN;
-#else
-                             throw "Returns value in undefined range with current preprocessor settings.";
-#endif
-                            
-                        else
-                            return Infinity;//PositiveInfinity
-                break;
-#endif
-#if defined(AltNum_EnableFractionals)
-                case RepType::NumByDiv:
-                    return FractionalPow(value, MediumDecVariant(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
-#if defined(AltNum_EnableERep)
-                case RepType::ENumByDiv:
-                    return FractionalPow(value, value.ExtraRep*-1);
-                    break;
-#endif
-                case RepType::INumByDiv:
-                    return FractionalPow(value, value.ExtraRep*-1);
-                    break;
-#endif
-    //            case RepType::PiNum:
-    //                expValue.ConvertPiToNum();
-    //                break;
-/*
-
-*/
-                default:
-                    //expValue.ConvertToNumRep();
-                    break;
-                }
-                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
-                switch (expValue.IntValue)
-                {
-                    case 0:
-                        return FractionalPow(value, Frac);
-                        break;
-                    case MediumDecVariant::NegativeRep:
-                        return 1 / FractionalPow(value, Frac);
-                        break;
-                    default:
-                    {
-                        if (expValue.IntValue < 0)//Negative Exponent 
-                        {
-                            MediumDecVariant CalcVal = 1 / value.Pow(expValue.IntValue * -1);
-                            CalcVal /= FractionalPow(value, Frac);
-                            return CalcVal;
-                        }
-                        else
-                        {
-                            MediumDecVariant CalcVal = value.Pow(expValue.IntValue);
-                            CalcVal *= FractionalPow(value, Frac);
-                            return CalcVal;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies Power of operation
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expValue">The exponent value.</param>
-        static MediumDecVariant Pow(MediumDecVariant value, MediumDecVariant expValue)
-        {
-            return PowOp(value, expValue);
-        }
-
 private:
     static MediumDecVariant LnRef_Part02(MediumDecVariant& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
