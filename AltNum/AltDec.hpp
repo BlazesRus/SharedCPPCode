@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -355,7 +355,7 @@ ExtraFlags treated as bitwise flag storage
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        static signed int const NegativeRep = MirroredInt::NegativeRep;
+        MirroredInt const NegativeRep = MirroredInt::NegativeZero;
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
@@ -443,13 +443,14 @@ ExtraFlags treated as bitwise flag storage
 		//If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
 		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
 		static const signed int ApproachingTopRep = -2147483646;
-		#endif
+        #if defined(AltNum_EnableApproachingI)
 		//Is Approaching Bottom i when DecimalHalf==-2147483645:
 		//If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)i
         static const signed int ApproachingImaginaryBottomRep = -2147483645;
 		//Is Approaching Top i when DecimalHalf==-2147483644:
 		//If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)i
 		static const signed int ApproachingImaginaryTopRep = -2147483644;
+        #endif
 	#endif
 	#if defined(AltNum_EnablePiRep)
         //Is Pi*Value representation when ExtraRep==-2147483648
