@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -186,6 +186,10 @@ AltNum_EnableNilRep = Enables Nil representation(detection not in code right now
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc
 AltNum_EnableWithinMinMaxRange
 AltNum_EnableUnknownTrigExpressions = (Not Implimented)
+
+AltNum_EnableModulusOverride
+AltNum_EnableAlternativeModulusResult
+AltNum_EnableBitwiseOverride
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -204,7 +208,7 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 #if defined(AltNum_EnableAlternativeRepFractionals)
 	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableIRep)
 		#undef AltNum_EnableAlternativeRepFractionals//Alternative Fractionals require the related representations enabled
-	#elif !defined(AltNum_EnableFractionals
+	#elif !defined(AltNum_EnableFractionals)
 		#define AltNum_EnableFractionals
 	#endif
 #endif
@@ -351,11 +355,11 @@ ExtraFlags treated as bitwise flag storage
         /// long double (Extended precision double)
         /// </summary>
         using ldouble = long double;
-    public:
+
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        MirroredInt const NegativeRep = MirroredInt::NegativeZero;
+        static MirroredInt NegativeRep;
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
@@ -377,16 +381,16 @@ ExtraFlags treated as bitwise flag storage
         /// Stores decimal section info and other special info
         /// </summary>
         signed int DecimalHalf;
-
+		
         /// <summary>
 		/// (Used exclusively for alternative represents of numbers including imaginery numbers and for fractionals)
         /// If both DecimalHalf&ExtraRep are Positive with ExtraRep as non-zero, then ExtraRep acts as denominator
-        /// If DecimalHalf is negative and ExtraRep is Positive, then MediumDecVariant represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
-        /// If ExtraRep is zero and DecimalHalf is positive, then MediumDecVariant represents +- 2147483647.999999999
+        /// If DecimalHalf is negative and ExtraRep is Positive, then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
+        /// If ExtraRep is zero and DecimalHalf is positive, then AltDec represents +- 2147483647.999999999
         ///-----------------------------------------------
-        /// If ExtraRep is negative, it acts as representation type similar to MediumDecVariant:
-		/// If ExtraRep is between 0 and , it acts as representation type similar to MediumDecVariant:
-        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePiRep is enabled, then MediumDecVariant represents +- 2147483647.999999999 * Pi
+        /// If ExtraRep is negative, it acts as representation type similar to AltDec:
+		/// If ExtraRep is between 0 and , it acts as representation type similar to AltDec:
+        /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePiRep is enabled, then AltDec represents +- 2147483647.999999999 * Pi
         /// </summary>
         signed int ExtraRep;
 
@@ -396,13 +400,31 @@ ExtraFlags treated as bitwise flag storage
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(MirroredInt intVal = MirroredInt::Zero, signed int decVal = 0, signed int extraVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
             ExtraRep = extraVal;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        /// <param name="extraVal">ExtraRep flags etc</param>
+        AltDec(int intVal = 0, signed int decVal = 0, signed int extraVal = 0)
+        {
+            IntValue.Value = intVal;
+            DecimalHalf = decVal;
+            ExtraRep = extraVal;
+        }
+
+        AltDec(const AltDec&) = default;
+
+        AltDec& operator=(const AltDec&) = default;
+
+        //Detect if at exactly zero
 		bool IsZero()
 		{
             return DecimalHalf==0&&IntValue.Value==0;
@@ -502,10 +524,6 @@ ExtraFlags treated as bitwise flag storage
     #endif
 
     #pragma endregion Const Representation values
-
-	#if !defined(AltNum_EnablePrivateRepType)
-    public:
-	#endif
 
         /// <summary>
         /// Enum representing value type stored
@@ -1641,21 +1659,21 @@ ExtraFlags treated as bitwise flag storage
         }
 	#endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-	    #if defined(AltNum_EnablePiRep)
+	    #if defined(AltNum_EnablePiFractional)
         void SetPiFractional(int Num, int Divisor)//IntValue/DecimalHalf*Pi Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
             ExtraRep = PiRep;
         }
 	    #endif
-	    #if defined(AltNum_EnableERep)
+	    #if defined(AltNum_EnableEFractional)
         void SetEFractional(int Num, int Divisor)//IntValue/DecimalHalf*e Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
             ExtraRep = ERep;
         }
 	    #endif
-	    #if defined(AltNum_EnableImaginaryNum)
+	    #if defined(AltNum_EnableIFractional)
         void SetIFractional(int Num, int Divisor)//IntValue/DecimalHalf*i Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
@@ -2292,7 +2310,7 @@ public:
             bool IsNegative = Value < 0.0f;
             if (IsNegative) { Value *= -1.0f; }
             //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483647.0f)
+            if (Value >= 2147483648.0f)
             {
                 if (IsNegative)
                     IntValue = -2147483647;
@@ -2308,7 +2326,7 @@ public:
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -2321,7 +2339,7 @@ public:
             bool IsNegative = Value < 0.0;
             if (IsNegative) { Value *= -1.0; }
             //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483647.0)
+            if (Value >= 2147483648.0)
             {
                 if (IsNegative)
                     IntValue = -2147483647;
@@ -2337,7 +2355,7 @@ public:
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -2350,7 +2368,7 @@ public:
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { Value *= -1.0L; }
             //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
+            if (Value >= 2147483648.0L)
             {
                 if (IsNegative)
                     IntValue = -2147483647;
@@ -2366,7 +2384,7 @@ public:
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -2425,10 +2443,12 @@ public:
             this->SetVal(Value);
         }
 
-        MediumDecVariant(MediumDec Value)
+#if defined(AltNum_EnableMediumDecBasedSetValues)
+        AltDec(MediumDec Value)
         {
             this->SetVal(Value);
         }
+#endif
     #pragma endregion From Standard types to this type
 
     #pragma region From this type to Standard types
@@ -8282,8 +8302,8 @@ public:
         std::string DecimalBuffer = "";
 
         bool ReadingDecimal = false;
-        int TemPint;
-        int TemPint02;
+        int TempInt;
+        int TempInt02;
         for (char const& StringChar : Value)
         {
             if (VariableConversionFunctions::IsDigit(StringChar))
@@ -8303,11 +8323,11 @@ public:
         PlaceNumber = WholeNumberBuffer.length() - 1;
         for (char const& StringChar : WholeNumberBuffer)
         {
-            TemPint = VariableConversionFunctions::CharAsInt(StringChar);
-            TemPint02 = (TemPint * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+            TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+            TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TemPint02;
+                IntValue += TempInt02;
             }
             PlaceNumber--;
         }
@@ -8317,11 +8337,11 @@ public:
             //Limit stored decimal numbers to the amount it can store
             if (PlaceNumber > -1)
             {
-                TemPint = VariableConversionFunctions::CharAsInt(StringChar);
-                TemPint02 = (TemPint * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+                TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+                TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
                 if (StringChar != '0')
                 {
-                    DecimalHalf += TemPint02;
+                    DecimalHalf += TempInt02;
                 }
                 PlaceNumber--;
             }
