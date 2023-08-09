@@ -1796,9 +1796,9 @@ public:
 		#if defined(AltNum_EnableDecimaledPiFractionals)
         void ConvertPiByDivToNumByDiv();
 		
-        void ConvertFromPiByDivToNorm();
+        void ConvertFrompIByDivToNorm();
 		#else
-		void ConvertFromPiFractionalToNorm();
+		void ConvertFrompIFractionalToNorm();
 		
 		#endif
 		
