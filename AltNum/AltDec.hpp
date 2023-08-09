@@ -400,7 +400,7 @@ namespace BlazesRusCode
         signed int ExtraRep;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
@@ -418,7 +418,7 @@ namespace BlazesRusCode
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDec(int intVal = 0, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(int intVal, signed int decVal = 0, signed int extraVal = 0)
         {
             IntValue.Value = intVal;
             DecimalHalf = decVal;
@@ -5495,7 +5495,7 @@ public:
             if (value == AltDec::One)
                 return AltDec::Zero;
             AltDec ConvertedVal;
-            switch (repType)
+            switch (value.repType)
             {
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
@@ -5554,6 +5554,7 @@ public:
             if (value == AltDec::One)
                 return AltDec::Zero;
             AltDec ConvertedVal;
+
             switch (repType)
             {
 	#if defined(AltNum_EnableImaginaryNum)
@@ -5657,23 +5658,24 @@ public:
         {
             if (value == AltDec::One)
                 return AltDec::Zero;
+            RepType repType = value.GetRepType();
             AltDec ConvertedVal;
             switch (repType)
             {
-	#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#else
+#else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
-		#endif
-                ConvertedVal = Value.ConvertAsNormalIRep(repType);
+#endif
+#endif
+                ConvertedVal = value.ConvertAsNormalIRep(repType);
                 break;
-	#endif
+#endif
             default:
-                ConvertedVal = Value.ConvertAsNormType(repType);
+                ConvertedVal = value.ConvertAsNormType(repType);
                 break;
             }
             if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
@@ -5768,6 +5770,7 @@ public:
         /// <returns>AltDec</returns>
         static AltDec Log(AltDec value, AltDec baseVal)
         {
+            RepType repType = value.GetRepType();
             AltDec ConvertedVal;
             switch (repType)
             {
@@ -5780,11 +5783,11 @@ public:
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			#endif
 		#endif
-                ConvertedVal = Value.ConvertAsNormalIRep(repType);
+                ConvertedVal = value.ConvertAsNormalIRep(repType);
                 break;
 	#endif
             default:
-                ConvertedVal = Value.ConvertAsNormType(repType);
+                ConvertedVal = value.ConvertAsNormType(repType);
                 break;
             }
             if (ConvertedVal == AltDec::One)
@@ -5802,24 +5805,26 @@ public:
         static AltDec Log(AltDec value, int baseVal)
         {
             AltDec ConvertedVal;
+            RepType repType = value.GetRepType();
+            AltDec ConvertedVal;
             switch (repType)
             {
-	#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#else
+#else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
-		#endif
-                ConvertedVal = Value.ConvertAsNormalIRep(repType);
+#endif
+#endif
+                ConvertedVal = value.ConvertAsNormalIRep(repType);
                 break;
-	#endif
+#endif
             default:
-                ConvertedVal = Value.ConvertAsNormType(repType);
+                ConvertedVal = value.ConvertAsNormType(repType);
                 break;
-            }
+        }
             if (ConvertedVal == AltDec::One)
                 return AltDec::Zero;
             //Calculate Base log first
