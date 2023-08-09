@@ -71,15 +71,6 @@ namespace BlazesRusCode
             this->SetVal(Tvalue);
         }
 		
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
-        /// </summary>
-        /// <param name="Tvalue">The value.</param>
-        MirroredInt(MirroredInt Tvalue = MirroredInt::Zero)
-        {
-            this->SetVal(Tvalue);
-        }
-		
 		MirroredInt(const MirroredInt&) = default;
 		MirroredInt& operator=(const MirroredInt&) = default;
 
@@ -370,162 +361,118 @@ namespace BlazesRusCode
         }
 		
 		template<typename IntType>
-        static bool EqualToInt(AltDec& LValue, IntType& RValue)
+        static bool EqualToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()==RValue;
 		}
 		
 	    template<typename IntType>
-        static bool NotEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool NotEqualToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()!=RValue;
 		}
 		
 		template<typename IntType>
-        static bool LessThanToInt(AltDec& LValue, IntType& RValue)
+        static bool LessThanToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()<RValue;
 		}
 		
 	    template<typename IntType>
-        static bool LessThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool LessThanOrEqualToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()<=RValue;
 		}
 		
         /// <summary>
-        /// Greater than operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than operation between <see cref="MirroredInt"/> and Integer Type.
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanToInt(AltDec& LValue, IntType& RValue)
+        static bool GreaterThanToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()>RValue;
 		}
 		
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">LeftSide AltDec RValue</param>
+        /// <param name="LValue">LeftSide MirroredInt RValue</param>
         /// <param name="RValue">RightSide integer RValue</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool GreaterThanOrEqualToInt(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()>=RValue;
 		}
 	
 	    template<typename IntType>
-        static bool EqualToInt(IntType& LValue, AltDec& RValue) { return EqualToInt(RValue, LValue); }
+        static bool EqualToInt(IntType& LValue, MirroredInt& RValue) { return EqualToInt(RValue, LValue); }
 	
 	    template<typename IntType>
-        static bool NotEqualToInt(IntType& LValue, AltDec& RValue) { return NotEqualToInt(RValue, LValue); }
+        static bool NotEqualToInt(IntType& LValue, MirroredInt& RValue) { return NotEqualToInt(RValue, LValue); }
 		
 	    template<typename IntType>
-        static bool LessThanToInt(IntType& LValue, AltDec& RValue) { return GreaterThanToInt(RValue, LValue); }
+        static bool LessThanToInt(IntType& LValue, MirroredInt& RValue) { return GreaterThanToInt(RValue, LValue); }
 		
 	    template<typename IntType>
-        static bool LessThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return GreaterThanOrEqualToInt(RValue, LValue); }
+        static bool LessThanOrEqualToInt(IntType& LValue, MirroredInt& RValue) { return GreaterThanOrEqualToInt(RValue, LValue); }
 		
 		template<typename IntType>
-        static bool GreaterThanToInt(IntType& LValue, AltDec& RValue) { return LessThanToInt(RValue, LValue); }
+        static bool GreaterThanToInt(IntType& LValue, MirroredInt& RValue) { return LessThanToInt(RValue, LValue); }
 		
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
         /// </summary>
         /// <returns>bool</returns>
 		template<typename IntType>
-        static bool GreaterThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
+        static bool GreaterThanOrEqualToInt(IntType& LValue, MirroredInt& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
 
-		friend bool operator==(int LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator==(signed long long LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator!=(int LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator!=(signed long long LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator<(int LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<(signed long long LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<=(int LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator<=(signed long long LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>(int LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>(signed long long LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>=(int LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>=(signed long long LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		friend bool operator==(int LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator==(signed long long LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator!=(int LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator!=(signed long long LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator<(int LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<(signed long long LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<=(int LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator<=(signed long long LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>(int LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>(signed long long LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>=(int LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>=(signed long long LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
 		
-		friend bool operator==(AltDec LValue, int RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator==(AltDec LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator!=(AltDec LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator!=(AltDec LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator<(AltDec LValue, int RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<(AltDec LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<=(AltDec LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator<=(AltDec LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>(AltDec LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>(AltDec LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator==(MirroredInt LValue, int RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator==(MirroredInt LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator!=(MirroredInt LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator!=(MirroredInt LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator<(MirroredInt LValue, int RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<(MirroredInt LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<=(MirroredInt LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator<=(MirroredInt LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>(MirroredInt LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>(MirroredInt LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
         /// </summary>
         /// <returns>bool</returns>
-		friend bool operator>=(AltDec LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>=(MirroredInt LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
         /// </summary>
         /// <returns>bool</returns>
-		friend bool operator>=(AltDec LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>=(MirroredInt LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
 #pragma endregion Comparison Operators
 
-#pragma region IntegerOperations//Including Mirrored Int Operations
-        /// <summary>
-        /// Multiplication Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        static int LeftSideIntMultOperation(IntType& LValue, MirroredInt& RValue)
-        {
-			LValue *= RValue.GetValue();
-        }
-		
-        /// <summary>
-        /// Multiplication Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        static MirroredInt RightSideIntMultOperation(MirroredInt& RValue, IntType& LValue)
-        {
-            if(LValue.IsZero()||RValue==0)
-                return LValue;
-	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-			throw "Need to write code for operation";//Placeholder
-	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-			LValue.Value *= RValue;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-            if(LValue.Value==NegativeRep)
-				throw "MirroredInt value has underflowed";
-		#endif
-	#else
-			throw "Need to write code for operation";//Placeholder
-	#endif
-			return LValue;
-        }
-		
-        friend MirroredInt operator*=(MirroredInt& LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
-		friend MirroredInt operator*=(MirroredInt& LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
-        friend MirroredInt operator*(MirroredInt LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
-		friend MirroredInt operator*(MirroredInt LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
-        friend int operator*(int RValue, MirroredInt LValue) { return LeftSideIntMultOperation(LValue, RValue); }
-		friend signed long long operator*(signed long long RValue, MirroredInt LValue) { return LeftSideIntMultOperation(LValue, RValue); }
-
+#pragma region Main Operations
         /// <summary>
         /// Multiplication Operation
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator*=(MirroredInt& LValue, MirroredInt RValue)
+        friend MirroredInt& operator*=(MirroredInt& LValue, MirroredInt RValue)
         {
             if(LValue.IsZero()||RValue.IsZero())
                 return LValue;
@@ -555,26 +502,49 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Multiplication Operation
+        /// Multiplication Operation with Integer Value
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator*(MirroredInt LValue, IntType RValue)
+        static IntType LeftSideIntMultOperation(IntType& LValue, MirroredInt& RValue)
         {
-            return LValue *= RValue;
+            LValue *= RValue.GetValue();
         }
 
+        /// <summary>
+        /// Multiplication Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend int operator*(IntType LValue, MirroredInt RValue)
+        static MirroredInt RightSideIntMultOperation(MirroredInt& RValue, IntType& LValue)
         {
-            if (RValue.IsNotZero())
-                LValue *= RValue.Value;
-            else
-                LValue = 0;
+            if (LValue.IsZero() || RValue == 0)
+                return LValue;
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            throw "Need to write code for operation";//Placeholder
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            LValue.Value *= RValue;
+#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if (LValue.Value == NegativeRep)
+                throw "MirroredInt value has underflowed";
+#endif
+#else
+            throw "Need to write code for operation";//Placeholder
+#endif
             return LValue;
         }
+
+        friend MirroredInt operator*=(MirroredInt& LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend MirroredInt operator*=(MirroredInt& LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend MirroredInt operator*(MirroredInt LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend MirroredInt operator*(MirroredInt LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend int operator*(int LValue, MirroredInt RValue) { return LeftSideIntMultOperation(LValue, RValue); }
+        friend signed long long operator*(signed long long LValue, MirroredInt RValue) { return LeftSideIntMultOperation(LValue, RValue); }
+
 
         /// <summary>
         /// Division Operation
@@ -582,7 +552,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator/=(MirroredInt& LValue, MirroredInt RValue)
+        friend MirroredInt& operator/=(MirroredInt& LValue, MirroredInt RValue)
         {
 			if(RValue.IsZero())
 				throw "Can't divide by zero without infinity result";
@@ -620,7 +590,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static int LeftSideIntDivOperation(IntType& LValue, MirroredInt& RValue)
+        static IntType LeftSideIntDivOperation(IntType& LValue, MirroredInt& RValue)
         {
             if (RValue.IsZero())
 				throw "Can't divide by zero without infinity result";
@@ -672,8 +642,8 @@ namespace BlazesRusCode
 		friend MirroredInt& operator/=(MirroredInt& LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
         friend MirroredInt operator/(MirroredInt LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
 		friend MirroredInt operator/(MirroredInt LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
-        friend MirroredInt operator/(int RValue, MirroredInt LValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
-		friend MirroredInt operator/(signed long long RValue, MirroredInt LValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
+        friend MirroredInt operator/(int LValue, MirroredInt RValue){ return LeftSideIntDivOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator/(signed long long LValue, MirroredInt RValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
 
         /// <summary>
         /// %= Operation with Integer Value
@@ -681,7 +651,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator%=(MirroredInt& LValue, MirroredInt RValue)
+        friend MirroredInt& operator%=(MirroredInt& LValue, MirroredInt RValue)
         {
             if(LValue.IsZero())
                 LValue.Value = 0; 
@@ -770,8 +740,8 @@ namespace BlazesRusCode
 		friend MirroredInt& operator%=(MirroredInt& LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
         friend MirroredInt operator%(MirroredInt LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
 		friend MirroredInt operator%(MirroredInt LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
-        friend MirroredInt operator%(int RValue, MirroredInt LValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
-		friend MirroredInt operator%(signed long long RValue, MirroredInt LValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
+        friend MirroredInt operator%(int LValue, MirroredInt RValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator%(signed long long LValue, MirroredInt RValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
 		
         /// <summary>
         /// Addition Operation
@@ -779,7 +749,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator+=(MirroredInt& LValue, MirroredInt& RValue)
+        friend MirroredInt& operator+=(MirroredInt& LValue, MirroredInt& RValue)
         {
             if(RValue.IsZero())
                 return LValue;
@@ -930,15 +900,6 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator+=(MirroredInt& LValue, IntType& RValue)
-        {
-        /// <summary>
-        /// Addition Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
         static int LeftSideIntAdditionOperation(IntType& LValue, MirroredInt& RValue)
         {
             if (RValue.IsZero())
@@ -1045,8 +1006,8 @@ namespace BlazesRusCode
 		friend MirroredInt& operator+=(MirroredInt& LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
         friend MirroredInt operator+(MirroredInt LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
 		friend MirroredInt operator+(MirroredInt LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
-        friend int operator+(int RValue, MirroredInt LValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
-		friend signed long long operator+(signed long long RValue, MirroredInt LValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
+        friend int operator+(int LValue, MirroredInt RValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
+		friend signed long long operator+(signed long long LValue, MirroredInt RValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
 
         /// <summary>
         /// Subtraction Operation
@@ -1054,7 +1015,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-		friend int operator-=(MirroredInt& LValue, MirroredInt RValue)
+		friend MirroredInt& operator-=(MirroredInt& LValue, MirroredInt RValue)
         {
             if(RValue.IsZero())
                 return LValue;
@@ -1309,9 +1270,9 @@ namespace BlazesRusCode
 		friend MirroredInt& operator-=(MirroredInt& LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
         friend MirroredInt operator-(MirroredInt LValue, int RValue) { return RightSideIntSubOperation(LValue, RValue); }
 		friend MirroredInt operator-(MirroredInt LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
-        friend MirroredInt operator-(int RValue, MirroredInt LValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
-		friend MirroredInt operator-(signed long long RValue, MirroredInt LValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
-#pragma endregion IntegerOperations
+        friend MirroredInt operator-(int LValue, MirroredInt RValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator-(signed long long LValue, MirroredInt RValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
+#pragma endregion Main Operations
 
 #pragma region BitwiseOperations
     #if defined(MirroredInt_EnableBitwiseOverride)
@@ -1596,7 +1557,7 @@ namespace BlazesRusCode
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
         friend int operator^(int LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
-		friend int operator^(signed long long LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
+		friend int operator^(signed long long LValue, MirroredInt RValue){ return LeftSideIntXorOperation(LValue, RValue); }
 	
         /// <summary>
         /// Bitwise XOR Operation
@@ -1605,7 +1566,7 @@ namespace BlazesRusCode
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
         friend int operator^=(int& LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
-        friend int operator^=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
+        friend int operator^=(signed long long& LValue, MirroredInt RValue){ return LeftSideIntXorOperation(LValue, RValue); }
 
         /// <summary>
         /// Bitwise Or Operation
@@ -1614,7 +1575,7 @@ namespace BlazesRusCode
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
         friend int operator|(int LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
-        friend int operator|(signed long long LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+        friend int operator|(signed long long LValue, MirroredInt RValue){ return LeftSideIntOrOperation(LValue, RValue); }
 
         /// <summary>
         /// Bitwise Or Operation
@@ -1624,7 +1585,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         template<typename IntType>
         friend int operator|=(int& LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
-        friend int operator|=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+        friend int operator|=(signed long long& LValue, MirroredInt RValue){ return LeftSideIntOrOperation(LValue, RValue); }
 		
         /// <summary>
         /// Bitwise And Operation
@@ -1632,8 +1593,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        friend int operator&(int LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
-        friend int operator&(signed long long LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&(int LValue, MirroredInt RValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&(signed long long LValue, MirroredInt RValue){ return LeftSideIntAndOperation(LValue, RValue); }
 
         /// <summary>
         /// Bitwise And Operation
@@ -1641,8 +1602,8 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        friend int operator&=(int& LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
-        friend int operator&=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&=(int& LValue, MirroredInt RValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&=(signed long long& LValue, MirroredInt RValue){ return LeftSideIntAndOperation(LValue, RValue); }
     #endif
 #pragma endregion BitwiseOperations
 
