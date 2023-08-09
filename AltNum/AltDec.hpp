@@ -5321,7 +5321,7 @@ public:
         /// <returns>AltDec</returns>
         static AltDec NthRoot(AltDec value, int n, AltDec precision = AltDec::JustAboveZero)
         {
-            AltDec xPre = 1 + (value - 1) / n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            AltDec xPre = ((value - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two 
@@ -5336,8 +5336,7 @@ public:
             {
                 //  calculating current value from previous
                 // value by newton's method
-                xK = (nMinus1 * xPre +
-                    value / AltDec::Pow(xPre, nMinus1)) / n;
+                xK = (xPre * nMinus1 + value / AltDec::Pow(xPre, nMinus1)) / n;
                 delX = AltDec::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
@@ -5394,11 +5393,11 @@ public:
         static AltDec NthRootV2(AltDec targetValue, int n, AltDec& Precision = AltDec::FiveBillionth)
         {
             int nMinus1 = n - 1;
-            AltDec x[2] = { (AltDec::One / n) * ((nMinus1 * targetValue) + (targetValue / AltDec::Pow(targetValue, nMinus1))), targetValue };
+            AltDec x[2] = { (AltDec::One / n) * ((targetValue*nMinus1) + (targetValue / AltDec::Pow(targetValue, nMinus1))), targetValue };
             while (AltDec::Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = (AltDec::One / n) * ((nMinus1 * x[1]) + (targetValue / AltDec::Pow(x[1], nMinus1)));
+                x[0] = (AltDec::One / n) * ((x[1]*nMinus1) + (targetValue / AltDec::Pow(x[1], nMinus1)));
             }
             return x[0];
         }
@@ -5494,25 +5493,26 @@ public:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == AltDec::One)
                 return AltDec::Zero;
+            RepType repType = value.GetRepType();
             AltDec ConvertedVal;
-            switch (value.repType)
+            switch (repType)
             {
-	#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#else
+#else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
-		#endif
-                ConvertedVal = Value.ConvertAsNormalIRep(repType);
+#endif
+#endif
+                ConvertedVal = value.ConvertAsNormalIRep(repType);
                 break;
-	#endif
+#endif
             default:
-                ConvertedVal = Value.ConvertAsNormType(repType);
+                ConvertedVal = value.ConvertAsNormType(repType);
                 break;
-            }
+        }
             if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 AltDec threshold = AltDec::FiveMillionth;
@@ -5553,24 +5553,24 @@ public:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == AltDec::One)
                 return AltDec::Zero;
+            RepType repType = value.GetRepType();
             AltDec ConvertedVal;
-
             switch (repType)
             {
-	#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#else
+#else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
-		#endif
-                ConvertedVal = Value.ConvertAsNormalIRep(repType);
+#endif
+#endif
+                ConvertedVal = value.ConvertAsNormalIRep(repType);
                 break;
-	#endif
+#endif
             default:
-                ConvertedVal = Value.ConvertAsNormType(repType);
+                ConvertedVal = value.ConvertAsNormType(repType);
                 break;
             }
             if(ConvertedVal.IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
@@ -5986,7 +5986,7 @@ public:
                 AltDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                    NewValue += AltDec::Pow(Radius, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                 }
                 return NewValue;
             }
@@ -6071,7 +6071,7 @@ public:
                 AltDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                    NewValue += AltDec::Pow(Radius, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
                 }
                 return NewValue;
             }
@@ -6088,7 +6088,7 @@ public:
             AltDec SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += AltDec::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
@@ -6141,7 +6141,7 @@ public:
                     AltDec SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
-                        SinValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                        SinValue += AltDec::Pow(Value, 2 * i + 1) * (i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                     }
                     return SinValue;
                     break;
@@ -6184,7 +6184,7 @@ public:
                     AltDec SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
-                        SinValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                        SinValue += AltDec::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                     }
                     return SinValue;
                     break;
@@ -6219,7 +6219,7 @@ public:
             AltDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -6285,11 +6285,11 @@ public:
             AltDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -6356,7 +6356,7 @@ public:
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
-                return AltDec::PositiveInfinity;
+                return Infinity;
 #else
                 return AltDec::Maximum;//Positive Infinity
 #endif
@@ -6392,11 +6392,11 @@ public:
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             { // That's also Taylor series!!
-                CosValue += (i % 2 == 0 ? 1 : -1) * AltDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
@@ -6417,7 +6417,7 @@ public:
 #else
             AltDec coeff_1 = PiNum / 4;
 #endif
-            AltDec coeff_2 = 3 * coeff_1;
+            AltDec coeff_2 = coeff_1 * 3;
             AltDec abs_y = AltDec::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
             AltDec r;
             AltDec angle;
