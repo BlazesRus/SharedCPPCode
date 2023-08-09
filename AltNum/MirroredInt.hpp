@@ -226,6 +226,28 @@ namespace BlazesRusCode
 
 #pragma region Comparison Operators
         /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(MirroredInt LValue, MirroredInt RValue)
+        {
+            return LValue.Value == RValue.Value;
+        }
+
+        /// <summary>
+        /// Not Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(MirroredInt LValue, MirroredInt RValue)
+        {
+            return LValue.Value != RValue.Value;
+        }
+		
+        /// <summary>
         /// Lesser than Operation
         /// </summary>
         /// <param name="LValue">The left side value</param>
@@ -311,7 +333,6 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        template<typename IntType>
         friend bool operator>=(MirroredInt LValue, MirroredInt RValue)
         {
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
@@ -338,28 +359,6 @@ namespace BlazesRusCode
 #endif
         }
 
-        /// <summary>
-        /// Not Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator!=(MirroredInt LValue, MirroredInt RValue)
-        {
-            return LValue.Value != RValue.Value;
-        }
-
-        /// <summary>
-        /// Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator==(MirroredInt LValue, MirroredInt RValue)
-        {
-            return LValue.Value == RValue.Value;
-        }
-		
 		template<typename IntType>
         static bool EqualToInt(MirroredInt& LValue, IntType& RValue)
         {
@@ -430,39 +429,35 @@ namespace BlazesRusCode
 		template<typename IntType>
         static bool GreaterThanOrEqualToInt(IntType& LValue, MirroredInt& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
 
-		friend bool operator==(int LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator==(signed long long LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator!=(int LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator!=(signed long long LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator<(int LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<(signed long long LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<=(int LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator<=(signed long long LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>(int LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>(signed long long LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>=(int LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>=(signed long long LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-		
-		friend bool operator==(MirroredInt LValue, int RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator==(MirroredInt LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
-		friend bool operator!=(MirroredInt LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator!=(MirroredInt LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
-		friend bool operator<(MirroredInt LValue, int RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<(MirroredInt LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
-		friend bool operator<=(MirroredInt LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator<=(MirroredInt LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-		friend bool operator>(MirroredInt LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
-		friend bool operator>(MirroredInt LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
-        /// </summary>
-        /// <returns>bool</returns>
-		friend bool operator>=(MirroredInt LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
-        /// </summary>
-        /// <returns>bool</returns>
-		friend bool operator>=(MirroredInt LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+
+        //Second set of comparison overloads doesn't work with the first
+        //  
+		//friend bool operator==(int LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
+		//friend bool operator==(signed long long LValue, MirroredInt RValue) { return EqualToInt(LValue, RValue); }
+		//friend bool operator!=(int LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
+		//friend bool operator!=(signed long long LValue, MirroredInt RValue) { return NotEqualToInt(LValue, RValue); }
+		//friend bool operator<(int LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
+		//friend bool operator<(signed long long LValue, MirroredInt RValue) { return LessThanToInt(LValue, RValue); }
+		//friend bool operator<=(int LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator<=(signed long long LValue, MirroredInt RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator>(int LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
+		//friend bool operator>(signed long long LValue, MirroredInt RValue) { return GreaterThanToInt(LValue, RValue); }
+		//friend bool operator>=(int LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator>=(signed long long LValue, MirroredInt RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		//
+		//friend bool operator==(MirroredInt LValue, int RValue) { return EqualToInt(LValue, RValue); }
+		//friend bool operator==(MirroredInt LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
+		//friend bool operator!=(MirroredInt LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
+		//friend bool operator!=(MirroredInt LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
+		//friend bool operator<(MirroredInt LValue, int RValue) { return LessThanToInt(LValue, RValue); }
+		//friend bool operator<(MirroredInt LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
+		//friend bool operator<=(MirroredInt LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator<=(MirroredInt LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator>(MirroredInt LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
+		//friend bool operator>(MirroredInt LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
+		//friend bool operator>=(MirroredInt LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		//friend bool operator>=(MirroredInt LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+
 #pragma endregion Comparison Operators
 
 #pragma region Main Operations
