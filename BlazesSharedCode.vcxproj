@@ -217,7 +217,9 @@
     <ClInclude Include="AltNum\AltNumConversions.hpp" />
     <ClInclude Include="AltNum\AltNumDebug.hpp" />
     <ClInclude Include="AltNum\FloatingOperations.hpp" />
-    <ClInclude Include="AltNum\MediumDec.hpp" />
+    <ClInclude Include="AltNum\MediumDec.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="AltNum\MediumDec_OtherMath.hpp" />
     <ClInclude Include="AltNum\MirroredInt.hpp" />
     <ClInclude Include="AltNum\MixedDec.hpp" />

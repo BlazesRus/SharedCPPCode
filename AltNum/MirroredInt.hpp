@@ -71,8 +71,8 @@ namespace BlazesRusCode
             this->SetVal(Tvalue);
         }
 		
-		MirroredInt(const MirroredInt&) = default;
-		MirroredInt& operator=(const MirroredInt&) = default;
+		//MirroredInt(const MirroredInt&) = default;
+		//MirroredInt& operator=(const MirroredInt&) = default;
 
         //Returns true if detected as either zero or negative zero value
 		bool IsZero()
