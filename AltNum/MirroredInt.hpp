@@ -31,6 +31,7 @@ BlazesMirroredInt_UsePseudoBitSet:(32nd bit used for positive/negative status Bi
 -  stores value in unsigned int
 
 BlazesMirroredInt_PreventNZeroUnderflowCheck
+MirroredInt_EnableBitwiseOverride
 */
 
 //Auto toggles to default option if not set
@@ -69,6 +70,18 @@ namespace BlazesRusCode
         {
             this->SetVal(Tvalue);
         }
+		
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
+        /// </summary>
+        /// <param name="Tvalue">The value.</param>
+        MirroredInt(MirroredInt Tvalue = MirroredInt::Zero)
+        {
+            this->SetVal(Tvalue);
+        }
+		
+		MirroredInt(const MirroredInt&) = default;
+		MirroredInt& operator=(const MirroredInt&) = default;
 
         //Returns true if detected as either zero or negative zero value
 		bool IsZero()
@@ -156,24 +169,47 @@ namespace BlazesRusCode
 			Value = NegativeRep;
         }
 
+        /// <summary>
+        /// Forces Number into non-negative
+        /// </summary>
+        /// <returns>MediumDecVariant&</returns>
+        MirroredInt& Abs()
+        {
+            if (Value == NegativeRep)
+                Value = 0;
+            else if (Value < 0)
+                Value *= -1;
+            return *this;
+        }
+
+        /// <summary>
+        /// Forces Number into non-negative
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDec</returns>
+        static MirroredInt Abs(MirroredInt tValue)
+        {
+            return tValue.Abs();
+        }
+
 #pragma region ValueDefines
         //Value at exactly zero(but not at negative side)
         static MirroredInt ZeroValue()
         {
-            MirroredInt NewLValue = MirroredInt();
-            return NewLValue;
+            MirroredInt NewValue = MirroredInt();
+            return NewValue;
         }
 
         static MirroredInt NegativeZeroValue()
         {
 	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            MirroredInt NewLValue = MirroredInt(2147483648);
+            MirroredInt NewValue = MirroredInt(2147483648);
 	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            MirroredInt NewLValue = MirroredInt(-2147483648);
+            MirroredInt NewValue = MirroredInt(-2147483648);
 	#else
             //Set bit flags to 10000000 00000000 00000000 00000000
 	#endif
-            return NewLValue;
+            return NewValue;
         }
 
         /// <summary>
@@ -190,8 +226,8 @@ namespace BlazesRusCode
 
         static MirroredInt OneValue()
         {
-            MirroredInt NewLValue = MirroredInt(1);
-            return NewLValue;
+            MirroredInt NewValue = MirroredInt(1);
+            return NewValue;
         }
 
         static MirroredInt One;
@@ -332,239 +368,411 @@ namespace BlazesRusCode
         {
             return LValue.Value == RValue.Value;
         }
-
+		
+		template<typename IntType>
+        static bool EqualToInt(AltDec& LValue, IntType& RValue)
+        {
+            return LValue.GetValue()==RValue;
+		}
+		
+	    template<typename IntType>
+        static bool NotEqualToInt(AltDec& LValue, IntType& RValue)
+        {
+            return LValue.GetValue()!=RValue;
+		}
+		
+		template<typename IntType>
+        static bool LessThanToInt(AltDec& LValue, IntType& RValue)
+        {
+            return LValue.GetValue()<RValue;
+		}
+		
+	    template<typename IntType>
+        static bool LessThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        {
+            return LValue.GetValue()<=RValue;
+		}
+		
         /// <summary>
-        /// Lesser than Operation
+        /// Greater than operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator<(MirroredInt LValue, IntType RValue)
+	    template<typename IntType>
+        static bool GreaterThanToInt(AltDec& LValue, IntType& RValue)
         {
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            if (LValue.Value == NegativeRep)
-                return RValue < 0 && RValue != NegativeRep;
-            else
-                return LValue.Value < RValue;
-#else
-#endif
-        }
-
+            return LValue.GetValue()>RValue;
+		}
+		
         /// <summary>
-        /// Lesser than or Equal to Operation
+        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
+        /// <param name="LValue">LeftSide AltDec RValue</param>
+        /// <param name="RValue">RightSide integer RValue</param>
         /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator<=(MirroredInt LValue, IntType RValue)
+	    template<typename IntType>
+        static bool GreaterThanOrEqualToInt(AltDec& LValue, IntType& RValue)
         {
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            if (LValue.Value == NegativeRep)
-                return RValue < 0;
-            else
-                return LValue.Value <= RValue;
-#else
-#endif
-        }
-
+            return LValue.GetValue()>=RValue;
+		}
+	
+	    template<typename IntType>
+        static bool EqualToInt(IntType& LValue, AltDec& RValue) { return EqualToInt(RValue, LValue); }
+	
+	    template<typename IntType>
+        static bool NotEqualToInt(IntType& LValue, AltDec& RValue) { return NotEqualToInt(RValue, LValue); }
+		
+	    template<typename IntType>
+        static bool LessThanToInt(IntType& LValue, AltDec& RValue) { return GreaterThanToInt(RValue, LValue); }
+		
+	    template<typename IntType>
+        static bool LessThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return GreaterThanOrEqualToInt(RValue, LValue); }
+		
+		template<typename IntType>
+        static bool GreaterThanToInt(IntType& LValue, AltDec& RValue) { return LessThanToInt(RValue, LValue); }
+		
         /// <summary>
-        /// Greater than or Equal to Operation
+        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator>(MirroredInt LValue, IntType RValue)
-        {
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            if (LValue.Value == NegativeRep)
-            {
-                if (RValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else
-                return LValue.Value > RValue;
-#else
-#endif
-        }
+		template<typename IntType>
+        static bool GreaterThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
 
+		friend bool operator==(int LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator==(signed long long LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator!=(int LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator!=(signed long long LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator<(int LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<(signed long long LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<=(int LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator<=(signed long long LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>(int LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>(signed long long LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>=(int LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>=(signed long long LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+		
+		friend bool operator==(AltDec LValue, int RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator==(AltDec LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
+		friend bool operator!=(AltDec LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator!=(AltDec LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
+		friend bool operator<(AltDec LValue, int RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<(AltDec LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
+		friend bool operator<=(AltDec LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator<=(AltDec LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
+		friend bool operator>(AltDec LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
+		friend bool operator>(AltDec LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
         /// <summary>
-        /// Greater than or Equal to Operation
+        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator>=(MirroredInt LValue, IntType RValue)
-        {
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            if (LValue.Value == RValue)
-                return true;
-            if (LValue.Value == NegativeRep)
-            {
-                if (RValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else
-                return LValue.Value > RValue;
-#else
-#endif
-        }
-
+		friend bool operator>=(AltDec LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
         /// <summary>
-        /// Not Equal to Operation
+        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator!=(MirroredInt LValue, IntType RValue)
-        {
-            return LValue.Value != RValue;
-        }
-
-        /// <summary>
-        /// Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        template<typename IntType>
-        friend bool operator==(MirroredInt LValue, IntType RValue)
-        {
-            return LValue.Value == RValue;
-        }
-
-        template<typename IntType>
-        friend bool operator!=(IntType LValue, MirroredInt RValue)
-        {
-            return RValue != LValue;
-        }
-
-        template<typename IntType>
-        friend bool operator==(IntType LValue, MirroredInt RValue)
-        {
-            return RValue == LValue;
-        }
-
-        template<typename IntType>
-        friend bool operator<(IntType LValue, MirroredInt RValue)
-        {
-            return RValue > LValue;
-        }
-
-        template<typename IntType>
-        friend bool operator<=(IntType LValue, MirroredInt RValue)
-        {
-            return RValue >= LValue;
-        }
-
-        template<typename IntType>
-        friend bool operator>(IntType LValue, MirroredInt RValue)
-        {
-            return RValue < LValue;
-        }
-
-        template<typename IntType>
-        friend bool operator>=(IntType LValue, MirroredInt RValue)
-        {
-            return RValue <= LValue;
-        }
+		friend bool operator>=(AltDec LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
 #pragma endregion Comparison Operators
 
 #pragma region IntegerOperations//Including Mirrored Int Operations
-
         /// <summary>
-        /// Addition Operation with Integer Value
+        /// Multiplication Operation with Integer Value
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator+=(MirroredInt& LValue, IntType& RValue)
+        static int LeftSideIntMultOperation(IntType& LValue, MirroredInt& RValue)
         {
-            if(RValue==0)
+			LValue *= RValue.GetValue();
+        }
+		
+        /// <summary>
+        /// Multiplication Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt RightSideIntMultOperation(MirroredInt& RValue, IntType& LValue)
+        {
+            if(LValue.IsZero()||RValue==0)
                 return LValue;
-            if(LValue.Value==0)
-                LValue.Value = RValue;
 	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            else
-			    throw "Need to write code for operation";//Placeholder
+			throw "Need to write code for operation";//Placeholder
 	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            else if(LValue.Value==NegativeRep)
-            {
-                //-0.XXXX + 2 = 1.XXXX
-                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
-                //-0.XXXX + -5 = -5.XXXX
-                if(RValue<0)
-                {
-                    LValue.Value = RValue;
+			LValue.Value *= RValue;
 		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if(LValue.Value==NegativeRep)
-                        throw "MirroredInt value has underflowed";
+            if(LValue.Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
 		#endif
-                }
-                else//(RValue>=0)
-                    LValue.Value = RValue - 1;
-            }
-			else if(LValue.Value<0)
-            {
-                //-1.XXXX + -5 = -6.XXXX
-                //-6.XXXX + 5 = -1.XXXX
-                //-6.XXXX + 6 = -0.XXXX
-                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
-                //-5.XXXX + 7 = 1.XXXX
-                int InvertedLValue = -LValue.Value;
-                if(LValue.Value==InvertedLValue)
-                    LValue.Value = NegativeRep;
-                else if(RValue>InvertedLValue)
-                    LValue.Value += RValue-1;
-                else
-                {
-                    LValue.Value += RValue;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if(LValue.Value==NegativeRep)
-                        throw "MirroredInt value has underflowed";
-		#endif
-                }
-            }
-            else
-            {
-                //5.XXXX + 5 = 10.XXXX
-                //5.XXXX + -5 = 0.XXXX
-                //5.XXXX + -6 = -0.XXXX (Flips to other side)
-                //5.XXXX + -7 = -1.XXXX 
-                int InversionPoint = -LValue.Value - 1;
-                if(RValue==InversionPoint)
-                    LValue.Value = NegativeRep;
-                else if(RValue<InversionPoint)
-                {
-                    LValue.Value += RValue + 1;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if(LValue.Value==NegativeRep)
-                        throw "MirroredInt value has underflowed";
-		#endif
-                }
-                else
-                    LValue.Value += RValue;
-            }
 	#else
-            else
-			    throw "Need to write code for operation";//Placeholder
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return LValue;
+        }
+		
+        friend MirroredInt operator*=(MirroredInt& LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
+		friend MirroredInt operator*=(MirroredInt& LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend MirroredInt operator*(MirroredInt LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
+		friend MirroredInt operator*(MirroredInt LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
+        friend int operator*(int RValue, MirroredInt LValue) { return LeftSideIntMultOperation(LValue, RValue); }
+		friend signed long long operator*(signed long long RValue, MirroredInt LValue) { return LeftSideIntMultOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator*=(MirroredInt& LValue, MirroredInt RValue)
+        {
+            if(LValue.IsZero()||RValue.IsZero())
+                return LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue.Value *= RValue.Value;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue.Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
 	#endif
 			return LValue;
         }
 
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator*(MirroredInt LValue, MirroredInt RValue)
+        {
+            return LValue*=RValue;
+        }
+
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        friend MirroredInt operator*(MirroredInt LValue, IntType RValue)
+        {
+            return LValue *= RValue;
+        }
+
+        template<typename IntType>
+        friend int operator*(IntType LValue, MirroredInt RValue)
+        {
+            if (RValue.IsNotZero())
+                LValue *= RValue.Value;
+            else
+                LValue = 0;
+            return LValue;
+        }
+
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator/=(MirroredInt& LValue, MirroredInt RValue)
+        {
+			if(RValue.IsZero())
+				throw "Can't divide by zero without infinity result";
+			if(LValue.IsZero())
+				return LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue.Value /= RValue.Value;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue.Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return LValue;
+        }
+
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator/(MirroredInt LValue, MirroredInt RValue)
+        {
+            return LValue/=RValue;
+        }
+
+        /// <summary>
+        /// Division Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static int LeftSideIntDivOperation(IntType& LValue, MirroredInt& RValue)
+        {
+            if (RValue.IsZero())
+				throw "Can't divide by zero without infinity result";
+			return LValue /= RValue.GetValue();
+        }
+		
+        /// <summary>
+        /// Division Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt LeftSideIntDivOperationAsSelf(IntType& LValue, MirroredInt& RValue)
+        {
+			MirroredInt Res(LValue);
+			Res /= RValue;
+			return Res;
+        }
+		
+        /// <summary>
+        /// Division Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt& RightSideIntDivOperation(MirroredInt& RValue, IntType& LValue)
+        {
+			if(RValue==0)
+				throw "Can't divide by zero without infinity result";
+			if(LValue.IsZero())
+				return LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue.Value /= RValue;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue.Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return LValue;
+        }
+		
+        friend MirroredInt& operator/=(MirroredInt& LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
+		friend MirroredInt& operator/=(MirroredInt& LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
+        friend MirroredInt operator/(MirroredInt LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
+		friend MirroredInt operator/(MirroredInt LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
+        friend MirroredInt operator/(int RValue, MirroredInt LValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator/(signed long long RValue, MirroredInt LValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
+
+        /// <summary>
+        /// %= Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator%=(MirroredInt& LValue, MirroredInt RValue)
+        {
+            if(LValue.IsZero())
+                LValue.Value = 0; 
+            else
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            {
+                if(IsNegative)
+                    throw "Need to write code for operation with negative number";//Placeholder
+                else
+                    LValue.Value%= RValue.Value;
+            }
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue.Value%=RValue.Value;
+#else
+                throw "Need to write code for operation with negative number";//Placeholder
+#endif 
+            return LValue;
+        }
+
+        /// <summary>
+        /// Modulus Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator%(MirroredInt LValue, MirroredInt RValue)
+        {
+            return LValue%=RValue;
+        }
+		
+        /// <summary>
+        /// Modulus Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static int LeftSideIntModulusOperation(IntType& LValue, MirroredInt& RValue)
+        {
+            if (RValue.IsZero())
+				throw "Can't divide by zero without infinity result";
+			return LValue %= RValue.GetValue();
+        }
+		
+        /// <summary>
+        /// Modulus Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt LeftSideIntModulusOperationAsSelf(IntType& LValue, MirroredInt& RValue)
+        {
+			MirroredInt Res(LValue);
+			Res %= RValue;
+			return Res;
+        }
+		
+        /// <summary>
+        /// Modulus Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt& RightSideIntModulusOperation(MirroredInt& RValue, IntType& LValue)
+        {
+            if(LValue.IsZero())
+                LValue.Value = 0;
+            else
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            {
+                if(IsNegative)
+                    throw "Need to write code for operation with negative number";//Placeholder
+                else
+                    LValue.Value%= RValue;
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue.Value%=RValue;
+#else
+                throw "Need to write code for operation with negative number";//Placeholder
+#endif
+                return LValue;
+        }
+		
+        friend MirroredInt& operator%=(MirroredInt& LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
+		friend MirroredInt& operator%=(MirroredInt& LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
+        friend MirroredInt operator%(MirroredInt LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
+		friend MirroredInt operator%(MirroredInt LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
+        friend MirroredInt operator%(int RValue, MirroredInt LValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator%(signed long long RValue, MirroredInt LValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
+		
         /// <summary>
         /// Addition Operation
         /// </summary>
@@ -710,86 +918,96 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator+(MirroredInt LValue, IntType RValue)
-        {
-            return LValue+=RValue;
-        }
-
-        /// <summary>
-        /// Addition Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
         friend MirroredInt operator+(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue+=RValue;
         }
 
-        template<typename IntType>
-        friend int operator+(IntType LValue, MirroredInt RValue)
-        {
-            if (RValue.IsNotZero())
-                LValue = LValue + RValue.Value;
-            return LValue;
-        }
-
-        template<typename IntType>
-        friend int operator+=(IntType& LValue, MirroredInt RValue)
-        {
-            if(RValue.IsNotZero())
-                LValue = LValue + RValue.Value;
-            return LValue;
-        }
-
         /// <summary>
-        /// Subtraction Operation with Integer Value
+        /// Addition Operation with Integer Value
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator-=(MirroredInt& LValue, IntType RValue)
+        friend MirroredInt operator+=(MirroredInt& LValue, IntType& RValue)
+        {
+        /// <summary>
+        /// Addition Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static int LeftSideIntAdditionOperation(IntType& LValue, MirroredInt& RValue)
+        {
+            if (RValue.IsZero())
+				return LValue;
+			return LValue += RValue.GetValue();
+        }
+		
+        /// <summary>
+        /// Addition Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt LeftSideIntAdditionOperationAsSelf(IntType& LValue, MirroredInt& RValue)
+        {
+			MirroredInt Res(LValue);
+			Res += RValue;
+			return Res;
+        }
+		
+        /// <summary>
+        /// Addition Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt& RightSideIntAdditionOperation(MirroredInt& RValue, IntType& LValue)
         {
             if(RValue==0)
                 return LValue;
             if(LValue.Value==0)
-                LValue.Value = -RValue;
-    #if defined(BlazesMirroredInt_UsePseudoBitSet)
+                LValue.Value = RValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
             else
 			    throw "Need to write code for operation";//Placeholder
-    #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
             else if(LValue.Value==NegativeRep)
             {
-                //-0.XXXX - -2 = 1.XXXX
-                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
-                //-0.XXXX - 1 = -1.XXXX 
-                //-0.XXXX - 6 = -6.XXXX
+                //-0.XXXX + 2 = 1.XXXX
+                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
+                //-0.XXXX + -5 = -5.XXXX
                 if(RValue<0)
-                    LValue.Value = -RValue - 1;
-                else
                 {
-                    LValue.Value = -RValue;
+                    LValue.Value = RValue;
 		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
                     if(LValue.Value==NegativeRep)
                         throw "MirroredInt value has underflowed";
 		#endif
                 }
+                else//(RValue>=0)
+                    LValue.Value = RValue - 1;
             }
 			else if(LValue.Value<0)
             {
-                //-5.XXXX - -7 = 1.XXXX 
-                //-5.XXXX - -6 = 0.XXXX            
-                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
-                //-5.XXXX - -4 = -1.XXXX
-                if(RValue==LValue.Value)
+                //-1.XXXX + -5 = -6.XXXX
+                //-6.XXXX + 5 = -1.XXXX
+                //-6.XXXX + 6 = -0.XXXX
+                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
+                //-5.XXXX + 7 = 1.XXXX
+                int InvertedLValue = -LValue.Value;
+                if(LValue.Value==InvertedLValue)
                     LValue.Value = NegativeRep;
-                else if(RValue<LValue.Value)
-                    LValue.Value -= RValue.Value - 1;
-                else//(RValue>=LValue.Value)
+                else if(RValue>InvertedLValue)
+                    LValue.Value += RValue-1;
+                else
                 {
-                    LValue.Value -= RValue;
+                    LValue.Value += RValue;
 		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
                     if(LValue.Value==NegativeRep)
                         throw "MirroredInt value has underflowed";
@@ -798,30 +1016,37 @@ namespace BlazesRusCode
             }
             else
             {
-                //5.XXXX - -5 = 10.XXXX
-                //5.XXXX - 5 = 0.XXXX
-                //5.XXXX - 6 = -0.XXXX (Flips to other side)
-                //5.XXXX - 7 = -1.XXXX
-                int InversionPoint = LValue.Value + 1;
+                //5.XXXX + 5 = 10.XXXX
+                //5.XXXX + -5 = 0.XXXX
+                //5.XXXX + -6 = -0.XXXX (Flips to other side)
+                //5.XXXX + -7 = -1.XXXX 
+                int InversionPoint = -LValue.Value - 1;
                 if(RValue==InversionPoint)
                     LValue.Value = NegativeRep;
-                else if(RValue>InversionPoint)
+                else if(RValue<InversionPoint)
                 {
-                    LValue.Value -= RValue - 1;
+                    LValue.Value += RValue + 1;
 		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
                     if(LValue.Value==NegativeRep)
                         throw "MirroredInt value has underflowed";
 		#endif
-                } 
+                }
                 else
                     LValue.Value += RValue;
             }
-    #else
+	#else
             else
 			    throw "Need to write code for operation";//Placeholder
-    #endif
+	#endif
 			return LValue;
         }
+		
+        friend MirroredInt& operator+=(MirroredInt& LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
+		friend MirroredInt& operator+=(MirroredInt& LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
+        friend MirroredInt operator+(MirroredInt LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
+		friend MirroredInt operator+(MirroredInt LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
+        friend int operator+(int RValue, MirroredInt LValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
+		friend signed long long operator+(signed long long RValue, MirroredInt LValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
 
         /// <summary>
         /// Subtraction Operation
@@ -829,7 +1054,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator-=(MirroredInt& LValue, MirroredInt RValue)
+		friend int operator-=(MirroredInt& LValue, MirroredInt RValue)
         {
             if(RValue.IsZero())
                 return LValue;
@@ -967,295 +1192,129 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator-(MirroredInt LValue, IntType RValue)
-        {
-            return LValue-=RValue;
-        }
-
-        template<typename IntType>
-        friend int operator-(IntType LValue, MirroredInt RValue)
-        {
-            if (RValue.IsNotZero())
-                LValue -= RValue.Value;
-            return LValue;
-        }
-
-        /// <summary>
-        /// Subtraction Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
         friend MirroredInt operator-(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue-=RValue;
         }
 
+        /// <summary>
+        /// Subtraction Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend int operator-=(IntType& LValue, MirroredInt RValue)
+        static int LeftSideIntSubOperation(IntType& LValue, MirroredInt& RValue)
         {
             if (RValue.IsNotZero())
-                LValue -= RValue.Value;
-            return LValue;
+				return LValue *= RValue.GetValue();
+			return LValue;
         }
-
+		
         /// <summary>
-        /// Multiplication Operation with Integer Value
+        /// Subtraction Operation with Integer Value
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator*=(MirroredInt& LValue, IntType RValue)
+        static MirroredInt LeftSideIntSubOperationAsSelf(IntType& LValue, MirroredInt& RValue)
         {
-            if(LValue.IsZero()||RValue==0)
+			MirroredInt Res(LValue);
+			Res -= RValue;
+			return Res;
+        }
+		
+        /// <summary>
+        /// Subtraction Operation with Integer Value
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt& RightSideIntSubOperation(MirroredInt& RValue, IntType& LValue)
+        {
+            if(RValue==0)
                 return LValue;
-	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-			throw "Need to write code for operation";//Placeholder
-	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-			LValue.Value *= RValue;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-            if(LValue.Value==NegativeRep)
-				throw "MirroredInt value has underflowed";
-		#endif
-	#else
-			throw "Need to write code for operation";//Placeholder
-	#endif
-			return LValue;
-        }
-
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator*=(MirroredInt& LValue, MirroredInt RValue)
-        {
-            if(LValue.IsZero()||RValue.IsZero())
-                return LValue;
-	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-			throw "Need to write code for operation";//Placeholder
-	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-			LValue.Value *= RValue.Value;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-            if(LValue.Value==NegativeRep)
-				throw "MirroredInt value has underflowed";
-		#endif
-	#else
-			throw "Need to write code for operation";//Placeholder
-	#endif
-			return LValue;
-        }
-
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator*(MirroredInt LValue, MirroredInt RValue)
-        {
-            return LValue*=RValue;
-        }
-
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator*(MirroredInt LValue, IntType RValue)
-        {
-            return LValue *= RValue;
-        }
-
-        template<typename IntType>
-        friend int operator*(IntType LValue, MirroredInt RValue)
-        {
-            if (RValue.IsNotZero())
-                LValue *= RValue.Value;
+            if(LValue.Value==0)
+                LValue.Value = -RValue;
+    #if defined(BlazesMirroredInt_UsePseudoBitSet)
             else
-                LValue = 0;
-            return LValue;
-        }
-
-        template<typename IntType>
-        friend int operator*=(IntType& LValue, MirroredInt RValue)
-        {
-            if (RValue.IsZero())
-                LValue = 0;
-            else
-                LValue *= RValue.Value;
-            return LValue;
-        }
-
-        /// <summary>
-        /// Division Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator/=(MirroredInt& LValue, IntType RValue)
-        {
-			if(RValue==0)
-				throw "Can't divide by zero without infinity result";
-			if(LValue.IsZero())
-				return LValue;
-	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-			throw "Need to write code for operation";//Placeholder
-	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-			LValue.Value /= RValue;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-            if(LValue.Value==NegativeRep)
-				throw "MirroredInt value has underflowed";
-		#endif
-	#else
-			throw "Need to write code for operation";//Placeholder
-	#endif
-			return LValue;
-        }
-
-        template<typename IntType>
-        friend MirroredInt operator/=(IntType& LValue, MirroredInt RValue)
-        {
-            if (RValue.IsZero())
-                throw "Can't divide by zero without infinity result";
-            LValue /= RValue.Value;
-            return LValue;
-        }
-
-        /// <summary>
-        /// Division Operation
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator/=(MirroredInt& LValue, MirroredInt RValue)
-        {
-			if(RValue.IsZero())
-				throw "Can't divide by zero without infinity result";
-			if(LValue.IsZero())
-				return LValue;
-	#if defined(BlazesMirroredInt_UsePseudoBitSet)
-			throw "Need to write code for operation";//Placeholder
-	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-			LValue.Value /= RValue.Value;
-		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-            if(LValue.Value==NegativeRep)
-				throw "MirroredInt value has underflowed";
-		#endif
-	#else
-			throw "Need to write code for operation";//Placeholder
-	#endif
-			return LValue;
-        }
-
-        /// <summary>
-        /// Division Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator/(MirroredInt LValue, IntType RValue)
-        {
-            return LValue/=RValue;
-        }
-
-        /// <summary>
-        /// Division Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator/(MirroredInt LValue, MirroredInt RValue)
-        {
-            return LValue/=RValue;
-        }
-
-        /// <summary>
-        /// %= Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator%=(MirroredInt& LValue, IntType RValue)
-        {
-            if(LValue.IsZero())
-                LValue.Value = 0;
-            else
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			    throw "Need to write code for operation";//Placeholder
+    #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            else if(LValue.Value==NegativeRep)
             {
-                if(IsNegative)
-                    throw "Need to write code for operation with negative number";//Placeholder
+                //-0.XXXX - -2 = 1.XXXX
+                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
+                //-0.XXXX - 1 = -1.XXXX 
+                //-0.XXXX - 6 = -6.XXXX
+                if(RValue<0)
+                    LValue.Value = -RValue - 1;
                 else
-                    LValue.Value%= RValue;
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value%=RValue;
-#else
-                throw "Need to write code for operation with negative number";//Placeholder
-#endif
-                return LValue;
-        }
-
-        /// <summary>
-        /// %= Operation with Integer Value
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator%=(MirroredInt& LValue, MirroredInt RValue)
-        {
-            if(LValue.IsZero())
-                LValue.Value = 0; 
-            else
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            {
-                if(IsNegative)
-                    throw "Need to write code for operation with negative number";//Placeholder
-                else
-                    LValue.Value%= RValue.Value;
+                {
+                    LValue.Value = -RValue;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if(LValue.Value==NegativeRep)
+                        throw "MirroredInt value has underflowed";
+		#endif
+                }
             }
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value%=RValue.Value;
-#else
-                throw "Need to write code for operation with negative number";//Placeholder
-#endif 
-            return LValue;
+			else if(LValue.Value<0)
+            {
+                //-5.XXXX - -7 = 1.XXXX 
+                //-5.XXXX - -6 = 0.XXXX            
+                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
+                //-5.XXXX - -4 = -1.XXXX
+                if(RValue==LValue.Value)
+                    LValue.Value = NegativeRep;
+                else if(RValue<LValue.Value)
+                    LValue.Value -= RValue.Value - 1;
+                else//(RValue>=LValue.Value)
+                {
+                    LValue.Value -= RValue;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if(LValue.Value==NegativeRep)
+                        throw "MirroredInt value has underflowed";
+		#endif
+                }
+            }
+            else
+            {
+                //5.XXXX - -5 = 10.XXXX
+                //5.XXXX - 5 = 0.XXXX
+                //5.XXXX - 6 = -0.XXXX (Flips to other side)
+                //5.XXXX - 7 = -1.XXXX
+                int InversionPoint = LValue.Value + 1;
+                if(RValue==InversionPoint)
+                    LValue.Value = NegativeRep;
+                else if(RValue>InversionPoint)
+                {
+                    LValue.Value -= RValue - 1;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if(LValue.Value==NegativeRep)
+                        throw "MirroredInt value has underflowed";
+		#endif
+                } 
+                else
+                    LValue.Value += RValue;
+            }
+    #else
+            else
+			    throw "Need to write code for operation";//Placeholder
+    #endif
+			return LValue;
         }
-
-        /// <summary>
-        /// Modulus Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator%(MirroredInt LValue, IntType RValue)
-        {
-            return LValue%=RValue;
-        }
-
-        /// <summary>
-        /// Modulus Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        friend MirroredInt operator%(MirroredInt LValue, MirroredInt RValue)
-        {
-            return LValue%=RValue;
-        }
-
+		
+        friend MirroredInt& operator-=(MirroredInt& LValue, int RValue) { return RightSideIntSubOperation(LValue, RValue); }
+		friend MirroredInt& operator-=(MirroredInt& LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
+        friend MirroredInt operator-(MirroredInt LValue, int RValue) { return RightSideIntSubOperation(LValue, RValue); }
+		friend MirroredInt operator-(MirroredInt LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
+        friend MirroredInt operator-(int RValue, MirroredInt LValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
+		friend MirroredInt operator-(signed long long RValue, MirroredInt LValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
 #pragma endregion IntegerOperations
 
 #pragma region BitwiseOperations
-
+    #if defined(MirroredInt_EnableBitwiseOverride)
         /// <summary>
         /// Bitwise XOR Operation
         /// </summary>
@@ -1263,7 +1322,7 @@ namespace BlazesRusCode
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator^=(MirroredInt& LValue, IntType RValue)
+        static MirroredInt RightSideIntXorOperation(MirroredInt& LValue, IntType& RValue)
         {
             if(LValue==NegativeZero)
                 LValue.Value = 0;
@@ -1281,6 +1340,111 @@ namespace BlazesRusCode
                 return LValue;
         }
 
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt RightSideIntOrOperation(MirroredInt& LValue, IntType& RValue)
+        {
+            if(LValue==NegativeZero)
+                LValue.Value = 0;
+
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(IsNegative)
+                throw "Need to write code for operation with negative number";//Placeholder
+            else
+                LValue.Value|= RValue;
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue.Value|=RValue;
+#else
+            throw "Need to write code for operation with negative number";//Placeholder
+#endif
+                return LValue;
+        }
+
+        /// <summary>
+        /// Bitwise And Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt RightSideIntAndOperation(MirroredInt& LValue, IntType& RValue)
+        {
+            if(LValue==NegativeZero)
+                LValue.Value = 0;
+
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(IsNegative)
+                throw "Need to write code for operation with negative number";//Placeholder
+            else
+                LValue.Value&= RValue;
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue.Value&=RValue;
+#else
+            throw "Need to write code for operation with negative number";//Placeholder
+#endif
+                return LValue;
+        }
+	
+        /// <summary>
+        /// Bitwise XOR Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator^(MirroredInt LValue, int RValue){ return RightSideIntXorOperation(LValue, RValue); }
+		friend MirroredInt operator^(MirroredInt LValue, signed long long RValue){ return RightSideIntXorOperation(LValue, RValue); }
+	
+        /// <summary>
+        /// Bitwise XOR Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator^=(MirroredInt& LValue, int RValue){ return RightSideIntXorOperation(LValue, RValue); }
+        friend MirroredInt operator^=(MirroredInt& LValue, signed long long RValue){ return RightSideIntXorOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator|(MirroredInt LValue, int RValue){ return RightSideIntOrOperation(LValue, RValue); }
+        friend MirroredInt operator|(MirroredInt LValue, signed long long RValue){ return RightSideIntOrOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        friend MirroredInt operator|=(MirroredInt& LValue, int RValue){ return RightSideIntOrOperation(LValue, RValue); }
+        friend MirroredInt operator|=(MirroredInt& LValue, signed long long RValue){ return RightSideIntOrOperation(LValue, RValue); }
+		
+        /// <summary>
+        /// Bitwise And Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator&(MirroredInt LValue, int RValue){ return RightSideIntAndOperation(LValue, RValue); }
+        friend MirroredInt operator&(MirroredInt LValue, signed long long RValue){ return RightSideIntAndOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Bitwise And Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend MirroredInt operator&=(MirroredInt& LValue, int RValue){ return RightSideIntAndOperation(LValue, RValue); }
+        friend MirroredInt operator&=(MirroredInt& LValue, signed long long RValue){ return RightSideIntAndOperation(LValue, RValue); }
+	
         /// <summary>
         /// Bitwise XOR Operation
         /// </summary>
@@ -1312,46 +1476,9 @@ namespace BlazesRusCode
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        friend MirroredInt operator^(MirroredInt LValue, IntType RValue)
-        {
-            return LValue^=RValue;
-        }
-
-        /// <summary>
-        /// Bitwise XOR Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
         friend MirroredInt operator^(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue^=RValue;
-        }
-
-        /// <summary>
-        /// Bitwise Or Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator|=(MirroredInt& LValue, IntType RValue)
-        {
-            if(LValue==NegativeZero)
-                LValue.Value = 0;
-
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            if(IsNegative)
-                throw "Need to write code for operation with negative number";//Placeholder
-            else
-                LValue.Value|= RValue;
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value|=RValue;
-#else
-            throw "Need to write code for operation with negative number";//Placeholder
-#endif
-                return LValue;
         }
 
         /// <summary>
@@ -1384,46 +1511,9 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator|(MirroredInt LValue, IntType RValue)
-        {
-            return LValue|=RValue;
-        }
-
-        /// <summary>
-        /// Bitwise Or Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
         friend MirroredInt operator|(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue|=RValue;
-        }
-
-        /// <summary>
-        /// Bitwise And Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator&=(MirroredInt& LValue, IntType RValue)
-        {
-            if(LValue==NegativeZero)
-                LValue.Value = 0;
-
-#if defined(BlazesMirroredInt_UsePseudoBitSet)
-            if(IsNegative)
-                throw "Need to write code for operation with negative number";//Placeholder
-            else
-                LValue.Value&= RValue;
-#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value&=RValue;
-#else
-            throw "Need to write code for operation with negative number";//Placeholder
-#endif
-                return LValue;
         }
 
         /// <summary>
@@ -1458,10 +1548,33 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        template<typename IntType>
-        friend MirroredInt operator&(MirroredInt LValue, IntType RValue)
+        friend MirroredInt operator&(MirroredInt LValue, MirroredInt RValue)
         {
             return LValue&=RValue;
+        }
+		
+        /// <summary>
+        /// Bitwise XOR Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static MirroredInt LeftSideIntXorOperation(IntType& LValue, MirroredInt& RValue)
+        {
+			LValue ^= RValue.GetValue();
+        }
+
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        static int LeftSideIntOrOperation(MirroredInt& LValue, IntType& RValue)
+        {
+			LValue |= RValue.GetValue();
         }
 
         /// <summary>
@@ -1470,11 +1583,67 @@ namespace BlazesRusCode
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt operator&(MirroredInt LValue, MirroredInt RValue)
+        template<typename IntType>
+        static int LeftSideIntAndOperation(MirroredInt& LValue, IntType& RValue)
         {
-            return LValue&=RValue;
+			LValue &= RValue.GetValue();
         }
+	
+        /// <summary>
+        /// Bitwise XOR Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend int operator^(int LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
+		friend int operator^(signed long long LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
+	
+        /// <summary>
+        /// Bitwise XOR Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend int operator^=(int& LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
+        friend int operator^=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntXorOperation(LValue, RValue); }
 
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend int operator|(int LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+        friend int operator|(signed long long LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Bitwise Or Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        friend int operator|=(int& LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+        friend int operator|=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntOrOperation(LValue, RValue); }
+		
+        /// <summary>
+        /// Bitwise And Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend int operator&(int LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&(signed long long LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+
+        /// <summary>
+        /// Bitwise And Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>MirroredInt</returns>
+        friend int operator&=(int& LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+        friend int operator&=(signed long long& LValue, MirroredInt LValue){ return LeftSideIntAndOperation(LValue, RValue); }
+    #endif
 #pragma endregion BitwiseOperations
 
 #pragma region OtherOperators
