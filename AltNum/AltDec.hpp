@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -4669,6 +4669,87 @@ public:
         friend AltDec operator/=(AltDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
 
     #pragma endregion Main Operator Overrides
+
+    #pragma endregion Other Operators
+        /// <summary>
+        /// Negative Unary Operator(Flips negative status)
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>AltDec</returns>
+        friend AltDec& operator-(AltDec& self)
+        {
+            self.SwapNegativeStatus(); return self;
+        }
+
+        /// <summary>
+        /// ++AltDec Operator
+        /// </summary>
+        /// <returns>AltDec &</returns>
+        AltDec& operator ++()
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+#endif
+            if (DecimalHalf == 0)
+                ++IntValue.Value;
+            else if (IntValue == NegativeRep)
+                IntValue = MirroredInt::Zero;
+            else
+                ++IntValue.Value;
+            return *this;
+        }
+
+        /// <summary>
+        /// ++AltDec Operator
+        /// </summary>
+        /// <returns>AltDec &</returns>
+        AltDec& operator --()
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+#endif
+            if (DecimalHalf == 0)
+                --IntValue.Value;
+            else if (IntValue.Value == 0)
+                IntValue = NegativeRep;
+            else
+                --IntValue.Value;
+            return *this;
+        }
+
+        /// <summary>
+        /// AltDec++ Operator
+        /// </summary>
+        /// <returns>AltDec</returns>
+        AltDec operator ++(int)
+        {
+            AltDec tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// AltDec-- Operator
+        /// </summary>
+        /// <returns>AltDec</returns>
+        AltDec operator --(int)
+        {
+            AltDec tmp(*this);
+            --* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// AltDec* Operator
+        /// </summary>
+        /// <returns>AltDec &</returns>
+        AltDec& operator *()
+        {
+            return *this;
+        }
+    #pragma endregion Other Operators
 
     #pragma region Modulus Operations
     #if defined(AltNum_EnableModulusOverride)
