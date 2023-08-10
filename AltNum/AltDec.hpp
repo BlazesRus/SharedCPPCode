@@ -535,7 +535,7 @@ namespace BlazesRusCode
         static const signed int AlternativeFractionalLowerBound = -2147483640;
 		//Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
 		static const signed int InfinityBasedLowerBound = -2147483644;
-	#if defined(AltNum_EnableInfinityRep)
+	#if defined(AltNum_EnableNaN)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
         //Is NaN when DecimalHalf==2147483646
@@ -848,6 +848,7 @@ namespace BlazesRusCode
             IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
         }
 		
+	#pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
         #if defined(AltNum_EnableMediumDecBasedSetValues)
         void SetPiValFromMediumDec(MediumDec Value)
@@ -872,7 +873,9 @@ namespace BlazesRusCode
             ExtraRep = PiRep;
         }
     #endif
+	#pragma endregion PiNum Setters
 
+	#pragma region ENum Setters
     #if defined(AltNum_EnableERep)
         #if defined(AltNum_EnableMediumDecBasedSetValues)
         void SetEValFromMediumDec(MediumDec Value)
@@ -2676,16 +2679,28 @@ public:
                 return false;
         }
 		
-		template<typename IntType>
-        static bool EqualToInt(AltDec& LValue, IntType& RValue)
+        /// <summary>
+        /// Equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+        template<typename IntType>
+        static bool RightSideIntEqualTo(AltDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
                 LValue.ConvertToNormType();
             return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
 		}
 		
+        /// <summary>
+        /// Not Equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool NotEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
                 LValue.ConvertToNormType();
@@ -2695,8 +2710,14 @@ public:
                 return true;
 		}
 		
+        /// <summary>
+        /// Less than operation between <see cref="AltDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 		template<typename IntType>
-        static bool LessThanToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntLessThan(AltDec& LValue, IntType& RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -2734,8 +2755,14 @@ public:
             return false;
 		}
 		
+        /// <summary>
+        /// Less than or Equal operation between <see cref="AltDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool LessThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType& RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -2780,7 +2807,7 @@ public:
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntGreaterThan(AltDec& LValue, IntType& RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -2825,7 +2852,7 @@ public:
         /// <param name="RValue">RightSide integer RValue</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType& RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -2863,54 +2890,47 @@ public:
             return false;
 		}
 	
+        /// <summary>
+        /// Equal to operation between Integer Type and <see cref="AltDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool EqualToInt(IntType& LValue, AltDec& RValue) { return EqualToInt(RValue, LValue); }
+        static bool LeftSideIntEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
 	
+        /// <summary>
+        /// Not equal to operation between Integer Type and <see cref="AltDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool NotEqualToInt(IntType& LValue, AltDec& RValue) { return NotEqualToInt(RValue, LValue); }
+        static bool LeftSideIntNotEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
 		
+        /// <summary>
+        /// Less than operation between Integer Type and <see cref="AltDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool LessThanToInt(IntType& LValue, AltDec& RValue) { return GreaterThanToInt(RValue, LValue); }
+        static bool LeftSideIntLessThan(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
 		
+        /// <summary>
+        /// Less than or equal operation between Integer Type and <see cref="AltDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool LessThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return GreaterThanOrEqualToInt(RValue, LValue); }
+        static bool LeftSideIntLessThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
 		
+        /// <summary>
+        /// Greater than operation between Integer Type and <see cref="AltDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 		template<typename IntType>
-        static bool GreaterThanToInt(IntType& LValue, AltDec& RValue) { return LessThanToInt(RValue, LValue); }
+        static bool LeftSideIntGreaterThan(IntType& LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
 		
         /// <summary>
         /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
         /// <returns>bool</returns>
 		template<typename IntType>
-        static bool GreaterThanOrEqualToInt(IntType& LValue, AltDec& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
-	
-        //Second set of comparison operators messes up primary comparison operators
-//		friend bool operator==(int LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
-//		friend bool operator==(signed long long LValue, AltDec RValue) { return EqualToInt(LValue, RValue); }
-//		friend bool operator!=(int LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
-//		friend bool operator!=(signed long long LValue, AltDec RValue) { return NotEqualToInt(LValue, RValue); }
-//		friend bool operator<(int LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
-//		friend bool operator<(signed long long LValue, AltDec RValue) { return LessThanToInt(LValue, RValue); }
-//		friend bool operator<=(int LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator<=(signed long long LValue, AltDec RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator>(int LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
-//		friend bool operator>(signed long long LValue, AltDec RValue) { return GreaterThanToInt(LValue, RValue); }
-//		friend bool operator>=(int LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator>=(signed long long LValue, AltDec RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-//		
-//		friend bool operator==(AltDec LValue, int RValue) { return EqualToInt(LValue, RValue); }
-//		friend bool operator==(AltDec LValue, signed long long RValue) { return EqualToInt(LValue, RValue); }
-//		friend bool operator!=(AltDec LValue, int RValue) { return NotEqualToInt(LValue, RValue); }
-//		friend bool operator!=(AltDec LValue, signed long long RValue) { return NotEqualToInt(LValue, RValue); }
-//		friend bool operator<(AltDec LValue, int RValue) { return LessThanToInt(LValue, RValue); }
-//		friend bool operator<(AltDec LValue, signed long long RValue) { return LessThanToInt(LValue, RValue); }
-//		friend bool operator<=(AltDec LValue, int RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator<=(AltDec LValue, signed long long RValue) { return LessThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator>(AltDec LValue, int RValue) { return GreaterThanToInt(LValue, RValue); }
-//		friend bool operator>(AltDec LValue, signed long long RValue) { return GreaterThanToInt(LValue, RValue); }
-//		friend bool operator>=(AltDec LValue, int RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
-//		friend bool operator>=(AltDec LValue, signed long long RValue) { return GreaterThanOrEqualToInt(LValue, RValue); }
+        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
    #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Operations

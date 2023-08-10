@@ -359,24 +359,48 @@ namespace BlazesRusCode
 #endif
         }
 
-		template<typename IntType>
+        /// <summary>
+        /// Equal to operation between <see cref="MirroredInt"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+        template<typename IntType>
         static bool RightSideIntEqualTo(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()==RValue;
 		}
 		
+        /// <summary>
+        /// Not Equal to operation between <see cref="MirroredInt"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool RightSideIntNotEqualTo(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()!=RValue;
 		}
 		
+        /// <summary>
+        /// Less than operation between <see cref="MirroredInt"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 		template<typename IntType>
         static bool RightSideIntLessThan(MirroredInt& LValue, IntType& RValue)
         {
             return LValue.GetValue()<RValue;
 		}
 		
+        /// <summary>
+        /// Less than or equal to operation between <see cref="MirroredInt"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool RightSideIntLessThanOrEqual(MirroredInt& LValue, IntType& RValue)
         {
@@ -407,20 +431,36 @@ namespace BlazesRusCode
             return LValue.GetValue()>=RValue;
 		}
 	
+        /// <summary>
+        /// Equal to operation between Integer Type and <see cref="MirroredInt"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool LeftSideIntEqualTo(IntType& LValue, MirroredInt& RValue) { return RightSideIntEqualTo(RValue, LValue); }
 	
+        /// <summary>
+        /// Not equal to operation between Integer Type and <see cref="MirroredInt"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool LeftSideIntNotEqualTo(IntType& LValue, MirroredInt& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
 		
+        /// <summary>
+        /// Less than operation between Integer Type and <see cref="MirroredInt"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool LeftSideIntLessThan(IntType& LValue, MirroredInt& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
 		
+        /// <summary>
+        /// Less than or equal operation between Integer Type and <see cref="MirroredInt"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
         static bool LeftSideIntLessThanOrEqual(IntType& LValue, MirroredInt& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
 		
         /// <summary>
-        /// Greater than operation between <see cref="MirroredInt"/> and Integer Type.
+        /// Greater than operation between Integer Type and <see cref="MirroredInt"/> 
         /// </summary>
         /// <returns>bool</returns>
 		template<typename IntType>
