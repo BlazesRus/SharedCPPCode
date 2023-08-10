@@ -327,7 +327,7 @@ namespace BlazesRusCode
     class DLL_API AltDec
     {
     public:
-    #undefine MediumDecVariant
+    #undef MediumDecVariant
     #define MediumDecVariant AltDec
 #if defined(AltNum_EnableModulusOverride)
 		class ModRes
@@ -4582,14 +4582,6 @@ public:
         friend AltDec operator*=(AltDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// *= Operation Between AltDec and Integer Value (from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator*=(AltDec* self, signed long long Value) { return IntMultOp(**self, Value); }
-
-        /// <summary>
         /// Division Operation Between AltDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
@@ -4604,8 +4596,6 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator/=(AltDec& self, signed long long Value) { return IntDivOp(self, Value); }
-
-        friend AltDec operator/=(AltDec* self, signed long long Value) { return IntDivOp(**self, Value); }
     
         friend AltDec operator+(AltDec self, float Value) { return self + (AltDec)Value; }
         friend AltDec operator-(AltDec self, float Value) { return self - (AltDec)Value; }
@@ -4830,7 +4820,7 @@ public:
             return self;
         }
     #endif
-    #pragman endregion Bitwise Functions
+    #pragma endregion Bitwise Functions
 
 	#pragma region Math Etc Functions
         /// <summary>
@@ -6653,11 +6643,10 @@ public:
         std::string Value = (std::string)IntValue;
         if (DecimalHalf != 0)
         {
-			int CurrentSection = IntValue;
 			unsigned __int8 CurrentDigit;
 			std::string DecBuffer = "";
             Value += ".";
-            CurrentSection = DecimalHalf;
+            int CurrentSection = DecimalHalf;
             for (__int8 Index = 8; Index >= 0; --Index)
             {
                 CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
