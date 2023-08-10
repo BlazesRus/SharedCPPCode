@@ -3102,7 +3102,85 @@ public:
         void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
 
     #pragma endregion NormalRep Integer Division Operations
-	
+
+    #pragma region NormalRep Integer Multiplication Operations
+    	
+		/// <summary>
+        /// Partial Multiplication Operation Between AltDec and Integer Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType>
+        void PartialIntMultOp(IntType& Value)
+        {
+            if (DecimalHalf == 0)
+            {
+                IntValue *= Value;
+            }
+            else
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                SRep *= Value;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    DecimalHalf = (signed int)SRep;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType>
+        void BasicIntMultOp(IntType& Value)
+        {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (Value == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType>
+        void BasicIntMultOpV2(IntType& Value)
+        {
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (Value == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+
+    #pragma endregion NormalRep Integer Multiplication Operations
+
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
         //Return true if divide into zero
@@ -3211,6 +3289,210 @@ public:
 
         AltDec DivideAsCopy(AltDec Value) { return DivOp(Value); }
 
+		/// <summary>
+        /// Basic Multiplication Operation(main code block)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		bool BasicMultOpPt2(AltDec& Value)
+		{
+            if (DecimalHalf == 0)
+            {
+                if (IntValue == 1)
+                {
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+                }
+                else if (Value.DecimalHalf == 0)
+                {
+                    IntValue *= Value.IntValue;
+                }
+                else
+                {
+                    Value.PartialIntMultOp(IntValue);
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+                }
+				return false;
+            }
+            else if (IntValue == 0)
+            {
+                __int64 SRep = (__int64)DecimalHalf;
+                SRep *= Value.DecimalHalf;
+                SRep /= AltDec::DecimalOverflowX;
+                if (Value.IntValue == 0)
+                {
+                    DecimalHalf = (signed int)SRep;
+					return DecimalHalf==0?true:false;
+                }
+                else
+                {
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    if (SRep >= AltDec::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
+                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        IntValue = OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
+                }
+            }
+            else if (IntValue == AltDec::NegativeRep)
+            {
+                __int64 SRep = (__int64)DecimalHalf;
+                SRep *= Value.DecimalHalf;
+                SRep /= AltDec::DecimalOverflowX;
+                if (Value.IntValue == 0)
+                {
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    if (SRep >= AltDec::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
+                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        IntValue = -OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
+                }
+            }
+            else
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    IntValue *= -1;
+                }
+                if (Value.IntValue == 0)
+                {
+                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.DecimalHalf;
+                    SRep /= AltDec::DecimalOverflowX;
+                    if (SRep >= AltDec::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
+                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
+                }
+                else if (Value.DecimalHalf == 0)//Y is integer
+                {
+                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue.GetValue();
+                    if (SRep >= AltDec::DecimalOverflowX)
+                    {
+                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
+                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        IntValue = (signed int)OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
+                    }
+                    else
+                    {
+                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
+                    }
+                }
+                else
+                {
+                    //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue.GetValue();//SRep holds __int64 version of X.Y * Z
+                    //X.Y *.V
+                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
+                    Temp04 /= AltDec::DecimalOverflow;
+                    //Temp04 holds __int64 version of .Y * .V
+                    __int64 IntegerRep = SRep + Temp03 + Temp04;
+                    __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? AltDec::NegativeRep : 0; }
+                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
+                    DecimalHalf = (signed int)IntegerRep;
+                }
+            }
+            if(DecimalHalf==0&&IntValue==0)
+                return true;
+            else
+                return false;
+		}
+		
+		/// <summary>
+        /// Basic Multiplication Operation(without checking for special representation variations or zero)
+		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		bool UnsignedBasicMultOp(AltDec& Value)
+		{
+            if (Value.IntValue < 0)
+            {
+                Value.SwapNegativeStatus();
+                SwapNegativeStatus();
+            }
+			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
+				DecimalHalf = 1;
+			else
+				return false;
+            return true;
+		}
+
+		/// <summary>
+        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		bool BasicMultOp(AltDec& Value)
+        {//Warning:Modifies Value to make it a positive variable
+        //Only checking for zero multiplication in main multiplication method
+        //Not checking for special representation variations in this method(closer to MediumDec operation code)
+            if (Value.IntValue < 0)
+            {
+                Value.SwapNegativeStatus();
+                SwapNegativeStatus();
+            }
+            return UnsignedBasicMultOp(Value);
+        }
+
+		void CatchAllMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			Value.ConvertToNormType(RRep);
+			BasicMultOp(Value);
+		}
+		
+		void CatchAllMultiplication(AltDec& Value, RepType& SameRep)
+		{
+            ConvertToNormType(SameRep);
+			Value.ConvertToNormType(SameRep);
+			BasicMultOp(Value);
+		}
+		
+		void CatchAllMultiplication(AltDec& Value)
+		{
+			ConvertToNormType();
+			Value.ConvertToNormType();
+			BasicMultOp(Value);
+		}
+
         /// <summary>
         /// Multiplication Operation
         /// </summary>
@@ -3219,7 +3501,7 @@ public:
         /// <returns>AltDec&</returns>
         static AltDec& MultOp(AltDec& self, AltDec& Value);
 
-        AltDec MultipleAsCopy(AltDec Value) { return MultOp(Value); }
+        AltDec MultipleAsCopy(AltDec& self, AltDec& Value) { return MultOp(self, Value); }
 
         /// <summary>
         /// Addition Operation
@@ -3518,316 +3800,6 @@ public:
         template<typename IntType>
         static AltDec& IntDivOp(AltDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
-		/// <summary>
-        /// Basic Multiplication Operation(main code block)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		bool UnsignedBasicMultOp(AltDec& Value)
-		{
-            if (DecimalHalf == 0)
-            {
-                if (IntValue == 1)
-                {
-                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                }
-                else if (Value.DecimalHalf == 0)
-                {
-                    IntValue *= Value.IntValue;
-                }
-                else
-                {
-                    Value.PartialIntMultOp(IntValue);
-                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                }
-				return false;
-            }
-            else if (IntValue == 0)
-            {
-                __int64 SRep = (__int64)DecimalHalf;
-                SRep *= Value.DecimalHalf;
-                SRep /= AltDec::DecimalOverflowX;
-                if (Value.IntValue == 0)
-                {
-                    DecimalHalf = (signed int)SRep;
-					return DecimalHalf==0?true:false;
-                }
-                else
-                {
-                    SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = OverflowVal;
-                        DecimalHalf = (signed int)SRep;
-						return false;
-                    }
-                    else
-                    {
-                        DecimalHalf = (signed int)SRep;
-						return DecimalHalf==0?true:false;
-                    }
-                }
-            }
-            else if (IntValue == AltDec::NegativeRep)
-            {
-                __int64 SRep = (__int64)DecimalHalf;
-                SRep *= Value.DecimalHalf;
-                SRep /= AltDec::DecimalOverflowX;
-                if (Value.IntValue == 0)
-                {
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    SRep += (__int64)DecimalHalf * Value.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = -OverflowVal;
-                        DecimalHalf = (signed int)SRep;
-						return false;
-                    }
-                    else
-                    {
-                        DecimalHalf = (signed int)SRep;
-						return DecimalHalf==0?true:false;
-                    }
-                }
-            }
-            else
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    IntValue *= -1;
-                }
-                if (Value.IntValue == 0)
-                {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.DecimalHalf;
-                    SRep /= AltDec::DecimalOverflowX;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
-                        DecimalHalf = (signed int)SRep;
-						return false;
-                    }
-                    else
-                    {
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
-                        DecimalHalf = (signed int)SRep;
-						return DecimalHalf==0?true:false;
-                    }
-                }
-                else if (Value.DecimalHalf == 0)//Y is integer
-                {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = (signed int)OverflowVal;
-                        DecimalHalf = (signed int)SRep;
-						return false;
-                    }
-                    else
-                    {
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
-                        DecimalHalf = (signed int)SRep;
-						return DecimalHalf==0?true:false;
-                    }
-                }
-                else
-                {
-                    //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();//SRep holds __int64 version of X.Y * Z
-                    //X.Y *.V
-                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
-                    __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
-                    Temp04 /= AltDec::DecimalOverflow;
-                    //Temp04 holds __int64 version of .Y * .V
-                    __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? AltDec::NegativeRep : 0; }
-                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
-                    DecimalHalf = (signed int)IntegerRep;
-                }
-            }
-            if(DecimalHalf==0&&IntValue==0)
-                return true;
-            else
-                return false;
-		}
-		
-		/// <summary>
-        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		bool BasicMultOp(AltDec& Value)
-        {//Warning:Modifies Value to make it a positive variable
-        //Only checking for zero multiplication in main multiplication method
-        //Not checking for special representation variations in this method(closer to MediumDec operation code)
-            if (Value.IntValue < 0)
-            {
-                Value.SwapNegativeStatus();
-                SwapNegativeStatus();
-            }
-			return UnsignedBasicMultOp(Value);
-        }
-
-		/// <summary>
-        /// Basic Multiplication Operation(without checking for special representation variations or zero)
-		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		bool BasicMultOp(AltDec& Value)
-		{
-			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
-			{	
-				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
-			}
-#else*/
-				DecimalHalf = 1;
-			else
-				return false;
-//#endif
-			return true;
-		}
-
-        //BasicMultOp without negative number check
-		bool BasicMultOpV2(AltDec& Value)
-		{
-			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
-			{	
-				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
-			}
-#else*/
-				DecimalHalf = 1;
-			else
-				return false;
-//#endif
-			return true;
-		}
-
-protected:
-		void CatchAllMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
-		{
-			ConvertToNormType(LRep);
-			Value.ConvertToNormType(RRep);
-			BasicMultOp(Value);
-		}
-		
-		void CatchAllMultiplication(AltDec& Value, RepType& SameRep)
-		{
-            ConvertToNormType(SameRep);
-			Value.ConvertToNormType(SameRep);
-			BasicMultOp(Value);
-		}
-		
-		void CatchAllMultiplication(AltDec& Value)
-		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
-			BasicMultOp(Value);
-		}
-public:
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& MultOp(AltDec& self, AltDec& Value);
-
-		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 coPies of variables)
-		static AltDec& MultOpV2(AltDec& self, AltDec Value)
-		{
-			return MultOp(self, Value);
-		}
-		
-		/// <summary>
-        /// Partial Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        template<typename IntType>
-        void PartialIntMultOp(IntType& Value)
-        {
-            if (DecimalHalf == 0)
-            {
-                IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        template<typename IntType>
-        void BasicIntMultOp(IntType& Value)
-        {
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
-            if (IntValue == 0 && DecimalHalf == 0)
-                return;
-            if (Value == 0)
-                SetAsZero();
-            else
-                PartialIntMultOp(Value);
-        }
-
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        template<typename IntType>
-        void BasicIntMultOpV2(IntType& Value)
-        {
-            if (IntValue == 0 && DecimalHalf == 0)
-                return;
-            if (Value == 0)
-                SetAsZero();
-            else
-                PartialIntMultOp(Value);
-        }
-
         template<typename IntType>
         static AltDec& IntMultOpPt2(IntType& Value)
         {
@@ -4003,47 +3975,6 @@ public:
         static AltDec& IntMultOp(AltDec& self, IntType& Value) { return self.IntMultOp(Value); }
 
         static AltDec& MultOp(AltDec& self, int& Value) { return self.IntMultOp(Value); }
-
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        template<typename IntType>
-        static AltDec& UnsignedMultOp(AltDec& self, IntType& Value)
-        {
-            if (self == Zero) {}
-            else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
-            else if (self.DecimalHalf == 0)
-            {
-                self.IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
 
         void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
     #pragma endregion Multiplication/Division Operations
