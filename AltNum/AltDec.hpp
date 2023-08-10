@@ -2999,18 +2999,18 @@ protected:
         }
 public:
 		
-		void PartialDivOp(signed int& Value) { return PartialIntDivOp(Value); }
+		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
 		AltDec PartialDiv(signed int Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
-		void PartialDivOp(unsigned int& Value) { return PartialIntDivOp(Value); }
+		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
 		AltDec PartialDiv(unsigned int Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
-		void PartialDivOp(signed long long& Value) { return PartialIntDivOp(Value); }
+		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
 		AltDec PartialDiv(signed long long Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
         AltDec PartialDiv(unsigned long long Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
-        void PartialDivOp(unsigned long long& Value) { return PartialDivOp(Value); }
+        void PartialDivOp(unsigned long long& Value) { PartialDivOp(Value); }
 
 protected:
         template<typename IntType>
-        AltDec& BasicIntDivOp(IntType& Value)
+        void BasicIntDivOp(IntType& Value)
         {
             if (Value == 0)
             {
@@ -3033,7 +3033,7 @@ protected:
         }
 
         template<typename IntType>
-        AltDec& BasicUnsignedIntDivOp(IntType& Value)
+        void BasicUnsignedIntDivOp(IntType& Value)
         {
             if (Value == 0)
             {
@@ -3047,19 +3047,22 @@ protected:
                 return;
             PartialIntDivOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-            return *this;
         }
 public:
-		
-		AltDec& BasicDivOp(int& Value) { return BasicIntDivOp(Value); }
-		AltDec BasicDiv(int Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
-		AltDec& BasicDivOp(unsigned int& Value) { return BasicUnsignedIntDivOp(Value); }
-		AltDec BasicDiv(unsigned int Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		AltDec& BasicDivOp(signed long long& Value) { return BasicIntDivOp(Value); }
-		AltDec BasicDiv(signed long long Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
-        AltDec BasicDiv(unsigned long long Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-        AltDec& BasicDivOp(unsigned long long& Value) { return BasicUnsignedIntDivOp(Value); }
-		
+
+		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
+		AltDec BasicDiv(signed int Value)
+        { AltDec self = *this; BasicIntDivOp(Value); return self; }
+		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		AltDec BasicDiv(unsigned int Value)
+        { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
+		AltDec BasicDiv(signed long long Value)
+        { AltDec self = *this; BasicIntDivOp(Value); return self; }
+        AltDec BasicDiv(unsigned long long Value)
+        { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+
 protected:
         template<typename IntType>
         void BasicIntDivOpV2(IntType& Value)
@@ -3085,19 +3088,18 @@ protected:
         }
 public:
 		
-		AltDec& BasicDivOpV2(signed int& Value) { return BasicIntDivOpV2(Value); }
+		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
 		AltDec BasicDivV2(signed int Value)
         { AltDec self = *this; BasicIntDivOpV2(Value); return self; }
-		AltDec& BasicDivOpV2(unsigned int& Value)
-        { return BasicUnsignedIntDivOpV2(Value); }
+		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
 		AltDec BasicDivV2(unsigned int Value)
         { AltDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-		AltDec& BasicDivOpV2(signed long long& Value) { return BasicIntDivOpV2(Value); }
+		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
 		AltDec BasicDivV2(signed long long Value)
         { AltDec self = *this; BasicIntDivOpV2(Value); return self; }
         AltDec BasicDivV2(unsigned long long Value)
         { AltDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-        AltDec& BasicDivOpV2(unsigned long long& Value) { return BasicUnsignedIntDivOpV2(Value); }
+        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
 
     #pragma endregion NormalRep Integer Division Operations
 	
@@ -3173,7 +3175,7 @@ public:
 			BasicDivOp(Value);
 		}
 
-        void CatchAllDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        AltDec CatchAllDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
         { AltDec self = *this; CatchAllDivision(Value, LRep, RRep); return self; }
 		
 		void CatchAllDivision(AltDec& Value, RepType& SameRep)
@@ -3183,7 +3185,7 @@ public:
 			BasicDivOp(Value);
 		}
 
-        void CatchAllDivisionAsCopies(AltDec Value, RepType& SameRep)
+        AltDec CatchAllDivisionAsCopies(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllDivision(Value, SameRep); return self; }
 	
 	   void CatchAllDivision(AltDec& Value)
@@ -3193,7 +3195,7 @@ public:
 		   BasicDivOp(Value);
 	   }
 
-        void CatchAllDivisionAsCopies(AltDec Value)
+        AltDec CatchAllDivisionAsCopies(AltDec Value)
         { AltDec self = *this; CatchAllDivision(Value); return self; }
 
 public:
@@ -3259,13 +3261,8 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntDivOp(IntType& Value)
+        static AltDec& UnsignedIntDivOp(IntType& Value)
         {
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
             if (Value==1)
                 return;
             if (Value == 0)
@@ -3486,97 +3483,46 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
+        /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntDivOp(AltDec& self, IntType& Value) { return self.IntDivOp(Value); }
+        static AltDec& IntDivOp(IntType& Value)
+        {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            return UnsignedIntDivOp(Value);
+        }
+
+		AltDec& DivOp(signed int& Value) { return IntDivOp(Value); }
+		AltDec& DivideAsCopy(signed int Value)
+        { AltDec self = *this; return self.IntDivOp(Value);}
+		AltDec& DivOp(unsigned int& Value)
+        { return UnsignedIntDivOp(Value); }
+		AltDec& DivideAsCopy(unsigned int Value)
+        { AltDec self = *this; return self.UnsignedIntDivOp(Value);}
+		AltDec& DivOp(signed long long& Value) { return IntDivOp(Value); }
+		AltDec& DivideAsCopy(signed long long Value)
+        { AltDec self = *this; return self.IntDivOp(Value); }
+        AltDec& DivideAsCopy(unsigned long long Value)
+        { AltDec self = *this; return self.UnsignedIntDivOp(Value); }
+        AltDec& DivOp(unsigned long long& Value) { return UnsignedIntDivOp(Value); }
 
         /// <summary>
         /// Division Operation Between AltDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& UnsignedDivOp(AltDec& self, IntType& Value)
-        {
-            if (Value == 0) { throw "Target value can not be divided by zero"; }
-            else if (self == Zero) { return self; }
-            if (self.DecimalHalf == 0)
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                    self.IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * self.IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
-
-protected:
-		void CatchAllDivision(AltDec& Value, RepType& LRep, RepType& RRep)
-		{
-			ConvertToNormType(LRep);
-			Value.ConvertToNormType(RRep);
-			BasicDivOp(Value);
-		}
-		
-		void CatchAllDivision(AltDec& Value, RepType& SameRep)
-		{
-			ConvertToNormType(SameRep);
-			Value.ConvertToNormType(SameRep);
-			BasicDivOp(Value);
-		}
-	
-	   void CatchAllDivision(AltDec& Value)
-	   {
-		   ConvertToNormType();
-		   Value.ConvertToNormType();
-		   BasicDivOp(Value);
-	   }
-
-public:
-        bool RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static AltDec& IntDivOp(AltDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
 		/// <summary>
         /// Basic Multiplication Operation(main code block)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOpPt2(AltDec& Value)
+		bool UnsignedBasicMultOp(AltDec& Value)
 		{
             if (DecimalHalf == 0)
             {
@@ -3724,7 +3670,7 @@ public:
         /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOpPt1(AltDec& Value)
+		bool BasicMultOp(AltDec& Value)
         {//Warning:Modifies Value to make it a positive variable
         //Only checking for zero multiplication in main multiplication method
         //Not checking for special representation variations in this method(closer to MediumDec operation code)
@@ -3733,7 +3679,7 @@ public:
                 Value.SwapNegativeStatus();
                 SwapNegativeStatus();
             }
-			return BasicMultOpPt2(Value);
+			return UnsignedBasicMultOp(Value);
         }
 
 		/// <summary>
