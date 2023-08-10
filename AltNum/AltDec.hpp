@@ -3285,22 +3285,28 @@ public:
 		#elif defined(AltNum_EnableEFractional)
 				case RepType::EFractional:
 		#endif
+                    #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
 					break;
-		#if defined(AltNum_EnableDecimaledEFractionals)
+                    #endif
+		#if defined(AltNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv:
 		#elif defined(AltNum_EnableEFractional)
 				case RepType::IFractional:
 		#endif
+                    #if defined(AltNum_EnableImaginaryNum)
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
-					break;
+                    break;
+                    #endif
 	#endif
+    #ifdef AltNum_EnableImaginaryInfinity
 				case RepType::PositiveImaginaryInfinity:
 				case RepType::NegativeImaginaryInfinity:
 					return;
 					break;
+    #endif
 	#if defined(AltNum_EnableImaginaryNum)
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
@@ -3309,12 +3315,13 @@ public:
 						return;
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
-	#if !defined(AltNum_DisableApproachingTop)
+	    #if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-	#endif
+	    #endif
 		#if defined(AltNum_EnableApproachingDivided)
 				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
 					ConvertToNormType(LRep);
