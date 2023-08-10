@@ -187,9 +187,9 @@ AltNum_EnableUndefinedButInRange = Enable representation of unknown number betwe
 AltNum_EnableWithinMinMaxRange
 AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 
-AltNum_PreventModulusOverride
-AltNum_EnableAlternativeModulusResult
-AltNum_EnableBitwiseOverride
+AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
+AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
+AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -329,15 +329,6 @@ namespace BlazesRusCode
     public:
     #undef MediumDecVariant
     #define MediumDecVariant AltDec
-#if defined(AltNum_EnableModulusOverride)
-		class ModRes
-		{
-			//Division Result
-			MediumDecVariant DivRes;
-			//Modulo Operation Result
-			MediumDecVariant RemRes;
-		}
-#endif
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -3181,6 +3172,22 @@ public:
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
+    #pragma region NormalRep Integer Modulus Operations
+
+	#pragma endregion NormalRep Integer Modulus Operations
+
+    #pragma region NormalRep Integer Addition Operations
+
+	#pragma endregion NormalRep Integer Addition Operations
+	
+    #pragma region NormalRep Integer Subtraction Operations
+
+	#pragma endregion NormalRep Integer Subtraction Operations
+	
+    #pragma region NormalRep Integer Bitwise Operations
+
+	#pragma endregion NormalRep Integer Bitwise Operations
+
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
         //Return true if divide into zero
@@ -3799,7 +3806,9 @@ public:
         /// <returns>AltDec</returns>
         template<typename IntType>
         static AltDec& IntDivOp(AltDec& self, IntType& Value) { return self.IntDivOp(Value); }
+    #pragma endregion Division Operations
 
+    #pragma region Other Multiplication Operations
         template<typename IntType>
         static AltDec& IntMultOpPt2(IntType& Value)
         {
@@ -3963,23 +3972,30 @@ public:
             IntMultOpPt2(Value);
         }
 
-        static AltDec& MultOp(int& Value) { return IntMultOp(Value); }
-
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType>
-        static AltDec& IntMultOp(AltDec& self, IntType& Value) { return self.IntMultOp(Value); }
-
-        static AltDec& MultOp(AltDec& self, int& Value) { return self.IntMultOp(Value); }
+		AltDec& MultOp(signed int& Value) { return IntMultOp(Value); }
+		AltDec& MultOp(signed long long& Value) { return IntMultOp(Value); }
+		AltDec& MultOp(unsigned int& Value) { return UnsignedIntMultOp(Value); }
+		AltDec& MultOp(unsigned long long& Value) { return UnsignedIntMultOp(Value); }
+		
+		AltDec& MultipleAsCopy(signed int Value)
+        { AltDec self = *this; return self.IntMultOp(Value);}
+		AltDec& MultipleAsCopy(unsigned int Value)
+        { AltDec self = *this; return self.UnsignedIntMultOp(Value);}
+		AltDec MultipleAsCopy(signed long long Value)
+        { AltDec self = *this; return self.IntMultOp(Value); }
+        AltDec MultipleAsCopy(unsigned long long Value)
+        { AltDec self = *this; return self.UnsignedIntMultOp(Value); }
 
         void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
-    #pragma endregion Multiplication/Division Operations
+    #pragma endregion Other Multiplication Operations
 
-#pragma region Addition/Subtraction Operations
+    #pragma region Other Addition Operations
         /// <summary>
         /// Basic Addition Operation
         /// </summary>
@@ -4124,7 +4140,10 @@ protected:
         }
 public:
         void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+		
+    #pragma endregion Other Addition Operations
 
+    #pragma region Other Subtraction Operations
 		/// <summary>
         /// Basic Subtraction Operation
         /// </summary>
@@ -4269,7 +4288,16 @@ protected:
 		}
 public:
         void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
-#pragma endregion Addition/Subtraction Operations
+    #pragma region Other Subtraction Operations
+	
+    #pragma region Other Modulus Operations
+	#if !defined(AltNum_PreventModulusOverride)
+	
+	#if defined(AltNum_EnableAlternativeModulusResult)
+	//Return AltNumModChecker<AltDec> Result with both Remainder and division result
+	#endif
+	#endif
+    #pragma endregion Other Modulus Operations
 
     #pragma region Main Operator Overrides
         /// <summary>
@@ -6979,14 +7007,4 @@ public:
         }
     }
     #pragma endregion String Function Source
-
-#if defined(AltNum_EnableAlternativeModulusResult)
-    /// <summary>
-    /// (AltDec Version)Performs remainder operation then saves division result
-    /// C = A - B * (A / B)
-    /// </summary>
-    class DLL_API AltModChecker : public AltNumModChecker<AltDec>
-    {
-    };
-#endif
 }
