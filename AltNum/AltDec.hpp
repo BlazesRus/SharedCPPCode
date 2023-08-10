@@ -6705,8 +6705,8 @@ public:
             ConvertToNormType(repType);
 			return BasicToStringOp();
 			break;
-        #endif
             #endif
+        #endif
 	#endif
     #if defined(AltNum_EnableFractionals)
             return BasicToStringOp()+"/"
@@ -6929,8 +6929,8 @@ public:
             ConvertToNormType(repType);
 			return BasicToFullStringOp();
 			break;
-        #endif
             #endif
+        #endif
 	#endif
     #if defined(AltNum_EnableFractionals)
             return BasicToFullStringOp()+"/"
@@ -7037,8 +7037,8 @@ public:
             ConvertToNormType(repType);
 			return BasicToFullStringOp()+"i";
 			break;
-        #endif
             #endif
+        #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
         case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
