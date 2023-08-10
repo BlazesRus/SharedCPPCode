@@ -3359,12 +3359,21 @@ public:
         /// <summary>
         /// Division Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        static AltDec& DivOp(AltDec& self, AltDec& Value);
+        AltDec& DivOp(AltDec& Value);
+		
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+		static AltDec DivOp(AltDec& self, AltDec& Value) { return self.DivOp(Value); }
 
-        AltDec DivideAsCopy(AltDec Value) { return DivOp(Value); }
+        AltDec DivisionAsCopy(AltDec Value) { return self.DivOp(Value); }
+		
+		AltDec DivisionAsCopy(AltDec self, AltDec Value) { return self.DivOp(Value); }
 
 		/// <summary>
         /// Basic Multiplication Operation(main code block)
@@ -3570,45 +3579,91 @@ public:
 			BasicMultOp(Value);
 		}
 
+        bool RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+
         /// <summary>
         /// Multiplication Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        static AltDec& MultOp(AltDec& self, AltDec& Value);
+        AltDec& MultOp(AltDec& Value);
+		
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+		static AltDec MultOp(AltDec& self, AltDec& Value) { return self.MultOp(Value); }
 
-        AltDec MultipleAsCopy(AltDec& self, AltDec& Value) { return MultOp(self, Value); }
+        AltDec MultipleAsCopy(AltDec Value) { return self.MultOp(Value); }
+		
+		AltDec MultipleAsCopy(AltDec self, AltDec Value) { return self.MultOp(Value); }
+
+        bool RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
 
         /// <summary>
         /// Addition Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        static AltDec& AddOp(AltDec& self, AltDec& Value);
+        AltDec& AddOp(AltDec& Value);
+		
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+		static AltDec AddOp(AltDec& self, AltDec& Value) { return self.AddOp(Value); }
 
-        AltDec AddAsCopy(AltDec Value) { return AddOp(Value); }
+        AltDec AddAsCopy(AltDec Value) { return self.AddOp(Value); }
+		
+		AltDec AddAsCopy(AltDec self, AltDec Value) { return self.AddOp(Value); }
+
+        bool RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
 
         /// <summary>
         /// Subtraction Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        static AltDec& SubOp(AltDec& self, AltDec& Value);
-
-        AltDec SubtractAsCopy(AltDec Value) { return SubOp(Value); }
-
+        AltDec& SubOp(AltDec& Value);
+		
         /// <summary>
         /// Subtraction Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        static AltDec& ModOp(AltDec& self, AltDec& Value);
+		static AltDec SubOp(AltDec& self, AltDec& Value) { return self.SubOp(Value); }
 
-        AltDec ModulusAsCopy(AltDec Value) { return ModOp(Value); }
+        AltDec SubtractionAsCopy(AltDec Value) { return self.SubOp(Value); }
+		
+		AltDec SubtractionAsCopy(AltDec self, AltDec Value) { return self.SubOp(Value); }
+
+    #if !defined(AltNum_PreventModulusOverride)
+	    bool RepToRepRemOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+	
+        /// <summary>
+        /// Modulus Operation (Division operation that returns the remainder result)
+        /// </summary>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+        AltDec& RemOp(AltDec& Value);
+		
+        /// <summary>
+        /// Modulus Operation (Division operation that returns the remainder result)
+        /// </summary>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+		static AltDec RemOp(AltDec& self, AltDec& Value) { return self.RemOp(Value); }
+
+        AltDec ModulusAsCopy(AltDec Value) { return self.RemOp(Value); }
+		
+		AltDec ModulusAsCopy(AltDec self, AltDec Value) { return self.RemOp(Value); }
+    #endif
 
     #pragma endregion NormalRep AltNumToAltNum Operations
 	

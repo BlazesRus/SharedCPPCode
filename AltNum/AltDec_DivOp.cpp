@@ -3,14 +3,14 @@
 /// <summary>
 /// Division Operation
 /// </summary>
-/// <param name="self">The self.</param>
+/// <param name="self">The </param>
 /// <param name="Value">The value.</param>
 /// <returns>MediumDecVariant&</returns>
 static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
-	if (self.IsZero())
-		return self;
+	if (IsZero())
+		return *this;
 #if defined(AltNum_EnableUndefinedButinMinMaxRange)
 	if (Value.ExtraRep!=UndefinedInMinMaxRangeRep&&Value.IntValue<0)
 #else
@@ -18,44 +18,44 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 #endif
 	{
 		Value.SwapNegativeStatus();
-		self.SwapNegativeStatus();
+		SwapNegativeStatus();
 	}
 	#if defined(AltNum_EnableInfinityRep)
 	if (Value.DecimalHalf == InfinityRep)
 	{
-        if(self.DecimalHalf== InfinityRep)//https://www.philforhumanity.com/Infinity_Divided_by_Infinity.html
-            self.DecimalHalf = NaNRep;//Infinity divided by infinity equals undefined
+        if(DecimalHalf== InfinityRep)//https://www.philforhumanity.com/Infinity_Divided_by_Infinity.html
+            DecimalHalf = NaNRep;//Infinity divided by infinity equals undefined
         else
 #if defined(AltNum_EnableApproachingValues)
         {
-            self.DecimalHalf = ApproachingBottomRep;
-            if(self.IntValue<0)
-                self.IntValue = NegativeRep;
+            DecimalHalf = ApproachingBottomRep;
+            if(IntValue<0)
+                IntValue = NegativeRep;
             else
-                self.IntValue = 0;
-            self.ExtraRep = 0;
+                IntValue = 0;
+            ExtraRep = 0;
         }
 #else            
-		    self.SetAsZero();
+		    SetAsZero();
 #endif
-        return self;
+        return *this;
 	}
 	if (Value.IsZero())
 	{
-		self.IntValue < 0 ? self.SetAsNegativeInfinity() : self.SetAsInfinity(); return self;
+		IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return *this;
 	}
 	#else
 	if (Value.IsZero())
 		throw "Target value can not be divided by zero unless infinity enabled";
 	#endif
-	RepType LRep = self.GetRepType();
+	RepType LRep = GetRepType();
 	RepType RRep = Value.GetRepType();
 	if(LRep==RRep)
 	{
 		switch (LRep)
 		{
 			case RepType::NormalType:
-				self.PartialDivOp(Value);
+				PartialDivOp(Value);
 				break;
     #if defined(AltNum_EnablePiRep)
 			case RepType::PiNum:
@@ -68,89 +68,89 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
     #endif
     #if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableImaginaryNum)
 				ExtraRep = 0;
-				self.PartialDivOp(Value);
+				PartialDivOp(Value);
 				break;
     #endif
 				
     #if defined(AltNum_EnablePiPowers)
 			case RepType::PiPower:
-                self.PartialDivOp(Value);
-                if(Value.ExtraRep<self.ExtraRep)
+                PartialDivOp(Value);
+                if(Value.ExtraRep<ExtraRep)
                 {
-                    MediumDecVariant PiPowerDivisor = PiPowerNum(self.ExtraRep - Value.ExtraRep);
-                    self.ExtraRep = 0;
-                    self.PartialDivOp(PiPowerDivisor);
+                    MediumDecVariant PiPowerDivisor = PiPowerNum(ExtraRep - Value.ExtraRep);
+                    ExtraRep = 0;
+                    PartialDivOp(PiPowerDivisor);
                 }
                 else
                 {
-                    self.ExtraRep -= Value.ExtraRep;
+                    ExtraRep -= Value.ExtraRep;
                 }
                 break;
     #endif
 
     #if defined(AltNum_EnableApproachingValues)
 			case RepType::ApproachingBottom:
-				if(self.IntValue==Value.IntValue)
-				{ self.IntValue = 1; self.DecimalHalf = 0; }
-				else if(self.IntValue==-Value.IntValue)
-				{ self.IntValue = -1; self.DecimalHalf = 0; }
-				else if(self.IntValue==NegativeRep&&Value.IntValue==0)
-				{ self.IntValue = -1; self.DecimalHalf = 0; }
+				if(IntValue==Value.IntValue)
+				{ IntValue = 1; DecimalHalf = 0; }
+				else if(IntValue==-Value.IntValue)
+				{ IntValue = -1; DecimalHalf = 0; }
+				else if(IntValue==NegativeRep&&Value.IntValue==0)
+				{ IntValue = -1; DecimalHalf = 0; }
 				else
 				{
-					self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 			case RepType::ApproachingTop:
-				if(self.IntValue==Value.IntValue)
-				{ self.IntValue = 1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-				else if(self.IntValue==-Value.IntValue)
-				{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-				else if(self.IntValue==NegativeRep&&Value.IntValue==0)
-				{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
+				if(IntValue==Value.IntValue)
+				{ IntValue = 1; DecimalHalf = 0; ExtraRep = 0; }
+				else if(IntValue==-Value.IntValue)
+				{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
+				else if(IntValue==NegativeRep&&Value.IntValue==0)
+				{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 				else
 				{
-					self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 
         #if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingBottomDiv:
-				if(self.ExtraRep==Value.ExtraRep)
+				if(ExtraRep==Value.ExtraRep)
 				{// 0.249..9 / 0.249..9 = 1
-					if(self.IntValue==Value.IntValue)
-					{ self.IntValue = 1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-					else if(self.IntValue==-Value.IntValue)
-					{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-					else if(self.IntValue==NegativeRep&&Value.IntValue==0)
-					{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
+					if(IntValue==Value.IntValue)
+					{ IntValue = 1; DecimalHalf = 0; ExtraRep = 0; }
+					else if(IntValue==-Value.IntValue)
+					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
+					else if(IntValue==NegativeRep&&Value.IntValue==0)
+					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 					else
 					{
-						self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+						CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 					}
 				}
 				else
 				{
-					self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 			case RepType::ApproachingTopDiv:
-				if(self.ExtraRep==Value.ExtraRep)
+				if(ExtraRep==Value.ExtraRep)
 				{//0.50..1 / 0.50..1 = 1
-					if(self.IntValue==Value.IntValue)
-					{ self.IntValue = 1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-					else if(self.IntValue==-Value.IntValue)
-					{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
-					else if(self.IntValue==NegativeRep&&Value.IntValue==0)
-					{ self.IntValue = -1; self.DecimalHalf = 0; self.ExtraRep = 0; }
+					if(IntValue==Value.IntValue)
+					{ IntValue = 1; DecimalHalf = 0; ExtraRep = 0; }
+					else if(IntValue==-Value.IntValue)
+					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
+					else if(IntValue==NegativeRep&&Value.IntValue==0)
+					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 					else
 					{
-						self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+						CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 					}
 				}
 				else
 				{
-					self.CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
         #endif
@@ -158,28 +158,28 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 
     #if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
 			case RepType::NumByDiv://(IntValue.DecimalHalf)/ExtraRep
-			//(self.(IntValue.DecimalHalf)/self.ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
-			//(self.(IntValue.DecimalHalf)* Value.ExtraRep/self.ExtraRep) /(Value.(IntValue.DecimalHalf))
-				signed int DivRes = Value.ExtraRep / self.ExtraRep;
-				signed int RemRes = Value.ExtraRep - self.ExtraRep / Value.ExtraRep;
+			//((IntValue.DecimalHalf)/ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
+			//((IntValue.DecimalHalf)* Value.ExtraRep/ExtraRep) /(Value.(IntValue.DecimalHalf))
+				signed int DivRes = Value.ExtraRep / ExtraRep;
+				signed int RemRes = Value.ExtraRep - ExtraRep / Value.ExtraRep;
 				if(RemRes==0)
 				{
                     if(Value.DecimalHalf==0)
-                        self.ExtraRep = DivRes * Value.IntValue;
+                        ExtraRep = DivRes * Value.IntValue;
                     else
                     {
-                        self.ExtraRep = DivRes;
-                        self.PartialDivOp(Value);
+                        ExtraRep = DivRes;
+                        PartialDivOp(Value);
                     }
 				}
 				else
 				{
-                    self.BasicMultOp(Value.ExtraRep);
-                    self.PartialDivOp(Value);
+                    BasicMultOp(Value.ExtraRep);
+                    PartialDivOp(Value);
 				}
 				break;
-			//(Self.IntValue/self.DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
-			//(self.IntValue*Value.DecimalHalf)/(self.DecimalHalf*Value.IntValue)
+			//(Self.IntValue/DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
+			//(IntValue*Value.DecimalHalf)/(DecimalHalf*Value.IntValue)
         #if defined(AltNum_EnablePiFractional)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 		#endif
@@ -190,20 +190,20 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 		#endif
 		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableENum)
-				int NumRes = self.IntValue*Value.DecimalHalf;
-                int DenomRes = self.DecimalHalf*Value.IntValue;
+				int NumRes = IntValue*Value.DecimalHalf;
+                int DenomRes = DecimalHalf*Value.IntValue;
 				signed int DivRes = NumRes / DenomRes;
 				signed int RemRes = NumRes - DenomRes * NumRes;
-                self.DecimalHalf = 0;
+                DecimalHalf = 0;
                 if(RemRes==0)
                 {
-                    self.IntValue = DivRes;
-                    self.ExtraRep = 0;
+                    IntValue = DivRes;
+                    ExtraRep = 0;
                 }
                 else
                 {
-                    self.IntValue = NumRes;
-                    self.ExtraRep = DenomRes;
+                    IntValue = NumRes;
+                    ExtraRep = DenomRes;
                 }
 				break;
         #endif
@@ -215,23 +215,23 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#endif
-				int LeftDiv = -self.ExtraRep; int RightDiv = -Value.ExtraRep;
-				AltNum NumRes = SetValue(self.IntValue, self.DecimalHalf);
+				int LeftDiv = -ExtraRep; int RightDiv = -Value.ExtraRep;
+				AltNum NumRes = SetValue(IntValue, DecimalHalf);
 				signed int DivRes = RightDiv / LeftDiv;
 				signed int RemRes = RightDiv - LeftDiv / RightDiv;
 				NumRes /= SetValue(Value.IntValue, Value.DecimalHalf);
 				if(RemRes==0)
 				{
-					self.IntValue = NumRes.IntValue;
-					self.DecimalHalf = NumRes.DecimalHalf;
-					self.ExtraRep = NumRes.ExtraRep;
+					IntValue = NumRes.IntValue;
+					DecimalHalf = NumRes.DecimalHalf;
+					ExtraRep = NumRes.ExtraRep;
 				}
 				else
 				{
 					NumRes *= RightDiv;
-					self.IntValue = NumRes.IntValue;
-					self.DecimalHalf = NumRes.DecimalHalf;
-					self.PartialDivOp(Value);
+					IntValue = NumRes.IntValue;
+					DecimalHalf = NumRes.DecimalHalf;
+					PartialDivOp(Value);
 				}
 				break;
 		#endif
@@ -242,22 +242,22 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
                 //=LeftSideNum*Value.ExtraRep / RightSideNum;
 				MediumDecVariant LeftSideNum;
-				if(self.IntValue==NegativeRep)
-					LeftSideNum = MediumDecVariant(self.DecimalHalf);
-				else if(self.IntValue<0)
-					LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep + self.DecimalHalf);
-				else if(self.IntValue==0)
-					LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+				if(IntValue==NegativeRep)
+					LeftSideNum = MediumDecVariant(DecimalHalf);
+				else if(IntValue<0)
+					LeftSideNum = MediumDecVariant(IntValue*ExtraRep + DecimalHalf);
+				else if(IntValue==0)
+					LeftSideNum = MediumDecVariant(-DecimalHalf);
 				else
-					LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep - self.DecimalHalf);
+					LeftSideNum = MediumDecVariant(IntValue*ExtraRep - DecimalHalf);
                 LeftSideNum.PartialMultOp(Value.ExtraRep);
                 if(LeftSideNum.IsZero())
-                    self.SetAsZero();
+                    SetAsZero();
                 else
                 {
-                    self.IntValue = LeftSideNum.IntValue;
-                    self.DecimalHalf = LeftSideNum.DecimalHalf;
-                    self.ExtraRep *= Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
+                    IntValue = LeftSideNum.IntValue;
+                    DecimalHalf = LeftSideNum.DecimalHalf;
+                    ExtraRep *= Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
                 }
                 break;//Result as NumByDiv
 		#if defined(AltNum_EnableMixedPiFractional)
@@ -270,23 +270,23 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
                 //=LeftSideNum*-Value.ExtraRep / RightSideNum;
 				int LeftSideNum;
-				if(self.IntValue==NegativeRep)
-					LeftSideNum = self.DecimalHalf;
-				else if(self.IntValue<0)
-					LeftSideNum = self.IntValue*-self.ExtraRep + self.DecimalHalf;
-				else if(self.IntValue==0)
-					LeftSideNum = -self.DecimalHalf;
+				if(IntValue==NegativeRep)
+					LeftSideNum = DecimalHalf;
+				else if(IntValue<0)
+					LeftSideNum = IntValue*-ExtraRep + DecimalHalf;
+				else if(IntValue==0)
+					LeftSideNum = -DecimalHalf;
 				else
-					LeftSideNum = self.IntValue*-self.ExtraRep + -self.DecimalHalf;
+					LeftSideNum = IntValue*-ExtraRep + -DecimalHalf;
                 LeftSideNum.PartialMultOp(-Value.ExtraRep);
                 if(LeftSideNum.IsZero())
-                    self.SetAsZero();
+                    SetAsZero();
                 else//Result as NumByDiv
                 {   //Need to have positive ExtraRep value
 				    //int RightSideNum = Value.IntValue==0?-DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-                    self.IntValue = LeftSideNum.IntValue;
-                    self.DecimalHalf = LeftSideNum.DecimalHalf;
-                    self.ExtraRep *= Value.IntValue==0?DecimalHalf:(Value.IntValue*Value.ExtraRep)+Value.DecimalHalf;
+                    IntValue = LeftSideNum.IntValue;
+                    DecimalHalf = LeftSideNum.DecimalHalf;
+                    ExtraRep *= Value.IntValue==0?DecimalHalf:(Value.IntValue*Value.ExtraRep)+Value.DecimalHalf;
                 } 
                 break;
 		#endif
@@ -295,17 +295,17 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
             case RepType::UndefinedButInRange:
                 if(Value.DecimalHalf==InfinityRep)
                 {
-                    if(self.DecimalHalf==InfinityRep)
-                        self.SetVal(One);
+                    if(DecimalHalf==InfinityRep)
+                        SetVal(One);
                     else
 #if defined(AltNum_EnableNaN)
-                        self.DecimalHalf = UndefinedRep;
+                        DecimalHalf = UndefinedRep;
 #else
                         throw "Undefined result(results in undefined expression)";
 #endif
                 }
                 else
-                    self.BasicDivOp(Value);
+                    BasicDivOp(Value);
                 break;
         #if defined(AltNum_EnableWithinMinMaxRange)
 			case RepType::WithinMinMaxRange:
@@ -325,6 +325,6 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 		}
 	}
 	else
-		RepToRepDivOp(LRep, RRep, self, Value);
-	return self;
+		RepToRepDivOp(LRep, RRep, *this, Value);
+	return *this;
 }

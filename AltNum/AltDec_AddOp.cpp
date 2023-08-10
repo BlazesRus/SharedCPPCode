@@ -3,28 +3,27 @@
 /// <summary>
 /// Addition Operation
 /// </summary>
-/// <param name="self">The self.</param>
-/// <param name="Value">The value.</param>
+/// <param name="Value">The rightside value.</param>
 /// <returns>AltDec</returns>
-static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumDecVariant& Value)
+static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& Value)
 {
-	if (self.IsZero())
+	if (IsZero())
 	{
-		self.IntValue = Value.IntValue; self.DecimalHalf = Value.DecimalHalf;
-		self.ExtraRep = Value.ExtraRep; return self;
+		IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+		ExtraRep = Value.ExtraRep; return *this;
 	}
 	else if (Value.IsZero())
-		return self;
+		return *this;
 	#if defined(AltNum_EnableInfinityRep)
-	if (self.DecimalHalf==InfinityRep)
-		return self;
+	if (DecimalHalf==InfinityRep)
+		return *this;
 	if (Value.DecimalHalf == InfinityRep)
 	{
-		Value.IntValue == 1 ? self.SetAsInfinity() : self.SetAsNegativeInfinity();
-		return self;
+		Value.IntValue == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
+		return *this;
 	}
 	#endif
-	RepType LRep = self.GetRepType();
+	RepType LRep = GetRepType();
 	RepType RRep = Value.GetRepType();
 	if(LRep==RRep)
 	{
@@ -40,59 +39,59 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 	#if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum:
 	#endif
-				self.BasicAddOp(Value);
+				BasicAddOp(Value);
 				break;
 
 	#if defined(AltNum_EnableApproachingValues)
 			case RepType::ApproachingBottom:
-				if (self.IntValue == NegativeRep)
+				if (IntValue == NegativeRep)
 				{
 					if (Value.IntValue == 0)//-0.0..1 + 0.0..1 = 0
-						self.SetAsZero();
+						SetAsZero();
 					else if (Value.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
 					{/*Do Nothing*/}
 					else if (Value.IntValue < 0)//-0.0..1 - 1.0..1 = -1.0..1
 					{
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 					else//-0.0..1 + 5.0..1 = 5
 					{
 						DecimalHalf = 0;
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 				}
-				if (self.IntValue == 0)
+				if (IntValue == 0)
 				{
 					if (Value.IntValue == 0)//0.0..1 + 0.0..1 = 0.0..1
 					{/*Do Nothing*/}
 					else if (Value.IntValue == NegativeRep)//0.0..1 - 0.0..1 = 0
-						self.SetAsZero();
+						SetAsZero();
 					else if (Value.IntValue < 0)//0.0..1 - 1.0..1 = -1
 					{
 						DecimalHalf = 0;
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 					else//0.0..1 + 5.0..1 = 5.0..1
 					{
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 				}
-				else if (self.IntValue < 0)
+				else if (IntValue < 0)
 				{
 					if (Value.IntValue == 0)//-1.0..1 + 0.0..1  = -1
 						DecimalHalf = 0;
 					else if (Value.IntValue == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
 					{/*Do Nothing*/}
-					else if(self.IntValue==-Value.IntValue)//-1.01 + 1.01
-						self.SetAsZero();
+					else if(IntValue==-Value.IntValue)//-1.01 + 1.01
+						SetAsZero();
 					else if (Value.IntValue < 0)//-1.0..1 - 2.0..1
 					{
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 					else//-1.0..1 + 2.0..1 = 1
 					{
 						DecimalHalf = 0;
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 				}
 				else
@@ -101,101 +100,101 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 					{/*Do Nothing*/}
 					else if (Value.IntValue == NegativeRep)//1.0..1 - 0.0..1
 						DecimalHalf = 0;
-					else if(self.IntValue==-Value.IntValue)//1.0..1 - 1.0..1
-						self.SetAsZero();
+					else if(IntValue==-Value.IntValue)//1.0..1 - 1.0..1
+						SetAsZero();
 					else if (Value.IntValue < 0)// 1.0..1  - 2.0..1
 					{
 						DecimalHalf = 0;
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 					else//1.0..1 + 1.0..1
 					{
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 				}
 				break;
 			case RepType::ApproachingTop:
-				if (self.IntValue == NegativeRep)
+				if (IntValue == NegativeRep)
 				{
 					if (Value.IntValue == 0)//-0.9..9 + 0.9..9 = 0
-						self.SetAsZero();
+						SetAsZero();
 					else if (Value.IntValue == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
-						self.IntValue = -1;
+						IntValue = -1;
 					else if (Value.IntValue < 0)//-0.9..9 - 1.9..9 = -2.9..8
 					{
-						self.IntValue = Value.IntValue-1;
+						IntValue = Value.IntValue-1;
 					}
 					else//-0.9..9 + 5.9..9 = 5
 					{
 						DecimalHalf = 0; ExtraRep = 0;
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 				}
-				if (self.IntValue == 0)
+				if (IntValue == 0)
 				{
 					if (Value.IntValue == 0)//0.9..9 + 0.9..9 = 1.9..8
-						self.IntValue = 1;
+						IntValue = 1;
 					else if (Value.IntValue == NegativeRep)//0.9..9 - 0.9..9 = 0
-						self.SetAsZero();
+						SetAsZero();
 					else if (Value.IntValue < 0)//0.9..9 - 1.9..9 = -1
 					{
 						DecimalHalf = 0; ExtraRep = 0;
-						self.IntValue = Value.IntValue;
+						IntValue = Value.IntValue;
 					}
 					else//0.9..9 + 5.9..9 = 6.9..8
 					{
-						self.IntValue = Value.IntValue+1;
+						IntValue = Value.IntValue+1;
 					}
 				}
-				else if (self.IntValue < 0)
+				else if (IntValue < 0)
 				{
 					if (Value.IntValue == 0)//-1.9..9 + 0.9..9  = -1
 					{	DecimalHalf = 0; ExtraRep = 0; }
 					else if (Value.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
-						self.IntValue += Value.IntValue;
-					else if(self.IntValue==-Value.IntValue)//-1.9..9 + 1.9..9
-						self.SetAsZero();
+						IntValue += Value.IntValue;
+					else if(IntValue==-Value.IntValue)//-1.9..9 + 1.9..9
+						SetAsZero();
 					else if (Value.IntValue < 0)//-1.9..9 - 2.9..9
 					{
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 					else//-1.9..9 + 2.9..9
 					{
 						DecimalHalf = 0; ExtraRep = 0;
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 				}
 				else
 				{
 					if (Value.IntValue == 0)//1.9..9 + 0.9..9 = 2.9..8
 					{
-						if(self.IntValue==-1)
-							self.IntValue = NegativeRep;
+						if(IntValue==-1)
+							IntValue = NegativeRep;
 						else
-							++self.IntValue;
+							++IntValue;
 					}
 					else if (Value.IntValue == NegativeRep)//1.9..9 - 0.9..9
 					{	DecimalHalf = 0; ExtraRep = 0; }
-					else if(self.IntValue==-Value.IntValue)//1.9..9 - 1.9..9
-						self.SetAsZero();
+					else if(IntValue==-Value.IntValue)//1.9..9 - 1.9..9
+						SetAsZero();
 					else if (Value.IntValue < 0)// 1.9..9  - 2.9..9
 					{
 						DecimalHalf = 0; ExtraRep = 0;
-						self.IntValue += Value.IntValue;
+						IntValue += Value.IntValue;
 					}
 					else//1.9..9 + 1.9..9 = 3.9..8
 					{
-						self.IntValue += Value.IntValue+1;
+						IntValue += Value.IntValue+1;
 					}
 				}
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingBottomDiv:
-                self.CatchAllAddition(Value, RepType::ApproachingBottomDiv);
+                CatchAllAddition(Value, RepType::ApproachingBottomDiv);
                 break;
 			case RepType::ApproachingTopDiv:
-                self.CatchAllAddition(Value, RepType::ApproachingTopDiv);
+                CatchAllAddition(Value, RepType::ApproachingTopDiv);
                 break;
 		#endif
 	#endif
@@ -212,15 +211,15 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 			case RepType::IFractional://  IntValue/DecimalHalf*e Representation
 		#endif
 		#if defined(AltNum_EnablePiFractional)||defined(AltNum_EnableEFractional)||defined(AltNum_EnableIFractional)
-				if (self.DecimalHalf == Value.DecimalHalf)
+				if (DecimalHalf == Value.DecimalHalf)
 				{
 				
-					self += Value.IntValue;
+					*this += Value.IntValue;
 				}
 				else
 				{
-					self.ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
-					self.BasicAddOp(Value);
+					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					BasicAddOp(Value);
 				}
 				break;
 		#endif
@@ -233,12 +232,12 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*e Representation
 			#endif
-				if (self.ExtraRep == Value.ExtraRep)
-					self.BasicAddOp(Value);
+				if (ExtraRep == Value.ExtraRep)
+					BasicAddOp(Value);
 				else
 				{
-					self.ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
-					self.BasicAddOp(Value);
+					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					BasicAddOp(Value);
 				}
 				break;
 		#endif
@@ -246,11 +245,11 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 	
 	#if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
-                if(self.ExtraRep!=Value.ExtraRep)
+                if(ExtraRep!=Value.ExtraRep)
                 {
-                    self.ConvertPiPowerToPiRep(); value.ConvertPiPowerToPiRep();
+                    ConvertPiPowerToPiRep(); value.ConvertPiPowerToPiRep();
                 }
-				self.BasicAddOp(Value);
+				BasicAddOp(Value);
 				break;
 	#endif    
     			
@@ -258,37 +257,37 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
             //Ignoring the fact that mixed fraction could be improperly formatted for spend
             //because should be corrected after every operation
 			case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
-				if(self.ExtraRep==Value.ExtraRep)
+				if(ExtraRep==Value.ExtraRep)
                 {
-                    self.IntValue += Value.IntValue;
-                    self.DecimalHalf += Value.DecimalHalf;
-                    if(self.DecimalHalf<0)//Subtract the overflow
+                    IntValue += Value.IntValue;
+                    DecimalHalf += Value.DecimalHalf;
+                    if(DecimalHalf<0)//Subtract the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        --self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        --IntValue;
                     }
                     else//Add the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        ++self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        ++IntValue;
                     }
                 }
                 else
                 {
-                    self.IntValue *= Value.ExtraRep;
-                    self.IntValue += Value.IntValue*self.ExtraRep;
-                    self.DecimalHalf += Value.DecimalHalf*self.ExtraRep;
-                    if(self.DecimalHalf<0)//Subtract the overflow
+                    IntValue *= Value.ExtraRep;
+                    IntValue += Value.IntValue*ExtraRep;
+                    DecimalHalf += Value.DecimalHalf*ExtraRep;
+                    if(DecimalHalf<0)//Subtract the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        --self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        --IntValue;
                     }
                     else//Add the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        ++self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        ++IntValue;
                     }
-                    self.ExtraRep *= Value.ExtraRep;
+                    ExtraRep *= Value.ExtraRep;
                 }
 				break;
 		#if defined(AltNum_EnableMixedPiFractional)
@@ -298,37 +297,37 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
         #elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
-				if(self.ExtraRep==Value.ExtraRep)
+				if(ExtraRep==Value.ExtraRep)
                 {
-                    self.IntValue += Value.IntValue;
-                    self.DecimalHalf += Value.DecimalHalf;
-                    if(self.DecimalHalf>0)//Subtract the overflow
+                    IntValue += Value.IntValue;
+                    DecimalHalf += Value.DecimalHalf;
+                    if(DecimalHalf>0)//Subtract the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        --self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        --IntValue;
                     }
                     else//Add the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        ++self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        ++IntValue;
                     }
                 }
                 else
                 {
-                    self.IntValue *= -Value.ExtraRep;
-                    self.IntValue += Value.IntValue*-self.ExtraRep;
-                    self.DecimalHalf += Value.DecimalHalf*-self.ExtraRep;
-                    if(self.DecimalHalf>0)//Subtract the overflow
+                    IntValue *= -Value.ExtraRep;
+                    IntValue += Value.IntValue*-ExtraRep;
+                    DecimalHalf += Value.DecimalHalf*-ExtraRep;
+                    if(DecimalHalf>0)//Subtract the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        --self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        --IntValue;
                     }
                     else//Add the overflow
                     {
-                        self.DecimalHalf += self.ExtraRep;
-                        ++self.IntValue;
+                        DecimalHalf += ExtraRep;
+                        ++IntValue;
                     }
-                    self.ExtraRep *= -Value.ExtraRep;
+                    ExtraRep *= -Value.ExtraRep;
                 }
 				break;
         #endif
@@ -336,30 +335,30 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 			case RepType::UndefinedButInRange:
-                self.BasicAddOp(Value);
+                BasicAddOp(Value);
 				break;
         #if defined(AltNum_EnableWithinMinMaxRange)
 			case RepType::WithinMinMaxRange:
-                if(self.IntValue==NegativeRep)
+                if(IntValue==NegativeRep)
                 {
                     //Do nothing?
                 }
                 else if(Value.IntValue==NegativeRep)
                 {
-                    self.IntValue = NegativeRep;
+                    IntValue = NegativeRep;
                 }
                 else
-                    self.IntValue += Value.IntValue;
-                if(self.DecimalHalf==InfinityRep)
+                    IntValue += Value.IntValue;
+                if(DecimalHalf==InfinityRep)
                 {
                    //Do Nothing?
                 }
                 else if(Value.DecimalHalf==InfinityRep)
                 {// + positive infinity to right side
-                    self.DecimalHalf = InfinityRep;
+                    DecimalHalf = InfinityRep;
                 }
                 else
-                    self.DecimalHalf += Value.DecimalHalf;
+                    DecimalHalf += Value.DecimalHalf;
 				break;
         #endif
 	#endif
@@ -376,7 +375,7 @@ static MediumDecVariant& MediumDecVariant::AddOp(MediumDecVariant& self, MediumD
 	}
 	else
 	{
-		RepToRepAddOp(LRep, RRep, self, Value);
+		RepToRepAddOp(LRep, RRep, *this, Value);
 	}
-	return self;
+	return *this;
 }
