@@ -166,7 +166,7 @@ AltNum_OutputTruncatedTrailingDigits =
     Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
 	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
 
-AltNum_UseOldDivisionCode
+AltNum_UseOldDivisionCode = Depressated (Working on removing all traces)
 AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
 AltNum_UseOldRemOpCode
 
@@ -900,6 +900,9 @@ namespace BlazesRusCode
             ExtraRep = ERep;
         }
     #endif
+    #pragma endregion ENum Setters
+
+    #pragma region Fractional Setters
     #if defined(AltNum_EnableFractionals)
         //Set value for NumByDiv
         void SetFractionalVal(int IntHalf, int DecHalf, int Divisor)
@@ -968,7 +971,9 @@ namespace BlazesRusCode
         }
 	    #endif
     #endif
-        
+    #pragma endregion Fractional Setters
+    
+    #pragma region MixedFrac Setters
     #if defined(AltNum_EnableMixedFractional)
         void SetMixedFractionalVal(int WholeNum, int Numerator, int Denom)
         {
@@ -984,7 +989,9 @@ namespace BlazesRusCode
             ExtraRep = Denom;
         }
     #endif
-		
+    #pragma endregion MixedFrac Setters
+	
+    #pragma region Infinity Setters
     //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
     // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
     #if defined(AltNum_EnableInfinityRep)
@@ -1000,7 +1007,9 @@ namespace BlazesRusCode
             ExtraRep = 0;
         }
 	#endif
+    #pragma endregion Infinity Setters
 	
+    #pragma region ApproachingZero Setters
 	#if defined(AltNum_EnableApproachingValues)
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
@@ -1058,7 +1067,7 @@ namespace BlazesRusCode
 			#endif
 		#endif
 	#endif
-		
+
 	#if defined(AltNum_EnableApproachingI)
         //Approaching Towards values from right to left side(IntValue.000...1)i
 		//If AltNum_EnableApproachingDivided is enabled and Divisor value is greator than 1, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
@@ -1094,7 +1103,9 @@ namespace BlazesRusCode
         }
 		#endif
 	#endif
+    #pragma endregion ApproachingZero Setters
 		
+	#pragma region NaN Setters
 	#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
@@ -1108,6 +1119,7 @@ namespace BlazesRusCode
             ExtraRep = 0;
         }
 	#endif
+    #pragma endregion NaN Setters
 
     #pragma region ValueDefines
     protected:
@@ -1491,7 +1503,7 @@ public:
 	
     #pragma endregion ValueDefines
 
-    #pragma region String Commands
+#pragma region String Commands
         /// <summary>
         /// Reads the string.
         /// </summary>
@@ -1545,6 +1557,8 @@ public:
                 this->ReadString(Value);
             }
         }
+
+#pragma endregion String Commands
 
 private:
         std::string BasicToStringOp();
@@ -1742,6 +1756,7 @@ public:
             }
             return Value;
         }
+
         /// <summary>
         /// AltDec to double explicit conversion
         /// </summary>
@@ -2208,32 +2223,32 @@ public:
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                 switch (LRep)
                 {
-#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+        #if defined(AltNum_EnableAlternativeRepFractionals)
+            #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-#endif
+            #endif
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
-#ifdef AltNum_EnableComplexNumbers
+        #endif
+        #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
-#endif
+        #endif
                     LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
-#if defined(AltNum_EnableImaginaryInfinity)
+        #if defined(AltNum_EnableImaginaryInfinity)
                 case RepType::PositiveImaginaryInfinity:
                 case RepType::NegativeImaginaryInfinity:
                     break;
-#endif
-#endif
-#if defined(AltNum_EnableInfinityRep)
+        #endif
+    #endif
+    #if defined(AltNum_EnableInfinityRep)
                     //Don't convert infinity into real number
                 case RepType::PositiveInfinity:
                 case RepType::NegativeInfinity:
                     break;
-#endif
+    #endif
                 default:
 #endif
                     LValue.ConvertToNormType(LRep);
@@ -2931,9 +2946,10 @@ public:
         /// <returns>bool</returns>
 		template<typename IntType>
         static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
-   #pragma endregion Comparison Operators
+    #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Operations
+    #pragma region NormalRep Integer Division Operations
+protected:
         template<typename IntType>
         void PartialIntDivOp(IntType& Value)
         {
@@ -2981,12 +2997,18 @@ public:
                 }
             }
         }
+public:
 		
-		void PartialDivOp(int& Value) { return PartialIntDivOp(Value); }
-		void PartialDivOp(int Value) { return PartialIntDivOp(Value); }
+		void PartialDivOp(signed int& Value) { return PartialIntDivOp(Value); }
+		void PartialDiv(signed int Value) { return PartialIntDivOp(Value); }
+		void PartialDivOp(unsigned int& Value) { return PartialIntDivOp(Value); }
+		void PartialDiv(unsigned int Value) { return PartialIntDivOp(Value); }
 		void PartialDivOp(signed long long& Value) { return PartialIntDivOp(Value); }
-		void PartialDivOp(signed long long Value) { return PartialIntDivOp(Value); }
+		void PartialDiv(signed long long Value) { return PartialIntDivOp(Value); }
+        void PartialDiv(unsigned long long Value) { return PartialIntDivOp(Value); }
+        void PartialDivOp(unsigned long long& Value) { return PartialDivOp(Value); }
 
+protected:
         template<typename IntType>
         void BasicIntDivOp(IntType& Value)
         {
@@ -3000,7 +3022,7 @@ public:
             }
             else if (IsZero())
                 return;
-            if (IntValue < 0)
+            if (Value < 0)
             {
                 Value *= -1;
                 SwapNegativeStatus();
@@ -3008,18 +3030,41 @@ public:
             PartialIntDivOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
         }
+
+        template<typename IntType>
+        void BasicUnsignedIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+#if defined(AltNum_EnableInfinityRep)
+                IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
+#else
+                throw "Target value can not be divided by zero";
+#endif
+            }
+            else if (IsZero())
+                return;
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+        }
+public:
 		
 		void BasicDivOp(int& Value) { return BasicIntDivOp(Value); }
-		void BasicDivOp(int Value) { return BasicIntDivOp(Value); }
+		void BasicDiv(int Value) { return BasicIntDivOp(Value); }
+		void BasicDivOp(unsigned int& Value) { return BasicUnsignedIntDivOp(Value); }
+		void BasicDiv(unsigned int Value) { return BasicUnsignedIntDivOp(Value); }
 		void BasicDivOp(signed long long& Value) { return BasicIntDivOp(Value); }
-		void BasicDivOp(signed long long Value) { return BasicIntDivOp(Value); }
+		void BasicDiv(signed long long Value) { return BasicIntDivOp(Value); }
+        void BasicDiv(unsigned long long Value) { return BasicUnsignedIntDivOp(Value); }
+        void BasicDivOp(unsigned long long& Value) { return BasicUnsignedIntDivOp(Value); }
 		
+protected:
         template<typename IntType>
         void BasicIntDivOpV2(IntType& Value)
         {
             if (IsZero())
                 return;
-            if (IntValue < 0)
+            if (Value < 0)
             {
                 Value *= -1;
                 SwapNegativeStatus();
@@ -3027,132 +3072,33 @@ public:
             PartialIntDivOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
         }
-		
-		void BasicDivOpV2(int& Value) { return BasicIntDivOpV2(Value); }
-		void BasicDivOpV2(int Value) { return BasicIntDivOpV2(Value); }
-		void BasicDivOpV2(signed long long& Value) { return BasicIntDivOpV2(Value); }
-		void BasicDivOpV2(signed long long Value) { return BasicIntDivOpV2(Value); }
 
-    #pragma endregion NormalRep Integer Operations
+        template<typename IntType>
+        void BasicUnsignedIntDivOpV2(IntType& Value)
+        {
+            if (IsZero())
+                return;
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+        }
+public:
+		
+		void BasicDivOp(int& Value) { return BasicIntDivOp(Value); }
+		void BasicDiv(int Value) { return BasicIntDivOp(Value); }
+		void BasicDivOp(unsigned int& Value) { return BasicIntDivOp(Value); }
+		void BasicDiv(unsigned int Value) { return BasicIntDivOp(Value); }
+		void BasicDivOp(signed long long& Value) { return BasicIntDivOp(Value); }
+		void BasicDiv(signed long long Value) { return BasicIntDivOp(Value); }
+        void BasicDiv(unsigned long long Value) { return BasicUnsignedIntDivOpV2(Value); }
+        void BasicDivOp(unsigned long long& Value) { return BasicUnsignedIntDivOpV2(Value); }
+
+    #pragma endregion NormalRep Integer Division Operations
 	
 	#pragma region NormalRep AltNumToAltNum Operations
-#ifdef AltNum_UseOldDivisionCode
-        void PartialDivOp(AltDec& Value)
-#else
-        bool PartialDivOp(AltDec& Value)//Return true if divide into zero
-#endif
+protected:
+        //Return true if divide into zero
+        bool PartialDivOp(AltDec& Value)
         {
-#ifdef AltNum_UseOldDivisionCode
-            if (DecimalHalf == 0)
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    IntValue *= -1;
-                }
-                if (Value.DecimalHalf == 0)//Both are integers
-                {
-                    __int64 SRep = IntValue * AltDec::DecimalOverflowX;
-                    __int64 YRep = Value.IntValue;
-                    SRep /= Value.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    }
-                    else
-                    {
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
-                    }
-                    DecimalHalf = (signed int)SRep;
-                }
-                else//Only self is integer while Value has both sides
-                {
-                    boost::multiprecision::uint128_t SRep02 = AltDec::DecimalOverflowX * AltDec::DecimalOverflowX;
-                    SRep02 *= IntValue;
-                    __int64 VRep = AltDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
-                    SRep02 /= VRep;
-                    __int64 SRep = (__int64)SRep02;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
-                    }
-                    else
-                    {
-                        IntValue = 0;
-                    }
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-            else if (IntValue == 0)
-            {
-                __int64 SRep = (__int64)DecimalHalf * AltDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : AltDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / AltDec::DecimalOverflowX;
-                SRep -= IntHalf * AltDec::DecimalOverflowX;
-                IntValue = IntHalf;
-                DecimalHalf = (signed int)SRep;
-            }
-            else if (IntValue == AltDec::NegativeRep)
-            {
-                __int64 SRep = (__int64)DecimalHalf * AltDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : AltDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / AltDec::DecimalOverflowX;
-                SRep -= IntHalf * AltDec::DecimalOverflowX;
-                IntValue = IntHalf == 0 ? AltDec::NegativeRep : -IntHalf;
-                DecimalHalf = (signed int)SRep;
-            }
-            else
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    IntValue *= -1;
-                }
-                if (Value.DecimalHalf == 0)//Y is integer but self is not
-                {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep /= Value.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
-                    }
-                    else
-                    {
-                        IntValue = 0;
-                    }
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {//Splitting Integer Half and Decimal Half Division
-                    __int64 SRep_DecHalf = (__int64)DecimalHalf * AltDec::DecimalOverflowX;
-                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : AltDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                    int IntHalf = SRep_DecHalf / AltDec::DecimalOverflowX;
-                    SRep_DecHalf -= IntHalf * AltDec::DecimalOverflowX;
-
-                    boost::multiprecision::uint128_t SRep02 = AltDec::DecimalOverflowX * AltDec::DecimalOverflowX;
-                    //std::cout << "Multi-precision as String:" << SRep02 << std::endl;
-                    SRep02 *= IntValue;
-                    __int64 VRep = AltDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
-                    SRep02 /= VRep;
-                    __int64 SRep = (__int64)SRep02 + SRep_DecHalf;
-                    if (SRep >= AltDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
-                        IntHalf += OverflowVal;
-                    }
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? AltDec::NegativeRep : 0; }
-                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-#else//Instead use modulus based code to divide
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
 			signed _int64 ValueRes;
@@ -3196,31 +3142,19 @@ public:
 				return true;
 			else
 				return false;
-#endif
         }
+
+
+        void PartialDiv(AltDec Value) { return PartialDivOp(Value); }
+public:
 		
         void BasicDivOp(AltDec& Value)
         {
-#if defined(AltNum_UseOldDivisionCode)
-            if (Value.IntValue < 0)
-            {
-                if (Value.IntValue == AltDec::NegativeRep) { Value.IntValue = 0; }
-                else { Value.IntValue *= -1; }
-                SwapNegativeStatus();
-            }
-#endif
-            PartialDivOp(Value);
-#if defined(AltNum_UseOldDivisionCode)
-			if ((IntValue==NegativeRep||IntValue==0)&&DecimalHalf==0)//Prevent Dividing into nothing
-#else
 			if (PartialDivOp(Value))//Prevent Dividing into nothing
-#endif
-#if defined(AltNum_EnableApproachingDivided)
-			{	DecimalHalf = ApproachingBottomRep; ExtraRep = 0; }
-#else
 				DecimalHalf = 1;
-#endif
         }
+
+        void BasicDiv(AltDec Value) { return BasicDivOp(Value); }
 
         /// <summary>
         /// Division Operation
