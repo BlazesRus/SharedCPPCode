@@ -5978,7 +5978,7 @@ public:
                 int WPow = 3;
                 do
                 {
-                    AddRes = AltDec::PowRef(W, WPow) / WPow;
+                    AddRes = AltDec::Pow(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > AltDec::JustAboveZero);
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * AltDec::HalfLN10Mult)/ baseTotalRes;
@@ -6400,12 +6400,12 @@ public:
             }
 #endif
 #if defined(AltNum_EnablePiRep)
-            case RepType::RepType::PiNum:
+            case RepType::PiNum:
 #endif
 #if defined(AltNum_EnableERep)
-            case RepType::RepType::ENum:
+            case RepType::ENum:
 #if defined(AltNum_EnableFractionals)
-            case RepType::RepType::ENumByDiv:
+            case RepType::ENumByDiv:
 #endif
 #endif
                 Value.ConvertToNormType();
