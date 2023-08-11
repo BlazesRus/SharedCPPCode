@@ -84,7 +84,7 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_APi MediumDecV2
     {
-    #undefine MediumDecVariant
+    #undef MediumDecVariant
     #define MediumDecVariant MediumDecV2
 	public:
 		class ModRes
@@ -120,7 +120,7 @@ namespace BlazesRusCode
         /// </summary>
         MirroredInt IntValue;
 
-        bool int IsNegative()
+        bool IsNegative()
         {
             return IntValue.IsNegative();
         }
@@ -659,14 +659,6 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator std::string() { return ToString(); }
-
-        ///// <summary>
-        ///// += MediumDecVariant operation added to std::string
-        ///// </summary>
-        ///// <param name="targetString">The target string(left side).</param>
-        ///// <param name="Value">The right side value</param>
-        ///// <returns>string</returns>
-        //friend std::string operator+=(std::string targetString, MediumDecVariant self) { return targetString + self.ToString(); }
     #pragma endregion String Commands
 
     #pragma region From Standard types to this type
@@ -695,7 +687,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -724,7 +716,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -753,7 +745,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -833,6 +825,7 @@ namespace BlazesRusCode
             }
             return Value;
         }
+
         /// <summary>
         /// MediumDecVariant to double explicit conversion
         /// </summary>

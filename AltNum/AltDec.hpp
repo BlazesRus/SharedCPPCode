@@ -2989,15 +2989,30 @@ protected:
             }
         }
 public:
-		
+
 		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
-		AltDec PartialDiv(signed int Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
 		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
-		AltDec PartialDiv(unsigned int Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
 		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
-		AltDec PartialDiv(signed long long Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
-        AltDec PartialDiv(unsigned long long Value) { AltDec self = *this; PartialIntDivOp(Value); return self; }
-        void PartialDivOp(unsigned long long& Value) { PartialDivOp(Value); }
+        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
+
+		static void PartialDivOp(AltDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(AltDec& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(AltDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
+        static void PartialDivOp(AltDec& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+
+		AltDec PartialDiv(signed int Value)
+        { AltDec self = *this; PartialIntDivOp(Value); return self; }
+		AltDec PartialDiv(unsigned int Value)
+        { AltDec self = *this; PartialIntDivOp(Value); return self; }
+		AltDec PartialDiv(signed long long Value)
+        { AltDec self = *this; PartialIntDivOp(Value); return self; }
+        AltDec PartialDiv(unsigned long long Value)
+        { AltDec self = *this; PartialIntDivOp(Value); return self; }
+
+		static AltDec PartialDiv(signed int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialDiv(unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialDiv(signed long long Value) { self.PartialIntDivOp(Value); return self; }
+        static AltDec PartialDiv(unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
         template<typename IntType>
@@ -3041,55 +3056,28 @@ protected:
 public:
 
 		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
+		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
+        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+
+		static void BasicDivOp(AltDec& self, signed int& Value) { self.BasicIntDivOp(Value); }
+		static void BasicDivOp(AltDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
+		static void BasicDivOp(AltDec& self, signed long long& Value) { self.BasicIntDivOp(Value); }
+        static void BasicDivOp(AltDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
+
 		AltDec BasicDiv(signed int Value)
         { AltDec self = *this; BasicIntDivOp(Value); return self; }
-		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
 		AltDec BasicDiv(unsigned int Value)
         { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
 		AltDec BasicDiv(signed long long Value)
         { AltDec self = *this; BasicIntDivOp(Value); return self; }
         AltDec BasicDiv(unsigned long long Value)
         { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
-protected:
-        template<typename IntType>
-        void BasicUnsignedIntDivOpV2(IntType& Value)
-        {
-            if (IsZero())
-                return;
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-        }
-
-        template<typename IntType>
-        void BasicIntDivOpV2(IntType& Value)
-        {
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-        }
-public:
-		
-		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
-		AltDec BasicDivV2(signed int Value)
-        { AltDec self = *this; BasicIntDivOpV2(Value); return self; }
-		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
-		AltDec BasicDivV2(unsigned int Value)
-        { AltDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
-		AltDec BasicDivV2(signed long long Value)
-        { AltDec self = *this; BasicIntDivOpV2(Value); return self; }
-        AltDec BasicDivV2(unsigned long long Value)
-        { AltDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
+		static AltDec BasicDiv(signed int Value) { self.BasicIntDivOp(Value); return self; }
+		static AltDec BasicDiv(unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
+		static AltDec BasicDiv(signed long long Value) { self.BasicIntDivOp(Value); return self; }
+        static AltDec BasicDiv(unsigned long long Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -3170,10 +3158,69 @@ public:
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Modulus Operations
+        template<typename IntType>
+        AltDec BasicIntRemOp(IntType& value)
+        {
 
+        }
 	#pragma endregion NormalRep Integer Modulus Operations
 
     #pragma region NormalRep Integer Addition Operations
+protected:
+        /// <summary>
+        /// Addition Operation Between AltDec and Integer value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType>
+        void BasicIntAddOp(IntType& value)
+        {
+            if(DecimalHalf==0)
+                IntValue.NRepSkippingAddOp(value);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntValue += value;
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+            }
+        }
+public:
+
+		/// <summary>
+        /// Basic Addition Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+		void BasicAddOp(signed int& Value) { BasicIntAddOp(Value); }
+		void BasicAddOp(unsigned int& Value) { BasicUnsignedIntAddOp(Value); }
+		void BasicAddOp(signed long long& Value) { BasicIntAddOp(Value); }
+		void BasicAddOp(unsigned long long& Value) { BasicUnsignedIntAddOp(Value); }
+
+		static void BasicAddOp(AltDec& self, signed int& Value) { self.BasicIntAddOp(Value); }
+		static void BasicAddOp(AltDec& self, unsigned int& Value) { self.BasicUnsignedIntAddOp(Value); }
+		static void BasicAddOp(AltDec& self, signed long long& Value) { self.BasicIntAddOp(Value); }
+		static void BasicAddOp(AltDec& self, unsigned long long& Value) { self.BasicUnsignedIntAddOp(Value); }
+
+		/// <summary>
+        /// Basic Addition Operation that returns a value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+		AltDec BasicAdd(signed int Value)
+        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+		AltDec BasicAdd(unsigned int Value)
+        { AltDec self = *this; BasicUnsignedIntAddOp(Value); return self; }
+		AltDec BasicAdd(signed long long Value)
+        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+        AltDec BasicAdd(unsigned long long Value)
+        { AltDec self = *this; BasicUnsignedIntAddOp(Value); return self; }
+
+		static AltDec BasicAdd(AltDec& self, signed int Value) { self.BasicIntAddOp(Value); return self; }
+		static AltDec BasicAdd(AltDec& self, unsigned int Value) { self.BasicUnsignedIntAddOp(Value); return self; }
+		static AltDec BasicAdd(AltDec& self, signed long long Value) { self.BasicIntAddOp(Value); return self; }
+        static AltDec BasicAdd(AltDec& self, unsigned long long Value) { self.BasicUnsignedIntAddOp(Value); return self; }
 
 	#pragma endregion NormalRep Integer Addition Operations
 	
@@ -3186,46 +3233,16 @@ protected:
         template<typename IntType>
         void BasicIntSubOp(IntType& Value)
         {
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntValue -= Value.IntValue;
-            //Now deal with the decimal section
-            if(Value.DecimalHalf!=0)
+            if(self.DecimalHalf==0)
+                self.IntValue.NRepSkippingSubOp(value);
+            else
             {
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)//-4.0 - -0.5 = -3.5
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else//4.3 -  - 1.8
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)//-4.5 - 5.6
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else//0.995 - 1 = 
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
+                bool NegativeBeforeOperation = self.IntValue < 0;
+                self.IntValue -= value;
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(self.IntValue<0))
+                    self.DecimalHalf = MediumDecVariant::DecimalOverflow - self.DecimalHalf;
             }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 public:
 
@@ -3237,6 +3254,11 @@ public:
 		void BasicSubOp(unsigned int& Value) { BasicUnsignedIntSubOp(Value); }
 		void BasicSubOp(signed long long& Value) { BasicIntSubOp(Value); }
 		void BasicSubOp(unsigned long long& Value) { BasicUnsignedIntSubOp(Value); }
+
+		static void BasicSubOp(AltDec& self, signed int& Value) { self.BasicIntSubOp(Value); }
+		static void BasicSubOp(AltDec& self, unsigned int& Value) { self.BasicUnsignedIntSubOp(Value); }
+		static void BasicSubOp(AltDec& self, signed long long& Value) { self.BasicIntSubOp(Value); }
+		static void BasicSubOp(AltDec& self, unsigned long long& Value) { self.BasicUnsignedIntSubOp(Value); }
 
 		/// <summary>
         /// Basic Subtraction Operation that returns a value
@@ -3251,6 +3273,11 @@ public:
         { AltDec self = *this; BasicIntSubOp(Value); return self; }
         AltDec BasicSub(unsigned long long Value)
         { AltDec self = *this; BasicUnsignedIntSubOp(Value); return self; }
+
+		static AltDec BasicSub(AltDec& self, signed int Value) { self.BasicIntSubOp(Value); return self; }
+		static AltDec BasicSub(AltDec& self, unsigned int Value) { self.BasicUnsignedIntSubOp(Value); return self; }
+		static AltDec BasicSub(AltDec& self, signed long long Value) { self.BasicIntSubOp(Value); return self; }
+        static AltDec BasicSub(AltDec& self, unsigned long long Value) { self.BasicUnsignedIntSubOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
@@ -3600,6 +3627,159 @@ public:
 		
 		AltDec MultipleAsCopy(AltDec self, AltDec Value) { return self.MultOp(Value); }
 
+    #if !defined(AltNum_PreventModulusOverride)
+		AltDec& BasicRemOp(AltDec& Value)
+        {
+            bool SelfIsWholeN = DecimalHalf == 0;
+            bool ValueIsWholeN = Value.DecimalHalf == 0;
+            if (Value.IntValue == 0 && ValueIsWholeN) { SetAsZero(); return self; }//Return zero instead of N/A
+            if (SelfIsWholeN && ValueIsWholeN)//WholeNumbers
+            {
+                IntValue %= Value.IntValue;
+            }
+            else if (ValueIsWholeN)
+            {
+                self %= Value.IntValue;
+            }
+            else
+            {
+                if (Value.IsNegative())
+                {
+                    Value.SwapNegativeStatus();
+                    SwapNegativeStatus();
+                }
+                bool SelfIsNegative = IsNegative();
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { SwapNegativeStatus(); }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                __int64 SRep_DecHalf = SRep;
+                __int64 VRep = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;;
+                SRep %= VRep;
+                __int64 IntResult = SRep;
+                //Int Half Calculated now get decimal digits that got truncated off
+                SRep_DecHalf -= IntResult * VRep;
+                //Gives enough buffer room that doesn't lose the decimal values
+                SRep_DecHalf *= DecimalOverflowX;
+                SRep_DecHalf %= VRep;
+                if (IntResult == 0) { IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
+                else { IntValue = (signed int)SelfIsNegative ? IntResult * -1 : IntResult; }
+                DecimalHalf = (signed int)SRep;
+            }
+        }
+
+		void CatchAllRem(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			Value.ConvertToNormType(RRep);
+			BasicRemOp(Value);
+		}
+		
+		void CatchAllRem(AltDec& Value, RepType& SameRep)
+		{
+            ConvertToNormType(SameRep);
+			Value.ConvertToNormType(SameRep);
+			BasicRemOp(Value);
+		}
+		
+		void CatchAllRem(AltDec& Value)
+		{
+			ConvertToNormType();
+			Value.ConvertToNormType();
+			BasicRemOp(Value);
+		}
+	
+	    //bool RepToRepRemOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+	
+        /// <summary>
+        /// Modulus Operation (Division operation that returns the remainder result)
+        /// </summary>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+        AltDec& RemOp(AltDec& Value);
+		
+        /// <summary>
+        /// Modulus Operation (Division operation that returns the remainder result)
+        /// </summary>
+        /// <param name="self">The leftside value.</param>
+        /// <param name="Value">The rightside value.</param>
+        /// <returns>AltDec&</returns>
+		static AltDec RemOp(AltDec& self, AltDec& Value) { return self.RemOp(Value); }
+
+        AltDec ModulusAsCopy(AltDec Value) { return self.RemOp(Value); }
+		
+		AltDec ModulusAsCopy(AltDec self, AltDec Value) { return self.RemOp(Value); }
+    #endif
+        /// <summary>
+        /// Basic Addition Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicAddOp(AltDec& Value)
+        {
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntValue += Value.IntValue;
+            if (Value.DecimalHalf != 0)
+            {
+                if (Value.IntValue < 0)
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+        }
+	
+        void CatchAllAddition(AltDec& Value, RepType& LRep, RepType& RRep)
+        {
+            ConvertToNormType(LRep);
+            Value.ConvertToNormType(RRep);
+            BasicAddOp(Value);
+        }
+		
+        void CatchAllAddition(AltDec& Value, RepType& SameRep)
+        {
+            ConvertToNormType(SameRep);
+            Value.ConvertToNormType(SameRep);
+            BasicAddOp(Value);
+        }
+		
+		void CatchAllAddition(AltDec& Value)
+		{
+			ConvertToNormType();
+			Value.ConvertToNormType();
+            BasicAddOp(Value);
+        }
+
         bool RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
 
         /// <summary>
@@ -3621,6 +3801,71 @@ public:
 		
 		AltDec AddAsCopy(AltDec self, AltDec Value) { return self.AddOp(Value); }
 
+		AltDec& BasicSubOp(AltDec& Value)
+        {
+            bool NegativeBeforeOperation = IntValue < 0;
+            //Deal with Int section first
+            IntValue -= Value.IntValue;
+            //Now deal with the decimal section
+            if(Value.DecimalHalf!=0)
+            {
+                if (Value.IntValue < 0)
+                {
+                    if (WasNegative)//-4.0 - -0.5 = -3.5
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
+                    }
+                    else//4.3 -  - 1.8
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)//-4.5 - 5.6
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; --IntValue; }
+                    }
+                    else//0.995 - 1 = 
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDecVariant::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDecVariant::DecimalOverflow) { DecimalHalf -= MediumDecVariant::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(NegativeBeforeOperation^(IntValue<0))
+                DecimalHalf = MediumDecVariant::DecimalOverflow - DecimalHalf;
+        }
+	
+		void CatchAllSubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			Value.ConvertToNormType(RRep);
+			BasicSubOp(Value);
+		}
+		
+		void CatchAllSubtraction(AltDec& Value, RepType& SameRep)
+		{
+			ConvertToNormType(SameRep);
+			Value.ConvertToNormType(SameRep);
+			BasicSubOp(Value);
+		}
+		
+		void CatchAllSubtraction(AltDec& Value)
+		{
+			ConvertToNormType();
+			Value.ConvertToNormType();
+			BasicSubOp(Value);
+		}
+
         bool RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
 
         /// <summary>
@@ -3641,29 +3886,6 @@ public:
         AltDec SubtractionAsCopy(AltDec Value) { return self.SubOp(Value); }
 		
 		AltDec SubtractionAsCopy(AltDec self, AltDec Value) { return self.SubOp(Value); }
-
-    #if !defined(AltNum_PreventModulusOverride)
-	    bool RepToRepRemOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
-	
-        /// <summary>
-        /// Modulus Operation (Division operation that returns the remainder result)
-        /// </summary>
-        /// <param name="Value">The rightside value.</param>
-        /// <returns>AltDec&</returns>
-        AltDec& RemOp(AltDec& Value);
-		
-        /// <summary>
-        /// Modulus Operation (Division operation that returns the remainder result)
-        /// </summary>
-        /// <param name="self">The leftside value.</param>
-        /// <param name="Value">The rightside value.</param>
-        /// <returns>AltDec&</returns>
-		static AltDec RemOp(AltDec& self, AltDec& Value) { return self.RemOp(Value); }
-
-        AltDec ModulusAsCopy(AltDec Value) { return self.RemOp(Value); }
-		
-		AltDec ModulusAsCopy(AltDec self, AltDec Value) { return self.RemOp(Value); }
-    #endif
 
     #pragma endregion NormalRep AltNumToAltNum Operations
 	
@@ -3899,7 +4121,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntDivOp(IntType& Value)
+        AltDec& IntDivOp(IntType& Value)
         {
             if (Value < 0)
             {
@@ -3908,21 +4130,7 @@ public:
             }
             return UnsignedIntDivOp(Value);
         }
-
-		AltDec& DivOp(signed int& Value) { return IntDivOp(Value); }
-		AltDec& DivideAsCopy(signed int Value)
-        { AltDec self = *this; return self.IntDivOp(Value);}
-		AltDec& DivOp(unsigned int& Value)
-        { return UnsignedIntDivOp(Value); }
-		AltDec& DivideAsCopy(unsigned int Value)
-        { AltDec self = *this; return self.UnsignedIntDivOp(Value);}
-		AltDec& DivOp(signed long long& Value) { return IntDivOp(Value); }
-		AltDec& DivideAsCopy(signed long long Value)
-        { AltDec self = *this; return self.IntDivOp(Value); }
-        AltDec& DivideAsCopy(unsigned long long Value)
-        { AltDec self = *this; return self.UnsignedIntDivOp(Value); }
-        AltDec& DivOp(unsigned long long& Value) { return UnsignedIntDivOp(Value); }
-
+		
         /// <summary>
         /// Division Operation Between AltDec and Integer Value
         /// </summary>
@@ -3931,6 +4139,31 @@ public:
         /// <returns>AltDec</returns>
         template<typename IntType>
         static AltDec& IntDivOp(AltDec& self, IntType& Value) { return self.IntDivOp(Value); }
+
+		AltDec& DivOp(signed int& Value) { return IntDivOp(Value); }
+		AltDec& DivOp(unsigned int& Value){ return UnsignedIntDivOp(Value); }
+		AltDec& DivOp(signed long long& Value) { return IntDivOp(Value); }
+        AltDec& DivOp(unsigned long long& Value) { return UnsignedIntDivOp(Value); }
+		
+		static AltDec& DivOp(AltDec& self, signed int& Value) { return self.IntDivOp(Value); }
+		static AltDec& DivOp(AltDec& self, unsigned int& Value){ return self.UnsignedIntDivOp(Value); }
+		static AltDec& DivOp(AltDec& self, signed long long& Value) { return self.IntDivOp(Value); }
+        static AltDec& DivOp(AltDec& self, unsigned long long& Value) { return self.UnsignedIntDivOp(Value); }
+
+		AltDec& DivideAsCopy(signed int Value)
+        { AltDec self = *this; return self.IntDivOp(Value);}
+		AltDec& DivideAsCopy(unsigned int Value)
+        { AltDec self = *this; return self.UnsignedIntDivOp(Value);}
+		AltDec& DivideAsCopy(signed long long Value)
+        { AltDec self = *this; return self.IntDivOp(Value); }
+        AltDec& DivideAsCopy(unsigned long long Value)
+        { AltDec self = *this; return self.UnsignedIntDivOp(Value); }
+		
+		static AltDec& DivideAsCopy(signed int Value) { return self.IntDivOp(Value);}
+		static AltDec& DivideAsCopy(unsigned int Value) { return self.UnsignedIntDivOp(Value);}
+		static AltDec& DivideAsCopy(signed long long Value) { return self.IntDivOp(Value); }
+        static AltDec& DivideAsCopy(unsigned long long Value) { return self.UnsignedIntDivOp(Value); }
+
     #pragma endregion Division Operations
 
     #pragma region Other Multiplication Operations
@@ -4117,57 +4350,9 @@ public:
         AltDec MultipleAsCopy(unsigned long long Value)
         { AltDec self = *this; return self.UnsignedIntMultOp(Value); }
 
-        void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
     #pragma endregion Other Multiplication Operations
 
     #pragma region Other Addition Operations
-        /// <summary>
-        /// Basic Addition Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void BasicAddOp(AltDec& Value)
-        {
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntValue += Value.IntValue;
-            if (Value.DecimalHalf != 0)
-            {
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
-
 protected:
         /// <summary>
         /// Addition Operation Between AltDec and Integer value
@@ -4235,36 +4420,7 @@ protected:
             return self.IntAddOp(value);
         }
 
-        /// <summary>
-        /// Addition Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        static AltDec& AddOp(AltDec& self, AltDec& Value);
-protected:
-        void CatchAllAddition(AltDec& Value, RepType& LRep, RepType& RRep)
-        {
-            ConvertToNormType(LRep);
-            Value.ConvertToNormType(RRep);
-            BasicAddOp(Value);
-        }
-		
-        void CatchAllAddition(AltDec& Value, RepType& SameRep)
-        {
-            ConvertToNormType(SameRep);
-            Value.ConvertToNormType(SameRep);
-            BasicAddOp(Value);
-        }
-		
-		void CatchAllAddition(AltDec& Value)
-		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
-            BasicAddOp(Value);
-        }
 public:
-        void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 		
     #pragma endregion Other Addition Operations
 
@@ -4336,37 +4492,7 @@ public:
             return self.IntSubOp(value);
         }
 
-        /// <summary>
-        /// Subtraction Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec&</returns>
-        static AltDec& SubOp(AltDec& self, AltDec& Value);
-protected:
-		void CatchAllSubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
-		{
-			ConvertToNormType(LRep);
-			Value.ConvertToNormType(RRep);
-			BasicSubOp(Value);
-		}
-		
-		void CatchAllSubtraction(AltDec& Value, RepType& SameRep)
-		{
-			ConvertToNormType(SameRep);
-			Value.ConvertToNormType(SameRep);
-			BasicSubOp(Value);
-		}
-		
-		void CatchAllSubtraction(AltDec& Value)
-		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
-			BasicSubOp(Value);
-		}
-public:
-        void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
-    #pragma region Other Subtraction Operations
+    #pragma endregion Other Subtraction Operations
 	
     #pragma region Other Modulus Operations
 	#if !defined(AltNum_PreventModulusOverride)
