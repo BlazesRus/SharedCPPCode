@@ -3354,41 +3354,33 @@ public:
 		/// <summary>
         ///  Modulus Operation
         /// </summary>
-        /// <param name="Value">The value.</param>
-		AltDec RemOp(signed int& Value) { return self.IntRemOp(Value); }
-		AltDec RemOp(unsigned int& Value) { return self.IntRemOp(Value); }
-		AltDec RemOp(signed long long& Value) { return self.IntRemOp(Value); }
-		AltDec RemOp(unsigned long long& Value) { return self.IntRemOp(Value); }
+        /// <param name="RValue">The value.</param>
+		AltDec RemOp(signed int& RValue) { return IntRemOp(RValue); }
+		AltDec RemOp(unsigned int& RValue) { return IntRemOp(RValue); }
+		AltDec RemOp(signed long long& RValue) { return IntRemOp(RValue); }
+		AltDec RemOp(unsigned long long& RValue) { return IntRemOp(RValue); }
 
-		static AltDec RemOp(AltDec& self, signed int& Value) { return self.IntRemOp(Value); }
-		static AltDec RemOp(AltDec& self, unsigned int& Value) { return self.IntRemOp(Value); }
-		static AltDec RemOp(AltDec& self, signed long long& Value) { return self.IntRemOp(Value); }
-		static AltDec RemOp(AltDec& self, unsigned long long& Value) { return self.IntRemOp(Value); }
+		static AltDec RemOp(AltDec& self, signed int& RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemOp(AltDec& self, unsigned int& RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemOp(AltDec& self, signed long long& RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemOp(AltDec& self, unsigned long long& RValue) { return self.IntRemOp(RValue); }
+		
+		AltDec RemAsCopy(signed int RValue) { return IntRemOp(RValue); }
+		AltDec RemAsCopy(unsigned int RValue) { return IntRemOp(RValue); }
+		AltDec RemAsCopy(signed long long RValue) { return IntRemOp(RValue); }
+		AltDec RemAsCopy(unsigned long long RValue) { return IntRemOp(RValue); }
 
-		/// <summary>
-        ///  Modulus Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-		AltDec RemAsCopy((signed int Value)
-        { AltDec self = *this; IntRemOp(Value); return self; }
-		AltDec RemAsCopy((unsigned int Value)
-        { AltDec self = *this; IntRemOp(Value); return self; }
-		AltDec RemAsCopy((signed long long Value)
-        { AltDec self = *this; IntRemOp(Value); return self; }
-        AltDec RemAsCopy((unsigned long long Value)
-        { AltDec self = *this; IntRemOp(Value); return self; }
+		static AltDec RemAsCopy(AltDec self, signed int RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemAsCopy(AltDec self, unsigned int RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemAsCopy(AltDec self, signed long long RValue) { return self.IntRemOp(RValue); }
+		static AltDec RemAsCopy(AltDec self, unsigned long long RValue) { return self.IntRemOp(RValue); }
 
-		static AltDec RemAsCopy((AltDec& self, signed int Value) { self.IntRemOp(Value); return self; }
-		static AltDec RemAsCopy((AltDec& self, unsigned int Value) { self.IntRemOpIntRemOp(Value); return self; }
-		static AltDec RemAsCopy((AltDec& self, signed long long Value) { self.IntRemOp(Value); return self; }
-        static AltDec RemAsCopy((AltDec& self, unsigned long long Value) { self.IntRemOp(Value); return self; }
 
 		//Performs modulus operation based on "C = A - B * (A / B)" formula
 		//Designed for use with normal, decimaled fractionals if both have same ExtraRep field, PiNum, and ENum  representation types
 		//Will not work with non-decimaled format fractionals or mixed fractions
 		//Modifies left side value with result
-        void BasicRemOp(IntType& RValue)
+        void BasicRemOp(AltDec& RValue)
         {
             if(RValue.DecimalHalf==0)
             {
@@ -3476,35 +3468,26 @@ public:
 		/// <summary>
         ///  Modulus Operation
         /// </summary>
-        /// <param name="Value">The value.</param>
-		AltNumModChecker<AltDec> ModulusOp(signed int& Value) { IntModulusOp(Value); }
-		AltNumModChecker<AltDec> ModulusOp(unsigned int& Value) { IntModulusOp(Value); }
-		AltNumModChecker<AltDec> ModulusOp(signed long long& Value) { IntModulusOp(Value); }
-		AltNumModChecker<AltDec> ModulusOp(unsigned long long& Value) { IntModulusOp(Value); }
+        /// <param name="RValue">The value.</param>
+		AltNumModChecker<AltDec> ModulusOp(signed int& RValue) { IntModulusOp(RValue); }
+		AltNumModChecker<AltDec> ModulusOp(unsigned int& RValue) { IntModulusOp(RValue); }
+		AltNumModChecker<AltDec> ModulusOp(signed long long& RValue) { IntModulusOp(RValue); }
+		AltNumModChecker<AltDec> ModulusOp(unsigned long long& RValue) { IntModulusOp(RValue); }
 
-		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, signed int& Value) { self.IntModulusOp(Value); }
-		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, unsigned int& Value) { self.IntModulusOp(Value); }
-		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, signed long long& Value) { self.IntModulusOp(Value); }
-		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, unsigned long long& Value) { self.IntModulusOp(Value); }
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, signed int& RValue) { self.IntModulusOp(RValue); }
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, unsigned int& RValue) { self.IntModulusOp(RValue); }
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, signed long long& RValue) { self.IntModulusOp(RValue); }
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, unsigned long long& RValue) { self.IntModulusOp(RValue); }
 
-		/// <summary>
-        ///  Modulus Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-		AltNumModChecker<AltDec> ModulusAsCopy((signed int Value)
-        { AltDec self = *this; IntModulusOp(Value); return self; }
-		AltNumModChecker<AltDec> ModulusAsCopy((unsigned int Value)
-        { AltDec self = *this; IntModulusOp(Value); return self; }
-		AltNumModChecker<AltDec> ModulusAsCopy((signed long long Value)
-        { AltDec self = *this; IntModulusOp(Value); return self; }
-        AltNumModChecker<AltDec> ModulusAsCopy((unsigned long long Value)
-        { AltDec self = *this; IntModulusOp(Value); return self; }
-
-		static AltNumModChecker<AltDec> ModulusAsCopy((AltDec& self, signed int Value) { self.IntModulusOp(Value); return self; }
-		static AltNumModChecker<AltDec> ModulusAsCopy((AltDec& self, unsigned int Value) { self.IntModulusOpIntModulusOp(Value); return self; }
-		static AltNumModChecker<AltDec> ModulusAsCopy((AltDec& self, signed long long Value) { self.IntModulusOp(Value); return self; }
-        static AltNumModChecker<AltDec> ModulusAsCopy((AltDec& self, unsigned long long Value) { self.IntModulusOp(Value); return self; }
+		
+        static AltNumModChecker<AltDec> ModulusOp(AltDec& RValue)
+        {
+			AltNumModChecker<AltDec> Res;
+			Res.CalcIfZero(*this, RValue);
+			return Res;
+        }
+		
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, AltDec& RValue) { self.IntModulusOp(RValue); }
 		#endif
 	#endif
     #pragma endregion Other Modulus Operations
