@@ -131,6 +131,23 @@ namespace BlazesRusCode
 	#else
 	#endif      
         }
+        //Return value as real number with Absolute value operation applied
+        int GetAbsValue()
+        {
+	#if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            if(IsZero())
+                return 0;
+            return IsNegative()?-Value:Value;
+	#elif defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(IsNegative())
+            {
+                return (signed int)(Value - 2147483648);
+            }
+            else
+                return (signed int)Value;
+	#else
+	#endif      
+        }
 
         /// <summary>
         /// Sets the value.

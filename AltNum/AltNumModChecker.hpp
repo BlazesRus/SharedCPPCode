@@ -18,10 +18,10 @@ namespace BlazesRusCode
         /// <param name="a">a.</param>
         /// <param name="b">The b.</param>
         /// <returns>bool</returns>
-        bool CalcIfZero(VarType a, VarType b)
+        bool CalcIfZero(VarType LValue, VarType RValue)
         {
-            divRes = a / b;
-            C = a - b * divRes;
+            divRes = LValue / RValue;
+            C = LValue - RValue * divRes;
             if (C == 0)
             {
                 return true;
