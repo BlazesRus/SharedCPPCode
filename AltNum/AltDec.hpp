@@ -5041,22 +5041,16 @@ public:
 
     #pragma region Modulus Operations
     #if !defined(AltNum_PreventModulusOverride)
-        friend AltDec operator%(AltDec& self, int Value) { return IntRemOp(self, Value); }
-        friend AltDec operator%(AltDec& self, signed long long Value) { return IntRemOp(self, Value); }
-
-        friend AltDec operator%=(AltDec& self, int Value) { return IntRemOp(self, Value); }
-        friend AltDec operator%=(AltDec& self, signed long long Value) { return IntRemOp(self, Value); }
-
-        friend AltDec operator%=(AltDec* self, int Value) { return IntRemOp(**self, Value); }
-        friend AltDec operator%=(AltDec* self, signed long long Value) { return IntRemOp(**self, Value); }
-        
-        friend AltDec operator%(AltDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
-    
-        #if defined(AltNum_EnableAlternativeModulusResult)
-        //friend MediumDec operator%(MediumDec& self, int Value) { return IntRemOp(self, Value); }
-        //friend MediumDec operator%(MediumDec& self, signed long long Value) { return IntRemOp(self, Value); }
-        //friend MediumDec operator%(MediumDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
-        #endif
+		friend AltDec operator%(AltDec self, AltDec Value) { return RemOp(self, Value); }
+		friend AltDec operator%(AltDec& self, AltDec Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec self, int Value) { return RemOp(self, Value); }
+		friend AltDec operator%(AltDec self, unsigned int Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec self, signed long long Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec self, unsigned __int64 Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec& self, int Value) { return RemOp(self, Value); }
+		friend AltDec operator%(AltDec& self, unsigned int Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec& self, signed long long Value) { return RemOp(self, Value); }
+        friend AltDec operator%(AltDec& self, unsigned __int64 Value) { return RemOp(self, Value); }
     #endif
     #pragma endregion Modulus Operations
 
