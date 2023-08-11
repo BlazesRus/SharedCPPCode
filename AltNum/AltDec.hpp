@@ -3319,7 +3319,7 @@ public:
 		//Will not work with non-decimaled format fractionals or mixed fractions
 		//Modifies left side value with result
         template<typename IntType>
-        void BasicIntRemOp(IntType& RValue)
+        AltDec BasicIntRemOp(IntType& RValue)
         {
             if(DecimalHalf==0)
                 IntValue.Value %= RValue;
@@ -3340,7 +3340,28 @@ public:
 					DecimalHalf = C;
 				}
             }
+			return *this;
         }
+		
+		AltDec BasicRemOp(signed int& RValue) { return BasicIntRemOp(RValue); }
+		AltDec BasicRemOp(unsigned int& RValue) { return BasicIntRemOp(RValue); }
+		AltDec BasicRemOp(signed long long& RValue) { return BasicIntRemOp(RValue); }
+		AltDec BasicRemOp(unsigned long long& RValue) { return BasicIntRemOp(RValue); }
+
+		static AltDec BasicRemOp(AltDec& self, signed int& RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRemOp(AltDec& self, unsigned int& RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRemOp(AltDec& self, signed long long& RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRemOp(AltDec& self, unsigned long long& RValue) { return self.BasicIntRemOp(RValue); }
+		
+		AltDec BasicRem(signed int RValue) { AltDec self = *this; return BasicIntRemOp(RValue); }
+		AltDec BasicRem(unsigned int RValue) { AltDec self = *this; return BasicIntRemOp(RValue); }
+		AltDec BasicRem(signed long long RValue) { AltDec self = *this; return BasicIntRemOp(RValue); }
+		AltDec BasicRem(unsigned long long RValue) { AltDec self = *this; return BasicIntRemOp(RValue); }
+
+		static AltDec BasicRem(AltDec self, signed int RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRem(AltDec self, unsigned int RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRem(AltDec self, signed long long RValue) { return self.BasicIntRemOp(RValue); }
+		static AltDec BasicRem(AltDec self, unsigned long long RValue) { return self.BasicIntRemOp(RValue); }
 		
 		//Performs modulus operation based on "C = A - B * (A / B)" formula
         template<typename IntType>
@@ -3365,10 +3386,10 @@ public:
 		static AltDec RemOp(AltDec& self, signed long long& RValue) { return self.IntRemOp(RValue); }
 		static AltDec RemOp(AltDec& self, unsigned long long& RValue) { return self.IntRemOp(RValue); }
 		
-		AltDec RemAsCopy(signed int RValue) { return IntRemOp(RValue); }
-		AltDec RemAsCopy(unsigned int RValue) { return IntRemOp(RValue); }
-		AltDec RemAsCopy(signed long long RValue) { return IntRemOp(RValue); }
-		AltDec RemAsCopy(unsigned long long RValue) { return IntRemOp(RValue); }
+		AltDec RemAsCopy(signed int RValue) { AltDec self = *this; return self.IntRemOp(RValue); }
+		AltDec RemAsCopy(unsigned int RValue) { AltDec self = *this; return self.IntRemOp(RValue); }
+		AltDec RemAsCopy(signed long long RValue) { AltDec self = *this; return self.IntRemOp(RValue); }
+		AltDec RemAsCopy(unsigned long long RValue) { AltDec self = *this; return self.IntRemOp(RValue); }
 
 		static AltDec RemAsCopy(AltDec self, signed int RValue) { return self.IntRemOp(RValue); }
 		static AltDec RemAsCopy(AltDec self, unsigned int RValue) { return self.IntRemOp(RValue); }
