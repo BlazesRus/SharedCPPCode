@@ -3508,7 +3508,7 @@ public:
 			return Res;
         }
 		
-		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, AltDec& RValue) { self.IntModulusOp(RValue); }
+		static AltNumModChecker<AltDec> ModulusOp(AltDec& self, AltDec& RValue) { self.ModulusOp(RValue); }
 		#endif
 	#endif
     #pragma endregion Other Modulus Operations
