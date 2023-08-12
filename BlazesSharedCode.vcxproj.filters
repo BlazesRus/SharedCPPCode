@@ -129,13 +129,7 @@
     <ClInclude Include="AltNum\AltDec.hpp">
       <Filter>Header Files\AltNum</Filter>
     </ClInclude>
-    <ClInclude Include="AltNum\MediumDec.hpp">
-      <Filter>Header Files\AltNum</Filter>
-    </ClInclude>
     <ClInclude Include="AltNum\AltNumModChecker.hpp">
-      <Filter>Header Files\AltNum</Filter>
-    </ClInclude>
-    <ClInclude Include="AltNum\MediumDec_OtherMath.hpp">
       <Filter>Header Files\AltNum</Filter>
     </ClInclude>
     <ClInclude Include="AltNum\FloatingOperations.hpp">

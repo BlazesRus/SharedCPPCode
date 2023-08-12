@@ -3009,10 +3009,10 @@ public:
         AltDec PartialDiv(unsigned long long Value)
         { AltDec self = *this; PartialIntDivOp(Value); return self; }
 
-		static AltDec PartialDiv(signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static AltDec PartialDiv(unsigned int Value) { self.PartialIntDivOp(Value); return self; }
-		static AltDec PartialDiv(signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static AltDec PartialDiv(unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialDiv(AltDec self, signed int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialDiv(AltDec self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialDiv(AltDec self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
+        static AltDec PartialDiv(AltDec self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
         template<typename IntType>
@@ -3074,10 +3074,10 @@ public:
         AltDec BasicDiv(unsigned long long Value)
         { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
-		static AltDec BasicDiv(signed int Value) { self.BasicIntDivOp(Value); return self; }
-		static AltDec BasicDiv(unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
-		static AltDec BasicDiv(signed long long Value) { self.BasicIntDivOp(Value); return self; }
-        static AltDec BasicDiv(unsigned long long Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+		static AltDec BasicDiv(AltDec self, signed int Value) { self.BasicIntDivOp(Value); return self; }
+		static AltDec BasicDiv(AltDec self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
+		static AltDec BasicDiv(AltDec self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
+        static AltDec BasicDiv(AltDec self, unsigned long long Value) { self.BasicUnsignedIntDivOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Division Operations
 
