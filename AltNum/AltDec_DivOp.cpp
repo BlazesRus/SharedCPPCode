@@ -5,8 +5,8 @@
 /// </summary>
 /// <param name="self">The </param>
 /// <param name="Value">The value.</param>
-/// <returns>MediumDecVariant&</returns>
-static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+/// <returns>AltDec&</returns>
+static AltDec& AltDec::DivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (IsZero())
@@ -77,7 +77,7 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
                 PartialDivOp(Value);
                 if(Value.ExtraRep<ExtraRep)
                 {
-                    MediumDecVariant PiPowerDivisor = PiPowerNum(ExtraRep - Value.ExtraRep);
+                    AltDec PiPowerDivisor = PiPowerNum(ExtraRep - Value.ExtraRep);
                     ExtraRep = 0;
                     PartialDivOp(PiPowerDivisor);
                 }
@@ -241,15 +241,15 @@ static MediumDecVariant& MediumDecVariant::DivOp(RepType& LRep, RepType& RRep, M
 	#if defined(AltNum_EnableMixedFractional)
 			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
                 //=LeftSideNum*Value.ExtraRep / RightSideNum;
-				MediumDecVariant LeftSideNum;
+				AltDec LeftSideNum;
 				if(IntValue==NegativeRep)
-					LeftSideNum = MediumDecVariant(DecimalHalf);
+					LeftSideNum = AltDec(DecimalHalf);
 				else if(IntValue<0)
-					LeftSideNum = MediumDecVariant(IntValue*ExtraRep + DecimalHalf);
+					LeftSideNum = AltDec(IntValue*ExtraRep + DecimalHalf);
 				else if(IntValue==0)
-					LeftSideNum = MediumDecVariant(-DecimalHalf);
+					LeftSideNum = AltDec(-DecimalHalf);
 				else
-					LeftSideNum = MediumDecVariant(IntValue*ExtraRep - DecimalHalf);
+					LeftSideNum = AltDec(IntValue*ExtraRep - DecimalHalf);
                 LeftSideNum.PartialMultOp(Value.ExtraRep);
                 if(LeftSideNum.IsZero())
                     SetAsZero();

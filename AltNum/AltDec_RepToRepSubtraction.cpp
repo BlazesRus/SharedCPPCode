@@ -1,6 +1,7 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
-bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
 	const bool RightIsNegative = false;//bool RightIsNegative = Value.IntValue<0;//Should always return positive value before RepToRep method used
@@ -51,9 +52,10 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
 			#endif
 		#endif
 	
-		#if defined(AltNum_EnableInfinityRep)
+		#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+		#endif
 		#if defined(AltNum_EnableApproachingDivided)
 				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
 				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
@@ -453,16 +455,16 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
         //#elif defined(AltNum_EnableMixedEFractional)&&AltNum_EnableDecimaledEFractionals
         //            break;//Give result as EByDiv
         //#else
-			        MediumDecVariant LeftSideNum;
+			        AltDec LeftSideNum;
 			        if(self.IntValue==NegativeRep)
-				        LeftSideNum = MediumDecVariant(self.DecimalHalf);
+				        LeftSideNum = AltDec(self.DecimalHalf);
 			        else if(self.IntValue<0)
-				        LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep + self.DecimalHalf);
+				        LeftSideNum = AltDec(self.IntValue*self.ExtraRep + self.DecimalHalf);
 			        else if(self.IntValue==0)
-				        LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+				        LeftSideNum = AltDec(-self.DecimalHalf);
 			        else
-				        LeftSideNum = MediumDecVariant(self.IntValue*self.ExtraRep - self.DecimalHalf);
-                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
+				        LeftSideNum = AltDec(self.IntValue*self.ExtraRep - self.DecimalHalf);
+                    AltDec RightSideNum = AltDec(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
 	    #if defined(AltNum_EnableMixedPiFractional)
                     RightSideNum *= PiNum;
         #else
@@ -505,15 +507,15 @@ bool MediumDecVariant::RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDecVari
         //            break;//Give result as EByDiv
         //#else
                 case RepType::MixedFrac:
-        			MediumDecVariant LeftSideNum;
+        			AltDec LeftSideNum;
         			if(self.IntValue==NegativeRep)
-        				LeftSideNum = MediumDecVariant(self.DecimalHalf);
+        				LeftSideNum = AltDec(self.DecimalHalf);
         			else if(self.IntValue<0)
-        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + self.DecimalHalf);
+        				LeftSideNum = AltDec(self.IntValue*-self.ExtraRep + self.DecimalHalf);
         			else if(self.IntValue==0)
-        				LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+        				LeftSideNum = AltDec(-self.DecimalHalf);
         			else
-        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + -self.DecimalHalf);
+        				LeftSideNum = AltDec(self.IntValue*-self.ExtraRep + -self.DecimalHalf);
         #if defined(AltNum_EnableMixedPiFractional)
                     LeftSideNum *= PiNum;
         #elif defined(AltNum_EnableMixedEFractional)

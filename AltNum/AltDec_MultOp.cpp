@@ -1,15 +1,16 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 /// <summary>
 /// Multiplication Operation
 /// </summary>
 /// <param name="Value">The rightside value.</param>
-/// <returns>MediumDecVariant&</returns>
-static MediumDecVariant& MediumDecVariant::MultOp(MediumDecVariant& Value)
+/// <returns>AltDec&</returns>
+AltDec& AltDec::MultOp(AltDec& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (Value.IsZero()) { SetAsZero(); return *this; }
-	if (IsZero() || Value == MediumDecVariant::One)
+	if (IsZero() || Value == AltDec::One)
 		return *this;
 #if defined(AltNum_EnableUndefinedButinMinMaxRange)
 	if (Value.ExtraRep!=UndefinedInMinMaxRangeRep&&Value.IntValue<0)
@@ -121,8 +122,8 @@ static MediumDecVariant& MediumDecVariant::MultOp(MediumDecVariant& Value)
 						bool IsNegative = IntValue<0;
 						if(IsNegative)
 							IntValue *= -1;
-						MediumDecVariant XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
-						MediumDecVariant YV = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
+						AltDec XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
+						AltDec YV = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
 						XV *= YV;
 						if(IsNegative)
 							IntValue = XV.IntValue==0?NegativeRep:-XV.IntValue;
@@ -137,9 +138,9 @@ static MediumDecVariant& MediumDecVariant::MultOp(MediumDecVariant& Value)
 					if(IsNegative)
 						IntValue = IntValue==NegativeRep:0?-IntValue;
 					int XZ = IntValue * Value.IntValue;
-					MediumDecVariant XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
-					MediumDecVariant YZ = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
-					MediumDecVariant YV = SetAsApproachingMid(0, Self.ExtraRep)*SetAsApproachingMid(0, Value.ExtraRep);
+					AltDec XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
+					AltDec YZ = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
+					AltDec YV = SetAsApproachingMid(0, Self.ExtraRep)*SetAsApproachingMid(0, Value.ExtraRep);
 					XV += XZ;
 					XV += YZ+YV;
 					if(IsNegative)
@@ -160,8 +161,8 @@ static MediumDecVariant& MediumDecVariant::MultOp(MediumDecVariant& Value)
 						bool IsNegative = IntValue<0;
 						if(IsNegative)
 							IntValue *= -1;
-						MediumDecVariant XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
-						MediumDecVariant YV = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
+						AltDec XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
+						AltDec YV = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
 						XV *= YV;
 						if(IsNegative)
 							IntValue = XV.IntValue==0?NegativeRep:-XV.IntValue;
@@ -176,9 +177,9 @@ static MediumDecVariant& MediumDecVariant::MultOp(MediumDecVariant& Value)
 					if(IsNegative)
 						IntValue = IntValue==NegativeRep:0?-IntValue;
 					int XZ = IntValue * Value.IntValue;
-					MediumDecVariant XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
-					MediumDecVariant YZ = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
-					MediumDecVariant YV = SetAsApproachingMid(0, Self.ExtraRep)*SetAsApproachingMid(0, Value.ExtraRep);
+					AltDec XV = SetAsApproachingMid(0, Value.ExtraRep)*IntValue;
+					AltDec YZ = SetAsApproachingMid(0, Self.ExtraRep)*Value.IntValue;
+					AltDec YV = SetAsApproachingMid(0, Self.ExtraRep)*SetAsApproachingMid(0, Value.ExtraRep);
 					XV += XZ;
 					XV += YZ+YV;
 					if(IsNegative)

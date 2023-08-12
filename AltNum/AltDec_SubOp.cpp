@@ -1,11 +1,12 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 /// <summary>
 /// Subtraction Operation
 /// </summary>
 /// <param name="Value">The value.</param>
-/// <returns>MediumDecVariant&</returns>
-static MediumDecVariant& MediumDecVariant::SubOp(MediumDecVariant& Value)
+/// <returns>AltDec&</returns>
+AltDec& AltDec::SubOp(AltDec& Value)
 {
 	if (IsZero())
 	{

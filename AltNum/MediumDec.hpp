@@ -7,9 +7,9 @@
 #ifdef BlazesSharedCode_LocalLayout
 #ifndef DLL_API
 #ifdef UsingBlazesSharedCodeDLL
-#define DLL_APi __declspec(dllimport)
+#define DLL_API __declspec(dllimport)
 #elif defined(BLAZESSharedCode_LIBRARY)
-#define DLL_APi __declspec(dllexport)
+#define DLL_API __declspec(dllexport)
 #else
 #define DLL_API
 #endif
@@ -22,43 +22,55 @@
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
-#include <boost/rational.hpp>//Requires boost to reduce fractional
-#include <boost/multiprecision/cpp_int.hpp>
-//Preprocessor options
-//RunAsC = Run code as c code instead of cpp(not implimented)
-/*
-*/
-#if defined(MediumDec_EnablePIRep) || defined(MediumDec_EnableInfinityRep) || defined(MediumDec_EnableERep)
-#define MediumDec_SpecialStatusEnabled
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
+#if defined(AltNum_UseOldDivisionCode)
+	#include <boost/multiprecision/cpp_int.hpp>
 #endif
 
+#include "AltNumModChecker.hpp"
+
+#include "MirroredInt.hpp"
+
+/*
+AltNum_PreventModulusOverride
+AltNum_EnableAlternativeModulusResult
+*/
+
 namespace BlazesRusCode
-{
+{//"Not used for this variant" comment used as placeholder between unused regions to help with code compare between variants and keep structure similar
+
     class MediumDec;
 
-/*---Accuracy Tests:
+/*---Accuracy Tests(with MediumDec based settings):
  * 100% accuracy for all integer value multiplication operations.
  * 100% accuracy for addition/subtraction operations
- * Partial but still high accuracy for non-integer representation variations of multiplication because of truncation
-   (values get lost if get too small)
- * Partial but still high accuracy for division because of truncation
-   (values get lost if get too small)
+ * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
+   (values get lost if get too small) (100% accuracy except for some truncated digits lost)
  * Other operations like Ln and Sqrt contained with decent level of accuracy
    (still loses a little accuracy because of truncation etc)
  * Operations and functions will mess up if IntValue overflows/underflows
- * Operations mess up if IntValue reaches exactly -2147483648,
-   which is used to represent negative zero when it has decimal values(Code added that should prevent this error occuring for integer addition and subtraction)
 */
 
     /// <summary>
-    /// Fixed point based number class representing +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
-    /// (values will be lost past 9th decimal digit)
-	/// (Use MediumDecV2, ExtendedMDec, AltDecV2, or AltDec instead for infinity, Pi, and e features)
-    /// (8 bytes worth of Variable Storage inside class for each instance)
-    /// </summary>
-    class DLL_APi MediumDec
+    /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
+    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
+    /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
+    /// (12 bytes worth of Variable Storage inside class for each instance)
+	/// </summary>
+    class DLL_API MediumDec
     {
     public:
+    #undef MediumDecVariant
+    #define MediumDecVariant MediumDec
+#if defined(AltNum_EnableAlternativeModulusResult)
+		class ModRes
+		{
+			//Division Result
+			MediumDecVariant DivRes;
+			//Modulo Operation Result
+			MediumDecVariant RemRes;
+		}
+#endif
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -69,39 +81,76 @@ namespace BlazesRusCode
         /// </summary>
         static signed _int64 const DecimalOverflowX = 1000000000;
 
+	protected:
+        /// <summary>
+        /// The decimal overflow value * -1
+        /// </summary>
+		static signed _int64 const NegDecimalOverflowX = -1000000000;
+	public:
+
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
         using ldouble = long double;
-    public:
+
         /// <summary>
-        /// Value when IntValue is at negative zero (when has decimal part)
+        /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        static signed int const NegativeRep = -2147483648;
+        static MirroredInt NegativeRep;
+        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
+		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        signed int IntValue;
+        MirroredInt IntValue;
+
+        signed int GetIntHalf()
+        {
+            return IntValue.GetValue();
+        }
+
+        bool IsNegative()
+        {
+            return IntValue.IsNegative();
+        }
 
         /// <summary>
-        /// Stores decimal section info
+        /// Stores decimal section info and other special info
         /// </summary>
         signed int DecimalHalf;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.(Default constructor)
         /// </summary>
-        /// <param name="intVal">The int value.</param>
-        /// <param name="decVal01">The decimal val01.</param>
-        /// <param name="decVal02">The decimal val02.</param>
-        MediumDec(signed int intVal = 0, signed int decVal01 = 0)
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDec(MirroredInt intVal = MirroredInt::Zero, signed int decVal = 0)
         {
             IntValue = intVal;
-            DecimalHalf = decVal01;
+            DecimalHalf = decVal;
         }
 
-		bool IsZero(){ return IntValue==0&&DecimalHalf==0; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDec(int intVal, signed int decVal = 0)
+        {
+            IntValue.Value = intVal;
+            DecimalHalf = decVal;
+        }
+
+        MediumDec(const MediumDec&) = default;
+
+        MediumDec& operator=(const MediumDec&) = default;
+
+        //Detect if at exactly zero
+		bool IsZero()
+		{
+            return DecimalHalf==0&&IntValue.Value==0;
+		}
 
         /// <summary>
         /// Sets the value.
@@ -112,23 +161,171 @@ namespace BlazesRusCode
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
         }
-        
+
         void SetAsZero()
         {
-            IntValue = 0; DecimalHalf = 0;
+            IntValue = 0;
+            DecimalHalf = 0;
+        }
+        
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus()
+        {
+            if (IntValue == NegativeRep)
+            {
+                IntValue = 0;
+            }
+            else if (IntValue == 0)
+            {
+                IntValue = NegativeRep;
+            }
+            else
+            {
+                IntValue *= -1;
+            }
         }
 
-    #pragma region ValueDefines
-    private:
+    #pragma region Const Representation values
+    protected:
+	#if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf==2147483647
+        static const signed int NaNRep = 2147483647;
+        //Is NaN when DecimalHalf==2147483646
+        static const signed int UndefinedRep = 2147483646;
+	#endif
+
+    #if defined(AltNum_EnableNilRep)
+        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
+        static signed int const NilRep = -2147483648;
+    #endif
+
+    #pragma endregion Const Representation values
         /// <summary>
-        /// Returns the value at zero
+        /// Enum representing value type stored
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec ZeroValue()
+        //enum class RepType: int;
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        //RepType GetRepType();
+
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMaximum()
         {
-            MediumDec NewSelf = MediumDec();
+            IntValue = 2147483647; DecimalHalf = 999999999;
+        }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMinimum()
+        {
+            IntValue = -2147483647; DecimalHalf = 999999999;
+        }
+	
+	#pragma region PiNum Setters
+	//Not used for this variant
+	#pragma endregion PiNum Setters
+
+	#pragma region ENum Setters
+	//Not used for this variant
+	#pragma endregion ENum Setters
+
+	#pragma region Fractional Setters
+	//Not used for this variant
+	#pragma endregion Fractional Setters
+        
+	#pragma region MixedFrac Setters
+	//Not used for this variant
+	#pragma endregion MixedFrac Setters
+		
+	#pragma region Infinity Setters
+	//Not used for this variant
+	#pragma endregion Infinity Setters
+	
+	#pragma region ApproachingZero Setters
+	//Not used for this variant
+	#pragma endregion ApproachingZero Setters
+
+	#pragma region NaN Setters
+	#if defined(AltNum_EnableNaN)
+        void SetAsNaN()
+        {
+            IntValue = 0; DecimalHalf = NaNRep;
+        }
+
+        void SetAsUndefined()
+        {
+            IntValue = 0; DecimalHalf = UndefinedRep;
+        }
+	#endif
+	#pragma endregion NaN Setters
+
+    #pragma region ValueDefines
+    protected:
+	#if defined(AltNum_EnableNaN)
+        static MediumDec NaNValue()
+        {
+            MediumDec NewSelf = MediumDec(0, NaNRep);
             return NewSelf;
         }
+		
+        static MediumDec UndefinedValue()
+        {
+            MediumDec NewSelf = MediumDec(0, UndefinedRep);
+            return NewSelf;
+        }
+	#endif
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        static MediumDec PiNumValue()
+        {
+            return MediumDec(3, 141592654);
+        }
+
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDec HundredMilPiNumVal()
+        {
+            return MediumDec(314159265, 358979324);
+        }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDec TenMilPiNumVal()
+        {
+            return MediumDec(31415926, 535897932);
+        }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDec OneMilPiNumVal()
+        {
+            return MediumDec(3141592, 653589793);
+        }
+
+        //10xPi(Rounded to 9th decimal digit)
+        static MediumDec TenPiNumVal()
+        {
+            return MediumDec(31, 415926536);
+        }
+        
+        static MediumDec ENumValue()
+        {
+            return MediumDec(2, 718281828);
+        }
+        
+        static MediumDec ZeroValue()
+        {
+            return MediumDec();
+        }
+
         /// <summary>
         /// Returns the value at one
         /// </summary>
@@ -211,46 +408,6 @@ namespace BlazesRusCode
             return NewSelf;
         }
 
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up(3.141592654)
-        /// (about 1.000000000448883 times actual value of Pi with digits past 15th cut off)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec PiValue()
-        {
-            MediumDec NewSelf = MediumDec(3, 141592654);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns value of -2147483647.999999999
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec MinimumValue()
-        {
-            return MediumDec(-2147483647, 999999999);
-        }
-
-        /// <summary>
-        /// Returns value of 2147483647.999999999
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec MaximumValue()
-        {
-            return MediumDec(2147483647, 999999999);
-        }
-
-        /// <summary>
-        /// Euler's number
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec EValue()
-        {
-            return MediumDec(2, 718281828);
-        }
-
         static MediumDec LN10Value()
         {
             return MediumDec(2, 302585093);
@@ -265,20 +422,66 @@ namespace BlazesRusCode
         {
             return MediumDec(0, 868588964);
         }
-
+        
+    #if defined(AltNum_EnableNilRep)
         static MediumDec NilValue()
         {
-            return MediumDec(-2147483648, -2147483648);
+            return MediumDec(NilRep, NilRep);
         }
-    public:
+    #endif
+
+        static MediumDec MinimumValue()
+        {
+            return MediumDec(2147483647, 999999999);
+        }
+
+        static MediumDec MaximumValue()
+        {
+            return MediumDec(2147483647, 999999999);
+        }
+public:
+        static MediumDec AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        static MediumDec PiNum;
+        
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        static MediumDec ENum;
+        
+#if defined(AltNum_EnableInfinityRep)
+        static MediumDec Infinity;
+        static MediumDec NegativeInfinity;
+        static MediumDec ApproachingZero;
+#endif
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>MediumDec</returns>
         static MediumDec Pi;
+      
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        static MediumDec E;
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec Zero;
-
+        
         /// <summary>
         /// Returns the value at one
         /// </summary>
@@ -342,23 +545,17 @@ namespace BlazesRusCode
         static MediumDec NegativeOne;
 
         /// <summary>
-        /// Returns value of highest non-infinite/Special Decimal State Value that can store
-        /// </summary>
-        static MediumDec Maximum;
-
-        /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
         /// </summary>
         static MediumDec Minimum;
-
+        
         /// <summary>
-        /// Euler's number
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec E;
-
+        static MediumDec Maximum;
+        
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
@@ -375,30 +572,15 @@ namespace BlazesRusCode
         /// </summary>
         static MediumDec HalfLN10Mult;
 
+    #if defined(AltNum_EnableNilRep)
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
         static MediumDec Nil;
-
+    #endif
+	
     #pragma endregion ValueDefines
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-            if (IntValue == NegativeRep)
-            {
-                IntValue = 0;
-            }
-            else if (IntValue == 0)
-            {
-                IntValue = NegativeRep;
-            }
-            else
-            {
-                IntValue *= -1;
-            }
-        }
+
     #pragma region String Commands
         /// <summary>
         /// Reads the string.
@@ -420,9 +602,9 @@ namespace BlazesRusCode
         MediumDec(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "PI")
+            if (Value == "Pi")
             {
-                this->SetVal(PI);
+                this->SetVal(Pi);
             }
             else if (Value == "E")
             {
@@ -440,9 +622,9 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         MediumDec(std::string Value)
         {
-            if (Value == "PI")
+            if (Value == "Pi")
             {
-                this->SetVal(PI);
+                this->SetVal(Pi);
             }
             else if (Value == "E")
             {
@@ -453,6 +635,14 @@ namespace BlazesRusCode
                 this->ReadString(Value);
             }
         }
+
+#pragma endregion String Commands
+
+//private:
+        //std::string BasicToStringOp();
+		
+		//std::string BasicToFullStringOp();
+public:
 
         /// <summary>
         /// Converts to string.
@@ -471,14 +661,6 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator std::string() { return ToString(); }
-
-        ///// <summary>
-        ///// += MediumDec operation added to std::string
-        ///// </summary>
-        ///// <param name="targetString">The target string(left side).</param>
-        ///// <param name="Value">The right side value</param>
-        ///// <returns>string</returns>
-        //friend std::string operator+=(std::string targetString, MediumDec self) { return targetString + self.ToString(); }
     #pragma endregion String Commands
 
     #pragma region From Standard types to this type
@@ -507,7 +689,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep: 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -536,7 +718,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep: 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -565,7 +747,7 @@ namespace BlazesRusCode
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep: 0;
+                    IntValue = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -623,6 +805,13 @@ namespace BlazesRusCode
         {
             this->SetVal(Value);
         }
+
+#if defined(AltNum_EnableMediumDecBasedSetValues)
+        MediumDec(MediumDec Value)
+        {
+            this->SetVal(Value);
+        }
+#endif
     #pragma endregion From Standard types to this type
 
     #pragma region From this type to Standard types
@@ -633,18 +822,19 @@ namespace BlazesRusCode
         explicit operator float()
         {
             float Value;
-            if (IntValue < 0)
+            if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
+                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-                Value = (float)IntValue;
+                Value = (float)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
         }
+
         /// <summary>
         /// MediumDec to double explicit conversion
         /// </summary>
@@ -652,14 +842,14 @@ namespace BlazesRusCode
         explicit operator double()
         {
             double Value;
-            if (IntValue < 0)
+            if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue;
+                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-                Value = (double)IntValue;
+                Value = (double)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
@@ -672,1396 +862,1327 @@ namespace BlazesRusCode
         explicit operator ldouble()
         {
             ldouble Value;
-            if (IntValue < 0)
+            if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue;
+                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-                Value = (ldouble)IntValue;
+                Value = (ldouble)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
         }
-
+		
         /// <summary>
         /// MediumDec to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return IntValue; }
+        explicit operator int() { return IntValue.GetValue(); }
 
-        explicit operator bool() { return IntValue == 0 ? false : true; }
-
-        /// <summary>
-        /// MediumDec to integer type explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        template<typename IntType>
-        explicit operator IntType() { return IntValue; }
+        explicit operator bool() { return IntValue.IsZero() ? false : true; }
     #pragma endregion From this type to Standard types
 
+    #pragma region Pi Conversion
+	//Not used for this variant
+    #pragma endregion Pi Conversion
+
+    #pragma region E Conversion
+	//Not used for this variant
+    #pragma endregion E Conversion
+	
+    #pragma region Other RepType Conversion
+	//Not used for this variant
+    #pragma endregion Other RepType Conversion
+	
     #pragma region Comparison Operators
         /// <summary>
-        /// Equal to Operation Between MediumDecs
+        /// Equal to Operation
         /// </summary>
-        /// <param name="self">The left side value</param>
+        /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator==(MediumDec self, MediumDec Value)
+        friend bool operator==(MediumDec LValue, MediumDec Value)
         {
-            return (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf);
+			return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
         }
 
         /// <summary>
-        /// Not equal to Operation Between MediumDecs
+        /// Not equal to Operation
         /// </summary>
-        /// <param name="self">The left side value</param>
+        /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator!=(MediumDec self, MediumDec Value)
+        friend bool operator!=(MediumDec LValue, MediumDec Value)
         {
-            return (self.IntValue != Value.IntValue || self.DecimalHalf != Value.DecimalHalf);
+            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
         }
 
         /// <summary>
-        /// Lesser than Operation Between MediumDecs
+        /// Lesser than Operation
         /// </summary>
-        /// <param name="self">The left side value</param>
+        /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<(MediumDec self, MediumDec Value)
+        friend bool operator<(MediumDec LValue, MediumDec Value)
         {
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
-            else
+            if (LValue.DecimalHalf == 0)
             {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return false; }// 5 > -5
-                else if (ValueIsNegative == false && SelfIsNegative) { return true; }// -5 <5
-                else
-                {//Both are either positive or negative
-                    if (Value.DecimalHalf == 0)
-                    {
-                        if (self.DecimalHalf == 0)
-                            return self.IntValue < Value.IntValue;
-                        else
-                        {
-                            if (self.IntValue == NegativeRep)
-                            {//-0.5<0
-                                if (Value.IntValue >= 0)
-                                    return true;
-                            }
-                            else if (self.IntValue < Value.IntValue) { return true; }//5.5 < 6
-                            else if (self.IntValue == Value.IntValue) { return self.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
-                        }
-                    }
-                    else if (self.DecimalHalf == 0)
-                    {
-                        if (Value.IntValue == NegativeRep)
-                        {
-                            if (self.IntValue <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue < Value.IntValue)
-                            return true;// 5 < 6.5
-                        else if (Value.IntValue == self.IntValue)
-                            return Value.IntValue < 0 ? false : true;//5 < 5.5 vs -5 > -5.5
-                    }
-                    //Assuming both are non-whole numbers if reach here
-                    if (self.IntValue == NegativeRep)
-                        self.IntValue = 0;
-                    if (Value.IntValue == NegativeRep)
-                        Value.IntValue = 0;
-                    if (SelfIsNegative)
-                    {//Larger number = farther down into negative
-                        if (self.IntValue > Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf > Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf < Value.DecimalHalf;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Lesser than or Equal to Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<=(MediumDec self, MediumDec Value)
-        {
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return false; }//5>=-5
-                else if (ValueIsNegative == false && SelfIsNegative) { return true; }//-5<=5
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue < Value.IntValue;
                 else
                 {
-                    if (Value.DecimalHalf == 0)
-                    {
-                        if (self.DecimalHalf == 0)
-                            return self.IntValue <= Value.IntValue;
-                        else
-                        {
-                            if (self.IntValue == NegativeRep)
-                            {//-0.5<0
-                                if (Value >= 0)
-                                    return true;
-                            }
-                            else if (self.IntValue < Value) { return true; }//5.5<=6
-                            else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }
-                        }
-                    }
-                    else if (self.DecimalHalf == 0)
-                    {
-                        if (Value.IntValue == NegativeRep && self.IntValue <= 1)
-                        {//-1<-0.5
-                            if (self.IntValue <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (Value.IntValue == self.IntValue)
-                            return Value.IntValue < 0 ? false : true;//5 <= 5.5 vs -5 >= -5.5
-                    }
-                    //Assuming both are non-whole numbers if reach here
-                    if (self.IntValue == NegativeRep)
-                        self.IntValue = 0;
-                    if (Value.IntValue == NegativeRep)
-                        Value.IntValue = 0;
-                    if (SelfIsNegative)//Both are either positive or negative
-                    {//Larger number = farther down into negative
-                        if (self.IntValue > Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf > Value.DecimalHalf;
-                    }
+                    if (LValue.IntValue < Value.IntValue)
+                        return LValue.DecimalHalf < Value.DecimalHalf;
                     else
-                    {
-                        if (self.IntValue < Value.IntValue)
-                            return true;
-                        else if (self.IntValue == Value.IntValue)
-                            return self.DecimalHalf < Value.DecimalHalf;
-                    }
+                        return false;
                 }
             }
-            return false;
+            else if (LValue.IntValue < Value.IntValue)
+                return LValue.DecimalHalf < Value.DecimalHalf;
+            else
+                return false;
         }
 
         /// <summary>
-        /// Greater than Operation Between MediumDecs
+        /// Lesser than or Equal to Operation
         /// </summary>
-        /// <param name="self">The self.</param>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue <= Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue <= Value.IntValue)
+                        return LValue.DecimalHalf <= Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue <= Value.IntValue)
+                return LValue.DecimalHalf <= Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Greater than Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The right side value.</param>
         /// <returns>bool</returns>
-        friend bool operator>(MediumDec self, MediumDec Value)
+        friend bool operator>(MediumDec LValue, MediumDec Value)
         {
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return false; }
-            else
+            if (LValue.DecimalHalf == 0)
             {
-
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return true; }//5 > -5
-                else if (ValueIsNegative == false && SelfIsNegative) { return false; }//-5<5
-                else if (Value.DecimalHalf == 0)
-                {
-                    if (self.DecimalHalf == 0)
-                        return self.IntValue > Value.IntValue;
-                    else
-                    {
-                        if (self.IntValue == NegativeRep)
-                        {//-0.5>-1
-                            if (Value <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue > Value) { return true; }
-                        else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }
-                    }
-                }
-                else if (self.DecimalHalf == 0)
-                {
-                    if (Value.IntValue == NegativeRep)
-                    {
-                        if (self.IntValue >= 0)
-                            return true;
-                    }
-                    else if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (Value.IntValue == self.IntValue)
-                        return Value.IntValue < 0 ? true : false;//5 < 5.5 vs -5 > -5.5
-                }
-                //Assuming both are non-whole numbers if reach here
-                if (self.IntValue == NegativeRep)
-                    self.IntValue = 0;
-                if (Value.IntValue == NegativeRep)
-                    Value.IntValue = 0;
-                if (SelfIsNegative)//Both are either positive or negative
-                {//Larger number = farther down into negative
-                    if (self.IntValue < Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf < Value.DecimalHalf;
-                }
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue > Value.IntValue;
                 else
                 {
-                    if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf > Value.DecimalHalf;
+                    if (LValue.IntValue > Value.IntValue)
+                        return LValue.DecimalHalf > Value.DecimalHalf;
+                    else
+                        return false;
                 }
             }
-            return false;
+            else if (LValue.IntValue > Value.IntValue)
+                return LValue.DecimalHalf > Value.DecimalHalf;
+            else
+                return false;
         }
 
         /// <summary>
-        /// Greater than or Equal to Operation Between MediumDecs
+        /// Greater than or Equal to Operation
         /// </summary>
-        /// <param name="self">The left side value</param>
+        /// <param name="LValue">The left side value</param>
         /// <param name="Value">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>=(MediumDec self, MediumDec Value)
+        friend bool operator>=(MediumDec LValue, MediumDec Value)
         {
-            if (self.IntValue == Value.IntValue && self.DecimalHalf == Value.DecimalHalf) { return true; }
-            else
+            if (LValue.DecimalHalf == 0)
             {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValueIsNegative = Value.IntValue < 0;
-                if (ValueIsNegative && SelfIsNegative == false) { return true; }
-                else if (ValueIsNegative == false && SelfIsNegative) { return false; }
-                else if (Value.DecimalHalf == 0)
-                {
-                    if (self.DecimalHalf == 0)
-                        return self.IntValue >= Value.IntValue;
-                    else
-                    {
-                        if (self.IntValue == NegativeRep)
-                        {
-                            if (Value <= -1)
-                                return true;
-                        }
-                        else if (self.IntValue > Value)
-                            return true;
-                        else if (self.IntValue == Value)
-                            return self.IntValue < 0 ? false : true;//-5.5<-5 vs 5.5>5
-                    }
-                }
-                else if (self.DecimalHalf == 0)//return self.IntValue > Value;
-                {
-                    if (Value.IntValue == NegativeRep)
-                    {//0>-0.5
-                        if (self.IntValue >= 0)
-                            return true;
-                    }
-                    else if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (Value.IntValue == self.IntValue)
-                        return Value.IntValue < 0 ? true : false;//5 <= 5.5 vs -5 >= -5.5
-                }
-                //Assuming both are non-whole numbers if reach here
-                if (self.IntValue == NegativeRep)
-                    self.IntValue = 0;
-                if (Value.IntValue == NegativeRep)
-                    Value.IntValue = 0;
-                if (SelfIsNegative)//Both are either positive or negative
-                {//Larger number = farther down into negative
-                    if (self.IntValue < Value.IntValue)//-5.5 >= -6.5
-                        return true;
-                    else if (self.IntValue == Value.IntValue)//-5.5 >= -5.6
-                        return self.DecimalHalf < Value.DecimalHalf;
-                }
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue >= Value.IntValue;
                 else
                 {
-                    if (self.IntValue > Value.IntValue)
-                        return true;
-                    else if (self.IntValue == Value.IntValue)
-                        return self.DecimalHalf > Value.DecimalHalf;
+                    if (LValue.IntValue >= Value.IntValue)
+                        return LValue.DecimalHalf >= Value.DecimalHalf;
+                    else
+                        return false;
                 }
             }
-            return false;
+            else if (LValue.IntValue >= Value.IntValue)
+                return LValue.DecimalHalf >= Value.DecimalHalf;
+            else
+                return false;
         }
-
-    #pragma endregion Comparison Operators
-
-    #pragma region Other Comparison Operators
-		template<typename IntType>
-        static bool EqualToInt(AltDec& LValue, IntType& RValue)
-        {
-            return LValue.IntValue==RValue.IntValue&&LValue.DecimalHalf==RValue.DecimalHalf;		}
 		
-	    template<typename IntType>
-        static bool NotEqualToInt(AltDec& LValue, IntType& RValue)
+        /// <summary>
+        /// Equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+        template<typename IntType>
+        static bool RightSideIntEqualTo(MediumDec& LValue, IntType& RValue)
         {
-            return LValue.IntValue!=RValue.IntValue||LValue.DecimalHalf!=RValue.DecimalHalf;
-		}
-		
-		template<typename IntType>
-        static bool LessThanToInt(AltDec& LValue, IntType& RValue)
-        {
-            if(self.DecimalHalf==0)
-                return self.IntValue<Value;
-            else if(self.IntValue<Value)
-                return true;
-            else if(self.IntValue == Value)
-                return self.DecimalHalf>0?false:true;
-		}
-		
-	    template<typename IntType>
-        static bool LessThanOrEqualToInt(AltDec& LValue, IntType& RValue)
-        {
-            if(self.DecimalHalf==0)
-                return self.IntValue<=Value;
-            else if(self.IntValue<Value)
-                return true;
-            else if(self.IntValue == Value)
-                return self.DecimalHalf>0?false:true;
+            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
 		}
 		
         /// <summary>
-        /// Greater than operation between <see cref="AltDec"/> and Integer Type.
+        /// Not Equal to operation between <see cref="MediumDec"/> and Integer Type.
         /// </summary>
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntNotEqualTo(MediumDec& LValue, IntType& RValue)
         {
-            if(self.DecimalHalf==0)
-                return self.IntValue>Value;
-            else if(self.IntValue>Value)
+            if (LValue.IntValue == RValue)
+                return false;
+            else
                 return true;
-            else if(self.IntValue == Value)
-                return self.DecimalHalf>0?true:false;
 		}
 		
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Less than operation between <see cref="MediumDec"/> and Integer Type.
         /// </summary>
-        /// <param name="LValue">LeftSide AltDec RValue</param>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+		template<typename IntType>
+        static bool RightSideIntLessThan(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue < RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Less than or Equal operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntLessThanOrEqual(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue <= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntGreaterThan(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue > RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5>-1
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">LeftSide MediumDec RValue</param>
         /// <param name="RValue">RightSide integer RValue</param>
         /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool GreaterThanOrEqualToInt(AltDec& LValue, IntType& RValue)
+        static bool RightSideIntGreaterThanOrEqual(MediumDec& LValue, IntType& RValue)
         {
-            if(self.DecimalHalf==0)
-                return self.IntValue<=Value;
-            else if(self.IntValue<Value)
-                return true;
-            else if(self.IntValue == Value)
-                return self.DecimalHalf>0?false:true;
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue >= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
+            }
+            return false;
 		}
 	
+        /// <summary>
+        /// Equal to operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool LeftSideIntEqualTo(IntType& LValue, AltDec& RValue) { return EqualToInt(RValue, LValue); }
+        static bool LeftSideIntEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
 	
+        /// <summary>
+        /// Not equal to operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
 	    template<typename IntType>
-        static bool LeftSideIntNotEqualTo(IntType& LValue, AltDec& RValue) { return NotEqualToInt(RValue, LValue); }
-		
-	    template<typename IntType>
-        static bool LeftSideIntLessThanTo(IntType& LValue, AltDec& RValue) { return GreaterThanToInt(RValue, LValue); }
-		
-	    template<typename IntType>
-        static bool LeftSideIntLessThanOrEqualTo(IntType& LValue, AltDec& RValue) { return GreaterThanOrEqualToInt(RValue, LValue); }
-		
-		template<typename IntType>
-        static bool LeftSideIntGreaterThanTo(IntType& LValue, AltDec& RValue) { return LessThanToInt(RValue, LValue); }
+        static bool LeftSideIntNotEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
 		
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Less than operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntLessThan(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
+		
+        /// <summary>
+        /// Less than or equal operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntLessThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
+		
+        /// <summary>
+        /// Greater than operation between Integer Type and <see cref="MediumDec"/> 
         /// </summary>
         /// <returns>bool</returns>
 		template<typename IntType>
-        static bool LeftSideIntGreaterThanOrEqualTo(IntType& LValue, AltDec& RValue) { return LessThanOrEqualToInt(RValue, LValue); }
-    #pragma endregion Other Comparison Operators
-
-    #pragma region MediumDec-To-MediumDec Operators
-    public:
+        static bool LeftSideIntGreaterThan(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
+		
         /// <summary>
-        /// Addition Operation Between MediumDecs
+        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <returns>bool</returns>
+		template<typename IntType>
+        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
+    #pragma endregion Comparison Operators
+
+    #pragma region NormalRep Integer Division Operations
+protected:
+        template<typename IntType>
+        void PartialIntDivOp(IntType& Value)
+        {
+            if (DecimalHalf == 0)
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                    IntValue *= -1;
+                __int64 SRep = DecimalOverflowX * IntValue;
+                SRep /= Value;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflow;
+                    SRep -= OverflowVal * DecimalOverflow;
+                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    DecimalHalf = (signed int)SRep;
+                }
+            }
+            else
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                SRep /= Value;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= DecimalOverflowX * OverflowVal;
+                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = 0;
+                    DecimalHalf = (signed int)SRep;
+                }
+            }
+        }
+public:
+
+		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
+		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
+		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
+        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
+
+		static void PartialDivOp(MediumDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(MediumDec& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(MediumDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
+        static void PartialDivOp(MediumDec& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+
+		MediumDec PartialDiv(signed int Value)
+        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
+		MediumDec PartialDiv(unsigned int Value)
+        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
+		MediumDec PartialDiv(signed long long Value)
+        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
+        MediumDec PartialDiv(unsigned long long Value)
+        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
+
+		static MediumDec PartialDiv(MediumDec& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
+		static MediumDec PartialDiv(MediumDec& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static MediumDec PartialDiv(MediumDec& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
+        static MediumDec PartialDiv(MediumDec& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+
+protected:
+        template<typename IntType>
+        MediumDec& BasicIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            return *this;
+        }
+
+        template<typename IntType>
+        MediumDec& BasicUnsignedIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            return *this;
+        }
+public:
+
+		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
+		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
+        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+
+		static void BasicDivOp(MediumDec& self, signed int& Value) { self.BasicIntDivOp(Value); }
+		static void BasicDivOp(MediumDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
+		static void BasicDivOp(MediumDec& self, signed long long& Value) { self.BasicIntDivOp(Value); }
+        static void BasicDivOp(MediumDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
+
+		MediumDec BasicDiv(signed int Value)
+        { MediumDec self = *this; BasicIntDivOp(Value); return self; }
+		MediumDec BasicDiv(unsigned int Value)
+        { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+		MediumDec BasicDiv(signed long long Value)
+        { MediumDec self = *this; BasicIntDivOp(Value); return self; }
+        MediumDec BasicDiv(unsigned long long Value)
+        { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+
+		static MediumDec BasicDiv(MediumDec& self, signed int Value) { self.BasicIntDivOp(Value); return self; }
+		static MediumDec BasicDiv(MediumDec& self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
+		static MediumDec BasicDiv(MediumDec& self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
+        static MediumDec BasicDiv(MediumDec& self, unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+
+//protected:
+//        template<typename IntType>
+//        void BasicIntDivOpV2(IntType& Value)
+//        {
+//            if (IsZero())
+//                return;
+//            if (Value < 0)
+//            {
+//                Value *= -1;
+//                SwapNegativeStatus();
+//            }
+//            PartialIntDivOp(Value);
+//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//        }
+//
+//        template<typename IntType>
+//        void BasicUnsignedIntDivOpV2(IntType& Value)
+//        {
+//            if (IsZero())
+//                return;
+//            PartialIntDivOp(Value);
+//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//        }
+//public:
+//
+//		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
+//		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
+//		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
+//        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
+//
+//		static void BasicDivOpV2(MediumDec& self, signed int& Value) { self.BasicIntDivOpV2(Value); }
+//		static void BasicDivOpV2(MediumDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOpV2(Value); }
+//		static void BasicDivOpV2(MediumDec& self, signed long long& Value) { self.BasicIntDivOpV2(Value); }
+//        static void BasicDivOpV2(MediumDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOpV2(Value); }
+//
+//		MediumDec BasicDivV2(signed int Value)
+//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
+//		MediumDec BasicDivV2(unsigned int Value)
+//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+//		MediumDec BasicDivV2(signed long long Value)
+//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
+//        MediumDec BasicDivV2(unsigned long long Value)
+//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+//
+//		static MediumDec BasicDivV2(signed int Value) { self.BasicIntDivOpV2(Value); return self; }
+//		static MediumDec BasicDivV2(unsigned int Value) { self.BasicUnsignedIntDivOpV2(Value); return self; }
+//		static MediumDec BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
+//        static MediumDec BasicDivV2(unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+
+    #pragma endregion NormalRep Integer Division Operations
+	
+	#pragma region NormalRep AltNumToAltNum Operations
+protected:
+        //Return true if divide into zero
+        bool PartialDivOp(MediumDec& Value)
+        {
+			bool ResIsPositive = true;
+			signed _int64 SelfRes;
+			signed _int64 ValueRes;
+			if(IntValue<0)
+			{
+                if (IntValue == NegativeRep)
+                    SelfRes = DecimalHalf;
+                else
+			        SelfRes = NegDecimalOverflowX*IntValue + DecimalHalf;
+                if (Value < 0)
+                {
+                    if (Value.IntValue == NegativeRep)
+                        ValueRes = Value.DecimalHalf;
+                    else
+                        ValueRes =  NegDecimalOverflowX* Value.IntValue + Value.DecimalHalf;
+                }
+				else
+				{
+				    ResIsPositive = false;
+					ValueRes = DecimalOverflowX * Value.IntValue +Value.DecimalHalf;
+				}
+			}
+			else
+			{
+                
+				SelfRes = DecimalOverflowX* IntValue+DecimalHalf;
+			    if(Value<0)
+				{
+				    ResIsPositive = false;
+					ValueRes = Value.IntValue==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntValue +Value.DecimalHalf;
+				}
+				else
+					ValueRes = DecimalOverflowX* Value.IntValue +Value.DecimalHalf;
+			}
+			
+			signed _int64 IntHalfRes = SelfRes / ValueRes;
+			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+			DecimalHalf = DecimalRes;
+			if(IntHalfRes==0&&DecimalRes==0)
+				return true;
+			else
+				return false;
+        }
+
+public:
+		
+        void BasicDivOp(MediumDec& Value)
+        {
+			if (PartialDivOp(Value))//Prevent Dividing into nothing
+				DecimalHalf = 1;
+        }
+
+        MediumDec BasicDiv(MediumDec Value)
+        {
+            MediumDec self = *this;
+            self.BasicDivOp(Value);
+            return self;
+        }
+
+        //void CatchAllDivision;
+
+public:
+        //bool RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        MediumDec& DivOp(MediumDec& Value) { BasicDivOp(Value); return *this; }
+
+        MediumDec DivideAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicDivOp(Value); return self; }
+
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        MediumDec& MultOp(MediumDec& Value) { BasicMultOp(Value); return *this; }
+
+        MediumDec MultipleAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicMultOp(Value); return self; }
+
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        MediumDec& AddOp(MediumDec& Value) { BasicAddOp(Value); return *this; }
+
+
+        MediumDec AddAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicAddOp(Value); return self; }
+
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        MediumDec& SubOp(MediumDec& Value) { BasicSubOp(Value); return *this; }
+
+
+        MediumDec SubtractAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicSubOp(Value); return self; }
+
+        //MediumDec& RemOp(MediumDec& Value) { BasicRemOp(Value); return *this; }
+
+        //MediumDec ModulusAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicRemOp(Value); return self; }
+
+    #pragma endregion NormalRep AltNumToAltNum Operations
+	
+    #pragma region Other Integer Operations
+        /// <summary>
+        /// Division Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType>
+        static MediumDec& IntDivOp(IntType& Value)
+        {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            if (Value==1)
+                return;
+            if (Value == 0)
+            {
+#if defined(AltNum_EnableInfinityRep)
+                if(IntValue < 0)
+                    SetAsNegativeInfinity()
+                else
+                    SetAsInfinity(); 
+                return;
+#else
+                throw "Target value can not be divided by zero";
+#endif
+            }
+			switch (LRep)
+			{
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv:
+		#elif defined(AltNum_EnablePiFractional)
+				case RepType::PiFractional:
+		#endif
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::EFractional:
+		#endif
+                    #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
+					ConvertToNormType(LRep);
+					BasicIntDivOpV2(Value);
+					break;
+                    #endif
+		#if defined(AltNum_EnableDecimaledIFractionals)
+				case RepType::INumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::IFractional:
+		#endif
+                    #if defined(AltNum_EnableImaginaryNum)
+					ConvertToNormType(LRep);
+					BasicIntDivOpV2(Value);
+                    break;
+                    #endif
+	#endif
+    #ifdef AltNum_EnableImaginaryInfinity
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
+    #endif
+	#if defined(AltNum_EnableImaginaryNum)
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+					if(self.IntValue.IsZero())
+						return;
+					ConvertToNormType(LRep);
+					BasicIntDivOpV2(Value);
+	    #if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+	    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			#endif
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntDivOpV2(Value);
+					break;
+	#endif
+	#if defined(AltNum_EnableFractionals)
+	#endif
+	#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
+		#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+			#endif
+		    #if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			    #if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			    #endif
+		    #endif
+					ConvertToNormalIRep(LRep);
+					BasicIntDivOpV2(Value);
+					break;
+	    #endif
+    #endif
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                    int divRes;
+                    int C;
+                    if(IntValue.IsZero())//Become NumByDiv
+                    {
+                        divRes = DecimalHalf/ExtraRep;//-4/3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if(C==0)
+                        {
+                            if(IntValue==NegativeRep)
+                                IntValue = divRes;
+                            else
+                                IntValue = -divRes;
+                            DecimalHalf = 0;
+                        }
+                        else
+                        {
+                            if(IntValue==NegativeRep)
+                                IntValue = DecimalHalf;
+                            else
+                                IntValue = -DecimalHalf;
+                            DecimalHalf = 0;
+                            ExtraRep *= Value;
+                        }
+                        return;
+                    }
+                    divRes = IntValue/ExtraRep;
+                    if(divRes!=0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if(C==0)
+                        {
+                            throw "ToDo: Impliment code here"; 
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+					break;
+		#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+		#endif
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+                    int divRes;
+                    int C;
+                    if(IntValue.IsZero())//Become Fractional
+                    {
+                        divRes = DecimalHalf/ExtraRep;//-4/-3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if(C==0)
+                        {
+            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+			#elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+			
+            #endif
+                        }
+                        else
+                        {
+            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+			#elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+			
+            #endif
+                        }
+                        //return;
+                    }
+                    divRes = IntValue/ExtraRep;
+                    if(divRes!=0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if(C==0)
+                        {
+                            throw "ToDo: Impliment code here"; 
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+					break;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
+				case RepType::Undefined:
+				case RepType::NaN:
+					throw "Can't perform operations with NaN or Undefined number";
+					break;
+	#endif			
+				default:
+					BasicIntDivOpV2(Value);
+					break;
+			}
+            return;
+        }
+
+        /// <summary>
+        /// Division Operation Between MediumDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec& AddOp(MediumDec& self, MediumDec& Value)
-        {
-            if (Value.DecimalHalf == 0)
-            {
-                if (Value.IntValue == 0)//(Value == Zero)
-                    return self;
-                if (self.DecimalHalf == 0)
-                {
-                    self.IntValue += Value.IntValue;
-                }
-                else
-                {
-                    bool WasNegative = self.IntValue < 0;
-                    if (WasNegative)
-                        self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                    self.IntValue += Value.IntValue;
-                    if (self.IntValue == -1)
-                        self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                    else if (self.IntValue < 0)
-                        ++self.IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                        self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-                }
-            }
-            else
-            {
-                bool WasNegative = self.IntValue < 0;
-                //Deal with Int section first
-                if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                if (Value.IntValue != 0 && Value.IntValue != MediumDec::NegativeRep)
-                    self.IntValue += Value.IntValue;
-                //Now deal with the decimal section
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
-                    }
-                    else
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
-                    }
-                    else
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-            }
-            return self;
-        }
+        template<typename IntType>
+        static MediumDec& IntDivOp(MediumDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
-        /// <summary>
-        /// Subtraction Operation Between MediumDecs
+		/// <summary>
+        /// Basic Multiplication Operation(main code block)
         /// </summary>
-        /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        static MediumDec& SubOp(MediumDec& self, MediumDec& Value)
-        {
-            if (Value.DecimalHalf == 0)
+		bool BasicMultOpPt2(MediumDec& Value)
+		{
+            if (DecimalHalf == 0)
             {
-                if (Value.IntValue == 0)//(Value == Zero)
-                    return self;
-                if (self.DecimalHalf == 0)
+                if (IntValue == 1)
                 {
-                    self.IntValue -= Value.IntValue;
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
-                else
-                {
-                    bool WasNegative = self.IntValue < 0;
-                    if (WasNegative)
-                        self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                    if (Value.IntValue != 0)
-                        self.IntValue -= Value.IntValue;
-                    if(self.IntValue==-1)
-                        self.IntValue = self.DecimalHalf == 0?0:MediumDec::NegativeRep;
-                    else if(self.IntValue<0)
-                        ++self.IntValue;
-                    //If flips to other side of negative, invert the decimals
-                    if ((WasNegative && self.IntValue >= 0)||(WasNegative == 0 && self.IntValue < 0))
-                        self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-                }
-            }
-            else
-            {
-                bool WasNegative = self.IntValue < 0;
-                //Deal with Int section first
-                if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                if(Value.IntValue!=0&&Value.IntValue!=MediumDec::NegativeRep)
-                    self.IntValue -= Value.IntValue;
-                //Now deal with the decimal section
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)//-4.0 - -0.5 = -3.5
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
-                    }
-                    else//4.3 -  - 1.8
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)//-4.5 - 5.6
-                    {
-                        self.DecimalHalf += Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; ++self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; --self.IntValue; }
-                    }
-                    else//0.995 - 1 = 
-                    {
-                        self.DecimalHalf -= Value.DecimalHalf;
-                        if (self.DecimalHalf < 0) { self.DecimalHalf += MediumDec::DecimalOverflow; --self.IntValue; }
-                        else if (self.DecimalHalf >= MediumDec::DecimalOverflow) { self.DecimalHalf -= MediumDec::DecimalOverflow; ++self.IntValue; }
-                    }
-                }
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Multiplication Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        static MediumDec& MultOp(MediumDec& self, MediumDec& Value)
-        {
-            if (Value == MediumDec::Zero) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
-            if (self == MediumDec::Zero || Value == MediumDec::One)
-                return self;
-            if (Value.IntValue < 0)
-            {
-                if (Value.IntValue == MediumDec::NegativeRep) { Value.IntValue = 0; }
-                else { Value.IntValue *= -1; }
-                self.SwapNegativeStatus();
-            }
-            if (self.DecimalHalf == 0)
-            {
-                if (self.IntValue == 1) { self = Value; return self; }
                 else if (Value.DecimalHalf == 0)
                 {
-                    self.IntValue *= Value.IntValue; return self;
+                    IntValue *= Value.IntValue;
                 }
                 else
                 {
-                    Value *= self.IntValue;
-                    self = Value;
+                    Value.PartialIntMultOp(IntValue);
+                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
+				return false;
             }
-            else if (self.IntValue == 0)
+            else if (IntValue == 0)
             {
-                __int64 SRep = (__int64)self.DecimalHalf;
+                __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
                 SRep /= MediumDec::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
-                    self.DecimalHalf = (signed int)SRep;
+                    DecimalHalf = (signed int)SRep;
+					return DecimalHalf==0?true:false;
                 }
                 else
                 {
-                    SRep += (__int64)self.DecimalHalf * Value.IntValue;
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
                     if (SRep >= MediumDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = OverflowVal;
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
-                        self.DecimalHalf = (signed int)SRep;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
             }
-            else if (self.IntValue == MediumDec::NegativeRep)
+            else if (IntValue == MediumDec::NegativeRep)
             {
-                __int64 SRep = (__int64)self.DecimalHalf;
+                __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
                 SRep /= MediumDec::DecimalOverflowX;
                 if (Value.IntValue == 0)
                 {
-                    self.DecimalHalf = (signed int)SRep;
+                    DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    SRep += (__int64)self.DecimalHalf * Value.IntValue;
+                    SRep += (__int64)DecimalHalf * Value.IntValue;
                     if (SRep >= MediumDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = -OverflowVal;
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = -OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
-                        self.DecimalHalf = (signed int)SRep;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
             }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = IntValue < 0;
                 if (SelfIsNegative)
                 {
-                    self.IntValue *= -1;
+                    IntValue *= -1;
                 }
                 if (Value.IntValue == 0)
                 {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                    __int64 SRep = MediumDec::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= Value.DecimalHalf;
                     SRep /= MediumDec::DecimalOverflowX;
                     if (SRep >= MediumDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
-                        self.IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                    SRep *= Value.IntValue;
+                    __int64 SRep = MediumDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue.GetValue();
                     if (SRep >= MediumDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = (signed int)OverflowVal;
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = (signed int)OverflowVal;
+                        DecimalHalf = (signed int)SRep;
+						return false;
                     }
                     else
                     {
-                        self.IntValue = 0;
-                        self.DecimalHalf = (signed int)SRep;
+                        IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
+                        DecimalHalf = (signed int)SRep;
+						return DecimalHalf==0?true:false;
                     }
-                    return self;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                    SRep *= Value.IntValue;//SRep holds __int64 version of X.Y * Z
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : MediumDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    SRep *= Value.IntValue.GetValue();//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    __int64 Temp03 = (__int64)self.IntValue * Value.DecimalHalf;//Temp03 holds __int64 version of X *.V
-                    __int64 Temp04 = (__int64)self.DecimalHalf * (__int64)Value.DecimalHalf;
+                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
                     Temp04 /= MediumDec::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
                     __int64 IntHalf = IntegerRep / MediumDec::DecimalOverflow;
                     IntegerRep -= IntHalf * (__int64)MediumDec::DecimalOverflow;
-                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDec::NegativeRep : 0; }
-                    else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
-                    self.DecimalHalf = (signed int)IntegerRep;
+                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? MediumDec::NegativeRep : 0; }
+                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
+                    DecimalHalf = (signed int)IntegerRep;
                 }
             }
-            if (self == MediumDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
-            return self;
-        }
-
-        /// <summary>
-        /// Division Operation Between MediumDecs
+            if(DecimalHalf==0&&IntValue==0)
+                return true;
+            else
+                return false;
+		}
+		
+		/// <summary>
+        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
         /// </summary>
-        /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        static MediumDec& DivOp(MediumDec& self, MediumDec& Value)
-        {
-            if (Value == MediumDec::Zero)
-                throw "Target value can not be divided by zero";
-            if (self == MediumDec::Zero)
-                return self;
+		bool BasicMultOpPt1(MediumDec& Value)
+        {//Warning:Modifies Value to make it a positive variable
+        //Only checking for zero multiplication in main multiplication method
+        //Not checking for special representation variations in this method(closer to MediumDec operation code)
             if (Value.IntValue < 0)
             {
-                if (Value.IntValue == MediumDec::NegativeRep) { Value.IntValue = 0; }
-                else { Value.IntValue *= -1; }
-                self.SwapNegativeStatus();
+                Value.SwapNegativeStatus();
+                SwapNegativeStatus();
             }
-            if (self.DecimalHalf == 0)
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    self.IntValue *= -1;
-                }
-                if (Value.DecimalHalf == 0)//Both are integers
-                {
-                    if (self.IntValue < 0) { self.IntValue *= -1; }
-                    __int64 SRep = self.IntValue * MediumDec::DecimalOverflowX;
-                    __int64 YRep = Value.IntValue;
-                    SRep /= Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    }
-                    else
-                    {
-                        self.IntValue = SelfIsNegative ? MediumDec::NegativeRep : 0;
-                    }
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else//Only self is integer while Value has both sides
-                {
-                    /* Testing calculation 2.0/2.5 = 0.8
-                    MediumDec::DecimalOverflowX * self.IntValue = 2000000000
-                    (MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf) = 2500000000
-
-                    Converting to 2/(5/2) = 4/5
-                    4/5 = 800000000
-                    2000000000/(2500000000/MediumDec::DecimalOverflowX)=800000000
-                    */
-                    boost::multiprecision::uint128_t SRep02 = MediumDec::DecimalOverflowX * MediumDec::DecimalOverflowX;
-                    SRep02 *= self.IntValue;
-                    __int64 VRep = MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
-                    SRep02 /= VRep;
-                    __int64 SRep = (__int64)SRep02;
-                    if (SRep >= MediumDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
-                    }
-                    else
-                    {
-                        self.IntValue = 0;
-                    }
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            else if (self.IntValue == 0)
-            {
-                __int64 SRep = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MediumDec::DecimalOverflowX;
-                SRep -= IntHalf * MediumDec::DecimalOverflowX;
-                self.IntValue = IntHalf;
-                self.DecimalHalf = (signed int)SRep;
-            }
-            else if (self.IntValue == MediumDec::NegativeRep)
-            {
-                __int64 SRep = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                SRep /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                int IntHalf = SRep / MediumDec::DecimalOverflowX;
-                SRep -= IntHalf * MediumDec::DecimalOverflowX;
-                self.IntValue = IntHalf == 0 ? MediumDec::NegativeRep : -IntHalf;
-                self.DecimalHalf = (signed int)SRep;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    self.IntValue *= -1;
-                }
-                if (Value.DecimalHalf == 0)//Y is integer but self is not
-                {
-                    __int64 SRep = MediumDec::DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                    SRep /= Value.IntValue;
-                    if (SRep >= MediumDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        self.IntValue = (signed int)SelfIsNegative ? -OverflowVal : OverflowVal;
-                    }
-                    else
-                    {
-                        self.IntValue = 0;
-                    }
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {//Splitting Integer Half and Decimal Half Division
-                    __int64 SRep_DecHalf = (__int64)self.DecimalHalf * MediumDec::DecimalOverflowX;
-                    SRep_DecHalf /= Value.IntValue == 0 ? Value.DecimalHalf : MediumDec::DecimalOverflowX * Value.IntValue + (__int64)Value.DecimalHalf;
-                    int IntHalf = SRep_DecHalf / MediumDec::DecimalOverflowX;
-                    SRep_DecHalf -= IntHalf * MediumDec::DecimalOverflowX;
-
-                    boost::multiprecision::uint128_t SRep02 = MediumDec::DecimalOverflowX * MediumDec::DecimalOverflowX;
-                    //std::cout << "Multi-precision as String:" << SRep02 << std::endl;
-                    SRep02 *= self.IntValue;
-                    __int64 VRep = MediumDec::DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
-                    SRep02 /= VRep;
-                    __int64 SRep = (__int64)SRep02 + SRep_DecHalf;
-                    if (SRep >= MediumDec::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / MediumDec::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDec::DecimalOverflowX;
-                        IntHalf += OverflowVal;
-                    }
-                    if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? MediumDec::NegativeRep : 0; }
-                    else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            if (self == MediumDec::Zero) { self.DecimalHalf = 1; }//Prevent Dividing into nothing
-            return self;
+			return BasicMultOpPt2(Value);
         }
 
-        /// <summary>
-        /// Remainder/Modulus Operation Between MediumDecs
+		/// <summary>
+        /// Basic Multiplication Operation(without checking for special representation variations or zero)
+		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
+        /// <param name="Value">The value.</param>
+		bool BasicMultOp(MediumDec& Value)
+		{
+			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
+/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+			{	
+				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
+			}
+#else*/
+				DecimalHalf = 1;
+			else
+				return false;
+//#endif
+			return true;
+		}
+
+        //BasicMultOp without negative number check
+		bool BasicMultOpV2(MediumDec& Value)
+		{
+			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
+/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+			{	
+				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
+			}
+#else*/
+				DecimalHalf = 1;
+			else
+				return false;
+//#endif
+			return true;
+		}
+
+protected:
+		//void CatchAllMultiplication(MediumDec& Value, RepType& LRep, RepType& RRep)
+
+public:
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>MediumDec&</returns>
-        static MediumDec& RemOp(MediumDec& self, MediumDec& Value)
-        {
-            bool SelfIsWholeN = self.DecimalHalf == 0;
-            bool ValueIsWholeN = Value.DecimalHalf == 0;
-            if (Value.IntValue == 0 && ValueIsWholeN) { self.SetAsZero(); return self; }//Return zero instead of N/A
-            if (SelfIsWholeN && ValueIsWholeN)//WholeNumbers
-            {
-                self.IntValue %= Value.IntValue;
-            }
-            else if (ValueIsWholeN)
-            {
-                self %= Value.IntValue;
-            }
-            else
-            {
-                //bool ValueIsNegative = Value.IntValue < 0;
-                if (Value.IntValue < 0)
-                {
-                    self.IntValue *= -1;
-                    if (Value.IntValue == NegativeRep) { Value.IntValue = 0; }
-                }
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                __int64 SRep_DecHalf = SRep;
-                __int64 VRep = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;;
-                SRep %= VRep;
-                __int64 IntResult = SRep;
-                //Int Half Calculated now get decimal digits that got truncated off
-                SRep_DecHalf -= IntResult * VRep;
-                //Gives enough buffer room that doesn't lose the decimal values
-                SRep_DecHalf *= DecimalOverflowX;
-                SRep_DecHalf %= VRep;
-                if (IntResult == 0) { self.IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
-                else { self.IntValue = (signed int)SelfIsNegative ? IntResult * -1 : IntResult; }
-                self.DecimalHalf = (signed int)SRep;
-            }
-            return self;
-        }
-        
-    public:
-        /// <summary>
-        /// Addition Operation Between MediumDecs
+        static MediumDec& MultOp(MediumDec& self, MediumDec& Value);
+
+		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 coPies of variables)
+		static MediumDec& MultOpV2(MediumDec& self, MediumDec Value)
+		{
+			return MultOp(self, Value);
+		}
+		
+		/// <summary>
+        /// Partial Multiplication Operation Between MediumDec and Integer Value
         /// </summary>
-        /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator+(MediumDec self, MediumDec Value)
-        {
-            return AddOp(self, Value);
-        }
-
-        /// <summary>
-        /// += Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator+=(MediumDec& self, MediumDec Value)
-        {
-            return AddOp(self, Value);
-        }
-        
-        /// <summary>
-        /// += Operation Between MediumDecs(from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator+=(MediumDec* self, MediumDec Value){ return AddOp(**self, Value); }
-
-        /// <summary>
-        /// Subtraction Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator-(MediumDec self, MediumDec Value)
-        {
-            return SubOp(self, Value);
-        }
-
-        /// <summary>
-        /// -= Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec& self, MediumDec Value)
-        {
-            return SubOp(self, Value);
-        }
-        
-        /// <summary>
-        /// -= Operation Between MediumDecs(from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec* self, MediumDec Value){ return SubOp(**self, Value); }
-
-        /// <summary>
-        /// Multiplication Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator*(MediumDec self, MediumDec Value)
-        {
-            return MultOp(self, Value);
-        }
-
-        ///// <summary>
-        ///// *= Operation Between MediumDecs
-        ///// </summary>
-        ///// <param name="self">The self.</param>
-        ///// <param name="Value">The value.</param>
-        ///// <returns>MediumDec</returns>
-        friend MediumDec& operator*=(MediumDec& self, MediumDec Value)
-        {
-            return MultOp(self, Value);
-        }
-
-        ///// <summary>
-        ///// *= Operation Between MediumDecs (from pointer)
-        ///// </summary>
-        ///// <param name="self">The self.</param>
-        ///// <param name="Value">The value.</param>
-        ///// <returns>MediumDec</returns>
-        friend MediumDec& operator*=(MediumDec* self, MediumDec Value){ return MultOp(**self, Value); }
-
-
-        /// <summary>
-        /// Division Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator/(MediumDec self, MediumDec Value)
-        {
-            return DivOp(self, Value);
-        }
-
-        /// <summary>
-        /// /= Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec& self, MediumDec Value)
-        {
-            return DivOp(self, Value);
-        }
-        
-        /// <summary>
-        /// /= Operation Between MediumDecs (from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec* self, MediumDec Value){ return DivOp(**self, Value); }
-
-        /// <summary>
-        /// Remainder Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator%(MediumDec self, MediumDec Value)
-        {
-            return RemOp(self, Value);
-        }
-
-        /// <summary>
-        /// %= Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator%=(MediumDec& self, MediumDec Value)
-        {
-            return RemOp(self, Value);
-        }
-        
-        /// <summary>
-        /// %= Operation Between MediumDecs (from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator%=(MediumDec* self, MediumDec Value)
-        {
-            return RemOp(**self, Value);
-        }
-
-        /// <summary>
-        /// XOR Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator^(MediumDec self, MediumDec Value)
-        {
-            if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
-            {
-                self.IntValue ^= Value.IntValue; return self;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValIsNegative = Value.IntValue < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
-                {
-                    self.IntValue = (0 ^ Value.IntValue) * -1;
-                    self.DecimalHalf ^= Value.DecimalHalf;
-                }
-                else
-                {
-                    if (ValIsNegative && Value.IntValue == NegativeRep)
-                    {
-                        self.IntValue = (self.IntValue ^ 0) * -1;
-                        self.DecimalHalf ^= Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        self.IntValue ^= Value.IntValue; self.DecimalHalf ^= Value.DecimalHalf;
-                    }
-                }
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Bitwise Or Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator|(MediumDec self, MediumDec Value)
-        {
-            if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
-            {
-                self.IntValue |= Value.IntValue; return self;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValIsNegative = Value.IntValue < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
-                {
-                    self.IntValue = (0 | Value.IntValue) * -1;
-                    self.DecimalHalf |= Value.DecimalHalf;
-                }
-                else
-                {
-                    if (ValIsNegative && Value.IntValue == NegativeRep)
-                    {
-                        self.IntValue = (self.IntValue & 0) * -1;
-                        self.DecimalHalf |= Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        self.IntValue |= Value.IntValue; self.DecimalHalf |= Value.DecimalHalf;
-                    }
-                }
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Bitwise And Operation Between MediumDecs
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator&(MediumDec self, MediumDec Value)
-        {
-            if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//Whole Numbers
-            {
-                self.IntValue &= Value.IntValue; return self;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValIsNegative = Value.IntValue < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
-                {
-                    self.IntValue = (0 & Value.IntValue) * -1;
-                    self.DecimalHalf &= Value.DecimalHalf;
-                }
-                else
-                {
-                    if (ValIsNegative && Value.IntValue == NegativeRep)
-                    {
-                        self.IntValue = (self.IntValue & 0) * -1;
-                        self.DecimalHalf &= Value.DecimalHalf;
-                    }
-                    else
-                    {
-                        self.IntValue &= Value.IntValue; self.DecimalHalf &= Value.DecimalHalf;
-                    }
-                }
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Negative Unary Operator(Flips negative status)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-(MediumDec& self)
-        {
-            self.SwapNegativeStatus(); return self;
-        }
-
-        /// <summary>
-        /// ++MediumDec Operator
-        /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator ++()
-        {
-            if (IntValue == NegativeRep) { IntValue = 0; }
-            else if (DecimalHalf == 0) { ++IntValue; }
-            else if (IntValue == -1) { IntValue = NegativeRep; }
-            else { ++IntValue; }
-            return *this;
-        }
-
-        /// <summary>
-        /// ++MediumDec Operator
-        /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator --()
-        {
-            if (IntValue == NegativeRep) { IntValue = -1; }
-            else if (DecimalHalf == 0) { --IntValue; }
-            else if (IntValue == 0) { IntValue = NegativeRep; }
-            else { --IntValue; }
-            return *this;
-        }
-
-        /// <summary>
-        /// MediumDec++ Operator
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        MediumDec operator ++(int)
-        {
-            MediumDec tmp(*this);
-            ++* this;
-            return tmp;
-        }
-
-        /// <summary>
-        /// MediumDec-- Operator
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        MediumDec operator --(int)
-        {
-            MediumDec tmp(*this);
-            --* this;
-            return tmp;
-        }
-
-        /// <summary>
-        /// MediumDec* Operator
-        /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator *()
-        {
-            return *this;
-        }
-
-    #pragma endregion MediumDec-To-MediumDec Operators
-
-    #pragma region Other Operations
-        friend MediumDec operator+(MediumDec self, float Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, float Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, float Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, float Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, float Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, float Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, float Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, float Value) { return self & (MediumDec)Value; }
-
-        friend MediumDec operator+(float Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(float Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(float Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(float Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(float Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(float Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(float Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(float Value, MediumDec self) { return (MediumDec)Value & self; }
-
-        friend MediumDec operator+(MediumDec self, double Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, double Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, double Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, double Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, double Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, double Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, double Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, double Value) { return self & (MediumDec)Value; }
-
-        friend MediumDec operator+(double Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(double Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(double Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(double Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(double Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(double Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(double Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(double Value, MediumDec self) { return (MediumDec)Value & self; }
-
-        friend MediumDec operator+(MediumDec self, ldouble Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(MediumDec self, ldouble Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(MediumDec self, ldouble Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(MediumDec self, ldouble Value) { return self / (MediumDec)Value; }
-        friend MediumDec operator%(MediumDec self, ldouble Value) { return self % (MediumDec)Value; }
-        friend MediumDec operator^(MediumDec self, ldouble Value) { return self ^ (MediumDec)Value; }
-        friend MediumDec operator|(MediumDec self, ldouble Value) { return self | (MediumDec)Value; }
-        friend MediumDec operator&(MediumDec self, ldouble Value) { return self & (MediumDec)Value; }
-
-        friend MediumDec operator+(ldouble Value, MediumDec self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(ldouble Value, MediumDec self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(ldouble Value, MediumDec self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(ldouble Value, MediumDec self) { return (MediumDec)Value / self; }
-        friend MediumDec operator%(ldouble Value, MediumDec self) { return (MediumDec)Value % self; }
-        friend MediumDec operator^(ldouble Value, MediumDec self) { return (MediumDec)Value ^ self; }
-        friend MediumDec operator|(ldouble Value, MediumDec self) { return (MediumDec)Value | self; }
-        friend MediumDec operator&(ldouble Value, MediumDec self) { return (MediumDec)Value & self; }
-
-    #pragma endregion Other Operations
-    #pragma region MediumDec-To-Integer Operations
-    public:
-        /// <summary>
-        /// Addition Operation Between MediumDec and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& IntAddOp(MediumDec& self, IntType& value)
-        {
-            if (value == 0)
-                return self;
-            if (self.DecimalHalf == 0)
-                self.IntValue += value;
-            else
-            {
-				bool selfStartedAsPositive = self.IntValue>=0;
-				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
-				
-                bool WasNegative = self.IntValue < 0;
-                if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                self.IntValue += value;
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-					
-				//prevent reaching MediumDec::NegativeRep IntValue
-				if(selfStartedAsPositive)
-				{
-					if(value<0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
-						throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
-				}
-				else if(startedAsNegativeZero==false&&value<0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
-					throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
-				return self;
-            }
-        }
-
-        /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        static MediumDec& IntSubOp(MediumDec& self, IntType& value)
+        void PartialIntMultOp(IntType& Value)
         {
-            if (value == 0)
-                return self;
-            if (self.DecimalHalf == 0)
-                self.IntValue -= value;
+            if (DecimalHalf == 0)
+            {
+                IntValue *= Value;
+            }
             else
             {
-				bool selfStartedAsPositive = self.IntValue>=0;
-				bool startedAsNegativeZero = self.IntValue==MediumDec::NegativeRep;
-				
-                bool WasNegative = self.IntValue < 0;
-                if (WasNegative)
-                    self.IntValue = self.IntValue==MediumDec::NegativeRep ? -1 : --self.IntValue;
-                self.IntValue -= value;
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-					
-				//prevent reaching MediumDec::NegativeRep IntValue
-				if(selfStartedAsPositive)
-				{
-					if(value>0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
-						throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
-				}
-				else if(startedAsNegativeZero==false&&value>0&&self.IntValue==NegativeRep&&self.DecimalHalf!=0)
-					throw std::underflow_error("Integer underflow from addition operation");//Return underflow exception
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                SRep *= Value;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    DecimalHalf = (signed int)SRep;
+                }
             }
-            return self;
         }
+
+        /// <summary>
+        /// Multiplication Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        void BasicIntMultOp(IntType& Value)
+        {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (Value == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between MediumDec and Integer Value(Without negative flipping)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        void BasicIntMultOpV2(IntType& Value)
+        {
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (Value == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+
+        template<typename IntType>
+        static MediumDec& IntMultOpPt2(IntType& Value)
+        {
+            LRep = this->GetRepType();
+			switch (LRep)
+			{
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv:
+		#elif defined(AltNum_EnablePiFractional)
+				case RepType::PiFractional:
+		#endif
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::EFractional:
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOpV2(Value);
+					break;
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::INumByDiv:
+		#elif defined(AltNum_EnableEFractional)
+				case RepType::IFractional:
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOpV2(Value);
+					break;
+	#endif
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
+	#if defined(AltNum_EnableImaginaryNum)
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+					if(self.IsZero())
+						return;
+					ConvertToNormType(LRep);
+					BasicIntMultOpV2(Value);
+					break;
+	    #if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+	    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			#endif
+		#endif
+					ConvertToNormType(LRep);
+					BasicIntMultOpV2(Value);
+					break;
+	#endif
+	#if defined(AltNum_EnableFractionals)
+	#endif
+	#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::PositiveImaginaryInfinity:
+				case RepType::NegativeImaginaryInfinity:
+					return;
+					break;
+		#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+			#endif
+		    #if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			    #if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			    #endif
+		    #endif
+					ConvertToNormalIRep(LRep);
+					BasicIntMultOpV2(Value);
+					break;
+	    #endif
+    #endif
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+					BasicIntMultOpV2(Value);
+					DecimalHalf *= Value;
+					int divRes = DecimalHalf / -ExtraRep;
+					if(divRes>0)
+					{
+						int increment = ExtraRep * divRes;
+						if(IntValue<0)
+							IntValue -= increment;
+						else
+							IntValue += increment;
+						DecimalHalf = DecimalHalf + increment;
+					}
+					break;
+		#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+		#elif defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+		#endif
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					BasicIntMultOpV2(Value);
+					DecimalHalf *= Value;
+					int divRes = DecimalHalf / ExtraRep;
+					if(divRes>0)
+					{
+						int increment = ExtraRep * divRes;
+						if(IntValue<0)
+							IntValue -= increment;
+						else
+							IntValue += increment;
+						DecimalHalf = DecimalHalf - increment;
+					}
+					break;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
+				case RepType::Undefined:
+				case RepType::NaN:
+					throw "Can't perform operations with NaN or Undefined number";
+					break;
+	#endif			
+				default:
+					BasicIntMultOpV2(Value);
+					break;
+			}
+        }
+
+        //IntMultOp without negative check
+        template<typename IntType>
+        static MediumDec& UnsignedIntMultOp(IntType& Value)
+        {
+            if (self == Zero||Value==1)
+                return;
+            if (Value == 0)
+            {
+                SetAsZero(); return;
+            }
+            IntMultOpPt2(Value);
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        static MediumDec& IntMultOp(IntType& Value)
+        {
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            if (self == Zero||Value==1)
+                return;
+            if (Value == 0)
+            {
+                SetAsZero(); return;
+            }
+            IntMultOpPt2(Value);
+        }
+
+        static MediumDec& MultOp(int& Value) { return IntMultOp(Value); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDec and Integer Value
@@ -2070,218 +2191,9 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        static MediumDec& MultOp(MediumDec& self, IntType& Value)
-        {
-            if (Value < 0)
-            {
-                if (Value == NegativeRep) { Value = 0; }
-                else { Value *= -1; }
-                self.SwapNegativeStatus();
-            }
-            if (self == Zero) {}
-            else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
-            else if (self.DecimalHalf == 0)
-            {
-                self.IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative?NegativeRep:0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
+        static MediumDec& IntMultOp(MediumDec& self, IntType& Value) { return self.IntMultOp(Value); }
 
-        /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& DivOp(MediumDec& self, IntType& Value)
-        {
-            if (Value == 0) { throw "Target value can not be divided by zero"; }
-            else if (self == Zero) { return self; }
-            if (Value < 0)
-            {
-                if (Value == NegativeRep) { Value = 0; }
-                else { Value *= -1; }
-                self.SwapNegativeStatus();
-            }
-            if (self.DecimalHalf == 0)
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                    self.IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * self.IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    self.IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative?NegativeRep:0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    self.IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            if (self == Zero) { return JustAboveZero; }//Prevent dividing into nothing
-            return self;
-        }
-
-        /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& IntRemOp(MediumDec& self, IntType& Value)
-        {
-            if (Value == 0 || self == MediumDec::Zero) { self.SetAsZero(); return self; }
-            if (self.DecimalHalf == 0)
-            {
-                if (self.IntValue < 0)//https://www.quora.com/How-does-the-modulo-operation-work-with-negative-numbers-and-why
-                {
-                    self.IntValue %= Value;
-                    self.IntValue = (signed int)(Value - self.IntValue);
-                }
-                else
-                {
-                    self.IntValue %= Value; return self;
-                }
-            }
-            else//leftValue is non-whole number
-            {
-                if (Value < 0) { self.SwapNegativeStatus(); Value *= -1; }
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep %= Value;
-                __int64 VRep = DecimalOverflowX * Value;
-                SRep /= VRep;
-                __int64 IntResult = SRep;
-                SRep = ((__int64)self.IntValue * DecimalOverflow) + self.DecimalHalf;
-                SRep -= IntResult * VRep;
-                __int64 IntHalf = SRep / DecimalOverflow;
-                SRep -= IntHalf * (__int64)DecimalOverflow;
-                if (IntHalf == 0) { self.IntValue = SelfIsNegative ? (signed int)NegativeRep : 0; }
-                else { self.IntValue = (signed int)(SelfIsNegative ? IntHalf * -1 : IntHalf); }
-                self.DecimalHalf = (signed int)SRep;
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Addition Operation Between MediumDec and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& UnsignedAddOp(MediumDec& self, IntType& value)
-        {
-            if(value==0){ return self; }
-            else if(self.DecimalHalf==0|| self.IntValue > 0)
-                self.IntValue += value;
-            else
-            {
-                bool WasNegative = self.IntValue < 0;
-                if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                self.IntValue += value;
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-            }
-            return self;
-        }
-
-        /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        static MediumDec& UnsignedSubOp(MediumDec& self, IntType& value)
-        {
-            if (value == 0) { return self; }
-            else if (self.DecimalHalf == 0)
-                self.IntValue -= value;
-            else if (self.IntValue == NegativeRep)
-                self.IntValue = (signed int)value * -1;
-            else if(self.IntValue < 0)
-                self.IntValue -= value;
-            else
-            {
-                bool WasNegative = self.IntValue < 0;
-                if (WasNegative)
-                    self.IntValue = self.IntValue == MediumDec::NegativeRep ? -1 : --self.IntValue;
-                self.IntValue -= value;
-                if (self.IntValue == -1)
-                    self.IntValue = self.DecimalHalf == 0 ? 0 : MediumDec::NegativeRep;
-                else if (self.IntValue < 0)
-                    ++self.IntValue;
-                //If flips to other side of negative, invert the decimals
-                if ((WasNegative && self.IntValue >= 0) || (WasNegative == 0 && self.IntValue < 0))
-                    self.DecimalHalf = MediumDec::DecimalOverflow - self.DecimalHalf;
-            }
-            return self;
-        }
+        static MediumDec& MultOp(MediumDec& self, int& Value) { return self.IntMultOp(Value); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDec and Integer Value
@@ -2317,172 +2229,335 @@ namespace BlazesRusCode
                 }
                 else
                 {
-                    self.IntValue = SelfIsNegative?NegativeRep:0;
+                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
                     self.DecimalHalf = (signed int)SRep;
                 }
             }
             return self;
         }
 
+        void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+    #pragma endregion Multiplication/Division Operations
+
+#pragma region Addition/Subtraction Operations
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Basic Addition Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicAddOp(MediumDec& Value)
+        {
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntValue += Value.IntValue;
+            if (Value.DecimalHalf != 0)
+            {
+                if (Value.IntValue < 0)
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+        }
+
+protected:
+        /// <summary>
+        /// Addition Operation Between MediumDec and Integer value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType>
+        static MediumDec& IntAddOp(IntType& value)
+        {
+            if (value == 0)
+                return;
+	#if defined(AltNum_EnableImaginaryNum)
+            if(ExtraRep==IRep)
+            {
+                throw "Can't convert MediumDec into complex number at moment";
+				return;
+            }
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return;
+	#endif
+	#if defined(AltNum_EnableMixedFractional)
+            if(DecimalHalf<0)//Mixed Fraction detected
+            {}
+			else
+	#endif
+			if(ExtraRep!=0)//Don't convert if mixed fraction
+				ConvertToNormType();
+			bool WasNegative = IntValue < 0;
+			IntValue += value;
+			//If flips to other side of negative, invert the decimals
+	#if defined(AltNum_EnableMixedFractional)
+			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			{
+				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
+				{
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
+						DecimalHalf = ExtraRep - DecimalHalf;
+					else
+		#endif			
+						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
+				}
+				else
+					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+			}
+	#else
+            if(WasNegative ^ IntValue >= 0)
+				DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+	#endif
+            return;
+        }
+
+        /// <summary>
+        /// Addition Operation Between MediumDec and Integer value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType>
+        static MediumDec& IntAddOp(MediumDec& self, IntType& value)
+        {
+            return self.IntAddOp(value);
+        }
+
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDec& AddOp(MediumDec& self, MediumDec& Value);
+
+        //void CatchAllAddition(MediumDec& Value, RepType& LRep, RepType& RRep)
+public:
+        //void RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+
+		/// <summary>
+        /// Basic Subtraction Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicSubOp(MediumDec& Value)
+        {
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntValue -= Value.IntValue;
+            //Now deal with the decimal section
+            if(Value.DecimalHalf!=0)
+            {
+                if (Value.IntValue < 0)
+                {
+                    if (WasNegative)//-4.0 - -0.5 = -3.5
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
+                    }
+                    else//4.3 -  - 1.8
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)//-4.5 - 5.6
+                    {
+                        DecimalHalf += Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
+                    }
+                    else//0.995 - 1 = 
+                    {
+                        DecimalHalf -= Value.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+        }
+
+                /// <summary>
+        /// Subtraction Operation Between MediumDec and Integer value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        static MediumDec& IntSubOp(IntType& value)
+        {
+            if (value == 0)
+                return;
+	#if defined(AltNum_EnableImaginaryNum)
+            if(ExtraRep==IRep)
+            {
+                throw "Can't convert MediumDec into complex number at moment";
+				return;
+            }
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return;
+	#endif
+	#if defined(AltNum_EnableMixedFractional)
+            if(DecimalHalf<0)//Mixed Fraction detected
+            {}
+			else
+	#endif
+			if(ExtraRep!=0)//Don't convert if mixed fraction
+				ConvertToNormType();
+			bool WasNegative = IntValue < 0;
+			IntValue += value;
+			//If flips to other side of negative, invert the decimals
+	#if defined(AltNum_EnableMixedFractional)
+			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			{
+				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
+				{
+		#if defined(AltNum_EnableAlternativeMixedFrac)
+					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
+						DecimalHalf = ExtraRep - DecimalHalf;
+					else
+		#endif			
+						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
+				}
+				else
+					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+			}
+	#else
+            if(WasNegative ^ IntValue >= 0))
+				DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+	#endif
+            return;
+        }
+
+        /// <summary>
+        /// Subtraction Operation Between MediumDec and Integer value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        static MediumDec& IntSubOp(MediumDec& self, IntType& value)
+        {
+            return self.IntSubOp(value);
+        }
+
+        /// <summary>
+        /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& UnsignedDivOp(MediumDec& self, IntType& Value)
-        {
-            if (Value == 0) { throw "Target value can not be divided by zero"; }
-            else if (self == Zero) { return self; }
-            if (self.DecimalHalf == 0)
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                    self.IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * self.IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative?NegativeRep:0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
-        
+        static MediumDec& SubOp(MediumDec& self, MediumDec& Value);
+
+		//void CatchAllSubtraction(MediumDec& Value, RepType& LRep, RepType& RRep)
+
+
+        //void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
+#pragma endregion Addition/Subtraction Operations
+
+    #pragma region Main Operator Overrides
         /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
+        /// Division Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDec&</returns>
-        template<typename IntType>
-        static MediumDec& UnsignedRemOp(MediumDec& self, IntType& Value)
-        {
-            if(self == MediumDec::Zero) { return self; }
-            if (Value == 0){ self.IntValue=0; self.DecimalHalf = 0; return self; }
-            if (self.DecimalHalf == 0)
-            {
-                self.IntValue %= Value; return self;
-            }
-            else//leftValue is non-whole number
-            {
-                __int64 SRep;
-                if (self.IntValue == NegativeRep) { SRep = (__int64)self.DecimalHalf * -1; }
-                else if (self.IntValue < 0) { SRep = DecimalOverflowX * self.IntValue - self.DecimalHalf; }
-                else { SRep = DecimalOverflowX * self.IntValue + self.DecimalHalf; }
-                bool SelfIsNegative = SRep < 0;
-                if (SelfIsNegative) { SRep *= -1; }
-                SRep %= Value;
-                __int64 VRep = DecimalOverflowX * Value;
-                SRep /= VRep;
-                __int64 IntResult = SRep;
-                SRep = ((__int64)self.IntValue * DecimalOverflow) + self.DecimalHalf;
-                SRep -= IntResult * VRep;
-                __int64 IntHalf = SRep / DecimalOverflow;
-                SRep -= IntHalf * (__int64)DecimalOverflow;
-                if (IntHalf == 0) { self.IntValue = (signed int)SelfIsNegative ? NegativeRep : 0; }
-                else { self.IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
-                self.DecimalHalf = (signed int)SRep;
-            }
-            return self;
-        }
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator/(MediumDec self, MediumDec Value) { return DivOp(self, Value); }
 
-     //   template<typename IntType>
-     //   static MediumDec& SignedModulusOp(MediumDec& self, IntType& Value)
-     //   {
-        //}
-    public:
-        friend MediumDec operator+(MediumDec self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned char Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned char Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned char Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned char Value){ return UnsignedRemOp(self, Value); }
-        
-        friend MediumDec operator+=(MediumDec& self, unsigned char Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned char Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned char Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned char Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned char Value){ return UnsignedRemOp(self, Value); }
+        /// <summary>
+        /// /= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec& operator/=(MediumDec& self, MediumDec Value) { return DivOp(self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned short Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned short Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned short Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned short Value){ return UnsignedRemOp(self, Value); }
-        
-        friend MediumDec operator+=(MediumDec& self, unsigned short Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned short Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned short Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned short Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned short Value){ return UnsignedRemOp(self, Value); }
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator*(MediumDec self, MediumDec Value) { return MultOp(self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned int Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned int Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned int Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned int Value){ return UnsignedRemOp(self, Value); }
-        
-        friend MediumDec operator+=(MediumDec& self, unsigned int Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned int Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned int Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned int Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned int Value){ return UnsignedRemOp(self, Value); }
-        
-        //friend MediumDec operator+=(MediumDec* self, unsigned int Value) { return UnsignedAddOp(**self, Value); }
-        //friend MediumDec operator-=(MediumDec* self, unsigned int Value) { return UnsignedSubOp(**self, Value); }
-        //friend MediumDec operator*=(MediumDec* self, unsigned int Value) { return UnsignedMultOp(**self, Value); }
-        //friend MediumDec operator/=(MediumDec* self, unsigned int Value) { return UnsignedDivOp(**self, Value); }
-        //friend MediumDec operator%=(MediumDec* self, unsigned int Value) { return UnsignedRemOp(**self, Value); }
+        ///// <summary>
+        ///// *= Operation
+        ///// </summary>
+        ///// <param name="self">The self.</param>
+        ///// <param name="Value">The value.</param>
+        ///// <returns>MediumDec</returns>
+        friend MediumDec& operator*=(MediumDec& self, MediumDec Value) { return MultOp(self, Value); }
 
-        friend MediumDec operator+(MediumDec self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-(MediumDec self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*(MediumDec self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/(MediumDec self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%(MediumDec self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
-        
-        friend MediumDec operator+=(MediumDec& self, unsigned __int64 Value){ return UnsignedAddOp(self, Value); }
-        friend MediumDec operator-=(MediumDec& self, unsigned __int64 Value){ return UnsignedSubOp(self, Value); }
-        friend MediumDec operator*=(MediumDec& self, unsigned __int64 Value){ return UnsignedMultOp(self, Value); }
-        friend MediumDec operator/=(MediumDec& self, unsigned __int64 Value){ return UnsignedDivOp(self, Value); }
-        friend MediumDec operator%=(MediumDec& self, unsigned __int64 Value){ return UnsignedRemOp(self, Value); }
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator+(MediumDec self, MediumDec Value) { return AddOp(self, Value); }
 
-     //   friend MediumDec operator+=(MediumDec* self, unsigned __int64 Value){ return UnsignedAddOp(**self, Value); }
-        //friend MediumDec operator-=(MediumDec* self, unsigned __int64 Value){ return UnsignedSubOp(**self, Value); }
-     //   friend MediumDec operator*=(MediumDec* self, unsigned __int64 Value){ return UnsignedMultOp(**self, Value); }
-        //friend MediumDec operator/=(MediumDec* self, unsigned __int64 Value){ return UnsignedDivOp(**self, Value); }
-     //   friend MediumDec operator%=(MediumDec* self, unsigned __int64 Value){ return UnsignedRemOp(**self, Value); }
+        /// <summary>
+        /// += Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec& operator+=(MediumDec& self, MediumDec Value) { return AddOp(self, Value); }
+
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator-(MediumDec self, MediumDec Value) { return SubOp(self, Value); }
+
+        /// <summary>
+        /// -= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec& operator-=(MediumDec& self, MediumDec Value) { return SubOp(self, Value); }
 
         /// <summary>
         /// Addition Operation Between MediumDec and Integer Value
@@ -2490,11 +2565,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator+(MediumDec self, IntType Value)
-        {
-            return IntAddOp(self, Value);
-        }
+        friend MediumDec operator+(MediumDec self, int Value) { return IntAddOp(self, Value); }
 
         ///// <summary>
         ///// += Operation Between MediumDec and Integer Value
@@ -2503,13 +2574,9 @@ namespace BlazesRusCode
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator+=(MediumDec& self, IntType Value)
-        {
-            return IntAddOp(self, Value);
-        }
+        friend MediumDec& operator+=(MediumDec& self, int Value) { return IntAddOp(self, Value); }
 
-        template<typename IntType>
-        friend MediumDec operator+=(MediumDec* self, IntType Value){ return IntAddOp(**self, Value); }
+        //friend MediumDec operator+=(MediumDec* self, int Value) { return IntAddOp(**self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between MediumDec and Integer Value
@@ -2517,11 +2584,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator-(MediumDec self, IntType Value)
-        {
-            return IntSubOp(self, Value);
-        }
+        friend MediumDec operator-(MediumDec self, int Value) { return IntSubOp(self, Value); }
 
         /// <summary>
         /// -= Operation Between MediumDec and Integer Value
@@ -2529,14 +2592,9 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator-=(MediumDec& self, IntType Value)
-        {
-            return IntSubOp(self, Value);
-        }
+        friend MediumDec& operator-=(MediumDec& self, int Value) { return IntSubOp(self, Value); }
 
-        template<typename IntType>
-        friend MediumDec operator-=(MediumDec* self, IntType Value){ return IntSubOp(**self, Value); }
+        //friend MediumDec& operator-=(MediumDec* self, int Value) { return IntSubOp(**self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDec and Integer Value
@@ -2544,11 +2602,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator*(MediumDec self, IntType Value)
-        {
-            return MultOp(self, Value);
-        }
+        friend MediumDec operator*(MediumDec self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
         /// *= Operation Between MediumDec and Integer Value
@@ -2557,19 +2611,15 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator*=(MediumDec& self, IntType Value)
-        {
-            return MultOp(self, Value);
-        }
+        friend MediumDec& operator*=(MediumDec& self, int Value) { return IntMultOp(self, Value); }
 
-        /// <summary>
-        /// *= Operation Between MediumDec and Integer Value (from pointer)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator*=(MediumDec* self, IntType Value){ return MultOp(**self, Value); }
+        ///// <summary>
+        ///// *= Operation Between MediumDec and Integer Value (from pointer)
+        ///// </summary>
+        ///// <param name="self">The self.</param>
+        ///// <param name="Value">The value.</param>
+        ///// <returns>MediumDec</returns>
+        //friend MediumDec operator*=(MediumDec* self, int Value) { return IntMultOp(**self, Value); }
 
         /// <summary>
         /// Division Operation Between MediumDec and Integer Value
@@ -2577,11 +2627,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator/(MediumDec self, IntType Value)
-        {
-            return DivOp(self, Value);
-        }
+        friend MediumDec operator/(MediumDec self, int Value) { return IntDivOp(self, Value); }
 
         /// <summary>
         /// /= Operation Between MediumDec and Integer Value
@@ -2589,42 +2635,251 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator/=(MediumDec& self, IntType Value)
-        {
-            return DivOp(self, Value);
-        }
+        friend MediumDec& operator/=(MediumDec& self, int Value) { return IntDivOp(self, Value); }
 
+        //friend MediumDec operator/=(MediumDec* self, int Value) { return IntDivOp(**self, Value); }
+
+        /// <summary>
+        /// Addition Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator+(MediumDec self, signed long long Value) { return IntAddOp(self, Value); }
+
+        ///// <summary>
+        ///// += Operation Between MediumDec and Integer Value
+        ///// </summary>
+        ///// <param name="self">The self.</param>
+        ///// <param name="Value">The value.</param>
+        ///// <returns>MediumDec</returns>
         template<typename IntType>
-        friend MediumDec operator/=(MediumDec* self, IntType Value){ return DivOp(**self, Value); }
+        friend MediumDec& operator+=(MediumDec& self, signed long long Value) { return IntAddOp(self, Value); }
+
+        /// <summary>
+        /// Subtraction Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator-(MediumDec self, signed long long Value) { return IntSubOp(self, Value); }
+
+        /// <summary>
+        /// -= Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec& operator-=(MediumDec& self, signed long long Value) { return IntSubOp(self, Value); }
+
+        /// <summary>
+        /// Multiplication Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator*(MediumDec self, signed long long Value) { return IntMultOp(self, Value); }
+
+        /// <summary>
+        /// *= Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        template<typename IntType>
+        friend MediumDec operator*=(MediumDec& self, signed long long Value) { return IntMultOp(self, Value); }
+
+        /// <summary>
+        /// Division Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator/(MediumDec self, signed long long Value) { return IntDivOp(self, Value); }
+
+        /// <summary>
+        /// /= Operation Between MediumDec and Integer Value
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        friend MediumDec operator/=(MediumDec& self, signed long long Value) { return IntDivOp(self, Value); }
+    
+        friend MediumDec operator+(MediumDec self, float Value) { return self + (MediumDec)Value; }
+        friend MediumDec operator-(MediumDec self, float Value) { return self - (MediumDec)Value; }
+        friend MediumDec operator*(MediumDec self, float Value) { return self * (MediumDec)Value; }
+        friend MediumDec operator/(MediumDec self, float Value) { return self / (MediumDec)Value; }
+
+        friend MediumDec operator+(float Value, MediumDec self) { return (MediumDec)Value + self; }
+        friend MediumDec operator-(float Value, MediumDec self) { return (MediumDec)Value - self; }
+        friend MediumDec operator*(float Value, MediumDec self) { return (MediumDec)Value * self; }
+        friend MediumDec operator/(float Value, MediumDec self) { return (MediumDec)Value / self; }
+
+        friend MediumDec operator+(MediumDec self, double Value) { return self + (MediumDec)Value; }
+        friend MediumDec operator-(MediumDec self, double Value) { return self - (MediumDec)Value; }
+        friend MediumDec operator*(MediumDec self, double Value) { return self * (MediumDec)Value; }
+        friend MediumDec operator/(MediumDec self, double Value) { return self / (MediumDec)Value; }
+
+        friend MediumDec operator+(MediumDec self, ldouble Value) { return self + (MediumDec)Value; }
+        friend MediumDec operator-(MediumDec self, ldouble Value) { return self - (MediumDec)Value; }
+        friend MediumDec operator*(MediumDec self, ldouble Value) { return self * (MediumDec)Value; }
+        friend MediumDec operator/(MediumDec self, ldouble Value) { return self / (MediumDec)Value; }
+
+        friend MediumDec operator+(ldouble Value, MediumDec self) { return (MediumDec)Value + self; }
+        friend MediumDec operator-(ldouble Value, MediumDec self) { return (MediumDec)Value - self; }
+        friend MediumDec operator*(ldouble Value, MediumDec self) { return (MediumDec)Value * self; }
+        friend MediumDec operator/(ldouble Value, MediumDec self) { return (MediumDec)Value / self; }
+
+
+        friend MediumDec operator+(MediumDec self, unsigned char Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-(MediumDec self, unsigned char Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*(MediumDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/(MediumDec self, unsigned char Value) { return self.UnsignedIntDivOp(Value); }
+
+        friend MediumDec operator+=(MediumDec& self, unsigned char Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-=(MediumDec& self, unsigned char Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*=(MediumDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/=(MediumDec& self, unsigned char Value) { return UnsignedDivOp(self, Value); }
         
+
+        friend MediumDec operator+(MediumDec self, unsigned short Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-(MediumDec self, unsigned short Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*(MediumDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/(MediumDec self, unsigned short Value) { return UnsignedDivOp(self, Value); }
+
+        friend MediumDec operator+=(MediumDec& self, unsigned short Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-=(MediumDec& self, unsigned short Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*=(MediumDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/=(MediumDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); } 
+
+        friend MediumDec operator+(MediumDec self, unsigned int Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-(MediumDec self, unsigned int Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*(MediumDec self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/(MediumDec self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        
+
+        friend MediumDec operator+=(MediumDec& self, unsigned int Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-=(MediumDec& self, unsigned int Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*=(MediumDec& self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/=(MediumDec& self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        
+        friend MediumDec operator+(MediumDec self, unsigned __int64 Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-(MediumDec self, unsigned __int64 Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*(MediumDec self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/(MediumDec self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+
+        friend MediumDec operator+=(MediumDec& self, unsigned __int64 Value) { return IntAddOp(self, Value); }
+        friend MediumDec operator-=(MediumDec& self, unsigned __int64 Value) { return IntSubOp(self, Value); }
+        friend MediumDec operator*=(MediumDec& self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend MediumDec operator/=(MediumDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+
+    #pragma endregion Main Operator Overrides
+
+    #pragma endregion Other Operators
         /// <summary>
-        /// Modulus Operation Between MediumDec and Integer Value
+        /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator%(MediumDec self, IntType Value)
+        friend MediumDec& operator-(MediumDec& self)
         {
-            return IntRemOp(self, Value);
+            self.SwapNegativeStatus(); return self;
         }
 
         /// <summary>
-        /// %= Operation Between MediumDec and Integer Value
+        /// ++MediumDec Operator
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator%=(MediumDec& self, IntType Value)
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator ++()
         {
-            return IntRemOp(self, Value);
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+#endif
+            if (DecimalHalf == 0)
+                ++IntValue.Value;
+            else if (IntValue == NegativeRep)
+                IntValue = MirroredInt::Zero;
+            else
+                ++IntValue.Value;
+            return *this;
         }
 
-        template<typename IntType>
-        friend MediumDec operator%=(MediumDec* self, IntType Value){ return IntRemOp(**self, Value); }
+        /// <summary>
+        /// ++MediumDec Operator
+        /// </summary>
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator --()
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+#endif
+            if (DecimalHalf == 0)
+                --IntValue.Value;
+            else if (IntValue.Value == 0)
+                IntValue = NegativeRep;
+            else
+                --IntValue.Value;
+            return *this;
+        }
 
+        /// <summary>
+        /// MediumDec++ Operator
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        MediumDec operator ++(int)
+        {
+            MediumDec tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// MediumDec-- Operator
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        MediumDec operator --(int)
+        {
+            MediumDec tmp(*this);
+            --* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// MediumDec* Operator
+        /// </summary>
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator *()
+        {
+            return *this;
+        }
+    #pragma endregion Other Operators
+
+    #pragma region Modulus Operations
+    #if !defined(AltNum_PreventModulusOverride)
+
+        friend MediumDec operator%(MediumDec& self, int Value) { return IntRemOp(self, Value); }
+        friend MediumDec operator%(MediumDec& self, signed long long Value) { return IntRemOp(self, Value); }
+
+        friend MediumDec operator%=(MediumDec& self, int Value) { return IntRemOp(self, Value); }
+        friend MediumDec operator%=(MediumDec& self, signed long long Value) { return IntRemOp(self, Value); }
+
+        friend MediumDec operator%=(MediumDec* self, int Value) { return IntRemOp(**self, Value); }
+        friend MediumDec operator%=(MediumDec* self, signed long long Value) { return IntRemOp(**self, Value); }
+        
+        friend MediumDec operator%(MediumDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
+    
+        #if defined(AltNum_EnableAlternativeModulusResult)
+        //friend MediumDec operator%(MediumDec& self, int Value) { return IntRemOp(self, Value); }
+        //friend MediumDec operator%(MediumDec& self, signed long long Value) { return IntRemOp(self, Value); }
+        //friend MediumDec operator%(MediumDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
+        #endif
+    #endif
+    #pragma endregion Modulus Operations
+
+    #pragma region Bitwise Functions
+    #if defined(AltNum_EnableBitwiseOverride)
         /// <summary>
         /// Bitwise XOR Operation Between MediumDec and Integer Value
         /// </summary>
@@ -2678,152 +2933,40 @@ namespace BlazesRusCode
             }
             return self;
         }
+    #endif
+    #pragma endregion Bitwise Functions
 
+	#pragma region Math Etc Functions
         /// <summary>
-        /// Bitwise And Operation Between MediumDec and Integer Value
+        /// Forces Number into non-negative
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator&(MediumDec self, IntType Value)
+        /// <returns>MediumDec&</returns>
+        MediumDec& Abs()
         {
-            if (self.DecimalHalf == 0) { self.IntValue &= Value; return self; }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
-                {
-                    self.IntValue = (0 & Value) * -1;
-                    self.DecimalHalf &= Value;
-                }
-                else
-                {
-                    self.IntValue &= Value; self.DecimalHalf &= Value;
-                }
-            }
-            return self;
-        }
-    #pragma endregion MediumDec-To-Integer Operations
-    #pragma region Integer-To-MediumDec Operations
-        /// <summary>
-        /// Addition Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator+(IntType Value, MediumDec self)
-        {
-            return IntAddOp(self, Value);
+            if (IntValue == NegativeRep)
+                IntValue.Value = 0;
+            else if (IntValue.Value < 0)
+                IntValue *= -1;
+            return *this;
         }
 
         /// <summary>
-        /// Subtraction Operation Between MediumDec and Integer Value
+        /// Forces Number into non-negative
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator-(IntType Value, MediumDec self)
+        static MediumDec Abs(MediumDec tValue)
         {
-            MediumDec Result = Value;
-            return SubOp(Result, self);
+            return tValue.Abs();
         }
 
-        /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator*(IntType Value, MediumDec self)
-        {
-            return MultOp(self, Value);
-        }
-
-        /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator/(IntType Value, MediumDec self)
-        {
-            MediumDec Result = Value;
-            return DivOp(Result, self);
-        }
-
-        /// <summary>
-        /// Remainder/Modulus Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator%(IntType Value, MediumDec self)
-        {
-            MediumDec Result = Value;
-            return RemOp(Result, self);
-        }
-
-        /// <summary>
-        /// Bitwise XOR Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator^(IntType Value, MediumDec self)
-        {
-            return (MediumDec)Value ^ self;
-        }
-
-        /// <summary>
-        /// Bitwise Or Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator|(IntType Value, MediumDec self)
-        {
-            return (MediumDec)Value | self;
-        }
-
-        /// <summary>
-        /// Bitwise And Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<typename IntType>
-        friend MediumDec operator&(IntType Value, MediumDec self)
-        {
-            return (MediumDec)Value & self;
-        }
-
-    #pragma endregion Integer-To-MediumDec Operations
-    #pragma region Math/Trigonomic Etc Functions
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDec&</returns>
         MediumDec& Floor()
         {
-            if (DecimalHalf == 0)
-            {
-                return *this;
-            }
             DecimalHalf = 0;
-            if (IntValue == NegativeRep) { IntValue = -1; }
-            else
-            {
-                --IntValue;
-            }
             return *this;
         }
 
@@ -2836,7 +2979,7 @@ namespace BlazesRusCode
         {
             return Value.Floor();
         }
-        
+
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
@@ -2867,15 +3010,14 @@ namespace BlazesRusCode
         /// <returns>MediumDec&</returns>
         MediumDec& Ceil()
         {
-            if (DecimalHalf == 0)
+            if (DecimalHalf != 0)
             {
-                return *this;
-            }
-            DecimalHalf = 0;
-            if (IntValue == NegativeRep) { IntValue = 0; }
-            else
-            {
-                ++IntValue;
+                DecimalHalf = 0;
+                if (IntValue == NegativeRep) { IntValue = 0; }
+                else
+                {
+                    ++IntValue;
+                }
             }
             return *this;
         }
@@ -2888,12 +3030,12 @@ namespace BlazesRusCode
         {
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue;
+                return Value.IntValue.GetValue();
             }
             if (Value.IntValue == NegativeRep) { return -1; }
             else
             {
-                return Value.IntValue - 1;
+                return Value.IntValue.GetValue() - 1;
             }
         }
 
@@ -2905,17 +3047,17 @@ namespace BlazesRusCode
         {
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue;
+                return Value.IntValue.GetValue();
             }
             if (Value.IntValue == NegativeRep) { return 0; }
             else
             {
-                return Value.IntValue+1;
+                return Value.IntValue.GetValue() + 1;
             }
         }
         
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the nearest integer).
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDec</returns>
@@ -2931,7 +3073,6 @@ namespace BlazesRusCode
         MediumDec& Trunc()
         {
             DecimalHalf = 0;
-            if (IntValue == NegativeRep) { IntValue = 0; }
             return *this;
         }
         
@@ -2944,301 +3085,18 @@ namespace BlazesRusCode
         {
             return Value.Trunc();
         }
-        
-        /// <summary>
-        /// Forces Number into non-negative
-        /// </summary>
-        /// <returns>MediumDec&</returns>
-        MediumDec& Abs()
-        {
-            if (IntValue == NegativeRep) { IntValue = 0; }
-            else if (IntValue < 0) { IntValue *= -1; }
-            return *this;
-        }
-        
-        /// <summary>
-        /// Forces Number into non-negative
-        /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec Abs(MediumDec Value)
-        {
-            return Value.Abs();
-        }
+	#pragma endregion Math Etc Functions
 
-        /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        MediumDec PowOp(ValueType& expValue)
-        {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
-            { 
-                IntValue = 1; DecimalHalf = 0;
-            }
-            else if (expValue < 0)//Negative Pow
-            {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
-                {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
-                    MediumDec self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (expValue % 2 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return this;
-                }
-            }
-            else if (DecimalHalf == 0 && IntValue == 10)
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            else if (DecimalHalf == 0 && IntValue == -10)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return *this;
-        }
-
-        /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        MediumDec PowConstOp(const ValueType& expValue)
-        {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
-            {
-                IntValue = 1; DecimalHalf = 0;
-            }
-            else if (expValue < 0)//Negative Pow
-            {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
-                {
-                    int expVal = expValue * -1;
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
-                }
-                else
-                {
-                    int expVal = expValue;
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expVal *= -1;
-                    MediumDec self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expVal > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (expVal % 2 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expVal = expVal >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return this;
-                }
-            }
-            else if (DecimalHalf == 0 && IntValue == 10)
-            {
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            }
-            else
-            {
-                int expVal = expValue;
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
-                while (expVal > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expVal % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expVal = expVal >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return *this;
-        }
-
-        /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        static MediumDec PowConstOp(MediumDec& targetValue, const ValueType& expValue)
-        {
-            return targetValue.PowConstOp(expValue);
-        }
-
-        /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        static MediumDec PowOp(MediumDec& targetValue, ValueType& expValue)
-        {
-            return targetValue.PowOp(expValue);
-        }
-        
-        /// <summary>
-        /// Applies Power of operation(for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        MediumDec Pow(ValueType expValue)
-        {
-            return this->PowOp(expValue);
-        }
-
-        /// <summary>
-        /// Applies Power of operation (for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        static MediumDec Pow(MediumDec targetValue, ValueType expValue)
-        {
-            if (expValue == 1) { return targetValue; }//Return self
-            else if (expValue == 0)
-            {
-                targetValue.IntValue = 1; targetValue.DecimalHalf = 0;
-                return targetValue;
-            }
-            else if (expValue < 0)//Negative Pow
-            {
-                if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
-                {
-                    targetValue.IntValue = 0; targetValue.DecimalHalf = MediumDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
-                    MediumDec self = targetValue;
-                    targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (expValue % 2 == 1)
-                            targetValue /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return targetValue;
-                }
-            }
-            else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10)
-            {
-                targetValue.IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            }
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = targetValue;
-                targetValue.IntValue = 1; targetValue.DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        targetValue *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return targetValue;
-        }
-
-        /// <summary>
-        /// Applies Power of operation (for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        static MediumDec PowRef(MediumDec& targetValue, ValueType expValue)
-        {
-            if (expValue == 1)
-                return targetValue;//Return self
-            else if (expValue == 0)
-                return MediumDec::One;
-            else if (expValue < 0)//Negative Pow
-            {
-                if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10 && expValue >= -9)
-                {
-                    return MediumDec(0, MediumDec::DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1]);
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
-                    MediumDec self = targetValue;
-                    MediumDec Result = MediumDec::One;
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, divide self with result
-                        if (expValue % 2 == 1)
-                            Result /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return Result;
-                }
-            }
-            else if (targetValue.DecimalHalf == 0 && targetValue.IntValue == 10)
-                return MediumDec(VariableConversionFunctions::PowerOfTens[expValue], 0);
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDec self = targetValue;
-                MediumDec Result = MediumDec::One;
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        Result *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-                return Result;
-            }
-            return targetValue;
-        }
-
+	#pragma region Pow and Sqrt Functions	
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDec Sqrt(MediumDec value, int precision=7)
-        {
+        static MediumDec BasicSqrt(MediumDec& value, int precision=7)
+        {//Ignores Alternate representations use Sqrt instead to check based on RepType
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
-                switch (value.IntValue)
+                switch (value.IntValue.GetValue())
                 {
                 case 1: value.IntValue = 1; break;
                 case 4: value.IntValue = 2; break;
@@ -3313,6 +3171,211 @@ namespace BlazesRusCode
             }
             return ans;
         }
+		
+		/// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+		static MediumDec Sqrt(MediumDec value, int precision=7)
+		{
+		    value.ConvertToNormType();
+			BasicSqrt(value, precision);
+		}
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        MediumDec BasicIntPowOp(ValueType& expValue)
+        {
+            if (expValue == 1) { return *this; }//Return self
+            else if (expValue == 0)
+            {
+                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+            }
+            else if (expValue < 0)//Negative Pow
+            {
+                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
+                {
+                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
+                }
+                else
+                {
+                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                    expValue *= -1;
+                    MediumDec self = *this;
+                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    while (expValue > 0)
+                    {
+                        // If expValue is odd, multiply self with result
+                        if (expValue % 2 == 1)
+                            *this /= self;
+                        // n must be even now
+                        expValue = expValue >> 1; // y = y/2
+                        self = self / self; // Change x to x^-1
+                    }
+                    return this;
+                }
+            }
+            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
+                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
+                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                MediumDec self = *this;
+                IntValue = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+            }
+            return *this;
+        }
+
+        MediumDec BasicPowOp(int& expValue) { return BasicIntPowOp(expValue); }
+        MediumDec BasicPowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
+        MediumDec BasicPow(int expValue) { return BasicIntPowOp(expValue); }
+        MediumDec BasicPow(signed long long expValue) { return BasicIntPowOp(expValue); }
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        static MediumDec IntPowOp(MediumDec& targetValue, ValueType& expValue)
+        {
+            if (value.DecimalHalf == InfinityRep)
+            {
+                if (expValue == 0)
+#if defined(AltNum_EnableNaN)
+                    targetValue.SetAsUndefined();
+#else
+                    throw "Infinity to power of Zero returns Undefined value";
+#endif
+                else if (expValue < 0)
+                    targetValue.SetAsZero();
+                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
+                    targetValue.IntValue.Value = 1;
+                else
+                    return targetValue;//Returns infinity
+                return *this;
+            }
+            else
+                targetValue.BasicIntPowOp(expValue);
+            return targetValue;
+        }
+
+        static MediumDec PowOp(MediumDec& targetValue, int& expValue) { return IntPowOp(targetValue, expValue); }
+        static MediumDec PowOp(MediumDec& targetValue, signed long long& expValue) { return IntPowOp(targetValue, expValue); }
+        static MediumDec Pow(MediumDec targetValue, int expValue) { return IntPowOp(targetValue, expValue); }
+        static MediumDec Pow(MediumDec targetValue, signed long long expValue) { return IntPowOp(targetValue, expValue); }
+
+        /// <summary>
+        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        MediumDec BasicIntPowConstOp(const ValueType& expValue)
+        {
+            if (expValue == 1) { return *this; }//Return self
+            else if (expValue == 0)
+            {
+                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+            }
+            else if (expValue < 0)//Negative Pow
+            {
+                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
+                {
+                    int expVal = expValue * -1;
+                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
+                }
+                else
+                {
+                    int expVal = expValue;
+                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                    expVal *= -1;
+                    MediumDec self = *this;
+                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    while (expVal > 0)
+                    {
+                        // If expValue is odd, multiply self with result
+                        if (expVal % 2 == 1)
+                            *this /= self;
+                        // n must be even now
+                        expVal = expVal >> 1; // y = y/2
+                        self = self / self; // Change x to x^-1
+                    }
+                    return this;
+                }
+            }
+            else if (DecimalHalf == 0 && IntValue == 10 && targetValue.ExtraRep == 0)
+            {
+                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+            }
+            else
+            {
+                int expVal = expValue;
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                MediumDec self = *this;
+                IntValue = 1; DecimalHalf = 0;// Initialize result
+                while (expVal > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expVal % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expVal = expVal >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+            }
+            return *this;
+        }
+
+        MediumDec BasicPowConstOp(const int& expValue) { return BasicIntPowConstOp(expValue); }
+        MediumDec BasicPowConstOp(const signed long long& expValue) { return BasicIntPowConstOp(expValue); }
+        MediumDec BasicPowConst(const int expValue) { return BasicIntPowConstOp(expValue); }
+        MediumDec BasicPowConst(const signed long long expValue) { return BasicIntPowConstOp(expValue); }
+
+        /// <summary>
+        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        static MediumDec IntPowConstOp(MediumDec& targetValue, const ValueType& expValue)
+        {
+            if (value.DecimalHalf == InfinityRep)
+            {
+                if (expValue == 0)
+#if defined(AltNum_EnableNaN)
+                    targetValue.SetAsUndefined();
+#else
+                    throw "Infinity to power of Zero returns Undefined value";
+#endif
+                else if (expValue < 0)
+                    return Zero;
+                else if (value.IntValue.Value == -1 && expValue % 2 == 0)
+                    IntValue.Value = 1;
+                else
+                    return;//Returns infinity
+                return *this;
+            }
+            else
+                targetValue.BasicIntPowConstOp(expValue);
+            return *this;
+        }
+
+        MediumDec PowConstOp(MediumDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
+        MediumDec PowConstOp(MediumDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+        MediumDec PowConst(MediumDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
+        MediumDec PowConst(MediumDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -3323,7 +3386,7 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec NthRoot(MediumDec value, int n, MediumDec precision = MediumDec::JustAboveZero)
         {
-            MediumDec xPre = 1+(value-1)/n;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            MediumDec xPre = ((value - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two 
@@ -3338,14 +3401,54 @@ namespace BlazesRusCode
             {
                 //  calculating current value from previous
                 // value by newton's method
-                xK = (nMinus1 * xPre +
-                    value / MediumDec::Pow(xPre, nMinus1)) / n;
+                xK = (xPre * nMinus1 + value / MediumDec::Pow(xPre, nMinus1)) / n;
                 delX = MediumDec::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
             return xK;
         }
 
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expNum">The numerator of the exponent value.</param>
+        /// <param name="expDenom">The denominator of the exponent value.</param>
+        static MediumDec FractionalPow(MediumDec value, int expNum, int expDenom);
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="Frac">The exponent value to raise the value to power of.</param>
+        static MediumDec FractionalPow(MediumDec& value, boost::rational<int>& Frac);
+
+        void BasicPowOp(MediumDec& expValue);
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDec PowOp(MediumDec& expValue);
+
+        static MediumDec PowOp(MediumDec& targetValue, MediumDec& expValue)
+        {
+            return targetValue.PowOp(expValue);
+        }
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="targetValue">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDec Pow(MediumDec targetValue, MediumDec expValue)
+        {
+            return PowOp(targetValue, expValue);
+        }
+	#pragma endregion Pow and Sqrt Functions
+
+	#pragma region Log Functions
         /// <summary>
         /// Get the (n)th Root
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
@@ -3355,11 +3458,11 @@ namespace BlazesRusCode
         static MediumDec NthRootV2(MediumDec targetValue, int n, MediumDec& Precision = MediumDec::FiveBillionth)
         {
             int nMinus1 = n - 1;
-            MediumDec x[2] = { (MediumDec::One / n) * ((nMinus1 * targetValue) + (targetValue / MediumDec::Pow(targetValue, nMinus1))), targetValue };
+            MediumDec x[2] = { (MediumDec::One / n) * ((targetValue*nMinus1) + (targetValue / MediumDec::Pow(targetValue, nMinus1))), targetValue };
             while (MediumDec::Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = (MediumDec::One / n) * ((nMinus1 * x[1]) + (targetValue / MediumDec::Pow(x[1], nMinus1)));
+                x[0] = (MediumDec::One / n) * ((x[1]*nMinus1) + (targetValue / MediumDec::Pow(x[1], nMinus1)));
             }
             return x[0];
         }
@@ -3369,8 +3472,9 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>MediumDec</returns>
-        static MediumDec Exp(MediumDec x)
+        static MediumDec Exp(MediumDec& x)
         {
+            //x.ConvertToNormType();//Prevent losing imaginary number status
             /*
              * Evaluates f(x) = e^x for any x in the interval [-709, 709].
              * If x < -709 or x > 709, raises an assertion error. Implemented
@@ -3400,7 +3504,7 @@ namespace BlazesRusCode
              // Check that x is a valid input.
             assert(-709 <= x.IntValue && x.IntValue <= 709);
             // When x = 0 we already know e^x = 1.
-            if (x == MediumDec::Zero) {
+            if (x.IsZero()) {
                 return MediumDec::One;
             }
             // Normalize x to a non-negative value to take advantage of
@@ -3426,82 +3530,24 @@ namespace BlazesRusCode
             }
             return tn;
         }
-
-        /// <summary>
-        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expNum">The numerator of the exponent value.</param>
-        /// <param name="expDenom">The denominator of the exponent value.</param>
-        static MediumDec FractionalPow(MediumDec value, int expNum, int expDenom)
+protected:
+    static MediumDec LnRef_Part02(MediumDec& value)
+    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+        //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+        MediumDec TotalRes = (value - 1) / (value + 1);
+        MediumDec LastPow = TotalRes;
+        MediumDec WSquared = TotalRes * TotalRes;
+        MediumDec AddRes;
+        int WPow = 3;
+        do
         {
-            MediumDec CalcVal = MediumDec::NthRoot(MediumDec::Pow(value, expNum), expDenom);
-            return CalcVal;
-        }
-
-        /// <summary>
-        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MediumDec FractionalPow(MediumDec& value, boost::rational<int>& Frac)
-        {
-            MediumDec CalcVal = MediumDec::NthRoot(MediumDec::Pow(value, Frac.numerator()), Frac.denominator());
-            return CalcVal;
-        }
-
-        /// <summary>
-        /// Applies Power of operation
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expValue">The exponent value.</param>
-        static MediumDec PowOp(MediumDec& value, MediumDec& expValue)
-        {
-            if (expValue.DecimalHalf == 0)
-            {
-                return value.Pow(expValue.IntValue);
-            }
-            else
-            {
-                boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDec::DecimalOverflow);
-                switch (expValue.IntValue)
-                {
-                    case 0:
-                        return FractionalPow(value, Frac);
-                        break;
-                    case MediumDec::NegativeRep:
-                        return 1 / FractionalPow(value, Frac);
-                        break;
-                    default:
-                    {
-                        if (expValue.IntValue < 0)//Negative Exponent 
-                        {
-                            MediumDec CalcVal = 1 / value.Pow(expValue.IntValue * -1);
-                            CalcVal /= FractionalPow(value, Frac);
-                            return CalcVal;
-                        }
-                        else
-                        {
-                            MediumDec CalcVal = value.Pow(expValue.IntValue);
-                            CalcVal *= FractionalPow(value, Frac);
-                            return CalcVal;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies Power of operation
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="expValue">The exponent value.</param>
-        static MediumDec Pow(MediumDec value, MediumDec expValue)
-        {
-            return PowOp(value, expValue);
-        }
-
+            LastPow *= WSquared;
+            AddRes = LastPow / WPow;
+            TotalRes += AddRes; WPow += 2;
+        } while (AddRes > MediumDec::JustAboveZero);
+        return TotalRes * 2;
+    }
+public:
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
@@ -3512,7 +3558,7 @@ namespace BlazesRusCode
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == MediumDec::One)
                 return MediumDec::Zero;
-            if (value.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 MediumDec threshold = MediumDec::FiveMillionth;
                 MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3538,18 +3584,7 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
-                int WPow = 3;
-                do
-                {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * 2;
+                return LnRef_Part02(value);
             }
         }
 
@@ -3563,7 +3598,7 @@ namespace BlazesRusCode
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == MediumDec::One)
                 return MediumDec::Zero;
-            if(value.IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if(IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 MediumDec W = (value - 1)/ (value + 1);
                 MediumDec TotalRes = W;
@@ -3582,7 +3617,7 @@ namespace BlazesRusCode
                 } while (AddRes > MediumDec::JustAboveZero);
                 return TotalRes * 2;
             }
-            else if (value.IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 MediumDec threshold = MediumDec::FiveMillionth;
                 MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3606,20 +3641,9 @@ namespace BlazesRusCode
 
                 return result;
             }
-            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
-                int WPow = 3;
-                do
-                {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * 2;
+            else
+            {
+                return LnRef_Part02(value);
             }
         }
 
@@ -3632,6 +3656,24 @@ namespace BlazesRusCode
             return LnRef(value);
         }
 
+protected:
+    static MediumDec Log10_Part02(MediumDec& value)
+    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+        MediumDec TotalRes = (value - 1) / (value + 1);
+        MediumDec LastPow = TotalRes;
+        MediumDec WSquared = TotalRes * TotalRes;
+        MediumDec AddRes;
+        int WPow = 3;
+        do
+        {
+            LastPow *= WSquared;
+            AddRes = LastPow / WPow;
+            TotalRes += AddRes; WPow += 2;
+        } while (AddRes > MediumDec::JustAboveZero);
+        return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+    }
+public:
+
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
@@ -3641,7 +3683,7 @@ namespace BlazesRusCode
         {
             if (value == MediumDec::One)
                 return MediumDec::Zero;
-            if (value.DecimalHalf == 0 && value.IntValue % 10 == 0)
+            if (DecimalHalf == 0 && IntValue % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3650,7 +3692,7 @@ namespace BlazesRusCode
                 }
                 return MediumDec(9, 0);
             }
-            if (value.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 MediumDec threshold = MediumDec::FiveBillionth;
                 MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3674,21 +3716,28 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec TotalRes = (value - 1) / (value + 1);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
-                int WPow = 3;
-                do
-                {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                return Log10_Part02(value);
             }
-            //return MediumDec::Ln(value) / MediumDec::HaLN10;//Slightly off because of truncation etc
         }
+
+protected:
+    template<typename ValueType>
+    static MediumDec Log10_IntPart02(ValueType& value)
+    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+        MediumDec TotalRes = MediumDec((value - 1), 0) / MediumDec((value + 1), 0);
+        MediumDec LastPow = TotalRes;
+        MediumDec WSquared = TotalRes * TotalRes;
+        MediumDec AddRes;
+        int WPow = 3;
+        do
+        {
+            LastPow *= WSquared;
+            AddRes = LastPow / WPow;
+            TotalRes += AddRes; WPow += 2;
+        } while (AddRes > MediumDec::JustAboveZero);
+        return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+    }
+public:
 
         /// <summary>
         /// Log Base 10 of Value(integer value variant)
@@ -3700,7 +3749,7 @@ namespace BlazesRusCode
         {
             if (value == 1)
                 return MediumDec::Zero;
-            else if (value % 10 == 0)
+            if (value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3711,18 +3760,7 @@ namespace BlazesRusCode
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDec TotalRes = MediumDec((value - 1), 0) / MediumDec((value + 1), 0);
-                MediumDec LastPow = TotalRes;
-                MediumDec WSquared = TotalRes * TotalRes;
-                MediumDec AddRes;
-                int WPow = 3;
-                do
-                {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDec::JustAboveZero);
-                return TotalRes * MediumDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+                return Log10_IntPart02(value);
             }
         }
 
@@ -3735,7 +3773,7 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec Log(MediumDec value, MediumDec baseVal)
         {
-            if (value == MediumDec::One)
+            if (ConvertedVal == MediumDec::One)
                 return MediumDec::Zero;
             return Log10(value) / Log10(baseVal);
         }
@@ -3749,8 +3787,6 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec Log(MediumDec value, int baseVal)
         {
-            if (value == MediumDec::One)
-                return MediumDec::Zero;
             //Calculate Base log first
             MediumDec baseTotalRes;
             bool lnMultLog = true;
@@ -3782,7 +3818,7 @@ namespace BlazesRusCode
             }
 
             //Now calculate other log
-            if (value.DecimalHalf == 0 && value.IntValue % 10 == 0)
+            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3791,7 +3827,7 @@ namespace BlazesRusCode
                 }
                 return lnMultLog? MediumDec(9, 0) / (baseTotalRes*MediumDec::HalfLN10Mult):MediumDec(9, 0)/baseTotalRes;
             }
-            if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 MediumDec threshold = MediumDec::FiveBillionth;
                 MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3821,15 +3857,15 @@ namespace BlazesRusCode
                 int WPow = 3;
                 do
                 {
-                    AddRes = MediumDec::PowRef(W, WPow) / WPow;
+                    AddRes = MediumDec::Pow(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > MediumDec::JustAboveZero);
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDec::HalfLN10Mult)/ baseTotalRes;
             }
             //return Log10(Value) / Log10(BaseVal);
         }
+	#pragma endregion Log Functions
 
-    #pragma endregion Math Etc Functions
     #pragma region Trigonomic Etc Functions
         /// <summary>
         /// Get Sin from Value of angle.
@@ -3839,7 +3875,7 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec SinFromAngle(MediumDec Value)
         {
-            if (Value.IntValue < 0)
+            if (Value.IsNegative())
             {
                 if (Value.IntValue == NegativeRep)
                 {
@@ -3847,7 +3883,7 @@ namespace BlazesRusCode
                 }
                 else
                 {
-                    Value.IntValue *= -1;
+                    Value.SwapNegativeStatus();
                     Value.IntValue %= 360;
                     Value.IntValue = 360 - Value.IntValue;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
@@ -3881,7 +3917,7 @@ namespace BlazesRusCode
                 MediumDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Radius, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                    NewValue += MediumDec::Pow(Radius, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                 }
                 return NewValue;
             }
@@ -3895,7 +3931,7 @@ namespace BlazesRusCode
         /// <returns></returns>
         static MediumDec CosFromAngle(MediumDec Value)
         {
-            if (Value.IntValue < 0)
+            if (Value.IsNegative())
             {
                 if (Value.IntValue == NegativeRep)
                 {
@@ -3903,7 +3939,7 @@ namespace BlazesRusCode
                 }
                 else
                 {
-                    Value.IntValue *= -1;
+                    Value.SwapNegativeStatus();
                     Value.IntValue %= 360;
                     Value.IntValue = 360 - Value.IntValue;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
@@ -3914,6 +3950,10 @@ namespace BlazesRusCode
                 Value.IntValue %= 360;
             }
             if (Value == Zero) { return One; }
+            else if (Value.IntValue == 60 && Value.DecimalHalf == 0)
+            {
+                return PointFive;
+            }
             else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
             {
                 return MediumDec::Zero;
@@ -3933,7 +3973,7 @@ namespace BlazesRusCode
                 MediumDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
-                    NewValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Radius, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                    NewValue += MediumDec::Pow(Radius, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
                 }
                 return NewValue;
             }
@@ -3945,15 +3985,31 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDec</returns>
+        //static MediumDec BasicSinOperation(MediumDec& Value);
+
+       /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDec</returns>
         static MediumDec Sin(MediumDec Value)
         {
             MediumDec SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += MediumDec::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
+
+        /// <summary>
+        /// Get Sin from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDec</returns>
+        //static MediumDec BasicCosOperation(MediumDec& Value);
 
         /// <summary>
         /// Get Sin from Value in Radians
@@ -3966,7 +4022,7 @@ namespace BlazesRusCode
             MediumDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += MediumDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -3983,11 +4039,11 @@ namespace BlazesRusCode
             MediumDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += MediumDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += MediumDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -4000,7 +4056,7 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec TanFromAngle(MediumDec Value)
         {
-            if (Value.IntValue < 0)
+            if (Value.IsNegative())
             {
                 if (Value.IntValue == NegativeRep)
                 {
@@ -4008,7 +4064,7 @@ namespace BlazesRusCode
                 }
                 else
                 {
-                    Value.IntValue *= -1;
+                    Value.SwapNegativeStatus();
                     Value.IntValue %= 360;
                     Value.IntValue = 360 - Value.IntValue;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
@@ -4050,11 +4106,11 @@ namespace BlazesRusCode
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i + 1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += MediumDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             { // That's also Taylor series!!
-                CosValue += (i % 2 == 0 ? 1 : -1) * MediumDec::Pow(Value, 2 * i) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += MediumDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
@@ -4070,8 +4126,8 @@ namespace BlazesRusCode
         /// <returns>MediumDec</returns>
         static MediumDec ArcTan2(MediumDec y, MediumDec x)
         {
-            MediumDec coeff_1 = Pi / 4;
-            MediumDec coeff_2 = 3 * coeff_1;
+            MediumDec coeff_1 = PiNum / 4;
+            MediumDec coeff_2 = coeff_1 * 3;
             MediumDec abs_y = MediumDec::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
             MediumDec r;
             MediumDec angle;
@@ -4093,8 +4149,12 @@ namespace BlazesRusCode
     #pragma endregion Math/Trigonomic Etc Functions
     };
 
+	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
     #pragma region ValueDefine Source
-    MediumDec MediumDec::Pi = PiValue();
+#if defined(AltNum_EnableApproachingValues)
+    MediumDec MediumDec::AlmostOne = ApproachingRightRealValue();
+#endif
+    MediumDec MediumDec::Pi = PiNumValue();
     MediumDec MediumDec::One = OneValue();
     MediumDec MediumDec::Two = TwoValue();
     MediumDec MediumDec::NegativeOne = NegativeOneValue();
@@ -4105,7 +4165,7 @@ namespace BlazesRusCode
     MediumDec MediumDec::FiveThousandth = FiveThousandthValue();
     MediumDec MediumDec::Minimum = MinimumValue();
     MediumDec MediumDec::Maximum = MaximumValue();
-    MediumDec MediumDec::E = EValue();
+    MediumDec MediumDec::E = ENumValue();
     MediumDec MediumDec::LN10 = LN10Value();
     MediumDec MediumDec::LN10Mult = LN10MultValue();
     MediumDec MediumDec::HalfLN10Mult = HalfLN10MultValue();
@@ -4113,302 +4173,17 @@ namespace BlazesRusCode
     MediumDec MediumDec::FiveMillionth = FiveMillionthValue();
     MediumDec MediumDec::FiveBillionth = FiveBillionthValue();
     MediumDec MediumDec::OneGMillionth = OneHundredMillionthValue();
+    #if defined(AltNum_EnableNilRep)
     MediumDec MediumDec::Nil = NilValue();
+    #endif
 
-/*#ifdef AltDec_InheritMediumDec
-    //Workaround to enable static inheritance
-    class DLL_APi MediumDecValues
-    {
-    #pragma region ValueDefines
-    private:
-        /// <summary>
-        /// Returns the value at zero
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec ZeroValue()
-        {
-            MediumDec NewSelf = MediumDec();
-            return NewSelf;
-        }
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec OneValue()
-        {
-            MediumDec NewSelf = MediumDec(1);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec TwoValue()
-        {
-            MediumDec NewSelf = MediumDec(2);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec NegativeOneValue()
-        {
-            MediumDec NewSelf = MediumDec(-1);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at 0.5
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec Point5Value()
-        {
-            MediumDec NewSelf = MediumDec(0, 500000000);
-            return NewSelf;
-        }
-
-        static MediumDec JustAboveZeroValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 1);
-            return NewSelf;
-        }
-
-        static MediumDec OneMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 1000);
-            return NewSelf;
-        }
-
-        static MediumDec FiveThousandthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5000000);
-            return NewSelf;
-        }
-
-        static MediumDec FiveMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5000);
-            return NewSelf;
-        }
-
-        static MediumDec TenMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 100);
-            return NewSelf;
-        }
-
-        static MediumDec OneHundredMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 10);
-            return NewSelf;
-        }
-
-        static MediumDec FiveBillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up(3.141592654)
-        /// (about 1.000000000448883 times actual value of Pi with digits past 15th cut off)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec PiValue()
-        {
-            MediumDec NewSelf = MediumDec(3, 141592654);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns value of -2147483647.999999999
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec MinimumValue()
-        {
-            return MediumDec(-2147483647, 999999999);
-        }
-
-        /// <summary>
-        /// Returns value of 2147483647.999999999
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec MaximumValue()
-        {
-            return MediumDec(2147483647, 999999999);
-        }
-
-        /// <summary>
-        /// Euler's number
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        MediumDec EValue()
-        {
-            return MediumDec(2, 718281828);
-        }
-
-        MediumDec LN10Value()
-        {
-            return MediumDec(2, 302585093);
-        }
-
-        MediumDec LN10MultValue()
-        {
-            return MediumDec(0, 434294482);
-        }
-
-        MediumDec HalfLN10MultValue()
-        {
-            return MediumDec(0, 868588964);
-        }
-
-        MediumDec NilValue()
-        {
-            return MediumDec(-2147483648, -2147483648);
-        }
-    public:
-        static MediumDec Pi;
-
-        /// <summary>
-        /// Returns the value at zero
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec Zero;
-
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec One;
-
-        /// <summary>
-        /// Returns the value at two
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec Two;
-
-        /// <summary>
-        /// Returns the value at 0.5
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec PointFive;
-
-        /// <summary>
-        /// Returns the value at digit one more than zero (0.000000001)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec JustAboveZero;
-
-        /// <summary>
-        /// Returns the value at .000000005
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec FiveBillionth;
-
-        /// <summary>
-        /// Returns the value at .000001000
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec OneMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.005"
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec FiveThousandth;
-
-        /// <summary>
-        /// Returns the value at .000000010
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec OneGMillionth;
-
-        //0e-7
-        static MediumDec TenMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.000005"
-        /// </summary>
-        static MediumDec FiveMillionth;
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec NegativeOne;
-
-        /// <summary>
-        /// Returns value of highest non-infinite/Special Decimal State Value that can store
-        /// </summary>
-        static MediumDec Maximum;
-
-        /// <summary>
-        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
-        /// </summary>
-        static MediumDec Minimum;
-
-        /// <summary>
-        /// Euler's number
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec E;
-
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        static MediumDec LN10;
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static MediumDec LN10Mult;
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static MediumDec HalfLN10Mult;
-
-        /// <summary>
-        /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
-        /// </summary>
-        static MediumDec Nil;
-
-        ///// <summary>
-        ///// 16 x 1 Matrix with Values at Zero
-        ///// </summary>
-        //static MediumDec ZeroMatrix16[16] = { Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero, Zero };
-    #pragma endregion ValueDefines
-	}
-
-    MediumDec MediumDecValues::Pi = PiValue();
-    MediumDec MediumDecValues::One = OneValue();
-    MediumDec MediumDecValues::Two = TwoValue();
-    MediumDec MediumDecValues::NegativeOne = NegativeOneValue();
-    MediumDec MediumDecValues::Zero = ZeroValue();
-    MediumDec MediumDecValues::PointFive = Point5Value();
-    MediumDec MediumDecValues::JustAboveZero = JustAboveZeroValue();
-    MediumDec MediumDecValues::OneMillionth = OneMillionthValue();
-    MediumDec MediumDecValues::FiveThousandth = FiveThousandthValue();
-    MediumDec MediumDecValues::Minimum = MinimumValue();
-    MediumDec MediumDecValues::Maximum = MaximumValue();
-    MediumDec MediumDecValues::E = EValue();
-    MediumDec MediumDecValues::LN10 = LN10Value();
-    MediumDec MediumDecValues::LN10Mult = LN10MultValue();
-    MediumDec MediumDecValues::HalfLN10Mult = HalfLN10MultValue();
-    MediumDec MediumDecValues::TenMillionth = TenMillionthValue();
-    MediumDec MediumDecValues::FiveMillionth = FiveMillionthValue();
-    MediumDec MediumDecValues::FiveBillionth = FiveBillionthValue();
-    MediumDec MediumDecValues::OneGMillionth = OneHundredMillionthValue();
-    MediumDec MediumDecValues::Nil = NilValue();
-#endif*/
+    MediumDec MediumDec::PiNum = PiNumValue();
+    MediumDec MediumDec::ENum = ENumValue();
+    
+#if defined(AltNum_EnableNaN)
+    MediumDec MediumDec::NaN = NaNValue();
+	MediumDec MediumDec::Undefined = UndefinedValue();
+#endif
     #pragma endregion ValueDefine Source
 
     #pragma region String Function Source
@@ -4488,28 +4263,15 @@ namespace BlazesRusCode
         return NewSelf;
     }
 
-    std::string MediumDec::ToString()
-    {
-        std::string Value = "";
-        int CurrentSection = IntValue;
-        unsigned __int8 CurrentDigit;
-        std::string DecBuffer = "";
-        if (IntValue < 0)
-        {
-            Value += "-";
-            if (IntValue == NegativeRep) { CurrentSection = 0; }
-            else { CurrentSection *= -1; }
-        }
-        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
-        {
-            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-        }
+	std::string MediumDec::BasicToStringOp()
+	{
+        std::string Value = (std::string)IntValue;
         if (DecimalHalf != 0)
         {
+			unsigned __int8 CurrentDigit;
+			std::string DecBuffer = "";
             Value += ".";
-            CurrentSection = DecimalHalf;
+            int CurrentSection = DecimalHalf;
             for (__int8 Index = 8; Index >= 0; --Index)
             {
                 CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
@@ -4529,31 +4291,214 @@ namespace BlazesRusCode
                 }
             }
         }
-        return Value;
+		return Value;
+	}
+
+    std::string MediumDec::ToString()
+    {
+        RepType repType = GetRepType();
+        switch (repType)
+        {
+	#if defined(AltNum_EnableInfinityRep)
+        case RepType::PositiveInfinity:
+            return "∞";
+            break;
+        case RepType::NegativeInfinity:
+            return "-∞";
+            break;
+	    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingBottom);
+            return BasicToStringOp();
+			#else
+            return (std::string)IntValue + ".0..1";
+			#endif
+            break;
+        case RepType::ApproachingTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToStringOp();
+			#else
+            return (std::string)IntValue + ".9..9";
+			#endif
+            break;
+		    #if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingMidRight:
+        case RepType::ApproachingMidLeft:
+            ConvertToNormType(repType);
+			return BasicToStringOp();
+			break;
+            #endif
+        #endif
+	#endif
+    #if defined(AltNum_EnableFractionals)
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
+            break;
+    #endif
+	#if defined(AltNum_EnablePiRep)
+        case RepType::PiNum:
+            return BasicToStringOp()+"π";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
+            break;
+        #endif
+	#endif
+	#if defined(AltNum_EnableERep)
+        case RepType::ENum:
+            return BasicToStringOp()+"e";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
+            break;
+        #endif
+	#endif
+
+	#if defined(AltNum_EnableImaginaryNum)
+        case RepType::INum:
+            return BasicToStringOp()+"i";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
+            break;
+        #endif
+	#endif
+	#if defined(AltNum_EnableApproachingPi)
+        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToStringOp()+"π";
+			#else
+            return (std::string)IntValue + ".9..9π";
+			#endif
+            break;
+	#endif
+	#if defined(AltNum_EnableApproachingE)
+        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToStringOp()+"e";
+			#else
+            return (std::string)IntValue + ".9..9e";
+			#endif
+            break;
+	#endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+        case RepType::PositiveImaginaryInfinity:
+            return "∞i";
+            break;
+        case RepType::NegativeImaginaryInfinity:
+            return "-∞i";
+            break;
+	    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingImaginaryBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingBottom);
+            return BasicToStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".0..1i";
+			#endif
+            break;
+        case RepType::ApproachingImaginaryTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".9..9i";
+			#endif
+            break;
+		    #if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingImaginaryMidRight:
+        case RepType::ApproachingImaginaryMidLeft:
+            ConvertToNormType(repType);
+			return BasicToStringOp()+"i";
+			break;
+        #endif
+            #endif
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+        case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
+            break;
+		#if defined(AltNum_EnableMixedPiFractional)
+        case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
+            break;
+		#elif defined(AltNum_EnableMixedEFractional)
+        case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
+            break;
+		#elif defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
+            break;
+		#endif
+    #endif
+	#if defined(AltNum_EnableNaN)
+        case RepType::Undefined:
+            return "Undefined";
+        case RepType::NaN:
+            return "NaN";
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+        case UndefinedButInRange:
+            return "UndefinedButInRange";
+            break;
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+        case WithinMinMaxRange:
+		    return "WithinMinMaxRange";
+            break;
+        #endif
+	#endif
+    #if defined(AltNum_EnableNilRep)
+        case RepType::Nil:
+            return "Nil";
+    #endif
+        default:
+			ConvertToNormType(repType);
+			return BasicToStringOp();
+            break;
+        }
     }
 
-    std::string MediumDec::ToFullString()
-    {
-        std::string Value = "";
-        int CurrentSection = IntValue;
-        unsigned __int8 CurrentDigit;
-        if (IntValue < 0)
-        {
-            Value += "-";
-            if (IntValue == NegativeRep) { CurrentSection = 0; }
-            else { CurrentSection *= -1; }
-        }
-        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
-        {
-            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-        }
+	std::string MediumDec::BasicToFullStringOp()
+	{
+        std::string Value = (std::string)IntValue;
         if (DecimalHalf != 0)
         {
+			unsigned __int8 CurrentDigit;
             Value += ".";
             bool HasDigitsUsed = false;
-            CurrentSection = DecimalHalf;
+            int CurrentSection = DecimalHalf;
             for (__int8 Index = 8; Index >= 0; --Index)
             {
                 if (CurrentSection > 0)
@@ -4570,7 +4515,213 @@ namespace BlazesRusCode
         {
             Value += ".000000000";
         }
-        return Value;
+		return Value;
+	}
+
+    std::string MediumDec::ToFullString()
+    {
+        RepType repType = GetRepType();
+        switch (repType)
+        {
+	#if defined(AltNum_EnableInfinityRep)
+        case RepType::PositiveInfinity:
+            return "∞";
+            break;
+        case RepType::NegativeInfinity:
+            return "-∞";
+            break;
+	    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingBottom);
+            return BasicToFullStringOp();
+			#else
+            return (std::string)IntValue + ".0..1";
+			#endif
+            break;
+        case RepType::ApproachingTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToFullStringOp();
+			#else
+            return (std::string)IntValue + ".9..9";
+			#endif
+            break;
+		    #if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingMidRight:
+        case RepType::ApproachingMidLeft:
+            ConvertToNormType(repType);
+			return BasicToFullStringOp();
+			break;
+            #endif
+        #endif
+	#endif
+    #if defined(AltNum_EnableFractionals)
+            return BasicToFullStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
+            break;
+    #endif
+	#if defined(AltNum_EnablePiRep)
+        case RepType::PiNum:
+            return BasicToFullStringOp()+"π";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            return BasicToFullStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
+            break;
+        #endif
+	#endif
+	#if defined(AltNum_EnableERep)
+        case RepType::ENum:
+            return BasicToFullStringOp()+"e";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+            return BasicToFullStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
+            break;
+        #endif
+	#endif
+
+	#if defined(AltNum_EnableImaginaryNum)
+        case RepType::INum:
+            return BasicToFullStringOp()+"i";
+            break;
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+            return BasicToFullStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
+            break;
+        #endif
+	#endif
+	#if defined(AltNum_EnableApproachingPi)
+        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToFullStringOp()+"π";
+			#else
+            return (std::string)IntValue + ".9..9π";
+			#endif
+            break;
+	#endif
+	#if defined(AltNum_EnableApproachingE)
+        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToFullStringOp()+"e";
+			#else
+            return (std::string)IntValue + ".9..9e";
+			#endif
+            break;
+	#endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+        case RepType::PositiveImaginaryInfinity:
+            return "∞i";
+            break;
+        case RepType::NegativeImaginaryInfinity:
+            return "-∞i";
+            break;
+	    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingImaginaryBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingBottom);
+            return BasicToFullStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".0..1i";
+			#endif
+            break;
+        case RepType::ApproachingImaginaryTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToFullStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".9..9i";
+			#endif
+            break;
+		    #if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingImaginaryMidRight:
+        case RepType::ApproachingImaginaryMidLeft:
+            ConvertToNormType(repType);
+			return BasicToFullStringOp()+"i";
+			break;
+            #endif
+        #endif
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+        case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
+            break;
+		#if defined(AltNum_EnableMixedPiFractional)
+        case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
+            break;
+		#elif defined(AltNum_EnableMixedEFractional)
+        case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
+            break;
+		#elif defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
+            break;
+		#endif
+    #endif
+	#if defined(AltNum_EnableNaN)
+        case RepType::Undefined:
+            return "Undefined";
+        case RepType::NaN:
+            return "NaN";
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+        case UndefinedButInRange:
+            return "UndefinedButInRange";
+            break;
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+        case WithinMinMaxRange:
+		    return "WithinMinMaxRange";
+            break;
+        #endif
+	#endif
+    #if defined(AltNum_EnableNilRep)
+        case RepType::Nil:
+            return "Nil";
+    #endif
+        default:
+			ConvertToNormType(repType);
+			return BasicToFullStringOp();
+            break;
+        }
     }
     #pragma endregion String Function Source
+
+#if defined(AltNum_EnableAlternativeModulusResult)
+    /// <summary>
+    /// (MediumDec Version)Performs remainder operation then saves division result
+    /// C = A - B * (A / B)
+    /// </summary>
+    class DLL_API AltModChecker : public AltNumModChecker<MediumDec>
+    {
+    };
+#endif
 }

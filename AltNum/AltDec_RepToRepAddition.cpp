@@ -1,6 +1,7 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
-bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+bool AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
 	const bool RightIsNegative = false;//bool RightIsNegative = Value.IntValue<0;//Should always return positive value before RepToRep method used
@@ -19,59 +20,60 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            #endif
+			#endif
 		#endif
 		case RepType::ComplexIRep:
-			switch(RRep)
+			switch (RRep)
 			{
-				case RepType::NormalType:
-				case RepType::NumByDiv:
+			case RepType::NormalType:
+			case RepType::NumByDiv:
 		#if defined(AltNum_EnablePiRep)
-				case RepType::PiNum:
+			case RepType::PiNum:
 			#if defined(AltNum_EnablePiPowers)
-				case RepType::PiPower:
+			case RepType::PiPower:
 			#endif
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 				#else
-				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-                #endif
+			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+				#endif
 			#endif
 		#endif
-	
+
 		#if defined(AltNum_EnableERep)
-				case RepType::ENum:
+			case RepType::ENum:
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+			case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 				#else
-				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-                #endif
+			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+				#endif
 			#endif
 		#endif
-	
-		#if defined(AltNum_EnableInfinityRep)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+
+		#if defined(AltNum_EnableApproachingValues)
+			case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+			case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
-	
-	    #if defined(AltNum_EnableNearPi)
-				case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
-	    #endif
-	    #if defined(AltNum_EnableNearE)
-				case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
-	    #endif
-					Value.ConvertToNormalRep(RRep);
-					break;
-		        default:
-                    break;
+		#if defined(AltNum_EnableApproachingDivided)
+			case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+		#endif
+
+				#if defined(AltNum_EnableNearPi)
+			case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
+				#endif
+				#if defined(AltNum_EnableNearE)
+			case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
+				#endif
+				Value.ConvertToNormalRep(RRep);
+				break;
+			default:
+				break;
 			}
 			break;
-    #endif
+	#endif
 	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
@@ -260,8 +262,8 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
                     else
                     {
                         //check if value is already a fractional equivalant of Value
-                        //MediumDecVariant divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
-                        //MediumDecVariant C = self + Value.ExtraRep * divRes;
+                        //AltDec divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
+                        //AltDec C = self + Value.ExtraRep * divRes;
                         //if(C==0)
                         //{
                         //}
@@ -339,8 +341,8 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
                     else
                     {
                         //check if value is already a fractional equivalant of Value
-                        //MediumDecVariant divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
-                        //MediumDecVariant C = self + Value.ExtraRep * divRes;
+                        //AltDec divRes = self / -Value.ExtraRep;//if(self%-Value.ExtraRep==0)
+                        //AltDec C = self + Value.ExtraRep * divRes;
                         //if(C==0)
                         //{
                         //}
@@ -519,7 +521,7 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
 				        LeftSideNum = -self.DecimalHalf;
 			        else
 				        LeftSideNum = self.IntValue*self.ExtraRep - self.DecimalHalf;
-                    MediumDecVariant RightSideNum = MediumDecVariant(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
+                    AltDec RightSideNum = AltDec(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
 	    #if defined(AltNum_EnableMixedPiFractional)
                     RightSideNum *= PiNum;
         #else
@@ -562,15 +564,15 @@ bool MediumDecVariant::RepToRepAddOp(RepType& LRep, RepType& RRep, MediumDecVari
         //            break;//Give result as EByDiv
         //#else
                 case RepType::MixedFrac:
-        			MediumDecVariant LeftSideNum;
+        			AltDec LeftSideNum;
         			if(self.IntValue==NegativeRep)
-        				LeftSideNum = MediumDecVariant(self.DecimalHalf);
+        				LeftSideNum = AltDec(self.DecimalHalf);
         			else if(self.IntValue<0)
-        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + self.DecimalHalf);
+        				LeftSideNum = AltDec(self.IntValue*-self.ExtraRep + self.DecimalHalf);
         			else if(self.IntValue==0)
-        				LeftSideNum = MediumDecVariant(-self.DecimalHalf);
+        				LeftSideNum = AltDec(-self.DecimalHalf);
         			else
-        				LeftSideNum = MediumDecVariant(self.IntValue*-self.ExtraRep + -self.DecimalHalf);
+        				LeftSideNum = AltDec(self.IntValue*-self.ExtraRep + -self.DecimalHalf);
             #if defined(AltNum_EnableMixedPiFractional)
                     LeftSideNum *= PiNum;
             #elif defined(AltNum_EnableMixedEFractional)

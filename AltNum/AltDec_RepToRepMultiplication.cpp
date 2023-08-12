@@ -1,6 +1,6 @@
 #include "AltDec.hpp"
 
-bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+bool AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	//LRep Overrides
 	switch(LRep)
@@ -238,7 +238,7 @@ bool MediumDecVariant::RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecVar
 					break;
 		#if defined(AltNum_EnablePiPowers)
 				case RepType::PiPower://Xe * (Y*Pi)^-ExtraRep
-					MediumDecVariant Res = Value;
+					AltDec Res = Value;
 					Res.BasicMultOp(self);
 					Res.BasicMultOp(ENum);
 					self.SetVal(Res);

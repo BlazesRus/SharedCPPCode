@@ -1,6 +1,7 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
-void MediumDecVariant::RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
+void AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides
     switch(LRep)
