@@ -1162,59 +1162,59 @@ namespace BlazesRusCode
         /// <returns>AltDec</returns>
         static AltDec PiNumValue()
         {
-            return AltDec(3, 141592654, 0);
+            return AltDec(3, 141592654);
         }
         
         static AltDec PiValue()
         {
 #if defined(AltNum_EnableERep)
-            return AltDec(1, 0, PiRep);
+            return AltDec(1, PiRep);
 #else
-            return AltDec(3, 141592654, 0);
+            return AltDec(3, 141592654);
 #endif
         }
 
         //100,000,000xPi(Rounded to 9th decimal digit)
         static AltDec HundredMilPiNumVal()
         {
-            return AltDec(314159265, 358979324, 0);
+            return AltDec(314159265, 358979324);
         }
 
         //10,000,000xPi(Rounded to 9th decimal digit)
         static AltDec TenMilPiNumVal()
         {
-            return AltDec(31415926, 535897932, 0);
+            return AltDec(31415926, 535897932);
         }
 
         //1,000,000xPi(Rounded to 9th decimal digit)
         static AltDec OneMilPiNumVal()
         {
-            return AltDec(3141592, 653589793, 0);
+            return AltDec(3141592, 653589793);
         }
 
         //10xPi(Rounded to 9th decimal digit)
         static AltDec TenPiNumVal()
         {
-            return AltDec(31, 415926536, 0);
+            return AltDec(31, 415926536);
         }
         
         static AltDec ENumValue()
         {
-            return AltDec(2, 718281828, 0);
+            return AltDec(2, 718281828);
         }
 
         static AltDec EValue()
         {
 #if defined(AltNum_EnableERep)
-            return AltDec(1, 0, ERep);
+            return AltDec(1, ERep);
 #else
-            return AltDec(2, 718281828, 0);
+            return AltDec(2, 718281828);
 #endif
         }
         
         static AltDec ZeroValue()
         {
-            return AltDec(0, 0, 0);
+            return AltDec();
         }
 
         /// <summary>
