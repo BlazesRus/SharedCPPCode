@@ -5187,11 +5187,6 @@ public:
                 return *this;
             }
             DecimalHalf = 0;
-            if (IntValue == NegativeRep) { IntValue = -1; }
-            else
-            {
-                --IntValue;
-            }
             return *this;
         }
 
@@ -5393,7 +5388,6 @@ public:
 #endif
                 ConvertToNormType();
                 DecimalHalf = 0;
-                if (IntValue == NegativeRep) { IntValue = 0; }
 #if defined(AltNum_EnableInfinityRep)
             }
 #endif
@@ -6133,8 +6127,6 @@ public:
         {
             if (value == 1)
                 return AltDec::Zero;
-            //if(value.ExtraRep!=0)
-            //    return Log10_IntPart02(value);
             if (value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
@@ -6594,7 +6586,7 @@ public:
             default:
                 break;
             }
-            return BasicSinOperation(Value);;
+            return BasicSinOperation(Value);
         }
 
         /// <summary>
