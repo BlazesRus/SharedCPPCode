@@ -5252,15 +5252,14 @@ public:
                 //ConvertToNormType();//Prevent losing imaginery numbers
                 break;
             }
-            if (DecimalHalf == 0)
+            if (DecimalHalf != 0)
             {
-                return *this;
-            }
-            DecimalHalf = 0;
-            if (IntValue == NegativeRep) { IntValue = 0; }
-            else
-            {
-                ++IntValue;
+                DecimalHalf = 0;
+                if (IntValue == NegativeRep) { IntValue = 0; }
+                else
+                {
+                    ++IntValue;
+                }
             }
             return *this;
         }
