@@ -3558,7 +3558,7 @@ public:
         { AltDec self = *this; CatchAllDivision(Value); return self; }
 
 public:
-        bool RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Division Operation
@@ -3781,7 +3781,7 @@ public:
 			BasicMultOp(Value);
 		}
 
-        bool RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Multiplication Operation
@@ -3868,7 +3868,7 @@ public:
             BasicAddOp(Value);
         }
 
-        bool RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static bool RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Addition Operation
@@ -3945,7 +3945,7 @@ public:
 			BasicSubOp(Value);
 		}
 
-        bool RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static bool RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Subtraction Operation
