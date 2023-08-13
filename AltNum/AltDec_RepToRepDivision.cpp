@@ -27,26 +27,57 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			{
 		#if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingTop:
-            #if defined(AltNum_EnableImaginaryInfinity)
                 if(Value.IntValue==0)
                 {
+            #if defined(AltNum_EnableImaginaryInfinity)
                     if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
                         self.IntValue = -1;
                     else//PositiveValue / 0.0..1 = Infinity
                         self.IntValue = 1;
                     self.DecimalHal = InfinityRep;
                     self.ExtraRep = IRep;
+            #else
+                    throw "Result is Infinity times i";
+                    if(self.IntValue<0)
+                        self.SetAsMaximum();
+                    else
+                        self.SetAsMinimum();
+                    self.ExtraRep = IRep;
+            #endif
                     return;
                 }
                 else
                 {
-            #endif
                     Value.DecimalHalf = 1;
                     RRep = RepType::NormalType;
-            #if defined(AltNum_EnableImaginaryInfinity)
                 }
-            #endif
                 break;
+        #endif
+        #if defined(AltNum_EnableApproachingI)
+			case RepType::ApproachingImaginaryBottom:
+                if(Value.IntValue==0)
+                {
+            #if defined(AltNum_EnableInfinityRep)
+                    if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
+                        self.IntValue = -1;
+                    else//PositiveValue / 0.0..1 = Infinity
+                        self.IntValue = 1;
+                    self.DecimalHal = InfinityRep;
+                    self.ExtraRep = 0;
+            #else
+                    throw "Result is Infinity";
+                    if(self.IntValue<0)
+                        self.SetAsMaximum();
+                    else
+                        self.SetAsMinimum();
+            #endif
+                    return;
+                }
+                else
+                {
+                    Value.DecimalHalf = 1;
+                    RRep = RepType::NormalType;
+                }
         #endif
 			case RepType::NumByDiv:
 		#if defined(AltNum_EnablePiRep)
