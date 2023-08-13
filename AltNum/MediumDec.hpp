@@ -2462,7 +2462,7 @@ public:
 					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ IntValue >= 0))
+            if(WasNegative ^ (IntValue >= 0))
 				DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
 	#endif
             return;
