@@ -646,6 +646,7 @@ namespace BlazesRusCode
     #endif
             UnknownType
         };
+		
 		std::string RepTypeAsString(RepType& repType)
 		{
 			switch(repType)
@@ -3355,7 +3356,7 @@ protected:
                 IntValue += value;
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = AltDecVariant::DecimalOverflow - DecimalHalf;
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
         }
 public:
@@ -3404,15 +3405,15 @@ protected:
         template<typename IntType>
         void BasicIntSubOp(IntType& Value)
         {
-            if(self.DecimalHalf==0)
-                self.IntValue.NRepSkippingSubOp(value);
+            if(DecimalHalf==0)
+                IntValue.NRepSkippingSubOp(value);
             else
             {
-                bool NegativeBeforeOperation = self.IntValue < 0;
-                self.IntValue -= value;
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntValue -= Value;
                 //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(self.IntValue<0))
-                    self.DecimalHalf = AltDecVariant::DecimalOverflow - self.DecimalHalf;
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
         }
 public:
@@ -3972,8 +3973,8 @@ public:
             if (Value == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
-                if(IntValue < 0)
-                    SetAsNegativeInfinity()
+                if (IntValue < 0)
+                    SetAsNegativeInfinity();
                 else
                     SetAsInfinity(); 
                 return;
@@ -3981,6 +3982,8 @@ public:
                 throw "Target value can not be divided by zero";
 #endif
             }
+
+            RepType LRep = GetRepType();
 			switch (LRep)
 			{
 	#if defined(AltNum_EnableAlternativeRepFractionals)
@@ -4020,7 +4023,7 @@ public:
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(self.IntValue.IsZero())
+					if(IntValue.IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
@@ -4234,9 +4237,8 @@ public:
     #pragma region Other Multiplication Operations
 protected:
         template<typename IntType>
-        static AltDec& IntMultOpPt2(IntType& Value)
+        static AltDec& IntMultOpPt2(IntType& Value, RepType LRep = GetRepType())
         {
-            LRep = this->GetRepType();
 			switch (LRep)
 			{
 	#if defined(AltNum_EnableAlternativeRepFractionals)
@@ -4365,7 +4367,7 @@ protected:
         template<typename IntType>
         static AltDec& UnsignedIntMultOp(IntType& Value)
         {
-            if (self == Zero||Value==1)
+            if (IsZero()||Value==1)
                 return;
             if (Value == 0)
             {
@@ -4387,7 +4389,7 @@ protected:
                 Value *= -1;
                 SwapNegativeStatus();
             }
-            if (self == Zero||Value==1)
+            if (IsZero()||Value==1)
                 return;
             if (Value == 0)
             {
@@ -4990,8 +4992,8 @@ public:
         template<typename IntType>
         AltDec IntRemOp(IntType& RValue)
         {
-            AltDec divRes = SRep / RValue;
-            AltDec C = SRep - RValue * divRes;
+            AltDec divRes = *this / RValue;
+            AltDec C = *this - RValue * divRes;
             return C;
         }
 
@@ -5641,7 +5643,7 @@ public:
         template<typename ValueType>
         static AltDec IntPowOp(AltDec& targetValue, ValueType& expValue)
         {
-            if (value.DecimalHalf == InfinityRep)
+            if (targetValue.DecimalHalf == InfinityRep)
             {
                 if (expValue == 0)
 #if defined(AltNum_EnableNaN)
@@ -5705,7 +5707,7 @@ public:
                     return this;
                 }
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && targetValue.ExtraRep == 0)
+            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
             {
                 IntValue = VariableConversionFunctions::PowerOfTens[expValue];
             }
@@ -5740,7 +5742,7 @@ public:
         template<typename ValueType>
         static AltDec IntPowConstOp(AltDec& targetValue, const ValueType& expValue)
         {
-            if (value.DecimalHalf == InfinityRep)
+            if (targetValue.DecimalHalf == InfinityRep)
             {
                 if (expValue == 0)
 #if defined(AltNum_EnableNaN)
