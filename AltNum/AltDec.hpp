@@ -3133,6 +3133,11 @@ protected:
                 }
             }
         }
+        template<typename IntType>
+        void PartialIntDiv(IntType Value)
+        {
+            PartialIntDiv(Value);
+        }
 public:
 
 		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
@@ -3176,6 +3181,11 @@ protected:
             PartialIntDivOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
         }
+        template<typename IntType>
+        void BasicUnsignedIntDiv(IntType Value)
+        {
+            BasicUnsignedIntDivOp(Value);
+        }
 
         template<typename IntType>
         void BasicIntDivOp(IntType& Value)
@@ -3197,6 +3207,11 @@ protected:
                 return;
             PartialIntDivOp(Value);
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+        }
+        template<typename IntType>
+        void BasicIntDiv(IntType Value)
+        {
+            BasicIntDivOp(Value);
         }
 public:
 
@@ -3227,7 +3242,7 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
-    	
+protected:
 		/// <summary>
         /// Partial Multiplication Operation Between AltDec and Integer Value
         /// </summary>
@@ -3264,8 +3279,12 @@ public:
                 }
             }
         }
-
-protected:
+        template<typename IntType>
+        void PartialIntMult(IntType Value)
+        {
+            PartialIntMultOp(Value);
+        }
+public:
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
         /// </summary>
@@ -3279,6 +3298,11 @@ protected:
                 SetAsZero();
             else
                 PartialIntMultOp(Value);
+        }
+        template<typename IntType>
+        void UnsignedBasicIntMult(IntType Value)
+        {
+            UnsignedBasicIntMultOp(Value);
         }
 
         /// <summary>
@@ -3299,6 +3323,11 @@ protected:
                 SetAsZero();
             else
                 PartialIntMultOp(Value);
+        }
+        template<typename IntType>
+        void BasicIntMult(IntType Value)
+        {
+            BasicIntMultOp(Value);
         }
 public:
 
@@ -3359,6 +3388,11 @@ protected:
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
         }
+        template<typename IntType>
+        void BasicIntAdd(IntType Value)
+        {
+            BasicIntAddOp(Value);
+        }
 public:
 
 		/// <summary>
@@ -3415,6 +3449,11 @@ protected:
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
+        }
+        template<typename IntType>
+        void BasicIntSub(IntType Value)
+        {
+            BasicIntSubOp(Value);
         }
 public:
 
@@ -3511,7 +3550,10 @@ protected:
 			else
 				return false;
         }
-
+        bool PartialDiv(AltDec Value)
+        {
+            return PartialDivOp(Value);
+        }
 public:
 		
         void BasicDivOp(AltDec& Value)
@@ -3724,6 +3766,10 @@ public:
             else
                 return false;
 		}
+        bool BasicMultPt2(AltDec Value)
+        {
+            return BasicMultOpPt2(Value);
+        }
 		
 		/// <summary>
         /// Basic Multiplication Operation(without checking for special representation variations or zero)
@@ -3743,6 +3789,10 @@ public:
 				return false;
             return true;
 		}
+        bool UnsignedBasicMult(AltDec Value)
+        {
+            return UnsignedBasicMultOp;
+        }
 
 		/// <summary>
         /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
@@ -3758,6 +3808,10 @@ public:
                 SwapNegativeStatus();
             }
             return UnsignedBasicMultOp(Value);
+        }
+        bool BasicMult(AltDec Value)
+        {
+            return BasicMultOp(Value);
         }
 
 		void CatchAllMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
@@ -4186,6 +4240,11 @@ public:
 			}
             return;
         }
+        template<typename IntType>
+        static AltDec& UnsignedIntDiv(IntType Value)
+        {
+            return UnsignedIntDivOp(Value);
+        }
 
         /// <summary>
         /// Division Operation Between AltDec and Integer Value
@@ -4202,6 +4261,11 @@ public:
                 SwapNegativeStatus();
             }
             return UnsignedIntDivOp(Value);
+        }
+        template<typename IntType>
+        AltDec& IntDiv(IntType Value)
+        {
+            return IntDivOp(Value);
         }
 		
         /// <summary>

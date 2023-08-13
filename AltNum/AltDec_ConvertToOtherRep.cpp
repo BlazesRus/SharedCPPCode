@@ -126,7 +126,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue;
+		SRep *= IntValue.Value;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
@@ -191,7 +191,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 
 inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 {
-	BasicIntDivOp(-ExtraRep);
+	PartialDiv(-ExtraRep);
 	ExtraRep = 0;
 	__int64 SRep;
 	__int64 divRes;
