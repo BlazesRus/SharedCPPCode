@@ -8,14 +8,14 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
+			throw "UndefinedButInRange operations not supported yet(from left side)"; return;
             break;
     #endif
 	#if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			#endif
@@ -287,6 +287,46 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				
 			}
 			break;
+    #if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiPowers)
+        #endif
+    #endif
+    #if defined(AltNum_EnableERep)
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+    #endif
+    #if defined(AltNum_EnableFractionals)
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #endif
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableMixedIFractional)
+        #endif
+    #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 		default:
 			throw AltDec::RepTypeAsString(LRep)-" RepType division with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;

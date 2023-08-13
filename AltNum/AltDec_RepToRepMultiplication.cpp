@@ -8,7 +8,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
+			throw "UndefinedButInRange operations not supported yet(from left side)"; return;
             break;
     #endif
 	#if defined(AltNum_EnableImaginaryNum)
@@ -18,8 +18,11 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
+            #endif
 		#endif
+        #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedI:
+        #endif
 			switch (RRep)
 			{
         #if !defined(AltNum_EnableComplexNumbers)
@@ -78,9 +81,6 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 				RRep = RepType::NormalType;
 				break;
     #endif
-		case RepType::UnknownType:
-			throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
-			break;
 		default://No nothing for most of them
 			break;
 	}
@@ -184,12 +184,46 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 					self.BasicMultOp(Value);
                     self.ExtraRep = IRep;
         #endif
-    #endif						
+    #endif
 				default:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;
 			}
 			break;
+    #if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiPowers)
+        #endif
+    #endif
+    #if defined(AltNum_EnableERep)
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+    #endif
+    #if defined(AltNum_EnableFractionals)
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #endif
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableMixedIFractional)
+        #endif
+    #endif
 		default:
 			throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;

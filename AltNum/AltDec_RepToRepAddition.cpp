@@ -3,6 +3,8 @@ using AltDec = BlazesRusCode::AltDec;
 
 inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
+	bool LeftIsNegative = self.IntValue<0;
+	const bool RightIsNegative = false;
     //LRep Overrides
     switch(LRep)
     {
@@ -107,10 +109,46 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			{
             }
             break;
-#if defined(AltNum_EnableImaginaryNum)
-#endif
-#if defined(AltNum_EnableMixedFractional)
-#endif
+    #if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiPowers)
+        #endif
+    #endif
+    #if defined(AltNum_EnableERep)
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+    #endif
+    #if defined(AltNum_EnableFractionals)
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+			switch (RRep)
+			{
+            }
+            break;
+        #endif
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableMixedIFractional)
+        #endif
+    #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 		default:
 			throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;

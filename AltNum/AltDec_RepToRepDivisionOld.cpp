@@ -1,25 +1,25 @@
 #include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
-void AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides
     switch(LRep)
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
+			throw "UndefinedButInRange operations not supported yet(from left side)"; return;
             break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
-        #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
-        case RepType::INumByDiv:
-            #else
-		case RepType::IFractional:
-		    #endif
-        #endif
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+			#else
+		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+			#endif
+		#endif
         #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedI:
         #endif
@@ -28,23 +28,29 @@ void AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
             {
                 if(Value.IntValue==0)
                 {
+        #if defined(AltNum_EnableImaginaryInfinity)
                     if(self.IntValue<0)//NegativeValue / 0.0..1 = Negative Infinity
                         self.IntValue = -1;
                     else//PositiveValue / 0.0..1 = Infinity
                         self.IntValue = 1;
                     self.DecimalHal = InfinityRep;
                     self.ExtraRep = IRep;
+        #else
+                    throw "Result is Infinity times i";
+                    if(self.IntValue<0)
+                        self.SetAsMaximum();
+                    else
+                        self.SetAsMinimum();
+                    self.ExtraRep = IRep;
+        #endif
                     return;
                 }
                 else
                 {
-		#endif
                     Value.DecimalHalf = 1;
                     RRep = RepType::NormalType;
-		#if defined(AltNum_EnableApproachingValues)&&defined(AltNum_EnableImaginaryInfinity)
                 }
             }
-		#endif
             break;
 	#endif
 	#if defined(AltNum_EnableNaN)

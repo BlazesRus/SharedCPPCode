@@ -1,7 +1,7 @@
 #include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
-bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
 	const bool RightIsNegative = false;//bool RightIsNegative = Value.IntValue<0;//Should always return positive value before RepToRep method used
@@ -22,6 +22,9 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             #endif
 		#endif
+        #if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedI:
+        #endif
         #ifdef AltNum_EnableComplexNumbers
 		case RepType::ComplexIRep:
         #endif

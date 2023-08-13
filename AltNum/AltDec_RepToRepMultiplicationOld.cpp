@@ -1,24 +1,26 @@
 #include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
-bool AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	//LRep Overrides
 	switch(LRep)
 	{
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 		case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
+			throw "UndefinedButInRange operations not supported yet(from left side)"; return;
 			break;
     #endif
     #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
-        #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-            #else
+		#if defined(AltNum_EnableAlternativeRepFractionals)
+			#if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+			#else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             #endif
+		#endif
+        #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedI:
         #endif
 			if(RRep==RepType::ApproachingBottom)
