@@ -5752,7 +5752,7 @@ public:
 #endif
                 else if (expValue < 0)
                     return Zero;
-                else if (value.IntValue.Value == -1 && expValue % 2 == 0)
+                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
                     IntValue.Value = 1;
                 else
                     return;//Returns infinity
@@ -6259,7 +6259,6 @@ public:
         /// <returns>AltDec</returns>
         static AltDec Log(AltDec value, int baseVal)
         {
-            AltDec ConvertedVal;
             RepType repType = value.GetRepType();
             AltDec ConvertedVal;
             switch (repType)
