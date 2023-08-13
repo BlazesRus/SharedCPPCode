@@ -546,7 +546,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt RightSideIntMultOperation(MirroredInt& RValue, IntType& LValue)
+        static MirroredInt RightSideIntMultOperation(MirroredInt& LValue, IntType& RValue)
         {
             if (LValue.IsZero() || RValue == 0)
                 return LValue;
@@ -743,7 +743,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt& RightSideIntModulusOperation(MirroredInt& RValue, IntType& LValue)
+        static MirroredInt& RightSideIntModulusOperation(MirroredInt& LValue, IntType& RValue)
         {
             if(LValue.IsZero())
                 LValue.Value = 0;
@@ -954,7 +954,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt& RightSideIntAdditionOperation(MirroredInt& RValue, IntType& LValue)
+        static MirroredInt& RightSideIntAdditionOperation(MirroredInt& LValue, IntType& RValue)
         {
             if(RValue==0)
                 return LValue;
@@ -1219,7 +1219,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt& RightSideIntSubOperation(MirroredInt& RValue, IntType& LValue)
+        static MirroredInt& RightSideIntSubOperation(MirroredInt& LValue, IntType& RValue)
         {
             if(RValue==0)
                 return LValue;
@@ -1255,7 +1255,7 @@ namespace BlazesRusCode
                 if(RValue==LValue.Value)
                     LValue.Value = NegativeRep;
                 else if(RValue<LValue.Value)
-                    LValue.Value -= RValue.Value - 1;
+                    LValue.Value -= RValue - 1;
                 else//(RValue>=LValue.Value)
                 {
                     LValue.Value -= RValue;
