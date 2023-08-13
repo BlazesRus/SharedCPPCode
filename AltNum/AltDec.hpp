@@ -4454,7 +4454,7 @@ protected:
 			IntValue += value;
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
 			{
 				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
 				{
@@ -4469,7 +4469,7 @@ protected:
 					DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ IntValue >= 0)
+            if(WasNegative ^ (IntValue >= 0))
 				DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
 	#endif
             return;
@@ -4546,7 +4546,7 @@ protected:
 			IntValue += value;
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
 			{
 				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
 				{
@@ -4561,7 +4561,7 @@ protected:
 					DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ IntValue >= 0))
+            if(WasNegative ^ (IntValue >= 0))
 				DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
 	#endif
             return;
