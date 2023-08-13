@@ -3406,7 +3406,7 @@ protected:
         void BasicIntSubOp(IntType& Value)
         {
             if(DecimalHalf==0)
-                IntValue.NRepSkippingSubOp(value);
+                IntValue.NRepSkippingSubOp(Value);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
@@ -4272,7 +4272,7 @@ protected:
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(self.IsZero())
+					if(IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntMultOpV2(Value);
