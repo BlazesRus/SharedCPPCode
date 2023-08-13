@@ -515,6 +515,23 @@ namespace BlazesRusCode
 	#endif
 			return LValue;
         }
+        friend MirroredInt& operator*=(MirroredInt* LValue, MirroredInt RValue)
+        {
+            if(LValue->IsZero()||RValue.IsZero())
+                return *LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue->Value *= RValue.Value;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue->Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return *LValue;
+        }
 
         /// <summary>
         /// Multiplication Operation
@@ -563,6 +580,24 @@ namespace BlazesRusCode
 #endif
             return LValue;
         }
+        template<typename IntType>
+        static MirroredInt RightSideIntMultOperation(MirroredInt* LValue, IntType& RValue)
+        {
+            if (LValue->IsZero() || RValue == 0)
+                return *LValue;
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            throw "Need to write code for operation";//Placeholder
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            LValue->Value *= RValue;
+#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if (LValue->Value == NegativeRep)
+                throw "MirroredInt value has underflowed";
+#endif
+#else
+            throw "Need to write code for operation";//Placeholder
+#endif
+            return *LValue;
+        }
 
         friend MirroredInt operator*=(MirroredInt& LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
         friend MirroredInt operator*=(MirroredInt& LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
@@ -596,6 +631,25 @@ namespace BlazesRusCode
 			throw "Need to write code for operation";//Placeholder
 	#endif
 			return LValue;
+        }
+        friend MirroredInt& operator/=(MirroredInt* LValue, MirroredInt RValue)
+        {
+			if(RValue.IsZero())
+				throw "Can't divide by zero without infinity result";
+			if(LValue->IsZero())
+				return *LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue->Value /= RValue.Value;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue->Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return *LValue;
         }
 
         /// <summary>
@@ -663,6 +717,26 @@ namespace BlazesRusCode
 	#endif
 			return LValue;
         }
+        template<typename IntType>
+        static MirroredInt& RightSideIntDivPointerOp(MirroredInt* LValue, IntType& RValue)
+        {
+			if(RValue==0)
+				throw "Can't divide by zero without infinity result";
+			if(LValue->IsZero())
+				return *LValue;
+	#if defined(BlazesMirroredInt_UsePseudoBitSet)
+			throw "Need to write code for operation";//Placeholder
+	#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+			LValue->Value /= RValue;
+		#if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+            if(LValue.Value==NegativeRep)
+				throw "MirroredInt value has underflowed";
+		#endif
+	#else
+			throw "Need to write code for operation";//Placeholder
+	#endif
+			return *LValue;
+        }
 		
         friend MirroredInt& operator/=(MirroredInt& LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
 		friend MirroredInt& operator/=(MirroredInt& LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
@@ -695,6 +769,25 @@ namespace BlazesRusCode
                 throw "Need to write code for operation with negative number";//Placeholder
 #endif 
             return LValue;
+        }
+        friend MirroredInt& operator%=(MirroredInt* LValue, MirroredInt RValue)
+        {
+            if(LValue->IsZero())
+                LValue->Value = 0; 
+            else
+#if defined(BlazesMirroredInt_UsePseudoBitSet)
+            {
+                if(IsNegative)
+                    throw "Need to write code for operation with negative number";//Placeholder
+                else
+                    LValue->Value%= RValue.Value;
+            }
+#elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue->Value%=RValue.Value;
+#else
+                throw "Need to write code for operation with negative number";//Placeholder
+#endif 
+            return *LValue;
         }
 
         /// <summary>
@@ -729,7 +822,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt LeftSideIntModulusOperationAsSelf(IntType& LValue, MirroredInt& RValue)
+        static MirroredInt LeftSideIntModulusOperationAsSelf(IntType& LValue, MirroredInt RValue)
         {
 			MirroredInt Res(LValue);
 			Res %= RValue;
@@ -761,6 +854,26 @@ namespace BlazesRusCode
 #endif
                 return LValue;
         }
+        template<typename IntType>
+        static MirroredInt& RightSideIntModulusPointerOp(MirroredInt* LValue, IntType& RValue)
+        {
+            if (LValue->IsZero())
+                LValue->Value = 0;
+            else
+        #if defined(BlazesMirroredInt_UsePseudoBitSet)
+            {
+                if (IsNegative)
+                    throw "Need to write code for operation with negative number";//Placeholder
+                else
+                    LValue.Value %= RValue;
+        #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                LValue->Value %= RValue;
+        #else
+                throw "Need to write code for operation with negative number";//Placeholder
+        #endif
+            return *LValue;
+        }
+        
 		
         friend MirroredInt& operator%=(MirroredInt& LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
 		friend MirroredInt& operator%=(MirroredInt& LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
@@ -775,7 +888,7 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        friend MirroredInt& operator+=(MirroredInt& LValue, MirroredInt& RValue)
+        friend MirroredInt& operator+=(MirroredInt& LValue, MirroredInt RValue)
         {
             if(RValue.IsZero())
                 return LValue;
@@ -848,6 +961,79 @@ namespace BlazesRusCode
 	#endif
 			return LValue;
         }
+        friend MirroredInt& operator+=(MirroredInt* LValue, MirroredInt RValue)
+        {
+            if (RValue.IsZero())
+                return *LValue;
+            if (LValue->Value == 0)
+                LValue->Value = RValue.Value;
+            #if defined(BlazesMirroredInt_UsePseudoBitSet)
+            else
+                throw "Need to write code for operation";//Placeholder
+            #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            else if (LValue->Value == NegativeRep)
+            {
+                //-0.XXXX + 2 = 1.XXXX
+                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
+                //-0.XXXX + -5 = -5.XXXX
+                if (RValue < 0)
+                {
+                    LValue->Value = RValue.Value;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else//(RValue>=0)
+                    LValue->Value = RValue.Value - 1;
+            }
+            else if (LValue->Value < 0)
+            {
+                //-1.XXXX + -5 = -6.XXXX
+                //-6.XXXX + 5 = -1.XXXX
+                //-6.XXXX + 6 = -0.XXXX
+                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
+                //-5.XXXX + 7 = 1.XXXX
+                int InvertedLValue = -LValue->Value;
+                if (LValue->Value == InvertedLValue)
+                    LValue->Value = NegativeRep;
+                else if (RValue > InvertedLValue)
+                    LValue->Value += RValue.Value - 1;
+                else
+                {
+                    LValue->Value += RValue.Value;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else
+            {
+                //5.XXXX + 5 = 10.XXXX
+                //5.XXXX + -5 = 0.XXXX
+                //5.XXXX + -6 = -0.XXXX (Flips to other side)
+                //5.XXXX + -7 = -1.XXXX 
+                int InversionPoint = -LValue->Value - 1;
+                if (RValue == InversionPoint)
+                    LValue->Value = NegativeRep;
+                else if (RValue < InversionPoint)
+                {
+                    LValue->Value = (RValue + 1).GetValue();
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else
+                    LValue->Value += RValue.Value;
+            }
+            #else
+            else
+                throw "Need to write code for operation";//Placeholder
+            #endif
+            return *LValue;
+        }
 
         /// <summary>
         /// Addition Operation that skips negative zero(for when decimal half is empty)
@@ -907,7 +1093,7 @@ namespace BlazesRusCode
             }
 			return;
         }
-
+		
         /// <summary>
         /// Addition Operation
         /// </summary>
@@ -1112,6 +1298,78 @@ namespace BlazesRusCode
 			    throw "Need to write code for operation";//Placeholder
 #endif
 			return LValue;
+        }
+        friend MirroredInt& operator-=(MirroredInt* LValue, MirroredInt RValue)
+        {
+            if (RValue.IsZero())
+                return *LValue;
+            if (LValue->Value == 0)
+                LValue->Value = -RValue.Value;
+            #if defined(BlazesMirroredInt_UsePseudoBitSet)
+            else
+                throw "Need to write code for operation";//Placeholder
+            #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            else if (LValue->Value == NegativeRep)
+            {
+                //-0.XXXX - -2 = 1.XXXX
+                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
+                //-0.XXXX - 1 = -1.XXXX 
+                //-0.XXXX - 6 = -6.XXXX
+                if (RValue < 0)
+                    LValue->Value = -RValue.Value - 1;
+                else
+                {
+                    LValue->Value = -RValue.Value;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else if (LValue->Value < 0)
+            {
+                //-5.XXXX - -7 = 1.XXXX 
+                //-5.XXXX - -6 = 0.XXXX            
+                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
+                //-5.XXXX - -4 = -1.XXXX
+                if (RValue == LValue->Value)
+                    LValue->Value = NegativeRep;
+                else if (RValue < LValue->Value)
+                    LValue->Value -= RValue.Value - 1;
+                else//(RValue>=LValue->Value)
+                {
+                    LValue->Value -= RValue.Value;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else
+            {
+                //5.XXXX - -5 = 10.XXXX
+                //5.XXXX - 5 = 0.XXXX
+                //5.XXXX - 6 = -0.XXXX (Flips to other side)
+                //5.XXXX - 7 = -1.XXXX
+                int InversionPoint = LValue->Value + 1;
+                if (RValue == InversionPoint)
+                    LValue->Value = NegativeRep;
+                else if (RValue > InversionPoint)
+                {
+                    LValue->Value -= RValue.Value - 1;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (LValue->Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else
+                    LValue->Value += RValue.Value;
+            }
+            #else
+            else
+                throw "Need to write code for operation";//Placeholder
+            #endif
+            return *LValue;
         }
 
         /// <summary>
