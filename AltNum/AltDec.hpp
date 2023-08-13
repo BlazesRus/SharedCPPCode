@@ -4612,6 +4612,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator/(AltDec self, AltDec Value) { return DivOp(self, Value); }
+        friend AltDec operator/(AltDec* self, AltDec Value) { return self->DivOp(Value); }
 
         /// <summary>
         /// /= Operation
@@ -4620,6 +4621,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec& operator/=(AltDec& self, AltDec Value) { return self.DivOp(Value); }
+        friend AltDec& operator/=(AltDec* self, AltDec Value) { return self->DivOp(Value); }
 
         /// <summary>
         /// /= Operation Between AltDec and Integer Value
@@ -4679,6 +4681,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator*(AltDec self, AltDec Value) { return self.MultOp(Value); }
+        friend AltDec operator*(AltDec* self, AltDec Value) { return self->MultOp(Value); }
 
         ///// <summary>
         ///// *= Operation
@@ -4687,6 +4690,7 @@ public:
         ///// <param name="Value">The value.</param>
         ///// <returns>AltDec</returns>
         friend AltDec& operator*=(AltDec& self, AltDec Value) { return self.MultOp(Value); }
+        friend AltDec& operator*=(AltDec* self, AltDec Value) { return self->MultOp(Value); }
 
         /// <summary>
         /// *= Operation Between AltDec and Integer Value
@@ -4727,6 +4731,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator+(AltDec self, AltDec Value) { return self.AddOp(Value); }
+        friend AltDec operator+(AltDec* self, AltDec Value) { return self->AddOp(Value); }
 
         /// <summary>
         /// += Operation
@@ -4735,6 +4740,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec& operator+=(AltDec& self, AltDec Value) { return self.AddOp(Value); }
+        friend AltDec& operator+=(AltDec* self, AltDec Value) { return self->AddOp(Value); }
 
         /// <summary>
         /// += Operation Between AltDec and Integer Value
@@ -4794,6 +4800,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator-(AltDec self, AltDec Value) { return self.SubOp(Value); }
+        friend AltDec operator-(AltDec* self, AltDec Value) { return self->SubOp(Value); }
 
         /// <summary>
         /// -= Operation
@@ -4802,6 +4809,14 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         friend AltDec& operator-=(AltDec& self, AltDec Value) { return self.SubOp(Value); }
+
+        /// <summary>
+        /// -= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        friend AltDec& operator-=(AltDec* self, AltDec Value) { return self->SubOp(Value); }
 
         /// <summary>
         /// -= Operation Between AltDec and Integer Value
