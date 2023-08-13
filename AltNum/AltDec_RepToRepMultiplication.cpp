@@ -34,7 +34,7 @@ bool AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& 
 			break;
 	#endif
 		case RepType::UnknownType:
-			throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;
 		default://No nothing for most of them
 		break;
@@ -641,7 +641,7 @@ bool AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& 
     #endif
 #endif
 	default:
-		throw static_cast<RepType>(LRep)-" RepType multiplication with"-static_cast<RepType>(RRep)-"not supported yet";
+		throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 		break;
 	}
 }

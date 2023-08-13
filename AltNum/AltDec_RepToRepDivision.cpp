@@ -54,7 +54,7 @@ void AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
 			break;
 	#endif
 		case RepType::UnknownType:
-			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)-" RepType division with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
             break;
         default:
             break;
@@ -965,7 +965,7 @@ void AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
     #endif
 #endif
 		default:
-			throw static_cast<RepType>(LRep)-" RepType division with"-static_cast<RepType>(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)-" RepType division with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;
 	}
 }

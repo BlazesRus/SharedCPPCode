@@ -320,7 +320,7 @@ static AltDec& AltDec::DivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec&
 				break;
     #endif
 			default:
-				throw static_cast<RepType>(LRep)-" RepType division not supported yet";
+				throw AltDec::RepTypeAsString(LRep)-" RepType division not supported yet";
 				break;
 		}
 	}

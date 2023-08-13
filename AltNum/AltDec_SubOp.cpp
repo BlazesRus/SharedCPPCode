@@ -207,7 +207,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 				}
 				else
 				{
-					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
 					BasicSubOp(Value);
 				}
 				break;
@@ -225,7 +225,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 					BasicSubOp(Value);
 				else
 				{
-					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
 					BasicSubOp(Value);
 				}
 				break;
@@ -283,7 +283,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 			case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
-        #elif defined(AltNum_EnableMixedIFractional)
+		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
 				if(ExtraRep==Value.ExtraRep)
@@ -319,7 +319,6 @@ AltDec& AltDec::SubOp(AltDec& Value)
                     ExtraRep *= -Value.ExtraRep;
                 }
 				break;
-        #endif
 	#endif
 
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -368,7 +367,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 				break;
     #endif
 			default:
-				throw static_cast<RepType>(LRep)-" RepType subtraction not supported yet";
+				throw AltDec::RepTypeAsString(LRep) + " RepType subtraction not supported yet";
 				break;
 		}
 	}

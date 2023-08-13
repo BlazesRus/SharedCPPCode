@@ -219,7 +219,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 				}
 				else
 				{
-					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
 					BasicAddOp(Value);
 				}
 				break;
@@ -237,7 +237,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 					BasicAddOp(Value);
 				else
 				{
-					ConvertToNormalRep(LRep); value.ConvertToNormalRep(LRep);
+					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
 					BasicAddOp(Value);
 				}
 				break;
@@ -370,7 +370,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 				break;
     #endif
 			default:
-				throw static_cast<RepType>(LRep)+" RepType addition not supported yet";
+				throw AltDec::RepTypeAsString(LRep)+" RepType addition not supported yet";
 				break;
 		}
 	}

@@ -67,7 +67,7 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
 	    #if defined(AltNum_EnableNearE)
 				case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
 	    #endif
-					Value.ConvertToNormalRep(RRep);
+					Value.ConvertToNormType(RRep);
 					break;
 				default:
 					break;
@@ -410,7 +410,7 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
     //#if defined(AltNum_EnableComplexNumbers)
     //    throw static_cast"Complex number operations not enabled right now";
     //#else
-        throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+        throw AltDec::RepTypeAsString(LRep)-" RepType subtraction with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
     //#endif
 					break;
             }
@@ -422,7 +422,7 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
     //#else
-                    throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+                    throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
     //#endif
 					break;
             }
@@ -434,7 +434,7 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
     //#else
-                    throw static_cast<RepType>(LRep)-" RepType addition with"-static_cast<RepType>(RRep)-"not supported yet";
+                    throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
     //#endif
 					break;
             }
@@ -563,7 +563,7 @@ bool AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& V
     #endif
 #endif
 		default:
-			throw static_cast<RepType>(LRep)-" RepType subtraction with"-static_cast<RepType>(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)-" RepType subtraction with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;
 	}
 }
