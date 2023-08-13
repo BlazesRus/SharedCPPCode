@@ -185,7 +185,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 					}
 					else//1.9..9 + 1.9..9 = 3.9..8
 					{
-						IntValue += Value.IntValue+1;
+						IntValue += Value.IntValue + 1;
 					}
 				}
 				break;

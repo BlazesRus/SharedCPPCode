@@ -4301,8 +4301,9 @@ public:
     #pragma region Other Multiplication Operations
 protected:
         template<typename IntType>
-        static AltDec& IntMultOpPt2(IntType& Value, RepType LRep = GetRepType())
+        static AltDec& IntMultOpPt2(IntType& Value)
         {
+            RepType LRep = GetRepType();
 			switch (LRep)
 			{
 	#if defined(AltNum_EnableAlternativeRepFractionals)
@@ -4483,6 +4484,21 @@ public:
         static AltDec Multiple(AltDec self, signed long long Value) { return self.IntMultOp(Value); }
         static AltDec Multiple(AltDec self, unsigned long long Value) { return self.UnsignedIntMultOp(Value); }
 
+        AltDec& MultOp(MirroredInt& Value)
+        { 
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            if (IsZero() || Value == 1)
+                return;
+            if (Value == 0)
+            {
+                SetAsZero(); return;
+            }
+            IntMultOpPt2(Value);
+        }
     #pragma endregion Other Multiplication Operations
 
     #pragma region Other Addition Operations
@@ -4697,6 +4713,7 @@ public:
         friend AltDec operator/=(AltDec& self, signed short Value) { return self.IntDivOp(Value); }
         friend AltDec operator/=(AltDec& self, signed int Value) { return self.IntDivOp(Value); }
         friend AltDec operator/=(AltDec& self, signed __int64 Value) { return self.IntDivOp(Value); }
+        friend AltDec operator/=(AltDec& self, MirroredInt Value) { return self.IntDivOp(Value); }
 
         /// <summary>
         /// /= Operation Between AltDec and unsigned Integer Value
@@ -4719,6 +4736,7 @@ public:
         friend AltDec operator/(AltDec self, signed short Value) { return self.IntDivOp(Value); }
         friend AltDec operator/(AltDec self, signed int Value) { return self.IntDivOp(Value); }
         friend AltDec operator/(AltDec self, signed __int64 Value) { return self.IntDivOp(Value); }
+        friend AltDec operator/(AltDec self, MirroredInt Value) { return self.IntDivOp(Value); }
 
         /// <summary>
         /// / Operation Between AltDec and unsigned Integer Value
@@ -4766,6 +4784,7 @@ public:
         friend AltDec operator*=(AltDec& self, signed short Value) { return self.IntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, signed int Value) { return self.IntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, signed __int64 Value) { return self.IntMultOp(Value); }
+        friend AltDec operator*=(AltDec& self, MirroredInt Value) { return self.MultOp(Value); }
 
         friend AltDec operator*=(AltDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
@@ -4776,6 +4795,7 @@ public:
         friend AltDec operator*(AltDec self, signed short Value) { return self.IntMultOp(Value); }
         friend AltDec operator*(AltDec self, signed int Value) { return self.IntMultOp(Value); }
         friend AltDec operator*(AltDec self, signed __int64 Value) { return self.IntMultOp(Value); }
+        friend AltDec operator*(AltDec self, MirroredInt Value) { return self.IntMultOp(Value); }
 
         friend AltDec operator*(AltDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
         friend AltDec operator*(AltDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
@@ -4816,6 +4836,7 @@ public:
         friend AltDec operator+=(AltDec& self, signed short Value) { return self.IntAddOp(Value); }
         friend AltDec operator+=(AltDec& self, signed int Value) { return self.IntAddOp(Value); }
         friend AltDec operator+=(AltDec& self, signed __int64 Value) { return self.IntAddOp(Value); }
+        friend AltDec operator+=(AltDec& self, MirroredInt Value) { return self.IntAddOp(Value); }
 
         /// <summary>
         /// += Operation Between AltDec and unsigned Integer Value
@@ -4838,6 +4859,7 @@ public:
         friend AltDec operator+(AltDec self, signed short Value) { return self.IntAddOp(Value); }
         friend AltDec operator+(AltDec self, signed int Value) { return self.IntAddOp(Value); }
         friend AltDec operator+(AltDec self, signed __int64 Value) { return self.IntAddOp(Value); }
+        friend AltDec operator+(AltDec self, MirroredInt Value) { return self.IntAddOp(Value); }
 
         /// <summary>
         /// + Operation Between AltDec and unsigned Integer Value
@@ -4892,6 +4914,7 @@ public:
         friend AltDec operator-=(AltDec& self, signed short Value) { return self.IntSubOp(Value); }
         friend AltDec operator-=(AltDec& self, signed int Value) { return self.IntSubOp(Value); }
         friend AltDec operator-=(AltDec& self, signed __int64 Value) { return self.IntSubOp(Value); }
+        friend AltDec operator-=(AltDec& self, MirroredInt Value) { return self.IntSubOp(Value); }
 
         /// <summary>
         /// -= Operation Between AltDec and unsigned Integer Value
@@ -4914,6 +4937,7 @@ public:
         friend AltDec operator-(AltDec self, signed short Value) { return self.IntSubOp(Value); }
         friend AltDec operator-(AltDec self, signed int Value) { return self.IntSubOp(Value); }
         friend AltDec operator-(AltDec self, signed __int64 Value) { return self.IntSubOp(Value); }
+        friend AltDec operator-(AltDec self, MirroredInt Value) { return self.IntSubOp(Value); }
 
         /// <summary>
         /// - Operation Between AltDec and unsigned Integer Value
