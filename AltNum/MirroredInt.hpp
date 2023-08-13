@@ -644,7 +644,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        static MirroredInt& RightSideIntDivOperation(MirroredInt& RValue, IntType& LValue)
+        static MirroredInt& RightSideIntDivOperation(MirroredInt& LValue, IntType& RValue)
         {
 			if(RValue==0)
 				throw "Can't divide by zero without infinity result";
@@ -856,27 +856,27 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingAddOp(MirroredInt& LValue, IntType& RValue)
+        void NRepSkippingAddOp(IntType& RValue)
         {
-            if(RValue==0)
+            if (RValue == 0)
                 return;
-            if(LValue.Value==0)
-                LValue.Value = RValue.Value;
+            if (Value == 0)
+                Value = RValue.Value;
             else
             {
-    #if defined(BlazesMirroredInt_UsePseudoBitSet)
-			    throw "Need to write code for operation";//Placeholder
-    #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value += RValue;
-        #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                if(RValue<0&&LValue.Value==NegativeRep)
+                #if defined(BlazesMirroredInt_UsePseudoBitSet)
+                throw "Need to write code for operation";//Placeholder
+                #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                Value += RValue;
+                #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                if (RValue < 0 && Value == NegativeRep)
                     throw "MirroredInt value has underflowed";
-        #endif
-    #else
-			    throw "Need to write code for operation";//Placeholder
-    #endif
+                #endif
+                #else
+                throw "Need to write code for operation";//Placeholder
+                #endif
             }
-			return;
+            return;
         }
 
         /// <summary>
@@ -885,20 +885,20 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        void NRepSkippingAddOp(MirroredInt& LValue, MirroredInt& RValue)
+        void NRepSkippingAddOp(MirroredInt& RValue)
         {
             if(RValue.IsZero())
                 return;
-            if(LValue.Value==0)
-                LValue.Value = RValue.Value;
+            if(Value==0)
+                Value = RValue.Value;
             else
             {
     #if defined(BlazesMirroredInt_UsePseudoBitSet)
 			    throw "Need to write code for operation";//Placeholder
     #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value += RValue.Value;
+                Value += RValue.Value;
         #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                if(RValue<0&&LValue.Value==NegativeRep)
+                if(RValue<0&&Value==NegativeRep)
                     throw "MirroredInt value has underflowed";
         #endif
     #else
@@ -1121,20 +1121,20 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingSubOp(MirroredInt& LValue, int& RValue)
+        void NRepSkippingSubOp(int& RValue)
         {
             if(RValue.IsZero())
                 return;
-            if(LValue.Value==0)
-                LValue.Value = -RValue.Value;
+            if(Value==0)
+                Value = -RValue.Value;
             else
             {
     #if defined(BlazesMirroredInt_UsePseudoBitSet)
 			    throw "Need to write code for operation";//Placeholder
     #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value -= RValue.Value;
+                Value -= RValue.Value;
         #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                if(RValue<0&&LValue.Value==NegativeRep)
+                if(RValue<0&&Value==NegativeRep)
                     throw "MirroredInt value has underflowed";
         #endif
     #else
@@ -1150,20 +1150,20 @@ namespace BlazesRusCode
         /// <param name="LValue">The LValue.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
-        void NRepSkippingSubOp(MirroredInt& LValue, MirroredInt& RValue)
+        void NRepSkippingSubOp(MirroredInt& RValue)
         {
             if(RValue.IsZero())
                 return;
-            if(LValue.Value==0)
-                LValue.Value = -RValue.Value;
+            if(Value==0)
+                Value = -RValue.Value;
             else
             {
     #if defined(BlazesMirroredInt_UsePseudoBitSet)
 			    throw "Need to write code for operation";//Placeholder
     #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                LValue.Value -= RValue.Value;
+                Value -= RValue.Value;
         #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                if(RValue<0&&LValue.Value==NegativeRep)
+                if(RValue<0&&Value==NegativeRep)
                     throw "MirroredInt value has underflowed";
         #endif
     #else
