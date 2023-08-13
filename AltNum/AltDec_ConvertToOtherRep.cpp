@@ -53,7 +53,7 @@ inline void BlazesRusCode::AltDec::ConvertPiToNum()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue;
+		SRep *= IntValue.Value;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;

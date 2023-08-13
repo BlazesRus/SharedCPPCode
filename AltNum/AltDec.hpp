@@ -1950,9 +1950,9 @@ public:
 		#if defined(AltNum_EnableDecimaledPiFractionals)
         void ConvertPiByDivToNumByDiv();
 		
-        void ConvertFrompIByDivToNorm();
+        void ConvertFromPiByDivToNorm();
 		#else
-		void ConvertFrompIFractionalToNorm();
+		void ConvertFromPiFractionalToNorm();
 		
 		#endif
 		
