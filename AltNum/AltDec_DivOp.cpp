@@ -1,4 +1,5 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 /// <summary>
 /// Division Operation
@@ -6,7 +7,7 @@
 /// <param name="self">The </param>
 /// <param name="Value">The value.</param>
 /// <returns>AltDec&</returns>
-static AltDec& AltDec::DivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+AltDec& AltDec::DivOp(AltDec& Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (IsZero())
@@ -24,7 +25,11 @@ static AltDec& AltDec::DivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec&
 	if (Value.DecimalHalf == InfinityRep)
 	{
         if(DecimalHalf== InfinityRep)//https://www.philforhumanity.com/Infinity_Divided_by_Infinity.html
+		#if defined(AltNum_EnableNaN)
             DecimalHalf = NaNRep;//Infinity divided by infinity equals undefined
+		#else
+			throw "Result is undefined(Infinity by Infinity)";
+		#endif
         else
 #if defined(AltNum_EnableApproachingValues)
         {

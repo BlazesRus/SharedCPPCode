@@ -1,4 +1,5 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 bool AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {

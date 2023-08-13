@@ -856,7 +856,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingAddOp(IntType& RValue)
+        void NRepSkippingIntAddOp(IntType& RValue)
         {
             if (RValue == 0)
                 return;
@@ -1121,7 +1121,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingSubOp(int& RValue)
+        void NRepSkippingIntSubOp(int& RValue)
         {
             if(RValue.IsZero())
                 return;
