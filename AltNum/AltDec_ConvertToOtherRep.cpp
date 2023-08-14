@@ -733,20 +733,15 @@ inline void BlazesRusCode::AltDec::ConvertIRepToNormal(RepType& repType)
 #if defined(AltNum_EnableAlternativeRepFractionals)
 	#if defined(AltNum_EnableDecimaledIFractionals)
 	case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			int Divisor = -ExtraRep;
-			BasicDivOp(Divisor);
+		int Divisor = -ExtraRep;
+		BasicDivOp(Divisor);
 		break;
 	#endif
 	case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 #endif
-		if(IntValue==0&&DecimalHalf!=0)
-			ExtraRep = 0
-		else
-		{
-			int Divisor = DecimalHalf;
-			DecimalHalf = 0;
-			BasicDivOp(Divisor);
-		}
+		int Divisor = DecimalHalf;
+		DecimalHalf = 0;
+		BasicDivOp(Divisor);
 		break;
 #ifdef AltNum_EnableComplexNumbers
 	case RepType::ComplexIRep:
