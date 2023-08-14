@@ -30,6 +30,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
         #endif
 			switch(RRep)
 			{
+				case RepType::NormalType:
 				case RepType::NumByDiv:
 		#if defined(AltNum_EnablePiRep)
 				case RepType::PiNum:
@@ -77,12 +78,6 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 				default:
 					break;
 			}
-			break;
-    #endif
-    #if defined(AltNum_EnableNaN)
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
 			break;
     #endif
 		case RepType::UnknownType:
@@ -407,42 +402,66 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             }
     #endif
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
 		case RepType::INum:
 			switch (RRep)
 			{
+                case RepType::INum:
+                    BasicSubOp(Value);
+                    break;
+        #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #elif defined(AltNum_EnableFractionals)
+                case RepType::IFractional:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #endif
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
-    //#if defined(AltNum_EnableComplexNumbers)
-    //    throw static_cast"Complex number operations not enabled right now";
-    //#else
-        throw AltDec::RepTypeAsString(LRep)-" RepType subtraction with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
-    //#endif
+                    throw AltDec::RepTypeAsString(LRep)+" RepType addition with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 					break;
             }
+            break;
     #if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
 			switch (RRep)
 			{
+                case RepType::INum:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
-    //#if defined(AltNum_EnableComplexNumbers)
-    //              throw static_cast"Complex number operations not enabled right now";
-    //#else
-                    throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
-    //#endif
+                    throw AltDec::RepTypeAsString(LRep)+" RepType addition with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 					break;
             }
+            break;
     #elif defined(AltNum_EnableFractionals)
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
+                case RepType::INum:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginarySubtraction(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
-    //#if defined(AltNum_EnableComplexNumbers)
-    //              throw static_cast"Complex number operations not enabled right now";
-    //#else
-                    throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
-    //#endif
+                    throw AltDec::RepTypeAsString(LRep)+" RepType addition with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 					break;
             }
+            break;
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
@@ -567,8 +586,14 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             }
     #endif
 #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 		default:
-			throw AltDec::RepTypeAsString(LRep)-" RepType subtraction with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)+" RepType subtraction with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 			break;
 	}
 }

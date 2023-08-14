@@ -3598,6 +3598,38 @@ public:
 
         AltDec CatchAllDivisionAsCopies(AltDec Value)
         { AltDec self = *this; CatchAllDivision(Value); return self; }
+		
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginaryDivision(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertAsNormalIRep(LRep);
+			Value.ConvertAsNormalIRep(RRep);
+			BasicDivOp(Value);
+		}
+
+        AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        { AltDec self = *this; CatchAllImaginaryDivision(Value, LRep, RRep); return self; }
+		
+		void CatchAllImaginaryDivision(AltDec& Value, RepType& SameRep)
+		{
+			ConvertAsNormalIRep(SameRep);
+			Value.ConvertAsNormalIRep(SameRep);
+			BasicDivOp(Value);
+		}
+
+        AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginaryDivision(Value, SameRep); return self; }
+	
+	   void CatchAllImaginaryDivision(AltDec& Value)
+	   {
+		   ConvertAsNormalIRep();
+		   Value.ConvertAsNormalIRep();
+		   BasicDivOp(Value);
+	   }
+
+        AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value)
+        { AltDec self = *this; CatchAllImaginaryDivision(Value); return self; }
+	#endif
 
 public:
         static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
@@ -3835,6 +3867,38 @@ public:
 			BasicMultOp(Value);
 		}
 
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginaryMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertAsNormalIRep(LRep);
+			Value.ConvertAsNormalIRep(RRep);
+			BasicMultOp(Value);
+		}
+
+        AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        { AltDec self = *this; CatchAllImaginaryMultiplication(Value, LRep, RRep); return self; }
+		
+		void CatchAllImaginaryMultiplication(AltDec& Value, RepType& SameRep)
+		{
+			ConvertAsNormalIRep(SameRep);
+			Value.ConvertAsNormalIRep(SameRep);
+			BasicMultOp(Value);
+		}
+
+        AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value, RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginaryMultiplication(Value, SameRep); return self; }
+	
+	   void CatchAllImaginaryMultiplication(AltDec& Value)
+	   {
+		   ConvertAsNormalIRep();
+		   Value.ConvertAsNormalIRep();
+		   BasicMultOp(Value);
+	   }
+
+        AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value)
+        { AltDec self = *this; CatchAllImaginaryMultiplication(Value); return self; }
+	#endif
+
         static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
@@ -3921,6 +3985,38 @@ public:
 			Value.ConvertToNormType();
             BasicAddOp(Value);
         }
+		
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginaryAddition(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertAsNormalIRep(LRep);
+			Value.ConvertAsNormalIRep(RRep);
+			BasicAddOp(Value);
+		}
+
+        AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        { AltDec self = *this; CatchAllImaginaryAddition(Value, LRep, RRep); return self; }
+		
+		void CatchAllImaginaryAddition(AltDec& Value, RepType& SameRep)
+		{
+			ConvertAsNormalIRep(SameRep);
+			Value.ConvertAsNormalIRep(SameRep);
+			BasicAddOp(Value);
+		}
+
+        AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginaryAddition(Value, SameRep); return self; }
+	
+	   void CatchAllImaginaryAddition(AltDec& Value)
+	   {
+		   ConvertAsNormalIRep();
+		   Value.ConvertAsNormalIRep();
+		   BasicAddOp(Value);
+	   }
+
+        AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value)
+        { AltDec self = *this; CatchAllImaginaryAddition(Value); return self; }
+	#endif
 
         static bool RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
@@ -3998,6 +4094,38 @@ public:
 			Value.ConvertToNormType();
 			BasicSubOp(Value);
 		}
+		
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginarySubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
+		{
+			ConvertAsNormalIRep(LRep);
+			Value.ConvertAsNormalIRep(RRep);
+			BasicSubOp(Value);
+		}
+
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        { AltDec self = *this; CatchAllImaginarySubtraction(Value, LRep, RRep); return self; }
+		
+		void CatchAllImaginarySubtraction(AltDec& Value, RepType& SameRep)
+		{
+			ConvertAsNormalIRep(SameRep);
+			Value.ConvertAsNormalIRep(SameRep);
+			BasicSubOp(Value);
+		}
+
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value, RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginarySubtraction(Value, SameRep); return self; }
+	
+	   void CatchAllImaginarySubtraction(AltDec& Value)
+	   {
+		   ConvertAsNormalIRep();
+		   Value.ConvertAsNormalIRep();
+		   BasicSubOp(Value);
+	   }
+
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value)
+        { AltDec self = *this; CatchAllImaginarySubtraction(Value); return self; }
+	#endif
 
         static bool RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 

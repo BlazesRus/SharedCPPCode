@@ -121,6 +121,28 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 					MixedFracMultOp(LRep, RRep, self, Value);
 					break;
     #endif						
+    #if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+					self.BasicMultOp(Value);
+                    self.ExtraRep = IRep;
+                    break;
+        #if defined(AltNum_EnableAlternativeRepFractionals)
+	        #if defined(AltNum_EnableDecimaledIFractionals)
+				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+            #else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            #endif
+        #endif
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+        #endif
+        //Placeholder code(Converting to i rep for now)
+        #if defined(AltNum_EnableAlternativeRepFractionals)||defined(AltNum_EnableMixedIFractional)
+					Value.ConvertToNormalIRep(RRep);
+					self.BasicMultOp(Value);
+                    self.ExtraRep = IRep;
+        #endif
+    #endif
 				default:
 					self.CatchAllMultiplication(Value, LRep, RRep);
 					break;
@@ -498,6 +520,10 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 				case RepType::NormalType:
 					self.BasicMultOp(Value);
 					break;
+		        case RepType::INum:
+                    self.BasicMultOp(Value);
+                    self.ExtraRep = 0;
+                    break;
 				default:
 					Value.ConvertToNormType(RRep);
 					self.BasicMultOp(Value);
@@ -552,6 +578,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			}
 			break;
         #endif
+    #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
@@ -612,13 +639,13 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
                             }
                             else
                             {
-                            
+                                throw "ToDo:Finish this code later";
                             }
                         }
                     }
                     else//Convert result as NumByDiv
                     {
-
+                        throw "ToDo:Finish this code later";
                     }
 					break;
 				default:
@@ -632,15 +659,29 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 		case RepType::MixedI:
 			switch (RRep)
 			{
-                //case RepType::NormalType:
-				//	break;
+                case RepType::INum:
+        #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv:
+        #elif defined(AltNum_EnableFractionals)
+                case RepType::IFractional:
+        #endif
+                    self.CatchAllImaginaryMultiplication(Value, LRep, RRep);
+                    self.SwapNegativeStatus();
+                    self.ExtraRep = 0;
 				default:
                     self.ConvertToNormalIRep(LRep);
 					Value.ConvertToNormType(RRep);
 					self.BasicDivOp(Value);
             }
+            break;
     #endif
 #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 	default:
 		throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 		break;

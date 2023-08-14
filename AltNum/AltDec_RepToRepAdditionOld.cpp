@@ -87,16 +87,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			break;
 	#endif
-	#if defined(AltNum_EnableNaN)
-		case RepType::Undefined:
-		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
-			break;
-	#endif
-		case RepType::UnknownType:
-			throw "Can't perform operations with unknown/non-enabled format number";
-			break;
-
 		default:
     #if defined(AltNum_EnableMixedIFractional)
 		    if(RRep==RepType::MixedI)
@@ -382,6 +372,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingTop:
 			switch (RRep)
@@ -390,6 +381,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #endif
     #if defined(AltNum_EnableApproachingDivided)
 		case RepType::ApproachingBottomDiv:
@@ -399,6 +391,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
         #if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingTopDiv:
 			switch (RRep)
@@ -407,6 +400,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
         #endif
     #endif
 #endif
@@ -424,6 +418,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #if defined(AltNum_EnablePiFractional)
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 			switch (RRep)
@@ -432,6 +427,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #endif
     #if defined(AltNum_EnableEFractional)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
@@ -441,6 +437,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #endif
     #if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
@@ -470,12 +467,30 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
 			switch (RRep)
 			{
+                case RepType::INum:
+                    BasicAddOp(Value);
+                    break;
+        #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #elif defined(AltNum_EnableFractionals)
+                case RepType::IFractional:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #endif
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
@@ -484,10 +499,20 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     //#endif
 					break;
             }
+            break;
     #if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
 			switch (RRep)
 			{
+			{
+                case RepType::INum:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
@@ -496,10 +521,19 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     //#endif
 					break;
             }
+            break;
     #elif defined(AltNum_EnableFractionals)
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			switch (RRep)
 			{
+                case RepType::INum:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    self.CatchAllImaginaryAddition(Value, LRep, RRep);
+                    break;
+        #endif
 				default:
     //#if defined(AltNum_EnableComplexNumbers)
     //              throw static_cast"Complex number operations not enabled right now";
@@ -508,6 +542,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     //#endif
 					break;
             }
+            break;
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
@@ -563,6 +598,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
@@ -613,6 +649,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					self.CatchAllAddition(Value, LRep, RRep);
 					break;
             }
+            break;
         //#endif
     #endif
     #if defined(AltNum_EnableMixedIFractional)
@@ -630,8 +667,15 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					throw "Code not implimented yet.";
 					break;
             }
+            break;
     #endif
 #endif
+	#if defined(AltNum_EnableNaN)
+		case RepType::Undefined:
+		case RepType::NaN:
+			throw "Can't perform operations with NaN or Undefined number";
+			break;
+	#endif
 		default:
 			throw AltDec::RepTypeAsString(LRep)-" RepType addition with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
 			break;
