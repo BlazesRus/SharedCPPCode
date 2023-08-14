@@ -1,4 +1,5 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 #if defined(AltNum_EnablePiRep)
 //3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
@@ -201,7 +202,7 @@ inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue;
+		SRep *= IntValue.GetValue();
 		divRes = SRep / DecimalOverflowX;
 		DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 		if (divRes == 0 && IsNegative)
@@ -293,7 +294,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToNum()
 	int powerExponent = -ExtraRep;
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PiSide.PowOp(powerExponent);
+	PowOp(PiSide, powerExponent);//PiSide.PowOp(powerExponent);
 	BasicMultOp(PiSide);
 }
 
@@ -301,7 +302,7 @@ inline AltDec BlazesRusCode::AltDec::PiPowerNum(int powerExponent)
 {
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PiSide.PowOp(powerExponent);
+	PowOp(PiSide, powerExponent);
 	return PiSide;
 }
 
@@ -316,7 +317,8 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 		if (powerExponent != 1)
 		{
 			AltDec PiSide = PiNum;
-			PiSide.PowOp(powerExponent - 1);
+			powerExponent -= 1;
+			PowOp(PiSide, powerExponent);
 			BasicMultOp(PiSide);
 		}
 	}
@@ -710,16 +712,16 @@ inline AltDec BlazesRusCode::AltDec::ConvertAsNormType(RepType& repType)
 	return Res;
 }
 
-inline void BlazesRusCode::AltDec::ConvertToNormType()
+inline void BlazesRusCode::AltDec::ConvertToNormTypeV2()
 {
 	RepType repType = GetRepType();
 	ConvertToNormType(repType);
 }
 
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormType()
+inline AltDec BlazesRusCode::AltDec::ConvertAsNormTypeV2()
 {
 	AltDec Res = *this;
-	Res.ConvertToNormType();
+	Res.ConvertToNormTypeV2();
 	return Res;
 }
 

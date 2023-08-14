@@ -1989,10 +1989,10 @@ public:
 		AltDec ConvertAsNormType(RepType& repType);
 
 		//Converts value to normal type representation
-        void ConvertToNormType();
+        void ConvertToNormTypeV2();
 		
 		//Returns value as normal type representation
-		AltDec ConvertAsNormalType();
+		AltDec ConvertAsNormTypeV2();
     #if defined(AltNum_EnableImaginaryNum)
 		void ConvertIRepToNormal(RepType& repType);
 		
