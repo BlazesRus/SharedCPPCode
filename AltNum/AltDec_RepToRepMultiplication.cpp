@@ -80,6 +80,8 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 				Value.ConvertToNormType(RRep);
 				RRep = RepType::NormalType;
 				break;
+			}
+			break;
     #endif
 		default://No nothing for most of them
 			break;

@@ -130,6 +130,11 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				Value.ConvertToNormType(RRep);
 				RRep = RepType::NormalType;
 				break;
+            default:
+                break;
+            }
+            break;
+
     #endif
 		default:
 			break;
