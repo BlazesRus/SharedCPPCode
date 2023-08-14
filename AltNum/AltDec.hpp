@@ -2842,7 +2842,7 @@ public:
         static bool RightSideIntEqualTo(AltDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
 		}
 		
@@ -2856,7 +2856,7 @@ public:
         static bool RightSideIntNotEqualTo(AltDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             if (LValue.IntValue == RValue)
                 return false;
             else
@@ -2884,13 +2884,13 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             if (LValue.ExtraRep >= 0 || LValue.ExtraRep == PiRep)
             {
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             }
             else
                 throw "Can't compare real RValues against imaginary.";
 #endif
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             if (LValue.DecimalHalf == 0)
             {
                 return LValue.IntValue < RValue;
@@ -2929,13 +2929,13 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             if (LValue.ExtraRep >= 0 || LValue.ExtraRep == PiRep)
             {
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             }
             else
                 throw "Can't compare real RValues against imaginary.";
 #endif
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             if (LValue.DecimalHalf == 0)
             {
                 return LValue.IntValue <= RValue;
@@ -2974,13 +2974,13 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             if (LValue.ExtraRep >= 0 || LValue.ExtraRep == PiRep)
             {
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             }
             else
                 throw "Can't compare real RValues against imaginary.";
 #endif
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             if (LValue.DecimalHalf == 0)
             {
                 return LValue.IntValue > RValue;
@@ -3019,13 +3019,13 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             if (LValue.ExtraRep >= 0 || LValue.ExtraRep == PiRep)
             {
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             }
             else
                 throw "Can't compare real RValues against imaginary.";
 #endif
             if (LValue.DecimalHalf < 0 || LValue.ExtraRep != 0)
-                LValue.ConvertToNormType();
+                LValue.ConvertToNormTypeV2();
             if (LValue.DecimalHalf == 0)
             {
                 return LValue.IntValue >= RValue;
@@ -3593,8 +3593,8 @@ public:
 	
 	   void CatchAllDivision(AltDec& Value)
 	   {
-		   ConvertToNormType();
-		   Value.ConvertToNormType();
+		   ConvertToNormTypeV2();
+		   Value.ConvertToNormTypeV2();
 		   BasicDivOp(Value);
 	   }
 
@@ -3868,8 +3868,8 @@ public:
 		
 		void CatchAllMultiplication(AltDec& Value)
 		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
+			ConvertToNormTypeV2();
+			Value.ConvertToNormTypeV2();
 			BasicMultOp(Value);
 		}
 
@@ -3994,8 +3994,8 @@ public:
 		
 		void CatchAllAddition(AltDec& Value)
 		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
+			ConvertToNormTypeV2();
+			Value.ConvertToNormTypeV2();
             BasicAddOp(Value);
         }
 		
@@ -4103,8 +4103,8 @@ public:
 		
 		void CatchAllSubtraction(AltDec& Value)
 		{
-			ConvertToNormType();
-			Value.ConvertToNormType();
+			ConvertToNormTypeV2();
+			Value.ConvertToNormTypeV2();
 			BasicSubOp(Value);
 		}
 		
@@ -4672,7 +4672,7 @@ protected:
 			else
 	#endif
 			if(ExtraRep!=0)//Don't convert if mixed fraction
-				ConvertToNormType();
+				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
 			IntValue += value;
 			//If flips to other side of negative, invert the decimals
@@ -4764,7 +4764,7 @@ protected:
 			else
 	#endif
 			if(ExtraRep!=0)//Don't convert if mixed fraction
-				ConvertToNormType();
+				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
 			IntValue += value;
 			//If flips to other side of negative, invert the decimals
@@ -5341,8 +5341,8 @@ public:
 
         void CatchAllRem(AltDec& Value)
         {
-            ConvertToNormType();
-            Value.ConvertToNormType();
+            ConvertToNormTypeV2();
+            Value.ConvertToNormTypeV2();
             BasicRemOp(Value);
         }
 
@@ -5498,7 +5498,7 @@ public:
                 return *this;
                 break;
             default:
-                ConvertToNormType();
+                ConvertToNormTypeV2();
                 break;
             }
             if (DecimalHalf == 0)
@@ -5526,7 +5526,7 @@ public:
         /// <param name="precision">The precision.</param>
         static AltDec Floor(AltDec Value, int precision)
         {
-            Value.ConvertToNormType();
+            Value.ConvertToNormTypeV2();
             switch (precision)
             {
             case 9: break;
@@ -5568,7 +5568,7 @@ public:
                 return *this;
                 break;
             default:
-                //ConvertToNormType();//Prevent losing imaginery numbers
+                //ConvertToNormTypeV2();//Prevent losing imaginery numbers
                 break;
             }
             if (DecimalHalf != 0)
@@ -5602,7 +5602,7 @@ public:
             //    return Value.IntValue;
             //    break;
             default:
-                Value.ConvertToNormType();
+                Value.ConvertToNormTypeV2();
                 break;
             }
             if (Value.DecimalHalf == 0)
@@ -5704,7 +5704,7 @@ public:
             else
             {
 #endif
-                ConvertToNormType();
+                ConvertToNormTypeV2();
                 DecimalHalf = 0;
 #if defined(AltNum_EnableInfinityRep)
             }
@@ -5813,7 +5813,7 @@ public:
         /// </summary>
 		static AltDec Sqrt(AltDec value, int precision=7)
 		{
-		    value.ConvertToNormType();
+		    value.ConvertToNormTypeV2();
 			BasicSqrt(value, precision);
 		}
 
@@ -6110,7 +6110,7 @@ public:
         /// <returns>AltDec</returns>
         static AltDec Exp(AltDec& x)
         {
-            //x.ConvertToNormType();//Prevent losing imaginary number status
+            //x.ConvertToNormTypeV2();//Prevent losing imaginary number status
             /*
              * Evaluates f(x) = e^x for any x in the interval [-709, 709].
              * If x < -709 or x > 709, raises an assertion error. Implemented
@@ -7025,11 +7025,11 @@ public:
             case RepType::ENumByDiv:
 #endif
 #endif
-                Value.ConvertToNormType();
+                Value.ConvertToNormTypeV2();
                 break;
             //case RepType::INum:
             default:
-                Value.ConvertToNormType();//Don't convert things like imaginary numbers into real numbers
+                Value.ConvertToNormTypeV2();//Don't convert things like imaginary numbers into real numbers
                 break;
             }
             if (Value.IsNegative())
