@@ -668,13 +668,13 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
                             }
                             else
                             {
-                            
+                                throw "ToDo:Finish this code later";
                             }
                         }
                     }
                     else//Convert result as NumByDiv
                     {
-
+                        throw "ToDo:Finish this code later";
                     }
 					break;
 				default:
