@@ -144,14 +144,14 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                     self.BasicMultOp(Value.ExtraRep);
 			        break;
 							
-	    #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+		#if defined(AltNum_EnablePiFractional)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(PiNumValue()*Value.IntValue);
 					break;
 	    #endif
-	    #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+		#if defined(AltNum_EnableEFractional)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(ENumValue()*Value.IntValue);
@@ -241,7 +241,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 					self.BasicMultOp(Value.ExtraRep);
 					break;
 							
-		#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+		#if defined(AltNum_EnablePiFractional)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
 					self.ExtraRep = 0;
@@ -249,7 +249,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 					self.BasicDivOp(Value.IntValue);
 					break;
 		#endif
-		#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+		#if defined(AltNum_EnableEFractional)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.BasicMultOp(Value.DecimalHalf);
 					self.BasicDivOp(ENumValue()*Value.IntValue);
@@ -420,8 +420,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				#elif defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
 					self.ExtraRep = 0;
-					self.BasicDivOp(-Value.ExtraRep);
-					self.BasicMultOp(Value);
+					self.BasicMultOp(-Value.ExtraRep);
+					self.BasicDivOp(Value);
 					break;
 				#endif
 			#endif
@@ -940,14 +940,17 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                         {
                             if(divRes==0)//Convert into non-mixed fractional
                             {
+                                throw "ToDo:Finish this code later";
                             }
                             else
                             {
+                                throw "ToDo:Finish this code later";
                             }
                         }
                     }
                     else//Convert to NumByDiv
                     {
+                        throw "ToDo:Finish this code later";
                     }
 					break;
 				default:
