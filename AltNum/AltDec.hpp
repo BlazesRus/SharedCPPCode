@@ -1994,13 +1994,15 @@ public:
 		//Returns value as normal type representation
 		AltDec ConvertAsNormalType();
     #if defined(AltNum_EnableImaginaryNum)
+		void ConvertIRepToNormal(RepType& repType);
+		
 		void ConvertToNormalIRep(RepType& repType);
 		
-		void ConvertAsNormalIRep(RepType& repType);
+		AltDec ConvertAsNormalIRep(RepType& repType);
 		
 		void ConvertToNormalIRep();
 		
-		void ConvertAsNormalIRep();
+		AltDec ConvertAsNormalIRep();
     #endif
     #pragma endregion Other RepType Conversion
 	
@@ -3599,12 +3601,14 @@ public:
         AltDec CatchAllDivisionAsCopies(AltDec Value)
         { AltDec self = *this; CatchAllDivision(Value); return self; }
 		
+	//Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
 	#if defined(AltNum_EnableImaginaryNum)
 		void CatchAllImaginaryDivision(AltDec& Value, RepType& LRep, RepType& RRep)
 		{
-			ConvertAsNormalIRep(LRep);
-			Value.ConvertAsNormalIRep(RRep);
+			ConvertIRepToNormal(LRep);
+			Value.ConvertIRepToNormal(RRep);
 			BasicDivOp(Value);
+            ExtraRep = 0;
 		}
 
         AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
@@ -3612,9 +3616,10 @@ public:
 		
 		void CatchAllImaginaryDivision(AltDec& Value, RepType& SameRep)
 		{
-			ConvertAsNormalIRep(SameRep);
-			Value.ConvertAsNormalIRep(SameRep);
+			ConvertIRepToNormal(SameRep);
+			Value.ConvertIRepToNormal(SameRep);
 			BasicDivOp(Value);
+			ExtraRep = 0;
 		}
 
         AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& SameRep)
@@ -3622,9 +3627,10 @@ public:
 	
 	   void CatchAllImaginaryDivision(AltDec& Value)
 	   {
-		   ConvertAsNormalIRep();
-		   Value.ConvertAsNormalIRep();
+		   ConvertIRepToNormal();
+		   Value.ConvertIRepToNormal();
 		   BasicDivOp(Value);
+		   ExtraRep = 0;
 	   }
 
         AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value)
@@ -3867,12 +3873,15 @@ public:
 			BasicMultOp(Value);
 		}
 
+	//Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
 	#if defined(AltNum_EnableImaginaryNum)
 		void CatchAllImaginaryMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
 		{
-			ConvertAsNormalIRep(LRep);
-			Value.ConvertAsNormalIRep(RRep);
+			ConvertIRepToNormal(LRep);
+			Value.ConvertIRepToNormal(RRep);
 			BasicMultOp(Value);
+		   ExtraRep = 0;
+		   SwapNegativeStatus();
 		}
 
         AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
@@ -3880,9 +3889,11 @@ public:
 		
 		void CatchAllImaginaryMultiplication(AltDec& Value, RepType& SameRep)
 		{
-			ConvertAsNormalIRep(SameRep);
-			Value.ConvertAsNormalIRep(SameRep);
+			ConvertIRepToNormal(SameRep);
+			Value.ConvertIRepToNormal(SameRep);
 			BasicMultOp(Value);
+		   ExtraRep = 0;
+		   SwapNegativeStatus();
 		}
 
         AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value, RepType& SameRep)
@@ -3890,9 +3901,11 @@ public:
 	
 	   void CatchAllImaginaryMultiplication(AltDec& Value)
 	   {
-		   ConvertAsNormalIRep();
-		   Value.ConvertAsNormalIRep();
+		   ConvertIRepToNormal();
+		   Value.ConvertIRepToNormal();
 		   BasicMultOp(Value);
+		   ExtraRep = 0;
+		   SwapNegativeStatus();
 	   }
 
         AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value)

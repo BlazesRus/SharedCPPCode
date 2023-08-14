@@ -724,25 +724,17 @@ inline AltDec BlazesRusCode::AltDec::ConvertAsNormType()
 }
 
 #if defined(AltNum_EnableImaginaryNum)
-void ConvertToNormalIRep(RepType& repType)
-{
+inline void BlazesRusCode::AltDec::ConvertIRepToNormal(RepType& repType)
+{//Assuming not zero(should not reach needing to convert the representation)
 	switch (repType)
 	{
 	case RepType::INum:
-		if(IntValue==0&&DecimalHalf==0)
-			ExtraRep = 0
 		break;
 #if defined(AltNum_EnableAlternativeRepFractionals)
 	#if defined(AltNum_EnableDecimaledIFractionals)
 	case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-		if(IntValue==0&&DecimalHalf==0)
-			ExtraRep = 0
-		else
-		{
 			int Divisor = -ExtraRep;
-			ExtraRep = IRep;
-			this /= Divisor;
-		}
+			BasicDivOp(Divisor);
 		break;
 	#endif
 	case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -752,8 +744,8 @@ void ConvertToNormalIRep(RepType& repType)
 		else
 		{
 			int Divisor = DecimalHalf;
-			ExtraRep = IRep; DecimalHalf = 0;
-			this /= Divisor;
+			DecimalHalf = 0;
+			BasicDivOp(Divisor);
 		}
 		break;
 #ifdef AltNum_EnableComplexNumbers
@@ -765,6 +757,12 @@ void ConvertToNormalIRep(RepType& repType)
 		throw "Conversion not supported.";
 		break;
 	}
+}
+
+inline void BlazesRusCode::AltDec::ConvertToNormalIRep(RepType& repType)
+{//Assuming not zero(should not reach needing to convert the representation)
+	ConvertIRepAsNormal(repType);
+	ExtraRep = IRep;
 }
 
 inline AltDec BlazesRusCode::AltDec::ConvertAsNormalIRep(RepType& repType)

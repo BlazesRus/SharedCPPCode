@@ -666,8 +666,6 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
                 case RepType::IFractional:
         #endif
                     self.CatchAllImaginaryMultiplication(Value, LRep, RRep);
-                    self.SwapNegativeStatus();
-                    self.ExtraRep = 0;
 				default:
                     self.ConvertToNormalIRep(LRep);
 					Value.ConvertToNormType(RRep);
