@@ -54,7 +54,7 @@ inline void BlazesRusCode::AltDec::ConvertPiToNum()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue.Value;
+		SRep *= IntValue;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
@@ -71,7 +71,7 @@ inline void BlazesRusCode::AltDec::ConvertPiToNum()
 		else
 			IntValue = (int)divRes;
 	}
-	else if (IntValue.Value == 0)
+	else if (IntValue == 0)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -127,7 +127,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue.Value;
+		SRep *= IntValue;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
@@ -144,7 +144,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 		else
 			IntValue = (int)divRes;
 	}
-	else if (IntValue.Value == 0)
+	else if (IntValue == 0)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -202,7 +202,7 @@ inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 		if (IsNegative)
 			IntValue *= -1;
 		SRep = 3141592654;
-		SRep *= IntValue.GetValue();
+		SRep *= GetIntHalf();
 		divRes = SRep / DecimalOverflowX;
 		DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
 		if (divRes == 0 && IsNegative)
@@ -217,7 +217,7 @@ inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 		else
 			IntValue = (int)divRes;
 	}
-	else if (IntValue.Value == 0)
+	else if (IntValue == 0)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -362,7 +362,7 @@ inline void BlazesRusCode::AltDec::ConvertENumToNum()
 		else
 			IntValue = (int)divRes;
 	}
-	else if(IntValue.Value==0)
+	else if(IntValue==0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -436,7 +436,7 @@ inline void BlazesRusCode::AltDec::ConvertEByDivToNumByDiv()
 		else
 			IntValue = (int)divRes;
 	}
-	else if(IntValue.Value==0)
+	else if(IntValue==0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -507,7 +507,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEByDivToNorm()
 		else
 			IntValue = (int)divRes;
 	}
-	else if(IntValue.Value==0)
+	else if(IntValue==0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;

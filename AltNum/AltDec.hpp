@@ -361,23 +361,36 @@ namespace BlazesRusCode
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        static MirroredInt NegativeRep;
-        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
+        static signed int const NegativeRep = -2147483648;
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        MirroredInt IntValue;
-
-        signed int GetIntHalf()
-        {
-            return IntValue.GetValue();
-        }
+        signed int IntValue;
 
         bool IsNegative()
         {
-            return IntValue.IsNegative();
+            return IntValue<0;
+        }
+
+        //Is at either zero or negative zero IntHalf of AltNum
+        bool IsAtZeroInt()
+        {
+            return IntValue==0||IntValue==NegativeRep;
+        }
+
+        bool IsNotAtZeroInt()
+        {
+            return IntValue != 0 && IntValue != NegativeRep;
+        }
+
+        int GetIntHalf()
+        {
+            if(IntValue == NegativeRep)
+                return 0;
+            else
+                return IntValue;
         }
 
         /// <summary>
@@ -398,27 +411,14 @@ namespace BlazesRusCode
         signed int ExtraRep;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
-        /// </summary>
-        /// <param name="intVal">The whole number based half of the representation</param>
-        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDec(MirroredInt intVal = MirroredInt::Zero, signed int decVal = 0, signed int extraVal = 0)
-        {
-            IntValue = intVal;
-            DecimalHalf = decVal;
-            ExtraRep = extraVal;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDec(int intVal, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(int intVal=0, signed int decVal = 0, signed int extraVal = 0)
         {
-            IntValue.Value = intVal;
+            IntValue = intVal;
             DecimalHalf = decVal;
             ExtraRep = extraVal;
         }
@@ -430,7 +430,7 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue.Value==0;
+            return DecimalHalf==0&&IntValue==0;
 		}
 
         /// <summary>
@@ -1881,6 +1881,155 @@ public:
 #endif
     #pragma endregion From Standard types to this type
 
+    #pragma region MirroredIntBased Operations
+        template<typename IntType>
+        void MirroredIntDivision(IntType RValue)
+        {
+
+        }
+
+        template<typename IntType>
+        void MirroredIntMultiplication(IntType RValue)
+        {
+
+        }
+
+        //Replace usage of IntValue += RValue; with MirroredIntAddition(RValue);
+        template<typename IntType>
+        void MirroredIntAddition(IntType RValue)
+        {
+            if (RValue==0)
+                return;
+            if (IntValue == 0)
+                IntValue = RValue;
+            else if (IntValue == NegativeRep)
+            {
+                //-0.XXXX + 2 = 1.XXXX
+                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
+                //-0.XXXX + -5 = -5.XXXX
+                if (RValue < 0)
+                {
+                    IntValue = RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else//(RValue>=0)
+                    IntValue = RValue - 1;
+            }
+            else if (IntValue < 0)
+            {
+                //-1.XXXX + -5 = -6.XXXX
+                //-6.XXXX + 5 = -1.XXXX
+                //-6.XXXX + 6 = -0.XXXX
+                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
+                //-5.XXXX + 7 = 1.XXXX
+                int InvertedLValue = -IntValue;
+                if (IntValue == InvertedLValue)
+                    IntValue = NegativeRep;
+                else if (RValue > InvertedLValue)
+                    IntValue += RValue - 1;
+                else
+                {
+                    IntValue += RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else
+            {
+                //5.XXXX + 5 = 10.XXXX
+                //5.XXXX + -5 = 0.XXXX
+                //5.XXXX + -6 = -0.XXXX (Flips to other side)
+                //5.XXXX + -7 = -1.XXXX 
+                int InversionPoint = -IntValue - 1;
+                if (RValue == InversionPoint)
+                    IntValue = NegativeRep;
+                else if (RValue < InversionPoint)
+                {
+                    IntValue = RValue + 1;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else
+                    IntValue += RValue;
+            }
+        }
+
+        //Replace usage of IntValue -= RValue; with MirroredIntSubtraction(RValue);
+        template<typename IntType>
+        void MirroredIntSubtraction(IntType RValue)
+        {
+            if (RValue==0)
+                return;
+            if (IntValue == 0)
+                IntValue = -RValue;
+            else if (IntValue == NegativeRep)
+            {
+                //-0.XXXX - -2 = 1.XXXX
+                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
+                //-0.XXXX - 1 = -1.XXXX 
+                //-0.XXXX - 6 = -6.XXXX
+                if (RValue < 0)
+                    IntValue = -RValue - 1;
+                else
+                {
+                    IntValue = -RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else if (IntValue < 0)
+            {
+                //-5.XXXX - -7 = 1.XXXX 
+                //-5.XXXX - -6 = 0.XXXX            
+                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
+                //-5.XXXX - -4 = -1.XXXX
+                if (RValue == IntValue)
+                    IntValue = NegativeRep;
+                else if (RValue < IntValue)
+                    IntValue -= RValue - 1;
+                else//(RValue>=LValue.Value)
+                {
+                    IntValue -= RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else
+            {
+                //5.XXXX - -5 = 10.XXXX
+                //5.XXXX - 5 = 0.XXXX
+                //5.XXXX - 6 = -0.XXXX (Flips to other side)
+                //5.XXXX - 7 = -1.XXXX
+                int InversionPoint = IntValue + 1;
+                if (RValue == InversionPoint)
+                    IntValue = NegativeRep;
+                else if (RValue > InversionPoint)
+                {
+                    IntValue -= RValue - 1;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (IntValue == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else
+                    IntValue += RValue;
+            }
+        }
+
+
+    #pragma endregion MirroredIntBased Operations
+
     #pragma region From this type to Standard types
         /// <summary>
         /// AltDec to float explicit conversion
@@ -1891,12 +2040,12 @@ public:
             float Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
+                Value = IntValue == NegativeRep ? 0.0f : (float)GetIntHalf();
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-                Value = (float)IntValue.GetValue();
+                Value = (float)GetIntHalf();
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
@@ -1911,12 +2060,12 @@ public:
             double Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
+                Value = IntValue == NegativeRep ? 0.0 : (double)GetIntHalf();
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-                Value = (double)IntValue.GetValue();
+                Value = (double)GetIntHalf();
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
@@ -1931,12 +2080,12 @@ public:
             ldouble Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
+                Value = IntValue == NegativeRep ? 0.0L : (ldouble)GetIntHalf();
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-                Value = (ldouble)IntValue.GetValue();
+                Value = (ldouble)GetIntHalf();
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
@@ -1946,9 +2095,9 @@ public:
         /// AltDec to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return IntValue.GetValue(); }
+        explicit operator int() { return GetIntHalf(); }
 
-        explicit operator bool() { return IntValue.IsZero() ? false : true; }
+        explicit operator bool() { return IsZero() ? false : true; }
     #pragma endregion From this type to Standard types
 
     #pragma region Pi Conversion
@@ -2102,7 +2251,7 @@ public:
 #endif
             }
 
-            return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
+            return (LValue.IntValue == Value.IntValue && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
         }
 
         /// <summary>
@@ -2190,7 +2339,7 @@ public:
                 }
 #endif
             }
-            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
+            return (LValue.IntValue != Value.IntValue || LValue.DecimalHalf != Value.DecimalHalf);
         }
 
         /// <summary>
@@ -2290,7 +2439,7 @@ public:
                 {
                     if (Value.DecimalHalf == InfinityRep)//both left and right are infinity types
                     {
-                        if (Value.IntValue.Value == 1 && LValue.IntValue.Value == -1)
+                        if (Value.IntValue == 1 && LValue.IntValue == -1)
                             return true;
                         else
                             return false;
@@ -2310,7 +2459,7 @@ public:
                         -inf < +inf = true
                         -inf < -inf = false
                     */
-                    if (Value.IntValue.Value == 1 && LValue.IntValue.Value == -1)
+                    if (Value.IntValue == 1 && LValue.IntValue == -1)
                         return true;
                     else
                         return false;
@@ -2452,7 +2601,7 @@ public:
                 {
                     if (Value.DecimalHalf == InfinityRep)//both left and right are infinity types
                     {
-                        if (Value.IntValue.Value == 1 && LValue.IntValue.Value == -1)
+                        if (Value.IntValue == 1 && LValue.IntValue == -1)
                             return false;
                         else
                             return true;
@@ -2472,7 +2621,7 @@ public:
                         (-inf <= +inf) = true
                         (-inf <= -inf) = true
                     */
-                    if (Value.IntValue.Value == -1 && LValue.IntValue.Value == 1)
+                    if (Value.IntValue == -1 && LValue.IntValue == 1)
                         return false;
                     else
                         return true;
@@ -2614,7 +2763,7 @@ public:
                 {
                     if (Value.DecimalHalf == InfinityRep)//both left and right are infinity types
                     {
-                        if (Value.IntValue.Value == -1 && LValue.IntValue.Value == 1)
+                        if (Value.IntValue == -1 && LValue.IntValue == 1)
                             return true;
                         else
                             return false;
@@ -2634,7 +2783,7 @@ public:
                         -inf > +inf = false
                         -inf > -inf = false
                     */
-                    if (Value.IntValue.Value == -1 && LValue.IntValue.Value == 1)
+                    if (Value.IntValue == -1 && LValue.IntValue == 1)
                         return true;
                     else
                         return false;
@@ -2776,7 +2925,7 @@ public:
                 {
                     if (Value.DecimalHalf == InfinityRep)//both left and right are infinity types
                     {
-                        if (Value.IntValue.Value == 1 && LValue.IntValue.Value == -1)
+                        if (Value.IntValue == 1 && LValue.IntValue == -1)
                             return false;
                         else
                             return true;
@@ -2796,7 +2945,7 @@ public:
                         (-inf >= +inf) = false
                         (-inf >= -inf) = true
                     */
-                    if (Value.IntValue.Value == 1 && LValue.IntValue.Value == -1)
+                    if (Value.IntValue == 1 && LValue.IntValue == -1)
                         return false;
                     else
                         return true;
@@ -3380,6 +3529,42 @@ public:
     #pragma region NormalRep Integer Addition Operations
 protected:
         /// <summary>
+        /// Addition Operation that skips negative zero(for when decimal half is empty)
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MirroredInt</returns>
+        template<typename IntType>
+        void NRepSkippingIntAddOp(IntType RValue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = RValue.Value;
+            else
+            {
+                #if defined(BlazesMirroredInt_UsePseudoBitSet)
+                throw "Need to write code for operation";//Placeholder
+                #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+                IntValue += RValue;
+                #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                if (RValue < 0 && Value == NegativeRep)
+                    throw "MirroredInt value has underflowed";
+                #endif
+                #else
+                throw "Need to write code for operation";//Placeholder
+                #endif
+            }
+            return;
+        }
+
+        template<typename IntType>
+        void MirroredIntAddition(IntType RValue)
+        {
+
+        }
+
+        /// <summary>
         /// Addition Operation Between AltDec and Integer value
         /// </summary>
         /// <param name="value">The value.</param>
@@ -3388,7 +3573,7 @@ protected:
         void BasicIntAddition(IntType value)
         {
             if(DecimalHalf==0)
-                IntValue.NRepSkippingIntAddOp(value);
+                NRepSkippingIntAddOp(value);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
@@ -3397,31 +3582,6 @@ protected:
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
-        }
-
-        /// <summary>
-        /// Addition Operation Between AltDec and Integer value
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
-        void BasicMirroredIntAddOp(MirroredInt& value)
-        {
-            if (DecimalHalf == 0)
-                IntValue.NRepSkippingAddOp(value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntValue += value;
-                //If flips to other side of negative, invert the decimals
-                if (NegativeBeforeOperation ^ (IntValue < 0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-            }
-        }
-
-        template<typename IntType>
-        void BasicMirroredIntAddition(IntType Value)
-        {
-            BasicMirroredIntAddOp(Value);
         }
 public:
 
@@ -3463,6 +3623,7 @@ public:
 	
     #pragma region NormalRep Integer Subtraction Operations
 protected:
+
 		/// <summary>
         /// Basic Subtraction Operation
         /// </summary>
@@ -3776,7 +3937,7 @@ public:
                 }
                 else
                 {
-                    Value.PartialIntMultOp(IntValue.Value);
+                    Value.PartialIntMultOp(IntValue);
                     IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
 				return false;
@@ -3866,7 +4027,7 @@ public:
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
                     __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();
+                    SRep *= Value.GetIntHalf();
                     if (SRep >= AltDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
@@ -3886,7 +4047,7 @@ public:
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
                     __int64 SRep = IntValue == 0 ? DecimalHalf : AltDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();//SRep holds __int64 version of X.Y * Z
+                    SRep *= Value.GetIntHalf();//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
@@ -5224,11 +5385,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                ++IntValue.Value;
+                ++IntValue;
             else if (IntValue == NegativeRep)
                 IntValue = MirroredInt::Zero;
             else
-                ++IntValue.Value;
+                ++IntValue;
             return *this;
         }
 
@@ -5243,11 +5404,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                --IntValue.Value;
-            else if (IntValue.Value == 0)
+                --IntValue;
+            else if (IntValue == 0)
                 IntValue = NegativeRep;
             else
-                --IntValue.Value;
+                --IntValue;
             return *this;
         }
 
@@ -5293,7 +5454,7 @@ public:
         AltDec BasicIntRemOp(IntType& RValue)
         {
             if (DecimalHalf == 0)
-                IntValue.Value %= RValue;
+                IntValue %= RValue;
             else
             {
                 if (RValue < 0)
@@ -5385,8 +5546,8 @@ public:
                     if (RValue < 0)
                         RValue *= -1;
                     __int64 SRep = DecimalOverflowX * IntValue.GetAbsValue() + DecimalHalf;
-                    __int64 divRes = SRep / RValue.IntValue.Value;
-                    __int64 C = SRep - (RValue.IntValue.Value * divRes);
+                    __int64 divRes = SRep / RValue.IntValue;
+                    __int64 C = SRep - (RValue.IntValue * divRes);
                     if (C == 0)
                         SetAsZero();
                     else
@@ -5562,8 +5723,8 @@ public:
         AltDec& Abs()
         {
             if (IntValue == NegativeRep)
-                IntValue.Value = 0;
-            else if (IntValue.Value < 0)
+                IntValue = 0;
+            else if (IntValue < 0)
                 IntValue *= -1;
             return *this;
         }
@@ -5709,12 +5870,12 @@ public:
             }
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue.GetValue();
+                return Value.GetIntHalf();
             }
             if (Value.IntValue == NegativeRep) { return -1; }
             else
             {
-                return Value.IntValue.GetValue() - 1;
+                return Value.GetIntHalf() - 1;
             }
         }
 
@@ -5767,12 +5928,12 @@ public:
             }
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue.GetValue();
+                return Value.GetIntHalf();
             }
             if (Value.IntValue == NegativeRep) { return 0; }
             else
             {
-                return Value.IntValue.GetValue() + 1;
+                return Value.GetIntHalf() + 1;
             }
         }
         
@@ -5834,7 +5995,7 @@ public:
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
-                switch (value.IntValue.GetValue())
+                switch (value.GetIntHalf())
                 {
                 case 1: value.IntValue = 1; break;
                 case 4: value.IntValue = 2; break;
@@ -5999,8 +6160,8 @@ public:
 #endif
                 else if (expValue < 0)
                     targetValue.SetAsZero();
-                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
-                    targetValue.IntValue.Value = 1;
+                else if (targetValue.IntValue == -1 && expValue % 2 == 0)
+                    targetValue.IntValue = 1;
                 else
                     return targetValue;//Returns infinity
                 return *this;
@@ -6098,8 +6259,8 @@ public:
 #endif
                 else if (expValue < 0)
                     return Zero;
-                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
-                    IntValue.Value = 1;
+                else if (targetValue.IntValue == -1 && expValue % 2 == 0)
+                    IntValue = 1;
                 else
                     return;//Returns infinity
                 return *this;
