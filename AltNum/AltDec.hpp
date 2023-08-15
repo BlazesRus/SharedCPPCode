@@ -3065,7 +3065,7 @@ public:
 #endif
             if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
                 LValue.ConvertToNormTypeV2();
-            else if (LValue.IntValue == RValue)
+            if (LValue.IntValue == RValue)
                 return false;
             else
                 return true;
