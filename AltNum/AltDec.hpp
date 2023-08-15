@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -2611,7 +2611,7 @@ public:
         /// <summary>
         /// Greater than Operation
         /// </summary>
-        /// <param name="LValue">The LValue.</param>
+        /// <param name="LValue">The left side value.</param>
         /// <param name="RValue">The right side value.</param>
         /// <returns>bool</returns>
         friend bool operator>(AltDec LValue, AltDec RValue)
@@ -2818,27 +2818,142 @@ public:
         /// <returns>bool</returns>
         friend bool operator>=(AltDec LValue, AltDec RValue)
         {
-#if defined(AltNum_EnableInfinityRep)
-            if(LValue.ExtraRep==InfinityRep)
-            {
-                if(RValue.ExtraRep==InfinityRep)
+            RepType LRep = LValue.GetRepType();
+            RepType RRep = RValue.GetRepType();
+            if (LRep != RRep)
+            {//ToDo:Check bitvalue of RepType instead maybe
+#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
+                switch (LRep)
                 {
-                    if(LValue.IntValue==RValue.IntValue||RValue.IntValue==-1)
+#if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
+#endif
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+#ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+#endif
+                    LValue.ConvertToNormalIRep(LRep);
+                    break;
+                    //Don't convert infinity into real number
+#if defined(AltNum_EnableImaginaryInfinity)
+                case RepType::PositiveImaginaryInfinity:
+                case RepType::NegativeImaginaryInfinity:
+                    break;
+#endif
+#endif
+#if defined(AltNum_EnableInfinityRep)
+                    //Don't convert infinity into real number
+                case RepType::PositiveInfinity:
+                case RepType::NegativeInfinity:
+                    break;
+#endif
+                default:
+#endif
+                    LValue.ConvertToNormType(LRep);
+#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
+                    break;
+                }
+#endif
+#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
+                switch (RRep)
+                {
+#if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
+#endif
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+#ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+#endif
+                    RValue.ConvertToNormalIRep(RRep);
+                    break;
+                    //Don't convert infinity into real number
+#if defined(AltNum_EnableImaginaryInfinity)
+                case RepType::PositiveImaginaryInfinity:
+                case RepType::NegativeImaginaryInfinity:
+                    break;
+#endif
+#endif
+#if defined(AltNum_EnableInfinityRep)
+                    //Don't convert infinity into real number
+                case RepType::PositiveInfinity:
+                case RepType::NegativeInfinity:
+                    break;
+#endif
+                default:
+#endif
+                    RValue.ConvertToNormType(RRep);
+#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
+                    break;
+                }
+#endif
+            }
+#if defined(AltNum_EnableImaginaryNum)
+            if (LValue.ExtraRep != RValue.ExtraRep)
+                throw "Can't compare imaginary number with real number";
+#endif
+#if defined(AltNum_EnableInfinityRep)
+            if (LValue.DecimalHalf == InfinityRep)
+            {
+#if defined(AltNum_EnableImaginaryInfinity)
+                if (LValue.ExtraRep == IRep)//LeftSide is Imaginary infinity
+                {
+                    if (RValue.DecimalHalf == InfinityRep)//both left and right are infinity types
+                    {
+                        if (RValue.IntValue == 1 && LValue.IntValue == -1)
+                            return false;
+                        else
+                            return true;
+                    }
+                    else if (LValue.IntValue == 1)//Left is Positive Imaginary Infinity
                         return true;
-                    else
+                    else//Left Negative Imaginary Infinity
                         return false;
                 }
-                else
+#endif
+                if (RValue.DecimalHalf == InfinityRep)//both left and right are infinity types
                 {
-                
+                    //return LValue.IntValue>=RValue.IntValue;
+                    /*
+                        (+inf >= +inf) = true
+                        (+inf >= -inf) = true
+                        (-inf >= +inf) = false
+                        (-inf >= -inf) = true
+                    */
+                    if (RValue.IntValue == 1 && LValue.IntValue == -1)
+                        return false;
+                    else
+                        return true;
                 }
+                else if (LValue.IntValue == 1)//Left is Positive Infinity
+                    return true;//+inf >= 99 
+                else//Left is Negative Infinity
+                    return false;//-inf >= 99
             }
-            else if(RValue.ExtraRep==InfinityRep)
+            else if (RValue.DecimalHalf == InfinityRep)//Right side is infinity
             {
-            
+#if defined(AltNum_EnableImaginaryInfinity)
+                if (RValue.ExtraRep == IRep)//RightSide is Imaginary infinity
+                {
+                    if (LValue.IntValue == 1)//Right is Positive Imaginary Infinity
+                        return false;
+                    else//Right is Negative Imaginary Infinity
+                        return true;
+                }
+#endif
+                if (RValue.IntValue == 1)//Right is Positive Infinity
+                    return false;//99 >= +inf
+                else//Right is Negative Infinity
+                    return true;//99 >= -inf
             }
 #endif
-            LValue.ConvertToNumRep(); RValue.ConvertToNumRep();
             if (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf) { return true; }
             else
             {
@@ -2900,252 +3015,285 @@ public:
 
     #pragma endregion Comparison Operators
 
-    #pragma region AltDec-To-Int Comparison Operators
+    #pragma region AltDec-To-Int Comparison Functions
         /// <summary>
-        /// Equality Operation between <see cref="AltDec &"/> and Integer Type.
+        /// Equality operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(AltDec self, IntType Value)
+        static bool RightSideIntEqualTo(AltDec& LValue, IntType& RValue)//friend bool operator==(AltDec LValue, IntType RValue)
         {
-            return (self.IntValue == Value && self.DecimalHalf == 0 && self.ExtraRep==0);
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                return false;
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                return false;
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep==0);
         }
 
         /// <summary>
-        /// != Operation between <see cref="AltDec"/> and Integer Type.
+        /// Not Equal to operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(AltDec self, IntType Value)
+        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType& RValue)//friend bool operator!=(AltDec LValue, IntType RValue)
         {
-            if (self.DecimalHalf!=0||self.ExtraRep!=0)
-                return true;
-            else if (self.IntValue == Value)
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                return false;
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                return false;
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            else if (LValue.IntValue == RValue)
                 return false;
             else
                 return true;
         }
 
         /// <summary>
-        /// Lesser than Operation between <see cref="AltDec"/> and Integer Type.
+        /// Less than operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(AltDec self, IntType Value)
+        static bool RightSideIntLessThan(AltDec& LValue, IntType& RValue)//friend bool operator<(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
             {
-                if(self.IntValue==-1)
+                if (LValue.IntValue == -1)
                     return true;
                 else
                     return false;
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-            {
-                self.ConvertToNumRep();
-            }
-            else
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
                 throw "Can't compare real values against imaginary.";
-#else
-            self.ConvertToNumRep();
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
 #endif
-            if (self.DecimalHalf == 0)
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
             {
-                return self.IntValue < Value;
+                return LValue.IntValue < RValue;
             }
             else
             {
-                if (self.IntValue == NegativeRep)
+                if (LValue.IntValue == NegativeRep)
                 {//-0.5<0
-                    if (Value >= 0)
+                    if (RValue >= 0)
                         return true;
                 }
-                else if (self.IntValue < Value) { return true; }//5.5 < 6
-                else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
             }
             return false;
         }
 		
         /// <summary>
-        /// Lesser than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Less than or equal to operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(AltDec self, IntType Value)
+        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType& RValue)//friend bool operator<=(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+            if(LValue.ExtraRep==InfinityRep)
             {
-                if(self.IntValue==-1)
+                if(LValue.IntValue==-1)
                     return true;
                 else
                     return false;
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-            {
-                self.ConvertToNumRep();
-            }
-            else
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
                 throw "Can't compare real values against imaginary.";
-#else
-            self.ConvertToNumRep();
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
 #endif
-            if (self.DecimalHalf == 0)
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
             {
-                return self.IntValue <= Value;
+                return LValue.IntValue <= RValue;
             }
             else
             {
-                if (self.IntValue == NegativeRep)
+                if (LValue.IntValue == NegativeRep)
                 {//-0.5<0
-                    if (Value >= 0)
+                    if (RValue >= 0)
                         return true;
                 }
-                else if (self.IntValue < Value) { return true; }//5.5<=6
-                else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }
+                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
             }
             return false;
         }
+
         /// <summary>
-        /// Greater than operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(AltDec self, IntType Value)
+        static bool RightSideIntGreaterThan(AltDec& LValue, IntType& RValue)//friend bool operator>(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+            if(LValue.ExtraRep==InfinityRep)
             {
-                if(self.IntValue==1)
+                if(LValue.IntValue==1)
                     return true;
                 else
                     return false;
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-            {
-                self.ConvertToNumRep();
-            }
-            else
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
                 throw "Can't compare real values against imaginary.";
-#else
-            self.ConvertToNumRep();
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
 #endif
-            if (self.DecimalHalf == 0)
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
             {
-                return self.IntValue > Value;
+                return LValue.IntValue > RValue;
             }
             else
             {
-                if (self.IntValue == NegativeRep)
+                if (LValue.IntValue == NegativeRep)
                 {//-0.5>-1
-                    if (Value <= -1)
+                    if (RValue <= -1)
                         return true;
                 }
-                else if (self.IntValue > Value) { return true; }
-                else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
             }
             return false;
         }
+
         /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
+        /// Greater than or equal to operation between <see cref="AltDec&"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(AltDec self, IntType Value)
+        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType& RValue)//friend bool operator>=(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
-            if(self.ExtraRep==InfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
             {
-                if(self.IntValue==1)
+                if (LValue.IntValue == 1)
                     return true;
                 else
                     return false;
             }
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            if(self.ExtraRep>=0||self.ExtraRep==PiRep)
-            {
-                self.ConvertToNumRep();
-            }
-            else
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
                 throw "Can't compare real values against imaginary.";
-#else
-            self.ConvertToNumRep();
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
 #endif
-            if (self.DecimalHalf == 0)
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
             {
-                return self.IntValue >= Value;
+                return LValue.IntValue >= RValue;
             }
             else
             {
-                if (self.IntValue == NegativeRep)
+                if (LValue.IntValue == NegativeRep)
                 {
-                    if (Value <= -1)
+                    if (RValue <= -1)
                         return true;
                 }
-                else if (self.IntValue > Value) { return true; }
-                else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
             }
             return false;
         }
 
         /// <summary>
-        /// Equality Operation between Integer Type and <see cref="AltDec"/>.
+        /// Equality operation between Integer Type and <see cref="AltDec&"/>.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator==(IntType Value, AltDec self)
-        {
-            return (self.IntValue == Value && self.DecimalHalf == 0 && self.ExtraRep==0);
-        }
+        static bool LeftSideIntEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }//friend bool operator==(IntType Value, AltDec self)
 
         /// <summary>
-        /// != Operation between Integer Type and <see cref="AltDec"/>.
+        /// Not equal to operation between Integer Type and <see cref="AltDec&"/>.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator!=(IntType Value, AltDec self)
-        {
-            if (self.DecimalHalf!=0||self.ExtraRep!=0)
-                return true;
-            else if (self.IntValue == Value)
-                return false;
-            else
-                return true;
-        }
+        static bool LeftSideIntNotEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }//friend bool operator!=(IntType Value, AltDec self)
 
         /// <summary>
-        /// Lesser than Operation between Integer Type and <see cref="AltDec"/> .
+        /// Lesser than Operation between Integer Type and <see cref="AltDec&"/> .
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<(IntType Value, AltDec self)
-        {
+        static bool LeftSideIntLessThan(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }//friend bool operator<(IntType Value, AltDec self)
+        /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
@@ -3180,16 +3328,17 @@ public:
                 else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }//5 < 5.5 vs -5 > -5.5
             }
             return false;
-        }
+        }*/
+
         /// <summary>
-        /// Lesser than or equal to operation between Integer Type and <see cref="AltDec"/>.
+        /// Less than or equal to operation between Integer Type and <see cref="AltDec&"/>.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator<=(IntType Value, AltDec self)
-        {
+        static bool LeftSideIntLessThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }//friend bool operator<=(IntType Value, AltDec self)
+        /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
@@ -3224,16 +3373,17 @@ public:
                 else if (self.IntValue == Value) { return self.IntValue < 0 ? false : true; }//5 <= 5.5 vs -5 >= -5.5
             }
             return false;
-        }
+        }*/
+
         /// <summary>
         /// Greater than operation between Integer Type and <see cref="AltDec"/>.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>(IntType Value, AltDec self)
-        {
+        static bool LeftSideIntGreaterThan(IntType& LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }//friend bool operator>(IntType Value, AltDec self)
+        /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
@@ -3268,16 +3418,17 @@ public:
                 else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }//5 < 5.5 vs -5 > -5.5
             }
             return false;
-        }
+        }*/
+
         /// <summary>
         /// Greater than or equal to operation between <see cref="AltDec"/> and Integer Type.
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        friend bool operator>=(IntType Value, AltDec self)
-        {
+        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }//friend bool operator>=(IntType Value, AltDec self)
+        /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
             {
@@ -3312,7 +3463,7 @@ public:
                 else if (self.IntValue == Value) { return self.IntValue < 0 ? true : false; }//5 <= 5.5 vs -5 >= -5.5
             }
             return false;
-        }
+        }*/
 
     #pragma endregion AltDec-To-Int Comparison Operators
 
