@@ -1213,8 +1213,83 @@ namespace BlazesRusCode
 	#endif
 			return LValue;
         }
+
+        template<typename IntType>
+        static MirroredInt& RightSideIntAdditionPointerOperation(IntType& RValue)
+        {
+            if (RValue == 0)
+                return *this;
+            if (Value == 0)
+                Value = RValue;
+            #if defined(BlazesMirroredInt_UsePseudoBitSet)
+            else
+                throw "Need to write code for operation";//Placeholder
+            #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            else if (Value == NegativeRep)
+            {
+                //-0.XXXX + 2 = 1.XXXX
+                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
+                //-0.XXXX + -5 = -5.XXXX
+                if (RValue < 0)
+                {
+                    Value = RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else//(RValue>=0)
+                    Value = RValue - 1;
+            }
+            else if (Value < 0)
+            {
+                //-1.XXXX + -5 = -6.XXXX
+                //-6.XXXX + 5 = -1.XXXX
+                //-6.XXXX + 6 = -0.XXXX
+                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
+                //-5.XXXX + 7 = 1.XXXX
+                int InvertedLValue = -Value;
+                if (Value == InvertedLValue)
+                    Value = NegativeRep;
+                else if (RValue > InvertedLValue)
+                    Value += RValue - 1;
+                else
+                {
+                    Value += RValue;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+            }
+            else
+            {
+                //5.XXXX + 5 = 10.XXXX
+                //5.XXXX + -5 = 0.XXXX
+                //5.XXXX + -6 = -0.XXXX (Flips to other side)
+                //5.XXXX + -7 = -1.XXXX 
+                int InversionPoint = -Value - 1;
+                if (RValue == InversionPoint)
+                    Value = NegativeRep;
+                else if (RValue < InversionPoint)
+                {
+                    Value += RValue + 1;
+                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+                    if (Value == NegativeRep)
+                        throw "MirroredInt value has underflowed";
+                    #endif
+                }
+                else
+                    Value += RValue;
+            }
+            #else
+            else
+                throw "Need to write code for operation";//Placeholder
+            #endif
+            return *this;
+        }
 		
-        friend MirroredInt& operator+=(MirroredInt& LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
+		friend MirroredInt& operator+=(MirroredInt& LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
 		friend MirroredInt& operator+=(MirroredInt& LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
         friend MirroredInt operator+(MirroredInt LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
 		friend MirroredInt operator+(MirroredInt LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
