@@ -3382,14 +3382,13 @@ protected:
         /// <summary>
         /// Addition Operation Between AltDec and Integer value
         /// </summary>
-        /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        void BasicIntAddOp(IntType& value)
+        void BasicIntAddition(IntType value)
         {
             if(DecimalHalf==0)
-                IntValue.NRepSkippingAddOp(value);
+                IntValue.NRepSkippingIntAddOp(value);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
@@ -3399,10 +3398,30 @@ protected:
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
         }
-        template<typename IntType>
-        void BasicIntAdd(IntType Value)
+
+        /// <summary>
+        /// Addition Operation Between AltDec and Integer value
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>AltDec&</returns>
+        void BasicMirroredIntAddOp(MirroredInt& value)
         {
-            BasicIntAddOp(Value);
+            if (DecimalHalf == 0)
+                IntValue.NRepSkippingAddOp(value);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntValue += value;
+                //If flips to other side of negative, invert the decimals
+                if (NegativeBeforeOperation ^ (IntValue < 0))
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+            }
+        }
+
+        template<typename IntType>
+        void BasicMirroredIntAddition(IntType Value)
+        {
+            BasicMirroredIntAddOp(Value);
         }
 public:
 
@@ -3410,15 +3429,15 @@ public:
         /// Basic Addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicAddOp(signed int& Value) { BasicIntAddOp(Value); }
-		void BasicAddOp(unsigned int& Value) { BasicIntAddOp(Value); }
-		void BasicAddOp(signed long long& Value) { BasicIntAddOp(Value); }
-		void BasicAddOp(unsigned long long& Value) { BasicIntAddOp(Value); }
+		void BasicAddOp(signed int& Value) { BasicIntAddition(Value); }
+		void BasicAddOp(unsigned int& Value) { BasicIntAddition(Value); }
+		void BasicAddOp(signed long long& Value) { BasicIntAddition(Value); }
+		void BasicAddOp(unsigned long long& Value) { BasicIntAddition(Value); }
 
-		static void BasicAddOp(AltDec& self, signed int& Value) { self.BasicIntAddOp(Value); }
-		static void BasicAddOp(AltDec& self, unsigned int& Value) { self.BasicIntAddOp(Value); }
-		static void BasicAddOp(AltDec& self, signed long long& Value) { self.BasicIntAddOp(Value); }
-		static void BasicAddOp(AltDec& self, unsigned long long& Value) { self.BasicIntAddOp(Value); }
+		static void BasicAddOp(AltDec& self, signed int& Value) { self.BasicIntAddition(Value); }
+		static void BasicAddOp(AltDec& self, unsigned int& Value) { self.BasicIntAddition(Value); }
+		static void BasicAddOp(AltDec& self, signed long long& Value) { self.BasicIntAddition(Value); }
+		static void BasicAddOp(AltDec& self, unsigned long long& Value) { self.BasicIntAddition(Value); }
 
 		/// <summary>
         /// Basic Addition Operation that returns a value
@@ -3426,18 +3445,19 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
 		AltDec BasicAdd(signed int Value)
-        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+        { AltDec self = *this; BasicIntAddition(Value); return self; }
 		AltDec BasicAdd(unsigned int Value)
-        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+        { AltDec self = *this; BasicIntAddition(Value); return self; }
 		AltDec BasicAdd(signed long long Value)
-        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+        { AltDec self = *this; BasicIntAddition(Value); return self; }
         AltDec BasicAdd(unsigned long long Value)
-        { AltDec self = *this; BasicIntAddOp(Value); return self; }
+        { AltDec self = *this; BasicIntAddition(Value); return self; }
 
-		static AltDec BasicAdd(AltDec& self, signed int Value) { self.BasicIntAddOp(Value); return self; }
-		static AltDec BasicAdd(AltDec& self, unsigned int Value) { self.BasicIntAddOp(Value); return self; }
-		static AltDec BasicAdd(AltDec& self, signed long long Value) { self.BasicIntAddOp(Value); return self; }
-        static AltDec BasicAdd(AltDec& self, unsigned long long Value) { self.BasicIntAddOp(Value); return self; }
+		static AltDec BasicAdd(AltDec self, signed int Value) { self.BasicIntAddition(Value); return self; }
+		static AltDec BasicAdd(AltDec self, unsigned int Value) { self.BasicIntAddition(Value); return self; }
+		static AltDec BasicAdd(AltDec self, signed long long Value) { self.BasicIntAddition(Value); return self; }
+        static AltDec BasicAdd(AltDec self, unsigned long long Value) { self.BasicIntAddition(Value); return self; }
+        static AltDec BasicAdd(AltDec self, MirroredInt Value) { self.BasicMirroredIntAddOp(Value); return self; }
 
 	#pragma endregion NormalRep Integer Addition Operations
 	
@@ -3448,10 +3468,10 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         template<typename IntType>
-        void BasicIntSubOp(IntType& Value)
+        void BasicIntSubtraction(IntType Value)
         {
             if(DecimalHalf==0)
-                IntValue.NRepSkippingSubOp(Value);
+                IntValue.NRepSkippingIntSubOp(Value);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
@@ -3461,10 +3481,28 @@ protected:
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
         }
-        template<typename IntType>
-        void BasicIntSub(IntType Value)
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void BasicMirroredIntSubOp(MirroredInt& Value)
         {
-            BasicIntSubOp(Value);
+            if (DecimalHalf == 0)
+                IntValue.NRepSkippingSubOp(Value);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntValue -= Value;
+                //If flips to other side of negative, invert the decimals
+                if (NegativeBeforeOperation ^ (IntValue < 0))
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+            }
+        }
+
+        void BasicMirroredIntSubtraction(MirroredInt Value)
+        {
+            BasicMirroredIntSubOp(Value);
         }
 public:
 
@@ -3472,15 +3510,15 @@ public:
         /// Basic Subtraction Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicSubOp(signed int& Value) { BasicIntSubOp(Value); }
-		void BasicSubOp(unsigned int& Value) { BasicIntSubOp(Value); }
-		void BasicSubOp(signed long long& Value) { BasicIntSubOp(Value); }
-		void BasicSubOp(unsigned long long& Value) { BasicIntSubOp(Value); }
+		void BasicSubOp(signed int& Value) { BasicIntSubtraction(Value); }
+		void BasicSubOp(unsigned int& Value) { BasicIntSubtraction(Value); }
+		void BasicSubOp(signed long long& Value) { BasicIntSubtraction(Value); }
+		void BasicSubOp(unsigned long long& Value) { BasicIntSubtraction(Value); }
 
-		static void BasicSubOp(AltDec& self, signed int& Value) { self.BasicIntSubOp(Value); }
-		static void BasicSubOp(AltDec& self, unsigned int& Value) { self.BasicIntSubOp(Value); }
-		static void BasicSubOp(AltDec& self, signed long long& Value) { self.BasicIntSubOp(Value); }
-		static void BasicSubOp(AltDec& self, unsigned long long& Value) { self.BasicIntSubOp(Value); }
+		static void BasicSubOp(AltDec& self, signed int& Value) { self.BasicIntSubtraction(Value); }
+		static void BasicSubOp(AltDec& self, unsigned int& Value) { self.BasicIntSubtraction(Value); }
+		static void BasicSubOp(AltDec& self, signed long long& Value) { self.BasicIntSubtraction(Value); }
+		static void BasicSubOp(AltDec& self, unsigned long long& Value) { self.BasicIntSubtraction(Value); }
 
 		/// <summary>
         /// Basic Subtraction Operation that returns a value
@@ -3488,23 +3526,24 @@ public:
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec</returns>
 		AltDec BasicSub(signed int Value)
-        { AltDec self = *this; BasicIntSubOp(Value); return self; }
+        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
 		AltDec BasicSub(unsigned int Value)
-        { AltDec self = *this; BasicIntSubOp(Value); return self; }
+        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
 		AltDec BasicSub(signed long long Value)
-        { AltDec self = *this; BasicIntSubOp(Value); return self; }
+        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
         AltDec BasicSub(unsigned long long Value)
-        { AltDec self = *this; BasicIntSubOp(Value); return self; }
+        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
 
         /// <summary>
         /// Basic Subtraction Operation that returns a value
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec</returns>
-		static AltDec BasicSub(AltDec self, signed int Value) { self.BasicIntSubOp(Value); return self; }
-		static AltDec BasicSub(AltDec self, unsigned int Value) { self.BasicIntSubOp(Value); return self; }
-		static AltDec BasicSub(AltDec self, signed long long Value) { self.BasicIntSubOp(Value); return self; }
-        static AltDec BasicSub(AltDec self, unsigned long long Value) { self.BasicIntSubOp(Value); return self; }
+		static AltDec BasicSub(AltDec self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
+		static AltDec BasicSub(AltDec self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
+		static AltDec BasicSub(AltDec self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
+        static AltDec BasicSub(AltDec self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
+        static AltDec BasicSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
@@ -3737,7 +3776,7 @@ public:
                 }
                 else
                 {
-                    Value.PartialIntMultOp(IntValue);
+                    Value.PartialIntMultOp(IntValue.Value);
                     IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
                 }
 				return false;
@@ -4695,12 +4734,13 @@ public:
                 SwapNegativeStatus();
             }
             if (IsZero() || Value == 1)
-                return;
+                return *this;
             if (Value == 0)
             {
-                SetAsZero(); return;
+                SetAsZero(); return *this;
             }
             IntMultOpPt2(Value);
+            return *this;
         }
     #pragma endregion Other Multiplication Operations
 

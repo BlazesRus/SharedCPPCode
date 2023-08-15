@@ -1042,7 +1042,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingIntAddOp(IntType& RValue)
+        void NRepSkippingIntAddOp(IntType RValue)
         {
             if (RValue == 0)
                 return;
@@ -1379,18 +1379,18 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>MirroredInt</returns>
         template<typename IntType>
-        void NRepSkippingIntSubOp(int& RValue)
+        void NRepSkippingIntSubOp(IntType RValue)
         {
-            if(RValue.IsZero())
+            if(RValue==0)
                 return;
             if(Value==0)
-                Value = -RValue.Value;
+                Value = -RValue;
             else
             {
     #if defined(BlazesMirroredInt_UsePseudoBitSet)
 			    throw "Need to write code for operation";//Placeholder
     #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                Value -= RValue.Value;
+                Value -= RValue;
         #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
                 if(RValue<0&&Value==NegativeRep)
                     throw "MirroredInt value has underflowed";
