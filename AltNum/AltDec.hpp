@@ -203,7 +203,6 @@ AltDec_UseMirroredInt
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
-    //#define AltNum_EnableModulusOverride
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
