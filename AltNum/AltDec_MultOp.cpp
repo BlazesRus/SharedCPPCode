@@ -447,7 +447,7 @@ AltDec& AltDec::MultOp(AltDec& Value)
 				break;
     #endif
 			default:
-				throw AltDec::RepTypeAsString(LRep)-" RepType multiplication not supported yet";
+				throw AltDec::RepTypeAsString(LRep)+" RepType multiplication not supported yet";
 				break;
 		}
 	}

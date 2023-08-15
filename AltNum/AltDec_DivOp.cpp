@@ -336,7 +336,7 @@ AltDec& AltDec::DivOp(AltDec& Value)
 				break;
     #endif
 			default:
-				throw AltDec::RepTypeAsString(LRep)-" RepType division not supported yet";
+				throw AltDec::RepTypeAsString(LRep)+" RepType division not supported yet";
 				break;
 		}
 	}

@@ -3891,7 +3891,7 @@ public:
 		}
         bool UnsignedBasicMult(AltDec Value)
         {
-            return UnsignedBasicMultOp;
+            return UnsignedBasicMultOp(Value);
         }
 
 		/// <summary>
