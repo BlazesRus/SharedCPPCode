@@ -190,6 +190,11 @@ AltNum_EnableUnknownTrigExpressions = (Not Implimented)
 AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
 AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
 AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
+
+AltNum_EnablePiFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnablePiRep enabled without AltNum_EnableDecimaledPiFractionals toggled
+AltNum_EnableEFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableERep enabled without AltNum_EnableDecimaledEFractionals toggled
+AltNum_EnableIFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableImaginaryNum enabled without AltNum_EnableDecimaledIFractionals toggled
+AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -290,6 +295,10 @@ AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 #endif
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnableIFractional
+#endif
+
+#if defined(AltNum_EnablePiFractional) || defined(AltNum_EnableEFractional) || defined(AltNum_EnableIFractional)
+	#defined AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
@@ -3634,25 +3643,25 @@ public:
         AltDec CatchAllDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
         { AltDec self = *this; CatchAllDivision(Value, LRep, RRep); return self; }
 		
-		void CatchAllDivision(AltDec& Value, RepType& SameRep)
+		void CatchAllDivisionV2(AltDec& Value, RepType& SameRep)
 		{
 			ConvertToNormType(SameRep);
 			Value.ConvertToNormType(SameRep);
 			BasicDivOp(Value);
 		}
 
-        AltDec CatchAllDivisionAsCopies(AltDec Value, RepType& SameRep)
-        { AltDec self = *this; CatchAllDivision(Value, SameRep); return self; }
+        AltDec CatchAllDivisionAsCopiesV2(AltDec Value, RepType& SameRep)
+        { AltDec self = *this; CatchAllDivisionV2(Value, SameRep); return self; }
 	
-	   void CatchAllDivision(AltDec& Value)
+	   void CatchAllDivisionV3(AltDec& Value)
 	   {
 		   ConvertToNormTypeV2();
 		   Value.ConvertToNormTypeV2();
 		   BasicDivOp(Value);
 	   }
 
-        AltDec CatchAllDivisionAsCopies(AltDec Value)
-        { AltDec self = *this; CatchAllDivision(Value); return self; }
+        AltDec CatchAllDivisionAsCopiesV3(AltDec Value)
+        { AltDec self = *this; CatchAllDivisionV3(Value); return self; }
 		
 	//Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
 	#if defined(AltNum_EnableImaginaryNum)
@@ -3667,7 +3676,7 @@ public:
         AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
         { AltDec self = *this; CatchAllImaginaryDivision(Value, LRep, RRep); return self; }
 		
-		void CatchAllImaginaryDivision(AltDec& Value, RepType& SameRep)
+		void CatchAllImaginaryDivisionV2(AltDec& Value, RepType& SameRep)
 		{
 			ConvertIRepToNormal(SameRep);
 			Value.ConvertIRepToNormal(SameRep);
@@ -3675,10 +3684,10 @@ public:
 			ExtraRep = 0;
 		}
 
-        AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value, RepType& SameRep)
+        AltDec CatchAllImaginaryDivisionAsCopiesV2(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllImaginaryDivision(Value, SameRep); return self; }
 	
-	   void CatchAllImaginaryDivision(AltDec& Value)
+	   void CatchAllImaginaryDivisionV3(AltDec& Value)
 	   {
 		   ConvertIRepToNormal();
 		   Value.ConvertIRepToNormal();
@@ -3686,7 +3695,7 @@ public:
 		   ExtraRep = 0;
 	   }
 
-        AltDec CatchAllImaginaryDivisionAsCopies(AltDec Value)
+        AltDec CatchAllImaginaryDivisionAsCopiesV3(AltDec Value)
         { AltDec self = *this; CatchAllImaginaryDivision(Value); return self; }
 	#endif
 
@@ -3912,14 +3921,14 @@ public:
 			BasicMultOp(Value);
 		}
 		
-		void CatchAllMultiplication(AltDec& Value, RepType& SameRep)
+		void CatchAllMultiplicationV2(AltDec& Value, RepType& SameRep)
 		{
             ConvertToNormType(SameRep);
 			Value.ConvertToNormType(SameRep);
 			BasicMultOp(Value);
 		}
 		
-		void CatchAllMultiplication(AltDec& Value)
+		void CatchAllMultiplicationV3(AltDec& Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();
@@ -3952,7 +3961,7 @@ public:
         AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllImaginaryMultiplication(Value, SameRep); return self; }
 	
-	   void CatchAllImaginaryMultiplication(AltDec& Value)
+	   void CatchAllImaginaryMultiplicationV3(AltDec& Value)
 	   {
 		   ConvertIRepToNormal();
 		   Value.ConvertIRepToNormal();
@@ -3961,7 +3970,7 @@ public:
 		   SwapNegativeStatus();
 	   }
 
-        AltDec CatchAllImaginaryMultiplicationAsCopies(AltDec Value)
+        AltDec CatchAllImaginaryMultiplicationAsCopiesV3(AltDec Value)
         { AltDec self = *this; CatchAllImaginaryMultiplication(Value); return self; }
 	#endif
 
@@ -4038,14 +4047,14 @@ public:
             BasicAddOp(Value);
         }
 		
-        void CatchAllAddition(AltDec& Value, RepType& SameRep)
+        void CatchAllAdditionV2(AltDec& Value, RepType& SameRep)
         {
             ConvertToNormType(SameRep);
             Value.ConvertToNormType(SameRep);
             BasicAddOp(Value);
         }
 		
-		void CatchAllAddition(AltDec& Value)
+		void CatchAllAdditionV3(AltDec& Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();
@@ -4063,7 +4072,7 @@ public:
         AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
         { AltDec self = *this; CatchAllImaginaryAddition(Value, LRep, RRep); return self; }
 		
-		void CatchAllImaginaryAddition(AltDec& Value, RepType& SameRep)
+		void CatchAllImaginaryAdditionV2(AltDec& Value, RepType& SameRep)
 		{
 			ConvertAsNormalIRep(SameRep);
 			Value.ConvertAsNormalIRep(SameRep);
@@ -4073,7 +4082,7 @@ public:
         AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllImaginaryAddition(Value, SameRep); return self; }
 	
-	   void CatchAllImaginaryAddition(AltDec& Value)
+	   void CatchAllImaginaryAdditionV3(AltDec& Value)
 	   {
 		   ConvertAsNormalIRep();
 		   Value.ConvertAsNormalIRep();
@@ -4147,14 +4156,14 @@ public:
 			BasicSubOp(Value);
 		}
 		
-		void CatchAllSubtraction(AltDec& Value, RepType& SameRep)
+		void CatchAllSubtractionV2(AltDec& Value, RepType& SameRep)
 		{
 			ConvertToNormType(SameRep);
 			Value.ConvertToNormType(SameRep);
 			BasicSubOp(Value);
 		}
 		
-		void CatchAllSubtraction(AltDec& Value)
+		void CatchAllSubtractionV3(AltDec& Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();

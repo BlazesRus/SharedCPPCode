@@ -104,7 +104,7 @@ AltDec& AltDec::MultOp(AltDec& Value)
 				}
 				break;
 			case RepType::ApproachingTop://Just going to convert into normal numbers for now
-				CatchAllMultiplication(Value, LRep);
+				CatchAllMultiplicationV2(Value, LRep);
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)

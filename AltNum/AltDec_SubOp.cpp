@@ -181,16 +181,21 @@ AltDec& AltDec::SubOp(AltDec& Value)
 
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingBottomDiv:
-                CatchAllSubtraction(Value, RepType::ApproachingBottomDiv);
+                CatchAllSubtractionV2(Value, RepType::ApproachingBottomDiv);
                 break;
 			case RepType::ApproachingTopDiv:
-                CatchAllSubtraction(Value, RepType::ApproachingTopDiv);    
+                CatchAllSubtractionV2(Value, RepType::ApproachingTopDiv);
                 break;
 		#endif
 	#endif
 
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 			case RepType::NumByDiv:
+				if (ExtraRep == Value.ExtraRep)
+					BasicSubOp(Value);
+				else
+					CatchAllSubtractionV2(Value, RepType::NumByDiv);
+				break;
 		#if defined(AltNum_EnablePiFractional)
 			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 		#endif
@@ -200,14 +205,14 @@ AltDec& AltDec::SubOp(AltDec& Value)
 		#if defined(AltNum_EnableIFractional)
 			case RepType::IFractional://  IntValue/DecimalHalf*e Representation
 		#endif
-		#if defined(AltNum_EnablePiFractional)||defined(AltNum_EnableEFractional)||defined(AltNum_EnableIFractional)
+		#if defined(AltNum_UsingAltFractional)
 				if (DecimalHalf == Value.DecimalHalf)
 				{
 					*this -= Value.IntValue;
 				}
 				else
 				{
-					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
+					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
 					BasicSubOp(Value);
 				}
 				break;
@@ -286,6 +291,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 		#elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
+		#if defined(AltNum_EnableAlternativeMixedFrac)
 				if(ExtraRep==Value.ExtraRep)
                 {
                     IntValue -= Value.IntValue;
@@ -319,6 +325,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
                     ExtraRep *= -Value.ExtraRep;
                 }
 				break;
+		#endif
 	#endif
 
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity

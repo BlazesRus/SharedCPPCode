@@ -103,7 +103,7 @@ AltDec& AltDec::DivOp(AltDec& Value)
 				{ IntValue = -1; DecimalHalf = 0; }
 				else
 				{
-					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 			case RepType::ApproachingTop:
@@ -115,7 +115,7 @@ AltDec& AltDec::DivOp(AltDec& Value)
 				{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 				else
 				{
-					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 
@@ -131,12 +131,12 @@ AltDec& AltDec::DivOp(AltDec& Value)
 					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 					else
 					{
-						CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+						CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 					}
 				}
 				else
 				{
-					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
 			case RepType::ApproachingTopDiv:
@@ -150,12 +150,12 @@ AltDec& AltDec::DivOp(AltDec& Value)
 					{ IntValue = -1; DecimalHalf = 0; ExtraRep = 0; }
 					else
 					{
-						CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+						CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 					}
 				}
 				else
 				{
-					CatchAllDivision(Value, LRep);//Just convert into normal numbers for now
+					CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
         #endif

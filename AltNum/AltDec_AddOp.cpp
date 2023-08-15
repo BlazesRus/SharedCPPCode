@@ -192,10 +192,10 @@ AltDec& AltDec::AddOp(AltDec& Value)
 
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingBottomDiv:
-                CatchAllAddition(Value, RepType::ApproachingBottomDiv);
+                CatchAllAdditionV2(Value, RepType::ApproachingBottomDiv);
                 break;
 			case RepType::ApproachingTopDiv:
-                CatchAllAddition(Value, RepType::ApproachingTopDiv);
+                CatchAllAdditionV2(Value, RepType::ApproachingTopDiv);
                 break;
 		#endif
 	#endif
@@ -237,7 +237,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 					BasicAddOp(Value);
 				else
 				{
-					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
+					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
 					BasicAddOp(Value);
 				}
 				break;
@@ -298,6 +298,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
         #elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
 		#endif
+		#if defined(AltNum_EnableAlternativeMixedFrac)
 				if(ExtraRep==Value.ExtraRep)
                 {
                     IntValue += Value.IntValue;
