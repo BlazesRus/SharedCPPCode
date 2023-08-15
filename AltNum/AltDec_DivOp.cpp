@@ -163,26 +163,28 @@ AltDec& AltDec::DivOp(AltDec& Value)
 
     #if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
 			case RepType::NumByDiv://(IntValue.DecimalHalf)/ExtraRep
-			//((IntValue.DecimalHalf)/ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
-			//((IntValue.DecimalHalf)* Value.ExtraRep/ExtraRep) /(Value.(IntValue.DecimalHalf))
+			{
+				//((IntValue.DecimalHalf)/ExtraRep) / (Value.(IntValue.DecimalHalf)/Value.ExtraRep) = 
+				//((IntValue.DecimalHalf)* Value.ExtraRep/ExtraRep) /(Value.(IntValue.DecimalHalf))
 				signed int DivRes = Value.ExtraRep / ExtraRep;
 				signed int RemRes = Value.ExtraRep - ExtraRep / Value.ExtraRep;
-				if(RemRes==0)
+				if (RemRes == 0)
 				{
-                    if(Value.DecimalHalf==0)
-                        ExtraRep = DivRes * Value.IntValue;
-                    else
-                    {
-                        ExtraRep = DivRes;
-                        PartialDivOp(Value);
-                    }
+					if (Value.DecimalHalf == 0)
+						ExtraRep = DivRes * Value.IntValue;
+					else
+					{
+						ExtraRep = DivRes;
+						PartialDivOp(Value);
+					}
 				}
 				else
 				{
-                    BasicMultOp(Value.ExtraRep);
-                    PartialDivOp(Value);
+					BasicMultOp(Value.ExtraRep);
+					PartialDivOp(Value);
 				}
-				break;
+			}
+			break;
 			//(Self.IntValue/DecimalHalf)/(Value.IntValue/Value.DecimalHalf) =
 			//(IntValue*Value.DecimalHalf)/(DecimalHalf*Value.IntValue)
         #if defined(AltNum_EnablePiFractional)
@@ -194,25 +196,27 @@ AltDec& AltDec::DivOp(AltDec& Value)
         #if defined(AltNum_EnableIFractional)
 			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 		#endif
-		#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableENum)||defined(AltNum_EnableENum)
-				int NumRes = IntValue*Value.DecimalHalf;
-                int DenomRes = DecimalHalf*Value.IntValue;
+		#if defined(AltNum_EnablePiFractional)||defined(AltNum_EnableEFractional)||defined(AltNum_EnableIFractional)
+			{
+				int NumRes = Value.DecimalHalf * IntValue;
+				int DenomRes = DecimalHalf * Value.IntValue;
 				signed int DivRes = NumRes / DenomRes;
 				signed int RemRes = NumRes - DenomRes * NumRes;
-                DecimalHalf = 0;
-                if(RemRes==0)
-                {
-                    IntValue = DivRes;
-                    ExtraRep = 0;
-                }
-                else
-                {
-                    IntValue = NumRes;
-                    ExtraRep = DenomRes;
-                }
-				break;
+				DecimalHalf = 0;
+				if (RemRes == 0)
+				{
+					IntValue = DivRes;
+					ExtraRep = 0;
+				}
+				else
+				{
+					IntValue = NumRes;
+					ExtraRep = DenomRes;
+				}
+			}
+			break;
         #endif
-		#if defined(AltNum_EnableDecimaledPiFractionals)
+		#if defined(AltNum_EnableDecimaledAlternativeFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 			#elif defined(AltNum_EnableDecimaledEFractionals)
@@ -220,12 +224,14 @@ AltDec& AltDec::DivOp(AltDec& Value)
 			#elif defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 			#endif
+			{
 				int LeftDiv = -ExtraRep; int RightDiv = -Value.ExtraRep;
-				AltNum NumRes = SetValue(IntValue, DecimalHalf);
+				AltDec NumRes = AltDec(IntValue, DecimalHalf);
 				signed int DivRes = RightDiv / LeftDiv;
 				signed int RemRes = RightDiv - LeftDiv / RightDiv;
-				NumRes /= SetValue(Value.IntValue, Value.DecimalHalf);
-				if(RemRes==0)
+				//NumRes /= AltDec(Value.IntValue, Value.DecimalHalf);
+				NumRes = UnsignedBasicDiv(NumRes, AltDec(Value.IntValue, Value.DecimalHalf));
+				if (RemRes == 0)
 				{
 					IntValue = NumRes.IntValue;
 					DecimalHalf = NumRes.DecimalHalf;
@@ -238,62 +244,67 @@ AltDec& AltDec::DivOp(AltDec& Value)
 					DecimalHalf = NumRes.DecimalHalf;
 					PartialDivOp(Value);
 				}
-				break;
+			}
+			break;
 		#endif
     #endif
 	
     //Turn MixedFrac into fractional and then apply			
 	#if defined(AltNum_EnableMixedFractional)
 			case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-                //=LeftSideNum*Value.ExtraRep / RightSideNum;
+			{
+				//=LeftSideNum*Value.ExtraRep / RightSideNum;
 				AltDec LeftSideNum;
-				if(IntValue==NegativeRep)
+				if (IntValue == NegativeRep)
 					LeftSideNum = AltDec(DecimalHalf);
-				else if(IntValue<0)
-					LeftSideNum = AltDec(IntValue*ExtraRep + DecimalHalf);
-				else if(IntValue==0)
+				else if (IntValue < 0)
+					LeftSideNum = AltDec(IntValue * ExtraRep + DecimalHalf);
+				else if (IntValue == 0)
 					LeftSideNum = AltDec(-DecimalHalf);
 				else
-					LeftSideNum = AltDec(IntValue*ExtraRep - DecimalHalf);
-                LeftSideNum.PartialMultOp(Value.ExtraRep);
-                if(LeftSideNum.IsZero())
-                    SetAsZero();
-                else
-                {
-                    IntValue = LeftSideNum.IntValue;
-                    DecimalHalf = LeftSideNum.DecimalHalf;
-                    ExtraRep *= Value.IntValue==0?-Value.DecimalHalf:Value.IntValue*Value.ExtraRep - Value.DecimalHalf;
-                }
-                break;//Result as NumByDiv
+					LeftSideNum = AltDec(IntValue * ExtraRep - DecimalHalf);
+				LeftSideNum.PartialMultOp(Value.ExtraRep);
+				if (LeftSideNum.IsZero())
+					SetAsZero();
+				else
+				{
+					IntValue = LeftSideNum.IntValue;
+					DecimalHalf = LeftSideNum.DecimalHalf;
+					ExtraRep *= Value.IntValue == 0 ? -Value.DecimalHalf : Value.IntValue * Value.ExtraRep - Value.DecimalHalf;
+				}
+			}
+            break;//Result as NumByDiv
 		#if defined(AltNum_EnableMixedPiFractional)
 			case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 		#elif defined(AltNum_EnableMixedEFractional)
 			case RepType::MixedE:
-        #if defined(AltNum_EnableMixedIFractional)
+        #elif defined(AltNum_EnableMixedIFractional)
 			case RepType::MixedI:
         #endif
 		#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
-                //=LeftSideNum*-Value.ExtraRep / RightSideNum;
+			{
+				//=LeftSideNum*-Value.ExtraRep / RightSideNum;
 				int LeftSideNum;
-				if(IntValue==NegativeRep)
+				if (IntValue == NegativeRep)
 					LeftSideNum = DecimalHalf;
-				else if(IntValue<0)
-					LeftSideNum = IntValue*-ExtraRep + DecimalHalf;
-				else if(IntValue==0)
+				else if (IntValue < 0)
+					LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
+				else if (IntValue == 0)
 					LeftSideNum = -DecimalHalf;
 				else
-					LeftSideNum = IntValue*-ExtraRep + -DecimalHalf;
-                LeftSideNum.PartialMultOp(-Value.ExtraRep);
-                if(LeftSideNum.IsZero())
-                    SetAsZero();
-                else//Result as NumByDiv
-                {   //Need to have positive ExtraRep value
-				    //int RightSideNum = Value.IntValue==0?-DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
-                    IntValue = LeftSideNum.IntValue;
-                    DecimalHalf = LeftSideNum.DecimalHalf;
-                    ExtraRep *= Value.IntValue==0?DecimalHalf:(Value.IntValue*Value.ExtraRep)+Value.DecimalHalf;
-                } 
-                break;
+					LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
+				LeftSideNum.PartialMultOp(-Value.ExtraRep);
+				if (LeftSideNum.IsZero())
+					SetAsZero();
+				else//Result as NumByDiv
+				{   //Need to have positive ExtraRep value
+					//int RightSideNum = Value.IntValue==0?-DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf;
+					IntValue = LeftSideNum.IntValue;
+					DecimalHalf = LeftSideNum.DecimalHalf;
+					ExtraRep *= Value.IntValue == 0 ? DecimalHalf : (Value.IntValue * Value.ExtraRep) + Value.DecimalHalf;
+				}
+			}
+            break;
 		#endif
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity

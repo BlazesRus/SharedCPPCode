@@ -3552,6 +3552,38 @@ protected:
 			else
 				return false;
         }
+
+        bool UnsignedPartialDivOp(AltDec& Value)
+        {
+            bool ResIsPositive = true;
+            signed _int64 SelfRes;
+            signed _int64 ValueRes;
+            if (IntValue < 0)
+            {
+                if (IntValue == NegativeRep)
+                    SelfRes = DecimalHalf;
+                else
+                    SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                ResIsPositive = false;
+                ValueRes = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+            }
+            else
+            {
+
+                SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+                ValueRes = DecimalOverflowX * Value.IntValue + Value.DecimalHalf;
+            }
+
+            signed _int64 IntHalfRes = SelfRes / ValueRes;
+            signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+            IntValue = IntHalfRes == 0 && ResIsPositive == false ? NegativeRep : IntHalfRes;
+            DecimalHalf = DecimalRes;
+            if (IntHalfRes == 0 && DecimalRes == 0)
+                return true;
+            else
+                return false;
+        }
+
         bool PartialDiv(AltDec Value)
         {
             return PartialDivOp(Value);
@@ -3562,6 +3594,27 @@ public:
         {
 			if (PartialDivOp(Value))//Prevent Dividing into nothing
 				DecimalHalf = 1;
+        }
+
+        AltDec BasicDivOp(AltDec& self, AltDec Value)
+        {
+            if (self.PartialDivOp(Value))//Prevent Dividing into nothing
+                self.DecimalHalf = 1;
+            return self;
+        }
+
+        AltDec UnsignedBasicDiv(AltDec self, AltDec Value)
+        {
+            if (self.UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+                self.DecimalHalf = 1;
+            return self;
+        }
+
+        AltDec UnsignedBasicDivOp(AltDec& self, AltDec Value)
+        {
+            if (self.UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+                self.DecimalHalf = 1;
+            return self;
         }
 
         AltDec BasicDiv(AltDec Value)
