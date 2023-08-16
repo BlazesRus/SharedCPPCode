@@ -2181,6 +2181,46 @@ public:
             IntHalfSubtractionOp(RValue);
         }
 
+		bool IntHalfEqualToOp(AltDec& RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualToOp(AltDec& RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualTo(AltDec RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualTo(AAltDec RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualToIntOp(int& RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualToIntOp(int& RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualToInt(int RValue)
+		{
+            return IntValue == RValue;
+        }
+
+		bool IntHalfNotEqualToInt(int RValue)
+		{
+            return IntValue != RValue;
+        }
+
         /// <summary>
         /// Less than Operation for just IntValue section
         /// </summary>
@@ -2527,8 +2567,11 @@ public:
                 }
 #endif
             }
-
+    #if !defined(AltDec_UseMirroredInt)
             return (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
+    #else
+            return (LValue.IntValue.Value == RValue.IntValue.Value && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
+    #endif
         }
 
         /// <summary>
@@ -2763,64 +2806,80 @@ public:
                     return false;//99 < -inf
             }
 #endif
-            if (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf) { return false; }
-            else
+//            if (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf) { return false; }
+//            else
+//            {
+//                bool SelfIsNegative = LValue.IntValue < 0;
+//                bool RValueIsNegative = RValue.IntValue < 0;
+//                if (RValueIsNegative && SelfIsNegative == false) { return false; }// 5 > -5
+//                else if (RValueIsNegative == false && SelfIsNegative) { return true; }// -5 <5
+//                else
+//                {//Both are either positive or negative
+//                    if (RValue.DecimalHalf == 0)
+//                    {
+//                        if (LValue.DecimalHalf == 0)
+//                            return LValue.IntValue < RValue.IntValue;
+//                        else
+//                        {
+//                            if (LValue.IntValue == NegativeRep)
+//                            {//-0.5<0
+//                                if (RValue.IntValue >= 0)
+//                                    return true;
+//                            }
+//                            else if (LValue.IntValue < RValue.IntValue) { return true; }//5.5 < 6
+//                            else if (LValue.IntValue == RValue.IntValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+//                        }
+//                    }
+//                    else if (LValue.DecimalHalf == 0)
+//                    {
+//                        if (RValue.IntValue == NegativeRep)
+//                        {
+//                            if (LValue.IntValue <= -1)
+//                                return true;
+//                        }
+//                        else if (LValue.IntValue < RValue.IntValue)
+//                            return true;// 5 < 6.5
+//                        else if (RValue.IntValue == LValue.IntValue)
+//                            return RValue.IntValue < 0 ? false : true;//5 < 5.5 vs -5 > -5.5
+//                    }
+//                    //Assuming both are non-whole numbers if reach here
+//                    if (LValue.IntValue == NegativeRep)
+//                        LValue.IntValue = 0;
+//                    if (RValue.IntValue == NegativeRep)
+//                        RValue.IntValue = 0;
+//                    if (SelfIsNegative)
+//                    {//Larger number = farther down into negative
+//                        if (LValue.IntValue > RValue.IntValue)
+//                            return true;
+//                        else if (LValue.IntValue == RValue.IntValue)
+//                            return LValue.DecimalHalf > RValue.DecimalHalf;
+//                    }
+//                    else
+//                    {
+//                        if (LValue.IntValue < RValue.IntValue)
+//                            return true;
+//                        else if (LValue.IntValue == RValue.IntValue)
+//                            return LValue.DecimalHalf < RValue.DecimalHalf;
+//                    }
+//                }
+//            }
+//            return false;
+            if (LValue.DecimalHalf == 0)
             {
-                bool SelfIsNegative = LValue.IntValue < 0;
-                bool RValueIsNegative = RValue.IntValue < 0;
-                if (RValueIsNegative && SelfIsNegative == false) { return false; }// 5 > -5
-                else if (RValueIsNegative == false && SelfIsNegative) { return true; }// -5 <5
+                if (RValue.DecimalHalf == 0)
+                    return LValue.IntValue < RValue.IntValue;
                 else
-                {//Both are either positive or negative
-                    if (RValue.DecimalHalf == 0)
-                    {
-                        if (LValue.DecimalHalf == 0)
-                            return LValue.IntValue < RValue.IntValue;
-                        else
-                        {
-                            if (LValue.IntValue == NegativeRep)
-                            {//-0.5<0
-                                if (RValue.IntValue >= 0)
-                                    return true;
-                            }
-                            else if (LValue.IntValue < RValue.IntValue) { return true; }//5.5 < 6
-                            else if (LValue.IntValue == RValue.IntValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
-                        }
-                    }
-                    else if (LValue.DecimalHalf == 0)
-                    {
-                        if (RValue.IntValue == NegativeRep)
-                        {
-                            if (LValue.IntValue <= -1)
-                                return true;
-                        }
-                        else if (LValue.IntValue < RValue.IntValue)
-                            return true;// 5 < 6.5
-                        else if (RValue.IntValue == LValue.IntValue)
-                            return RValue.IntValue < 0 ? false : true;//5 < 5.5 vs -5 > -5.5
-                    }
-                    //Assuming both are non-whole numbers if reach here
-                    if (LValue.IntValue == NegativeRep)
-                        LValue.IntValue = 0;
-                    if (RValue.IntValue == NegativeRep)
-                        RValue.IntValue = 0;
-                    if (SelfIsNegative)
-                    {//Larger number = farther down into negative
-                        if (LValue.IntValue > RValue.IntValue)
-                            return true;
-                        else if (LValue.IntValue == RValue.IntValue)
-                            return LValue.DecimalHalf > RValue.DecimalHalf;
-                    }
+                {
+                    if (IntHalfLessThanOp(LValue, RValue))
+                        return LValue.DecimalHalf < RValue.DecimalHalf;
                     else
-                    {
-                        if (LValue.IntValue < RValue.IntValue)
-                            return true;
-                        else if (LValue.IntValue == RValue.IntValue)
-                            return LValue.DecimalHalf < RValue.DecimalHalf;
-                    }
+                        return false;
                 }
             }
-            return false;
+            else if (IntHalfLessThanOp(LValue, RValue))
+                return LValue.DecimalHalf < RValue.DecimalHalf;
+            else
+                return false;
         }
 
         /// <summary>
