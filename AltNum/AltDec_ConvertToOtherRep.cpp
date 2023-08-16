@@ -294,7 +294,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToNum()
 	int powerExponent = -ExtraRep;
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PowOp(PiSide, powerExponent);//PiSide.PowOp(powerExponent);
+	PiSide.Int32PowOp(powerExponent);
 	BasicMultOp(PiSide);
 }
 
@@ -302,7 +302,7 @@ inline AltDec BlazesRusCode::AltDec::PiPowerNum(int powerExponent)
 {
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PowOp(PiSide, powerExponent);
+	PiSide.Int32PowOp(powerExponent);
 	return PiSide;
 }
 
@@ -318,13 +318,13 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 		{
 			AltDec PiSide = PiNum;
 			powerExponent -= 1;
-			PowOp(PiSide, powerExponent);
+			PiSide.Int32PowOp(powerExponent);
 			BasicMultOp(PiSide);
 		}
 	}
 }
 
-inline void BlazesRusCode::AltDec::ConvertToPiRep()
+inline void BlazesRusCode::AltDec::ConvertToPiRep(RepType& repType)
 {
 	switch (repType)
 	{
@@ -340,7 +340,7 @@ inline void BlazesRusCode::AltDec::ConvertToPiRep()
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 		{
-			BasicDivOp(-ExtraRep);
+			BasicUnsignedIntDiv(-ExtraRep);
 		}
 		#else
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -615,7 +615,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 }
 	#endif
 
-inline void BlazesRusCode::AltDec::ConvertToPiRep()
+inline void BlazesRusCode::AltDec::ConvertToERep(RepType& repType)
 {
 	switch (repType)
 	{
@@ -643,7 +643,7 @@ inline void BlazesRusCode::AltDec::ConvertToPiRep()
 			return;//Add Conversion Code from MixedPi later
 	#endif
 	}
-	ExtraRep = PiRep;
+	ExtraRep = ERep;
 }
 #endif
 

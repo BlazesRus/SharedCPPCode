@@ -6749,30 +6749,30 @@ public:
 
         AltDec Int32PowOp(int& expValue) { return IntPowOp(expValue); }
         AltDec Int64PowOp(signed long long& expValue) { return IntPowOp(expValue); }
-        AltDec Int32Pow(int expValue) { return IntPowOp(expValue); }
-        AltDec Int64Pow(signed long long expValue) { return IntPowOp(expValue); }
+        AltDec Int32Pow(int expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
+        AltDec Int64Pow(signed long long expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
         AltDec UnsignedInt32PowOp(unsigned int& expValue) { return UnsignedIntPowOp(expValue); }
         AltDec UnsignedInt64PowOp(unsigned long long& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt32Pow(unsigned int expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64Pow(unsigned long long expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt32Pow(unsigned int expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64Pow(unsigned long long expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
 
         AltDec BasicInt32PowConstOp(const int& expValue) { return BasicIntPowOp(expValue); }
         AltDec BasicInt64PowConstOp(const signed long long& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt32PowConst(const int expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt64PowConst(const signed long long expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt32PowConst(const int expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
+        AltDec BasicInt64PowConst(const signed long long expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
         AltDec BasicUnsignedInt32PowConstOp(const unsigned int& expValue) { return BasicUnsignedIntPowOp(expValue); }
         AltDec BasicUnsignedInt64PowConstOp(const unsigned long long& expValue) { return BasicUnsignedIntPowOp(expValue); }
-        AltDec BasicUnsignedInt32PowConst(const unsigned int expValue) { return BasicUnsignedIntPowOp(expValue); }
-        AltDec BasicUnsignedInt64PowConst(const unsigned long long expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt32PowConst(const unsigned int expValue) { AltDec self = *this; return self.BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt64PowConst(const unsigned long long expValue) { AltDec self = *this; return self.BasicUnsignedIntPowOp(expValue); }
 
         AltDec Int32PowConstOp(const int& expValue) { return IntPowOp(expValue); }
         AltDec Int64PowConstOp(const long long& expValue) { return IntPowOp(expValue); }
-        AltDec Int32PowConst(const int expValue) { return IntPowOp(expValue); }
-        AltDec Int64PowConst(const long long expValue) { return IntPowOp(expValue); }
+        AltDec Int32PowConst(const int expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
+        AltDec Int64PowConst(const long long expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
         AltDec UnsignedInt32PowConstOp(const int& expValue) { return UnsignedIntPowOp(expValue); }
         AltDec UnsignedInt64PowConstOp(const long long& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt32PowConst(const int expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64PowConst(const long long expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt32PowConst(const int expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64PowConst(const long long expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
 
 
         /// <summary>
@@ -6829,6 +6829,8 @@ public:
 
         AltDec BasicPowOp(AltDec& expValue);
 
+        AltDec BasicPow(AltDec expValue) { AltDec self = *this; return self.BasicPowOp(expValue); }
+
         /// <summary>
         /// Applies Power of operation
         /// </summary>
@@ -6839,7 +6841,7 @@ public:
         /// Applies Power of operation
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        AltDec Pow(AltDec expValue) { return PowOp(expValue); }
+        AltDec Pow(AltDec expValue) { AltDec self = *this; return self.PowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation

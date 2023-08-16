@@ -573,11 +573,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
 			switch (RRep)
 			{
-        //#if defined(AltNum_EnableMixedPiFractional)&&AltNum_EnableDecimaledPiFractionals
-        //            break;//Give result as PiByDiv
-        //#elif defined(AltNum_EnableMixedEFractional)&&AltNum_EnableDecimaledEFractionals
-        //            break;//Give result as EByDiv
-        //#else
                 case RepType::MixedFrac:
         			AltDec LeftSideNum;
         			if(self.IntValue==NegativeRep)
@@ -616,7 +611,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 					break;
             }
             break;
-        //#endif
     #endif
     #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
