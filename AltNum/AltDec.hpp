@@ -428,7 +428,7 @@ namespace BlazesRusCode
         }
 
         //Return IntValue part as Absolute value
-        signed int GetIntHalfAsAbs()
+        signed int IntHalfAsAbs()
         {
 #if defined(AltDec_UseMirroredInt)
             return IntValue.GetAbsValue();
@@ -442,7 +442,7 @@ namespace BlazesRusCode
 #endif
         }
 
-        std::string GetIntHalfAsString()
+        std::string IntHalfAsString()
         {
 #if defined(AltDec_UseMirroredInt)
             return (std::string) IntValue;
@@ -8051,7 +8051,7 @@ public:
 
 	std::string AltDec::BasicToStringOp()
 	{
-        std::string Value = GetIntHalfAsString();
+        std::string Value = IntHalfAsString();
         if (DecimalHalf != 0)
         {
 			unsigned __int8 CurrentDigit;
@@ -8098,7 +8098,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToStringOp();
 			#else
-            return GetIntHalfAsString() + ".0..1";
+            return IntHalfAsString() + ".0..1";
 			#endif
             break;
         case RepType::ApproachingTop:
@@ -8106,7 +8106,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp();
 			#else
-            return GetIntHalfAsString() + ".9..9";
+            return IntHalfAsString() + ".9..9";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -8135,7 +8135,7 @@ public:
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            return GetIntHalfAsString() +"/"
+            return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
@@ -8151,7 +8151,7 @@ public:
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            return GetIntHalfAsString() +"/"
+            return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
         #endif
@@ -8168,7 +8168,7 @@ public:
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            return GetIntHalfAsString() +"/"
+            return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
@@ -8179,7 +8179,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"π";
 			#else
-            return GetIntHalfAsString() + ".9..9π";
+            return IntHalfAsString() + ".9..9π";
 			#endif
             break;
 	#endif
@@ -8189,7 +8189,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"e";
 			#else
-            return GetIntHalfAsString() + ".9..9e";
+            return IntHalfAsString() + ".9..9e";
 			#endif
             break;
 	#endif
@@ -8206,7 +8206,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToStringOp()+"i";
 			#else
-            return GetIntHalfAsString() + ".0..1i";
+            return IntHalfAsString() + ".0..1i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
@@ -8214,7 +8214,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"i";
 			#else
-            return GetIntHalfAsString() + ".9..9i";
+            return IntHalfAsString() + ".9..9i";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -8278,7 +8278,7 @@ public:
 
 	std::string AltDec::BasicToFullStringOp()
 	{
-        std::string Value = GetIntHalfAsString();
+        std::string Value = IntHalfAsString();
         if (DecimalHalf != 0)
         {
 			unsigned __int8 CurrentDigit;
@@ -8322,7 +8322,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToFullStringOp();
 			#else
-            return GetIntHalfAsString() + ".0..1";
+            return IntHalfAsString() + ".0..1";
 			#endif
             break;
         case RepType::ApproachingTop:
@@ -8330,7 +8330,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp();
 			#else
-            return GetIntHalfAsString() + ".9..9";
+            return IntHalfAsString() + ".9..9";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -8392,7 +8392,7 @@ public:
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            return GetIntHalfAsString() +"/"
+            return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
@@ -8403,7 +8403,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"π";
 			#else
-            return GetIntHalfAsString() + ".9..9π";
+            return IntHalfAsString() + ".9..9π";
 			#endif
             break;
 	#endif
@@ -8413,7 +8413,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"e";
 			#else
-            return GetIntHalfAsString() + ".9..9e";
+            return IntHalfAsString() + ".9..9e";
 			#endif
             break;
 	#endif
@@ -8430,7 +8430,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToFullStringOp()+"i";
 			#else
-            return GetIntHalfAsString() + ".0..1i";
+            return IntHalfAsString() + ".0..1i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
@@ -8438,7 +8438,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"i";
 			#else
-            return GetIntHalfAsString() + ".9..9i";
+            return IntHalfAsString() + ".9..9i";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -8453,22 +8453,22 @@ public:
     #endif
     #if defined(AltNum_EnableMixedFractional)
         case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-            return GetIntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
         case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-            return GetIntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
         case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-            return GetIntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
         case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-            return GetIntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
