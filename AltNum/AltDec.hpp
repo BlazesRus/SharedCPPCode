@@ -2018,19 +2018,19 @@ public:
 #endif
         }
 
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
         template<typename IntType>
-        void IntHalfAddition(IntType RValue)
+        void IntHalfAdditionOp(IntType& RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue -= RValue;
+            IntValue += RValue;
     #elif defined(BlazesMirroredInt_UsePseudoBitSet)
         #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
         #else
         #endif
     #endif
-#else
+#else//Can be used without modifying RValue
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2095,15 +2095,22 @@ public:
 #endif
         }
 
-        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
         template<typename IntType>
-        void IntHalfSubtraction(IntType RValue)
+        void IntHalfAddition(IntType RValue)
+        {
+            IntHalfAdditionOp(RValue);
+        }
+
+        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue); or IntHalfSubtractionOp(RValue);
+        template<typename IntType>
+        void IntHalfSubtractionOp(IntType& RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue -= RValue;
     #endif
-#else
+#else//Can be used without modifying RValue
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2165,6 +2172,13 @@ public:
                     IntValue += RValue;
             }
 #endif
+        }
+
+        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        template<typename IntType>
+        void IntHalfSubtraction(IntType RValue)
+        {
+            IntHalfSubtractionOp(RValue);
         }
 
         /// <summary>
@@ -3862,25 +3876,20 @@ protected:
                 IntValue = RValue.Value;
             else
             {
-                #if defined(BlazesMirroredInt_UsePseudoBitSet)
-                throw "Need to write code for operation";//Placeholder
-                #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-                IntValue += RValue;
-                #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                if (RValue < 0 && Value == NegativeRep)
-                    throw "MirroredInt value has underflowed";
-                #endif
-                #else
-                throw "Need to write code for operation";//Placeholder
-                #endif
+//                #if defined(BlazesMirroredInt_UsePseudoBitSet)
+//                throw "Need to write code for operation";//Placeholder
+//                #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//                IntValue += RValue;
+//                #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                if (RValue < 0 && Value == NegativeRep)
+//                    throw "MirroredInt value has underflowed";
+//                #endif
+//                #else
+//                throw "Need to write code for operation";//Placeholder
+//                #endif
+                IntHalfAdditionOp(RValue);
             }
             return;
-        }
-
-        template<typename IntType>
-        void MirroredIntAddition(IntType RValue)
-        {
-
         }
 
         /// <summary>
@@ -3896,7 +3905,7 @@ protected:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntValue += value;
+                IntHalfAdditionOp(value);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -3955,7 +3964,7 @@ protected:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntValue -= Value;
+                IntHalfSubtractionOp(Value);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -3973,7 +3982,7 @@ protected:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntValue -= Value;
+                IntHalfSubtractionOp(Value);
                 //If flips to other side of negative, invert the decimals
                 if (NegativeBeforeOperation ^ (IntValue < 0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -4520,7 +4529,7 @@ public:
         {
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntValue += Value.IntValue;
+            IntHalfAdditionOp(Value.IntValue);
             if (Value.DecimalHalf != 0)
             {
                 if (Value.IntValue < 0)
@@ -4628,7 +4637,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntValue -= Value.IntValue;
+            IntHalfSubtractionOp(Value.IntValue);
             //Now deal with the decimal section
             if(Value.DecimalHalf!=0)
             {
@@ -5109,9 +5118,9 @@ protected:
 					{
 						int increment = ExtraRep * divRes;
 						if(IntValue<0)
-							IntValue -= increment;
+							IntHalfSubtractionOp(increment);
 						else
-							IntValue += increment;
+							IntHalfAdditionOp(increment);
 						DecimalHalf = DecimalHalf + increment;
 					}
 					break;
@@ -5130,9 +5139,9 @@ protected:
 					{
 						int increment = ExtraRep * divRes;
 						if(IntValue<0)
-							IntValue -= increment;
+							IntHalfSubtractionOp(increment);
 						else
-							IntValue += increment;
+							IntHalfAdditionOp(increment);
 						DecimalHalf = DecimalHalf - increment;
 					}
 					break;
@@ -5256,7 +5265,7 @@ protected:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntValue += value;
+			IntHalfAdditionOp(value);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -5348,7 +5357,7 @@ protected:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntValue += value;
+			IntHalfAddition(value);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -7805,7 +7814,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TempInt02;
+                IntHalfAdditionOp(TempInt02);
             }
             PlaceNumber--;
         }

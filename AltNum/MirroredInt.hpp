@@ -134,6 +134,7 @@ namespace BlazesRusCode
 	#else
 	#endif      
         }
+
         //Return value as real number with Absolute value operation applied
         int GetAbsValue()
         {
@@ -602,13 +603,16 @@ namespace BlazesRusCode
             return *LValue;
         }
 
+    #if defined(BlazesMirroredInt_UseLegacyIntOperations)
         friend MirroredInt operator*=(MirroredInt& LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
         friend MirroredInt operator*=(MirroredInt& LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
         friend MirroredInt operator*(MirroredInt LValue, int RValue) { return RightSideIntMultOperation(LValue, RValue); }
         friend MirroredInt operator*(MirroredInt LValue, signed long long RValue) { return RightSideIntMultOperation(LValue, RValue); }
         friend int operator*(int LValue, MirroredInt RValue) { return LeftSideIntMultOperation(LValue, RValue); }
         friend signed long long operator*(signed long long LValue, MirroredInt RValue) { return LeftSideIntMultOperation(LValue, RValue); }
+    #else
 
+    #endif
 
         /// <summary>
         /// Division Operation
@@ -741,12 +745,16 @@ namespace BlazesRusCode
 			return *LValue;
         }
 		
+    #if defined(BlazesMirroredInt_UseLegacyIntOperations)
         friend MirroredInt& operator/=(MirroredInt& LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
 		friend MirroredInt& operator/=(MirroredInt& LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
         friend MirroredInt operator/(MirroredInt LValue, int RValue) { return RightSideIntDivOperation(LValue, RValue); }
 		friend MirroredInt operator/(MirroredInt LValue, signed long long RValue) { return RightSideIntDivOperation(LValue, RValue); }
         friend MirroredInt operator/(int LValue, MirroredInt RValue){ return LeftSideIntDivOperationAsSelf(LValue, RValue); }
 		friend MirroredInt operator/(signed long long LValue, MirroredInt RValue) { return LeftSideIntDivOperationAsSelf(LValue, RValue); }
+    #else
+
+    #endif
 
         /// <summary>
         /// %= Operation with Integer Value
@@ -877,13 +885,16 @@ namespace BlazesRusCode
             return *LValue;
         }
         
-		
+    #if defined(BlazesMirroredInt_UseLegacyIntOperations)
         friend MirroredInt& operator%=(MirroredInt& LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
 		friend MirroredInt& operator%=(MirroredInt& LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
         friend MirroredInt operator%(MirroredInt LValue, int RValue) { return RightSideIntModulusOperation(LValue, RValue); }
 		friend MirroredInt operator%(MirroredInt LValue, signed long long RValue) { return RightSideIntModulusOperation(LValue, RValue); }
         friend MirroredInt operator%(int LValue, MirroredInt RValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
 		friend MirroredInt operator%(signed long long LValue, MirroredInt RValue) { return LeftSideIntModulusOperationAsSelf(LValue, RValue); }
+    #else
+
+    #endif
 		
         /// <summary>
         /// Addition Operation
@@ -1292,12 +1303,16 @@ namespace BlazesRusCode
             return *this;
         }
 		
+    #if defined(BlazesMirroredInt_UseLegacyIntOperations)
 		friend MirroredInt& operator+=(MirroredInt& LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
 		friend MirroredInt& operator+=(MirroredInt& LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
         friend MirroredInt operator+(MirroredInt LValue, int RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
 		friend MirroredInt operator+(MirroredInt LValue, signed long long RValue) { return RightSideIntAdditionOperation(LValue, RValue); }
         friend int operator+(int LValue, MirroredInt RValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
 		friend signed long long operator+(signed long long LValue, MirroredInt RValue) { return LeftSideIntAdditionOperation(LValue, RValue); }
+    #else
+
+    #endif
 
         /// <summary>
         /// Subtraction Operation
