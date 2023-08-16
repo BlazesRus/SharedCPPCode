@@ -32,6 +32,9 @@ BlazesMirroredInt_UsePseudoBitSet:(32nd bit used for positive/negative status Bi
 
 BlazesMirroredInt_PreventNZeroUnderflowCheck
 MirroredInt_EnableBitwiseOverride
+
+BlazesMirroredInt_UseLegacyIntOperations
+BlazesMirroredInt_UseBitwiseForIntOp
 */
 
 //Auto toggles to default option if not set
@@ -93,7 +96,7 @@ namespace BlazesRusCode
 #if defined(BlazesMirroredInt_UsePseudoBitSet)
             if (Value != 0 && Value != 2147483648)
 #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            if (Value != 0 && Value != -2147483648)
+            if (Value != 0 && Value != -2147483648)//Can also check if any bit between index 0 to 31 are non-zero
 #else
             //If bits# 1 - 31(index 0 - 30) are zero, then value is zero or Negative Zero
 #endif
@@ -1624,13 +1627,29 @@ namespace BlazesRusCode
     #endif
 			return LValue;
         }
-		
+    #if defined(BlazesMirroredInt_UseLegacyIntOperations)
         friend MirroredInt& operator-=(MirroredInt& LValue, int RValue) { return RightSideIntSubOperation(LValue, RValue); }
 		friend MirroredInt& operator-=(MirroredInt& LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
         friend MirroredInt operator-(MirroredInt LValue, int RValue) { return RightSideIntSubOperation(LValue, RValue); }
 		friend MirroredInt operator-(MirroredInt LValue, signed long long RValue) { return RightSideIntSubOperation(LValue, RValue); }
         friend MirroredInt operator-(int LValue, MirroredInt RValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
 		friend MirroredInt operator-(signed long long LValue, MirroredInt RValue) { return LeftSideIntSubOperationAsSelf(LValue, RValue); }
+    #else
+        void SubtractByUnsignedOp(unsigned int RValue)
+        {
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+            RightSideIntSubOperation(RValue);
+        #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+        #endif
+        }
+        
+        void SubtractByOp(unsigned int RValue)
+        {
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+            RightSideIntSubOperation(RValue);
+        #endif
+        }
+    #endif
 #pragma endregion Main Operations
 
 #pragma region BitwiseOperations
@@ -2067,9 +2086,21 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator int()
 		{
+    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
 			if(IsZero())
 				return 0;
 			return Value;
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+			if(IsZero())
+				return 0;
+            else if(Value>NegativeRep)
+            {
+			    return -(Value - NegativeRep);
+            }
+            else
+			    return Value;
+    #else
+    #endif
 		}
 		
 		/// <summary>
@@ -2078,9 +2109,20 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator std::string()
 		{
+    #if defined(BlazesMirroredInt_UseLegacyValueBehavior) 
 			if(Value==NegativeRep)
 				return "-0";
 			return VariableConversionFunctions::IntToStringConversion(Value);
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(Value>=NegativeRep)
+            {
+                unsigned int tempValue = (Value - NegativeRep);
+			    return "-"+VariableConversionFunctions::UnsignedIntToStringConversion(Value);
+            }
+            else
+			    return VariableConversionFunctions::UnsignedIntToStringConversion(Value);
+    #else
+    #endif
 		}
 #pragma endregion ConversionToType
 

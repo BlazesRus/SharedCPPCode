@@ -1935,7 +1935,37 @@ public:
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value /= RValue;
+        #else
+            IntValue.DivideByOp(RValue);
+        #endif
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(RValue<0)
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                    IntValue.Value -= NegativeRepVal;
+                    RValue -= NegativeRepVal;
+                    IntValue.Value /= RValue; 
+                }
+                else
+                {
+
+                } 
+            }
+            else
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                }
+                else
+                {
+                    IntValue.Value /= RValue;
+                } 
+            }
+    #else
+            IntValue.DivideByOp(RValue);
     #endif
 #else
             IntValue /= RValue;
@@ -1947,7 +1977,41 @@ public:
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue.Value *= RValue;
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+            IntValue.Value /= RValue;
+        #else
+            IntValue.MultipleByOp(RValue);
+        #endif
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+            IntValue.MultipleByOp(RValue);
+        #else
+            if(RValue<0)
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                    IntValue.Value -= NegativeRepVal;
+                    RValue -= NegativeRepVal;
+                    IntValue.Value *= RValue;
+                }
+                else
+                {
+
+                } 
+            }
+            else
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                }
+                else
+                {
+                    IntValue.Value *= RValue;
+                } 
+            }
+        #endif
+    #else
+            IntValue.MultipleByOp(RValue);
     #endif
 #else
             IntValue *= RValue;
@@ -1961,6 +2025,10 @@ public:
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue -= RValue;
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+        #else
+        #endif
     #endif
 #else
             if (RValue==0)
