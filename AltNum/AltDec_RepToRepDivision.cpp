@@ -236,7 +236,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
         #endif
         #if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
-					self.BasicMultOp(-Value.ExtraRep);
+					self.BasicMult(-Value.ExtraRep);
 	        #if defined(AltNum_EnableDecimaledPiFractionals)
 					Value.ConvertToNormType(RepType::PiNum);
             #elif defined(AltNum_EnableDecimaledEFractionals)
@@ -1050,7 +1050,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			break;
 	#endif
 		default:
-			throw AltDec::RepTypeAsString(LRep)-" RepType division with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)+" RepType division with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 			break;
 	}
 }

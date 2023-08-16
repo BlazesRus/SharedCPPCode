@@ -722,7 +722,7 @@ namespace BlazesRusCode
             UnknownType
         };
 		
-		std::string RepTypeAsString(RepType& repType)
+		static std::string RepTypeAsString(RepType& repType)
 		{
 			switch(repType)
 			{
@@ -2579,7 +2579,8 @@ public:
 	
     #pragma region Other RepType Conversion
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        void ConvertToNormType(RepType& repType);
+        template<typename RepTypeV2>
+        void ConvertToNormType(RepTypeV2& repType);
 
 		//Switch based return of value as normal type representation
 		AltDec ConvertAsNormType(RepType& repType);
@@ -4792,7 +4793,7 @@ public:
         { AltDec self = *this; CatchAllImaginaryAddition(Value); return self; }
 	#endif
 
-        static bool RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Addition Operation
@@ -4901,7 +4902,7 @@ public:
         { AltDec self = *this; CatchAllImaginarySubtraction(Value); return self; }
 	#endif
 
-        static bool RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Subtraction Operation

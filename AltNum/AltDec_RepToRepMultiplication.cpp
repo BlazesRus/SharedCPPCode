@@ -712,7 +712,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			break;
 	#endif
 		default:
-			throw AltDec::RepTypeAsString(LRep)-" RepType multiplication with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)+" RepType multiplication with"AltDec::RepTypeAsString(RRep)+"not supported yet";
 			break;
 	}
 }

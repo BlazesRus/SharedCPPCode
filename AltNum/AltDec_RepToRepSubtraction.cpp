@@ -492,7 +492,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 			break;
 	#endif
 		default:
-			throw AltDec::RepTypeAsString(LRep)-" RepType subtraction with"-AltDec::RepTypeAsString(RRep)-"not supported yet";
+			throw AltDec::RepTypeAsString(LRep)+" RepType subtraction with"+AltDec::RepTypeAsString(RRep)+"not supported yet";
 			break;
 	}
 }

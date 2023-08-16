@@ -647,7 +647,8 @@ inline void BlazesRusCode::AltDec::ConvertToPiRep()
 }
 #endif
 
-inline void BlazesRusCode::AltDec::ConvertToNormType(RepType& repType)
+template<typename RepTypeV2>//Template to allow to use as both copy and reference
+inline void BlazesRusCode::AltDec::ConvertToNormType(RepTypeV2& repType)
 {
 	switch (repType)
 	{
