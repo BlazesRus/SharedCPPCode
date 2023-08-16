@@ -1935,7 +1935,37 @@ public:
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value /= RValue;
+        #else
+            IntValue.DivideByOp(RValue);
+        #endif
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+            if(RValue<0)
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                    IntValue.Value -= NegativeRepVal;
+                    RValue -= NegativeRepVal;
+                    IntValue.Value /= RValue; 
+                }
+                else
+                {
+
+                } 
+            }
+            else
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                }
+                else
+                {
+                    IntValue.Value /= RValue;
+                } 
+            }
+    #else
+            IntValue.DivideByOp(RValue);
     #endif
 #else
             IntValue /= RValue;
@@ -1947,22 +1977,60 @@ public:
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue.Value *= RValue;
+        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+            IntValue.Value /= RValue;
+        #else
+            IntValue.MultipleByOp(RValue);
+        #endif
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+            IntValue.MultipleByOp(RValue);
+        #else
+            if(RValue<0)
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                    IntValue.Value -= NegativeRepVal;
+                    RValue -= NegativeRepVal;
+                    IntValue.Value *= RValue;
+                }
+                else
+                {
+
+                } 
+            }
+            else
+            {
+                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+                {
+                }
+                else
+                {
+                    IntValue.Value *= RValue;
+                } 
+            }
+        #endif
+    #else
+            IntValue.MultipleByOp(RValue);
     #endif
 #else
             IntValue *= RValue;
 #endif
         }
 
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
         template<typename IntType>
-        void IntHalfAddition(IntType RValue)
+        void IntHalfAdditionOp(IntType& RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue -= RValue;
+            IntValue += RValue;
+    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+        #else
+        #endif
     #endif
-#else
+#else//Can be used without modifying RValue
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2027,15 +2095,22 @@ public:
 #endif
         }
 
-        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
         template<typename IntType>
-        void IntHalfSubtraction(IntType RValue)
+        void IntHalfAddition(IntType RValue)
+        {
+            IntHalfAdditionOp(RValue);
+        }
+
+        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue); or IntHalfSubtractionOp(RValue);
+        template<typename IntType>
+        void IntHalfSubtractionOp(IntType& RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue -= RValue;
     #endif
-#else
+#else//Can be used without modifying RValue
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2097,6 +2172,13 @@ public:
                     IntValue += RValue;
             }
 #endif
+        }
+
+        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        template<typename IntType>
+        void IntHalfSubtraction(IntType RValue)
+        {
+            IntHalfSubtractionOp(RValue);
         }
 
         /// <summary>
