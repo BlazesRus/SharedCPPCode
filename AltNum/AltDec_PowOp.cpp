@@ -1,4 +1,5 @@
 #include "AltDec.hpp"
+using AltDec = BlazesRusCode::AltDec;
 
 /// <summary>
 /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
@@ -6,41 +7,41 @@
 /// <param name="value">The target value.</param>
 /// <param name="expNum">The numerator of the exponent value.</param>
 /// <param name="expDenom">The denominator of the exponent value.</param>
-inline AltDec BlazesRusCode::AltDec::FractionalPow(AltDec value, int expNum, int expDenom)
+inline AltDec BlazesRusCode::AltDec::FractionalPow(int expNum, int expDenom)
 {
-    AltDec CalcVal = AltDec::NthRoot(AltDec::Pow(value, expNum), expDenom);
+    AltDec CalcVal = AltDec::NthRoot(Int32PowOp(expNum), expDenom);
     return CalcVal;
 }
 
-inline AltDec BlazesRusCode::AltDec::FractionalPow(AltDec& value, boost::rational<int>& Frac)
+inline AltDec BlazesRusCode::AltDec::FractionalPow(boost::rational<int>& Frac)
 {
-	AltDec CalcVal = AltDec::NthRoot(AltDec::Pow(value, Frac.numerator()), Frac.denominator());
+	AltDec CalcVal = AltDec::NthRoot(Int32Pow(Frac.numerator()), Frac.denominator());
 	return CalcVal;
 }
 
-inline void BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
+inline AltDec BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
 {
 	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 	case 0:
-		return FractionalPow(&this, Frac);
+		return FractionalPow(Frac);
 		break;
 	case AltDec::NegativeRep:
-		return 1 / FractionalPow(&this, Frac);
+		return One / FractionalPow(Frac);
 		break;
 	default:
 	{
 		if (expValue.IntValue < 0)//Negative Exponent 
 		{
-			AltDec CalcVal = 1 / Pow(expValue.IntValue * -1);
-			CalcVal /= FractionalPow(&this, Frac);
+			AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
+			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		}
 		else
 		{
-			AltDec CalcVal = Pow(expValue.IntValue);
-			CalcVal *= FractionalPow(&this, Frac);
+			AltDec CalcVal = Int32PowOp(expValue.IntValue);
+			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
 		break;
@@ -51,7 +52,7 @@ inline void BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
 inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 {
 	if (expValue.DecimalHalf == 0)
-		return Pow(expValue.IntValue);
+		return Int32PowOp(expValue.IntValue);
 	else if (DecimalHalf == InfinityRep)
 	{
 		if (expValue == Zero)
@@ -60,12 +61,12 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 #else
 			throw "Infinity to power of Zero returns Undefined value";
 #endif
-		else if (expValue.IntValue.Value < 0)
-			SetAsZero();
-		else if (IntValue.Value == -1 && expValue.IntValue.Value % 2 == 0)
-			IntValue.Value = 1;
+		else if (expValue.IntValue < 0)
+			return Zero;
+		else if (IntValue == -1 && expValue.GetIntHalf() % 2 == 0)
+			IntValue = 1;
 		else
-			return;//Returns infinity
+			return *this;//Returns infinity
 		return;
 	}
 #if defined(AltNum_EnableNaN)
@@ -75,32 +76,32 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 	{
 #if defined(AltNum_EnableFractionals)
 	case RepType::NumByDiv:
-		return AltDec::NthRoot(AltDec::Pow(value, AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
 		break;
 #endif
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledPiFractionals)
 	case RepType::PiNumByDiv:
 		ConvertPiByDivToNumByDiv();
-		return AltDec::NthRoot(AltDec::Pow(value, AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
 		break;
 #elif defined(AltNum_EnablePiFractional)
 	case RepType::PiFractional:
 		AltDec NumExp = AltDec(expValue.IntValue, expValue.DecimalHalf);
 		NumExp *= PiNum;
-		return AltDec::NthRoot(AltDec::Pow(value, NumExp), -expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(NumExp), -expValue.ExtraRep);
 		break;
 #endif
 #if defined(AltNum_EnableDecimaledEFractionals)
 	case RepType::ENumByDiv:
 		ConvertEByDivToNumByDiv();
-		return AltDec::NthRoot(AltDec::Pow(value, AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
 		break;
 #elif defined(AltNum_EnableEFractional)
 	case RepType::EFractional:
 		AltDec NumExp = AltDec(expValue.IntValue, expValue.DecimalHalf);
 		NumExp *= ENum;
-		return AltDec::NthRoot(AltDec::Pow(value, NumExp), -expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(NumExp), -expValue.ExtraRep);
 		break;
 #endif
 #endif
@@ -111,18 +112,18 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 		//2^NegativeInfinity = ApproachingZero
 		//-2^NegativeInfinity = -Approaching Zero
 	case RepType::PositiveInfinity:
-		if (value < 0)
-			value.SetAsNegativeInfinity();
+		if (IsNegative())
+			return NegativeInfinity;
 		else
-			value.SetAsInfinity();//Techically within range of Positive and NegativeInfinity
+			return Infinity;//Techically within range of Positive and NegativeInfinity
 		return;
 		break;
 	case RepType::NegativeInfinity:
 #if defined(AltNum_EnableApproachingValues)
-		if (value < 0)
-			value.SetAsApproachingBottom(NegativeRep);
+		if (IsNegative())
+			SetAsApproachingBottom(NegativeRep);
 		else
-			value.SetAsApproachingBottom();
+			SetAsApproachingBottom();
 #else
 		value.SetAsZero();
 #endif
@@ -162,30 +163,30 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 		break;
 #endif			
 	default:
-		expValue.ConvertToNormType(LRep);
+		expValue.ConvertToNormType(expType);
 		break;
 	}
 	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 	case 0:
-		return FractionalPow(value, Frac);
+		return FractionalPow(Frac);
 		break;
 	case AltDec::NegativeRep:
-		return 1 / FractionalPow(value, Frac);
+		return One / FractionalPow(Frac);
 		break;
 	default:
 	{
 		if (expValue.IntValue < 0)//Negative Exponent 
 		{
-			AltDec CalcVal = 1 / Pow(expValue.IntValue * -1);
-			CalcVal /= FractionalPow(value, Frac);
+			AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
+			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		}
 		else
 		{
-			AltDec CalcVal = Pow(expValue.IntValue);
-			CalcVal *= FractionalPow(value, Frac);
+			AltDec CalcVal = Int32PowOp(expValue.IntValue);
+			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
 		break;

@@ -2561,6 +2561,7 @@ public:
 		#else
 		void ConvertFromEFractionalToNorm();
 		#endif
+        void ConvertToERep(RepType& repType);
 	#endif
     #pragma endregion E Conversion
 	
@@ -3969,9 +3970,11 @@ public:
                 PartialIntMultOp(Value);
         }
         template<typename IntType>
-        void BasicIntMult(IntType Value)
+        AltDec BasicIntMult(IntType Value)
         {
-            BasicIntMultOp(Value);
+            AltDec self = *this;
+            self.BasicIntMultOp(Value);
+            return self;
         }
 public:
 
@@ -4026,20 +4029,7 @@ protected:
             if (IntValue == 0)
                 IntValue = RValue.Value;
             else
-            {
-//                #if defined(BlazesMirroredInt_UsePseudoBitSet)
-//                throw "Need to write code for operation";//Placeholder
-//                #elif defined(BlazesMirroredInt_UseLegacyValueBehavior)
-//                IntValue += RValue;
-//                #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-//                if (RValue < 0 && Value == NegativeRep)
-//                    throw "MirroredInt value has underflowed";
-//                #endif
-//                #else
-//                throw "Need to write code for operation";//Placeholder
-//                #endif
                 IntHalfAdditionOp(RValue);
-            }
             return;
         }
 
@@ -4105,6 +4095,18 @@ public:
     #pragma region NormalRep Integer Subtraction Operations
 protected:
 
+        template<typename IntType>
+        void NRepSkippingIntSubOp(IntType RValue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = -RValue;
+            else
+                IntHalfSubtractionOp(RValue);
+            return;
+        }
+
 		/// <summary>
         /// Basic Subtraction Operation
         /// </summary>
@@ -4112,8 +4114,8 @@ protected:
         template<typename IntType>
         void BasicIntSubtraction(IntType Value)
         {
-            if(DecimalHalf==0)
-                IntValue.NRepSkippingIntSubOp(Value);
+            if (DecimalHalf == 0)
+                NRepSkippingIntSubOp(Value);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
@@ -4402,7 +4404,7 @@ public:
         /// <returns>AltDec&</returns>
 		static AltDec DivOp(AltDec& self, AltDec& Value) { return self.DivOp(Value); }
 
-        AltDec Divide(AltDec self, AltDec Value) { return self.DivOp(Value); }
+        static AltDec Divide(AltDec self, AltDec Value) { return self.DivOp(Value); }
 
 		/// <summary>
         /// Basic Multiplication Operation(main code block)
@@ -6592,7 +6594,7 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        AltDec BasicIntPowOp(ValueType& expValue)
+        AltDec BasicIntPowOp(ValueType expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -6645,142 +6647,119 @@ public:
             return *this;
         }
 
-        AltDec BasicPowOp(int& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicPowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicPow(int expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicPow(signed long long expValue) { return BasicIntPowOp(expValue); }
-
-        /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static AltDec IntPowOp(AltDec& targetValue, ValueType& expValue)
-        {
-            if (targetValue.DecimalHalf == InfinityRep)
-            {
-                if (expValue == 0)
-#if defined(AltNum_EnableNaN)
-                    targetValue.SetAsUndefined();
-#else
-                    throw "Infinity to power of Zero returns Undefined value";
-#endif
-                else if (expValue < 0)
-                    targetValue.SetAsZero();
-                else if (targetValue.IntValue == -1 && expValue % 2 == 0)
-                    targetValue.IntValue = 1;
-                else
-                    return targetValue;//Returns infinity
-                return *this;
-            }
-            else
-                targetValue.BasicIntPowOp(expValue);
-            return targetValue;
-        }
-
-        static AltDec PowOp(AltDec& targetValue, int& expValue) { return IntPowOp(targetValue, expValue); }
-        static AltDec PowOp(AltDec& targetValue, signed long long& expValue) { return IntPowOp(targetValue, expValue); }
-        static AltDec Pow(AltDec targetValue, int expValue) { return IntPowOp(targetValue, expValue); }
-        static AltDec Pow(AltDec targetValue, signed long long expValue) { return IntPowOp(targetValue, expValue); }
-
-        /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        AltDec BasicIntPowConstOp(const ValueType& expValue)
+        AltDec BasicUnsignedIntPowOp(ValueType expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
             {
                 IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
             }
-            else if (expValue < 0)//Negative Pow
-            {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
-                {
-                    int expVal = expValue * -1;
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
-                }
-                else
-                {
-                    int expVal = expValue;
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expVal *= -1;
-                    AltDec self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expVal > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (expVal % 2 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expVal = expVal >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return this;
-                }
-            }
             else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-            {
                 IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            }
+            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
+                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
             else
             {
-                int expVal = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 AltDec self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
-                while (expVal > 0)
+                while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
-                    if (expVal % 2 == 1)
+                    if (expValue % 2 == 1)
                         this *= self;
                     // n must be even now
-                    expVal = expVal >> 1; // y = y/2
+                    expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
                 }
             }
             return *this;
         }
 
-        AltDec BasicPowConstOp(const int& expValue) { return BasicIntPowConstOp(expValue); }
-        AltDec BasicPowConstOp(const signed long long& expValue) { return BasicIntPowConstOp(expValue); }
-        AltDec BasicPowConst(const int expValue) { return BasicIntPowConstOp(expValue); }
-        AltDec BasicPowConst(const signed long long expValue) { return BasicIntPowConstOp(expValue); }
+        AltDec BasicInt32PowOp(int& expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt64PowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt32Pow(int expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt64Pow(signed long long expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicUnsignedInt32PowOp(unsigned int& expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt64PowOp(unsigned long long& expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt32Pow(unsigned int expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt64Pow(unsigned long long expValue) { return BasicUnsignedIntPowOp(expValue); }
 
         /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
+        /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static AltDec IntPowConstOp(AltDec& targetValue, const ValueType& expValue)
+        AltDec IntPowOp(ValueType expValue)
         {
-            if (targetValue.DecimalHalf == InfinityRep)
+            if (DecimalHalf == InfinityRep)
             {
                 if (expValue == 0)
 #if defined(AltNum_EnableNaN)
-                    targetValue.SetAsUndefined();
+                    tSetAsUndefined();
 #else
                     throw "Infinity to power of Zero returns Undefined value";
 #endif
                 else if (expValue < 0)
                     return Zero;
-                else if (targetValue.IntValue == -1 && expValue % 2 == 0)
+                else if (IntValue == -1 && expValue % 2 == 0)
                     IntValue = 1;
                 else
-                    return;//Returns infinity
+                    return *this;//Returns infinity
                 return *this;
             }
             else
-                targetValue.BasicIntPowConstOp(expValue);
-            return *this;
+                return BasicIntPowOp(expValue);
         }
 
-        AltDec PowConstOp(AltDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        AltDec PowConstOp(AltDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
-        AltDec PowConst(AltDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        AltDec PowConst(AltDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+        template<typename ValueType>
+        AltDec UnsignedIntPowOp(ValueType expValue)
+        {
+            if (DecimalHalf == InfinityRep)
+            {
+                if (expValue == 0)
+#if defined(AltNum_EnableNaN)
+                    tSetAsUndefined();
+#else
+                    throw "Infinity to power of Zero returns Undefined value";
+#endif
+                else if (IntValue == -1 && expValue % 2 == 0)
+                    IntValue = 1;
+                else
+                    return *this;//Returns infinity
+                return *this;
+            }
+            else
+                return BasicUnsignedIntPowOp(expValue);
+        }
+
+        AltDec Int32PowOp(int& expValue) { return IntPowOp(expValue); }
+        AltDec Int64PowOp(signed long long& expValue) { return IntPowOp(expValue); }
+        AltDec Int32Pow(int expValue) { return IntPowOp(expValue); }
+        AltDec Int64Pow(signed long long expValue) { return IntPowOp(expValue); }
+        AltDec UnsignedInt32PowOp(unsigned int& expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64PowOp(unsigned long long& expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt32Pow(unsigned int expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64Pow(unsigned long long expValue) { return UnsignedIntPowOp(expValue); }
+
+        AltDec BasicInt32PowConstOp(const int& expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt64PowConstOp(const signed long long& expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt32PowConst(const int expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicInt64PowConst(const signed long long expValue) { return BasicIntPowOp(expValue); }
+        AltDec BasicUnsignedInt32PowConstOp(const unsigned int& expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt64PowConstOp(const unsigned long long& expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt32PowConst(const unsigned int expValue) { return BasicUnsignedIntPowOp(expValue); }
+        AltDec BasicUnsignedInt64PowConst(const unsigned long long expValue) { return BasicUnsignedIntPowOp(expValue); }
+
+        AltDec Int32PowConstOp(const int& expValue) { return IntPowOp(expValue); }
+        AltDec Int64PowConstOp(const long long& expValue) { return IntPowOp(expValue); }
+        AltDec Int32PowConst(const int expValue) { return IntPowOp(expValue); }
+        AltDec Int64PowConst(const long long expValue) { return IntPowOp(expValue); }
+        AltDec UnsignedInt32PowConstOp(const int& expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64PowConstOp(const long long& expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt32PowConst(const int expValue) { return UnsignedIntPowOp(expValue); }
+        AltDec UnsignedInt64PowConst(const long long expValue) { return UnsignedIntPowOp(expValue); }
 
 
         /// <summary>
@@ -6792,7 +6771,9 @@ public:
         /// <returns>AltDec</returns>
         static AltDec NthRoot(AltDec value, int n, AltDec precision = AltDec::JustAboveZero)
         {
-            AltDec xPre = ((value - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            //Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            AltDec xPre = One;
+            xPre += (value-1)/n;
             int nMinus1 = n - 1;
 
             // initializing difference between two 
@@ -6801,13 +6782,17 @@ public:
 
             //  xK denotes current value of x 
             AltDec xK;
+            AltDec xPrePower;
 
             //  loop until we reach desired accuracy
             do
             {
                 //  calculating current value from previous
                 // value by newton's method
-                xK = (xPre * nMinus1 + value / AltDec::Pow(xPre, nMinus1)) / n;
+                xK = xPre.BasicIntMult(nMinus1);
+                xPrePower = xPre.Int32Pow(nMinus1);
+                xK += value/xPrePower;
+                xK.BasicIntDivOp(n);
                 delX = AltDec::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
@@ -6820,38 +6805,35 @@ public:
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-        static AltDec FractionalPow(AltDec value, int expNum, int expDenom);
+        AltDec FractionalPow(int expNum, int expDenom);
 
         /// <summary>
         /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static AltDec FractionalPow(AltDec& value, boost::rational<int>& Frac);
+        AltDec FractionalPow(boost::rational<int>& Frac);
 
-        void BasicPowOp(AltDec& expValue);
+        AltDec BasicPowOp(AltDec& expValue);
 
         /// <summary>
         /// Applies Power of operation
         /// </summary>
-        /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
         AltDec PowOp(AltDec& expValue);
 
-        static AltDec PowOp(AltDec& targetValue, AltDec& expValue)
-        {
-            return targetValue.PowOp(expValue);
-        }
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        AltDec Pow(AltDec expValue) { return PowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation
         /// </summary>
         /// <param name="targetValue">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static AltDec Pow(AltDec targetValue, AltDec expValue)
-        {
-            return PowOp(targetValue, expValue);
-        }
+        static AltDec PowV2(AltDec targetValue, AltDec expValue) { return targetValue.PowOp(expValue); }
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
@@ -6864,11 +6846,11 @@ public:
         static AltDec NthRootV2(AltDec targetValue, int n, AltDec& Precision = AltDec::FiveBillionth)
         {
             int nMinus1 = n - 1;
-            AltDec x[2] = { (AltDec::One / n) * ((targetValue*nMinus1) + (targetValue / AltDec::Pow(targetValue, nMinus1))), targetValue };
+            AltDec x[2] = { (AltDec::One / n) * ((targetValue*nMinus1) + (targetValue / targetValue.Int32Pow(nMinus1))), targetValue };
             while (AltDec::Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = (AltDec::One / n) * ((x[1]*nMinus1) + (targetValue / AltDec::Pow(x[1], nMinus1)));
+                x[0] = (AltDec::One / n) * ((x[1]*nMinus1) + (targetValue / x[1].Int32Pow(nMinus1)));
             }
             return x[0];
         }
@@ -7365,7 +7347,7 @@ public:
                 int WPow = 3;
                 do
                 {
-                    AddRes = AltDec::Pow(W, WPow) / WPow;
+                    AddRes = W.Int32Pow(WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > AltDec::JustAboveZero);
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * AltDec::HalfLN10Mult)/ baseTotalRes;
@@ -7454,8 +7436,8 @@ public:
                 AltDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
-                    NewValue += AltDec::Pow(Radius, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                }
+                    NewValue += Radius.Pow(2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                }//x[1].Int32Pow(nMinus1)
                 return NewValue;
             }
         }
@@ -7539,7 +7521,7 @@ public:
                 AltDec Radius = Pi * Value / 180;
                 for (int i = 0; i < 7; ++i)
                 { // That's also Taylor series!!
-                    NewValue += AltDec::Pow(Radius, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                    NewValue += Radius.Pow(2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
                 }
                 return NewValue;
             }
@@ -7556,7 +7538,7 @@ public:
             AltDec SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += AltDec::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += Value.Pow(2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
@@ -7609,7 +7591,7 @@ public:
                     AltDec SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
-                        SinValue += AltDec::Pow(Value, 2 * i + 1) * (i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                        SinValue += Value.Pow(2 * i + 1) * (i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                     }
                     return SinValue;
                     break;
@@ -7652,7 +7634,7 @@ public:
                     AltDec SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
-                        SinValue += AltDec::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                        SinValue += Value.Pow(2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
                     }
                     return SinValue;
                     break;
@@ -7687,7 +7669,7 @@ public:
             AltDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += Value.Pow(2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -7753,11 +7735,11 @@ public:
             AltDec CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += Value.Pow(2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += Value.Pow(2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -7860,11 +7842,11 @@ public:
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += Value.Pow(2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             for (int i = 0; i < 7; ++i)
             { // That's also Taylor series!!
-                CosValue += AltDec::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += Value.Pow(2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }

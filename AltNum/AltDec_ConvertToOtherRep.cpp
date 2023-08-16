@@ -323,6 +323,42 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 		}
 	}
 }
+
+inline void BlazesRusCode::AltDec::ConvertToPiRep()
+{
+	switch (repType)
+	{
+		case RepType::PiNum:
+			return;
+			break;
+	#if defined(AltNum_EnablePiPowers)
+		case RepType::PiPower:
+			ConvertPiPowerToPiRep();
+			break;
+	#endif
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+		case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+		{
+			BasicDivOp(-ExtraRep);
+		}
+		#else
+		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+		{
+			int divisor = DecimalHalf;
+			DecimalHalf = 0;
+			BasicDivOp(divisor);
+		}
+		#endif
+		break;
+	#endif
+	#if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi:
+			return;//Add Conversion Code from MixedPi later
+	#endif
+	}
+	ExtraRep = PiRep;
+}
 #endif
 
 #if defined(AltNum_EnableERep)
@@ -578,6 +614,37 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 	BasicIntDivOp(divisor);
 }
 	#endif
+
+inline void BlazesRusCode::AltDec::ConvertToPiRep()
+{
+	switch (repType)
+	{
+		case RepType::ENum:
+			return;
+			break;
+	#if defined(AltNum_EnableAlternativeRepFractionals)
+		#if defined(AltNum_EnableDecimaledEFractionals)
+		case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+		{
+			BasicDivOp(-ExtraRep);
+		}
+		#else
+		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+		{
+			int divisor = DecimalHalf;
+			DecimalHalf = 0;
+			BasicDivOp(divisor);
+		}
+		#endif
+		break;
+	#endif
+	#if defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+			return;//Add Conversion Code from MixedPi later
+	#endif
+	}
+	ExtraRep = PiRep;
+}
 #endif
 
 inline void BlazesRusCode::AltDec::ConvertToNormType(RepType& repType)
