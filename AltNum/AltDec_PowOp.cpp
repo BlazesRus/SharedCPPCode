@@ -107,7 +107,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
     #endif
     #if defined(AltNum_EnableDecimaledPiFractionals)
 	case RepType::PiNumByDiv:
-		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf, PiRep), -expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf, PiRep)), -expValue.ExtraRep);
 		break;
     #elif defined(AltNum_EnableDecimaledEFractionals)
 	case RepType::ENumByDiv:
