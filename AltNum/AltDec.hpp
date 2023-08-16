@@ -3798,29 +3798,24 @@ protected:
         }
 public:
 
-		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
-        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
+		void PartialInt32DivOp(signed int& Value) { PartialIntDivOp(Value); }
+		void PartialUnsignedInt32DivOp(unsigned int& Value) { PartialIntDivOp(Value); }
+		void PartialInt64DivOp(signed long long& Value) { PartialIntDivOp(Value); }
+        void PartialUnsignedInt64DivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
 
-		static void PartialDivOp(AltDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(AltDec& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(AltDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(AltDec& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
-
-		AltDec PartialDiv(signed int Value)
+		AltDec PartialInt32Div(signed int Value)
         { AltDec self = *this; PartialIntDivOp(Value); return self; }
-		AltDec PartialDiv(unsigned int Value)
+		AltDec PartialUnsignedInt32Div(unsigned int Value)
         { AltDec self = *this; PartialIntDivOp(Value); return self; }
-		AltDec PartialDiv(signed long long Value)
+		AltDec PartialInt64Div(signed long long Value)
         { AltDec self = *this; PartialIntDivOp(Value); return self; }
-        AltDec PartialDiv(unsigned long long Value)
+        AltDec PartialUnsignedInt64Div(unsigned long long Value)
         { AltDec self = *this; PartialIntDivOp(Value); return self; }
 
-		static AltDec PartialDiv(AltDec self, signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static AltDec PartialDiv(AltDec self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
-		static AltDec PartialDiv(AltDec self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static AltDec PartialDiv(AltDec self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialInt32Division(AltDec self, signed int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialUnsignedInt32Division(AltDec self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static AltDec PartialInt64Division(AltDec self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
+        static AltDec PartialUnsignedInt64Division(AltDec self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
         template<typename IntType>
@@ -3873,29 +3868,20 @@ protected:
         }
 public:
 
-		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicInt32DivOp(signed int& Value) { BasicIntDivOp(Value); }
+		void BasicUnsignedInt32DivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicInt64DivOp(signed long long& Value) { BasicIntDivOp(Value); }
+        void BasicUnsignedInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
-		static void BasicDivOp(AltDec& self, signed int& Value) { self.BasicIntDivOp(Value); }
-		static void BasicDivOp(AltDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
-		static void BasicDivOp(AltDec& self, signed long long& Value) { self.BasicIntDivOp(Value); }
-        static void BasicDivOp(AltDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
+		AltDec BasicInt32Div(signed int Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
+		AltDec BasicUnsignedInt32Div(unsigned int Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+		AltDec BasicInt64Div(signed long long Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
+        AltDec BasicUnsignedInt64Div(unsigned long long Value) { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
-		AltDec BasicDiv(signed int Value)
-        { AltDec self = *this; BasicIntDivOp(Value); return self; }
-		AltDec BasicDiv(unsigned int Value)
-        { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		AltDec BasicDiv(signed long long Value)
-        { AltDec self = *this; BasicIntDivOp(Value); return self; }
-        AltDec BasicDiv(unsigned long long Value)
-        { AltDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-
-		static AltDec BasicDiv(AltDec self, signed int Value) { self.BasicIntDivOp(Value); return self; }
-		static AltDec BasicDiv(AltDec self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
-		static AltDec BasicDiv(AltDec self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
-        static AltDec BasicDiv(AltDec self, unsigned long long Value) { self.BasicUnsignedIntDivOp(Value); return self; }
+		static AltDec BasicInt32Division(AltDec self, signed int Value) { self.BasicIntDivOp(Value); return self; }
+		static AltDec BasicUnsignedInt32Division(AltDec self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
+		static AltDec BasicInt64Division(AltDec self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
+        static AltDec BasicUnsignedDivision(AltDec self, unsigned long long Value) { self.BasicUnsignedIntDivOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -3995,34 +3981,25 @@ public:
         /// Basic Multiplication Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicMultOp(signed int& Value) { BasicIntMultOp(Value); }
-		void BasicMultOp(unsigned int& Value) { UnsignedBasicIntMultOp(Value); }
-		void BasicMultOp(signed long long& Value) { BasicIntMultOp(Value); }
-		void BasicMultOp(unsigned long long& Value) { UnsignedBasicIntMultOp(Value); }
-
-		static void BasicMultOp(AltDec& self, signed int& Value) { self.BasicIntMultOp(Value); }
-		static void BasicMultOp(AltDec& self, unsigned int& Value) { self.UnsignedBasicIntMultOp(Value); }
-		static void BasicMultOp(AltDec& self, signed long long& Value) { self.BasicIntMultOp(Value); }
-		static void BasicMultOp(AltDec& self, unsigned long long& Value) { self.UnsignedBasicIntMultOp(Value); }
+		void BasicInt32MultOp(signed int& Value) { BasicIntMultOp(Value); }
+		void BasicUnsignedInt32MultOp(unsigned int& Value) { UnsignedBasicIntMultOp(Value); }
+		void BasicInt64MultOp(signed long long& Value) { BasicIntMultOp(Value); }
+		void BasicUnsignedInt64MultOp(unsigned long long& Value) { UnsignedBasicIntMultOp(Value); }
 
 		/// <summary>
         /// Basic Multiplication Operation that returns a value
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-		AltDec BasicMult(signed int Value)
-        { AltDec self = *this; BasicIntMultOp(Value); return self; }
-		AltDec BasicMult(unsigned int Value)
-        { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
-		AltDec BasicMult(signed long long Value)
-        { AltDec self = *this; BasicIntMultOp(Value); return self; }
-        AltDec BasicMult(unsigned long long Value)
-        { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
+		AltDec BasicInt32Mult(signed int Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
+		AltDec BasicUnsignedInt32Mult(unsigned int Value) { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
+		AltDec BasicInt64Mult(signed long long Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
+        AltDec BasicUnsignedInt64Mult(unsigned long long Value) { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
 
-		static AltDec BasicMult(AltDec self, signed int Value) { self.BasicIntMultOp(Value); return self; }
-		static AltDec BasicMult(AltDec self, unsigned int Value) { self.UnsignedBasicIntMultOp(Value); return self; }
-		static AltDec BasicMult(AltDec self, signed long long Value) { self.BasicIntMultOp(Value); return self; }
-        static AltDec BasicMult(AltDec self, unsigned long long Value) { self.UnsignedBasicIntMultOp(Value); return self; }
+		static AltDec BasicInt32Multiplication(AltDec self, signed int Value) { self.BasicIntMultOp(Value); return self; }
+		static AltDec BasicUnsignedInt32Multiplication(AltDec self, unsigned int Value) { self.UnsignedBasicIntMultOp(Value); return self; }
+		static AltDec BasicInt64Multiplication(AltDec self, signed long long Value) { self.BasicIntMultOp(Value); return self; }
+        static AltDec BasicUnsignedInt64Multiplication(AltDec self, unsigned long long Value) { self.UnsignedBasicIntMultOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -4071,36 +4048,30 @@ public:
         /// Basic Addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicAddOp(signed int& Value) { BasicIntAddition(Value); }
-		void BasicAddOp(unsigned int& Value) { BasicIntAddition(Value); }
-		void BasicAddOp(signed long long& Value) { BasicIntAddition(Value); }
-		void BasicAddOp(unsigned long long& Value) { BasicIntAddition(Value); }
-
-		static void BasicAddOp(AltDec& self, signed int& Value) { self.BasicIntAddition(Value); }
-		static void BasicAddOp(AltDec& self, unsigned int& Value) { self.BasicIntAddition(Value); }
-		static void BasicAddOp(AltDec& self, signed long long& Value) { self.BasicIntAddition(Value); }
-		static void BasicAddOp(AltDec& self, unsigned long long& Value) { self.BasicIntAddition(Value); }
+		void BasicInt32AddOp(signed int& Value) { BasicIntAddition(Value); }
+		void BasicUnsignedInt32AddOp(unsigned int& Value) { BasicIntAddition(Value); }
+		void BasicInt64AddOp(signed long long& Value) { BasicIntAddition(Value); }
+		void BasicUnsignedInt64AddOp(unsigned long long& Value) { BasicIntAddition(Value); }
 
 		/// <summary>
         /// Basic Addition Operation that returns a value
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-		AltDec BasicAdd(signed int Value)
+		AltDec BasicInt32Add(signed int Value)
         { AltDec self = *this; BasicIntAddition(Value); return self; }
-		AltDec BasicAdd(unsigned int Value)
+		AltDec BasicUnsignedInt32Add(unsigned int Value)
         { AltDec self = *this; BasicIntAddition(Value); return self; }
-		AltDec BasicAdd(signed long long Value)
+		AltDec BasicInt64Add(signed long long Value)
         { AltDec self = *this; BasicIntAddition(Value); return self; }
-        AltDec BasicAdd(unsigned long long Value)
-        { AltDec self = *this; BasicIntAddition(Value); return self; }
+        AltDec BasicUnsignedInt64Add(unsigned long long Value) { AltDec self = *this; BasicIntAddition(Value); return self; }
 
-		static AltDec BasicAdd(AltDec self, signed int Value) { self.BasicIntAddition(Value); return self; }
-		static AltDec BasicAdd(AltDec self, unsigned int Value) { self.BasicIntAddition(Value); return self; }
-		static AltDec BasicAdd(AltDec self, signed long long Value) { self.BasicIntAddition(Value); return self; }
-        static AltDec BasicAdd(AltDec self, unsigned long long Value) { self.BasicIntAddition(Value); return self; }
+		static AltDec BasicInt32Addition(AltDec self, signed int Value) { self.BasicIntAddition(Value); return self; }
+		static AltDec BasicUnsignedInt32Addition(AltDec self, unsigned int Value) { self.BasicIntAddition(Value); return self; }
+		static AltDec BasicInt64Addition(AltDec self, signed long long Value) { self.BasicIntAddition(Value); return self; }
+        static AltDec BasicUnsignedInt64Addition(AltDec self, unsigned long long Value) { self.BasicIntAddition(Value); return self; }
 #if defined(AltDec_UseMirroredInt)
-        static AltDec BasicAdd(AltDec self, MirroredInt Value) { self.BasicMirroredIntAddOp(Value); return self; }
+        static AltDec BasicMirroredIntAddition(AltDec self, MirroredInt Value) { self.BasicMirroredIntAddOp(Value); return self; }
 #endif
 
 	#pragma endregion NormalRep Integer Addition Operations
@@ -4169,28 +4140,23 @@ public:
         /// Basic Subtraction Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-		void BasicSubOp(signed int& Value) { BasicIntSubtraction(Value); }
-		void BasicSubOp(unsigned int& Value) { BasicIntSubtraction(Value); }
-		void BasicSubOp(signed long long& Value) { BasicIntSubtraction(Value); }
-		void BasicSubOp(unsigned long long& Value) { BasicIntSubtraction(Value); }
-
-		static void BasicSubOp(AltDec& self, signed int& Value) { self.BasicIntSubtraction(Value); }
-		static void BasicSubOp(AltDec& self, unsigned int& Value) { self.BasicIntSubtraction(Value); }
-		static void BasicSubOp(AltDec& self, signed long long& Value) { self.BasicIntSubtraction(Value); }
-		static void BasicSubOp(AltDec& self, unsigned long long& Value) { self.BasicIntSubtraction(Value); }
+		void BasicInt32SubOp(signed int& Value) { BasicIntSubtraction(Value); }
+		void BasicUnsignedInt32SubOp(unsigned int& Value) { BasicIntSubtraction(Value); }
+		void BasicInt64SubOp(signed long long& Value) { BasicIntSubtraction(Value); }
+		void BasicUnsignedInt64SubOp(unsigned long long& Value) { BasicIntSubtraction(Value); }
 
 		/// <summary>
         /// Basic Subtraction Operation that returns a value
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec</returns>
-		AltDec BasicSub(signed int Value)
+		AltDec BasicInt32Sub(signed int Value)
         { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-		AltDec BasicSub(unsigned int Value)
+		AltDec BasicUnsignedInt32Sub(unsigned int Value)
         { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-		AltDec BasicSub(signed long long Value)
+		AltDec BasicInt64Sub(signed long long Value)
         { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-        AltDec BasicSub(unsigned long long Value)
+        AltDec BasicUnsignedInt64Sub(unsigned long long Value)
         { AltDec self = *this; BasicIntSubtraction(Value); return self; }
 
         /// <summary>
@@ -4198,12 +4164,12 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec</returns>
-		static AltDec BasicSub(AltDec self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
-		static AltDec BasicSub(AltDec self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
-		static AltDec BasicSub(AltDec self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
-        static AltDec BasicSub(AltDec self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
+		static AltDec BasicInt32Subtraction(AltDec self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
+		static AltDec BasicUnsignedInt32Subtraction(AltDec self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
+		static AltDec BasicInt64Subtraction(AltDec self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
+        static AltDec BasicUnsignedInt64Subtraction(AltDec self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
 #if defined(AltDec_UseMirroredInt)
-        static AltDec BasicSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
+        static AltDec BasicMirroredIntSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
 #endif
 
     #pragma endregion NormalRep Integer Subtraction Operations
@@ -4305,28 +4271,36 @@ public:
 				DecimalHalf = 1;
         }
 
-        AltDec BasicDivOp(AltDec& self, AltDec Value)
+        AltDec UnsignedBasicDivOp(AltDec& Value)
+        {
+            if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+                DecimalHalf = 1;
+            return *this;
+        }
+
+        AltDec BasicDivision(AltDec self, AltDec Value)
         {
             if (self.PartialDivOp(Value))//Prevent Dividing into nothing
                 self.DecimalHalf = 1;
             return self;
         }
 
-        AltDec UnsignedBasicDiv(AltDec self, AltDec Value)
+        AltDec UnsignedBasicDivision(AltDec self, AltDec Value)
         {
             if (self.UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
                 self.DecimalHalf = 1;
             return self;
         }
 
-        AltDec UnsignedBasicDivOp(AltDec& self, AltDec Value)
-        {
-            if (self.UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-                self.DecimalHalf = 1;
-            return self;
-        }
 
         AltDec BasicDiv(AltDec Value)
+        {
+            AltDec self = *this;
+            self.UnsignedBasicDivOp(Value);
+            return self;
+        }
+
+        AltDec UnsignedBasicDiv(AltDec Value)
         {
             AltDec self = *this;
             self.BasicDivOp(Value);
@@ -4419,6 +4393,7 @@ public:
 
         static AltDec Divide(AltDec self, AltDec Value) { return self.DivOp(Value); }
 
+protected:
 		/// <summary>
         /// Basic Multiplication Operation(main code block)
         /// </summary>
@@ -4570,6 +4545,7 @@ public:
         {
             return BasicMultOpPt2(Value);
         }
+public:
 		
 		/// <summary>
         /// Basic Multiplication Operation(without checking for special representation variations or zero)
@@ -4611,7 +4587,8 @@ public:
         }
         bool BasicMult(AltDec Value)
         {
-            return BasicMultOp(Value);
+            AltDec self = *this;
+            return self.BasicMultOp(Value);
         }
 
 		void CatchAllMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
@@ -4923,7 +4900,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& UnsignedIntDivOp(IntType& Value)
+        AltDec& UnsignedIntDivOp(IntType& Value)
         {
             if (Value==1)
                 return;
@@ -4956,7 +4933,7 @@ public:
 		#endif
                     #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
 					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
 					break;
                     #endif
 		#if defined(AltNum_EnableDecimaledIFractionals)
@@ -4966,7 +4943,7 @@ public:
 		#endif
         #if defined(AltNum_EnableDecimaledIFractionals)||defined(AltNum_EnableIFractional)
 					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
                     break;
         #endif
 	#endif
@@ -4983,7 +4960,7 @@ public:
 					if(IntValue.IsZero())
 						return;
 					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
 	    #if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 	    #endif
@@ -4995,7 +4972,7 @@ public:
 		#endif
         #if !defined(AltNum_DisableApproachingTop)||defined(AltNum_EnableApproachingDivided)
 					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
 					break;
         #endif
 	#endif
@@ -5018,7 +4995,7 @@ public:
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
 					break;
 	    #endif
     #endif
@@ -5138,7 +5115,7 @@ public:
 					break;
 	#endif			
 				default:
-					BasicIntDivOpV2(Value);
+					BasicInt32DivOp(Value);
 					break;
 			}
             return;
