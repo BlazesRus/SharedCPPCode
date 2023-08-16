@@ -53,59 +53,76 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 {
 	if (expValue.DecimalHalf == 0)
 		return Int32PowOp(expValue.IntValue);
+#if defined(AltNum_EnableInfinityRep)
 	else if (DecimalHalf == InfinityRep)
 	{
 		if (expValue == Zero)
-#if defined(AltNum_EnableNaN)
-			SetAsUndefined();
-#else
+    #if defined(AltNum_EnableNaN)
+			return Undefined;
+    #else
 			throw "Infinity to power of Zero returns Undefined value";
-#endif
-		else if (expValue.IntValue < 0)
-			return Zero;
-		else if (IntValue == -1 && expValue.GetIntHalf() % 2 == 0)
-			IntValue = 1;
-		else
-			return *this;//Returns infinity
-		return;
+    #endif
+	    RepType RRep = GetRepType();
+        switch(RRep)
+        {
+	        case RepType::PositiveInfinity:
+	        case RepType::NegativeInfinity:
+                if(expValue.IntValue==1)
+                    return *this;
+                else
+                    return Zero;
+                break;
+    #if defined(AltNum_EnableImaginaryNum)
+	        case RepType::INum:
+        #if defined(AltNum_EnableDecimaledIFractionals)
+	        case RepType::INumByDiv:
+        #elif defined(AltNum_EnableIFractional)
+	        case RepType::IFractional:
+        #endif
+        #if defined(AltNum_EnableNaN)
+			    return Undefined;
+        #else
+			    throw "Infinity to power of i returns Undefined value";
+        #endif
+    #endif
+            default:
+            	RepType expType = expValue.GetRepType();
+        		if (expValue.IntValue < 0)
+        			return Zero;
+        		else if (IntValue == -1 && expValue.GetIntHalf() % 2 == 0)
+        			IntValue = 1;
+        		else
+        			return *this;//Returns infinity
+        }
+        return *this;
 	}
-#if defined(AltNum_EnableNaN)
 #endif
 	RepType expType = expValue.GetRepType();
 	switch (expType)
 	{
-#if defined(AltNum_EnableFractionals)
+    #if defined(AltNum_EnableFractionals)
 	case RepType::NumByDiv:
 		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
 		break;
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
+    #endif
+    #if defined(AltNum_EnableDecimaledPiFractionals)
 	case RepType::PiNumByDiv:
-		ConvertPiByDivToNumByDiv();
-		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf, PiRep), -expValue.ExtraRep);
 		break;
-#elif defined(AltNum_EnablePiFractional)
-	case RepType::PiFractional:
-		AltDec NumExp = AltDec(expValue.IntValue, expValue.DecimalHalf);
-		NumExp *= PiNum;
-		return AltDec::NthRoot(Pow(NumExp), -expValue.ExtraRep);
-		break;
-#endif
-#if defined(AltNum_EnableDecimaledEFractionals)
+    #elif defined(AltNum_EnableDecimaledEFractionals)
 	case RepType::ENumByDiv:
-		ConvertEByDivToNumByDiv();
-		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf)), expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, expValue.DecimalHalf, ERep)), -expValue.ExtraRep);
 		break;
-#elif defined(AltNum_EnableEFractional)
+    #endif
+    #if defined(AltNum_EnablePiFractional)
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, 0, PiRep)), expValue.DecimalHalf);
+    #endif
+    #if defined(AltNum_EnableEFractional)
 	case RepType::EFractional:
-		AltDec NumExp = AltDec(expValue.IntValue, expValue.DecimalHalf);
-		NumExp *= ENum;
-		return AltDec::NthRoot(Pow(NumExp), -expValue.ExtraRep);
+		return AltDec::NthRoot(Pow(AltDec(expValue.IntValue, 0, ERep)), expValue.DecimalHalf);
 		break;
-#endif
-#endif
-	#if defined(AltNum_EnableInfinityRep)
+    #endif
+    #if defined(AltNum_EnableInfinityRep)
 		//0^Infinity = 0
 		//2^PositiveInfinity = PositiveInfinity
 		//-2^PositiveInfinity = Within range of Positive and NegativeInfinity(undefined?)
@@ -129,67 +146,72 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 #endif
 		return;
 		break;
-	#endif
-#if defined(AltNum_EnableImaginaryNum)
-	case RepType::INum:
-#if defined(AltNum_EnableDecimaledEFractionals)
-	case RepType::INumByDiv:
-#elif defined(AltNum_EnableEFractional)
-	case RepType::IFractional:
-#endif
-#if defined(AltNum_EnableImaginaryInfinity)
-	case RepType::PositiveImaginaryInfinity:
-	case RepType::NegativeImaginaryInfinity:
-#if defined(AltNum_EnableApproachingI)
-	case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-#if !defined(AltNum_DisableApproachingTop)
-	case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-#endif
-#if defined(AltNum_EnableApproachingDivided)
-	case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-#if !defined(AltNum_DisableApproachingTop)
-	case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-#endif
-#endif
-#endif
-#endif
-		throw "operation to power of imaginary number not supported";
-		break;
-#endif
-#if defined(AltNum_EnableNaN)
-	case RepType::Undefined:
-	case RepType::NaN:
-		throw "Can't perform operations with NaN or Undefined number";
-		break;
-#endif			
-	default:
-		expValue.ConvertToNormType(expType);
-		break;
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingBottom:
+            if(expValue.IntValue==0)
+                return ApproachingOneFromRightValue();
+            else if(expValue.IntValue==NegativeRep)
+                return ApproachingOneFromLeftValue();
+            else
+                expValue.ConvertToNormType(expType);
+    #if defined(AltNum_EnableImaginaryNum)
+        case RepType::INum:
+        #if defined(AltNum_EnableDecimaledIFractionals)
+        case RepType::INumByDiv:
+        #elif defined(AltNum_EnableIFractional)
+        case RepType::IFractional:
+        #endif
+        if defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI:
+        #endif
+        #if defined(AltNum_EnableImaginaryInfinity)
+	    case RepType::PositiveImaginaryInfinity:
+	    case RepType::NegativeImaginaryInfinity:
+        #endif
+        #if defined(AltNum_EnableApproachingI)
+	    case RepType::ApproachingImaginaryBottom:
+        #if !defined(AltNum_DisableApproachingTop)
+	    case RepType::ApproachingImaginaryTop:
+        #endif
+            #if defined(AltNum_EnableApproachingDivided)
+	    case RepType::ApproachingImaginaryMidRight:
+                #if !defined(AltNum_DisableApproachingTop)
+	    case RepType::ApproachingImaginaryMidLeft:
+                #endif
+            #endif
+        #endif
+			throw "Needs complex number support to give result of power of i";
+            break;
+    #endif
+        default:
+            expValue.ConvertToNormType(expType);
+            break;
 	}
-	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
-	switch (expValue.IntValue)
-	{
-	case 0:
-		return FractionalPow(Frac);
-		break;
-	case AltDec::NegativeRep:
-		return One / FractionalPow(Frac);
-		break;
-	default:
-	{
-		if (expValue.IntValue < 0)//Negative Exponent 
-		{
-			AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
-			CalcVal /= FractionalPow(Frac);
-			return CalcVal;
-		}
-		else
-		{
-			AltDec CalcVal = Int32PowOp(expValue.IntValue);
-			CalcVal *= FractionalPow(Frac);
-			return CalcVal;
-		}
-		break;
-	}
+    	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
+    	switch (expValue.IntValue)
+    	{
+    	case 0:
+    		return FractionalPow(Frac);
+    		break;
+    	case AltDec::NegativeRep:
+    		return One / FractionalPow(Frac);
+    		break;
+    	default:
+    	{
+    		if (expValue.IntValue < 0)//Negative Exponent 
+    		{
+    			AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
+    			CalcVal /= FractionalPow(Frac);
+    			return CalcVal;
+    		}
+    		else
+    		{
+    			AltDec CalcVal = Int32PowOp(expValue.IntValue);
+    			CalcVal *= FractionalPow(Frac);
+    			return CalcVal;
+    		}
+    		break;
+    	}
 	}
 }

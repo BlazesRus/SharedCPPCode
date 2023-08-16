@@ -1376,6 +1376,18 @@ namespace BlazesRusCode
             AltDec NewSelf = AltDec(0, ApproachingBottomRep);
             return NewSelf;
         }
+		
+        static AltDec ApproachingOneFromLeftValue()
+        {
+            AltDec NewSelf = AltDec(0, ApproachingTopRep);
+            return NewSelf;
+        }
+		
+        static AltDec ApproachingOneFromRightValue()
+        {
+            AltDec NewSelf = AltDec(1, ApproachingBottomRep);
+            return NewSelf;
+        }
 
         static AltDec NegativeApproachingZeroValue()
         {
