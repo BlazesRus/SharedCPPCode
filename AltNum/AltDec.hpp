@@ -2181,6 +2181,46 @@ public:
             IntHalfSubtractionOp(RValue);
         }
 
+		bool IntHalfEqualToOp(AltDec& RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualToOp(AltDec& RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualTo(AltDec RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualTo(AAltDec RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualToIntOp(int& RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+
+		bool IntHalfNotEqualToIntOp(int& RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+
+		bool IntHalfEqualToInt(int RValue)
+		{
+            return IntValue == RValue;
+        }
+
+		bool IntHalfNotEqualToInt(int RValue)
+		{
+            return IntValue != RValue;
+        }
+
         /// <summary>
         /// Less than Operation for just IntValue section
         /// </summary>
@@ -2317,12 +2357,20 @@ public:
             float Value;
             if (IntValue < 0)
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
+    #else
+                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = (float)IntValue;
+    #else
+                Value = (float)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
@@ -2337,12 +2385,20 @@ public:
             double Value;
             if (IntValue < 0)
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0 : (double)IntValue;
+    #else
+                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = (double)IntValue;
+    #else
+                Value = (double)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
@@ -2357,12 +2413,20 @@ public:
             ldouble Value;
             if (IntValue < 0)
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue;
+    #else
+                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
+    #if !defined(AltDec_UseMirroredInt)
                 Value = (ldouble)IntValue;
+    #else
+                Value = (ldouble)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
@@ -2527,8 +2591,11 @@ public:
                 }
 #endif
             }
-
+    #if !defined(AltDec_UseMirroredInt)
             return (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
+    #else
+            return (LValue.IntValue.Value == RValue.IntValue.Value && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
+    #endif
         }
 
         /// <summary>
