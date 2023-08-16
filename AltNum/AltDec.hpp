@@ -2222,19 +2222,19 @@ public:
             return IntValue == RValue.IntValue;
         }
 
-		bool IntHalfNotEqualTo(AAltDec RValue)
+		bool IntHalfNotEqualTo(AltDec RValue)
 		{
             return IntValue != RValue.IntValue;
         }
 
 		bool IntHalfEqualToIntOp(int& RValue)
 		{
-            return IntValue == RValue.IntValue;
+            return IntValue == RValue;
         }
 
 		bool IntHalfNotEqualToIntOp(int& RValue)
 		{
-            return IntValue != RValue.IntValue;
+            return IntValue != RValue;
         }
 
 		bool IntHalfEqualToInt(int RValue)
@@ -2253,25 +2253,63 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-		bool IntHalfLessThanOp(AltDec& LValue, AltDec& RValue)
+		bool IntHalfLessThanOpV2(AltDec& RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
-            if(LValue.IntValue<RValue)
+            if(IntValue<RValue)
                 return true;
             else
                 return false;
 #else
-            if (LValue.IntValue == NegativeRep)
+            if (IntValue == NegativeRep)
                 return RValue.IntValue < 0 && RValue.IntValue != NegativeRep;
             else if (RValue.IntValue == NegativeRep)
             {
-                if (LValue.IntValue < 0)
+                if (IntValue < 0)
                     return true;
                 else
                     return false;
             }
             else
-                return IntHalfLessThanOp(LValue, RValue);
+                return IntValue<RValue.IntValue;
+#endif
+		}
+		
+		static bool IntHalfLessThanOp(AltDec& LValue, AltDec& RValue)
+		{
+			return LValue.IntHalfLessThanOpV2(RValue);
+		}
+		
+		static bool IntHalfLessThan(AltDec LValue, AltDec RValue)
+		{
+			return IntHalfLessThanOp(LValue, RValue);
+		}
+		
+        /// <summary>
+        /// Less than or Equal Operation for just IntValue section
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+		bool IntHalfLessThanOrEqualOpV2(AltDec& RValue)
+		{
+#if defined(AltDec_UseMirroredInt)
+            if(IntValue<=RValue)
+                return true;
+            else
+                return false;
+#else
+            if (IntValue == NegativeRep)
+                return RValue.IntValue < 0;
+            else if (RValue.IntValue == NegativeRep)
+            {
+                if (IntValue >= 0)
+                    return false;
+                else
+                    return true;
+            }
+            else
+                return IntValue <= RValue.IntValue;
 #endif
 		}
 		
@@ -2281,25 +2319,46 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-		bool IntHalfLessThanOrEqualOp(AltDec& LValue, AltDec& RValue)
+		static bool IntHalfLessThanOrEqualOp(AltDec& LValue, AltDec& RValue)
+		{
+			return LValue.IntHalfLessThanOrEqualOpV2(RValue);
+		}
+		
+		static bool IntHalfLessThanOrEqual(AltDec LValue, AltDec RValue)
+		{
+			return IntHalfLessThanOrEqualOp(LValue, RValue);
+		}
+		
+        /// <summary>
+        /// Greater than Operation for just IntValue section
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+		bool IntHalfGreaterThanOpV2(AltDec& RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
-            if(LValue.IntValue<=RValue)
+            if(IntValue>RValue)
                 return true;
             else
                 return false;
 #else
-            if (LValue.IntValue == NegativeRep)
-                return RValue.IntValue < 0;
-            else if (RValue.IntValue == NegativeRep)
+            if (IntValue == NegativeRep)
             {
-                if (LValue.IntValue >= 0)
+                if (RValue.IntValue < 0)
                     return false;
                 else
                     return true;
             }
+            else if (RValue.IntValue == NegativeRep)
+            {
+                if (IntValue >= 0)
+                    return true;
+                else
+                    return false;
+            }
             else
-                return IntHalfLessThanOrEqualOp(LValue, RValue);
+                return IntValue > RValue.IntValue;
 #endif
 		}
 		
@@ -2309,15 +2368,33 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-		bool IntHalfGreaterThanOp(AltDec& LValue, AltDec& RValue)
+		static bool IntHalfGreaterThanOp(AltDec& LValue, AltDec& RValue)
+		{
+			return LValue.IntHalfLessThanOrEqualOpV2(RValue);
+		}
+		
+		static bool IntHalfGreaterThan(AltDec LValue, AltDec RValue)
+		{
+			return IntHalfGreaterThanOp(LValue, RValue);
+		}
+		
+        /// <summary>
+        /// Greater than or Equal to Operation for just IntValue section
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+		bool IntHalfGreaterThanOrEqualOpV2(AltDec& RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
-            if(LValue.IntValue>RValue)
+            if(IntValue>=RValue)
                 return true;
             else
                 return false;
 #else
-            if (LValue.IntValue == NegativeRep)
+            if (IntValue == RValue.IntValue)
+                return true;
+            if (IntValue == NegativeRep)
             {
                 if (RValue.IntValue < 0)
                     return false;
@@ -2326,13 +2403,13 @@ public:
             }
             else if (RValue.IntValue == NegativeRep)
             {
-                if (LValue.IntValue >= 0)
+                if (IntValue >= 0)
                     return true;
                 else
                     return false;
             }
             else
-                return IntHalfGreaterThanOp(LValue, RValue);
+                return IntValue >= RValue.IntValue;
 #endif
 		}
 		
@@ -2342,33 +2419,14 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-		bool IntHalfGreaterThanOrEqualOp(AltDec& LValue, AltDec& RValue)
+		static bool IntHalfGreaterThanOrEqualOp(AltDec& LValue, AltDec& RValue)
 		{
-#if defined(AltDec_UseMirroredInt)
-            if(LValue.IntValue>=RValue)
-                return true;
-            else
-                return false;
-#else
-            if (LValue.IntValue == RValue.IntValue)
-                return true;
-            if (LValue.IntValue == NegativeRep)
-            {
-                if (RValue.IntValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (LValue.IntValue >= 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntHalfGreaterThanOp(LValue, RValue);
-#endif
+			return LValue.IntHalfGreaterThanOrEqualOpV2(RValue);
+		}
+		
+		static bool IntHalfGreaterThanOrEqual(AltDec LValue, AltDec RValue)
+		{
+			return IntHalfGreaterThanOrEqualOp(LValue, RValue);
 		}
 
     #pragma endregion MirroredIntBased Operations
@@ -4038,7 +4096,9 @@ public:
 		static AltDec BasicAdd(AltDec self, unsigned int Value) { self.BasicIntAddition(Value); return self; }
 		static AltDec BasicAdd(AltDec self, signed long long Value) { self.BasicIntAddition(Value); return self; }
         static AltDec BasicAdd(AltDec self, unsigned long long Value) { self.BasicIntAddition(Value); return self; }
+#if defined(AltDec_UseMirroredInt)
         static AltDec BasicAdd(AltDec self, MirroredInt Value) { self.BasicMirroredIntAddOp(Value); return self; }
+#endif
 
 	#pragma endregion NormalRep Integer Addition Operations
 	
@@ -4064,6 +4124,7 @@ protected:
             }
         }
 
+#if defined(AltDec_UseMirroredInt)
         /// <summary>
         /// Basic Subtraction Operation
         /// </summary>
@@ -4086,6 +4147,7 @@ protected:
         {
             BasicMirroredIntSubOp(Value);
         }
+#endif
 public:
 
 		/// <summary>
@@ -4125,7 +4187,9 @@ public:
 		static AltDec BasicSub(AltDec self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
 		static AltDec BasicSub(AltDec self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
         static AltDec BasicSub(AltDec self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
+#if defined(AltDec_UseMirroredInt)
         static AltDec BasicSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
+#endif
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
@@ -5308,6 +5372,7 @@ public:
         static AltDec Multiple(AltDec self, signed long long Value) { return self.IntMultOp(Value); }
         static AltDec Multiple(AltDec self, unsigned long long Value) { return self.UnsignedIntMultOp(Value); }
 
+#if defined(AltDec_UseMirroredInt)
         AltDec& MultOp(MirroredInt& Value)
         { 
             if (Value < 0)
@@ -5324,6 +5389,7 @@ public:
             IntMultOpPt2(Value);
             return *this;
         }
+#endif
     #pragma endregion Other Multiplication Operations
 
     #pragma region Other Addition Operations
@@ -5538,7 +5604,9 @@ public:
         friend AltDec operator/=(AltDec& self, signed short Value) { return self.IntDivOp(Value); }
         friend AltDec operator/=(AltDec& self, signed int Value) { return self.IntDivOp(Value); }
         friend AltDec operator/=(AltDec& self, signed __int64 Value) { return self.IntDivOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator/=(AltDec& self, MirroredInt Value) { return self.IntDivOp(Value); }
+#endif
 
         /// <summary>
         /// /= Operation Between AltDec and unsigned Integer Value
@@ -5561,7 +5629,9 @@ public:
         friend AltDec operator/(AltDec self, signed short Value) { return self.IntDivOp(Value); }
         friend AltDec operator/(AltDec self, signed int Value) { return self.IntDivOp(Value); }
         friend AltDec operator/(AltDec self, signed __int64 Value) { return self.IntDivOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator/(AltDec self, MirroredInt Value) { return self.IntDivOp(Value); }
+#endif
 
         /// <summary>
         /// / Operation Between AltDec and unsigned Integer Value
@@ -5609,7 +5679,9 @@ public:
         friend AltDec operator*=(AltDec& self, signed short Value) { return self.IntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, signed int Value) { return self.IntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, signed __int64 Value) { return self.IntMultOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator*=(AltDec& self, MirroredInt Value) { return self.MultOp(Value); }
+#endif
 
         friend AltDec operator*=(AltDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
         friend AltDec operator*=(AltDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
@@ -5620,7 +5692,9 @@ public:
         friend AltDec operator*(AltDec self, signed short Value) { return self.IntMultOp(Value); }
         friend AltDec operator*(AltDec self, signed int Value) { return self.IntMultOp(Value); }
         friend AltDec operator*(AltDec self, signed __int64 Value) { return self.IntMultOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator*(AltDec self, MirroredInt Value) { return self.IntMultOp(Value); }
+#endif
 
         friend AltDec operator*(AltDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
         friend AltDec operator*(AltDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
@@ -5661,7 +5735,9 @@ public:
         friend AltDec operator+=(AltDec& self, signed short Value) { return self.IntAddOp(Value); }
         friend AltDec operator+=(AltDec& self, signed int Value) { return self.IntAddOp(Value); }
         friend AltDec operator+=(AltDec& self, signed __int64 Value) { return self.IntAddOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator+=(AltDec& self, MirroredInt Value) { return self.IntAddOp(Value); }
+#endif
 
         /// <summary>
         /// += Operation Between AltDec and unsigned Integer Value
@@ -5684,7 +5760,9 @@ public:
         friend AltDec operator+(AltDec self, signed short Value) { return self.IntAddOp(Value); }
         friend AltDec operator+(AltDec self, signed int Value) { return self.IntAddOp(Value); }
         friend AltDec operator+(AltDec self, signed __int64 Value) { return self.IntAddOp(Value); }
+#if defined(AltDec_UseMirroredInt)
         friend AltDec operator+(AltDec self, MirroredInt Value) { return self.IntAddOp(Value); }
+#endif
 
         /// <summary>
         /// + Operation Between AltDec and unsigned Integer Value
@@ -5812,7 +5890,11 @@ public:
             if (DecimalHalf == 0)
                 ++IntValue;
             else if (IntValue == NegativeRep)
+#if defined(AltDec_UseMirroredInt)
                 IntValue = MirroredInt::Zero;
+#else
+                IntValue = 0;
+#endif
             else
                 ++IntValue;
             return *this;
