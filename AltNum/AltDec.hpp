@@ -7894,7 +7894,7 @@ public:
     /// <summary>
     /// Reads the string.
     /// </summary>
-    /// <param name="Value">The value.</param>
+    /// <param name="Value">The target value to convert into AltDec</param>
     inline void AltDec::ReadString(std::string Value)
     {
         IntValue = 0; DecimalHalf = 0;
