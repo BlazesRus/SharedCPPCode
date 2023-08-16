@@ -7799,11 +7799,27 @@ public:
         static AltDec ArcTan2(AltDec y, AltDec x)
         {
 #if defined(AltNum_EnablePiRep)
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+            AltDec coeff_1 = AltDec(1, 0, -4);
+    #elif defined(AltNum_EnablePiFractional)
+            AltDec coeff_1 = AltDec(1, 4, PiByDivisorRep);
+    #else
             AltDec coeff_1 = AltDec(0, 250000000, PiRep);//Pi / 4;
+    #endif
 #else
             AltDec coeff_1 = PiNum / 4;
 #endif
-            AltDec coeff_2 = coeff_1 * 3;
+#if defined(AltNum_EnablePiRep)
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+            AltDec coeff_2 = AltDec(3, 0, -4);
+    #elif defined(AltNum_EnablePiFractional)
+            AltDec coeff_2 = AltDec(3, 4, PiByDivisorRep);
+    #else
+            AltDec coeff_2 = AltDec(0, 750000000, PiRep);//Pi / 4;
+    #endif
+#else
+            AltDec coeff_2 = PiNum * AltDec(0, 750000000);
+#endif
             AltDec abs_y = AltDec::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
             AltDec r;
             AltDec angle;
