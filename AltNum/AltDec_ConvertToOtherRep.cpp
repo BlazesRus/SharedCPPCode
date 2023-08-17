@@ -340,7 +340,7 @@ inline void BlazesRusCode::AltDec::ConvertToPiRep(RepType& repType)
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 		{
-			BasicUnsignedIntDiv(-ExtraRep);
+			Int32DivOpV2(-ExtraRep);//BasicUnsignedIntDiv(-ExtraRep);
 		}
 		#else
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -647,8 +647,7 @@ inline void BlazesRusCode::AltDec::ConvertToERep(RepType& repType)
 }
 #endif
 
-template<typename RepTypeV2>//Template to allow to use as both copy and reference
-inline void BlazesRusCode::AltDec::ConvertToNormType(RepTypeV2& repType)
+inline void BlazesRusCode::AltDec::ConvertToNormTypeOp(RepType& repType)
 {
 	switch (repType)
 	{
@@ -773,10 +772,19 @@ inline void BlazesRusCode::AltDec::ConvertToNormType(RepTypeV2& repType)
 	}
 }
 
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormType(RepType& repType)
+inline void BlazesRusCode::AltDec::ConvertToNormType(RepType repType) { ConvertToNormTypeOp(repType); }
+
+inline AltDec BlazesRusCode::AltDec::ConvertAsNormTypeOp(RepType& repType)
 {
 	AltDec Res = *this;
-	Res.ConvertToNormType(repType);
+	Res.ConvertToNormTypeOp(repType);
+	return Res;
+}
+
+inline AltDec BlazesRusCode::AltDec::ConvertAsNormType(RepType repType)
+{
+	AltDec Res = *this;
+	Res.ConvertToNormTypeOp(repType);
 	return Res;
 }
 
