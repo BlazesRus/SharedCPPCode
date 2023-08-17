@@ -1,6 +1,214 @@
 ﻿#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
+void NormalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+	switch (RRep)
+	{
+		case RepType::NormalType://Fail safe for when converted before switch
+			self.BasicDivOp(Value);
+			break;
+#if defined(AltNum_EnableFractionals)
+		case RepType::NumByDiv://X / (Y / Z) = (XZ)/Y
+			self.BasicDivOp(Value);
+			self.Int32BasicMultOp(Value.ExtraRep);
+			break;
+					
+#if defined(AltNum_EnablePiFractional)
+		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+			//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
+			self.Int32BasicMultOp(Value.DecimalHalf);
+			self.BasicDivOp(PiNumValue()*Value.IntValue);
+			break;
+#endif
+#if defined(AltNum_EnableEFractional)
+		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+			self.Int32BasicMultOp(Value.DecimalHalf);
+			self.BasicDivOp(ENumValue()*Value.IntValue);
+			break;
+#endif
+
+#if defined(AltNum_EnableDecimaledPiFractionals)
+		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+#elif defined(AltNum_EnableDecimaledEFractionals)
+		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+#endif
+#if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
+			self.BasicMult(-Value.ExtraRep);
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+			Value.ConvertToNormType(RepType::PiNum);
+	#elif defined(AltNum_EnableDecimaledEFractionals)
+			Value.ConvertToNormType(RepType::ENum);
+	#endif
+			self.BasicDivOp(Value);
+			break;
+#endif
+#endif					
+
+#if defined(AltNum_EnableImaginaryNum)
+//Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
+		case RepType::INum:
+			self.BasicDivOp(Value);
+			if(self.IntValue==NegativeRep)
+				self.IntValue = 0;
+			else
+				self.IntValue = self.IntValue==0?NegativeRep:-self.IntValue;
+			break;
+			self.ExtraRep = IRep;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+	#if defined(AltNum_EnableDecimaledIFractionals)
+		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+	#else
+		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+	#endif
+#endif
+#if defined(AltNum_EnableMixedIFractional)
+		case RepType::MixedI:
+#endif
+//Placeholder code(Converting to i rep for now)
+#if defined(AltNum_EnableAlternativeRepFractionals)||defined(AltNum_EnableMixedIFractional)
+			Value.ConvertToNormalIRep(RRep);
+			self.BasicDivOp(Value);
+			if(self.IntValue==NegativeRep)
+				self.IntValue = 0;
+			else
+				self.IntValue = self.IntValue==0?NegativeRep:-self.IntValue;
+			break;
+			self.ExtraRep = IRep;
+			break;
+#endif
+#endif
+		default:
+			Value.ConvertToNormType(RRep);
+			self.BasicDivOp(Value);
+			break;
+		}
+		break;
+		
+	}
+}
+
+#if defined(AltNum_EnableFractionals)
+void NumByDivDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+#endif
+
+#if defined(AltNum_EnablePiRep)
+void PiNumDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnablePiPowers)
+void PiPowerDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+void PiNumByDivDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnablePiFractional)
+void PiFractionalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableERep)
+void ENumDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledEFractionals)
+void ENumByDivDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableEFractional)
+void EFractionalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableApproachingValues)
+void ApproachingBottomDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if !defined(AltNum_DisableApproachingTop)
+void ApproachingTopDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	#if defined(AltNum_EnableApproachingDivided)
+void ApproachingMidRightDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingMidLeftDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableImaginaryNum)
+void INumDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledIFractionals)
+void INumByDivDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableIFractional)
+void IFractionalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableApproachingI)
+void ApproachingImaginaryBottomDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryTopDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+void ApproachingImaginaryMidRightDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+			#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryMidLeftDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+void MixedFracDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+void MixedPiESubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableMixedIFractional)
+void MixedIDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
 inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides
@@ -205,89 +413,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
     switch (LRep)//Main switch block starts here
     {
 		case RepType::NormalType:
-			switch (RRep)
-			{
-                case RepType::NormalType://Fail safe for when converted before switch
-                    self.BasicDivOp(Value);
-                    break;
-	#if defined(AltNum_EnableFractionals)
-		        case RepType::NumByDiv://X / (Y / Z) = (XZ)/Y
-                    self.BasicDivOp(Value);
-                    self.BasicMultOp(Value.ExtraRep);
-			        break;
-							
-		#if defined(AltNum_EnablePiFractional)
-				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-					//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
-					self.BasicMultOp(Value.DecimalHalf);
-					self.BasicDivOp(PiNumValue()*Value.IntValue);
-					break;
-	    #endif
-		#if defined(AltNum_EnableEFractional)
-				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-					self.BasicMultOp(Value.DecimalHalf);
-					self.BasicDivOp(ENumValue()*Value.IntValue);
-					break;
-	    #endif
-
-	    #if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-	    #elif defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-        #endif
-        #if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
-					self.BasicMult(-Value.ExtraRep);
-	        #if defined(AltNum_EnableDecimaledPiFractionals)
-					Value.ConvertToNormType(RepType::PiNum);
-            #elif defined(AltNum_EnableDecimaledEFractionals)
-					Value.ConvertToNormType(RepType::ENum);
-            #endif
-					self.BasicDivOp(Value);
-					break;
-        #endif
-    #endif					
-
-    #if defined(AltNum_EnableImaginaryNum)
-    //Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
-				case RepType::INum:
-                    self.BasicDivOp(Value);
-                    if(self.IntValue==NegativeRep)
-						self.IntValue = 0;
-                    else
-						self.IntValue = self.IntValue==0?NegativeRep:-self.IntValue;
-					break;
-                    self.ExtraRep = IRep;
-        #if defined(AltNum_EnableAlternativeRepFractionals)
-	        #if defined(AltNum_EnableDecimaledIFractionals)
-				case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-            #else
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            #endif
-        #endif
-        #if defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI:
-        #endif
-        //Placeholder code(Converting to i rep for now)
-        #if defined(AltNum_EnableAlternativeRepFractionals)||defined(AltNum_EnableMixedIFractional)
-					Value.ConvertToNormalIRep(RRep);
-					self.BasicDivOp(Value);
-					if(self.IntValue==NegativeRep)
-						self.IntValue = 0;
-					else
-						self.IntValue = self.IntValue==0?NegativeRep:-self.IntValue;
-					break;
-					self.ExtraRep = IRep;
-					break;
-        #endif
-	#endif
-				default:
-					Value.ConvertToNormType(RRep);
-					self.BasicDivOp(Value);
-					break;
-				}
-				break;
-				
-			}
+			NormalDivOp(RRep, self, Value); 
 			break;
 #if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
@@ -303,7 +429,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 		#endif
 				case RepType::NumByDiv://(X*Pi) / (Y / Z) = (XZ)/Y
 					self.BasicDivOp(Value);
-					self.BasicMultOp(Value.ExtraRep);
+					self.Int32BasicMultOp(Value.ExtraRep);
 					break;
 							
 		#if defined(AltNum_EnablePiFractional)
@@ -458,7 +584,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				case RepType::NumByDiv://(X*E) / (Y / Z) = (XZ*E)/Y
 					self.BasicDivOp(Value);
-					self.BasicMultOp(Value.ExtraRep);
+					self.Int32BasicMultOp(Value.ExtraRep);
 					break;
 					
 				#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)

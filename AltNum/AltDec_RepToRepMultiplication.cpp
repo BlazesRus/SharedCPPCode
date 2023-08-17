@@ -1,6 +1,131 @@
 ﻿#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
+void NormalMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+#if defined(AltNum_EnableFractionals)
+void NumByDivMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+#endif
+
+#if defined(AltNum_EnablePiRep)
+void PiNumMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnablePiPowers)
+void PiPowerMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+void PiNumByDivMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnablePiFractional)
+void PiFractionalMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableERep)
+void ENumMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledEFractionals)
+void ENumByDivMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableEFractional)
+void EFractionalMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableApproachingValues)
+void ApproachingBottomMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if !defined(AltNum_DisableApproachingTop)
+void ApproachingTopMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	#if defined(AltNum_EnableApproachingDivided)
+void ApproachingMidRightMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingMidLeftMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableImaginaryNum)
+void INumMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledIFractionals)
+void INumByDivMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableIFractional)
+void IFractionalMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableApproachingI)
+void ApproachingImaginaryBottomMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryTopMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+void ApproachingImaginaryMidRightMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+			#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryMidLeftMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+void MixedFracMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+void MixedPiEMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableMixedIFractional)
+void MixedIMultOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
 inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides

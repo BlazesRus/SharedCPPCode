@@ -1,6 +1,127 @@
 ﻿#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 
+void NormalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+#if defined(AltNum_EnableFractionals)
+void NumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+#endif
+
+#if defined(AltNum_EnablePiRep)
+void PiNumSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnablePiPowers)
+void PiPowerSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+void PiNumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnablePiFractional)
+void PiFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableERep)
+void ENumSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledEFractionals)
+void ENumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableEFractional)
+void EFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
+#if defined(AltNum_EnableApproachingValues)
+void ApproachingBottomSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if !defined(AltNum_DisableApproachingTop)
+void ApproachingTopSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	#if defined(AltNum_EnableApproachingDivided)
+void ApproachingMidRightSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingMidLeftSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableImaginaryNum)
+void INumSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+	#if defined(AltNum_EnableDecimaledIFractionals)
+void INumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#elif defined(AltNum_EnableIFractional)
+void IFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+	
+	#if defined(AltNum_EnableApproachingI)
+void ApproachingImaginaryBottomSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+		#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryTopSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+void ApproachingImaginaryMidRightSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+
+			#if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryMidLeftSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+void MixedFracSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+void MixedPiESubOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	#endif
+#endif
+
 inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
