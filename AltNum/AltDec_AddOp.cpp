@@ -377,7 +377,13 @@ AltDec& AltDec::AddOp(AltDec& Value)
 	}
 	else
 	{
-		RepToRepAddOp(LRep, RRep, *this, Value);
+		if(Value.IntValue<0)
+		{
+			Value.SwapNegativeStatus();
+			RepToRepSubOp(LRep, RRep, *this, Value);
+		}
+		else
+			RepToRepAddOp(LRep, RRep, *this, Value);
 	}
 	return *this;
 }

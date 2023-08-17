@@ -584,8 +584,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     switch (LRep)//Main switch block starts here
     {
 		case RepType::NormalType:
-            NormalAddOp(RRep, self, Value); 
-			break;
 #if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
 	#if defined(AltNum_EnablePiPowers)
@@ -621,7 +619,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
     #endif
 #endif
-#if defined(AltNum_EnableFractionals)||defined(AltNum_EnableApproachingValues)||defined(AltNum_EnableERep)||defined(AltNum_EnablePiRep)
 #if defined(AltNum_EnableMixedFractional)
             if(RRep==RepType::MixedFrac)
     			self.ConvertToNormType(LRep);
@@ -643,7 +640,6 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 #endif
 			    self.CatchAllAddition(Value, LRep, RRep);
 			break;
-#endif
 #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
 		case RepType::INum:
     #if defined(AltNum_EnableDecimaledIFractionals)

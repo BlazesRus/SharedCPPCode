@@ -380,7 +380,13 @@ AltDec& AltDec::SubOp(AltDec& Value)
 	}
 	else
 	{
-		RepToRepSubOp(LRep, RRep, *this, Value);
+		if(Value.IntValue<0)
+		{
+			Value.SwapNegativeStatus();
+			RepToRepAddOp(LRep, RRep, *this, Value);
+		}
+		else
+			RepToRepSubOp(LRep, RRep, *this, Value);
 	}
 	return *this;
 }
