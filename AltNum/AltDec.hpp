@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -2046,7 +2046,7 @@ public:
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
         template<typename IntType>
-        void IntHalfAdditionOp(IntType& RValue)
+        void IntHalfAdditionOp(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -2130,7 +2130,7 @@ public:
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue); or IntHalfSubtractionOp(RValue);
         template<typename IntType>
-        void IntHalfSubtractionOp(IntType& RValue)
+        void IntHalfSubtractionOp(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -3527,7 +3527,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntEqualTo(AltDec& LValue, IntType& RValue)//friend bool operator==(AltDec LValue, IntType RValue)
+        static bool RightSideIntEqualTo(AltDec& LValue, IntType RValue)//friend bool operator==(AltDec LValue, IntType RValue)
         {
 #if defined(AltNum_EnableImaginaryNum)
     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -3553,7 +3553,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType& RValue)//friend bool operator!=(AltDec LValue, IntType RValue)
+        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType RValue)//friend bool operator!=(AltDec LValue, IntType RValue)
         {
 #if defined(AltNum_EnableImaginaryNum)
     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -3582,7 +3582,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntLessThan(AltDec& LValue, IntType& RValue)//friend bool operator<(AltDec self, IntType Value)
+        static bool RightSideIntLessThan(AltDec& LValue, IntType RValue)//friend bool operator<(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -3631,7 +3631,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType& RValue)//friend bool operator<=(AltDec self, IntType Value)
+        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType RValue)//friend bool operator<=(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
             if(LValue.ExtraRep==InfinityRep)
@@ -3680,7 +3680,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntGreaterThan(AltDec& LValue, IntType& RValue)//friend bool operator>(AltDec self, IntType Value)
+        static bool RightSideIntGreaterThan(AltDec& LValue, IntType RValue)//friend bool operator>(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
             if(LValue.ExtraRep==InfinityRep)
@@ -3729,7 +3729,7 @@ public:
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType& RValue)//friend bool operator>=(AltDec self, IntType Value)
+        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType RValue)//friend bool operator>=(AltDec self, IntType Value)
         {
 #if defined(AltNum_EnableInfinityRep)
             if (LValue.ExtraRep == InfinityRep)
@@ -3778,7 +3778,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }//friend bool operator==(IntType Value, AltDec self)
+        static bool LeftSideIntEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }//friend bool operator==(IntType Value, AltDec self)
 
         /// <summary>
         /// Not equal to operation between Integer Type and <see cref="AltDec&"/>.
@@ -3787,7 +3787,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntNotEqualTo(IntType& LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }//friend bool operator!=(IntType Value, AltDec self)
+        static bool LeftSideIntNotEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }//friend bool operator!=(IntType Value, AltDec self)
 
         /// <summary>
         /// Lesser than Operation between Integer Type and <see cref="AltDec&"/> .
@@ -3796,7 +3796,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntLessThan(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }//friend bool operator<(IntType Value, AltDec self)
+        static bool LeftSideIntLessThan(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }//friend bool operator<(IntType Value, AltDec self)
         /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
@@ -3841,7 +3841,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntLessThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }//friend bool operator<=(IntType Value, AltDec self)
+        static bool LeftSideIntLessThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }//friend bool operator<=(IntType Value, AltDec self)
         /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
@@ -3886,7 +3886,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntGreaterThan(IntType& LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }//friend bool operator>(IntType Value, AltDec self)
+        static bool LeftSideIntGreaterThan(IntType LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }//friend bool operator>(IntType Value, AltDec self)
         /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
@@ -3931,7 +3931,7 @@ public:
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
         template<typename IntType>
-        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }//friend bool operator>=(IntType Value, AltDec self)
+        static bool LeftSideIntGreaterThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }//friend bool operator>=(IntType Value, AltDec self)
         /*{
 #if defined(AltNum_EnableInfinityRep)
             if(self.ExtraRep==InfinityRep)
@@ -4374,7 +4374,7 @@ public:
         /// </summary>
         /// <param name="value">The value.</param>
         template<typename IntType>
-        void PartialIntAddition(IntType& value)
+        void PartialIntAddition(IntType value)
         {
             if (DecimalHalf == 0)
                 IntValue += value;
@@ -4401,7 +4401,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntAddOp(AltDec& self, IntType& value)
+        static AltDec& IntAddOp(AltDec& self, IntType value)
         {
             if (value == 0)
                 return self;
@@ -4441,7 +4441,7 @@ public:
         /// </summary>
         /// <param name="value">The value.</param>
         template<typename IntType>
-        void PartialIntSubtraction(IntType& value)
+        void PartialIntSubtraction(IntType value)
         {
             if (DecimalHalf == 0)
                 IntValue -= value;
@@ -4468,7 +4468,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& IntSubOp(AltDec& self, IntType& value)
+        static AltDec& IntSubOp(AltDec& self, IntType value)
         {
             if (value == 0)
                 return self;
@@ -4510,7 +4510,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        void PartialUnsignedAddition(IntType& value)
+        void PartialUnsignedAddition(IntType value)
         {
             if (DecimalHalf == 0 || IntValue > 0)
                 IntValue += value;
@@ -4543,7 +4543,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& UnsignedAddOp(AltDec& self, IntType& value)
+        static AltDec& UnsignedAddOp(AltDec& self, IntType value)
         {
             if (value == 0)
                 return self;
@@ -4576,7 +4576,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        void PartialUnsignedSubtraction(IntType& value)
+        void PartialUnsignedSubtraction(IntType value)
         {
             if (DecimalHalf == 0)
                 IntValue -= value;
@@ -4622,7 +4622,7 @@ public:
         /// <param name="value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& UnsignedSubOp(AltDec& self, IntType& value)
+        static AltDec& UnsignedSubOp(AltDec& self, IntType value)
         {
             if (value == 0)
                 return self;
@@ -4886,7 +4886,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        void PartialIntMultOp(IntType& Value)
+        void PartialIntMultOp(IntType Value)
         {
             if (DecimalHalf == 0)
             {
@@ -4923,7 +4923,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        void BasicIntMultOp(IntType& Value)
+        void BasicIntMultOp(IntType Value)
         {
             if (Value < 0)
             {
@@ -4946,7 +4946,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& IntMultOp(AltDec& self, IntType& Value)
+        static AltDec& IntMultOp(AltDec& self, IntType Value)
         {
             if (Value < 0)
             {
@@ -5359,7 +5359,7 @@ public:
         static AltDec& DivOp(AltDec& self, AltDec& Value);
 
         template<typename IntType>
-        void PartialIntDivOp(IntType& Value)
+        void PartialIntDivOp(IntType Value)
         {
             if (DecimalHalf == 0)
             {
@@ -5407,7 +5407,7 @@ public:
         }
 
         template<typename IntType>
-        void BasicIntDivOp(IntType& Value)
+        void BasicIntDivOp(IntType Value)
         {
             if (Value == 0)
             {
@@ -5435,7 +5435,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntDivOp(AltDec& self, IntType& Value)
+        static AltDec& IntDivOp(AltDec& self, IntType Value)
         {
             if (Value == 0)
             {
@@ -5489,7 +5489,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename IntType>
-        static AltDec& UnsignedMultOp(AltDec& self, IntType& Value)
+        static AltDec& UnsignedMultOp(AltDec& self, IntType Value)
         {
             if (self == Zero) {}
             else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
@@ -5530,7 +5530,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& UnsignedDivOp(AltDec& self, IntType& Value)
+        static AltDec& UnsignedDivOp(AltDec& self, IntType Value)
         {
             if (Value == 0) { throw "Target value can not be divided by zero"; }
             else if (self == Zero) { return self; }
@@ -5666,7 +5666,7 @@ public:
             return self;
         }
 		
-		ModRes PerformModOp(AltDec& self, IntType& Value)
+		ModRes PerformModOp(AltDec& self, IntType Value)
 		{
 			ModRes Result;
 			if (self.IntValue < 0)
@@ -5690,7 +5690,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& IntRemOp(AltDec& self, IntType& Value)
+        static AltDec& IntRemOp(AltDec& self, IntType Value)
         {
             if (Value == 0 || self == AltDec::Zero) { self.SetAsZero(); return self; }
             if (self.DecimalHalf == 0)
@@ -5751,7 +5751,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType>
-        static AltDec& UnsignedRemOp(AltDec& self, IntType& Value)
+        static AltDec& UnsignedRemOp(AltDec& self, IntType Value)
         {
             if (self == AltDec::Zero) { return self; }
             if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; return self; }
