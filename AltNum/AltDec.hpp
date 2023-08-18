@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -203,6 +203,42 @@ AltDec_UseMirroredInt
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
+    //#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
+#endif
+
+#if defined(AltNum_UseDeveloperExtraDefaults)
+    #define AltNum_EnableImaginaryNum
+    #define AltNum_EnableApproachingI
+    #define AltNum_EnableMixedPiFractional
+    #define AltNum_EnableERep
+#endif
+
+//If Pi rep is neither disabled or enabled, default to enabling Pi representation
+#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
+    #define AltNum_EnablePiRep
+#endif
+
+#if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
+    #undef AltNum_DisablePiRep
+#endif
+
+#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
+    #define AltNum_EnableAlternativeMixedFrac
+    #if !defined(AltNum_EnableMixedFractional)
+        #define AltNum_EnableMixedFractional
+    #endif
+    #if !defined(AltNum_EnableAlternativeRepFractionals)
+        #define AltNum_EnableAlternativeRepFractionals
+    #endif
+    #if !defined(AltNum_EnablePiRep) && defined(AltNum_EnableMixedPiFractional)
+        #define AltNum_EnablePiRep
+    #endif
+    #if !defined(AltNum_EnableERep) && defined(AltNum_EnableMixedEFractional)
+        #define AltNum_EnableERep
+    #endif
+    #if !defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableMixedIFractional)
+        #define AltNum_EnableImaginaryNum
+    #endif
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -257,15 +293,6 @@ AltDec_UseMirroredInt
 	#undef AltNum_EnableNormalPowers
 #endif
 
-//If Pi rep is neither disabled or enabled, default to enabling Pi representation
-#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
-#endif
-
-#if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
-    #undef AltNum_DisablePiRep
-#endif
-
 //Force enable Pi features if near Pi enabled
 #if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
     #define AltNum_EnablePiRep
@@ -301,12 +328,12 @@ AltDec_UseMirroredInt
 	#defined AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
-	#define AltNum_EnableAlternativeMixedFrac
+#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
+	#define AltNum_MixedAltFracHasFractionalAccess
 #endif
 
-#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
-	#define AltNum_MixedAltFracHasFractionalAccess
+#if defined(AltNum_MixedAltFracHasFractionalAccess) && (defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional))
+    #define AltNum_MixedPiOrEHasFractionalAccess
 #endif
 
 #if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
@@ -4519,7 +4546,8 @@ public:
 		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool UnsignedBasicMultOp(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		bool UnsignedBasicMultOp(AltDecVariant Value)
 		{
 			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
 				DecimalHalf = 1;
@@ -4528,13 +4556,15 @@ public:
             return true;
 		}
 
-        AltDec UnsignedBasicMult(AltDec Value) { AltDec self = *this; self.UnsignedBasicMultOp(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+        AltDec UnsignedBasicMult(AltDecVariant Value) { AltDec self = *this; self.UnsignedBasicMultOp(Value); return self; }
 
 		/// <summary>
         /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOp(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		bool BasicMultOp(AltDecVariant Value)
         {//Warning:Modifies Value to make it a positive variable
         //Only checking for zero multiplication in main multiplication method
         //Not checking for special representation variations in this method(closer to AltDec operation code)
@@ -4546,7 +4576,8 @@ public:
             return UnsignedBasicMultOp(Value);
         }
 
-        AltDec BasicMult(AltDec Value) { AltDec self = *this; self.BasicMultOp(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+        AltDec BasicMult(AltDecVariant Value) { AltDec self = *this; self.BasicMultOp(Value); return self; }
 
 		void CatchAllMultiplication(AltDec& Value, RepType& LRep, RepType& RRep)
 		{
@@ -4562,7 +4593,8 @@ public:
 			BasicMultOp(Value);
 		}
 		
-		void CatchAllMultiplicationV3(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		void CatchAllMultiplicationV3(AltDecVariant Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();
@@ -4615,17 +4647,20 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        AltDec& MultOp(AltDec& Value);
+        template<typename AltDecVariant = AltDec&>
+        AltDec& MultOp(AltDecVariant Value);
 		
         AltDec Mult(AltDec Value) { AltDec self = *this; self.MultOp(Value); return self; }
 
-		AltDec Multiple(AltDec self, AltDec Value) { return self.MultOp(Value); }
+        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
+		AltDec Multiple(AltDecVariant self, AltDecVariant2 Value) { return self.MultOp(Value); }
 
         /// <summary>
         /// Basic Addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-        void BasicAddOp(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+        void BasicAddOp(AltDecVariant Value)
         {
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
@@ -4670,21 +4705,24 @@ public:
 	
         AltDec BasicAdd(AltDec Value) { AltDec self = *this; BasicAddOp(Value); return self; }
 
-        void CatchAllAddition(AltDec& Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
+        void CatchAllAddition(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
         {
             ConvertToNormType(LRep);
             Value.ConvertToNormType(RRep);
             BasicAddOp(Value);
         }
 		
-        void CatchAllAdditionV2(AltDec& Value, RepType& SameRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
+        void CatchAllAdditionV2(AltDecVariant Value, RepType& SameRep)
         {
             ConvertToNormType(SameRep);
             Value.ConvertToNormType(SameRep);
             BasicAddOp(Value);
         }
 		
-		void CatchAllAdditionV3(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		void CatchAllAdditionV3(AltDecVariant Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();
@@ -4692,16 +4730,19 @@ public:
         }
 		
 	#if defined(AltNum_EnableImaginaryNum)
-		void CatchAllImaginaryAddition(AltDec& Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
+		void CatchAllImaginaryAddition(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
 			ConvertAsNormalIRep(LRep);
 			Value.ConvertAsNormalIRep(RRep);
 			BasicAddOp(Value);
 		}
 
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
         AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
         { AltDec self = *this; CatchAllImaginaryAddition(Value, LRep, RRep); return self; }
 		
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
 		void CatchAllImaginaryAdditionV2(AltDec& Value, RepType& SameRep)
 		{
 			ConvertAsNormalIRep(SameRep);
@@ -4709,9 +4750,11 @@ public:
 			BasicAddOp(Value);
 		}
 
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
         AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllImaginaryAddition(Value, SameRep); return self; }
 	
+       template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
 	   void CatchAllImaginaryAdditionV3(AltDec& Value)
 	   {
 		   ConvertAsNormalIRep();
@@ -4719,6 +4762,7 @@ public:
 		   BasicAddOp(Value);
 	   }
 
+       template<typename AltDecVariant = AltDec&>
         AltDec CatchAllImaginaryAdditionAsCopies(AltDec Value)
         { AltDec self = *this; CatchAllImaginaryAddition(Value); return self; }
 	#endif
@@ -4781,21 +4825,24 @@ public:
 
         AltDec BasicSub(AltDec Value) { AltDec self = *this; BasicSubOp(Value); return self; }
 	
-		void CatchAllSubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
+		void CatchAllSubtraction(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
 			ConvertToNormType(LRep);
 			Value.ConvertToNormType(RRep);
 			BasicSubOp(Value);
 		}
 		
-		void CatchAllSubtractionV2(AltDec& Value, RepType& SameRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
+		void CatchAllSubtractionV2(AltDecVariant Value, RepTypeVar SameRep)
 		{
 			ConvertToNormType(SameRep);
 			Value.ConvertToNormType(SameRep);
 			BasicSubOp(Value);
 		}
 		
-		void CatchAllSubtractionV3(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		void CatchAllSubtractionV3(AltDecVariant Value)
 		{
 			ConvertToNormTypeV2();
 			Value.ConvertToNormTypeV2();
@@ -4803,34 +4850,40 @@ public:
 		}
 		
 	#if defined(AltNum_EnableImaginaryNum)
-		void CatchAllImaginarySubtraction(AltDec& Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
+		void CatchAllImaginarySubtraction(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
 			ConvertAsNormalIRep(LRep);
 			Value.ConvertAsNormalIRep(RRep);
 			BasicSubOp(Value);
 		}
 
-        AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
         { AltDec self = *this; CatchAllImaginarySubtraction(Value, LRep, RRep); return self; }
 		
-		void CatchAllImaginarySubtraction(AltDec& Value, RepType& SameRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
+		void CatchAllImaginarySubtraction(AltDec Value, RepTypeVar SameRep)
 		{
 			ConvertAsNormalIRep(SameRep);
 			Value.ConvertAsNormalIRep(SameRep);
 			BasicSubOp(Value);
 		}
 
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
         AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value, RepType& SameRep)
         { AltDec self = *this; CatchAllImaginarySubtraction(Value, SameRep); return self; }
 	
-	   void CatchAllImaginarySubtraction(AltDec& Value)
+       template<typename AltDecVariant = AltDec&>
+	   void CatchAllImaginarySubtraction(AltDecVariant Value)
 	   {
 		   ConvertAsNormalIRep();
 		   Value.ConvertAsNormalIRep();
 		   BasicSubOp(Value);
 	   }
 
-        AltDec CatchAllImaginarySubtractionAsCopies(AltDec Value)
+        template<typename AltDecVariant = AltDec&>
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDecVariant Value)
         { AltDec self = *this; CatchAllImaginarySubtraction(Value); return self; }
 	#endif
 
@@ -6057,21 +6110,23 @@ public:
         /// <returns>AltDec&</returns>
         static AltDec Modulus(AltDec self, AltDec Value) { return self.RemOp(Value); }
 
-        void CatchAllRem(AltDec& Value, RepType& LRep, RepType& RRep)
+        template<typename AltDecVariant=AltDec&, typename RepTypeVar=RepType&, typename RepTypeVar2=RepType&>
+        void CatchAllRem(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
         {
             ConvertToNormType(LRep);
             Value.ConvertToNormType(RRep);
             BasicRemOp(Value);
         }
 
-        void CatchAllRem(AltDec& Value, RepType& SameRep)
+        template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
+        void CatchAllRemV2(AltDecVariant Value, RepTypeVar SameRep)
         {
             ConvertToNormType(SameRep);
             Value.ConvertToNormType(SameRep);
             BasicRemOp(Value);
         }
 
-        void CatchAllRem(AltDec& Value)
+        void CatchAllRemV3(AltDec& Value)
         {
             ConvertToNormTypeV2();
             Value.ConvertToNormTypeV2();
@@ -8444,4 +8499,5 @@ public:
         }
     }
     #pragma endregion String Function Source
+
 }
