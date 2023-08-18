@@ -6,7 +6,8 @@ using AltDec = BlazesRusCode::AltDec;
 /// </summary>
 /// <param name="Value">The rightside value.</param>
 /// <returns>AltDec&</returns>
-AltDec& AltDec::MultOp(AltDec& Value)
+template<typename AltDecVariant>
+inline AltDec& AltDec::MultOp(AltDecVariant Value)
 {
 //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
 	if (Value.IsZero()) { SetAsZero(); return *this; }

@@ -192,7 +192,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 
 inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 {
-	PartialDiv(-ExtraRep);
+	PartialIntDiv(-ExtraRep);
 	ExtraRep = 0;
 	__int64 SRep;
 	__int64 divRes;
@@ -324,41 +324,6 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 	}
 }
 
-inline void BlazesRusCode::AltDec::ConvertToPiRep(RepType& repType)
-{
-	switch (repType)
-	{
-		case RepType::PiNum:
-			return;
-			break;
-	#if defined(AltNum_EnablePiPowers)
-		case RepType::PiPower:
-			ConvertPiPowerToPiRep();
-			break;
-	#endif
-	#if defined(AltNum_EnableAlternativeRepFractionals)
-		#if defined(AltNum_EnableDecimaledPiFractionals)
-		case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-		{
-			Int32DivOpV2(-ExtraRep);//BasicUnsignedIntDiv(-ExtraRep);
-		}
-		#else
-		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-		{
-			int divisor = DecimalHalf;
-			DecimalHalf = 0;
-			BasicDivOp(divisor);
-		}
-		#endif
-		break;
-	#endif
-	#if defined(AltNum_EnableMixedPiFractional)
-		case RepType::MixedPi:
-			return;//Add Conversion Code from MixedPi later
-	#endif
-	}
-	ExtraRep = PiRep;
-}
 #endif
 
 #if defined(AltNum_EnableERep)
@@ -615,178 +580,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 }
 	#endif
 
-inline void BlazesRusCode::AltDec::ConvertToERep(RepType& repType)
-{
-	switch (repType)
-	{
-		case RepType::ENum:
-			return;
-			break;
-	#if defined(AltNum_EnableAlternativeRepFractionals)
-		#if defined(AltNum_EnableDecimaledEFractionals)
-		case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
-		{
-			BasicDivOp(-ExtraRep);
-		}
-		#else
-		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-		{
-			int divisor = DecimalHalf;
-			DecimalHalf = 0;
-			BasicDivOp(divisor);
-		}
-		#endif
-		break;
-	#endif
-	#if defined(AltNum_EnableMixedEFractional)
-		case RepType::MixedE:
-			return;//Add Conversion Code from MixedPi later
-	#endif
-	}
-	ExtraRep = ERep;
-}
 #endif
-
-inline void BlazesRusCode::AltDec::ConvertToNormTypeOp(RepType& repType)
-{
-	switch (repType)
-	{
-	case RepType::NormalType:
-		break;
-#if defined(AltNum_EnableInfinityRep)
-	case RepType::PositiveInfinity:
-		IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-		break;
-	case RepType::NegativeInfinity:
-		IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-		break;
-#endif
-#if defined(AltNum_EnableApproachingValues)
-	case RepType::ApproachingBottom:
-		DecimalHalf = 1; ExtraRep = 0;
-		break;
-	#if !defined(AltNum_DisableApproachingTop)
-	case RepType::ApproachingTop:
-		DecimalHalf = 999999999; ExtraRep = 0;
-		break;
-	#endif
-	#if defined(AltNum_EnableApproachingDivided)
-	case RepType::ApproachingMidRight:
-		int InvertedExtraRep = ExtraRep*-1;
-		if(DecimalOverflow%InvertedExtraRep!=0)//Only cut off the traiing digits for those that can't have all digits stored
-			DecimalHalf = DecimalOverflow/InvertedExtraRep;
-		else
-			DecimalHalf = (DecimalOverflow/InvertedExtraRep)+1;
-		ExtraRep = 0;
-		break;
-		#if !defined(AltNum_DisableApproachingTop)
-	case RepType::ApproachingMidLeft:
-		if(DecimalOverflow%ExtraRep==0)//Only cut off the traiing digits for those that can't have all digits stored
-			DecimalHalf = DecimalOverflow/ExtraRep;
-		else
-			DecimalHalf = (DecimalOverflow/ExtraRep)-1;
-		ExtraRep = 0;
-		break;
-		#endif
-	#endif
-#endif
-#if defined(AltNum_EnablePiRep)
-	case RepType::PiNum:
-		ConvertPiToNum();
-		break;
-#if defined(AltNum_EnablePiPowers)
-	case RepType::PiPower:
-		ConvertPiPowerToNum();
-		break;
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnableDecimaledPiFractionals)
-	case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-		ConvertFromPiByDivToNorm();
-	#else
-	case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-		ConvertFromPiFractionalToNorm();
-	#endif
-		break;
-#endif		
-#endif
-	case RepType::NumByDiv:
-		BasicIntDivOp(ExtraRep);
-		ExtraRep = 0;
-		break;
-#if defined(AltNum_EnableERep)
-	case RepType::ENum:
-		ConvertENumToNorm();
-		break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnableDecimaledEFractionals)
-	case RepType::ENumByDiv:
-		ConvertEByDivToNorm();
-	#else
-	case RepType::EFractional://IntValue/DecimalHalf*e Representation
-		ConvertEFractionalToNorm();
-	#endif
-		break;
-#endif
-#endif
-
-#if defined(AltNum_EnableMixedFractional)
-	case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-		AltDec Res = IntValue<0?AltDec(DecimalHalf, 0):AltDec(DecimalHalf, 0);
-		Res /= ExtraRep;
-		if(IntValue!=0&&IntValue!=NegativeRep)
-			Res += IntValue;
-		IntValue = Res.IntValue;
-		DecimalHalf = Res.DecimalHalf;
-		ExtraRep = 0;
-		break;
-#endif
-
-#if defined(AltNum_EnableImaginaryNum)
-	case RepType::INum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnableDecimaledIFractionals)
-	case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-		if(IntValue==0&&DecimalHalf==0)
-			ExtraRep = 0
-		else
-			throw "Can't convert imaginery number into real number unless is zero.";
-		break;
-	#endif
-	case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
-		if(IntValue==0&&DecimalHalf!=0)
-			ExtraRep = 0
-		else
-			throw "Can't convert imaginery number into real number unless is zero.";
-		break;
-#endif
-#ifdef AltNum_EnableComplexNumbers
-	case RepType::ComplexIRep:
-		throw "Conversion from complex number to real number not supported yet.";
-		break;
-#endif
-	default:
-		throw "Conversion to normal number not supported yet?";
-		break;
-	}
-}
-
-inline void BlazesRusCode::AltDec::ConvertToNormType(RepType repType) { ConvertToNormTypeOp(repType); }
-
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormTypeOp(RepType& repType)
-{
-	AltDec Res = *this;
-	Res.ConvertToNormTypeOp(repType);
-	return Res;
-}
-
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormType(RepType repType)
-{
-	AltDec Res = *this;
-	Res.ConvertToNormTypeOp(repType);
-	return Res;
-}
 
 inline void BlazesRusCode::AltDec::ConvertToNormTypeV2()
 {
@@ -802,48 +596,6 @@ inline AltDec BlazesRusCode::AltDec::ConvertAsNormTypeV2()
 }
 
 #if defined(AltNum_EnableImaginaryNum)
-inline void BlazesRusCode::AltDec::ConvertIRepToNormal(RepType& repType)
-{//Assuming not zero(should not reach needing to convert the representation)
-	switch (repType)
-	{
-	case RepType::INum:
-		break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnableDecimaledIFractionals)
-	case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-		int Divisor = -ExtraRep;
-		BasicDivOp(Divisor);
-		break;
-	#endif
-	case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
-		int Divisor = DecimalHalf;
-		DecimalHalf = 0;
-		BasicDivOp(Divisor);
-		break;
-#ifdef AltNum_EnableComplexNumbers
-	case RepType::ComplexIRep:
-		throw "Conversion from complex number to real number not supported yet.";
-		break;
-#endif
-	default:
-		throw "Conversion not supported.";
-		break;
-	}
-}
-
-inline void BlazesRusCode::AltDec::ConvertToNormalIRep(RepType& repType)
-{//Assuming not zero(should not reach needing to convert the representation)
-	ConvertIRepAsNormal(repType);
-	ExtraRep = IRep;
-}
-
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormalIRep(RepType& repType)
-{
-	AltDec Res = *this;
-	Res.ConvertToNormalIRep(repType);
-	return Res;
-}
 
 inline void BlazesRusCode::AltDec::ConvertToNormalIRep()
 {

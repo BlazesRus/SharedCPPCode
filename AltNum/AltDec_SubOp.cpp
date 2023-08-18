@@ -212,7 +212,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 				}
 				else
 				{
-					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
+					ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
 					BasicSubOp(Value);
 				}
 				break;
@@ -230,7 +230,7 @@ AltDec& AltDec::SubOp(AltDec& Value)
 					BasicSubOp(Value);
 				else
 				{
-					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
+					ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
 					BasicSubOp(Value);
 				}
 				break;
