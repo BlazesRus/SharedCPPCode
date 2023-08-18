@@ -1019,7 +1019,7 @@ namespace BlazesRusCode
 			}
 		#if defined(AltNum_EnableEFractional)
             else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-				return RepType::ENumByDiv;
+				return RepType::EFractional;
 		#endif
     #endif
 
