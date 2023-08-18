@@ -336,8 +336,12 @@ AltDec_UseMirroredInt
     #define AltNum_MixedPiOrEHasFractionalAccess
 #endif
 
-#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
+#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
 	#define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#endif
+
+#if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_EnableDecimaledPiOrEFractionals
 #endif
 
 namespace BlazesRusCode
