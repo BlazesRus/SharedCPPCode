@@ -11,18 +11,18 @@ void NormalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 			break;
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
 #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
 #endif
-#if defined(AltNum_MixedPiOrEHasFractionalAccess)
+#if defined(AltNum_MixedPiOrEEnabled)
 	#if defined(AltNum_EnableMixedPiFractional) 
-			BasicMixedPiFracAddOp(self, Value);
+			self.BasicMixedPiFracAddOp(Value);
 	#else
-			BasicMixedEFracAddOp(self, Value);
+			self.BasicMixedEFracAddOp(Value);
 	#endif
 			break;
 #endif
@@ -35,37 +35,38 @@ void NormalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 #if defined(AltNum_EnableFractionals)
+/*
 void NumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
-{
 {
 	switch (RRep)
 	{
-    #if defined(AltNum_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
             //ToDo:Add more precise operation code here later
 			self.ConvertToNormType(&LRep);
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
 			self.ConvertToNormType(&LRep);
 	    #if defined(AltNum_EnableMixedPiFractional)
-			BasicMixedPiFracAddOp(self, Value);
+			self.BasicMixedPiFracAddOp(Value);
         #else
-			BasicMixedEFracAddOp(self, Value);
+			self.BasicMixedEFracAddOp(Value);
 	    #endif
 			break;
     #endif
+#endif
 		default:
 			self.CatchAllAddition(&Value, RepType::NumByDiv, &RRep);
 			break;
 	}
 }
-}
+*/
 #endif
 
 #if defined(AltNum_EnablePiRep)
@@ -75,20 +76,20 @@ void PiNumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 	{
     #if defined(AltNum_EnablePiPowers)//Combine PiPower in certain cases
     #endif
-    #if defined(AltNum_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			self.ConvertToNormType(&LRep);
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
 	    #if defined(AltNum_EnableMixedEFractional)
 			self.ConvertToNormType(&LRep);
-			BasicMixedEFracSubOp(self, Value);
+			self.BasicMixedEFracSubOp(Value);
         #else
             #if defined(AltNum_EnablePiFractional)
     			if(self.DecimalHalf==0)//Result is PiFractional
@@ -115,7 +116,7 @@ void PiNumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
     			else
     			{
     	            self.ConvertToNormType(&LRep);
-    	            BasicMixedPiFracSubOp(self, Value);
+    	            self.BasicMixedPiFracSubOp(Value);
     			}
             #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
                 if(Value.IntValue!=0)
@@ -135,9 +136,10 @@ void PiNumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
                 }
                 self.ExtraRep = Value.ExtraRep;
             #endif
-    #endif
+        #endif
 			break;
     #endif
+#endif
 		default:
 			self.CatchAllAddition(&Value, &LRep, &RRep);
 			break;
@@ -150,33 +152,34 @@ void PiNumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 //	switch (RRep)
 //	{
 //		case RepType::PiNum:
-//    #if defined(AltNum_EnableMixedFractional)
+//#if defined(AltNum_EnableMixedFractional)
 //		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 //			self.ConvertToNormType(RepType::PiPower);
-//			BasicMixedFracAddOp(self, Value);
+//			self.BasicMixedFracAddOp(Value);
 //			break;
 //    #if defined(AltNum_EnableMixedPiFractional)
 //		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 //    #elif defined(AltNum_EnableMixedEFractional)
 //		case RepType::MixedE:
 //    #endif
-//    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+//    #if defined(AltNum_MixedPiOrEEnabled)
 //        self.ConvertToNormType(&LRep);
 //	    #if defined(AltNum_EnableMixedEFractional)
-//			BasicMixedEFracAddOp(self, Value);
+//			self.BasicMixedEFracAddOp(Value);
 //        #else
-//			BasicMixedPiFracAddOp(self, Value);
+//			self.BasicMixedPiFracAddOp(Value);
 //	    #endif
 //			break;
 //    #endif
+//#endif
 //		default:
-//			self.CatchAllAddition(Value, RepType::PiPower, RRep);
+//			self.CatchAllAddition(&Value, &LRep, &RRep);
 //			break;
 //	}
 //}
-//	#endif
 	
 	#if defined(AltNum_EnableDecimaledPiFractionals)
+/*
 void PiNumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
@@ -184,24 +187,25 @@ void PiNumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
     #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			self.ConvertToNormType(&LRep);
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
 	    #if defined(AltNum_EnableMixedEFractional)
             self.ConvertToNormType(&LRep);
-			BasicMixedEFracAddOp(self, Value);
+			self.BasicMixedEFracAddOp(Value);
         #else
             //ToDo:Add more precise operation code here later
             self.ConvertToNormType(&LRep);
-			BasicMixedPiFracAddOp(self, Value);
+			self.BasicMixedPiFracAddOp(Value);
 	    #endif
 			break;
     #endif
+#endif
 		default:
 			self.CatchAllAddition(&Value, &LRep, &RRep);
 			break;
@@ -212,33 +216,35 @@ void PiFractionalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
-    #if defined(AltNum_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			self.ConvertToNormType(&LRep);
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
 	    #if defined(AltNum_EnableMixedEFractional)
             self.ConvertToNormType(&LRep);
-			BasicMixedEFracAddOp(self, Value);
+			self.BasicMixedEFracAddOp(Value);
         #else
             //ToDo:Add more precise operation code here later
             self.ConvertToNormType(&LRep);
-			BasicMixedPiFracAddOp(self, Value);
+			self.BasicMixedPiFracAddOp(Value);
 	    #endif
 			break;
     #endif
+#endif
 		default:
 			self.CatchAllAddition(&Value, &LRep, &RRep);
 			break;
 	}
 }
 	#endif
+*/
 #endif
 
 #if defined(AltNum_EnableERep)
@@ -249,17 +255,17 @@ void ENumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
 			self.ConvertToNormType(&LRep);
-			BasicMixedFracAddOp(self, Value);
+			self.BasicMixedFracAddOp(Value);
 			break;
 #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
 #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
 #endif
-#if defined(AltNum_MixedPiOrEHasFractionalAccess)
+#if defined(AltNum_MixedPiOrEEnabled)
 	#if defined(AltNum_EnableMixedPiFractional)
 			self.ConvertToNormType(&LRep);
-			BasicMixedPiFracAddOp(self, Value);
+			self.BasicMixedPiFracAddOp(Value);
         #else
             #if defined(AltNum_EnableEFractional)
     			if(self.DecimalHalf==0)//Result is EFractional
@@ -286,7 +292,7 @@ void ENumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
     			else
     			{
     	            self.ConvertToNormType(&LRep);
-    	            BasicMixedPiFracSubOp(self, Value);
+    	            self.BasicMixedPiFracSubOp(Value);
     			}
             #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
                 if(Value.IntValue!=0)
@@ -316,22 +322,73 @@ void ENumAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 
+/*
 	#if defined(AltNum_EnableDecimaledEFractionals)
 void ENumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
+	switch (RRep)
+	{
+#if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedFracAddOp(Value);
+			break;
+    #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+    #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+    #endif
+    #if defined(AltNum_MixedPiOrEEnabled)
+	    #if defined(AltNum_EnableMixedPiFractional)
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedEFracAddOp(Value);
+        #else
+            //ToDo:Add more precise operation code here later
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedPiFracAddOp(Value);
+	    #endif
+			break;
+    #endif
+#endif
+		default:
+			self.CatchAllAddition(&Value, &LRep, &RRep);
+			break;
+	}
 }
 	#elif defined(AltNum_EnableEFractional)
 void EFractionalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
+#if defined(AltNum_EnableMixedFractional)
+		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedFracAddOp(Value);
+			break;
+    #if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+    #elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+    #endif
+    #if defined(AltNum_MixedPiOrEEnabled)
+	    #if defined(AltNum_EnableMixedPiFractional)
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedEFracAddOp(Value);
+        #else
+            //ToDo:Add more precise operation code here later
+			self.ConvertToNormType(&LRep);
+			self.BasicMixedPiFracAddOp(Value);
+	    #endif
+			break;
+    #endif
+#endif
 		default:
 			self.CatchAllAddition(&Value, &LRep, &RRep);
 			break;
 	}
-	break;
 }
 	#endif
+*/
 #endif
 
 #if defined(AltNum_EnableImaginaryNum)
@@ -368,7 +425,7 @@ void MixedFracAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 	#elif defined(AltNum_EnableMixedEFractional)
 				//case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
         //#if defined(AltNum_EnableMixedPiFractional)&&AltNum_EnableDecimaledPiFractionals
         //            break;//Give result as PiByDiv
         //#elif defined(AltNum_EnableMixedEFractional)&&AltNum_EnableDecimaledEFractionals
@@ -451,6 +508,7 @@ void MixedPiEAddOp(RepType& RRep, AltDec& self, AltDec& Value)
                         self.DecimalHalf = LeftSide.DecimalHalf;
                     }
                     break;
+/*
     #if defined(AltNum_MixedPiOrEHasDecimaledFracAccess)
 	    #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
@@ -459,7 +517,16 @@ void MixedPiEAddOp(RepType& RRep, AltDec& self, AltDec& Value)
         #endif
                     //ToDo:Add more precise code here later
                     break;
+    #elif defined(AltNum_EnablePiFractional)|| defined(AltNum_EnableEFractional)
+	    #if defined(AltNum_EnablePiFractional)
+
+        #else
+
+        #endif
+                    //ToDo:Add more precise code here later
+                    break;
     #endif
+*/
 				default:
 					self.CatchAllAddition(&Value, &LRep, &RRep);
 					break;
@@ -700,7 +767,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if (RRep == RepType::MixedFrac)
 			{
 				self.ConvertToNormType(&LRep);
-				BasicMixedFracAddOp(self, Value);
+				self.BasicMixedFracAddOp(Value);
 			}
 #if defined(AltNum_EnableMixedPiFractional)
             else if(RRep==RepType::MixedPi)
@@ -710,9 +777,9 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 #if defined(AltNum_MixedPiOrEEnabled)
     			self.ConvertToNormType(&LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
-    			BasicMixedPiFracAddOp(self, Value);
+    			self.BasicMixedPiFracAddOp(Value);
     		#else
-    			BasicMixedEFracAddOp(self, Value);
+    			self.BasicMixedEFracAddOp(Value);
     		#endif
 #else
             else
@@ -741,7 +808,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
     #endif
-    #if defined(AltNum_MixedPiOrEHasFractionalAccess)
+    #if defined(AltNum_MixedPiOrEEnabled)
             MixedPiEAddOp(RRep, self, Value);
             break;
     #endif

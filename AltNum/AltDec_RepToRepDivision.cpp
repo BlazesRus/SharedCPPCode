@@ -199,7 +199,7 @@ void ApproachingImaginaryMidLeftDivOp(RepType& RRep, AltDec& self, AltDec& Value
 void MixedFracDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
+	#if defined(AltNum_MixedPiOrEEnabled)
 void MixedPiESubOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }

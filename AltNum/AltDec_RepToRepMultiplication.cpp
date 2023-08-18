@@ -116,7 +116,7 @@ void ApproachingImaginaryMidLeftMultOp(RepType& RRep, AltDec& self, AltDec& Valu
 void MixedFracMultOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
+	#if defined(AltNum_MixedPiOrEEnabled)
 void MixedPiEMultOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
@@ -746,7 +746,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 	#else
 				//case RepType::MixedE:
 	#endif
-	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
+	#if defined(AltNum_MixedPiOrEEnabled)
 					//MixedFracMultOp(LRep, RRep, self, Value);
 					//break;
 	#endif

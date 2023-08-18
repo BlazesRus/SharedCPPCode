@@ -5161,11 +5161,14 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        AltDec& AddOp(AltDec& Value);
+        template<typename AltDecVariant = AltDec&>
+        AltDec& AddOp(AltDecVariant Value);
 
-        AltDec Add(AltDec self, AltDec Value) { return self.AddOp(Value); }
+        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
+        AltDec Add(AltDecVariant self, AltDecVariant2 Value) { return self.AddOp(Value); }
 
-		void BasicSubOp(AltDec& Value)
+        template<typename AltDecVariant = AltDec&>
+		void BasicSubOp(AltDecVariant Value)
         {
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
@@ -5275,7 +5278,6 @@ public:
         { AltDec self = *this; CatchAllImaginarySubtraction(Value); return self; }
 	#endif
 
-        template<typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&, typename AltDecVariant = AltDec&, typename AltDecVariant2 = AltDec&>
         static void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
@@ -5283,8 +5285,10 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        AltDec& SubOp(AltDec& Value);
+        template<typename AltDecVariant = AltDec&>
+        AltDec& SubOp(AltDecVariant RValue);
 		
+        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
 		AltDec Subtract(AltDec self, AltDec Value) { return self.SubOp(Value); }
 
     #pragma endregion NormalRep AltNumToAltNum Operations
