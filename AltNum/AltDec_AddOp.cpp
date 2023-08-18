@@ -219,7 +219,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 				}
 				else
 				{
-					ConvertToNormType(LRep); value.ConvertToNormType(LRep);
+					ConvertToNormType(&LRep); value.ConvertToNormType(&LRep);
 					BasicAddOp(Value);
 				}
 				break;
@@ -237,7 +237,7 @@ AltDec& AltDec::AddOp(AltDec& Value)
 					BasicAddOp(Value);
 				else
 				{
-					ConvertToNormType(LRep); Value.ConvertToNormType(LRep);
+					ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
 					BasicAddOp(Value);
 				}
 				break;

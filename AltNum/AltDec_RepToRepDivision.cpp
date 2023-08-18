@@ -1,5 +1,6 @@
 ﻿#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
+using RepType = BlazesRusCode::AltDec::RepType;
 
 void NormalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
@@ -33,7 +34,7 @@ void NormalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 #elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
 #endif
-#if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
+#if defined(AltNum_EnableDecimaledPiOrEFractionals)
 			self.BasicMult(-Value.ExtraRep);
 	#if defined(AltNum_EnableDecimaledPiFractionals)
 			Value.ConvertToNormType(RepType::PiNum);
@@ -79,7 +80,7 @@ void NormalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 #endif
 #endif
 		default:
-			Value.ConvertToNormType(RRep);
+			Value.ConvertToNormType(&RRep);
 			self.BasicDivOp(Value);
 			break;
 		}
@@ -198,7 +199,7 @@ void ApproachingImaginaryMidLeftDivOp(RepType& RRep, AltDec& self, AltDec& Value
 void MixedFracDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
 void MixedPiESubOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
@@ -335,7 +336,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			case RepType::MixedE:
             #endif
         #endif
-				Value.ConvertToNormType(RRep);
+				Value.ConvertToNormType(&RRep);
 				RRep = RepType::NormalType;
 				break;
             default:
@@ -675,7 +676,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 		#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
 	#endif
@@ -701,7 +702,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 		#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
 	#endif
@@ -729,7 +730,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 		    #endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
 		#endif
@@ -755,7 +756,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 		    #endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
 		#endif
@@ -789,12 +790,12 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 		#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
 	#endif
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
                     if(Value.DecimalHalf==0)
                         self.ExtraRep *= Value.IntValue;
                     else
@@ -841,7 +842,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 				#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
             #endif
@@ -886,7 +887,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 				#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
             #endif
@@ -961,7 +962,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 				case RepType::MixedI:
 				#endif
                     //Skip to performing operation as normal type
-					self.ConvertToNormType(LRep);
+					self.ConvertToNormType(&LRep);
                     RepToRepDivOp(RepType::NormalType, RRep, self, Value);
                     break;
             #endif
@@ -1020,7 +1021,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			#endif
 		#endif
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
 					break;
 			}
@@ -1041,7 +1042,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 					}
 					break;
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					if(Value.DecimalHalf==0)
 						self.DecimalHalf *= Value.IntValue;
 					else//Convert to INum
@@ -1095,7 +1096,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 		    #endif
         #endif
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
 			}
 			break;
@@ -1108,8 +1109,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                 //case RepType::NormalType:
 				//	break;
 				default:
-                    self.ConvertToNormType(LRep);
-					Value.ConvertToNormType(RRep);
+                    self.ConvertToNormType(&LRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
 			}
 			break;
@@ -1145,8 +1146,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                     }
 					break;
 				default:
-                    self.ConvertToNormType(LRep);
-					Value.ConvertToNormType(RRep);
+                    self.ConvertToNormType(&LRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
 			}
 			break;
@@ -1163,8 +1164,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
         #endif
                     self.CatchAllImaginaryDivision(Value, LRep, RRep);
 				default:
-                    self.ConvertToNormalIRep(LRep);
-					Value.ConvertToNormType(RRep);
+                    self.ConvertToNormalIRep(&LRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
             }
     #endif

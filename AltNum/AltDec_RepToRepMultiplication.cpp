@@ -1,5 +1,6 @@
 ﻿#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
+using RepType = BlazesRusCode::AltDec::RepType;
 
 void NormalMultOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
@@ -115,7 +116,7 @@ void ApproachingImaginaryMidLeftMultOp(RepType& RRep, AltDec& self, AltDec& Valu
 void MixedFracMultOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
 void MixedPiEMultOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
@@ -202,7 +203,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			case RepType::MixedE:
             #endif
         #endif
-				Value.ConvertToNormType(RRep);
+				Value.ConvertToNormType(&RRep);
 				RRep = RepType::NormalType;
 				break;
 			}
@@ -674,7 +675,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 					break;
 			#endif							
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicMultOp(Value);
 					break;
 			}
@@ -694,7 +695,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
                     self.ExtraRep = 0;
                     break;
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicMultOp(Value);
 					break;
 			}
@@ -712,7 +713,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 					self.ExtraRep = -self.ExtraRep;
 					break;
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicMultOp(Value);
 			}
 			break;
@@ -729,7 +730,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 					self.BasicMultOp(-Value);
 					break;
 				default:
-					Value.ConvertToNormType(RRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicMultOp(Value);
 			}
 			break;
@@ -745,7 +746,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 	#else
 				//case RepType::MixedE:
 	#endif
-	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+	#if defined(AltNum_MixedPiOrEHasFractionalAccess)
 					//MixedFracMultOp(LRep, RRep, self, Value);
 					//break;
 	#endif
@@ -805,8 +806,8 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
                     }
 					break;
 				default:
-                    self.ConvertToNormType(LRep);
-					Value.ConvertToNormType(RRep);
+                    self.ConvertToNormType(&LRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
 			}
 			break;
@@ -823,8 +824,8 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
         #endif
                     self.CatchAllImaginaryMultiplication(Value, LRep, RRep);
 				default:
-                    self.ConvertToNormalIRep(LRep);
-					Value.ConvertToNormType(RRep);
+                    self.ConvertToNormalIRep(&LRep);
+					Value.ConvertToNormType(&RRep);
 					self.BasicDivOp(Value);
             }
             break;
