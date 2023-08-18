@@ -320,12 +320,12 @@ AltDec_UseMirroredInt
 	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
+#if (defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnablePiFractional)) || (defined(AltNum_EnableMixedEFractional) && defined(AltNum_EnableEFractional)) || (defined(AltNum_EnableMixedIFractional) && defined(AltNum_EnableIFractional))
 	#define AltNum_MixedAltFracHasFractionalAccess
 #endif
 
-#if defined(AltNum_MixedAltFracHasFractionalAccess) && (defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional))
-    #define AltNum_MixedPiOrEHasFractionalAccess
+#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+    #define AltNum_MixedPiOrEEnabled
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
