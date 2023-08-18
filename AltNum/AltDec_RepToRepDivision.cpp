@@ -12,19 +12,19 @@ void NormalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 #if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv://X / (Y / Z) = (XZ)/Y
 			self.BasicDivOp(Value);
-			self.Int32BasicMultOp(Value.ExtraRep);
+			self.BasicIntMultOp(Value.ExtraRep);
 			break;
 					
 #if defined(AltNum_EnablePiFractional)
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 			//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
-			self.Int32BasicMultOp(Value.DecimalHalf);
+			self.BasicIntMultOp(Value.DecimalHalf);
 			self.BasicDivOp(PiNumValue()*Value.IntValue);
 			break;
 #endif
 #if defined(AltNum_EnableEFractional)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-			self.Int32BasicMultOp(Value.DecimalHalf);
+			self.BasicIntMultOp(Value.DecimalHalf);
 			self.BasicDivOp(ENumValue()*Value.IntValue);
 			break;
 #endif
@@ -430,7 +430,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 		#endif
 				case RepType::NumByDiv://(X*Pi) / (Y / Z) = (XZ)/Y
 					self.BasicDivOp(Value);
-					self.Int32BasicMultOp(Value.ExtraRep);
+					self.BasicIntMultOp(Value.ExtraRep);
 					break;
 							
 		#if defined(AltNum_EnablePiFractional)
@@ -585,7 +585,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				case RepType::NumByDiv://(X*E) / (Y / Z) = (XZ*E)/Y
 					self.BasicDivOp(Value);
-					self.Int32BasicMultOp(Value.ExtraRep);
+					self.BasicIntMultOp(Value.ExtraRep);
 					break;
 					
 				#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)

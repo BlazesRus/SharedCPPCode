@@ -6,7 +6,8 @@ using AltDec = BlazesRusCode::AltDec;
 /// </summary>
 /// <param name="Value">The rightside value.</param>
 /// <returns>AltDec</returns>
-AltDec& AltDec::AddOp(AltDec& Value)
+template<typename AltDecVariant>
+inline AltDec& AltDec::AddOp(AltDecVariant Value)
 {
 	if (IsZero())
 	{

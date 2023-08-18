@@ -178,6 +178,7 @@ AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
 Autotoggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
+Autotoggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
 
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
 
@@ -196,6 +197,7 @@ AltNum_EnableIFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals
 AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
 
 AltDec_UseMirroredInt
+AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -1225,15 +1227,15 @@ namespace BlazesRusCode
     #if defined(AltNum_EnableMixedFractional)
         void SetMixedFractionalVal(int WholeNum, int Numerator, int Denom)
         {
-            IntValue = Value.IntValue;
+            IntValue = WholeNum;
             DecimalHalf = Numerator*-1;
             ExtraRep = Denom;
         }
         
         void SetMixedFractionalValAsNeg(int WholeNum, int NumeratorAsNeg, int Denom)
         {
-            IntValue = Value.IntValue;
-            DecimalHalf = Numerator;
+            IntValue = WholeNum;
+            DecimalHalf = NumeratorAsNeg;
             ExtraRep = Denom;
         }
     #endif
@@ -4157,36 +4159,38 @@ protected:
             PartialIntMultOp(Value);
         }
 public:
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        template<typename IntType=int>
-        void UnsignedBasicIntMultOp(IntType Value)
-        {
-            if (IntValue == 0 && DecimalHalf == 0)
-                return;
-            if (Value == 0)
-                SetAsZero();
-            else
-                PartialIntMultOp(Value);
-        }
-		
-        template<typename IntType=int>
-        void UnsignedBasicIntMult(IntType Value) { AltDec self = *this; self.UnsignedBasicIntMultOp(Value); return self; }
 
+public:
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
-        template<typename IntType=int>
-        void BasicIntMultOp(IntType Value)
+        template<typename IntType = int>
+        void BasicIntMultOp(IntType RValue)
         {
-            if (Value < 0)
+            if (IntValue == 0 && DecimalHalf == 0)
+                return;
+            if (RValue < 0)
             {
-                Value *= -1;
+                RValue *= -1;
                 SwapNegativeStatus();
             }
+            else if (RValue == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(Value);
+        }
+
+        template<typename IntType = int>
+        AltDec BasicIntMult(IntType Value) { AltDec self = *this; self.BasicIntMultOp(Value); return self; }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        template<typename IntType = unsigned int&>
+        void UnsignedIntBasicMultOp(IntType Value)
+        {
             if (IntValue == 0 && DecimalHalf == 0)
                 return;
             if (Value == 0)
@@ -4194,19 +4198,12 @@ public:
             else
                 PartialIntMultOp(Value);
         }
-		
-        template<typename IntType=int>
-        AltDec BasicIntMult(IntType Value) { AltDec self = *this; self.BasicIntMultOp(Value); return self; }
-public:
 
-		/// <summary>
-        /// Basic Multiplication Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		void Int32BasicMultOp(signed int& Value) { BasicIntMultOp(Value); }
-		void UInt32BasicMultOp(unsigned int& Value) { UnsignedBasicIntMultOp(Value); }
+        template<typename IntType = int>
+        void UnsignedBasicIntMult(IntType Value) { AltDec self = *this; self.UnsignedIntBasicMultOp(Value); return self; }
+
 		void Int64BasicMultOp(signed long long& Value) { BasicIntMultOp(Value); }
-		void UInt64BasicMultOp(unsigned long long& Value) { UnsignedBasicIntMultOp(Value); }
+		void UInt64BasicMultOp(unsigned long long& Value) { UnsignedIntBasicMultOp(Value); }
 
 		/// <summary>
         /// Basic Multiplication Operation that returns a value
@@ -4214,14 +4211,14 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
 		AltDec Int32BasicMult(signed int Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
-		AltDec UInt32BasicMult(unsigned int Value) { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
+		AltDec UInt32BasicMult(unsigned int Value) { AltDec self = *this; UnsignedIntBasicMultOp(Value); return self; }
 		AltDec Int64BasicMult(signed long long Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
-        AltDec UInt64BasicMult(unsigned long long Value) { AltDec self = *this; UnsignedBasicIntMultOp(Value); return self; }
+        AltDec UInt64BasicMult(unsigned long long Value) { AltDec self = *this; UnsignedIntBasicMultOp(Value); return self; }
 
 		static AltDec BasicInt32Multiplication(AltDec self, signed int Value) { self.BasicIntMultOp(Value); return self; }
-		static AltDec BasicUInt32Multiplication(AltDec self, unsigned int Value) { self.UnsignedBasicIntMultOp(Value); return self; }
+		static AltDec BasicUInt32Multiplication(AltDec self, unsigned int Value) { self.UnsignedIntBasicMultOp(Value); return self; }
 		static AltDec BasicInt64Multiplication(AltDec self, signed long long Value) { self.BasicIntMultOp(Value); return self; }
-        static AltDec BasicUInt64Multiplication(AltDec self, unsigned long long Value) { self.UnsignedBasicIntMultOp(Value); return self; }
+        static AltDec BasicUInt64Multiplication(AltDec self, unsigned long long Value) { self.UnsignedIntBasicMultOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -4380,10 +4377,14 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec</returns>
-		static AltDec BasicInt32Subtraction(AltDec self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
-		static AltDec BasicUInt32Subtraction(AltDec self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
-		static AltDec BasicInt64Subtraction(AltDec self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
-        static AltDec BasicUInt64Subtraction(AltDec self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+		static AltDec BasicInt32Subtraction(AltDecVariant self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+		static AltDec BasicUInt32Subtraction(AltDecVariant self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+		static AltDec BasicInt64Subtraction(AltDecVariant self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
+        template<typename AltDecVariant = AltDec>
+        static AltDec BasicUInt64Subtraction(AltDecVariant self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
 #if defined(AltDec_UseMirroredInt)
         static AltDec BasicMirroredIntSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
 #endif
@@ -4393,6 +4394,180 @@ public:
     #pragma region NormalRep Integer Bitwise Operations
 
 	#pragma endregion NormalRep Integer Bitwise Operations
+
+    #pragma region Mixed Fraction Operations
+    #if defined(AltNum_EnableMixedFractional)
+		//Assumes NormalRep + Normal MixedFraction operation
+		void BasicMixedFracAddOp(AltDec& RValue)
+		{
+			if(DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
+			{
+				if(IntValue<0)
+				{
+					if(RValue.IntValue==NegativeRep)
+					{
+						DecimalHalf = RValue.DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+					else if(RValue.IntValue<0)
+					{
+						IntValue += RValue.IntValue;
+						DecimalHalf = RValue.DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+					else//(RValue.IntValue>0)
+					{
+						if(RValue.IntValue>-IntValue)//check for flipping of sign
+						{
+							IntValue += RValue.IntValue - 1;
+							DecimalHalf = RValue.ExtraRep - RValue.DecimalHalf;
+						}
+						else
+						{
+							IntValue += RValue.IntValue;
+							DecimalHalf = RValue.ExtraRep - RValue.DecimalHalf;
+						}
+						ExtraRep = RValue.ExtraRep;
+					}
+				}
+				else//(IntValue>0)
+				{
+					if(RValue.IntValue==NegativeRep)
+					{
+						DecimalHalf = RValue.ExtraRep - RValue.DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+					else if(RValue.IntValue<0)
+					{
+						IntValue += RValue.IntValue;
+						if(-RValue.IntValue>IntValue)//check for flipping of sign
+						{
+							IntValue += RValue.IntValue;
+							if(IntValue==-1)
+								IntValue = NegativeRep;
+							else
+								++IntValue;
+						}
+						DecimalHalf = RValue.ExtraRep - RValue.DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+					else//(RValue.IntValue>0)
+					{
+						IntValue += RValue.IntValue;
+						DecimalHalf = RValue.DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+				}     
+			}
+			else
+			{
+				AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:RValue.IntValue*RValue.ExtraRep - RValue.DecimalHalf);
+				BasicIntMultOp(&RValue.ExtraRep);
+                BasicAddOp(&RightSideNum);//self += RightSideNum;
+				if(DecimalHalf==0)
+				{
+					if(IntValue!=0)//Set as Zero if both are zero
+					{
+						DecimalHalf = -DecimalHalf;
+						ExtraRep = RValue.ExtraRep;
+					}
+				}
+				else
+				{
+					if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+						DecimalHalf = -DecimalHalf;
+					ExtraRep = RValue.ExtraRep;
+				}
+			}
+		}
+		
+	#if defined(AltNum_EnableMixedPiFractional)
+		void BasicMixedPiFracAddOp(AltDec& RValue)
+	#elif defined(AltNum_EnableMixedEFractional)
+		void BasicMixedEFracAddOp(AltDec& RValue)
+	#endif
+	#if defined(AltNum_MixedPiOrEEnabled)
+		{
+			AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:(RValue.IntValue*-RValue.ExtraRep) - RValue.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		#else
+			RightSideNum *= ENum;
+		#endif
+            BasicIntMultOp(-RValue.ExtraRep);
+            BasicAddOp(&RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+					DecimalHalf = -DecimalHalf;
+					ExtraRep = -RValue.ExtraRep;
+				}
+			}
+			else
+			{
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					DecimalHalf = -DecimalHalf;
+				ExtraRep = -RValue.ExtraRep;
+			}
+		}
+	#endif
+		
+		//Assumes NormalRep - Normal MixedFraction operation
+		void BasicMixedFracSubOp(AltDec& Value)
+		{
+			AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:RValue.IntValue*RValue.ExtraRep - RValue.DecimalHalf);
+			BasicMultOp(&RValue.ExtraRep);
+			BasicSubOp(&RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+					DecimalHalf = -DecimalHalf;
+					ExtraRep = RValue.ExtraRep;
+				}
+			}
+			else
+			{
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					DecimalHalf = -DecimalHalf;
+				ExtraRep = RValue.ExtraRep;
+			}
+		}
+		
+	#if defined(AltNum_EnableMixedPiFractional)
+		void BasicMixedPiFracSubOp(AltDec& Value)
+	#elif defined(AltNum_EnableMixedEFractional)
+		void BasicMixedEFracSubOp(AltDec& Value)
+	#endif
+	#if defined(AltNum_MixedPiOrEEnabled)
+		{
+			AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:(RValue.IntValue*-RValue.ExtraRep) - RValue.DecimalHalf);
+		#if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		#else
+			RightSideNum *= ENum;
+		#endif
+			BasicMultOp(-RValue.ExtraRep);
+			BasicSubOp(&RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+					DecimalHalf = -DecimalHalf;
+					ExtraRep = -RValue.ExtraRep;
+				}
+			}
+			else
+			{
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					DecimalHalf = -DecimalHalf;
+				ExtraRep = -RValue.ExtraRep;
+			}
+		}
+	#endif
+#endif
+    #pragma endregion Mixed Fraction Operations
 
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
@@ -4864,10 +5039,7 @@ public:
         AltDec& MultOp(AltDecVariant Value);
 		
         template<typename AltDecVariant = AltDec>
-        AltDec Mult(AltDecVariant Value) { AltDec self = *this; self.MultOp(Value); return self; }
-
-        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
-		AltDec Multiple(AltDecVariant self, AltDecVariant2 Value) { return self.MultOp(Value); }
+        AltDec Multiple(AltDecVariant Value) { AltDec self = *this; self.MultOp(Value); return self; }
 
         /// <summary>
         /// Basic Addition Operation
