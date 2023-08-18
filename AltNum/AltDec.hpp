@@ -298,20 +298,12 @@ AltDec_UseMirroredInt
     #define AltNum_EnablePiRep
 #endif
 
-#if defined(AltNum_EnableERep) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePiPowers))
-    #undef AltNum_EnableERep
-#endif
-
-#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
-    #undef AltNum_EnableApproachingPi
-#endif
-
 #if defined(AltNum_EnableApproachingE) && !defined(AltNum_EnableERep)
-    #undef AltNum_EnableApproachingE
+#define AltNum_EnableERep
 #endif
 
 #if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-    #undef AltNum_EnableApproachingI
+#define AltNum_EnableImaginaryNum
 #endif
 
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
@@ -325,7 +317,7 @@ AltDec_UseMirroredInt
 #endif
 
 #if defined(AltNum_EnablePiFractional) || defined(AltNum_EnableEFractional) || defined(AltNum_EnableIFractional)
-	#defined AltNum_UsingAltFractional//Shorthand for having any of above toggles active
+	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
@@ -338,6 +330,10 @@ AltDec_UseMirroredInt
 
 #if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
 	#define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#endif
+
+#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals)))
+    #define AltNum_MixedPiOrEHasDecimaledFracAccess
 #endif
 
 #if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
@@ -566,7 +562,6 @@ namespace BlazesRusCode
         }
 
     #pragma region Const Representation values
-    protected:
 	#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//(other values only used if AltNum_EnableInfinityPowers is enabled)
@@ -1092,15 +1087,16 @@ namespace BlazesRusCode
 		
 	#pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
-        #if defined(AltNum_EnableAltDecBasedSetValues)
-        void SetPiValFromAltDec(AltDec Value)
+        #if defined(AltNum_EnableMediumDecBasedSetValues)
+        void SetPiValFromMediumDec(MediumDec Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
             ExtraRep = PiRep;
         }
         #endif
 
-        void SetPiVal(AltDec Value)
+        template<typename AltDecVariant = AltDec>
+        void SetPiVal(AltDecVariant Value)
         {
             if(ExtraRep==0)
             {
