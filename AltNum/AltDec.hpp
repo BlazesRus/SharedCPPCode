@@ -305,7 +305,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 #endif
 
 #if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-#define AltNum_EnableImaginaryNum
+    #define AltNum_EnableImaginaryNum
 #endif
 
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
@@ -322,19 +322,23 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
-#if (defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnablePiFractional)) || (defined(AltNum_EnableMixedEFractional) && defined(AltNum_EnableEFractional)) || (defined(AltNum_EnableMixedIFractional) && defined(AltNum_EnableIFractional))
-	#define AltNum_MixedAltFracHasFractionalAccess
-#endif
-
 #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
     #define AltNum_MixedPiOrEEnabled
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
-	#define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#if defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnableDecimaledPiFractionals)
+    #define AltNum_MixedPiHasDecimaledFracAccess
+#elif defined(AltNum_EnableMixedEFractional) && defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_MixedEHasDecimaledFracAccess
+#elif defined(AltNum_EnableMixedIFractional) && defined(AltNum_EnableDecimaledIFractionals)
+    #define AltNum_MixedIHasDecimaledFracAccess
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals)))
+#if defined(AltNum_MixedPiHasDecimaledFracAccess) || defined(AltNum_MixedEHasDecimaledFracAccess) || defined(AltNum_MixedPiHasDecimaledFracAccess)
+    #define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#endif
+
+#if defined(AltNum_MixedPiHasDecimaledFracAccess)||defined(AltNum_MixedEHasDecimaledFracAccess)
     #define AltNum_MixedPiOrEHasDecimaledFracAccess
 #endif
 
