@@ -1020,7 +1020,7 @@ namespace BlazesRusCode
 			}
 		#if defined(AltNum_EnableEFractional)
             else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-				return RepType::ENumByDiv;
+				return RepType::EFractional;
 		#endif
     #endif
 
@@ -4592,10 +4592,8 @@ public:
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
-        AltDec& DivOp(AltDec& Value);
-
         template<typename AltDecVariant = AltDec>
-        AltDec& DivOpV2(AltDecVariant Value) { return DivOp(Value); }
+        AltDec& DivOp(AltDecVariant Value);
 		
         template<typename AltDecVariant = AltDec>
         AltDec Divide(AltDecVariant Value) { AltDec self = *this; self.DivOp(Value); return self; }
@@ -5040,6 +5038,7 @@ public:
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 
+        template<typename AltDecVariant = AltDec&>
         AltDec BasicSub(AltDecVariant Value) { AltDec self = *this; BasicSubOp(Value); return self; }
 	
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
@@ -6523,6 +6522,7 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>AltDec&</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Floor(AltDecVariant Value)
         {
             return Value.Floor();
@@ -6596,6 +6596,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>AltDec&</returns>
+        template<typename AltDecVariant = AltDec>
         static int FloorInt(AltDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -6629,6 +6630,7 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>AltDec&</returns>
+        template<typename AltDecVariant = AltDec>
         static int CeilInt(AltDecVariant Value)
         {
             RepType repType = Value.GetRepType();
@@ -6688,6 +6690,7 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Ceil(AltDecVariant Value)
         {
             return Value.Ceil();
@@ -6726,6 +6729,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Trunc(AltDecVariant Value)
         {
             return Value.Trunc();
@@ -7318,6 +7322,7 @@ public:
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
+        template<typename AltDecVariant = AltDec>
         static AltDec Ln(AltDecVariant Value)
         {
             return LnRef(value);
@@ -7346,6 +7351,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Log10(AltDecVariant Value)
         {
             if (value == AltDec::One)
@@ -7602,6 +7608,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec SinFromAngle(AltDecVariant Value)
         {
     #if defined(AltNum_EnableInfinityRep)
@@ -7687,6 +7694,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns></returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec CosFromAngle(AltDecVariant Value)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -7788,6 +7796,7 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Sin(AltDecVariant Value)
         {
 /*
@@ -7919,6 +7928,7 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Cos(AltDecVariant Value)
         {
 /*
@@ -7968,6 +7978,7 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec Tan(AltDecVariant Value)
         {
             AltDec SinValue = Zero;
@@ -7989,6 +8000,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
+        template<typename AltDecVariant = AltDec>
         static AltDec TanFromAngle(AltDecVariant Value)
         {
             RepType repType = Value.GetRepType();
