@@ -4514,7 +4514,7 @@ public:
 	#endif
 		
 		//Assumes NormalRep - Normal MixedFraction operation
-		void BasicMixedFracSubOp(AltDec& Value)
+		void BasicMixedFracSubOp(AltDec& RValue)
 		{
 			AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:RValue.IntValue*RValue.ExtraRep - RValue.DecimalHalf);
 			BasicMultOp(&RValue.ExtraRep);
@@ -4536,9 +4536,9 @@ public:
 		}
 		
 	#if defined(AltNum_EnableMixedPiFractional)
-		void BasicMixedPiFracSubOp(AltDec& Value)
+		void BasicMixedPiFracSubOp(AltDec& RValue)
 	#elif defined(AltNum_EnableMixedEFractional)
-		void BasicMixedEFracSubOp(AltDec& Value)
+		void BasicMixedEFracSubOp(AltDec& RValue)
 	#endif
 	#if defined(AltNum_MixedPiOrEEnabled)
 		{
