@@ -250,7 +250,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 
 //Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
 #if defined(AltNum_EnableAlternativeRepFractionals)
-	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableIRep)
+	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableImaginaryNum)
 		#undef AltNum_EnableAlternativeRepFractionals//Alternative Fractionals require the related representations enabled
 	#elif !defined(AltNum_EnableFractionals)
 		#define AltNum_EnableFractionals
@@ -262,8 +262,12 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 #endif
 
 //Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
-#if defined(AltNum_EnableApproachingDivided)
-	#define AltNum_EnableApproachingValues
+#if !defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproachingDivided)
+		#define AltNum_EnableApproachingValues
+	#elif defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI)
+		#define AltNum_EnableApproachingValues
+	#endif
 #endif
 
 #if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
@@ -301,7 +305,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 #endif
 
 #if defined(AltNum_EnableApproachingE) && !defined(AltNum_EnableERep)
-#define AltNum_EnableERep
+	#define AltNum_EnableERep
 #endif
 
 #if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
@@ -314,7 +318,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 #if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnableEFractional
 #endif
-#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
+#if !defined(AltNum_EnableIFractional) &&defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
     #define AltNum_EnableIFractional
 #endif
 
