@@ -2607,12 +2607,14 @@ public:
 		//2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
         void ConvertENumToNum();
 		
-		#if defined(AltNum_EnableDecimaledPiFractionals)
+		#if defined(AltNum_EnableDecimaledEFractionals)
 		void ConvertEByDivToNumByDiv();
+
+        void ConvertFromEByDivToNorm();
 		
-		void ConvertEByDivToNorm();
+		//void ConvertFromEByDivToNorm();
 		#else
-		void ConvertFromEFractionalToNorm();
+        void ConvertFromEFractionalToNorm();
 		#endif
         void ConvertToERep(RepType& repType)
         {
@@ -2656,24 +2658,24 @@ public:
             {
             case RepType::NormalType:
                 break;
-#if defined(AltNum_EnableInfinityRep)
+    #if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
                 IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
             case RepType::NegativeInfinity:
                 IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
-#endif
-#if defined(AltNum_EnableApproachingValues)
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottom:
                 DecimalHalf = 1; ExtraRep = 0;
                 break;
-#if !defined(AltNum_DisableApproachingTop)
+        #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingTop:
                 DecimalHalf = 999999999; ExtraRep = 0;
                 break;
-#endif
-#if defined(AltNum_EnableApproachingDivided)
+        #endif
+        #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidRight:
                 int InvertedExtraRep = ExtraRep * -1;
                 if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
@@ -2682,7 +2684,7 @@ public:
                     DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
                 ExtraRep = 0;
                 break;
-#if !defined(AltNum_DisableApproachingTop)
+            #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingMidLeft:
                 if (DecimalOverflow % ExtraRep == 0)//Only cut off the traiing digits for those that can't have all digits stored
                     DecimalHalf = DecimalOverflow / ExtraRep;
@@ -2690,50 +2692,41 @@ public:
                     DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
                 ExtraRep = 0;
                 break;
-#endif
-#endif
-#endif
-#if defined(AltNum_EnablePiRep)
+            #endif
+        #endif
+    #endif
+    #if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
-                ConvertPiToNum();
-                break;
-#if defined(AltNum_EnablePiPowers)
+                ConvertPiToNum(); break;
+        #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
-                ConvertPiPowerToNum();
-                break;
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
+                ConvertPiPowerToNum(); break;
+        #endif
+        #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-                ConvertFromPiByDivToNorm();
-#else
+                ConvertFromPiByDivToNorm(); break;
+        #elif defined(AltNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-                ConvertFromPiFractionalToNorm();
-#endif
-                break;
-#endif		
-#endif
+                ConvertFromPiFractionalToNorm(); break;
+        #endif
+    #endif		
             case RepType::NumByDiv:
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableERep)
+    #if defined(AltNum_EnableERep)
             case RepType::ENum:
-                ConvertENumToNorm();
-                break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
+                ConvertENumToNum(); break;
+        #if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
-                ConvertEByDivToNorm();
-#else
+                ConvertFromEByDivToNorm(); break;
+        #elif defined(AltNum_EnableEFractional)
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
-                ConvertEFractionalToNorm();
-#endif
-                break;
-#endif
-#endif
+                ConvertFromEFractionalToNorm(); break;
+        #endif
+    #endif
 
-#if defined(AltNum_EnableMixedFractional)
+    #if defined(AltNum_EnableMixedFractional)
             case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
                 AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
                 Res /= ExtraRep;
@@ -2743,32 +2736,26 @@ public:
                 DecimalHalf = Res.DecimalHalf;
                 ExtraRep = 0;
                 break;
-#endif
+    #endif
 
-#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+        #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-                if (IntValue == 0 && DecimalHalf == 0)
-                    ExtraRep = 0
-                else
-                    throw "Can't convert imaginery number into real number unless is zero.";
-                break;
-#endif
+        #elif defined(AltNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
+        #endif
                 if (IntValue == 0 && DecimalHalf != 0)
                     ExtraRep = 0
                 else
                     throw "Can't convert imaginery number into real number unless is zero.";
                 break;
-#endif
-#ifdef AltNum_EnableComplexNumbers
+    #endif
+    #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
                 throw "Conversion from complex number to real number not supported yet.";
                 break;
-#endif
+    #endif
             default:
                 throw "Conversion to normal number not supported yet?";
                 break;

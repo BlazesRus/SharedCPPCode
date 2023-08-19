@@ -487,41 +487,41 @@ inline void BlazesRusCode::AltDec::ConvertFromEByDivToNorm()
 {
 	__int64 SRep;
 	__int64 divRes;
-	if(DecimalHalf==0)
+	if (DecimalHalf == 0)
 	{
 		bool IsNegative = IntValue<0;
-		if(IsNegative)
+		if (IsNegative)
 			IntValue *= -1;
-		SRep = 2718281828;				       
+		SRep = 2718281828;
 		SRep *= IntValue;
-		divRes = SRep / DecimalOverflowX;
+		divRes = SRep / AltDec::DecimalOverflowX;
 		DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-		if(divRes==0&&IsNegative)
+		if (divRes == 0 && IsNegative)
 		{
-			if(DecimalHalf==0)
+			if (DecimalHalf == 0)
 				IntValue = 0;
 			else
 				IntValue = NegativeRep;
 		}
-		else if(IsNegative)
+		else if (IsNegative)
 			IntValue = (int)-divRes;
 		else
 			IntValue = (int)divRes;
 	}
-	else if(IntValue==0)
+	else if (IntValue == 0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
 		divRes = SRep / 1000000000000000000;
-		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
+		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
 	}
-	else if(IntValue==NegativeRep)
+	else if (IntValue == NegativeRep)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
 		divRes = SRep / 1000000000000000000;
-		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes)/DecimalOverflowX);
-		if(divRes==0)
+		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
+		if (divRes == 0)
 			IntValue = NegativeRep;
 		else
 			IntValue = (int)-divRes;
@@ -529,7 +529,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEByDivToNorm()
 	else
 	{
 		bool IsNegative = IntValue<0;
-		if(IsNegative)
+		if (IsNegative)
 			IntValue *= -1;
 		SRep = DecimalOverflowX * IntValue + DecimalHalf;
 		SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
@@ -542,44 +542,44 @@ inline void BlazesRusCode::AltDec::ConvertFromEByDivToNorm()
 		__int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
 		IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
 		DecimalHalf = (signed int)IntegerRep;
-		if(IntHalf == 0&&IsNegative)
+		if (IntHalf == 0 && IsNegative)
 		{
 			IntValue = NegativeRep;
 		}
-		else if(IsNegative)
+		else if (IsNegative)
 			IntValue = (int)-IntHalf;
 		else
 			IntValue = (int)IntHalf;
 	}
 }
+
 	#elif defined(AltNum_EnableEFractional)
 inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 {
 	int divisor = DecimalHalf;
 	DecimalHalf = 0;
 	ExtraRep = 0;
-	bool IsNegative = IntValue<0;
-	if(IsNegative)
+	bool IsNegative = IntValue < 0;
+	if (IsNegative)
 		IntValue *= -1;
-	__int64 SRep = 2718281828ll;				       
+	__int64 SRep = 2718281828ll;
 	SRep *= IntValue;
-	__int64 divRes = SRep / DecimalOverflowX;
-	DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-	if(divRes==0&&IsNegative)
+	__int64 divRes = SRep / AltDec::DecimalOverflowX;
+	DecimalHalf = (int)(SRep - AltDec::DecimalOverflowX * divRes);
+	if (divRes == 0 && IsNegative)
 	{
-		if(DecimalHalf==0)
+		if (DecimalHalf == 0)
 			IntValue = 0;
 		else
-			IntValue = NegativeRep;
+			IntValue = AltDec::NegativeRep;
 	}
-	else if(IsNegative)
+	else if (IsNegative)
 		IntValue = (int)-divRes;
 	else
 		IntValue = (int)divRes;
-	BasicIntDivOp(divisor);
+	BasicIntDivOp(&divisor);
 }
 	#endif
-
 #endif
 
 inline void BlazesRusCode::AltDec::ConvertToNormTypeV2()
