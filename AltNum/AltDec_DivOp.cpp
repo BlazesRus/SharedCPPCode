@@ -120,7 +120,7 @@ AltDec& AltDec::DivOp(AltDec& Value)
 				break;
 
         #if defined(AltNum_EnableApproachingDivided)
-			case RepType::ApproachingBottomDiv:
+			case RepType::ApproachingMidLeft:
 				if(ExtraRep==Value.ExtraRep)
 				{// 0.249..9 / 0.249..9 = 1
 					if(IntValue==Value.IntValue)
@@ -139,7 +139,7 @@ AltDec& AltDec::DivOp(AltDec& Value)
 					CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
 				}
 				break;
-			case RepType::ApproachingTopDiv:
+			case RepType::ApproachingMidRight:
 				if(ExtraRep==Value.ExtraRep)
 				{//0.50..1 / 0.50..1 = 1
 					if(IntValue==Value.IntValue)

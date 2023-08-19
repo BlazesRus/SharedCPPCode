@@ -523,8 +523,8 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			break;
 
         #if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
-			if(LRep==RepType::ApproachingTopDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
+		case RepType::ApproachingMidLeft:
+			if(LRep==RepType::ApproachingMidRight&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = 0;
@@ -540,12 +540,12 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+				Value.ConvertToNormType(RepType::ApproachingMidLeft);
 				RRep = RepType::NormalType;
 			}
 			break;
-		case RepType::ApproachingTopDiv:
-			if(LRep==RepType::ApproachingBottomDiv&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
+		case RepType::ApproachingMidRight:
+			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==-Value.ExtraRep&&LeftIsNegative==RightIsNegative)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = 0;
@@ -561,7 +561,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingTopDiv);
+				Value.ConvertToNormType(RepType::ApproachingMidRight);
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -599,9 +599,9 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		case RepType::ApproachingTop:
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
         #if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
         #endif
     #endif
 #endif

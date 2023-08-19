@@ -180,11 +180,11 @@ AltDec& AltDec::SubOp(AltDec& Value)
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
-			case RepType::ApproachingBottomDiv:
-                CatchAllSubtractionV2(Value, RepType::ApproachingBottomDiv);
+			case RepType::ApproachingMidLeft:
+                CatchAllSubtractionV2(Value, RepType::ApproachingMidLeft);
                 break;
-			case RepType::ApproachingTopDiv:
-                CatchAllSubtractionV2(Value, RepType::ApproachingTopDiv);
+			case RepType::ApproachingMidRight:
+                CatchAllSubtractionV2(Value, RepType::ApproachingMidRight);
                 break;
 		#endif
 	#endif

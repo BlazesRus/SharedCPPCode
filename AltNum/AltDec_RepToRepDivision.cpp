@@ -133,12 +133,12 @@ void EFractionalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 #endif
 
 #if defined(AltNum_EnableApproachingValues)
-void ApproachingBottomDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidLeftOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 	#if !defined(AltNum_DisableApproachingTop)
-void ApproachingTopDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
@@ -171,12 +171,12 @@ void IFractionalDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 	#endif
 	
 	#if defined(AltNum_EnableApproachingI)
-void ApproachingImaginaryBottomDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingImaginaryMidLeftOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 		#if !defined(AltNum_DisableApproachingTop)
-void ApproachingImaginaryTopDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingImaginaryMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 		#endif
@@ -386,12 +386,12 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			break;
         
         #if defined(AltNum_EnableApproachingDivided)
-        		case RepType::ApproachingBottomDiv:
-                    Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+        		case RepType::ApproachingMidLeft:
+                    Value.ConvertToNormType(RepType::ApproachingMidLeft);
                     RRep = RepType::NormalType;
         			break;
-        		case RepType::ApproachingTopDiv:
-                    Value.ConvertToNormType(RepType::ApproachingTopDiv);
+        		case RepType::ApproachingMidRight:
+                    Value.ConvertToNormType(RepType::ApproachingMidRight);
                     RRep = RepType::NormalType;
         			break;
         #endif
@@ -712,7 +712,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			break;
 
 	#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
 			switch (RRep)
 			{
 		#if defined(AltNum_EnableImaginaryNum)
@@ -738,7 +738,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 					break;
 			}
 			break;
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
 		#if defined(AltNum_EnableImaginaryNum)

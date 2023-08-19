@@ -236,12 +236,12 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			RRep = RepType::NormalType;
 			break;
 		#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
-			Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+		case RepType::ApproachingMidLeft:
+			Value.ConvertToNormType(RepType::ApproachingMidLeft);
 			RRep = RepType::NormalType;
 			break;
-		case RepType::ApproachingTopDiv:
-			Value.ConvertToNormType(RepType::ApproachingTopDiv);
+		case RepType::ApproachingMidRight:
+			Value.ConvertToNormType(RepType::ApproachingMidRight);
 			RRep = RepType::NormalType;
 			break;
 		#endif
@@ -555,7 +555,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			break;
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
 			switch (RRep)
 			{
 				default:
@@ -564,7 +564,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 			}
 			break;
 		#if defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
 				default:

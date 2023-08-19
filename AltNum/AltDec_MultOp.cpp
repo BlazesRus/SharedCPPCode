@@ -108,7 +108,7 @@ AltDec& AltDec::MultOp(AltDec& Value)
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
-			case RepType::ApproachingBottomDiv:
+			case RepType::ApproachingMidLeft:
 				if(Value.IntValue==0)
 				{
 					//-0.49..9 * 0.49..9 =  ~-0.249..9 (IntValue:0 DecimalHalf:ApproachingValueRep ExtraRep:4)
@@ -149,7 +149,7 @@ AltDec& AltDec::MultOp(AltDec& Value)
 					ExtraRep = XV.ExtraRep;
 				}
 				break;
-			case RepType::ApproachingTopDiv:
+			case RepType::ApproachingMidRight:
 				if(Value.IntValue==0)
 				{
 					//0.50..1 * 0.50..1(IntValue:0 DecimalHalf:ApproachingValueRep ExtraRep:-2)

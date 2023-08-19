@@ -302,7 +302,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             break;
         #endif
         #if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
 			switch (RRep)
 			{
 				default:
@@ -311,7 +311,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             }
             break;
             #if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
 				default:

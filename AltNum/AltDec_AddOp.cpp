@@ -191,11 +191,11 @@ AltDec& AltDec::AddOp(AltDec& Value)
 				break;
 
 		#if defined(AltNum_EnableApproachingDivided)
-			case RepType::ApproachingBottomDiv:
-                CatchAllAdditionV2(Value, RepType::ApproachingBottomDiv);
+			case RepType::ApproachingMidLeft:
+                CatchAllAdditionV2(Value, RepType::ApproachingMidLeft);
                 break;
-			case RepType::ApproachingTopDiv:
-                CatchAllAdditionV2(Value, RepType::ApproachingTopDiv);
+			case RepType::ApproachingMidRight:
+                CatchAllAdditionV2(Value, RepType::ApproachingMidRight);
                 break;
 		#endif
 	#endif

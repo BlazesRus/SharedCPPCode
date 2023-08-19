@@ -178,6 +178,7 @@ AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
 Autotoggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
+Autotoggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
 
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
 
@@ -196,6 +197,7 @@ AltNum_EnableIFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals
 AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
 
 AltDec_UseMirroredInt
+AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -203,7 +205,7 @@ AltDec_UseMirroredInt
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
-    //#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
+    #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
 #endif
 
 #if defined(AltNum_UseDeveloperExtraDefaults)
@@ -303,7 +305,7 @@ AltDec_UseMirroredInt
 #endif
 
 #if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-#define AltNum_EnableImaginaryNum
+    #define AltNum_EnableImaginaryNum
 #endif
 
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
@@ -320,19 +322,23 @@ AltDec_UseMirroredInt
 	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnablePiFractional))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableEFractional))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableIFractional))
-	#define AltNum_MixedAltFracHasFractionalAccess
+#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
+    #define AltNum_MixedPiOrEEnabled
 #endif
 
-#if defined(AltNum_MixedAltFracHasFractionalAccess) && (defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional))
-    #define AltNum_MixedPiOrEHasFractionalAccess
+#if defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnableDecimaledPiFractionals)
+    #define AltNum_MixedPiHasDecimaledFracAccess
+#elif defined(AltNum_EnableMixedEFractional) && defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_MixedEHasDecimaledFracAccess
+#elif defined(AltNum_EnableMixedIFractional) && defined(AltNum_EnableDecimaledIFractionals)
+    #define AltNum_MixedIHasDecimaledFracAccess
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))||(defined(AltNum_EnableMixedIFractional)&&defined(AltNum_EnableDecimaledIFractionals))
-	#define AltNum_MixedAltFracHasDecimaledFractionalAccess
+#if defined(AltNum_MixedPiHasDecimaledFracAccess) || defined(AltNum_MixedEHasDecimaledFracAccess) || defined(AltNum_MixedPiHasDecimaledFracAccess)
+    #define AltNum_MixedAltFracHasDecimaledFractionalAccess
 #endif
 
-#if defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals)))
+#if defined(AltNum_MixedPiHasDecimaledFracAccess)|| defined(AltNum_MixedEHasDecimaledFracAccess)
     #define AltNum_MixedPiOrEHasDecimaledFracAccess
 #endif
 
