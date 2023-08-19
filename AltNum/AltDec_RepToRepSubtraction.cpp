@@ -570,7 +570,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingMidLeft);
+				Value.ConvertFromApproachingMidLeftToNorm().
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -594,7 +594,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingMidRight);
+				Value.ConvertFromApproachingMidRightToNorm();
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -696,7 +696,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 			break;
 		}
 			#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingMidRight:
+		case RepType::ApproachingImaginaryMidRight:
 		{
 			if(LRep==RepType::ApproachingImaginaryMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative^RightIsNegative)
 			{
@@ -714,7 +714,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				ConvertFromApproachingIMidRightToINum();
+				Value.ConvertFromApproachingIMidRightToINum();
 				RRep = RepType::INum;
 			}
 			break;
@@ -792,9 +792,9 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 #if defined(AltNum_MixedPiOrEEnabled)
     			self.ConvertToNormType(RepType::);
     		#if defined(AltNum_EnableMixedPiFractional)
-    			self.BasicMixedPiFracSubOp(Value);
+    			self.BasicMixedPiFracOp(Value);
     		#else
-    			self.BasicMixedEFracSubOp(Value);
+    			self.BasicMixedEFracOp(Value);
     		#endif
 #else
             else

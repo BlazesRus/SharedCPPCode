@@ -548,7 +548,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingMidLeft);
+				Value.ConvertFromApproachingMidLeftToNorm().
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -572,7 +572,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			else
 			{
-				Value.ConvertToNormType(RepType::ApproachingMidRight);
+				Value.ConvertFromApproachingMidRightToNorm();
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -586,6 +586,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if(LRep==RepType::ApproachingTop&&LeftIsNegative==RightIsNegative)
 			{
 				self.DecimalHalf = 0;
+				self.ExtraRep = IRep;
 				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
 				if(LeftIsNegative)//&&RightIsNegative)
 					--RightSide;
@@ -610,6 +611,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if(LRep==RepType::ApproachingImaginaryBottom&&LeftIsNegative==RightIsNegative)
 			{
 				self.DecimalHalf = 0;
+				self.ExtraRep = IRep;
 				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
 				if(LeftIsNegative)//&&RightIsNegative)
 					--RightSide;

@@ -291,7 +291,7 @@
 			break;
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
 			switch (RRep)
 			{
 				default:
