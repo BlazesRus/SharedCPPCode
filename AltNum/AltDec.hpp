@@ -338,7 +338,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
     #define AltNum_MixedAltFracHasDecimaledFractionalAccess
 #endif
 
-#if defined(AltNum_MixedPiHasDecimaledFracAccess)||defined(AltNum_MixedEHasDecimaledFracAccess)
+#if defined(AltNum_MixedPiHasDecimaledFracAccess)|| defined(AltNum_MixedEHasDecimaledFracAccess)
     #define AltNum_MixedPiOrEHasDecimaledFracAccess
 #endif
 
