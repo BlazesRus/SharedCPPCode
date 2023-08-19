@@ -298,7 +298,7 @@
 			break;
 
 	#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
+		case RepType::ApproachingMidLeft:
 			switch (RRep)
 			{
 		#if defined(AltNum_EnableImaginaryNum)
@@ -324,7 +324,7 @@
 					break;
 			}
 			break;
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
 		#if defined(AltNum_EnableImaginaryNum)

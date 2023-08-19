@@ -141,12 +141,12 @@ void ApproachingTopOp(RepType& RRep, AltDec& self, AltDec& Value)
 }
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-void ApproachingMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidLeftOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 		#if !defined(AltNum_DisableApproachingTop)
-void ApproachingMidLeftOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 		#endif
@@ -167,29 +167,29 @@ void IFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
-	
-	#if defined(AltNum_EnableApproachingI)
+#endif
+
+#if defined(AltNum_EnableApproachingI)
 void ApproachingImaginaryBottomOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-		#if !defined(AltNum_DisableApproachingTop)
+	#if !defined(AltNum_DisableApproachingTop)
 void ApproachingImaginaryTopOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-		#endif
-		#if defined(AltNum_EnableApproachingDivided)
-void ApproachingImaginaryMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
-{
-}
-
-			#if !defined(AltNum_DisableApproachingTop)
+	#endif
+	#if defined(AltNum_EnableApproachingDivided)
 void ApproachingImaginaryMidLeftOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
-			#endif
-		#endif
-	#endif
+
+	    #if !defined(AltNum_DisableApproachingTop)
+void ApproachingImaginaryMidRightOp(RepType& RRep, AltDec& self, AltDec& Value)
+{
+}
+	    #endif
+    #endif
 #endif
 
 #if defined(AltNum_EnableMixedFractional)
@@ -352,6 +352,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			LRepImaginaryOverridePt2(LRep, RRep, self, Value);
             break;
     #endif
+		default:
+			break;
 	}
 #endif
     //RRep Overrides before Main RepToRep Code
@@ -393,12 +395,12 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			break;
         
         #if defined(AltNum_EnableApproachingDivided)
-        		case RepType::ApproachingBottomDiv:
-                    Value.ConvertToNormType(RepType::ApproachingBottomDiv);
+        		case RepType::ApproachingMidLeft:
+                    Value.ConvertToNormType(RepType::ApproachingMidLeft);
                     RRep = RepType::NormalType;
         			break;
-        		case RepType::ApproachingTopDiv:
-                    Value.ConvertToNormType(RepType::ApproachingTopDiv);
+        		case RepType::ApproachingMidRight:
+                    Value.ConvertToNormType(RepType::ApproachingMidRight);
                     RRep = RepType::NormalType;
         			break;
         #endif
@@ -438,14 +440,14 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			ApproachingBottomOp(RRep, self, Value); break;
 	#if defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingTop:
-			ApproachingTopOp(RRep, self, Value); break; break;
+			ApproachingTopOp(RRep, self, Value); break;
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingBottomDiv:
-			ApproachingBottomDivOp(RRep, self, Value); break; break;
+		case RepType::ApproachingMidLeft:
+			ApproachingMidLeftOp(RRep, self, Value); break;
 		#if defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTopDiv:
-			ApproachingTopDivOp(RRep, self, Value); break; break;
+		case RepType::ApproachingMidRight:
+			ApproachingMidRightOp(RRep, self, Value); break;
 		#endif
 	#endif
 #endif

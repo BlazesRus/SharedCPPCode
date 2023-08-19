@@ -711,9 +711,9 @@ namespace BlazesRusCode
             ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-            ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingMidLeft,//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
 			#if !defined(AltNum_DisableApproachingTop)
-			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+            ApproachingMidRight,//DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
 			#endif
 		#endif
 	#endif
@@ -737,9 +737,9 @@ namespace BlazesRusCode
             ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-            ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingImaginaryMidLeft,//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
 			#if !defined(AltNum_DisableApproachingTop)
-			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+            ApproachingImaginaryMidRight,//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
 			#endif
 		#endif
     #endif
@@ -841,12 +841,10 @@ namespace BlazesRusCode
                     return "ApproachingTop"; break;
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-					return "ApproachingMidRight"; break;
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepType::ApproachingMidLeft:
 					return "ApproachingMidLeft"; break;
-			#endif
+				case RepType::ApproachingMidRight:
+					return "ApproachingMidRight"; break;
 		#endif
 	#endif
     #if defined(AltNum_EnableNaN)
@@ -877,11 +875,11 @@ namespace BlazesRusCode
 					return "ApproachingImaginaryTop"; break;
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-					return "ApproachingImaginaryMidRight"; break;
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepType::ApproachingImaginaryMidLeft:
 					return "ApproachingImaginaryMidLeft"; break;
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidRight:
+					return "ApproachingImaginaryMidRight"; break;
 			#endif
 		#endif
     #endif
@@ -2650,6 +2648,49 @@ public:
     #pragma endregion E Conversion
 	
     #pragma region Other RepType Conversion
+#if defined(AltNum_EnableApproachingDivided)
+		void ConvertFromApproachingMidLeftToNorm()
+		{//0.9..9/2 = 0.49..9
+			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
+				DecimalHalf = DecimalOverflow / InvertedExtraRep;
+			else
+				DecimalHalf = (DecimalOverflow / InvertedExtraRep) - 1;
+			ExtraRep = 0;
+		}
+		
+	#if !defined(AltNum_DisableApproachingTop)
+		void ConvertFromApproachingMidRightToNorm()
+		{
+			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
+				DecimalHalf = DecimalOverflow / InvertedExtraRep;
+			else
+				DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
+			ExtraRep = 0;
+		}
+	#endif
+#endif
+#if defined(AltNum_EnableApproachingI)
+		void ConvertFromApproachingIMidLeftToINum()
+		{
+			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
+				DecimalHalf = DecimalOverflow / InvertedExtraRep;
+			else
+				DecimalHalf = (DecimalOverflow / InvertedExtraRep) - 1;
+			ExtraRep = IRep;
+		}
+	
+	#if !defined(AltNum_DisableApproachingTop)
+		void ConvertFromApproachingIMidRightToINum()
+		{
+			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
+				DecimalHalf = DecimalOverflow / InvertedExtraRep;
+			else
+				DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
+			ExtraRep = IRep;
+		}
+	#endif
+#endif
+	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
         template<typename RepTypeVar = RepType&>
         void ConvertToNormType(RepTypeVar repType)
@@ -2668,30 +2709,19 @@ public:
     #endif
     #if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottom:
-                DecimalHalf = 1; ExtraRep = 0;
+                DecimalHalf = 1;
                 break;
         #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingTop:
-                DecimalHalf = 999999999; ExtraRep = 0;
+                DecimalHalf = 999999999;
                 break;
         #endif
         #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidRight:
-                int InvertedExtraRep = ExtraRep * -1;
-                if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
-                    DecimalHalf = DecimalOverflow / InvertedExtraRep;
-                else
-                    DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
-                ExtraRep = 0;
-                break;
-            #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingMidLeft:
-                if (DecimalOverflow % ExtraRep == 0)//Only cut off the traiing digits for those that can't have all digits stored
-                    DecimalHalf = DecimalOverflow / ExtraRep;
-                else
-                    DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
-                ExtraRep = 0;
-                break;
+                ConvertFromApproachingMidLeftToNorm(); break;
+            #if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingMidRight:
+                ConvertFromApproachingMidRightToNorm(); break;
             #endif
         #endif
     #endif
@@ -2751,6 +2781,24 @@ public:
                     throw "Can't convert imaginery number into real number unless is zero.";
                 break;
     #endif
+    #if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingImaginaryBottom:
+                DecimalHalf = 1;
+                break;
+        #if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryTop:
+                DecimalHalf = 999999999;
+                break;
+        #endif
+        #if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingImaginaryMidLeft:
+                ConvertFromApproachingIMidLeftToNorm(); break;
+            #if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryMidRight:
+                ConvertFromApproachingIMidRightToNorm(); break;
+            #endif
+        #endif
+    #endif
     #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
                 throw "Conversion from complex number to real number not supported yet.";
@@ -2784,19 +2832,18 @@ public:
             {
             case RepType::INum:
                 break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                 int Divisor = -ExtraRep;
                 BasicDivOp(Divisor);
                 break;
-#endif
+#elif defined(AltNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
                 int Divisor = DecimalHalf;
                 DecimalHalf = 0;
                 BasicDivOp(Divisor);
                 break;
+#endif
 #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
                 throw "Conversion from complex number to real number not supported yet.";
@@ -5138,7 +5185,7 @@ public:
                     break;
 
 #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingBottomDiv:
+                case RepType::ApproachingMidLeft:
                     if (Value.IntValue == 0)
                     {
                         //-0.49..9 * 0.49..9 =  ~-0.249..9 (IntValue:0 DecimalHalf:ApproachingValueRep ExtraRep:4)
@@ -5179,7 +5226,7 @@ public:
                         ExtraRep = XV.ExtraRep;
                     }
                     break;
-                case RepType::ApproachingTopDiv:
+                case RepType::ApproachingMidRight:
                     if (Value.IntValue == 0)
                     {
                         //0.50..1 * 0.50..1(IntValue:0 DecimalHalf:ApproachingValueRep ExtraRep:-2)
@@ -5808,11 +5855,11 @@ public:
                     break;
 
 #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingBottomDiv:
-                    CatchAllAdditionV2(Value, RepType::ApproachingBottomDiv);
+                case RepType::ApproachingMidLeft:
+                    CatchAllAdditionV2(Value, RepType::ApproachingMidLeft);
                     break;
-                case RepType::ApproachingTopDiv:
-                    CatchAllAdditionV2(Value, RepType::ApproachingTopDiv);
+                case RepType::ApproachingMidRight:
+                    CatchAllAdditionV2(Value, RepType::ApproachingMidRight);
                     break;
 #endif
 #endif
@@ -9304,7 +9351,7 @@ public:
                     break;
 
 #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingBottomDiv:
+                case RepType::ApproachingMidLeft:
                     if (ExtraRep == Value.ExtraRep)
                     {// 0.249..9 / 0.249..9 = 1
                         if (IntValue == Value.IntValue)
@@ -9329,7 +9376,7 @@ public:
                         CatchAllDivisionV2(Value, LRep);//Just convert into normal numbers for now
                     }
                     break;
-                case RepType::ApproachingTopDiv:
+                case RepType::ApproachingMidRight:
                     if (ExtraRep == Value.ExtraRep)
                     {//0.50..1 / 0.50..1 = 1
                         if (IntValue == Value.IntValue)
@@ -9728,11 +9775,11 @@ public:
                     break;
 
 #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingBottomDiv:
-                    CatchAllSubtractionV2(Value, RepType::ApproachingBottomDiv);
+                case RepType::ApproachingMidLeft:
+                    CatchAllSubtractionV2(Value, RepType::ApproachingMidLeft);
                     break;
-                case RepType::ApproachingTopDiv:
-                    CatchAllSubtractionV2(Value, RepType::ApproachingTopDiv);
+                case RepType::ApproachingMidRight:
+                    CatchAllSubtractionV2(Value, RepType::ApproachingMidRight);
                     break;
 #endif
 #endif

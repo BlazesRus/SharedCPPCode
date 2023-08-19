@@ -300,7 +300,7 @@
 			}
 			break;
 		#if defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTopDiv:
+		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
 				default:
