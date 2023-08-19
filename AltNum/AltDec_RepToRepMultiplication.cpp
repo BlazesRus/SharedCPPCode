@@ -199,6 +199,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides
+#if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)
     switch(LRep)
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -218,12 +219,13 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
         #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
         #endif
-		
+			LRepImaginaryOverridePt2(LRep, RRep, self, Value);
 			break;
     #endif
 		default://No nothing for most of them
 			break;
 	}
+#endif
     //RRep Overrides before Main RepToRep Code
     switch(RRep)
     {
