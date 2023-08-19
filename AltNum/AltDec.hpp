@@ -5584,6 +5584,7 @@ public:
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 	
+        template<typename AltDecVariant = AltDec>
         AltDec BasicAdd(AltDecVariant Value) { AltDec self = *this; BasicAddOp(Value); return self; }
 
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
@@ -7332,6 +7333,7 @@ public:
         //Designed for use with normal, decimaled fractionals if both have same ExtraRep field, PiNum, and ENum  representation types
         //Will not work with non-decimaled format fractionals or mixed fractions
         //Modifies left side value with result
+        template<typename AltDecVariant = AltDec>
         void BasicRemOp(AltDecVariant RValue)
         {
             if (RValue.DecimalHalf == 0)
@@ -9496,6 +9498,7 @@ public:
 #if defined(AltNum_EnableMixedFractional)
                 case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
                 {
+                    int rvDivisor = -Value.ExtraRep;
                     //=LeftSideNum*Value.ExtraRep / RightSideNum;
                     AltDec LeftSideNum;
                     if (IntValue == NegativeRep)
@@ -9506,7 +9509,7 @@ public:
                         LeftSideNum = AltDec(-DecimalHalf);
                     else
                         LeftSideNum = AltDec(IntValue * ExtraRep - DecimalHalf);
-                    LeftSideNum.PartialMultOp(Value.ExtraRep);
+                    LeftSideNum.UnsignedIntDivOp(&Value.ExtraRep);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
                     else
@@ -9527,7 +9530,8 @@ public:
 #if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
                 {
                     //=LeftSideNum*-Value.ExtraRep / RightSideNum;
-                    int LeftSideNum;
+                    int rvDivisor = -Value.ExtraRep;
+                    AltDec LeftSideNum;
                     if (IntValue == NegativeRep)
                         LeftSideNum = DecimalHalf;
                     else if (IntValue < 0)
@@ -9536,7 +9540,7 @@ public:
                         LeftSideNum = -DecimalHalf;
                     else
                         LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
-                    LeftSideNum.PartialMultOp(-Value.ExtraRep);
+                    LeftSideNum.UnsignedIntDivOp(&rvDivisor);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
                     else//Result as NumByDiv
