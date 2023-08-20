@@ -10423,14 +10423,14 @@ public:
         case RepType::ENum:
             return BasicToFullStringOp()+"e";
             break;
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledEFractionals)
         case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            return (std::string)IntValue+"/"
+            return IntHalfAsString()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
         #endif
@@ -10440,7 +10440,7 @@ public:
         case RepType::INum:
             return BasicToFullStringOp()+"i";
             break;
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledIFractionals)
         case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
