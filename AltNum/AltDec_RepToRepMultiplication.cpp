@@ -189,7 +189,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::MixedE:
 	#endif
 #endif
-		Value.ConvertToNormType(&RRep);
+		Value.ConvertToNormTypeOp(RRep);
 		RRep = RepType::NormalType;
 		break;
 	}	

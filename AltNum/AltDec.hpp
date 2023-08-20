@@ -2688,136 +2688,16 @@ public:
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        //template<class RepTypeVar = AltDec::RepType&>
-        void ConvertToNormType(RepType repType)//void ConvertToNormType(RepTypeVar repType)
-        {
-            switch (repType)
-            {
-            case RepType::NormalType:
-                break;
-    #if defined(AltNum_EnableInfinityRep)
-            case RepType::PositiveInfinity:
-                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-                break;
-            case RepType::NegativeInfinity:
-                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-                break;
-    #endif
-    #if defined(AltNum_EnableApproachingValues)
-            case RepType::ApproachingBottom:
-                DecimalHalf = 1;
-                break;
-        #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingTop:
-                DecimalHalf = 999999999;
-                break;
-        #endif
-        #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft:
-                ConvertFromApproachingMidLeftToNorm(); break;
-            #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingMidRight:
-                ConvertFromApproachingMidRightToNorm(); break;
-            #endif
-        #endif
-    #endif
-    #if defined(AltNum_EnablePiRep)
-            case RepType::PiNum:
-                ConvertPiToNum(); break;
-        #if defined(AltNum_EnablePiPowers)
-            case RepType::PiPower:
-                ConvertPiPowerToNum(); break;
-        #endif
-        #if defined(AltNum_EnableDecimaledPiFractionals)
-            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-                ConvertFromPiByDivToNorm(); break;
-        #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-                ConvertFromPiFractionalToNorm(); break;
-        #endif
-    #endif		
-            case RepType::NumByDiv:
-            {
-                BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
-                break;
-            }
-    #if defined(AltNum_EnableERep)
-            case RepType::ENum:
-                ConvertENumToNum(); break;
-        #if defined(AltNum_EnableDecimaledEFractionals)
-            case RepType::ENumByDiv:
-                ConvertFromEByDivToNorm(); break;
-        #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://IntValue/DecimalHalf*e Representation
-                ConvertFromEFractionalToNorm(); break;
-        #endif
-    #endif
+        void ConvertToNormTypeOp(RepType& repType);
 
-    #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-            {
-                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
-                Res /= ExtraRep;
-                if (IntValue != 0 && IntValue != NegativeRep)
-                    Res += IntValue;
-                IntValue = Res.IntValue;
-                DecimalHalf = Res.DecimalHalf;
-                ExtraRep = 0;
-                break;
-            }
-    #endif
-
-    #if defined(AltNum_EnableImaginaryNum)
-            case RepType::INum:
-        #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-        #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-        #endif
-            {
-                if (IntValue == 0 && DecimalHalf != 0)
-                    ExtraRep = 0;
-                else
-                    throw "Can't convert imaginery number into real number unless is zero.";
-                break;
-            }
-    #endif
-    #if defined(AltNum_EnableApproachingValues)
-            case RepType::ApproachingImaginaryBottom:
-                DecimalHalf = 1;
-                break;
-        #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingImaginaryTop:
-                DecimalHalf = 999999999;
-                break;
-        #endif
-        #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingImaginaryMidLeft:
-                ConvertFromApproachingIMidLeftToNorm(); break;
-            #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingImaginaryMidRight:
-                ConvertFromApproachingIMidRightToNorm(); break;
-            #endif
-        #endif
-    #endif
-    #ifdef AltNum_EnableComplexNumbers
-            case RepType::ComplexIRep:
-                throw "Conversion from complex number to real number not supported yet.";
-                break;
-    #endif
-            default:
-                throw "Conversion to normal number not supported yet?";
-                break;
-            }
-        }
+        void ConvertToNormType(RepType repType) { return ConvertToNormType(repType); }
 
         //Switch based return of value as normal type representation
         template<typename RepTypeVar = RepType&>
         AltDec ConvertAsNormType(RepTypeVar repType)
         {
             AltDec Res = *this;
-            Res.ConvertToNormType(repType);
+            Res.ConvertToNormTypeOp(repType);
             return Res;
         }
 
@@ -2922,7 +2802,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -2958,7 +2838,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3014,7 +2894,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3050,7 +2930,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3102,7 +2982,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3138,7 +3018,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3264,7 +3144,7 @@ public:
     #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3300,7 +3180,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3426,7 +3306,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3462,7 +3342,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3588,7 +3468,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormType(&LRep);
+                    LValue.ConvertToNormTypeOp(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3624,7 +3504,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormType(&RRep);
+                    RValue.ConvertToNormTypeOp(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -4730,8 +4610,8 @@ public:
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
 		void CatchAllDivision(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
-			ConvertToNormType(&LRep);
-			Value.ConvertToNormType(&RRep);
+			ConvertToNormTypeOp(LRep);
+			Value.ConvertToNormTypeOp(RRep);
 			BasicDivOp(Value);
 		}
 
@@ -5366,8 +5246,8 @@ public:
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
 		void CatchAllMultiplication(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
-			ConvertToNormType(&LRep);
-			Value.ConvertToNormType(&RRep);
+			ConvertToNormTypeOp(LRep);
+			Value.ConvertToNormTypeOp(RRep);
 			BasicMultOp(Value);
 		}
 		
@@ -5953,8 +5833,8 @@ public:
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
         void CatchAllAddition(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
         {
-            ConvertToNormType(&LRep);
-            Value.ConvertToNormType(&RRep);
+            ConvertToNormTypeOp(LRep);
+            Value.ConvertToNormTypeOp(RRep);
             BasicAddOp(Value);
         }
 		
@@ -6246,7 +6126,7 @@ public:
                     }
                     else
                     {
-                        ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
+                        ConvertToNormTypeOp(LRep); Value.ConvertToNormTypeOp(LRep);
                         BasicAddOp(Value);
                     }
                     break;
@@ -6264,7 +6144,7 @@ public:
                         BasicAddOp(Value);
                     else
                     {
-                        ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
+                        ConvertToNormTypeOp(LRep); Value.ConvertToNormTypeOp(LRep);
                         BasicAddOp(Value);
                     }
                     break;
@@ -6470,8 +6350,8 @@ public:
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
 		void CatchAllSubtraction(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
 		{
-			ConvertToNormType(&LRep);
-			Value.ConvertToNormType(&RRep);
+			ConvertToNormTypeOp(LRep);
+			Value.ConvertToNormTypeOp(RRep);
 			BasicSubOp(Value);
 		}
 		
@@ -6751,7 +6631,7 @@ public:
                     }
                     else
                     {
-                        ConvertToNormType(&LRep); RValue.ConvertToNormType(&LRep);
+                        ConvertToNormTypeOp(LRep); RValue.ConvertToNormTypeOp(LRep);
                         BasicSubOp(RValue);
                     }
                     break;
@@ -6769,7 +6649,7 @@ public:
                         BasicSubOp(RValue);
                     else
                     {
-                        ConvertToNormType(&LRep); RValue.ConvertToNormType(&LRep);
+                        ConvertToNormTypeOp(LRep); RValue.ConvertToNormTypeOp(LRep);
                         BasicSubOp(RValue);
                     }
                     break;
@@ -6975,7 +6855,7 @@ public:
 				case RepType::EFractional:
 		#endif
                     #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					BasicIntDivOp(Value);
 					break;
                     #endif
@@ -6985,7 +6865,7 @@ public:
 				case RepType::IFractional:
 		#endif
         #if defined(AltNum_EnableDecimaledIFractionals)||defined(AltNum_EnableIFractional)
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
                     BasicIntDivOp(Value);
                     break;
         #endif
@@ -7002,7 +6882,7 @@ public:
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 					if(IsAtZeroInt())
 						return *this;
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					BasicIntDivOp(Value);
 	    #if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
@@ -7014,7 +6894,7 @@ public:
 			#endif
 		#endif
         #if !defined(AltNum_DisableApproachingTop)||defined(AltNum_EnableApproachingDivided)
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					BasicIntDivOp(Value);
 					break;
         #endif
@@ -7242,7 +7122,7 @@ protected:
 		#elif defined(AltNum_EnableEFractional)
 				case RepType::EFractional:
 		#endif
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					UnsignedIntMultOp(Value);
 					break;
 		#if defined(AltNum_EnableDecimaledEFractionals)
@@ -7250,7 +7130,7 @@ protected:
 		#elif defined(AltNum_EnableEFractional)
 				case RepType::IFractional:
 		#endif
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					UnsignedIntMultOp(Value);
 					break;
 	#endif
@@ -7264,7 +7144,7 @@ protected:
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 					if(IsZero())
 						return *this;
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					UnsignedIntMultOp(Value);
 					break;
 	    #if !defined(AltNum_DisableApproachingTop)
@@ -7276,7 +7156,7 @@ protected:
                 case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
-					ConvertToNormType(&LRep);
+					ConvertToNormTypeOp(LRep);
 					UnsignedIntMultOp(Value);
 					break;
 	#endif
@@ -8152,8 +8032,8 @@ public:
         template<typename AltDecVariant=AltDec&, typename RepTypeVar=RepType&, typename RepTypeVar2=RepType&>
         void CatchAllRem(AltDecVariant Value, RepTypeVar LRep, RepTypeVar2 RRep)
         {
-            ConvertToNormType(&LRep);
-            Value.ConvertToNormType(&RRep);
+            ConvertToNormTypeOp(LRep);
+            Value.ConvertToNormTypeOp(RRep);
             BasicRemOp(Value);
         }
 

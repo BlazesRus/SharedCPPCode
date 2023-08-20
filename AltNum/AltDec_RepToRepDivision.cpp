@@ -80,7 +80,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		#endif
 	#endif*/
 		default:
-			Value.ConvertToNormType(&RRep);
+			Value.ConvertToNormTypeOp(RRep);
 			self.BasicDivOp(Value);
 			break;
 	}
@@ -316,7 +316,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::MixedE:
 		#endif
 	#endif
-		Value.ConvertToNormType(&RRep);
+		Value.ConvertToNormTypeOp(RRep);
 		RRep = RepType::NormalType;
 		break;
 */

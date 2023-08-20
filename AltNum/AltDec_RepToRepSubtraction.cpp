@@ -28,7 +28,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 #endif
 		default:
-			Value.ConvertToNormType(&RRep);
+			Value.ConvertToNormTypeOp(RRep);
 			self.BasicSubOp(Value);
 			break;
 	}
@@ -446,7 +446,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
 #endif
 #if defined(AltNum_EnableComplexNumbers)
-		Value.ConvertToNormType(&RRep);
+		Value.ConvertToNormTypeOp(RRep);
 		RRep = RepType::NormalType;
 #else
 		throw "Complex number operations not enabled";
@@ -719,7 +719,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 #if defined(AltNum_EnableMixedFractional)
             if(RRep==RepType::MixedFrac)
 			{
-				self.ConvertToNormType(&LRep);
+				self.ConvertToNormTypeOp(LRep);
 				self.BasicMixedFracSubOp(Value);
 			}
 	#if defined(AltNum_EnableMixedPiFractional)
@@ -728,7 +728,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             else if(RRep==RepType::MixedE)
 	#endif
 	#if defined(AltNum_MixedPiOrEEnabled)
-    			self.ConvertToNormType(&LRep);
+    			self.ConvertToNormTypeOp(LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
     			self.BasicMixedPiFracSubOp(Value);
     		#else
