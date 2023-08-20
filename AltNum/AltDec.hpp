@@ -676,9 +676,9 @@ namespace BlazesRusCode
             ENum = 2,
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
-            ENumByDiv = 9,//(Value/(ExtraRep*-1))*e Representation
+            ENumByDiv = 10,//(Value/(ExtraRep*-1))*e Representation
 			#else
-            EFractional = 9,//  IntValue/DecimalHalf*e Representation
+            EFractional = 10,//  IntValue/DecimalHalf*e Representation
 			#endif
 		#endif
 	#endif
@@ -2688,8 +2688,8 @@ public:
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        template<class RepTypeVar = RepType&>
-        void ConvertToNormType(RepTypeVar repType)
+        //template<class RepTypeVar = AltDec::RepType&>
+        void ConvertToNormType(RepType repType)//void ConvertToNormType(RepTypeVar repType)
         {
             switch (repType)
             {
@@ -2737,9 +2737,11 @@ public:
         #endif
     #endif		
             case RepType::NumByDiv:
+            {
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
+            }
     #if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
@@ -2754,6 +2756,7 @@ public:
 
     #if defined(AltNum_EnableMixedFractional)
             case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            {
                 AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
                 Res /= ExtraRep;
                 if (IntValue != 0 && IntValue != NegativeRep)
@@ -2762,6 +2765,7 @@ public:
                 DecimalHalf = Res.DecimalHalf;
                 ExtraRep = 0;
                 break;
+            }
     #endif
 
     #if defined(AltNum_EnableImaginaryNum)
@@ -2771,11 +2775,13 @@ public:
         #elif defined(AltNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
         #endif
+            {
                 if (IntValue == 0 && DecimalHalf != 0)
                     ExtraRep = 0;
                 else
                     throw "Can't convert imaginery number into real number unless is zero.";
                 break;
+            }
     #endif
     #if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingImaginaryBottom:
