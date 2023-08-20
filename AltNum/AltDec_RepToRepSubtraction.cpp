@@ -271,34 +271,35 @@ void MixedFracOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
-	#if defined(AltNum_EnableMixedPiFractional)
+		#if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
-	#elif defined(AltNum_EnableMixedEFractional)
-		//case RepType::MixedE:
-	#endif
-	#if defined(AltNum_MixedPiOrEEnabled)
-		//#if defined(AltNum_MixedPiHasDecimaledFracAccess)
-		//            break;//Give result as PiByDiv
-		//#elif defined(AltNum_MixedEHasDecimaledFracAccess)
-		//            break;//Give result as EByDiv
-		//#else
+		#elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+		#endif
+		#if defined(AltNum_MixedPiOrEEnabled)
+		{
+			//#if defined(AltNum_MixedPiHasDecimaledFracAccess)
+			//            break;//Give result as PiByDiv
+			//#elif defined(AltNum_MixedEHasDecimaledFracAccess)
+			//            break;//Give result as EByDiv
+			//#else
 			AltDec LeftSide;
-			if(self.IntValue==AltDec::NegativeRep)
+			if (self.IntValue == AltDec::NegativeRep)
 				LeftSide = AltDec(self.DecimalHalf);
-			else if(self.IntValue<0)
-				LeftSide = AltDec(self.IntValue*self.ExtraRep + self.DecimalHalf);
-			else if(self.IntValue==0)
+			else if (self.IntValue < 0)
+				LeftSide = AltDec(self.IntValue * self.ExtraRep + self.DecimalHalf);
+			else if (self.IntValue == 0)
 				LeftSide = AltDec(-self.DecimalHalf);
 			else
-				LeftSide = AltDec(self.IntValue*self.ExtraRep - self.DecimalHalf);
-			AltDec RightSide = AltDec(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
-	#if defined(AltNum_EnableMixedPiFractional)
+				LeftSide = AltDec(self.IntValue * self.ExtraRep - self.DecimalHalf);
+			AltDec RightSide = AltDec(Value.IntValue == 0 ? -Value.DecimalHalf : (Value.IntValue * -Value.ExtraRep) - Value.DecimalHalf);
+			#if defined(AltNum_EnableMixedPiFractional)
 			RightSide *= AltDec::PiNum;
-	#else
+			#else
 			RightSide *= AltDec::ENum;
-	#endif
+			#endif
 			int InvertedVDivisor = -Value.ExtraRep;
-			if(self.ExtraRep==InvertedVDivisor)
+			if (self.ExtraRep == InvertedVDivisor)
 			{
 				LeftSide.BasicSubOp(RightSide);
 				self.IntValue = LeftSide.IntValue;
@@ -314,8 +315,9 @@ void MixedFracOp(RepType& RRep, AltDec& self, AltDec& Value)
 				self.DecimalHalf = LeftSide.DecimalHalf;
 			}
 			break;//Give result as NumByDiv
-		//#endif
-	#endif
+			//#endif
+		}
+		#endif
 		default:
 			self.CatchAllSubtraction(&Value, RepType::MixedFrac, &RRep);
 			break;
@@ -790,7 +792,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             else if(RRep==RepType::MixedE)
 #endif
 #if defined(AltNum_MixedPiOrEEnabled)
-    			self.ConvertToNormType(RepType::);
+    			self.ConvertToNormType(&LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
     			self.BasicMixedPiFracOp(Value);
     		#else

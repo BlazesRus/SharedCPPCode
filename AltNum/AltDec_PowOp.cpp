@@ -133,28 +133,30 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 			return NegativeInfinity;
 		else
 			return Infinity;//Techically within range of Positive and NegativeInfinity
-		return;
+		return *this;
 		break;
 	case RepType::NegativeInfinity:
-#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproachingValues)
 		if (IsNegative())
 			SetAsApproachingBottom(NegativeRep);
 		else
 			SetAsApproachingBottom();
-#else
+		#else
 		value.SetAsZero();
-#endif
-		return;
+		#endif
+		return *this;
 		break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
-        case RepType::ApproachingBottom:
-            if(expValue.IntValue==0)
-                return ApproachingOneFromRightValue();
-            else if(expValue.IntValue==NegativeRep)
-                return ApproachingOneFromLeftValue();
-            else
-                expValue.ConvertToNormType(expType);
+	#if defined(AltNum_EnableApproachingValues)
+	case RepType::ApproachingBottom:
+		if(expValue.IntValue==0)
+			return ApproachingOneFromRightValue();
+		else if(expValue.IntValue==NegativeRep)
+			return ApproachingOneFromLeftValue();
+		else
+			expValue.ConvertToNormType(expType);
+		break;
+	#endif
     #if defined(AltNum_EnableImaginaryNum)
         case RepType::INum:
         #if defined(AltNum_EnableDecimaledIFractionals)
@@ -162,7 +164,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
         #elif defined(AltNum_EnableIFractional)
         case RepType::IFractional:
         #endif
-        if defined(AltNum_EnableMixedIFractional)
+        #if defined(AltNum_EnableMixedIFractional)
         case RepType::MixedI:
         #endif
         #if defined(AltNum_EnableImaginaryInfinity)
@@ -171,13 +173,13 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
         #endif
         #if defined(AltNum_EnableApproachingI)
 	    case RepType::ApproachingImaginaryBottom:
-        #if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 	    case RepType::ApproachingImaginaryTop:
-        #endif
+			#endif
             #if defined(AltNum_EnableApproachingDivided)
-	    case RepType::ApproachingImaginaryMidRight:
-                #if !defined(AltNum_DisableApproachingTop)
 	    case RepType::ApproachingImaginaryMidLeft:
+                #if !defined(AltNum_DisableApproachingTop)
+	    case RepType::ApproachingImaginaryMidRight:
                 #endif
             #endif
         #endif
@@ -188,30 +190,28 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
             expValue.ConvertToNormType(expType);
             break;
 	}
-    	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
-    	switch (expValue.IntValue)
-    	{
-    	case 0:
-    		return FractionalPow(Frac);
-    		break;
-    	case AltDec::NegativeRep:
-    		return One / FractionalPow(Frac);
-    		break;
-    	default:
-    	{
-    		if (expValue.IntValue < 0)//Negative Exponent 
-    		{
-    			AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
-    			CalcVal /= FractionalPow(Frac);
-    			return CalcVal;
-    		}
-    		else
-    		{
-    			AltDec CalcVal = Int32PowOp(expValue.IntValue);
-    			CalcVal *= FractionalPow(Frac);
-    			return CalcVal;
-    		}
-    		break;
-    	}
+	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
+	switch (expValue.IntValue)
+	{
+		case 0:
+			return FractionalPow(Frac);
+			break;
+		case AltDec::NegativeRep:
+			return One / FractionalPow(Frac);
+			break;
+		default:
+			if (expValue.IntValue < 0)//Negative Exponent 
+			{
+				AltDec CalcVal = One / Int32Pow(expValue.IntValue * -1);
+				CalcVal /= FractionalPow(Frac);
+				return CalcVal;
+			}
+			else
+			{
+				AltDec CalcVal = Int32PowOp(expValue.IntValue);
+				CalcVal *= FractionalPow(Frac);
+				return CalcVal;
+			}
+			break;
 	}
 }
