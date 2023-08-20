@@ -462,7 +462,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
-    //LRep Overrides
+#if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)//LRep Overrides
     switch(LRep)
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -479,30 +479,25 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
 			#endif
 		#endif
-        #if defined(AltNum_EnableMixedFractional)
+        #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
         #endif
 			LRepImaginaryOverridePt2(LRep, RRep, self, Value);
+	#endif
 		default:
 			break;
 	}
+#endif
     //RRep Overrides before Main RepToRep Code
     switch(RRep)
     {
 	#if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
 		{
-			if(LRep==RepType::ApproachingTop&&LeftIsNegative==RightIsNegative)
+			if(LRep==RepType::ApproachingTop&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+				self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -515,17 +510,10 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		#if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingTop:
 		{
-			if(LRep==RepType::ApproachingBottom&&LeftIsNegative==RightIsNegative)
+			if(LRep==RepType::ApproachingBottom&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+				self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -544,14 +532,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = 0;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+                self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -563,19 +544,12 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		}
 			#if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingMidRight:
-        {
-			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==RightIsNegative)
+        {//0.49..9+0.0.50..1
+			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = 0;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+                self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -589,20 +563,13 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
         #endif
     #endif
 	#if defined(AltNum_EnableApproachingI)
-		case RepType::ApproachingBottom:
+		case RepType::ApproachingImaginaryBottom:
 		{
-			if(LRep==RepType::ApproachingTop&&LeftIsNegative==RightIsNegative)
+			if(LRep==RepType::ApproachingImaginaryTop&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = IRep;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+                self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -616,18 +583,11 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		#if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingImaginaryTop:
 		{
-			if(LRep==RepType::ApproachingImaginaryBottom&&LeftIsNegative==RightIsNegative)
+			if(LRep==RepType::ApproachingImaginaryBottom&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = IRep;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+                self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -646,14 +606,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = IRep;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+                self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -670,14 +623,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = IRep;
-				int RightSide = Value.IntValue==NegativeRep?0:Value.IntValue;
-				if(LeftIsNegative)//&&RightIsNegative)
-					--RightSide;
-				else// if(LeftIsNegative==false&&RightIsNegative==false)
-					++RightSide;
-				if(self.IntValue==NegativeRep)
-				   self.IntValue = 0;
-				self.IntValue += RightSide;
+				self.IntValue += Value.IntValue+1;
 				return;
 			}
 			else
@@ -750,7 +696,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if (RRep == RepType::MixedFrac)
 			{
 				self.ConvertToNormType(&LRep);
-				self.BasicMixedFracOp(Value);
+				self.BasicMixedFracAddOp(Value);
 			}
 #if defined(AltNum_EnableMixedPiFractional)
             else if(RRep==RepType::MixedPi)
@@ -760,9 +706,9 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 #if defined(AltNum_MixedPiOrEEnabled)
     			self.ConvertToNormType(&LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
-    			self.BasicMixedPiFracOp(Value);
+    			self.BasicMixedPiFracAddOp(Value);
     		#else
-    			self.BasicMixedEFracOp(Value);
+    			self.BasicMixedEFracAddOp(Value);
     		#endif
 #else
             else

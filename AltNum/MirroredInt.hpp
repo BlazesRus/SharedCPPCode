@@ -42,6 +42,10 @@ BlazesMirroredInt_UseBitwiseForIntOp
 	#define BlazesMirroredInt_UseLegacyValueBehavior
 #endif
 
+#if defined(BlazesMirroredInt_UseBitSet)
+	#include <bitset>
+#endif
+
 namespace BlazesRusCode
 {
     class MirroredInt;
