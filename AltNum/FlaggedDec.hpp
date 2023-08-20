@@ -391,7 +391,7 @@ namespace BlazesRusCode
 		//BitFlag 02 = ERep
 		static const unsigned char ENumRep = 2;
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
-		static const unsigned char ENumByDivRep = 9;
+		static const unsigned char ENumByDivRep = 10;
 	#endif
 	#if defined(FlaggedNum_EnablePowers)
 		static const unsigned char EByPowerRep = 18;
@@ -472,7 +472,7 @@ namespace BlazesRusCode
             EPower = 18,//with flag 05, and 02 active
 	#endif
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
-            ENumByDiv = 11,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
+            ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
@@ -534,10 +534,141 @@ namespace BlazesRusCode
 #endif
             UnknownType = 136//(Enum Bits:8, 4)
         };
+
+		static std::string RepTypeAsString(RepType& repType)
+		{
+			switch(repType)
+			{
+				case RepType::NormalType:
+					return "NormalType"; break;
+	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+				case RepType::NumByDiv:
+					return "NumByDiv"; break;
+	#endif
+	#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:
+					return "PiNum"; break;
+		#if defined(AltNum_EnablePiPowers)
+				case RepType::PiPower:
+					return "PiPower"; break;
+		#endif
+		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+					return "PiNumByDiv"; break;
+		#endif
+	#endif
+	#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+					return "ENum"; break;
+		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+					return "ENumByDiv"; break;
+		#endif
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+                    return "INum"; break;
+		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					return "INumByDiv"; break;
+		#endif
+		#ifdef AltNum_EnableComplexNumbers
+				case RepType::ComplexIRep:
+					return "ComplexIRep"; break;
+		#endif
+	#endif
+
+	#if defined(FlaggedNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+					return "MixedFrac"; break;
+		#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedPi"; break;
+		#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedE"; break;
+		#elif defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedI"; break;
+		#endif
+	#endif
+
+	#if defined(AltNum_EnableInfinityRep)
+				case RepType::PositiveInfinity://If Positive Infinity: then convert number into MaximumValue instead when need as real number
+					return "PositiveInfinity"; break;
+				case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
+					return "NegativeInfinity"; break;
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                    return "ApproachingBottom"; break;
+		#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                    return "ApproachingTop"; break;
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidLeft:
+					return "ApproachingMidLeft"; break;
+				case RepType::ApproachingMidRight:
+					return "ApproachingMidRight"; break;
+		#endif
+	#endif
+    #if defined(AltNum_EnableNaN)
+				case RepType::Undefined:
+					return "Undefined"; break;
+				case RepType::NaN:
+					return "NaN"; break;
+    #endif
+	#if defined(AltNum_EnableApproachingPi)
+				case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+					return "ApproachingTopPi"; break;
+	#endif
+	#if defined(AltNum_EnableApproachingE)
+				case RepType::ApproachingTopE://equal to IntValue.9..9 e
+					return "ApproachingTopE"; break;
+	#endif
+	#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::PositiveImaginaryInfinity:
+					return "PositiveImaginaryInfinity"; break;
+				case RepType::NegativeImaginaryInfinity:
+					return "NegativeImaginaryInfinity"; break;
+	#endif
+	#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+					return "ApproachingImaginaryBottom"; break;
+		#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+					return "ApproachingImaginaryTop"; break;
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidLeft:
+					return "ApproachingImaginaryMidLeft"; break;
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidRight:
+					return "ApproachingImaginaryMidRight"; break;
+			#endif
+		#endif
+    #endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
+				case RepType::UndefinedButInRange:
+					return "UndefinedButInRange"; break;
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+				case RepType::WithinMinMaxRange:
+					return "WithinMinMaxRange"; break;
+		#endif
+	#endif
+    #if defined(AltNum_EnableNilRep)
+				case RepType::Nil:
+					return "Nil"; break;
+    #endif
+				default:
+					return "Unknown";
+			}
+		}
+
         RepType GetRepType()
         {
 #if defined(AltNum_EnableInfinityRep)
-	#if !defined(AltNum_DisableInfinityRepTypeReturn)
             if(DecimalHalf==InfinityRep)
             {
 	#if defined(AltNum_EnableImaginaryInfinity)

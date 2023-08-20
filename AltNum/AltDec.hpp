@@ -692,7 +692,7 @@ namespace BlazesRusCode
 			#endif
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
-            ComplexIRep,
+            ComplexIRep = 255,
 		#endif
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
@@ -707,51 +707,51 @@ namespace BlazesRusCode
 	#endif
 
 	#if defined(AltNum_EnableInfinityRep)
-			PositiveInfinity = 64,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
-			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
+			PositiveInfinity = 192,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
+			NegativeInfinity = 112,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
-            ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+            ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            ApproachingTop = 72,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-			ApproachingMidLeft,//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
+			ApproachingMidLeft = 80,//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
 			#if !defined(AltNum_DisableApproachingTop)
-            ApproachingMidRight,//DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
+            ApproachingMidRight = 96,//DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
 			#endif
 		#endif
 	#endif
     #if defined(AltNum_EnableNaN)
-            Undefined,
-            NaN,
+            Undefined = 128,
+            NaN = 129,
     #endif
 	#if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi,//equal to IntValue.9..9 Pi
+            ApproachingTopPi = 65,//equal to IntValue.9..9 Pi
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-            ApproachingTopE,//equal to IntValue.9..9 e
+            ApproachingTopE = 66,//equal to IntValue.9..9 e
 	#endif
 	#if defined(AltNum_EnableImaginaryInfinity)
-            PositiveImaginaryInfinity,
-			NegativeImaginaryInfinity,
+            PositiveImaginaryInfinity = 196,
+			NegativeImaginaryInfinity = 228,
 	#endif
 	#if defined(AltNum_EnableApproachingI)
-            ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            ApproachingImaginaryBottom = 196,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+            ApproachingImaginaryTop = 228,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-			ApproachingImaginaryMidLeft,//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
+			ApproachingImaginaryMidLeft = 84,//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
 			#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryMidRight,//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
+            ApproachingImaginaryMidRight = 100,//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
 			#endif
 		#endif
     #endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-            UndefinedButInRange,
+            UndefinedButInRange = 130,
 		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-			WithinMinMaxRange,
+			WithinMinMaxRange = 136,
 		#endif
 	#endif
     #if defined(AltNum_EnableNilRep)
@@ -2639,7 +2639,7 @@ public:
             {
                 int divisor = DecimalHalf;
                 DecimalHalf = 0;
-                BasicDivOp(divisor);
+                BasicIntDivOp(divisor);
             }
 #endif
             break;
@@ -2723,7 +2723,7 @@ public:
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 int Divisor = DecimalHalf;
                 DecimalHalf = 0;
-                BasicDivOp(Divisor);
+                BasicIntDivOp(Divisor);
                 break;
 #endif
 #ifdef AltNum_EnableComplexNumbers
@@ -4085,7 +4085,7 @@ public:
         /// Multiplication Operation Between AltDec and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
-        template<typename IntType = int>
+        template<typename IntType>
         void BasicIntMultOp(IntType RValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -4571,6 +4571,7 @@ protected:
         }
 
 public:
+        //Performs division operation that modifies the AltDec ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec&>
         void BasicDivOp(AltDecVariant Value)
         {
@@ -4578,6 +4579,7 @@ public:
 				DecimalHalf = 1;
         }
 
+        //Performs division operation (without checking negative) that modifies the AltDec ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec&>
         void UnsignedBasicDivOp(AltDec& Value)
         {
@@ -4601,9 +4603,11 @@ public:
             return self;
         }
 
+        //Performs division operation ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec>
         AltDec BasicDiv(AltDecVariant Value) { AltDec self = *this; self.UnsignedBasicDivOp(Value); return self; }
 
+        //Performs division operation (without checking negative) ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec>
         AltDec UnsignedBasicDiv(AltDecVariant Value) { AltDec self = *this; self.BasicDivOp(Value);  return self; }
 
@@ -5895,7 +5899,7 @@ public:
         static void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
-        /// Addition Operation
+        /// Addition Operation that modifies caller with right side AltDec
         /// </summary>
         /// <param name="Value">The rightside value.</param>
         /// <returns>AltDec&</returns>
