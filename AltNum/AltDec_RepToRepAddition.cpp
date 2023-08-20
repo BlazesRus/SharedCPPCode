@@ -270,100 +270,102 @@ void ImaginaryNumberOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value
 #if defined(AltNum_EnableMixedFractional)
 void MixedFracOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
-			switch (RRep)
+	switch (RRep)
+	{
+#if defined(AltNum_EnableMixedPiFractional)
+		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+#elif defined(AltNum_EnableMixedEFractional)
+		case RepType::MixedE:
+#endif
+#if defined(AltNum_MixedPiOrEEnabled)
+		{
+			//#if defined(AltNum_MixedPiHasDecimaledFracAccess)
+			//            break;//Give result as PiByDiv
+			//#elif defined(AltNum_MixedEHasDecimaledFracAccess)
+			//            break;//Give result as EByDiv
+			//#else
+			int LeftSide;
+			if (self.IntValue == AltDec::NegativeRep)
+				LeftSide = self.DecimalHalf;
+			else if (self.IntValue < 0)
+				LeftSide = self.IntValue * self.ExtraRep + self.DecimalHalf;
+			else if (self.IntValue == 0)
+				LeftSide = -self.DecimalHalf;
+			else
+				LeftSide = self.IntValue * self.ExtraRep - self.DecimalHalf;
+			AltDec RightSide = AltDec(Value.IntValue == 0 ? -Value.DecimalHalf : (Value.IntValue * -Value.ExtraRep) - Value.DecimalHalf);
+			#if defined(AltNum_EnableMixedPiFractional)
+			RightSide *= AltDec::PiNum;
+			#else
+			RightSide *= AltDec::ENum;
+			#endif
+			int InvertedVDivisor = -Value.ExtraRep;
+			if (self.ExtraRep == InvertedVDivisor)
 			{
-	#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
-	#elif defined(AltNum_EnableMixedEFractional)
-				//case RepType::MixedE:
-    #endif
-    #if defined(AltNum_MixedPiOrEEnabled)
-        //#if defined(AltNum_MixedPiHasDecimaledFracAccess)
-        //            break;//Give result as PiByDiv
-        //#elif defined(AltNum_MixedEHasDecimaledFracAccess)
-        //            break;//Give result as EByDiv
-        //#else
-			        int LeftSide;
-			        if(self.IntValue==AltDec::NegativeRep)
-				        LeftSide = self.DecimalHalf;
-			        else if(self.IntValue<0)
-				        LeftSide = self.IntValue*self.ExtraRep + self.DecimalHalf;
-			        else if(self.IntValue==0)
-				        LeftSide = -self.DecimalHalf;
-			        else
-				        LeftSide = self.IntValue*self.ExtraRep - self.DecimalHalf;
-                    AltDec RightSide = AltDec(Value.IntValue==0?-Value.DecimalHalf:(Value.IntValue*-Value.ExtraRep)-Value.DecimalHalf);
-	    #if defined(AltNum_EnableMixedPiFractional)
-                    RightSide *= AltDec::PiNum;
-        #else
-                    RightSide *= AltDec::ENum;
-        #endif
-                    int InvertedVDivisor = -Value.ExtraRep;
-                    if(self.ExtraRep==InvertedVDivisor)
-                    {
-                        RightSide.BasicAddOp(LeftSide);
-                        self.IntValue = RightSide.IntValue;
-                        self.DecimalHalf = RightSide.DecimalHalf;
-                    }
-                    else
-                    {
-                        self.ExtraRep *= InvertedVDivisor;
-                        LeftSide *= InvertedVDivisor;
-                        RightSide *= self.ExtraRep;
-                        RightSide.BasicAddOp(LeftSide);
-                        self.IntValue = RightSide.IntValue;
-                        self.DecimalHalf = RightSide.DecimalHalf;
-                    }
-                    break;//Give result as NumByDiv
-        //#endif
-    #endif
-				default:
-					self.CatchAllAddition(&Value, RepType::, &RRep);
-					break;
-            }
+				RightSide.BasicAddOp(LeftSide);
+				self.IntValue = RightSide.IntValue;
+				self.DecimalHalf = RightSide.DecimalHalf;
+			}
+			else
+			{
+				self.ExtraRep *= InvertedVDivisor;
+				LeftSide *= InvertedVDivisor;
+				RightSide *= self.ExtraRep;
+				RightSide.BasicAddOp(LeftSide);
+				self.IntValue = RightSide.IntValue;
+				self.DecimalHalf = RightSide.DecimalHalf;
+			}
+			break;//Give result as NumByDiv
+			//#endif
+		}
+#endif
+		default:
+			self.CatchAllAddition(&Value, RepType::MixedFrac, &RRep);
+			break;
+    }
 }
 #endif
 
 #if defined(AltNum_MixedPiOrEEnabled)
 void MixedPiEOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
-			switch (RRep)
+	switch (RRep)
+	{
+        case RepType::MixedFrac:
+		{
+			AltDec LeftSide;
+			if (self.IntValue == AltDec::NegativeRep)
+				LeftSide = AltDec(self.DecimalHalf);
+			else if (self.IntValue < 0)
+				LeftSide = AltDec(self.IntValue * -self.ExtraRep + self.DecimalHalf);
+			else if (self.IntValue == 0)
+				LeftSide = AltDec(-self.DecimalHalf);
+			else
+				LeftSide = AltDec(self.IntValue * -self.ExtraRep + -self.DecimalHalf);
+			#if defined(AltNum_EnableMixedPiFractional)
+			LeftSide *= AltDec::PiNum;
+			#elif defined(AltNum_EnableMixedEFractional)
+			LeftSide *= AltDec::ENum;
+			#endif
+			int RightSide = Value.IntValue == 0 ? -Value.DecimalHalf : Value.IntValue * Value.ExtraRep - Value.DecimalHalf;
+			self.ExtraRep = -self.ExtraRep;
+			if (Value.ExtraRep == self.ExtraRep)
 			{
-                case RepType::MixedFrac:
-				{
-					AltDec LeftSide;
-					if (self.IntValue == AltDec::NegativeRep)
-						LeftSide = AltDec(self.DecimalHalf);
-					else if (self.IntValue < 0)
-						LeftSide = AltDec(self.IntValue * -self.ExtraRep + self.DecimalHalf);
-					else if (self.IntValue == 0)
-						LeftSide = AltDec(-self.DecimalHalf);
-					else
-						LeftSide = AltDec(self.IntValue * -self.ExtraRep + -self.DecimalHalf);
-					#if defined(AltNum_EnableMixedPiFractional)
-					LeftSide *= AltDec::PiNum;
-					#elif defined(AltNum_EnableMixedEFractional)
-					LeftSide *= AltDec::ENum;
-					#endif
-					int RightSide = Value.IntValue == 0 ? -Value.DecimalHalf : Value.IntValue * Value.ExtraRep - Value.DecimalHalf;
-					self.ExtraRep = -self.ExtraRep;
-					if (Value.ExtraRep == self.ExtraRep)
-					{
-						LeftSide.BasicAddOp(RightSide);
-						self.IntValue = LeftSide.IntValue;
-						self.DecimalHalf = LeftSide.DecimalHalf;
-					}
-					else
-					{
-						self.ExtraRep *= Value.ExtraRep;
-						LeftSide *= Value.ExtraRep;
-						RightSide *= self.ExtraRep;
-						LeftSide.BasicAddOp(RightSide);
-						self.IntValue = LeftSide.IntValue;
-						self.DecimalHalf = LeftSide.DecimalHalf;
-					}
-					break;
-				}
+				LeftSide.BasicAddOp(RightSide);
+				self.IntValue = LeftSide.IntValue;
+				self.DecimalHalf = LeftSide.DecimalHalf;
+			}
+			else
+			{
+				self.ExtraRep *= Value.ExtraRep;
+				LeftSide *= Value.ExtraRep;
+				RightSide *= self.ExtraRep;
+				LeftSide.BasicAddOp(RightSide);
+				self.IntValue = LeftSide.IntValue;
+				self.DecimalHalf = LeftSide.DecimalHalf;
+			}
+			break;
+		}
 /*
     #if defined(AltNum_MixedPiOrEHasDecimaledFracAccess)
 	    #if defined(AltNum_EnableDecimaledPiFractionals)
@@ -383,14 +385,14 @@ void MixedPiEOp(RepType& RRep, AltDec& self, AltDec& Value)
                     break;
     #endif
 */
-				default:
-	#if defined(AltNum_EnableMixedPiFractional)
-					self.CatchAllAddition(&Value, RepType::MixedPi, &RRep);
-	#else
-					self.CatchAllAddition(&Value, RepType::MixedE, &RRep);	
-	#endif
-					break;
-            }
+		default:
+#if defined(AltNum_EnableMixedPiFractional)
+			self.CatchAllAddition(&Value, RepType::MixedPi, &RRep);
+#else
+			self.CatchAllAddition(&Value, RepType::MixedE, &RRep);	
+#endif
+			break;
+    }
 }
 #endif
 
