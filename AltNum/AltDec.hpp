@@ -2655,44 +2655,33 @@ public:
 #if defined(AltNum_EnableApproachingDivided)
 		void ConvertFromApproachingMidLeftToNorm()
 		{//0.9..9/2 = 0.49..9
-			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
-				DecimalHalf = DecimalOverflow / InvertedExtraRep;
-			else
-				DecimalHalf = (DecimalOverflow / InvertedExtraRep) - 1;
+			DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
 			ExtraRep = 0;
 		}
 		
 	#if !defined(AltNum_DisableApproachingTop)
 		void ConvertFromApproachingMidRightToNorm()
 		{
-			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
-				DecimalHalf = DecimalOverflow / InvertedExtraRep;
-			else
-				DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
+			DecimalHalf = (DecimalOverflow / ExtraRep) + 1;
 			ExtraRep = 0;
 		}
 	#endif
-#endif
-#if defined(AltNum_EnableApproachingI)
+
+    #if defined(AltNum_EnableApproachingI)
 		void ConvertFromApproachingIMidLeftToINum()
 		{
-			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
-				DecimalHalf = DecimalOverflow / InvertedExtraRep;
-			else
-				DecimalHalf = (DecimalOverflow / InvertedExtraRep) - 1;
+			DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
 			ExtraRep = IRep;
 		}
 	
 	#if !defined(AltNum_DisableApproachingTop)
 		void ConvertFromApproachingIMidRightToINum()
 		{
-			if (DecimalOverflow % InvertedExtraRep != 0)//Only cut off the traiing digits for those that can't have all digits stored
-				DecimalHalf = DecimalOverflow / InvertedExtraRep;
-			else
-				DecimalHalf = (DecimalOverflow / InvertedExtraRep) + 1;
+			DecimalHalf = (DecimalOverflow / ExtraRep) + 1;
 			ExtraRep = IRep;
 		}
 	#endif
+    #endif
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
@@ -10412,7 +10401,7 @@ public:
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnablePiFractional)
         case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             return IntHalfAsString()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
@@ -10428,7 +10417,7 @@ public:
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnableEFractional)
         case RepType::EFractional://  IntValue/DecimalHalf*e Representation
             return IntHalfAsString()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
@@ -10445,7 +10434,7 @@ public:
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnableIFractional)
         case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
