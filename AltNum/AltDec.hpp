@@ -2780,7 +2780,7 @@ public:
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
         #endif
                 if (IntValue == 0 && DecimalHalf != 0)
-                    ExtraRep = 0
+                    ExtraRep = 0;
                 else
                     throw "Can't convert imaginery number into real number unless is zero.";
                 break;
@@ -6573,7 +6573,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
 #endif
-                    BasicSubOp(Value);
+                    BasicSubOp(RValue);
                     break;
 
 #if defined(AltNum_EnableApproachingDivided)
@@ -6733,9 +6733,9 @@ public:
 #if defined(AltNum_EnableAlternativeRepFractionals)
                 case RepType::NumByDiv:
                     if (ExtraRep == RValue.ExtraRep)
-                        BasicSubOp(Value);
+                        BasicSubOp(RValue);
                     else
-                        CatchAllSubtractionV2(Value, RepType::NumByDiv);
+                        CatchAllSubtractionV2(RValue, RepType::NumByDiv);
                     break;
 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -6754,7 +6754,7 @@ public:
                     else
                     {
                         ConvertToNormType(&LRep); RValue.ConvertToNormType(&LRep);
-                        BasicSubOp(Value);
+                        BasicSubOp(RValue);
                     }
                     break;
 #endif
@@ -6768,11 +6768,11 @@ public:
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*e Representation
 #endif
                     if (ExtraRep == RValue.ExtraRep)
-                        BasicSubOp(Value);
+                        BasicSubOp(RValue);
                     else
                     {
                         ConvertToNormType(&LRep); RValue.ConvertToNormType(&LRep);
-                        BasicSubOp(Value);
+                        BasicSubOp(RValue);
                     }
                     break;
 #endif
@@ -6924,10 +6924,10 @@ public:
                 if (RValue.IntValue<0)
                 {
                     RValue.SwapNegativeStatus();
-                    RepToRepAddOp(LRep, RRep, *this, Value);
+                    RepToRepAddOp(LRep, RRep, *this, RValue);
                 }
                 else
-                    RepToRepSubOp(LRep, RRep, *this, Value);
+                    RepToRepSubOp(LRep, RRep, *this, RValue);
             }
             return *this;
         }
@@ -9144,7 +9144,7 @@ public:
         /// </summary>
         /// <param name="value">The target value.</param>
         template<typename AltDecVariant = AltDec>
-        static AltDec Ln(AltDecVariant Value)
+        static AltDec Ln(AltDecVariant value)
         {
             return LnRef(value);
         }
@@ -9173,7 +9173,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename AltDecVariant = AltDec>
-        static AltDec Log10(AltDecVariant Value)
+        static AltDec Log10(AltDecVariant value)
         {
             if (value == AltDec::One)
                 return AltDec::Zero;
@@ -10188,7 +10188,7 @@ public:
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnablePiFractional)
         case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
@@ -10199,12 +10199,12 @@ public:
         case RepType::ENum:
             return BasicToStringOp()+"e";
             break;
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledEFractionals)
         case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnableEFractional)
         case RepType::EFractional://  IntValue/DecimalHalf*e Representation
             return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
@@ -10216,12 +10216,12 @@ public:
         case RepType::INum:
             return BasicToStringOp()+"i";
             break;
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledIFractionals)
         case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
-        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        #elif defined(AltNum_EnableIFractional)
         case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             return IntHalfAsString() +"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
@@ -10284,22 +10284,22 @@ public:
     #endif
     #if defined(AltNum_EnableMixedFractional)
         case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
         case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
         case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
         case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+            return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
@@ -10414,7 +10414,7 @@ public:
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
         case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            return (std::string)IntValue+"/"
+            return IntHalfAsString()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
