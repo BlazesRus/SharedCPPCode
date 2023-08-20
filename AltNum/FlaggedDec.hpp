@@ -145,6 +145,10 @@ ExtraRep value is used only if:
 FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional
 are enabled
 Automatically toggles FlaggedNum_ExtraRepIsInactive.
+
+FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus for 
+                                        Approaching value and infinity representations
+
 */
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation
 #if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
@@ -237,17 +241,102 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API FlaggedDec
     {
-#undefine MediumDecVariant
-#define MediumDecVariant FlaggedDec
+    public:
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static signed int const DecimalOverflow = 1000000000;
+
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static signed _int64 const DecimalOverflowX = 1000000000;
+		
+	//private:
+	//	static signed _int64 const NegDecimalOverflowX = -1000000000;//Shouldn't need to use this variable
 	public:
-		class ModRes
+
+        /// <summary>
+        /// long double (Extended precision double)
+        /// </summary>
+        using ldouble = long double;
+    public:
+        /// <summary>
+        /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// </summary>
+        static signed int const NegativeRep = -2147483648;
+
+        /// <summary>
+        /// Stores whole half of number(Including positive/negative status)
+		/// (in the case of infinity is used to determine if positive vs negative infinity)
+        /// </summary>
+        signed int IntValue;
+
+        /// <summary>
+        /// Stores decimal section info and other special info
+        /// </summary>
+        signed int DecimalHalf;
+		
+		//BitFlag 01 = PiRep, 02 = ERep, 03 = IRep, 04 = Fractional Rep, 05 = Power of, 06 = Mixed Fractional
+	#if !defined(FlaggedNum_UseBitset)
+		unsigned char FlagsActive;
+	#else
+		std::bitset<6> FlagsActive;
+	#endif
+		
+	#if defined(FlaggedNum_ExtraRepIsActive)
+        /// <summary>
+		/// (Used exclusively for alternative representations if FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional enabled)
+        /// </summary>
+        signed int ExtraRep;
+	#endif
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
+        /// </summary>
+        /// <param name="intVal">The int value.</param>
+        /// <param name="decVal">The decimal val01.</param>
+        /// <param name="extraVal">ExtraRep.</param>
+	#if defined(FlaggedNum_ExtraRepIsActive)
+        #if !defined(FlaggedNum_UseBitset)
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive = 0, signed int extraVal = 0)
+        #else
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {}, signed int extraVal = 0)
+        #endif
+    #else
+        #if !defined(FlaggedNum_UseBitset)
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive=0)
+        #else
+        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {})
+        #endif
+    #endif
+        {
+            IntValue = intVal;
+            DecimalHalf = decVal;
+			FlagsActive = flagsActive;
+    #if defined(FlaggedNum_ExtraRepIsActive)
+            ExtraRep = extraVal;
+    #endif
+        }
+
+		bool IsZero()
 		{
-			//Division Result
-			MediumDecVariant DivRes;
-			//Modulo Operation Result
-			MediumDecVariant RemRes;
+			return DecimalHalf==0&&IntValue = 0;
 		}
-    private:
+
+        void SetAsZero()
+        {
+            IntValue = 0; DecimalHalf = 0;
+        #if defined(FlaggedNum_UseBitset)
+            FlagsActive.reset();
+        #else
+            FlagsActive = 0;
+        #endif
+        #if defined(FlaggedNum_ExtraRepIsActive)
+            ExtraRep = 0;
+        #endif
+        }
+
 #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
@@ -272,7 +361,6 @@ namespace BlazesRusCode
 		static const signed int ApproachingImaginaryTopRep = -2147483644;
 #endif
 		
-#if !defined(FlaggedNum_UseBitset)
 	#if defined(FlaggedNum_EnablePowers)
 		//BitFlag 05 = Power of flag
 		static const unsigned char NumByPowerRep = 16;
@@ -285,9 +373,8 @@ namespace BlazesRusCode
 		//BitFlag 06 = Mixed Fraction flag
 		static const unsigned char MixedFracRep = 32;
 	#endif
-#endif
 
-#if defined(AltNum_EnablePiRep)&&defined(FlaggedNum_UsePseudoBitset)
+#if defined(AltNum_EnablePiRep)
         //BitFlag 01 = PiRep
 		static const unsigned char PiNumRep = 1;
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
@@ -300,7 +387,7 @@ namespace BlazesRusCode
 		static const unsigned char MixedFracPiRep = 33;
 	#endif
 #endif
-#if defined(AltNum_EnableENum)&&defined(FlaggedNum_UsePseudoBitset)
+#if defined(AltNum_EnableENum)
 		//BitFlag 02 = ERep
 		static const unsigned char ENumRep = 2;
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
@@ -313,7 +400,7 @@ namespace BlazesRusCode
 		static const unsigned char MixedFracERep = 34;
 	#endif
 #endif
-#if defined(AltNum_EnableImaginaryNum)&&defined(FlaggedNum_UsePseudoBitset)
+#if defined(AltNum_EnableImaginaryNum)
 		
 	#if !defined(FlaggedNum_UseBitset)
 		static const unsigned char INumRep = 4;
@@ -324,6 +411,34 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnableMixedFractional)
 		static const unsigned char MixedFracIRep = 36;
 	#endif
+#endif
+
+#if defined(FlaggedNum_UseFlagForInfinitesimalRep)
+//(Enum Bits:7)=64;Flag 5=16;Flag 6=32;
+		static const unsigned char PositiveInfinityRep = 192;//(Enum Bits:7,8)
+		static const unsigned char NegativeInfinityRep = 112;//(Enum Bits:7,6,5)
+
+		static const unsigned char ApproachingBottom = 64;//(Enum Bits:7)
+		static const unsigned char ApproachingTop = 72;//(Enum Bits:7,4)
+
+		static const unsigned char ApproachingMidLeftRep = 80;//(Enum Bits:7,5)
+		static const unsigned char ApproachingMidRightRep = 96;//(Enum Bits:7,6)
+
+    #if defined(AltNum_EnableApproachingPi)
+		static const unsigned char ApproachingTopPiRep = 65;//(Enum Bits:7,1)
+    #endif
+    #if defined(AltNum_EnableApproachingE)
+		static const unsigned char ApproachingTopERep = 66;//(Enum Bits:7,2)
+    #endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+		static const unsigned char PositiveImaginaryInfinityRep = 196;//(Enum Bits:7,3,8)
+		static const unsigned char NegativeImaginaryInfinityRep = 228;//(Enum Bits:7,3,8,6)
+
+		static const unsigned char ApproachingImaginaryBottom = 68;//(Enum Bits:7,3)
+		static const unsigned char ApproachingImaginaryBottom = 76;//(Enum Bits:7,3,4)
+		static const unsigned char ApproachingImaginaryMidLeftRep = 84;//(Enum Bits:7,3,5)
+		static const unsigned char ApproachingImaginaryMidLeftRep = 100;//(Enum Bits:7,3,6)
+    #endif
 #endif
 		
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -338,87 +453,86 @@ namespace BlazesRusCode
         //Is NaN when DecimalHalf==2147483646
         static const signed int UndefinedRep = 2147483646;
 #endif
-#if defined(AltNum_EnablePrivateRepType)
-    public:
-#endif
         enum class RepType: int
         {
             NormalType = 0,
-            NumByDiv,//with flag 04 active
+            NumByDiv = 8,//with flag 04 active
 #if defined(AltNum_EnablePiRep)
-            PiNum,//with flag 01 active
+            PiNum = 1,//with flag 01 active
 	#if defined(FlaggedNum_EnablePowers)
-            PiPower,//with flag 05, and 01 active
+            PiPower = 17,//with flag 05, and 01 active
 	#endif
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
-			PiNumByDiv,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
+			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
 	#endif
 #endif
 #if defined(AltNum_EnableENum)
-            ENum,//with flag 02 active
+            ENum = 2,//with flag 02 active
 	#if defined(FlaggedNum_EnablePowers)
-            EPower,//with flag 05, and 02 active
+            EPower = 18,//with flag 05, and 02 active
 	#endif
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
-            ENumByDiv,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
+            ENumByDiv = 11,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
-            INum,//with flag 03 active
+            INum = 4,//with flag 03 active
 	#if defined(FlaggedNum_EnableByDecimaledFractionals)
-            INumByDiv,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
+            INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
 	#endif
 #endif
 #if defined(FlaggedNum_EnableMixedFractional)
-			MixedFrac,//IntValue +- DecimalHalf/ExtraRep with flag 06 active 
-			MixedPi,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 01 active
-			MixedE,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 02 active
-			MixedI,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 03 active
+			MixedFrac = 32,//IntValue +- DecimalHalf/ExtraRep with flag 06 active 
+			MixedPi = 33,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 01 active
+			MixedE = 34,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 02 active
+			MixedI = 36,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 03 active
 #endif
 
 #if defined(AltNum_EnableInfinityRep)
-			PositiveInfinity,//IntValue == 1 and DecimalHalf==InfinityRep 
-			NegativeInfinity,//IntValue == -1 and DecimalHalf==InfinityRep 
+			PositiveInfinity = 192,//IntValue == 1 and DecimalHalf==InfinityRep
+			NegativeInfinity = 112,//IntValue == -1 and DecimalHalf==InfinityRep
+#endif
 	#if defined(AltNum_EnableApproachingValues)
-            ApproachingBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+            ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)  (Enum Bits:7,5)
 		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            ApproachingTop = 72,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9) (Enum Bits:7,6)
 		#endif
 		#if defined(AltNum_EnableApproachingDivided)
-            ApproachingMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			ApproachingMidLeft = 80,//(Enum Bits:7,5,8)
 			#if !defined(AltNum_DisableApproachingTop)
-			ApproachingMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+            ApproachingMidRight = 96,//(Enum Bits:7,6,8)
 			#endif
 		#endif
 	#endif
-#endif
-            Undefined,
-            NaN,
+    #if defined(AltNum_EnableNaN)
+            Undefined = 128,//(Enum Bits:8)
+            NaN = 129,//(Enum Bits:8, 1)
+    #endif
 #if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi,//equal to IntValue.9..9 Pi
+            ApproachingTopPi = 65,//equal to IntValue.9..9 Pi (Enum Bits:7,1,5)
 #endif
 #if defined(AltNum_EnableApproachingE)
-            ApproachingTopE,//equal to IntValue.9..9 e
+            ApproachingTopE = 66,//equal to IntValue.9..9 e (Enum Bits:7,2, 5)
 #endif
 #if defined(AltNum_EnableImaginaryInfinity)
-            PositiveImaginaryInfinity,//IntValue == 1 and DecimalHalf==InfinityRep and flag 03 active
-			NegativeImaginaryInfinity,//IntValue == -1 and DecimalHalf==InfinityRep and flag 03 active
+            PositiveImaginaryInfinity = 196,//IntValue == 1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3)
+			NegativeImaginaryInfinity = 228,//IntValue == -1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3,4)
 	#if defined(AltNum_EnableApproachingI)
-            ApproachingImaginaryBottom,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            ApproachingImaginaryBottom = 68,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryTop,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+            ApproachingImaginaryTop = 76,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		#endif
 	#if defined(AltNum_EnableApproachingDivided)
-            ApproachingImaginaryMidRight,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            ApproachingImaginaryMidRight = 84,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
 		#if !defined(AltNum_DisableApproachingTop)
-			ApproachingImaginaryMidLeft,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+			ApproachingImaginaryMidLeft = 100,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
 		#endif
 	#endif
 #endif
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-            UndefinedButInRange,
+            UndefinedButInRange = 130,//(Enum Bits:8, 2)
 #endif
-            UnknownType
+            UnknownType = 136//(Enum Bits:8, 4)
         };
         RepType GetRepType()
         {
@@ -598,99 +712,6 @@ namespace BlazesRusCode
 
 #endif
 			}
-        }
-    public:
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
-
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
-		
-	//private:
-	//	static signed _int64 const NegDecimalOverflowX = -1000000000;//Shouldn't need to use this variable
-	public:
-
-        /// <summary>
-        /// long double (Extended precision double)
-        /// </summary>
-        using ldouble = long double;
-    public:
-        /// <summary>
-        /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
-        /// </summary>
-        static signed int const NegativeRep = -2147483648;
-
-        /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-		/// (in the case of infinity is used to determine if positive vs negative infinity)
-        /// </summary>
-        signed int IntValue;
-
-        /// <summary>
-        /// Stores decimal section info and other special info
-        /// </summary>
-        signed int DecimalHalf;
-		
-		//BitFlag 01 = PiRep, 02 = ERep, 03 = IRep, 04 = Fractional Rep, 05 = Power of, 06 = Mixed Fractional
-	#if !defined(FlaggedNum_UseBitset)
-		unsigned char FlagsActive;
-	#else
-		std::bitset<6> FlagsActive;
-	#endif
-		
-	#if defined(FlaggedNum_ExtraRepIsActive)
-        /// <summary>
-		/// (Used exclusively for alternative representations if FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional enabled)
-        /// </summary>
-        signed int ExtraRep;
-	#endif
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecVariant"/> class.
-        /// </summary>
-        /// <param name="intVal">The int value.</param>
-        /// <param name="decVal">The decimal val01.</param>
-        /// <param name="extraVal">ExtraRep.</param>
-	#if defined(FlaggedNum_ExtraRepIsActive)
-        #if !defined(FlaggedNum_UseBitset)
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive = 0, signed int extraVal = 0)
-        #else
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {}, signed int extraVal = 0)
-        #endif
-    #else
-        #if !defined(FlaggedNum_UseBitset)
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, unsigned char flagsActive=0)
-        #else
-        MediumDecVariant(signed int intVal = 0, signed int decVal = 0, std::bitset<6> flagsActive = {})
-        #endif
-    #endif
-        {
-            IntValue = intVal;
-            DecimalHalf = decVal;
-			FlagsActive = flagsActive;
-    #if defined(FlaggedNum_ExtraRepIsActive)
-            ExtraRep = extraVal;
-    #endif
-        }
-
-		bool IsZero()
-		{
-			return DecimalHalf==0&&ExtraRep==0
-#if defined(AltNum_EnableNegativeZero)
-			&&(IntValue==0||IntValue==NegativeRep);
-#else
-			&&IntValue==0;
-#endif
-		}
-
-        void SetAsZero()
-        {
-            IntValue = 0; DecimalHalf = 0;
-            ExtraRep = 0;
         }
 
 #if defined(AltNum_EnableNegativeZero)

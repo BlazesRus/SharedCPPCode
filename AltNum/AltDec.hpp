@@ -198,6 +198,7 @@ AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
 
 AltDec_UseMirroredInt
 AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
+AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bitchecks instead of case statements(Not implimented yet)
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -205,7 +206,7 @@ AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test
 	#define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
-    //#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
+    #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
 #endif
 
 #if defined(AltNum_UseDeveloperExtraDefaults)
@@ -656,38 +657,38 @@ namespace BlazesRusCode
         {
             NormalType = 0,
 	#if defined(AltNum_EnableFractionals)
-            NumByDiv,
+            NumByDiv = 8,
 	#endif
 	#if defined(AltNum_EnablePiRep)
-            PiNum,
+            PiNum = 1,
 		#if defined(AltNum_EnablePiPowers)
-            PiPower,
+            PiPower = 17,
 		#endif
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledPiFractionals)
-            PiNumByDiv,//  (Value/(ExtraRep*-1))*Pi Representation
+            PiNumByDiv = 9,//  (Value/(ExtraRep*-1))*Pi Representation
 			#else
-            PiFractional,//  IntValue/DecimalHalf*Pi Representation
+            PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableERep)
-            ENum,
+            ENum = 2,
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)
-            ENumByDiv,//(Value/(ExtraRep*-1))*e Representation
+            ENumByDiv = 9,//(Value/(ExtraRep*-1))*e Representation
 			#else
-            EFractional,//  IntValue/DecimalHalf*e Representation
+            EFractional = 9,//  IntValue/DecimalHalf*e Representation
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-            INum,
+            INum = 4,
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
-            INumByDiv,//(Value/(ExtraRep*-1))*i Representation
+            INumByDiv = 11,//(Value/(ExtraRep*-1))*i Representation
 			#else
-            IFractional,//  IntValue/DecimalHalf*i Representation
+            IFractional = 11,//  IntValue/DecimalHalf*i Representation
 			#endif
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
@@ -695,18 +696,18 @@ namespace BlazesRusCode
 		#endif
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
-            MixedFrac,//IntValue +- (-DecimalHalf)/ExtraRep
+            MixedFrac = 32,//IntValue +- (-DecimalHalf)/ExtraRep
 		#if defined(AltNum_EnableMixedPiFractional)
-            MixedPi,//IntValue +- (-DecimalHalf/-ExtraRep)
+            MixedPi = 33,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-            MixedE,//IntValue +- (-DecimalHalf/-ExtraRep)
+            MixedE = 34,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-            MixedI,//IntValue +- (-DecimalHalf/-ExtraRep)
+            MixedI = 36,//IntValue +- (-DecimalHalf/-ExtraRep)
 		#endif
 	#endif
 
 	#if defined(AltNum_EnableInfinityRep)
-			PositiveInfinity,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
+			PositiveInfinity = 64,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
 			NegativeInfinity,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
@@ -1007,7 +1008,7 @@ namespace BlazesRusCode
                 return RepType::PiNum;
 		#if defined(AltNum_EnablePiFractional)
             else if(ExtraRep==PiByDivisorRep)
-				return RepType::PiIntNumByDiv;
+				return RepType::PiFractional;
 		#endif
 	#endif
             else if(ExtraRep>0)
@@ -1039,7 +1040,7 @@ namespace BlazesRusCode
 			}
 		#if defined(AltNum_EnableIFractional)
             else if(ExtraRep==IByDivisorRep)
-					return RepType::INumByDiv;
+					return RepType::IFractional;
 		#endif
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -1059,8 +1060,10 @@ namespace BlazesRusCode
 					return RepType::MixedPi;
 		#elif defined(AltNum_EnableMixedEFractional)
 					return RepType::MixedE;
-		#else
+		#elif defined(AltNum_EnableMixedIFractional)
 					return RepType::MixedI;
+        #else
+					throw "Non-enabled Alternative Mixed Fraction representation type detected";
 		#endif
 				else
 	#endif
@@ -2685,7 +2688,7 @@ public:
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        template<typename RepTypeVar = RepType&>
+        template<class RepTypeVar = RepType&>
         void ConvertToNormType(RepTypeVar repType)
         {
             switch (repType)
@@ -4209,7 +4212,7 @@ public:
             else if (RValue == 0)
                 SetAsZero();
             else
-                PartialIntMultOp(Value);
+                PartialIntMultOp(RValue);
         }
 
         template<typename IntType = int>
@@ -5554,7 +5557,7 @@ public:
                             if (IsNegative)
                                 IntValue *= -1;
                             AltDec XV = SetAsApproachingMid(0, Value.ExtraRep) * IntValue;
-                            AltDec YV = SetAsApproachingMid(0, Self.ExtraRep) * Value.IntValue;
+                            AltDec YV = SetAsApproachingMid(0, ExtraRep) * Value.IntValue;
                             XV *= YV;
                             if (IsNegative)
                                 IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
@@ -5570,8 +5573,8 @@ public:
                             IntValue = IntValue == NegativeRep:0 ? -IntValue;
                         int XZ = IntValue * Value.IntValue;
                         AltDec XV = SetAsApproachingMid(0, Value.ExtraRep) * IntValue;
-                        AltDec YZ = SetAsApproachingMid(0, Self.ExtraRep) * Value.IntValue;
-                        AltDec YV = SetAsApproachingMid(0, Self.ExtraRep) * SetAsApproachingMid(0, Value.ExtraRep);
+                        AltDec YZ = SetAsApproachingMid(0, ExtraRep) * Value.IntValue;
+                        AltDec YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, Value.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
@@ -5593,7 +5596,7 @@ public:
                             if (IsNegative)
                                 IntValue *= -1;
                             AltDec XV = SetAsApproachingMid(0, Value.ExtraRep) * IntValue;
-                            AltDec YV = SetAsApproachingMid(0, Self.ExtraRep) * Value.IntValue;
+                            AltDec YV = SetAsApproachingMid(0, ExtraRep) * Value.IntValue;
                             XV *= YV;
                             if (IsNegative)
                                 IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
@@ -5609,8 +5612,8 @@ public:
                             IntValue = IntValue == NegativeRep:0 ? -IntValue;
                         int XZ = IntValue * Value.IntValue;
                         AltDec XV = SetAsApproachingMid(0, Value.ExtraRep) * IntValue;
-                        AltDec YZ = SetAsApproachingMid(0, Self.ExtraRep) * Value.IntValue;
-                        AltDec YV = SetAsApproachingMid(0, Self.ExtraRep) * SetAsApproachingMid(0, Value.ExtraRep);
+                        AltDec YZ = SetAsApproachingMid(0, ExtraRep) * Value.IntValue;
+                        AltDec YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, Value.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
@@ -5630,7 +5633,7 @@ public:
                     ExtraRep *= Value.ExtraRep;
                     break;
 
-                    //(Self.IntValue*Value.IntValue)*Pi^2/(DecimalHalf/Value.DecimalHalf)
+                    //(IntValue*Value.IntValue)*Pi^2/(DecimalHalf/Value.DecimalHalf)
 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                     int NumRes = IntValue * Value.IntValue;
@@ -5648,7 +5651,7 @@ public:
                         IntValue = DivRes;
                         ExtraRep = -2;
 #else
-                        Self.SetPiVal(DivRes);
+                        SetPiVal(DivRes);
                         *this *= PiNum;
 #endif
                     }
@@ -5686,7 +5689,7 @@ public:
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     if (RemRes == 0)
                     {
-                        Self.SetEVal(DivRes);
+                        SetEVal(DivRes);
                         *this *= ENum;
                     }
                     else
@@ -6237,7 +6240,7 @@ public:
                     }
                     else
                     {
-                        ConvertToNormType(&LRep); value.ConvertToNormType(&LRep);
+                        ConvertToNormType(&LRep); Value.ConvertToNormType(&LRep);
                         BasicAddOp(Value);
                     }
                     break;
@@ -9248,7 +9251,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
         template<typename ValueType>
-        static AltDec Log10(ValueType value)
+        static AltDec IntegerLog10(ValueType value)
         {
             if (value == 1)
                 return AltDec::Zero;
@@ -9308,7 +9311,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>AltDec</returns>
-        static AltDec Log(AltDec value, int baseVal)
+        static AltDec IntegerLog(AltDec value, int baseVal)
         {
             RepType repType = value.GetRepType();
             AltDec ConvertedVal;
