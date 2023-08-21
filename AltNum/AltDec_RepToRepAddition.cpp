@@ -447,12 +447,11 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 #endif
 #if defined(AltNum_EnableComplexNumbers)
 		Value.ConvertToNormTypeOp(RRep);
-		RRep = RepType::NormalType;
+		RRep = RepType::NormalType; 
 #else
 		throw "Complex number operations not enabled";
 #endif
 		break;
-#endif
 	default:
 		break;
 	}
