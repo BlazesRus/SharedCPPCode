@@ -697,23 +697,25 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 				self.ConvertToNormTypeOp(LRep);
 				self.BasicMixedFracAddOp(Value);
 			}
-#if defined(AltNum_EnableMixedPiFractional)
+	#if defined(AltNum_MixedPiOrEEnabled)
+		#if defined(AltNum_EnableMixedPiFractional)
             else if(RRep==RepType::MixedPi)
-#elif defined(AltNum_EnableMixedEFractional)
+		#else
             else if(RRep==RepType::MixedE)
-#endif
-#if defined(AltNum_MixedPiOrEEnabled)
+		#endif
     			self.ConvertToNormTypeOp(LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
     			self.BasicMixedPiFracAddOp(Value);
     		#else
     			self.BasicMixedEFracAddOp(Value);
     		#endif
-#else
+	#else
             else
+	#endif
 #endif
 			    self.CatchAllAddition(&Value, &LRep, &RRep);
 			break;
+
 #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
 		case RepType::INum:
     #if defined(AltNum_EnableDecimaledIFractionals)
