@@ -2008,6 +2008,7 @@ public:
     #pragma endregion From Standard types to this type
 
     #pragma region MirroredIntBased Operations
+
         template<typename IntType=int>
         void IntHalfDivision(IntType RValue)
         {
@@ -2049,6 +2050,10 @@ public:
             IntValue /= RValue;
 #endif
         }
+
+        //this is reference version
+        template<typename IntType=int>
+        void IntHalfDivisionOp(IntType& RValue) { IntHalfDivision(RValue); }
 
         template<typename IntType=int>
         void IntHalfMultiplication(IntType RValue)
@@ -2096,8 +2101,12 @@ public:
 #endif
         }
 
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
+        //this is reference version
         template<typename IntType=int>
+        void IntHalfMultiplicationOp(IntType& RValue) { IntHalfMultiplication(RValue); }
+
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
+        template<typename IntType>
         void IntHalfAdditionOp(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -2175,14 +2184,12 @@ public:
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
         template<typename IntType=int>
-        void IntHalfAddition(IntType RValue)
-        {
-            IntHalfAdditionOp(RValue);
-        }
+        void IntHalfAdditionOp(IntType& RValue) { IntHalfAddition(RValue); }
 
-        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue); or IntHalfSubtractionOp(RValue);
+        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        //this is copy by value and pointer version
         template<typename IntType=int>
-        void IntHalfSubtractionOp(IntType RValue)
+        void IntHalfSubtraction(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -2253,35 +2260,33 @@ public:
         }
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
+        //this is reference version
         template<typename IntType=int>
-        void IntHalfSubtraction(IntType RValue)
-        {
-            IntHalfSubtractionOp(RValue);
-        }
+        void IntHalfSubtractionOp(IntType& RValue) { IntHalfSubtraction(RValue); }
 
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfEqualTo(AltDecVariant RValue)
+		bool IntPartEqualTo(AltDec& RValue)
 		{
             return IntValue == RValue.IntValue;
         }
 
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfNotEqualTo(AltDecVariant RValue)
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
+
+        template<typename IntType=int>
+        bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
+
+		bool IntPartNotEqualTo(AltDec& RValue)
 		{
             return IntValue != RValue.IntValue;
         }
 
-        template<typename IntType = int&>
-		bool IntHalfEqualToInt(IntType RValue)
-		{
-            return IntValue == RValue;
-        }
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
 
-        template<typename IntType = int&>
-		bool IntHalfNotEqualToInt(IntType RValue)
-		{
-            return IntValue != RValue;
-        }
+        template<typename IntType=int>
+        bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
 
         /// <summary>
         /// Less than Operation for just IntValue section
@@ -2289,8 +2294,8 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfLessThanOp(AltDecVariant RValue)
+        template<typename AltDecVariant = AltDec>
+		bool IntHalfLessThan(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue<RValue)
@@ -2312,11 +2317,15 @@ public:
 #endif
 		}
 		
-        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
-		static bool IntHalfLessThan(AltDecVariant LValue, AltDecVariant2 RValue)
-		{
-			return LValue.IntHalfLessThanOp(RValue);
-		}
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
+
+		static bool IntPartLessThan(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+
+		static bool IntPartLessThanOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
         /// <summary>
         /// Less than or Equal Operation for just IntValue section
@@ -2324,8 +2333,8 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfLessThanOrEqualOp(AltDecVariant RValue)
+        template<typename AltDecVariant = AltDec>
+		bool IntHalfLessThanOrEqual(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue<=RValue)
@@ -2347,17 +2356,21 @@ public:
 #endif
 		}
 		
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
+
         /// <summary>
         /// Less than or Equal Operation for just IntValue section
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
-		static bool IntHalfLessThanOrEqual(AltDecVariant LValue, AltDecVariant2 RValue)
-		{
-			return LValue.IntHalfLessThanOrEqualOp(RValue);
-		}
+		static bool IntPartHalfLessThanOrEqual(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+
+		static bool IntPartLessThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
         /// <summary>
         /// Greater than Operation for just IntValue section
@@ -2365,8 +2378,8 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfGreaterThanOp(AltDecVariant RValue)
+        template<typename AltDecVariant = AltDec>
+		bool IntHalfGreaterThan(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue>RValue)
@@ -2393,17 +2406,21 @@ public:
 #endif
 		}
 		
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
+
         /// <summary>
         /// Greater than Operation for just IntValue section
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
-		static bool IntHalfGreaterThan(AltDecVariant LValue, AltDecVariant2 RValue)
-		{
-			return LValue.IntHalfGreaterThanOp(RValue);
-		}
+		static bool IntPartGreaterThan(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
+
+		static bool IntPartGreaterThanOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
 		
         /// <summary>
         /// Greater than or Equal to Operation for just IntValue section
@@ -2411,8 +2428,8 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec&>
-		bool IntHalfGreaterThanOrEqualOp(AltDecVariant RValue)
+        template<typename AltDecVariant = AltDec>
+		bool IntHalfGreaterThanOrEqual(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue>=RValue)
@@ -2441,17 +2458,21 @@ public:
 #endif
 		}
 		
+        //Reference version
+        template<typename IntType=int>
+        bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
+
         /// <summary>
         /// Greater than or Equal to Operation for just IntValue section
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec, typename AltDecVariant2 = AltDec>
-		static bool IntHalfGreaterThanOrEqual(AltDecVariant LValue, AltDecVariant2 RValue)
-		{
-			return LValue.IntHalfGreaterThanOrEqualOp(RValue);
-		}
+		static bool IntPartGreaterThanOrEqual(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfGreaterThanOrEqualOp(RValue.IntValue); }
+
+		static bool IntPartGreaterThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfGreaterThanOrEqualOp(RValue.IntValue); }
 
     #pragma endregion MirroredIntBased Operations
 
@@ -2767,13 +2788,14 @@ public:
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
+
         /// <summary>
         /// Equal to Operation
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator==(AltDec LValue, AltDec RValue)
+        static bool EqualToOp(AltDec LValue, AltDec RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -2860,12 +2882,20 @@ public:
         }
 
         /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(AltDec LValue, AltDec RValue) { return EqualToOp(LValue, RValue); }
+
+        /// <summary>
         /// Not equal to Operation
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator!=(AltDec LValue, AltDec RValue)
+        static bool NotEqualToOp(AltDec& LValue, AltDec& RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -2948,12 +2978,20 @@ public:
         }
 
         /// <summary>
+        /// Not equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(AltDec LValue, AltDec RValue) { return NotEqualToOp(LValue, RValue); }
+
+        /// <summary>
         /// Lesser than Operation
         /// </summary>
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<(AltDec LValue, AltDec RValue)
+        static bool LessThanOp(AltDec& LValue, AltDec& RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -3097,17 +3135,25 @@ public:
                     return LValue.IntValue < RValue.IntValue;
                 else
                 {
-                    if (IntHalfLessThan(&LValue, &RValue))
+                    if (IntPartLessThanOp(LValue, RValue))
                         return LValue.DecimalHalf < RValue.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (IntHalfLessThan(&LValue, &RValue))
+            else if (IntPartLessThanOp(LValue, RValue))
                 return LValue.DecimalHalf < RValue.DecimalHalf;
             else
                 return false;
         }
+
+        /// <summary>
+        /// Lesser than Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<(AltDec LValue, AltDec RValue) { return LessThanOp(LValue, RValue); }
 
         /// <summary>
         /// Lesser than or Equal to Operation
@@ -3115,7 +3161,7 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator<=(AltDec LValue, AltDec RValue)
+        static bool LessThanOrEqualToOp(AltDec& LValue, AltDec& RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -3259,17 +3305,25 @@ public:
                     return LValue.IntValue <= RValue.IntValue;
                 else
                 {
-                    if (IntHalfLessThanOrEqual(&LValue, &RValue))
+                    if (IntPartLessThanOrEqualOp(LValue, RValue))
                         return LValue.DecimalHalf <= RValue.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (IntHalfLessThanOrEqual(&LValue, &RValue))
+            else if (IntPartLessThanOrEqualOp(LValue, RValue))
                 return LValue.DecimalHalf <= RValue.DecimalHalf;
             else
                 return false;
         }
+
+        /// <summary>
+        /// Lesser than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(AltDec LValue, AltDec RValue) { return LessThanOrEqualToOp(LValue, RValue); }
 
         /// <summary>
         /// Greater than Operation
@@ -3277,7 +3331,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The right side value.</param>
         /// <returns>bool</returns>
-        friend bool operator>(AltDec LValue, AltDec RValue)
+        static bool GreaterThanOp(AltDec& LValue, AltDec& RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -3421,17 +3475,25 @@ public:
                     return LValue.IntValue > RValue.IntValue;
                 else
                 {
-                    if (IntHalfGreaterThan(&LValue, &RValue))
+                    if (IntPartGreaterThanOp(LValue, RValue))
                         return LValue.DecimalHalf > RValue.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (IntHalfGreaterThan(&LValue, &RValue))
+            else if (IntPartGreaterThanOp(LValue, RValue))
                 return LValue.DecimalHalf > RValue.DecimalHalf;
             else
                 return false;
         }
+
+        /// <summary>
+        /// Greater than Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>(AltDec LValue, AltDec RValue) { return GreaterThanOp(LValue, RValue); }
 
         /// <summary>
         /// Greater than or Equal to Operation
@@ -3439,7 +3501,7 @@ public:
         /// <param name="LValue">The left side value</param>
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
-        friend bool operator>=(AltDec LValue, AltDec RValue)
+        static bool GreaterThanOrEqualToOp(AltDec& LValue, AltDec& RValue)
         {
             RepType LRep = LValue.GetRepType();
             RepType RRep = RValue.GetRepType();
@@ -3583,18 +3645,26 @@ public:
                     return LValue.IntValue >= RValue.IntValue;
                 else
                 {
-                    if (IntHalfGreaterThanOrEqual(&LValue, &RValue))
+                    if (IntPartGreaterThanOrEqualOp(LValue, RValue))
                         return LValue.DecimalHalf >= RValue.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (IntHalfGreaterThanOrEqual(&LValue, &RValue))
+            else if (IntPartGreaterThanOrEqualOp(LValue, RValue))
                 return LValue.DecimalHalf >= RValue.DecimalHalf;
             else
                 return false;
         }
 		
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>=(AltDec LValue, AltDec RValue) { return GreaterThanOrEqualToOp(LValue, RValue); }
+
     #pragma endregion Comparison Operators
 
     #pragma region AltDec-To-Int Comparison Functions
