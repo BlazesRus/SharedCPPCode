@@ -8541,12 +8541,14 @@ public:
 			BasicSqrt(value, precision);
 		}
 
+public:
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
+        /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        AltDec BasicIntPowOp(ValueType expValue)
+        AltDec BasicIntPowOpV2(ValueType expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -8599,51 +8601,21 @@ public:
             return *this;
         }
 
+public:
+
         template<typename ValueType>
-        AltDec BasicUIntPowOp(ValueType expValue)
-        {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
-            {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
-            }
-            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                AltDec self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return *this;
-        }
+        AltDec BasicIntPowOp(ValueType& expValue) { return BasicIntPowOpV2(expValue); }
 
-        AltDec BasicInt32PowOp(int& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt64PowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt32Pow(int expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt64Pow(signed long long expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicUInt32PowOp(unsigned int& expValue) { return BasicUIntPowOp(expValue); }
-        AltDec BasicUInt64PowOp(unsigned long long& expValue) { return BasicUIntPowOp(expValue); }
-        AltDec BasicUInt32Pow(unsigned int expValue) { return BasicUIntPowOp(expValue); }
-        AltDec BasicUInt64Pow(unsigned long long expValue) { return BasicUIntPowOp(expValue); }
+        template<typename ValueType>
+        AltDec BasicIntPow(ValueType expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
 
+protected:
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        AltDec IntPowOp(ValueType expValue)
+        AltDec IntPowOpV2(ValueType expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -8666,7 +8638,7 @@ public:
         }
 
         template<typename ValueType>
-        AltDec UnsignedIntPowOp(ValueType expValue)
+        AltDec UnsignedIntPowV2(ValueType expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -8685,33 +8657,18 @@ public:
             else
                 return BasicUIntPowOp(expValue);
         }
+public:
+        template<typename ValueType>
+        AltDec IntPowOp(ValueType& expValue) { return IntPowOpV2(expValue); }
 
-        AltDec Int32PowOp(int& expValue) { return IntPowOp(expValue); }
-        AltDec Int64PowOp(signed long long& expValue) { return IntPowOp(expValue); }
-        AltDec Int32Pow(int expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
-        AltDec Int64Pow(signed long long expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
-        AltDec UnsignedInt32PowOp(unsigned int& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64PowOp(unsigned long long& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt32Pow(unsigned int expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64Pow(unsigned long long expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
+        template<typename ValueType>
+        AltDec UnsignedIntPowOp(ValueType& expValue) { return UnsignedIntPowV2(expValue); }
 
-        AltDec BasicInt32PowConstOp(const int& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt64PowConstOp(const signed long long& expValue) { return BasicIntPowOp(expValue); }
-        AltDec BasicInt32PowConst(const int expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
-        AltDec BasicInt64PowConst(const signed long long expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
-        AltDec BasicUInt32PowConstOp(const unsigned int& expValue) { return BasicUIntPowOp(expValue); }
-        AltDec BasicUInt64PowConstOp(const unsigned long long& expValue) { return BasicUIntPowOp(expValue); }
-        AltDec BasicUInt32PowConst(const unsigned int expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
-        AltDec BasicUInt64PowConst(const unsigned long long expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
+        template<typename ValueType>
+        AltDec IntPow(ValueType expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
 
-        AltDec Int32PowConstOp(const int& expValue) { return IntPowOp(expValue); }
-        AltDec Int64PowConstOp(const long long& expValue) { return IntPowOp(expValue); }
-        AltDec Int32PowConst(const int expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
-        AltDec Int64PowConst(const long long expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
-        AltDec UnsignedInt32PowConstOp(const int& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64PowConstOp(const long long& expValue) { return UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt32PowConst(const int expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
-        AltDec UnsignedInt64PowConst(const long long expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
+        template<typename ValueType>
+        AltDec UnsignedIntPow(ValueType expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
 
 
         /// <summary>
