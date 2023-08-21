@@ -577,7 +577,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 		IntValue = (int)-divRes;
 	else
 		IntValue = (int)divRes;
-	BasicIntDivOp(&divisor);
+	BasicIntDivOp(divisor);
 }
 	#endif
 #endif

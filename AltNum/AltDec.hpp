@@ -2660,7 +2660,7 @@ public:
             {
                 int divisor = DecimalHalf;
                 DecimalHalf = 0;
-                BasicIntDivOp(&divisor);
+                BasicIntDivOp(divisor);
             }
 #endif
             break;
@@ -2749,7 +2749,7 @@ public:
                 {
                     int Divisor = DecimalHalf;
                     DecimalHalf = 0;
-                    BasicIntDivOp(&Divisor);
+                    BasicIntDivOp(Divisor);
                     break;
                 }
                 #endif
@@ -4460,8 +4460,8 @@ public:
 			else
 			{
 				AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:RValue.IntValue*RValue.ExtraRep - RValue.DecimalHalf);
-				BasicIntMultOp(&RValue.ExtraRep);
-                BasicAddOp(&RightSideNum);//self += RightSideNum;
+				BasicIntMultOp(RValue.ExtraRep);
+                BasicAddOp(RightSideNum);//self += RightSideNum;
 				if(DecimalHalf==0)
 				{
 					if(IntValue!=0)//Set as Zero if both are zero
@@ -4493,7 +4493,7 @@ public:
 			RightSideNum *= ENum;
 		#endif
             BasicIntMultOp(-RValue.ExtraRep);
-            BasicAddOp(&RightSideNum);
+            BasicAddOp(RightSideNum);
 			if(DecimalHalf==0)
 			{
 				if(IntValue!=0)//Set as Zero if both are zero
@@ -4515,8 +4515,8 @@ public:
 		void BasicMixedFracSubOp(AltDec& RValue)
 		{
 			AltDec RightSideNum = AltDec(RValue.IntValue==0?-RValue.DecimalHalf:RValue.IntValue*RValue.ExtraRep - RValue.DecimalHalf);
-			BasicMultOp(&RValue.ExtraRep);
-			BasicSubOp(&RightSideNum);
+			BasicMultOp(RValue.ExtraRep);
+			BasicSubOp(RightSideNum);
 			if(DecimalHalf==0)
 			{
 				if(IntValue!=0)//Set as Zero if both are zero
@@ -4547,7 +4547,7 @@ public:
 			RightSideNum *= ENum;
 		#endif
 			BasicMultOp(-RValue.ExtraRep);
-			BasicSubOp(&RightSideNum);
+			BasicSubOp(RightSideNum);
 			if(DecimalHalf==0)
 			{
 				if(IntValue!=0)//Set as Zero if both are zero
@@ -8739,8 +8739,7 @@ public:
 
         template<typename ValueType>
         AltDec UnsignedIntPow(ValueType expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
-
-
+public:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
@@ -8748,11 +8747,11 @@ public:
         /// <param name="nValue">The nth value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
         /// <returns>AltDec</returns>
-        static AltDec NthRoot(AltDec value, int n, AltDec precision = AltDec::JustAboveZero)
+        AltDec NthRootOp(int& n, AltDec& precision = AltDec::JustAboveZero)
         {
             //Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             AltDec xPre = One;
-            xPre += (value-1)/n;
+            xPre += (*this - One)/n;
             int nMinus1 = n - 1;
 
             // initializing difference between two 
@@ -8768,15 +8767,17 @@ public:
             {
                 //  calculating current value from previous
                 // value by newton's method
-                xK = xPre.BasicIntMult(nMinus1);
-                xPrePower = xPre.Int32Pow(nMinus1);
-                xK += value/xPrePower;
-                xK.BasicIntDivOp(n);
+                xK = xPre * nMinus1;
+                xPrePower = xPre.IntPow(nMinus1);
+                xK += DivideByV2(xPrePower); (//*this/xPrePower;
+                xK.IntDivOp(n);
                 delX = AltDec::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
             return xK;
         }
+
+        AltDec NthRoot(AltDec value, int n, AltDec precision = AltDec::JustAboveZero) { return value.NthRootOp(n, precision); }
 
         /// <summary>
         /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
