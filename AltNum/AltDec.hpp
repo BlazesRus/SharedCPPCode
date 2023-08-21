@@ -7594,6 +7594,11 @@ public:
     #pragma endregion Other Subtraction Operations
 
     #pragma region Main Operator Overrides
+        //Supporting pass by reference for = AltDec operator
+        //Supporting pass by copy parameters for operators(so can modify as needed during operation code
+        //Supporting pass by const reference for unsigned int assignment operators(since don't need to flip the negative status during operation)
+        //Might add alternative code later so can change more operators to pass by const reference
+
         /// <summary>
         /// Division Operation
         /// </summary>
