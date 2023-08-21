@@ -2639,7 +2639,7 @@ public:
             {
                 int divisor = DecimalHalf;
                 DecimalHalf = 0;
-                BasicIntDivOp(divisor);
+                BasicIntDivOp(&divisor);
             }
 #endif
             break;
@@ -2712,28 +2712,36 @@ public:
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
             {
-            case RepType::INum:
-                break;
-#if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-                int Divisor = -ExtraRep;
-                BasicDivOp(Divisor);
-                break;
-#elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                int Divisor = DecimalHalf;
-                DecimalHalf = 0;
-                BasicIntDivOp(Divisor);
-                break;
-#endif
-#ifdef AltNum_EnableComplexNumbers
-            case RepType::ComplexIRep:
-                throw "Conversion from complex number to real number not supported yet.";
-                break;
-#endif
-            default:
-                throw "Conversion not supported.";
-                break;
+                case RepType::INum:
+                {
+                    break;
+                }
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+                {
+                    int Divisor = -ExtraRep;
+                    BasicDivOp(Divisor);
+                    break;
+                }
+                #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                {
+                    int Divisor = DecimalHalf;
+                    DecimalHalf = 0;
+                    BasicIntDivOp(&Divisor);
+                    break;
+                }
+                #endif
+                #ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+                {
+                    throw "Conversion from complex number to real number not supported yet.";
+                    break;
+                }
+    #endif
+                default:
+                    throw "Conversion not supported.";
+                    break;
             }
         }
 		
@@ -4572,7 +4580,7 @@ protected:
 
 public:
         //Performs division operation that modifies the AltDec ignoring non-normal representation with right side AltDec
-        template<typename AltDecVariant = AltDec&>
+        template<typename AltDecVariant = AltDec>
         void BasicDivOp(AltDecVariant Value)
         {
 			if (PartialDivOp(Value))//Prevent Dividing into nothing
@@ -4580,8 +4588,8 @@ public:
         }
 
         //Performs division operation (without checking negative) that modifies the AltDec ignoring non-normal representation with right side AltDec
-        template<typename AltDecVariant = AltDec&>
-        void UnsignedBasicDivOp(AltDec& Value)
+        template<typename AltDecVariant = AltDec>
+        void UnsignedBasicDivOp(AltDecVariant Value)
         {
             if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
                 DecimalHalf = 1;
@@ -4605,7 +4613,7 @@ public:
 
         //Performs division operation ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec>
-        AltDec BasicDiv(AltDecVariant Value) { AltDec self = *this; self.UnsignedBasicDivOp(Value); return self; }
+        AltDec BasicDiv(AltDecVariant Value) { AltDec self = *this; self.UnsignedBasicDivOp(&Value); return self; }
 
         //Performs division operation (without checking negative) ignoring non-normal representation with right side AltDec
         template<typename AltDecVariant = AltDec>
@@ -4616,7 +4624,7 @@ public:
 		{
 			ConvertToNormTypeOp(LRep);
 			Value.ConvertToNormTypeOp(RRep);
-			BasicDivOp(Value);
+			BasicDivOp(&Value);
 		}
 
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&, typename RepTypeVar2 = RepType&>
@@ -4627,7 +4635,7 @@ public:
 		{
 			ConvertToNormType(SameRep);
 			Value.ConvertToNormType(SameRep);
-			BasicDivOp(Value);
+			BasicDivOp(&Value);
 		}
 
         template<typename AltDecVariant = AltDec&, typename RepTypeVar = RepType&>
@@ -4638,7 +4646,7 @@ public:
 	   {
 		   ConvertToNormTypeV2();
 		   Value.ConvertToNormTypeV2();
-		   BasicDivOp(Value);
+		   BasicDivOp(&Value);
 	   }
 
        template<typename AltDecVariant = AltDec&>
@@ -4651,7 +4659,7 @@ public:
 		{
 			ConvertIRepToNormal(LRep);
 			Value.ConvertIRepToNormal(RRep);
-			BasicDivOp(Value);
+			BasicDivOp(&Value);
             ExtraRep = 0;
 		}
 
@@ -4663,7 +4671,7 @@ public:
 		{
 			ConvertIRepToNormal(SameRep);
 			Value.ConvertIRepToNormal(SameRep);
-			BasicDivOp(Value);
+			BasicDivOp(&Value);
 			ExtraRep = 0;
 		}
 
