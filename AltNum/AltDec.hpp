@@ -498,8 +498,9 @@ namespace BlazesRusCode
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDec(MirroredInt intVal = MirroredInt::Zero, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(const MirroredInt& intVal = MirroredInt::Zero, const signed int& decVal = 0, const signed int& extraVal = 0)
         {
+
             IntValue = intVal;
             DecimalHalf = decVal;
             ExtraRep = extraVal;
@@ -513,9 +514,9 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
 #if !defined(AltDec_UseMirroredInt)
-        AltDec(int intVal=0, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(const int& intVal=0, const signed int& decVal = 0, const signed int& extraVal = 0)
 #else
-        AltDec(int intVal, signed int decVal = 0, signed int extraVal = 0)
+        AltDec(const int& intVal, const signed int& decVal = 0, const signed int& extraVal = 0)
 #endif
         {
 #if defined(AltDec_UseMirroredInt)&&defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -529,7 +530,15 @@ namespace BlazesRusCode
 
         AltDec(const AltDec&) = default;
 
-        AltDec& operator=(const AltDec&) = default;
+        AltDec& operator=(const AltDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            ExtraRep = rhs.ExtraRep;
+            return *this;
+        }
 
         //Detect if at exactly zero
 		bool IsZero()
@@ -541,8 +550,7 @@ namespace BlazesRusCode
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        template<typename AltDecVariant = AltDec>
-        void SetVal(AltDecVariant Value)
+        void SetVal(const AltDec& Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
@@ -1107,8 +1115,7 @@ namespace BlazesRusCode
         }
         #endif
 
-        template<typename AltDecVariant = AltDec>
-        void SetPiVal(AltDecVariant Value)
+        void SetPiVal(const AltDec& Value)
         {
             if(ExtraRep==0)
             {
@@ -1128,15 +1135,14 @@ namespace BlazesRusCode
 	#pragma region ENum Setters
     #if defined(AltNum_EnableERep)
         #if defined(AltNum_EnableMediumDecBasedSetValues)
-        void SetEValFromMediumDec(MediumDec Value)
+        void SetEValFromMediumDec(const MediumDec& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
             ExtraRep = ERep;
         }
         #endif
 
-        template<typename AltDecVariant = AltDec>
-        void SetEVal(AltDecVariant Value)
+        void SetEVal(const AltDec& Value)
         {
             if(ExtraRep==0)
             {
@@ -3977,77 +3983,158 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
+
         template<typename IntType=int>
-        void PartialIntDiv(IntType Value)
+        bool PartialIntDivOp(const IntType& rValue)
         {
+            bool ResIsNegative = IntValue < 0;
+            signed _int64 SelfRes;
+            signed _int64 Res;
+            signed _int64 IntHalfRes;
+            signed _int64 DecimalRes;
             if (DecimalHalf == 0)
             {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                    IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
+                if (ResIsNegative)
                 {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
+                    SelfRes = NegDecimalOverflowX * IntValue;
                 }
                 else
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-                    DecimalHalf = (signed int)SRep;
+                    SelfRes = DecimalOverflowX * IntValue;
                 }
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
+                if (ResIsNegative)
                 {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
+                    if(IntValue==NegativeRep)
+                        SelfRes = DecimalHalf;
+                    else
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
                 }
                 else
                 {
-                    IntValue = 0;
-                    DecimalHalf = (signed int)SRep;
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
                 }
             }
+			if(rValue<0)
+			{
+				ResIsNegative = !ResIsNegative;
+				IntType invertedValue = -rValue;
+                Res = SelfRes / invertedValue;
+            #if defined(AltNum_OutputTruncatedTrailingDigits)
+                TruncatedDigits = SelfRes - invertedValue * IntHalfRes;
+            #endif
+                IntHalfRes = Res/DecimalOverflowX;
+                DecimalRes = Res - DecimalOverflowX * IntHalfRes;
+			}
+			else
+			{
+                Res = SelfRes / rValue;
+            #if defined(AltNum_OutputTruncatedTrailingDigits)
+                TruncatedDigits = SelfRes - rValue * IntHalfRes;
+            #endif
+                IntHalfRes = Res/DecimalOverflowX;
+                DecimalRes = Res - DecimalOverflowX * IntHalfRes;
+			}
+			if(ResIsNegative)
+			{
+				IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+				DecimalHalf = (int) DecimalRes;
+			}
+			else
+			{
+				IntValue = (int)IntHalfRes;
+				DecimalHalf = DecimalRes;
+			}
+            if (IntHalfRes == 0 && DecimalRes == 0)
+                return true;
+            else
+                return false;
         }
+
+        template<typename IntType=int>
+        bool PartialUIntDivOp(const IntType& rValue)
+        {
+            bool ResIsNegative = IntValue < 0;
+            signed _int64 SelfRes;
+            signed _int64 Res;
+            signed _int64 IntHalfRes;
+            signed _int64 DecimalRes;
+        #if defined(AltNum_OutputTruncatedTrailingDigits)
+            signed _int64 TruncatedDigits; 
+        #endif
+            if (DecimalHalf == 0)
+            {
+                if (ResIsNegative)
+                {
+                    SelfRes = NegDecimalOverflowX * IntValue;
+                }
+                else
+                {
+                    SelfRes = DecimalOverflowX * IntValue;
+                }
+            }
+            else
+            {
+                if (ResIsNegative)
+                {
+                    if(IntValue==NegativeRep)
+                        SelfRes = DecimalHalf;
+                    else
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                }
+                else
+                {
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+                }
+            }
+            //One has SelfRes of 1000000000
+            //1000000000/2 = 500000000
+            Res = SelfRes / rValue;
+        #if defined(AltNum_OutputTruncatedTrailingDigits)
+            TruncatedDigits = SelfRes - rValue * IntHalfRes;
+        #endif
+            IntHalfRes = SelfRes/DecimalOverflowX;
+            DecimalRes = SelfRes - DecimalOverflowX * IntHalfRes;
+            if(ResIsNegative)
+            {
+                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                DecimalHalf = (int) DecimalRes;
+            }
+            else
+            {
+                IntValue = (int)IntHalfRes;
+                DecimalHalf = DecimalRes;
+            }
+            if (IntHalfRes == 0 && DecimalRes == 0)
+                return true;
+            else
+                return false;
+        }
+
 public:
 
-		void PartialInt32DivOp(signed int& Value) { PartialIntDiv(Value); }
-		void PartialUInt32DivOp(unsigned int& Value) { PartialIntDiv(Value); }
-		void PartialInt64DivOp(signed long long& Value) { PartialIntDiv(Value); }
-        void PartialUInt64DivOp(unsigned long long& Value) { PartialIntDiv(Value); }
-
-		AltDec PartialInt32Div(signed int Value)
-        { AltDec self = *this; PartialIntDiv(Value); return self; }
-		AltDec PartialUInt32Div(unsigned int Value)
-        { AltDec self = *this; PartialIntDiv(Value); return self; }
-		AltDec PartialInt64Div(signed long long Value)
-        { AltDec self = *this; PartialIntDiv(Value); return self; }
-        AltDec PartialUInt64Div(unsigned long long Value)
-        { AltDec self = *this; PartialIntDiv(Value); return self; }
-
-		static AltDec PartialInt32Division(AltDec self, signed int Value) { self.PartialIntDiv(Value); return self; }
-		static AltDec PartialUInt32Division(AltDec self, unsigned int Value) { self.PartialIntDiv(Value); return self; }
-		static AltDec PartialInt64Division(AltDec self, signed long long Value) { self.PartialIntDiv(Value); return self; }
-        static AltDec PartialUInt64Division(AltDec self, unsigned long long Value) { self.PartialIntDiv(Value); return self; }
-
-protected:
         template<typename IntType=int>
-        void BasicUIntDivOp(IntType Value)
+        AltDec& BasicUIntDivOp(const IntType& rValue)
+        {
+            if (rValue == 0)
+            {
+#if defined(AltNum_EnableInfinityRep)
+                IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
+#else
+                throw "Target value can not be divided by zero";
+#endif
+            }
+            else if (IsZero())
+                return;
+            if(PartialUIntDivOp(rValue))
+                DecimalHalf = 1;//Prevent Dividing into nothing
+            return *this;
+        }
+
+        template<typename IntType=int>
+        void BasicIntDivOp(const IntType& rValue)
         {
             if (Value == 0)
             {
@@ -4059,333 +4146,63 @@ protected:
             }
             else if (IsZero())
                 return;
-            PartialIntDiv(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-        }
-        template<typename IntType=int>
-        void BasicUIntDiv(IntType Value)
-        {
-            BasicUIntDivOp(Value);
-        }
-
-        template<typename IntType=int>
-        void BasicIntDivOp(IntType Value)
-        {
-			if (Value < 0)
+            if (rValue < 0)
             {
-                Value *= -1;
+                IntType invertedValue = -rValue;
                 SwapNegativeStatus();
+                if(PartialUIntDivOp(invertedValue))
+                    DecimalHalf = 1;//Prevent Dividing into nothing
             }
-            else if (Value == 0)
-            {
-#if defined(AltNum_EnableInfinityRep)
-                IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
-#else
-                throw "Target value can not be divided by zero";
-#endif
-            }
-            else if (IsZero())
-                return;
-            PartialIntDiv(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            else if(PartialUIntDivOp(rValue))
+                DecimalHalf = 1;//Prevent Dividing into nothing
         }
+
+		void BasicIntDivOp(signed int& rValue) { BasicIntDivOp(rValue); }
+		void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
+
+        /// <summary>
+        /// Division Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-        void BasicIntDiv(IntType Value)
-        {
-            BasicIntDivOp(Value);
-        }
-public:
+		static AltDec BasicDivideByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
-		void BasicIntDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		void BasicUInt32DivOp(unsigned int& Value) { BasicUIntDivOp(Value); }
-		void BasicInt64DivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        void BasicUInt64DivOp(unsigned long long& Value) { BasicUIntDivOp(Value); }
+        /// <summary>
+        /// Division Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
-		AltDec BasicInt32Div(signed int Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
-		AltDec BasicUInt32Div(unsigned int Value) { AltDec self = *this; BasicUIntDivOp(Value); return self; }
-		AltDec BasicInt64Div(signed long long Value) { AltDec self = *this; BasicIntDivOp(Value); return self; }
-        AltDec BasicUInt64Div(unsigned long long Value) { AltDec self = *this; BasicUIntDivOp(Value); return self; }
-
-		static AltDec BasicInt32Division(AltDec self, signed int Value) { self.BasicIntDivOp(Value); return self; }
-		static AltDec BasicUInt32Division(AltDec self, unsigned int Value) { self.BasicUIntDivOp(Value); return self; }
-		static AltDec BasicInt64Division(AltDec self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
-        static AltDec BasicUnsignedDivision(AltDec self, unsigned long long Value) { self.BasicUIntDivOp(Value); return self; }
+        /// <summary>
+        /// Division Operation Between AltDec and Integer Value that ignores special representation status
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicDivideByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
+        
+        /// <summary>
+        /// Division Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
-protected:
-		/// <summary>
-        /// Partial Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        template<typename IntType=int>
-        void PartialIntMultOp(IntType Value)
-        {
-            if (DecimalHalf == 0)
-            {
-                IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-        }
-        template<typename IntType=int>
-        void PartialIntMult(IntType Value)
-        {
-            PartialIntMultOp(Value);
-        }
-public:
-
-public:
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        template<typename IntType>
-        void BasicIntMultOp(IntType RValue)
-        {
-            if (IntValue == 0 && DecimalHalf == 0)
-                return;
-            if (RValue < 0)
-            {
-                RValue *= -1;
-                SwapNegativeStatus();
-            }
-            else if (RValue == 0)
-                SetAsZero();
-            else
-                PartialIntMultOp(RValue);
-        }
-
-        template<typename IntType = int>
-        AltDec BasicIntMult(IntType Value) { AltDec self = *this; self.BasicIntMultOp(Value); return self; }
-
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value(Without negative flipping)
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        template<typename IntType = unsigned int&>
-        void UnsignedIntBasicMultOp(IntType Value)
-        {
-            if (IntValue == 0 && DecimalHalf == 0)
-                return;
-            if (Value == 0)
-                SetAsZero();
-            else
-                PartialIntMultOp(Value);
-        }
-
-        template<typename IntType = int>
-        void UnsignedBasicIntMult(IntType Value) { AltDec self = *this; self.UnsignedIntBasicMultOp(Value); return self; }
-
-		void Int64BasicMultOp(signed long long& Value) { BasicIntMultOp(Value); }
-		void UInt64BasicMultOp(unsigned long long& Value) { UnsignedIntBasicMultOp(Value); }
-
-		/// <summary>
-        /// Basic Multiplication Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-		AltDec Int32BasicMult(signed int Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
-		AltDec UInt32BasicMult(unsigned int Value) { AltDec self = *this; UnsignedIntBasicMultOp(Value); return self; }
-		AltDec Int64BasicMult(signed long long Value) { AltDec self = *this; BasicIntMultOp(Value); return self; }
-        AltDec UInt64BasicMult(unsigned long long Value) { AltDec self = *this; UnsignedIntBasicMultOp(Value); return self; }
-
-		static AltDec BasicInt32Multiplication(AltDec self, signed int Value) { self.BasicIntMultOp(Value); return self; }
-		static AltDec BasicUInt32Multiplication(AltDec self, unsigned int Value) { self.UnsignedIntBasicMultOp(Value); return self; }
-		static AltDec BasicInt64Multiplication(AltDec self, signed long long Value) { self.BasicIntMultOp(Value); return self; }
-        static AltDec BasicUInt64Multiplication(AltDec self, unsigned long long Value) { self.UnsignedIntBasicMultOp(Value); return self; }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
-protected:
-        /// <summary>
-        /// Addition Operation that skips negative zero(for when decimal half is empty)
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MirroredInt</returns>
-        template<typename IntType=int>
-        void NRepSkippingIntAddOp(IntType RValue)
-        {
-            if (RValue == 0)
-                return;
-            if (IntValue == 0)
-                IntValue = RValue;
-            else
-                IntHalfAdditionOp(RValue);
-            return;
-        }
 
-        /// <summary>
-        /// Addition Operation Between AltDec and Integer value
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>AltDec&</returns>
-        template<typename IntType=int>
-        void BasicIntAddition(IntType value)
-        {
-            if(DecimalHalf==0)
-                NRepSkippingIntAddOp(value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(value);
-                //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-            }
-        }
-public:
-
-		/// <summary>
-        /// Basic Addition Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		void Int32BasicAddOp(signed int& Value) { BasicIntAddition(Value); }
-		void UInt32BasicAddOp(unsigned int& Value) { BasicIntAddition(Value); }
-		void Int64BasicAddOp(signed long long& Value) { BasicIntAddition(Value); }
-		void UInt64BasicAddOp(unsigned long long& Value) { BasicIntAddition(Value); }
-
-		/// <summary>
-        /// Basic Addition Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-		AltDec Int32BasicAdd(signed int Value) { AltDec self = *this; BasicIntAddition(Value); return self; }
-		AltDec UInt32BasicAdd(unsigned int Value) { AltDec self = *this; BasicIntAddition(Value); return self; }
-		AltDec Int64BasicAdd(signed long long Value) { AltDec self = *this; BasicIntAddition(Value); return self; }
-        AltDec UInt64BasicAdd(unsigned long long Value) { AltDec self = *this; BasicIntAddition(Value); return self; }
-
-		static AltDec BasicInt32Addition(AltDec self, signed int Value) { self.BasicIntAddition(Value); return self; }
-		static AltDec BasicUInt32Addition(AltDec self, unsigned int Value) { self.BasicIntAddition(Value); return self; }
-		static AltDec BasicInt64Addition(AltDec self, signed long long Value) { self.BasicIntAddition(Value); return self; }
-        static AltDec BasicUInt64Addition(AltDec self, unsigned long long Value) { self.BasicIntAddition(Value); return self; }
-#if defined(AltDec_UseMirroredInt)
-        static AltDec BasicMirroredIntAddition(AltDec self, MirroredInt Value) { self.BasicMirroredIntAddOp(Value); return self; }
-#endif
-
-	#pragma endregion NormalRep Integer Addition Operations
-	
     #pragma region NormalRep Integer Subtraction Operations
-protected:
-
-        template<typename IntType=int>
-        void NRepSkippingIntSubOp(IntType RValue)
-        {
-            if (RValue == 0)
-                return;
-            if (IntValue == 0)
-                IntValue = -(int)RValue;
-            else
-                IntHalfSubtractionOp(RValue);
-            return;
-        }
-
-		/// <summary>
-        /// Basic Subtraction Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        template<typename IntType=int>
-        void BasicIntSubtraction(IntType Value)
-        {
-            if (DecimalHalf == 0)
-                NRepSkippingIntSubOp(Value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(Value);
-                //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-            }
-        }
-
-#if defined(AltDec_UseMirroredInt)
-        /// <summary>
-        /// Basic Subtraction Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void BasicMirroredIntSubOp(MirroredInt& Value)
-        {
-            if (DecimalHalf == 0)
-                IntValue.NRepSkippingSubOp(Value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(Value);
-                //If flips to other side of negative, invert the decimals
-                if (NegativeBeforeOperation ^ (IntValue < 0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-            }
-        }
-
-        void BasicMirroredIntSubtraction(MirroredInt Value) { AltDec self = *this; BasicMirroredIntSubOp(Value); return self; }
-#endif
-public:
-
-		/// <summary>
-        /// Basic Subtraction Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-		void BasicInt32SubOp(signed int& Value) { BasicIntSubtraction(Value); }
-		void BasicUInt32SubOp(unsigned int& Value) { BasicIntSubtraction(Value); }
-		void BasicInt64SubOp(signed long long& Value) { BasicIntSubtraction(Value); }
-		void BasicUInt64SubOp(unsigned long long& Value) { BasicIntSubtraction(Value); }
-
-		/// <summary>
-        /// Basic Subtraction Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The rightside value.</param>
-        /// <returns>AltDec</returns>
-		AltDec BasicInt32Sub(signed int Value)
-        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-		AltDec BasicUInt32Sub(unsigned int Value)
-        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-		AltDec BasicInt64Sub(signed long long Value)
-        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-        AltDec BasicUInt64Sub(unsigned long long Value)
-        { AltDec self = *this; BasicIntSubtraction(Value); return self; }
-
-        /// <summary>
-        /// Basic Subtraction Operation that returns a value
-        /// </summary>
-        /// <param name="Value">The rightside value.</param>
-        /// <returns>AltDec</returns>
-        template<typename AltDecVariant = AltDec>
-		static AltDec BasicInt32Subtraction(AltDecVariant self, signed int Value) { self.BasicIntSubtraction(Value); return self; }
-        template<typename AltDecVariant = AltDec>
-		static AltDec BasicUInt32Subtraction(AltDecVariant self, unsigned int Value) { self.BasicIntSubtraction(Value); return self; }
-        template<typename AltDecVariant = AltDec>
-		static AltDec BasicInt64Subtraction(AltDecVariant self, signed long long Value) { self.BasicIntSubtraction(Value); return self; }
-        template<typename AltDecVariant = AltDec>
-        static AltDec BasicUInt64Subtraction(AltDecVariant self, unsigned long long Value) { self.BasicIntSubtraction(Value); return self; }
-#if defined(AltDec_UseMirroredInt)
-        static AltDec BasicMirroredIntSub(AltDec self, MirroredInt Value) { self.BasicMirroredIntSubOp(Value); return self; }
-#endif
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
