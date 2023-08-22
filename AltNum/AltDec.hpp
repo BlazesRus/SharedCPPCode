@@ -4157,7 +4157,7 @@ public:
                 DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
-		void BasicIntDivOp(signed int& rValue) { BasicIntDivOp(rValue); }
+		void BasicInt32DivOp(signed int& rValue) { BasicIntDivOp(rValue); }
 		void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
 
         /// <summary>
@@ -4197,6 +4197,178 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
+
+protected:
+		/// <summary>
+        /// Partial Multiplication Operation Between AltDec and Integer Value
+        /// (Modifies owner object) 
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType=int>
+        void PartialIntMultOp(const IntType& rValue)
+        {
+            if (DecimalHalf == 0)
+            {
+                IntValue *= rValue;
+            }
+            else
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                if(rValue<0)
+                {
+                    SelfIsNegative = !SelfIsNegative;
+                    SRep *= -rValue;
+                }
+                else
+                    SRep *= rValue;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    DecimalHalf = (signed int)SRep;
+                }
+            }
+        }
+
+		/// <summary>
+        /// Partial Multiplication Operation Between AltDec and Integer Value
+        /// Applies after making sure rValue is positive
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType=int>
+        void PartialIntMultOpV2(const IntType& rValue)
+        {
+            if (DecimalHalf == 0)
+            {
+                IntValue *= rValue;
+            }
+            else
+            {
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                SRep *= rValue;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    DecimalHalf = (signed int)SRep;
+                }
+                else
+                {
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    DecimalHalf = (signed int)SRep;
+                }
+            }
+        }
+
+public:
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType>
+        AltDec BasicIntMultOp(const IntType& rValue)
+        {
+            if (IntValue == 0 && DecimalHalf == 0)
+                return *this;
+            if (rValue == 0)
+                SetAsZero();
+            else
+                PartialIntMultOp(rValue);
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType>
+        void BasicUIntMultOp(const IntType& rValue)
+        {
+            if (IntValue == 0 && DecimalHalf == 0)
+                return *this;
+            if (rValue == 0)
+                SetAsZero();
+            else
+                PartialIntMultOpV2(rValue);
+        }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value
+        /// (Avoids modifying owner object by copying lValue)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType = int>
+        AltDec BasicIntMult(const IntType& Value) { AltDec self = *this; self.BasicIntMultOp(Value); return self; }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value
+        /// (Avoids modifying owner object by copying lValue)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType = int>
+        void BasicUIntMult(const IntType& Value) { AltDec self = *this; self.BasicUIntMultOp(Value); return self; }
+
+		void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
+		void BasicInt64MultOp(signed long long& rValue) { BasicIntMultOp(rValue); }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicMultipleByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicMultipleByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(Value); }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value that ignores special representation status
+        /// (lValue is copied variable) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicMultipleByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+        
+        /// <summary>
+        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (lValue is copied variable) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicMultipleByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(Value); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
