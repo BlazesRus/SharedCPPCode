@@ -2722,7 +2722,7 @@ public:
         AltDec ConvertAsNormType(RepTypeVar repType)
         {
             AltDec Res = *this;
-            Res.ConvertToNormTypeOp(repType);
+            Res.ConvertToNormType(repType);
             return Res;
         }
 
@@ -2732,8 +2732,7 @@ public:
 		//Returns value as normal type representation
 		AltDec ConvertAsNormTypeV2();
     #if defined(AltNum_EnableImaginaryNum)
-        template<typename RepTypeVar = RepType&>
-        void ConvertIRepToNormal(RepTypeVar repType)
+        void ConvertIRepToNormal(const RepType& repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
             {
@@ -2770,10 +2769,9 @@ public:
             }
         }
 		
-        template<typename RepTypeVar = RepType&>
-		void ConvertToNormalIRep(RepTypeVar repType)
+		void ConvertToNormalIRep(const RepType& repType)
         {//Assuming not zero(should not reach needing to convert the representation)
-            ConvertIRepAsNormal(repType);
+            ConvertIRepToNormal(repType);
             ExtraRep = IRep;
         }
 		
@@ -2836,7 +2834,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -2872,7 +2870,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -2919,7 +2917,7 @@ public:
 #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
 #endif
-                    LValue.ConvertToNormalIRep(&LRep);
+                    LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -2936,7 +2934,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -2972,7 +2970,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3015,7 +3013,7 @@ public:
 #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
 #endif
-                    LValue.ConvertToNormalIRep(&LRep);
+                    LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -3032,7 +3030,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3068,7 +3066,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3185,7 +3183,7 @@ public:
         #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
         #endif
-                    LValue.ConvertToNormalIRep(&LRep);
+                    LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
         #if defined(AltNum_EnableImaginaryInfinity)
@@ -3202,7 +3200,7 @@ public:
     #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3238,7 +3236,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3355,7 +3353,7 @@ public:
 #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
 #endif
-                    LValue.ConvertToNormalIRep(&LRep);
+                    LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -3372,7 +3370,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3408,7 +3406,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3525,7 +3523,7 @@ public:
 #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
 #endif
-                    LValue.ConvertToNormalIRep(&LRep);
+                    LValue.ConvertToNormalIRep(LRep);
                     break;
                     //Don't convert infinity into real number
 #if defined(AltNum_EnableImaginaryInfinity)
@@ -3542,7 +3540,7 @@ public:
 #endif
                 default:
 #endif
-                    LValue.ConvertToNormTypeOp(LRep);
+                    LValue.ConvertToNormType(LRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -3578,7 +3576,7 @@ public:
 #endif
                 default:
 #endif
-                    RValue.ConvertToNormTypeOp(RRep);
+                    RValue.ConvertToNormType(RRep);
 #if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)
                     break;
                 }
@@ -4319,7 +4317,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        AltDec BasicIntMult(const IntType& Value) { AltDec self = *this; self.BasicIntMultOp(Value); return self; }
+        AltDec BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value
@@ -4327,7 +4325,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        void BasicUIntMult(const IntType& Value) { AltDec self = *this; self.BasicUIntMultOp(Value); return self; }
+        void BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 
 		void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
 		void BasicInt64MultOp(signed long long& rValue) { BasicIntMultOp(rValue); }
@@ -4348,7 +4346,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicMultipleByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(Value); }
+		static AltDec BasicMultipleByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value that ignores special representation status
@@ -4366,13 +4364,152 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicMultipleByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(Value); }
+		static AltDec BasicMultipleByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
 
+protected:
+        /// <summary>
+        /// Addition Operation that skips negative zero(for when decimal half is empty)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The right side value.</param>
+        /// <returns>void</returns>
+        template<typename IntType=int>
+        void NRepSkippingIntAddOp(const IntType& rvalue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = (int)rvalue;
+            else
+                IntHalfAdditionOp(rvalue);
+            return;
+        }
+
+public:
+
+        /// <summary>
+        /// Basic Addition Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        AltDec& BasicIntAddition(const IntType& rvalue)
+        {
+            if(DecimalHalf==0)
+                NRepSkippingIntAddOp(rvalue);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfAdditionOp(rvalue);
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+            }
+            return *this;
+        }
+
+		/// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The value.</param>
+		void Int32BasicAddOp(signed int& rvalue) { BasicIntAddition(rvalue); }
+		void Int64BasicAddOp(signed long long& rvalue) { BasicIntAddition(rvalue); }
+        /// <summary>
+        /// Addition Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicAddByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntAddition(rValue); }
+
+        /// <summary>
+        /// Addition Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicAddByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntAddition(rValue); }
+
+	#pragma endregion NormalRep Integer Addition Operations
+
     #pragma region NormalRep Integer Subtraction Operations
+
+protected:
+        /// <summary>
+        /// Subtraction Operation that skips negative zero(for when decimal half is empty)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The right side value.</param>
+        /// <returns>void</returns>
+        template<typename IntType=int>
+        void NRepSkippingIntSubOp(const IntType& rvalue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = -(int)rvalue;
+            else
+                IntHalfSubtractionOp(rvalue);
+            return;
+        }
+
+public:
+
+		/// <summary>
+        /// Basic Subtraction Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The right side value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        AltDec BasicIntSubtraction(const IntType& rvalue)
+        {
+            if (DecimalHalf == 0)
+                NRepSkippingIntSubOp(Value);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfSubtractionOp(rvalue);
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+            }
+            return *this;
+        }
+
+		/// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rvalue">The value.</param>
+		void Int32BasicSubOp(signed int& rValue) { BasicIntSubtraction(rValue); }
+		void Int64BasicSubOp(signed long long& rValue) { BasicIntSubtraction(rValue); }
+
+        /// <summary>
+        /// Subtraction Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// (Modifies lValue during operation) 
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicSubtractByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntSubtraction(rValue); }
+
+        /// <summary>
+        /// Subtraction Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// </summary>
+        /// <param name="lValue">The left side value.</param>
+        /// <param name="rValue">The right side value.</param>
+        template<typename IntType=int>
+		static AltDec BasicSubtractByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntSubtraction(rValue); }
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
