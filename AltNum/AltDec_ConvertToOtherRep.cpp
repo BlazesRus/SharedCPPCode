@@ -584,7 +584,7 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 
 
 //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-inline void BlazesRusCode::AltDec::ConvertToNormTypeOp(RepType& repType)
+inline void BlazesRusCode::AltDec::ConvertToNormType(const RepType& repType)
 {
 	switch (repType)
 	{

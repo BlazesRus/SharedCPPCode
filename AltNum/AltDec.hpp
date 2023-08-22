@@ -2715,9 +2715,7 @@ public:
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        void ConvertToNormTypeOp(RepType& repType);
-
-        void ConvertToNormType(RepType repType) { return ConvertToNormType(repType); }
+        void ConvertToNormType(const RepType& repType);
 
         //Switch based return of value as normal type representation
         template<typename RepTypeVar = RepType&>
