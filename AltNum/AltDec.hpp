@@ -5478,19 +5478,18 @@ public:
 	#endif
 
 public:
-        static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec Value);
+        static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
         /// Division Operation
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& DivOp(const AltDec& rightHandValue)
+        AltDec& DivOp(AltDec rValue)
         {
             //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
             if (IsZero())
                 return *this;
-            AltDec rValue = rightHandValue;//Copying value for now until can fix functions not working with const AltDec
 #if defined(AltNum_EnableInfinityRep)
             if (rValue.DecimalHalf == InfinityRep)
             {
@@ -5953,7 +5952,7 @@ public:
         { AltDec self = *this; CatchAllImaginaryMultiplicationV3(rValue); return self; }
 	#endif
 
-        static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec rValue);
+        static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& rValue);
 
         /// <summary>
         /// Multiplication Operation
@@ -5965,9 +5964,8 @@ public:
         /// </summary>
         /// <param name="rValue.">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& MultOp(const AltDec& rightHandValue)
+        AltDec& MultOp(AltDec rValue)
         {
-            AltDec rValue = rightHandValue;//Temporary copy for now until fix it so const functions work with const AltDec
             if (rValue.IntValue==0&&rValue.DecimalHalf==0) { SetAsZero(); return *this; }
             if (IsZero() || rValue == AltDec::One)
                 return *this;

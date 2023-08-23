@@ -1,4 +1,4 @@
-﻿#include "AltDec.hpp"
+#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::AltDec::RepType;
 
@@ -47,7 +47,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 			#elif defined(AltNum_EnableDecimaledEFractionals)
 			Value.ConvertToNormType(RepType::ENum);
 			#endif
-			self.BasicDivOp(&Value);
+			self.BasicDivOp(Value);
 			break;
 		}
 		#endif
@@ -90,7 +90,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		#endif
 	#endif*/
 		default:
-			Value.ConvertToNormTypeOp(RRep);
+			Value.ConvertToNormType(RRep);
 			self.BasicDivOp(Value);
 			break;
 	}
@@ -326,7 +326,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::MixedE:
 		#endif
 	#endif
-		Value.ConvertToNormTypeOp(RRep);
+		Value.ConvertToNormType(RRep);
 		RRep = RepType::NormalType;
 		break;
 */
@@ -390,7 +390,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
             break;
 
 		case RepType::ApproachingTop:
-            if(LRep==RepType::NormalType&&Value.IntValue==0)//1/0.9..9 = 1.0..1
+		{
+            if(Value.IntValue==0&&LRep==RepType::NormalType)//1/0.9..9 = 1.0..1
             {//(For positive left side values)Techically returns self.IntValue + 0.0..self.IntValue
 				self.DecimalHalf = ApproachingBottomRep;
 				self.ExtraRep = 0;
@@ -403,7 +404,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                 RRep = RepType::NormalType;
             }
 			break;
-        
+        }
         #if defined(AltNum_EnableApproachingDivided)
         		case RepType::ApproachingMidLeft:
                     Value.ConvertToNormType(RepType::ApproachingMidLeft);
