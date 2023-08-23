@@ -579,11 +579,10 @@ inline void BlazesRusCode::AltDec::ConvertFromEFractionalToNorm()
 		IntValue = (int)divRes;
 	BasicIntDivOp(divisor);
 }
-	#endif
-#endif
-
 
 //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
+//Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
+
 inline void BlazesRusCode::AltDec::ConvertToNormType(const RepType& repType)
 {
 	switch (repType)
@@ -706,32 +705,16 @@ inline void BlazesRusCode::AltDec::ConvertToNormType(const RepType& repType)
 		break;
 	}
 }
-
-inline void BlazesRusCode::AltDec::ConvertToNormTypeV2()
-{
-	RepType repType = GetRepType();
-	ConvertToNormType(repType);
-}
-
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormTypeV2()
+inline const AltDec BlazesRusCode::AltDec::ConvertAsNormType(const RepType& repType)
 {
 	AltDec Res = *this;
-	Res.ConvertToNormTypeV2();
+	Res.ConvertToNormType(repType);
 	return Res;
 }
+	#endif
+#endif
+
 
 #if defined(AltNum_EnableImaginaryNum)
 
-inline void BlazesRusCode::AltDec::ConvertToNormalIRep()
-{
-	RepType repType = GetRepType();
-	ConvertToNormalIRep(repType);
-}
-
-inline AltDec BlazesRusCode::AltDec::ConvertAsNormalIRep()
-{
-	AltDec Res = *this;
-	Res.ConvertToNormalIRep();
-	return Res;
-}
 #endif
