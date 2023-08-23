@@ -199,6 +199,8 @@ AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
 AltDec_UseMirroredInt
 AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
 AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bitchecks instead of case statements(Not implimented yet)
+
+AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
 */
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
@@ -5379,13 +5381,13 @@ public:
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum Addition Operations
         //AdditionSection01.cpp
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum Addition Operations
         
-	#pragma region NormalRep AltNum Multiplication Operations
+	#pragma region NormalRep AltNum Subtraction Operations
         //SubtractionSection01.cpp
-	#pragma endregion NormalRep AltNum Multiplication Operations
+	#pragma endregion NormalRep AltNum Subtraction Operations
 
 
 
@@ -5393,7 +5395,670 @@ public:
     //#pragma endregion NormalRep AltNumToAltNum Operations
 	
     #pragma region Other Division Operations
-        //DivisionSection02.cpp
+
+        template<typename IntType=int>
+		void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
+		{
+            ConvertToNormType(LRep);
+			BasicIntDivOp(convertedRVal);
+		}
+
+        template<typename IntType=int>
+		void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
+		{
+            ConvertToNormType(LRep);
+			BasicUIntDivOp(convertedRVal);
+		}
+
+        template<typename IntType=int>
+        void CatchAllIntDivisionV2(const IntType& rValue)
+        {
+			ConvertToNormTypeV2();
+			BasicIntDivOp(convertedRVal);
+        }
+
+        /// <summary>
+        /// Division Operation Between AltDec and Integer rValue.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType = int>
+        AltDec& IntDivOp(const IntType& rValue)
+        {
+            if (rValue == 1)
+                return *this;
+            if (rValue == 0)
+            {
+                #if defined(AltNum_EnableInfinityRep)
+                if (IntValue < 0)
+                    SetAsNegativeInfinity();
+                else
+                    SetAsInfinity();
+                return *this;
+                #else
+                throw "Target rValue can not be divided by zero";
+                #endif
+            }
+            RepType LRep = GetRepType();
+            switch (LRep)
+            {
+                case RepType::NormalType:
+                {
+                    #if defined(AltNum_EnableAlternativeRepFractionals)
+                    if (rValue < 0)
+                    {
+                        ExtraRep = -rValue;
+                        SwapNegativeStatus();
+                    }
+                    else
+                        ExtraRep = rValue;
+                    #else
+                    BasicIntDivOp(rValue);
+                    #endif
+                }
+                break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+                case RepType::NumByDiv:
+                {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
+                    int result;
+                    if (rValue < 0)
+                    {
+                        int invertedR = -rValue;
+                        SwapNegativeStatus();
+                        result *= invertedR;
+                        if (ExtraRep == result / invertedR)//checking for overflow
+                            ExtraRep = result;
+                        else
+                            BasicUIntDivOp(invertedR);
+                    }
+                    else
+                    {
+                        result *= rValue;
+                        if (ExtraRep == result / rValue)//checking for overflow
+                            ExtraRep = result;
+                        else
+                            BasicUIntDivOp(rValue);
+                    }
+                }
+                break;
+    #if defined(AltNum_UsingAltFractional)
+                #if defined(AltNum_EnablePiFractional)
+                case RepType::PiFractional:
+                #endif
+                #if defined(AltNum_EnableEFractional)
+                case RepType::EFractional:
+                #endif
+                #if defined(AltNum_EnableIFractional)
+                case RepType::IFractional:
+                #endif
+                {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
+                    int result;
+                    if (rValue < 0)
+                    {
+                        int invertedR = -rValue;
+                        SwapNegativeStatus();
+                        result *= invertedR;
+                        if (DecimalHalf == result / invertedR)//checking for overflow
+                            DecimalHalf = result;
+                        else
+                            CatchAllUIntDivision(invertedR, LRep);
+                    }
+                    else
+                    {
+                        result *= rValue;
+                        if (DecimalHalf == result / rValue)//checking for overflow
+                            DecimalHalf = result;
+                        else
+                            CatchAllUIntDivision(rValue, LRep);
+                    }
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
+                #if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv:
+                #elif defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv:
+                #elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv:
+                #endif
+                {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
+                    int result;
+                    if (rValue < 0)
+                    {
+                        int invertedR = -rValue;
+                        SwapNegativeStatus();
+                        result *= invertedR;
+                        if (ExtraRep == result / invertedR)//checking for overflow
+                            ExtraRep = result;
+                        else
+                            BasicUIntDivOp(invertedR);
+                    }
+                    else
+                    {
+                        result *= rValue;
+                        if (ExtraRep == result / rValue)//checking for overflow
+                            ExtraRep = result;
+                        else
+                            BasicUIntDivOp(rValue);
+                    }
+                }
+                break; 
+    #endif
+    #ifdef AltNum_EnableInfinity
+                case RepType::PositiveInfinity:
+                case RepType::NegativeInfinity:
+                    if(rValue<0)
+                        IntValue *= -1;
+                    return *this;
+                    break;
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+                {
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    if (rValue < 0)
+                    {
+                        ExtraRep = rValue;
+                        SwapNegativeStatus();
+                    }
+                    else
+                        ExtraRep = -rValue;
+                    #elif defined(AltNum_EnableIFractional)
+                    if (DecimalHalf == 0)
+                    {
+                        if (rValue < 0)
+                        {
+                            DecimalHalf = -rValue;
+                            SwapNegativeStatus();
+                        }
+                        else
+                            DecimalHalf = rValue;
+                        ExtraRep = IByDivisorRep;
+                    }
+                    else
+                        BasicUIntDivOp(rValue);
+                    #else
+                    BasicUIntDivOp(rValue);
+                    #endif
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                {
+                    if (IsAtZeroInt())
+                    {
+                        if (rValue < 0)
+                            SwapNegativeStatus();
+                        return *this;
+                    }
+                    ConvertToNormType(LRep);
+                    BasicIntDivOp(rValue);
+                }
+                break;
+                #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                #endif
+        #if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                #endif
+        #endif
+                {
+                    ConvertToNormType(LRep);
+                    BasicUIntDivOp(rValue);
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+                case RepType::PositiveImaginaryInfinity:
+                case RepType::NegativeImaginaryInfinity:
+                    if(rValue<0)
+                        IntValue *= -1;
+                    return *this;
+                    break;
+    #endif
+    #if defined(AltNum_EnableApproachingI)
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+            #endif
+        #if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+            #endif
+        #endif
+                {
+                    ConvertToNormalIRep(&LRep);
+                    BasicIntDivOp(rValue);
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                {
+                    int divRes;
+                    int C;
+                    if (IsAtZeroInt())//Become NumByDiv
+                    {
+                        divRes = DecimalHalf / ExtraRep;//-4/3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if (C == 0)
+                        {
+                            if (IntValue == NegativeRep)
+                                IntValue = divRes;
+                            else
+                                IntValue = -divRes;
+                            DecimalHalf = 0;
+                        }
+                        else
+                        {
+                            if (IntValue == NegativeRep)
+                                IntValue = DecimalHalf;
+                            else
+                                IntValue = -DecimalHalf;
+                            DecimalHalf = 0;
+                            ExtraRep *= rValue.;
+                        }
+                        return *this;
+                    }
+                    divRes = IntValue / ExtraRep;
+                    if (divRes != 0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if (C == 0)
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+                }
+                break;
+        #if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+        #elif defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+        #elif defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+        #endif
+        #if defined(AltNum_EnableAlternativeMixedFrac)
+                {
+                    int divRes;
+                    int C;
+                    if (IsAtZeroInt())//Become Fractional
+                    {
+                        divRes = DecimalHalf / ExtraRep;//-4/-3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if (C == 0)
+                        {
+                            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+    
+                            #endif
+                        }
+                        else
+                        {
+                            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+    
+                            #endif
+                        }
+                        //return *this;
+                    }
+                    divRes = IntValue / ExtraRep;
+                    if (divRes != 0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if (C == 0)
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+                }
+                break;
+        #endif
+    #endif
+    #if defined(AltNum_EnableNaN)
+                case RepType::Undefined:
+                case RepType::NaN:
+                    throw "Can't perform operations with NaN or Undefined number";
+                    break;
+    #endif			
+                default:
+                    BasicIntDivOp(rValue);
+                    break;
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Division Operation Between AltDec and unsigned Integer rValue.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        AltDec& UIntDivOp(const IntType& rValue)
+        {
+            if (rValue == 1)
+                return *this;
+            if (rValue == 0)
+            {
+                #if defined(AltNum_EnableInfinityRep)
+                if (IntValue < 0)
+                    SetAsNegativeInfinity();
+                else
+                    SetAsInfinity();
+                return *this;
+                #else
+                throw "Target rValue can not be divided by zero";
+                #endif
+            }
+            RepType LRep = GetRepType();
+            switch (LRep)
+            {
+                case RepType::NormalType:
+                {
+                    #if defined(AltNum_EnableAlternativeRepFractionals)
+                    ExtraRep = rValue;
+                    #else
+                    BasicUIntDivOp(rValue);
+                    #endif
+                }
+                break;
+#if defined(AltNum_EnableAlternativeRepFractionals)
+                case RepType::NumByDiv:
+                {
+                    int result;
+                    result *= rValue;
+                    if (ExtraRep == result / rValue)//checking for overflow
+                        ExtraRep = result;
+                    else
+                        BasicUIntDivOp(rValue);
+                }
+                break;
+    #if defined(AltNum_UsingAltFractional)
+                #if defined(AltNum_EnablePiFractional)
+                case RepType::PiFractional:
+                #endif
+                #if defined(AltNum_EnableEFractional)
+                case RepType::EFractional:
+                #endif
+                #if defined(AltNum_EnableIFractional)
+                case RepType::IFractional:
+                #endif
+                {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
+                    int result *= rValue;
+                    if (DecimalHalf == result / rValue)//checking for overflow
+                        DecimalHalf = result;
+                    else
+                        CatchAllIntDivision(rValue, LRep);
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
+                #if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv:
+                    #elif defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv:
+                    #elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv:
+                    #endif
+                {
+                    int result *= rValue;
+                    if (ExtraRep == result / rValue)//checking for overflow
+                        ExtraRep = result;
+                    else
+                        BasicUIntDivOp(rValue);
+                }
+                break; 
+    #endif
+    #ifdef AltNum_EnableInfinity
+                case RepType::PositiveInfinity:
+                case RepType::NegativeInfinity:
+                    return *this;
+                    break;
+    #endif
+    #if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+                {
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    ExtraRep = -rValue;
+                    #elif defined(AltNum_EnableIFractional)
+                    if (DecimalHalf == 0)
+                    {
+                        DecimalHalf = rValue;
+                        ExtraRep = IByDivisorRep;
+                    }
+                    else
+                        BasicUIntDivOp(rValue);
+                    #else
+                    BasicUIntDivOp(rValue);
+                    #endif
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                {
+                    if (IsAtZeroInt())
+                        return *this;
+                    ConvertToNormType(LRep);
+                    BasicIntDivOp(rValue);
+                }
+                break;
+                #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                #endif
+        #if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                #endif
+        #endif
+                {
+                    ConvertToNormType(LRep);
+                    BasicUIntDivOp(rValue);
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+                case RepType::PositiveImaginaryInfinity:
+                case RepType::NegativeImaginaryInfinity:
+                    return *this;
+                    break;
+    #endif
+    #if defined(AltNum_EnableApproachingI)
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+            #endif
+        #if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+            #endif
+        #endif
+                {
+                    ConvertToNormalIRep(&LRep);
+                    BasicIntDivOp(rValue);
+                }
+                break;
+    #endif
+    #if defined(AltNum_EnableMixedFractional)
+                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                {
+                    int divRes;
+                    int C;
+                    if (IsAtZeroInt())//Become NumByDiv
+                    {
+                        divRes = DecimalHalf / ExtraRep;//-4/3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if (C == 0)
+                        {
+                            if (IntValue == NegativeRep)
+                                IntValue = divRes;
+                            else
+                                IntValue = -divRes;
+                            DecimalHalf = 0;
+                        }
+                        else
+                        {
+                            if (IntValue == NegativeRep)
+                                IntValue = DecimalHalf;
+                            else
+                                IntValue = -DecimalHalf;
+                            DecimalHalf = 0;
+                            ExtraRep *= rValue.;
+                        }
+                        return *this;
+                    }
+                    divRes = IntValue / ExtraRep;
+                    if (divRes != 0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if (C == 0)
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+                }
+                break;
+        #if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+        #elif defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+        #elif defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+        #endif
+        #if defined(AltNum_EnableAlternativeMixedFrac)
+                {
+                    int divRes;
+                    int C;
+                    if (IsAtZeroInt())//Become Fractional
+                    {
+                        divRes = DecimalHalf / ExtraRep;//-4/-3
+                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
+                        if (C == 0)
+                        {
+                            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+    
+                            #endif
+                        }
+                        else
+                        {
+                            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
+                            throw "ToDo: Impliment code here";
+                            #else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
+    
+                            #endif
+                        }
+                        //return *this;
+                    }
+                    divRes = IntValue / ExtraRep;
+                    if (divRes != 0)
+                    {
+                        C = IntValue - ExtraRep * divRes;
+                        if (C == 0)
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                        else
+                        {
+                            throw "ToDo: Impliment code here";
+                        }
+                    }
+                    else
+                    {
+                        throw "ToDo: Impliment code here";
+                    }
+                }
+                break;
+        #endif
+    #endif
+    #if defined(AltNum_EnableNaN)
+                case RepType::Undefined:
+                case RepType::NaN:
+                    throw "Can't perform operations with NaN or Undefined number";
+                    break;
+    #endif			
+                default:
+                    BasicIntDivOp(rValue);
+                    break;
+            }
+            return *this;
+        }
+		
+        /// <summary>
+        /// Division Operation Between AltDec and Integer rValue.
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="rValue.">The rValue</param>
+        /// <returns>AltDec</returns>
+        template<typename IntType = int>
+        static AltDec& IntDivision(AltDec self, const IntType& rValue) { return self.IntDivOp(rValue); }
+
+        template<typename IntType = int>
+        AltDec DivideByInt(const AltDec& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+
+        template<typename IntType = int>
+        AltDec DivideByUnsignedInt(const IntType& rValue) { AltDec self = *this; return self.UnsignedIntDivOp(rValue); }
+
     #pragma endregion Other Division Operations
 
     #pragma region Other Multiplication Operations
