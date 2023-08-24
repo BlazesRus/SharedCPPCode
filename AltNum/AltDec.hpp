@@ -2593,41 +2593,87 @@ public:
 		
         void ConvertPiPowerToPiRep();
 		
-        void ConvertToPiRep(RepType& repType)
+        void ConvertToPiRep(const RepType& repType)
         {
             switch (repType)
             {
-            case RepType::PiNum:
-                return;
+                case RepType::PiNum:
+                    return;
+                    break;
+    #if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
+                    ConvertPiPowerToPiRep();
+                    break;
+    #endif
+    #if defined(AltNum_EnableAlternativeRepFractionals)
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                {
+                    BasicUIntDivOp(-ExtraRep);
+                }
+    #else
+                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                {
+                    int divisor = DecimalHalf;
+                    DecimalHalf = 0;
+                    BasicDivOp(divisor);
+                }
+    #endif
                 break;
-#if defined(AltNum_EnablePiPowers)
-            case RepType::PiPower:
-                ConvertPiPowerToPiRep();
-                break;
-#endif
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
-            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-            {
-                BasicUIntDivOp(-ExtraRep);
-            }
-#else
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            {
-                int divisor = DecimalHalf;
-                DecimalHalf = 0;
-                BasicDivOp(divisor);
-            }
-#endif
-            break;
-#endif
-#if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi:
-                return;//Add Conversion Code from MixedPi later
-#endif
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi:
+                    return;//Add Conversion Code from MixedPi later
+    #endif
+                default:
+                    break;
             }
             ExtraRep = PiRep;
         }
+
+        AltDec ConvertAsPiRep(const RepType& repType)
+        {
+            switch (repType)
+            {
+                case RepType::PiNum:
+                    return *this;
+                    break;
+    #if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
+                {
+                    AltDec Res = *this;
+                    Res.ConvertPiPowerToPiRep();
+                    return Res;
+                    break;
+                }
+    #endif
+    #if defined(AltNum_EnableAlternativeRepFractionals)
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                {
+                    AltDec Res = AltDec(IntValue, DecimalHalf, PiRep);
+                    Res.BasicUIntDivOp(-ExtraRep);
+                    return Res;
+                }
+    #else
+                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                {
+                    AltDec Res = AltDec(IntValue, 0, PiRep);
+                    Res.BasicUIntDivOp(DecimalHalf);
+                    return Res;
+                }
+    #endif
+                break;
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi:
+                    return;//Add Conversion Code from MixedPi later
+    #endif
+                default:
+                    break;
+            }
+            ExtraRep = PiRep;
+        } const
 	#endif
     #pragma endregion Pi Conversion
 	
@@ -2645,36 +2691,75 @@ public:
 		#else
         void ConvertFromEFractionalToNorm();
 		#endif
-        void ConvertToERep(RepType& repType)
+        void ConvertToERep(const RepType& repType)
         {
             switch (repType)
             {
-            case RepType::ENum:
-                return;
+                case RepType::ENum:
+                    return;
+                    break;
+    #if defined(AltNum_EnableAlternativeRepFractionals)
+    #if defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+                {
+                    BasicUIntDivOp(-ExtraRep);
+                }
+    #else
+                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                {
+                    int divisor = DecimalHalf;
+                    DecimalHalf = 0;
+                    BasicUIntDivOp(divisor);
+                    ExtraRep = ERep;
+                }
+    #endif
                 break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
-            case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
-            {
-                BasicDivOp(-ExtraRep);
-            }
-#else
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            {
-                int divisor = DecimalHalf;
-                DecimalHalf = 0;
-                BasicUIntDivOp(divisor);
-            }
-#endif
-            break;
-#endif
-#if defined(AltNum_EnableMixedEFractional)
-            case RepType::MixedE:
-                return;//Add Conversion Code from MixedPi later
-#endif
+    #endif
+    #if defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE:
+                    return;//Add Conversion Code from MixedPi later
+    #endif
+                default:
+                    break;
             }
             ExtraRep = ERep;
-}
+        }
+
+        AltDec ConvertAsERep(const RepType& repType)
+        {
+            switch (repType)
+            {
+                case RepType::ENum:
+                    return *this;
+                    break;
+    #if defined(AltNum_EnableAlternativeRepFractionals)
+        #if defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+                {
+                    AltDec Res = AltDec(IntValue, DecimalHalf, ERep);
+                    Res.BasicUIntDivOp(-ExtraRep);
+                    return Res;
+                }
+        #else
+                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                {
+                    AltDec Res = AltDec(IntValue, 0, ERep);
+                    Res.BasicUIntDivOp(DecimalHalf);
+                    return Res;
+
+                }
+        #endif
+                break;
+    #endif
+    #if defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE:
+                    return;//Add Conversion Code from MixedPi later
+    #endif
+                default:
+                    break;
+            }
+            ExtraRep = ERep;
+        } const
 	#endif
     #pragma endregion E Conversion
 	
