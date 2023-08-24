@@ -4507,7 +4507,7 @@ public:
         /// <param name="rvalue">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType=int>
-        AltDec& BasicIntAddition(const IntType& rvalue)
+        AltDec& BasicIntAddOp(const IntType& rvalue)
         {
             if(DecimalHalf==0)
                 NRepSkippingIntAddOp(rvalue);
@@ -4522,30 +4522,22 @@ public:
             return *this;
         }
 
-		/// <summary>
-        /// Basic Addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rvalue">The value.</param>
-		void Int32BasicAddOp(signed int& rvalue) { BasicIntAddition(rvalue); }
-		void Int64BasicAddOp(signed long long& rvalue) { BasicIntAddition(rvalue); }
         /// <summary>
-        /// Addition Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// Addition Operation Between AltDec and  Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicAddByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntAddition(rValue); }
+		static AltDec BasicAddByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
 
         /// <summary>
-        /// Addition Operation Between AltDec and unsigned Integer Value that ignores special representation status
+        /// Subtraction Operation Between AltDec and unsigned Integer Value that ignores special representation status
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicAddByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntAddition(rValue); }
-
+		static AltDec BasicAddByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
 	#pragma endregion NormalRep Integer Addition Operations
 
     #pragma region NormalRep Integer Subtraction Operations
@@ -4579,7 +4571,7 @@ public:
         /// <param name="rvalue">The right side value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType=int>
-        AltDec BasicIntSubtraction(const IntType& rvalue)
+        AltDec BasicIntSubOp(const IntType& rvalue)
         {
             if (DecimalHalf == 0)
                 NRepSkippingIntSubOp(Value);
@@ -4594,14 +4586,6 @@ public:
             return *this;
         }
 
-		/// <summary>
-        /// Basic Subtraction Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rvalue">The value.</param>
-		void Int32BasicSubOp(signed int& rValue) { BasicIntSubtraction(rValue); }
-		void Int64BasicSubOp(signed long long& rValue) { BasicIntSubtraction(rValue); }
-
         /// <summary>
         /// Subtraction Operation Between AltDec and unsigned Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
@@ -4609,7 +4593,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicSubtractByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntSubtraction(rValue); }
+		static AltDec BasicSubtractByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
         /// <summary>
         /// Subtraction Operation Between AltDec and unsigned Integer Value that ignores special representation status
@@ -4617,7 +4601,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicSubtractByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntSubtraction(rValue); }
+		static AltDec BasicSubtractByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
     #pragma endregion NormalRep Integer Subtraction Operations
 	
@@ -5467,17 +5451,174 @@ public:
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
-        //AdditionSection01.cpp
+
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicAddOp(const AltDec& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfAdditionOp(rValue.IntValue);
+            if (rValue.DecimalHalf != 0)
+            {
+                if (rValue.IntValue < 0)
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+        }
+
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicUnsignedAddOp(const AltDec& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfAdditionOp(rValue.IntValue);
+            if (rValue.DecimalHalf != 0)
+            {
+                if (WasNegative)
+                {
+                    DecimalHalf -= rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                }
+                else
+                {
+                    DecimalHalf += rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+        }
+
 	#pragma endregion NormalRep AltNum Addition Operations
         
 	#pragma region NormalRep AltNum Subtraction Operations
-        //SubtractionSection01.cpp
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+		void BasicSubOp(const AltDec& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfSubtractionOp(rValue.IntValue);
+            //Now deal with the decimal section
+            if(rValue.DecimalHalf!=0)
+            {
+                if (rValue.IntValue < 0)
+                {
+                    if (WasNegative)//-4.0 - -0.5 = -3.5
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else//4.3 -  - 1.8
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)//-4.5 - 5.6
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                    }
+                    else//0.995 - 1 = 
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+        }
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+		void BasicUnsignedSubOp(const AltDec& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfSubtractionOp(rValue.IntValue);
+            //Now deal with the decimal section
+            if(rValue.DecimalHalf!=0)
+            {
+                if (WasNegative)//-4.5 - 5.6
+                {
+                    DecimalHalf += rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
+                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
+                }
+                else//0.995 - 1
+                {
+                    DecimalHalf -= rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
+                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+        }
+
 	#pragma endregion NormalRep AltNum Subtraction Operations
-
-
-
-
-    //#pragma endregion NormalRep AltNumToAltNum Operations
 	
     #pragma region Other Division Operations
 
@@ -7677,6 +7818,925 @@ public:
 		
         AltDec MultipleBy(const AltDec& rValue) { AltDec self = *this; self.MultOp(rValue); return self; }
 
+		void CatchAllAddition(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			AltDec convertedRVal = rValue.ConvertAsNormType(RRep);
+			BasicMultOp(convertedRVal);
+		}
+
+        AltDec CatchAllAdditionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        { AltDec self = *this; CatchAllAddition(rValue, LRep, RRep); return self; }
+		
+		void CatchAllAdditionV2(AltDec& rValue, const RepType& SameRep)
+		{
+            ConvertToNormType(SameRep);
+			AltDec convertedRVal = rValue.ConvertAsNormType(SameRep);
+			BasicAddOp(convertedRVal);
+		}
+
+        AltDec CatchAllAdditionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        { AltDec self = *this; CatchAllAdditionV2(rValue, SameRep); return self; }
+	
+	   void CatchAllAdditionV3(AltDec& rValue)
+	   {
+			ConvertToNormTypeV2();
+            AltDec convertedRVal = rValue.ConvertAsNormTypeV2();
+			BasicAddOp(convertedRVal);
+	   }
+
+        AltDec CatchAllAdditionAsCopiesV3(AltDec& rValue)
+        { AltDec self = *this; CatchAllAdditionV3(rValue); return self; }
+		
+	//Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginaryAddition(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+		{
+		   ConvertIRepToNormal(LRep);
+           AltDec convertedRVal = rValue.ConvertAsNormalIRep(RRep);
+		   BasicAddOp(convertedRVal);
+		   ExtraRep = 0;
+		}
+
+        AltDec CatchAllImaginaryAdditionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        { AltDec self = *this; CatchAllImaginaryAddition(rValue, LRep, RRep); return self; }
+		
+		void CatchAllImaginaryAdditionV2(AltDec& rValue, const RepType& SameRep)
+		{
+            ConvertIRepToNormal(SameRep);
+            AltDec convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
+            BasicAddOp(convertedRVal);
+            ExtraRep = 0;
+		}
+
+        AltDec CatchAllImaginaryAdditionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginaryAdditionV2(rValue, SameRep); return self; }
+	
+        void CatchAllImaginaryAdditionV3(AltDec& rValue)
+        {
+           ConvertIRepToNormalV2();
+           AltDec convertedRVal = rValue.ConvertAsNormalIRepV2();
+           BasicAddOp(convertedRVal);
+           ExtraRep = 0;
+        }
+
+        AltDec CatchAllImaginaryAdditionAsCopiesV3(AltDec& rValue)
+        { AltDec self = *this; CatchAllImaginaryAdditionV3(rValue); return self; }
+	#endif
+
+        static void RepToRepAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec rValue);
+
+        /// <summary>
+        /// Addition Operation  with right side AltDec
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rightside rValue</param>
+        /// <returns>AltDec&</returns>
+        AltDec& AddOp(AltDec rValue)
+        {
+            if (IsZero())
+            {
+                IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                ExtraRep = rValue.ExtraRep; return *this;
+            }
+            else if (rValue.IsZero())
+                return *this;
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+            if (rValue.DecimalHalf == InfinityRep)
+            {
+                rValue.IntValue == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
+                return *this;
+            }
+#endif
+            RepType LRep = GetRepType();
+            RepType RRep = rValue.GetRepType();
+            if (LRep == RRep)
+            {
+                switch (LRep)
+                {
+                case RepType::NormalType:
+#if defined(AltNum_EnablePiRep)
+                case RepType::PiNum:
+#endif
+#if defined(AltNum_EnableENum)
+                case RepType::ENum:
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+#endif
+                    BasicAddOp(rValue);
+                    break;
+
+#if defined(AltNum_EnableApproachingValues)
+                case RepType::ApproachingBottom:
+                    if (IntValue == NegativeRep)
+                    {
+                        if (rValue.IntValue == 0)//-0.0..1 + 0.0..1 = 0
+                            SetAsZero();
+                        else if (rValue.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue < 0)//-0.0..1 - 1.0..1 = -1.0..1
+                        {
+                            IntValue = rValue.IntValue;
+                        }
+                        else//-0.0..1 + 5.0..1 = 5
+                        {
+                            DecimalHalf = 0;
+                            IntValue = rValue.IntValue;
+                        }
+                    }
+                    if (IntValue == 0)
+                    {
+                        if (rValue.IntValue == 0)//0.0..1 + 0.0..1 = 0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue == NegativeRep)//0.0..1 - 0.0..1 = 0
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//0.0..1 - 1.0..1 = -1
+                        {
+                            DecimalHalf = 0;
+                            IntValue = rValue.IntValue;
+                        }
+                        else//0.0..1 + 5.0..1 = 5.0..1
+                        {
+                            IntValue = rValue.IntValue;
+                        }
+                    }
+                    else if (IntValue < 0)
+                    {
+                        if (rValue.IntValue == 0)//-1.0..1 + 0.0..1  = -1
+                            DecimalHalf = 0;
+                        else if (rValue.IntValue == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (IntValue == -rValue.IntValue)//-1.01 + 1.01
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-1.0..1 - 2.0..1
+                        {
+                            IntValue += rValue.IntValue;
+                        }
+                        else//-1.0..1 + 2.0..1 = 1
+                        {
+                            DecimalHalf = 0;
+                            IntValue += rValue.IntValue;
+                        }
+                    }
+                    else
+                    {
+                        if (rValue.IntValue == 0)//1.0..1 + 0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue == NegativeRep)//1.0..1 - 0.0..1
+                            DecimalHalf = 0;
+                        else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+                        {
+                            DecimalHalf = 0;
+                            IntValue += rValue.IntValue;
+                        }
+                        else//1.0..1 + 1.0..1
+                        {
+                            IntValue += rValue.IntValue;
+                        }
+                    }
+                    break;
+                case RepType::ApproachingTop:
+                    if (IntValue == NegativeRep)
+                    {
+                        if (rValue.IntValue == 0)//-0.9..9 + 0.9..9 = 0
+                            SetAsZero();
+                        else if (rValue.IntValue == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
+                            IntValue = -1;
+                        else if (rValue.IntValue < 0)//-0.9..9 - 1.9..9 = -2.9..8
+                        {
+                            IntValue = rValue.IntValue - 1;
+                        }
+                        else//-0.9..9 + 5.9..9 = 5
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = rValue.IntValue;
+                        }
+                    }
+                    if (IntValue == 0)
+                    {
+                        if (rValue.IntValue == 0)//0.9..9 + 0.9..9 = 1.9..8
+                            IntValue = 1;
+                        else if (rValue.IntValue == NegativeRep)//0.9..9 - 0.9..9 = 0
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//0.9..9 - 1.9..9 = -1
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = rValue.IntValue;
+                        }
+                        else//0.9..9 + 5.9..9 = 6.9..8
+                        {
+                            IntValue = rValue.IntValue + 1;
+                        }
+                    }
+                    else if (IntValue < 0)
+                    {
+                        if (rValue.IntValue == 0)//-1.9..9 + 0.9..9  = -1
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                        }
+                        else if (rValue.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
+                            IntValue += rValue.IntValue;
+                        else if (IntValue == -rValue.IntValue)//-1.9..9 + 1.9..9
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-1.9..9 - 2.9..9
+                        {
+                            IntValue += rValue.IntValue;
+                        }
+                        else//-1.9..9 + 2.9..9
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue += rValue.IntValue;
+                        }
+                    }
+                    else
+                    {
+                        if (rValue.IntValue == 0)//1.9..9 + 0.9..9 = 2.9..8
+                        {
+                            if (IntValue == -1)
+                                IntValue = NegativeRep;
+                            else
+                                ++IntValue;
+                        }
+                        else if (rValue.IntValue == NegativeRep)//1.9..9 - 0.9..9
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                        }
+                        else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue += rValue.IntValue;
+                        }
+                        else//1.9..9 + 1.9..9 = 3.9..8
+                        {
+                            IntValue += rValue.IntValue + 1;
+                        }
+                    }
+                    break;
+
+#if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingMidLeft:
+                    CatchAllAdditionV2(rValue, RepType::ApproachingMidLeft);
+                    break;
+                case RepType::ApproachingMidRight:
+                    CatchAllAdditionV2(rValue, RepType::ApproachingMidRight);
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnableAlternativeRepFractionals)
+                case RepType::NumByDiv:
+#if defined(AltNum_EnablePiFractional)
+                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+#endif
+#if defined(AltNum_EnableEFractional)
+                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+#endif
+#if defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*e Representation
+#endif
+#if defined(AltNum_EnablePiFractional)||defined(AltNum_EnableEFractional)||defined(AltNum_EnableIFractional)
+                    if (DecimalHalf == rValue.DecimalHalf)
+                    {
+
+                        *this += rValue.IntValue;
+                    }
+                    else
+                    {
+                        ConvertToNormType(LRep); rValue.ConvertToNormType(LRep);
+                        BasicAddOp(rValue);
+                    }
+                    break;
+#endif
+
+#if defined(AltNum_EnableDecimaledAlternativeFractionals)
+#if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv://  (rValue/(ExtraRep*-1))*Pi Representation
+#elif defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv://(rValue/(ExtraRep*-1))*e Representation
+#elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(rValue/(ExtraRep*-1))*e Representation
+#endif
+                    if (ExtraRep == rValue.ExtraRep)
+                        BasicAddOp(rValue);
+                    else
+                    {
+                        ConvertToNormType(LRep); rValue.ConvertToNormType(LRep);
+                        BasicAddOp(rValue);
+                    }
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
+                    if (ExtraRep != rValue.ExtraRep)
+                    {
+                        ConvertPiPowerToPiRep(); rValue.ConvertPiPowerToPiRep();
+                    }
+                    BasicAddOp(rValue);
+                    break;
+#endif    
+
+#if defined(AltNum_EnableMixedFractional)
+                    //Ignoring the fact that mixed fraction could be improperly formatted for spend
+                    //because should be corrected after every operation
+                case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    if (ExtraRep == rValue.ExtraRep)
+                    {
+                        IntValue += rValue.IntValue;
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf<0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                    }
+                    else
+                    {
+                        IntValue *= rValue.ExtraRep;
+                        IntValue += rValue.IntValue * ExtraRep;
+                        DecimalHalf += rValue.DecimalHalf * ExtraRep;
+                        if (DecimalHalf<0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                        ExtraRep *= rValue.ExtraRep;
+                    }
+                    break;
+#if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+#elif defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE:
+#elif defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+#endif
+#if defined(AltNum_EnableAlternativeMixedFrac)
+                    if (ExtraRep == rValue.ExtraRep)
+                    {
+                        IntValue += rValue.IntValue;
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf>0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                    }
+                    else
+                    {
+                        IntValue *= -rValue.ExtraRep;
+                        IntValue += rValue.IntValue * -ExtraRep;
+                        DecimalHalf += rValue.DecimalHalf * -ExtraRep;
+                        if (DecimalHalf>0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                        ExtraRep *= -rValue.ExtraRep;
+                    }
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+                    BasicAddOp(rValue);
+                    break;
+#if defined(AltNum_EnableWithinMinMaxRange)
+                case RepType::WithinMinMaxRange:
+                    if (IntValue == NegativeRep)
+                    {
+                        //Do nothing?
+                    }
+                    else if (rValue.IntValue == NegativeRep)
+                    {
+                        IntValue = NegativeRep;
+                    }
+                    else
+                        IntValue += rValue.IntValue;
+                    if (DecimalHalf == InfinityRep)
+                    {
+                        //Do Nothing?
+                    }
+                    else if (rValue.DecimalHalf == InfinityRep)
+                    {// + positive infinity to right side
+                        DecimalHalf = InfinityRep;
+                    }
+                    else
+                        DecimalHalf += rValue.DecimalHalf;
+                    break;
+#endif
+#endif
+#if defined(AltNum_EnableNaN)
+                case RepType::Undefined:
+                case RepType::NaN:
+                    throw "Can't perform operations with NaN or Undefined number";
+                    break;
+#endif
+                default:
+                    throw AltDec::RepTypeAsString(LRep) + " RepType addition not supported yet";
+                    break;
+                }
+            }
+            else
+                RepToRepAddOp(LRep, RRep, *this, rValue);
+            return *this;
+        }
+
+        AltDec AddBy(const AltDec& rValue) { AltDec self = *this; self.AddOp(rValue); return self; }
+
+		void CatchAllSubtraction(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+		{
+			ConvertToNormType(LRep);
+			AltDec convertedRVal = rValue.ConvertAsNormType(RRep);
+			BasicMultOp(convertedRVal);
+		}
+
+        AltDec CatchAllSubtractionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        { AltDec self = *this; CatchAllSubtraction(rValue, LRep, RRep); return self; }
+		
+		void CatchAllSubtractionV2(AltDec& rValue, const RepType& SameRep)
+		{
+            ConvertToNormType(SameRep);
+			AltDec convertedRVal = rValue.ConvertAsNormType(SameRep);
+			BasicSubOp(convertedRVal);
+		}
+
+        AltDec CatchAllSubtractionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        { AltDec self = *this; CatchAllSubtractionV2(rValue, SameRep); return self; }
+	
+	   void CatchAllSubtractionV3(AltDec& rValue)
+	   {
+			ConvertToNormTypeV2();
+            AltDec convertedRVal = rValue.ConvertAsNormTypeV2();
+			BasicSubOp(convertedRVal);
+	   }
+
+        AltDec CatchAllSubtractionAsCopiesV3(AltDec& rValue)
+        { AltDec self = *this; CatchAllSubtractionV3(rValue); return self; }
+		
+	//Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
+	#if defined(AltNum_EnableImaginaryNum)
+		void CatchAllImaginarySubtraction(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+		{
+		   ConvertIRepToNormal(LRep);
+           AltDec convertedRVal = rValue.ConvertAsNormalIRep(RRep);
+		   BasicSubOp(convertedRVal);
+		   ExtraRep = 0;
+		}
+
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        { AltDec self = *this; CatchAllImaginarySubtraction(rValue, LRep, RRep); return self; }
+		
+		void CatchAllImaginarySubtractionV2(AltDec& rValue, const RepType& SameRep)
+		{
+            ConvertIRepToNormal(SameRep);
+            AltDec convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
+            BasicSubOp(convertedRVal);
+            ExtraRep = 0;
+		}
+
+        AltDec CatchAllImaginarySubtractionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        { AltDec self = *this; CatchAllImaginarySubtractionV2(rValue, SameRep); return self; }
+	
+        void CatchAllImaginarySubtractionV3(AltDec& rValue)
+        {
+           ConvertIRepToNormalV2();
+           AltDec convertedRVal = rValue.ConvertAsNormalIRepV2();
+           BasicSubOp(convertedRVal);
+           ExtraRep = 0;
+        }
+
+        AltDec CatchAllImaginarySubtractionAsCopiesV3(AltDec& rValue)
+        { AltDec self = *this; CatchAllImaginarySubtractionV3(rValue); return self; }
+	#endif
+
+        static void RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec rValue);
+
+        /// <summary>
+        /// Subtraction Operation  with right side AltDec
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rightside rValue</param>
+        /// <returns>AltDec&</returns>
+        AltDec& SubOp(AltDec rValue)
+        {
+            if (IsZero())
+            {
+                IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                ExtraRep = rValue.ExtraRep; return *this;
+            }
+            else if (rValue.IsZero())
+                return *this;
+#if defined(AltNum_EnableInfinityRep)
+            if (DecimalHalf == InfinityRep)
+                return *this;
+            if (rValue.DecimalHalf == InfinityRep)
+            {
+                rValue.IntValue == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
+                return *this;
+            }
+#endif
+            RepType LRep = GetRepType();
+            RepType RRep = rValue.GetRepType();
+            if (LRep == RRep)
+            {
+                switch (LRep)
+                {
+                case RepType::NormalType:
+#if defined(AltNum_EnablePiRep)
+                case RepType::PiNum:
+#endif
+#if defined(AltNum_EnableENum)
+                case RepType::ENum:
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+                case RepType::INum:
+#endif
+                    BasicSubOp(rValue);
+                    break;
+
+#if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingBottom:
+                    if (IntValue == NegativeRep)
+                    {
+                        if (rValue.IntValue == 0)//-0.0..1 - 0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue == NegativeRep)//-0.0..1 + 0.0..1 
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-0.0..1 + 1.0..1
+                        {
+                            DecimalHalf = 0;
+                            IntValue = -rValue.IntValue;
+                        }
+                        else//-0.0..1 - 5.0..1
+                        {
+                            IntValue = -rValue.IntValue;
+                        }
+                    }
+                    if (IntValue == 0)
+                    {
+                        if (rValue.IntValue == 0)//0.0..1 - 0.0..1 = 0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue == NegativeRep)//0.0..1 + 0.0..1 = 0
+
+                        else if (rValue.IntValue < 0)//0.0..1 + 1.0..1
+                        {
+                            IntValue = -rValue.IntValue;
+                        }
+                        else//0.0..1 - 5.0..1
+                        {
+                            DecimalHalf = 0;
+                            IntValue = -rValue.IntValue;
+                        }
+                    }
+                    else if (IntValue < 0)
+                    {
+                        if (rValue.IntValue == 0)//-1.0..1 - 0.0..1  = -1
+                        {/*Do Nothing*/
+                        }
+                        else if (rValue.IntValue == NegativeRep)//-1.0..1 + 0.0..1
+                            DecimalHalf = 0;
+                        else if (IntValue == rValue.IntValue)//-1.01 - 1.01
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-1.0..1 + 2.0..1
+                        {
+                            DecimalHalf = 0;
+                            IntValue -= rValue.IntValue;
+                        }
+                        else//-1.0..1 - 2.0..1 = 1
+                        {
+                            IntValue -= rValue.IntValue;
+                        }
+                    }
+                    else
+                    {
+                        if (rValue.IntValue == 0)//1.0..1 - 0.0..1
+                            DecimalHalf = 0;
+                        else if (rValue.IntValue == NegativeRep)//1.0..1 + 0.0..1
+                        {/*Do Nothing*/
+                        }
+                        else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+                        {
+                            DecimalHalf = 0;
+                            IntValue -= rValue.IntValue;
+                        }
+                        else//1.0..1 - 1.0..1
+                        {
+                            IntValue -= rValue.IntValue;
+                        }
+                    }
+                    break;
+                case RepType::ApproachingTop:
+                    if (IntValue == NegativeRep)
+                    {
+                        if (rValue.IntValue == 0)//-0.9..9 - 0.9..9 = 0
+                            IntValue = -1;
+                        else if (rValue.IntValue == NegativeRep)//-0.9..9 + 0.9..9
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-0.9..9 + 1.9..9
+
+                        else//-0.9..9 - 5.9..9 = -6.9..8
+                            IntValue = -rValue.IntValue - 1;
+                    }
+                    if (IntValue == 0)
+                    {
+                        if (rValue.IntValue == 0)//0.9..9 - 0.9..9
+                            SetAsZero();
+                        else if (rValue.IntValue == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
+                            IntValue = 1;
+                        else if (rValue.IntValue < 0)//0.9..9 + 1.9..9 = 1.9..8
+                            IntValue = -rValue.IntValue;
+                        else//0.9..9 - 5.9..9 = -5
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -rValue.IntValue;
+                        }
+                    }
+                    else if (IntValue < 0)
+                    {
+                        if (rValue.IntValue == 0)//-1.9..9 - 0.9..9  = -2.9..8
+                            --IntValue;
+                        else if (rValue.IntValue == NegativeRep)//-1.9..9  + 0.9..9 = -1
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                        }
+                        else if (IntValue == rValue.IntValue)//-1.01 + 1.01
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)//-1.9..9 + 2.9..9
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue -= rValue.IntValue;
+                        }
+                        else//-1.9..9 - 2.9..9
+                        {
+                            IntValue -= rValue.IntValue + 1;
+                        }
+                    }
+                    else
+                    {
+                        if (rValue.IntValue == 0)//1.9..9 - 0.9..9 = 2.9..8
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                        }
+                        else if (rValue.IntValue == NegativeRep)//1.9..9 + 0.9..9
+                            ++IntValue;
+                        else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
+                            SetAsZero();
+                        else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
+                        {
+                            DecimalHalf = 0;
+                            IntValue -= rValue.IntValue;
+                        }
+                        else//1.9..9 - 2.9..9
+                        {
+                            DecimalHalf = 0; ExtraRep = 0;
+                            IntValue -= rValue.IntValue;
+                        }
+                    }
+                    break;
+
+#if defined(AltNum_EnableApproachingDivided)
+                case RepType::ApproachingMidLeft:
+                    CatchAllSubtractionV2(rValue, RepType::ApproachingMidLeft);
+                    break;
+                case RepType::ApproachingMidRight:
+                    CatchAllSubtractionV2(rValue, RepType::ApproachingMidRight);
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnableAlternativeRepFractionals)
+                case RepType::NumByDiv:
+                    if (ExtraRep == rValue.ExtraRep)
+                        BasicSubOp(rValue);
+                    else
+                        CatchAllSubtractionV2(rValue, RepType::NumByDiv);
+                    break;
+#if defined(AltNum_EnablePiFractional)
+                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+#endif
+#if defined(AltNum_EnableEFractional)
+                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+#endif
+#if defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*e Representation
+#endif
+#if defined(AltNum_UsingAltFractional)
+                    if (DecimalHalf == rValue.DecimalHalf)
+                    {
+                        *this -= rValue.IntValue;
+                    }
+                    else
+                    {
+                        ConvertToNormType(LRep); rValue.ConvertToNormType(LRep);
+                        BasicSubOp(rValue);
+                    }
+                    break;
+#endif
+
+#if defined(AltNum_EnableDecimaledAlternativeFractionals)
+#if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv://  (rValue/(ExtraRep*-1))*Pi Representation
+#elif defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv://(rValue/(ExtraRep*-1))*e Representation
+#elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(rValue/(ExtraRep*-1))*e Representation
+#endif
+                    if (ExtraRep == rValue.ExtraRep)
+                        BasicSubOp(rValue);
+                    else
+                    {
+                        ConvertToNormType(LRep); rValue.ConvertToNormType(LRep);
+                        BasicSubOp(rValue);
+                    }
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
+                    if (ExtraRep != rValue.ExtraRep)
+                    {
+                        ConvertPiPowerToPiRep(); rValue.ConvertPiPowerToPiRep();
+                    }
+                    BasicSubOp(rValue);
+                    break;
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+                    //Ignoring the fact that mixed fraction could be improperly formatted for spend
+                    //because should be corrected after every operation
+                case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                    if (ExtraRep == rValue.ExtraRep)
+                    {
+                        IntValue -= rValue.IntValue;
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf<0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                    }
+                    else
+                    {
+                        IntValue *= rValue.ExtraRep;
+                        IntValue -= rValue.IntValue * ExtraRep;
+                        DecimalHalf -= rValue.DecimalHalf * ExtraRep;
+                        if (DecimalHalf<0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                        ExtraRep *= rValue.ExtraRep;
+                    }
+                    break;
+#if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+#elif defined(AltNum_EnableMixedEFractional)
+                case RepType::MixedE:
+#elif defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+#endif
+#if defined(AltNum_EnableAlternativeMixedFrac)
+                    if (ExtraRep == rValue.ExtraRep)
+                    {
+                        IntValue -= rValue.IntValue;
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf>0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                    }
+                    else
+                    {
+                        IntValue *= -rValue.ExtraRep;
+                        IntValue -= rValue.IntValue * -ExtraRep;
+                        DecimalHalf -= rValue.DecimalHalf * -ExtraRep;
+                        if (DecimalHalf>0)//Subtract the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            --IntValue;
+                        }
+                        else//Add the overflow
+                        {
+                            DecimalHalf += ExtraRep;
+                            ++IntValue;
+                        }
+                        ExtraRep *= -rValue.ExtraRep;
+                    }
+                    break;
+#endif
+#endif
+
+#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+                case RepType::UndefinedButInRange:
+                    BasicSubOp(rValue);
+                    break;
+#if defined(AltNum_EnableWithinMinMaxRange)
+                case RepType::WithinMinMaxRange:
+                    if (IntValue == NegativeRep)
+                    {
+                        if (rValue.IntValue == NegativeRep)
+                            IntValue = 0;
+                    }
+                    else if (rValue.IntValue == NegativeRep)
+                    {//+positive infinity to left side
+#if defined(AltNum_EnableNaN)
+                        DecimalHalf = UndefinedRep;
+#else
+                        throw "Uncertain result";
+#endif
+                    }
+                    else
+                        IntValue -= rValue.IntValue;
+                    if (DecimalHalf == InfinityRep)
+                    {
+                        if (rValue.DecimalHalf == InfinityRep)
+                            DecimalHalf = 0;
+                    }
+                    else if (rValue.DecimalHalf == InfinityRep)
+                    {// subtractive infinity from real number
+#if defined(AltNum_EnableNaN)
+                        DecimalHalf = UndefinedRep;
+#else
+                        throw "Uncertain result";
+#endif
+                    }
+                    else
+                        DecimalHalf -= rValue.DecimalHalf;
+                    break;
+#endif
+#endif
+#if defined(AltNum_EnableNaN)
+                case RepType::Undefined:
+                case RepType::NaN:
+                    throw "Can't perform operations with NaN or Undefined number";
+                    break;
+#endif
+                default:
+                    throw AltDec::RepTypeAsString(LRep) + " RepType subtraction not supported yet";
+                    break;
+                }
+            }
+            else
+                RepToRepSubOp(LRep, RRep, *this, rValue);
+            return *this;
+        }
+
+        AltDec SubtractBy(const AltDec& rValue) { AltDec self = *this; self.SubOp(rValue); return self; }
+
 	#pragma endregion Main AltNum Operations
 
     #pragma region Main Operator Overrides
@@ -7688,290 +8748,124 @@ public:
         /// <summary>
         /// Division Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator/(AltDec self, AltDec Value) { return self.DivOp(Value); }
-        friend AltDec operator/(AltDec* self, AltDec Value) { return self->DivOp(Value); }
+        AltDec& operator/=(AltDec rValue) { return *this; }
 
         /// <summary>
-        /// /= Operation
+        /// Division Operation Between AltDec and Integer Value
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator/=(AltDec& self, AltDec Value) { return self.DivOp(Value); }
-        friend AltDec& operator/=(AltDec* self, AltDec Value) { return self->DivOp(Value); }
+        AltDec& operator/=(signed int rValue) { return *this; }
+        AltDec& operator/=(const unsigned int& rValue) { return *this; }
+        AltDec& operator/=(const unsigned __int64& rValue) { return *this; }
 
         /// <summary>
-        /// /= Operation Between AltDec and Integer Value
+        /// Division Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator/=(AltDec& self, signed char Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, signed short Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, signed int Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, signed __int64 Value) { return self.IntDivOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator/=(AltDec& self, MirroredInt Value) { return self.IntDivOp(Value); }
-#endif
-
-        /// <summary>
-        /// /= Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator/=(AltDec& self, unsigned char Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, unsigned short Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, unsigned int Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/=(AltDec& self, unsigned __int64 Value) { return self.UnsignedIntDivOp(Value); }
-
-        /// <summary>
-        /// / Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator/(AltDec self, signed char Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/(AltDec self, signed short Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/(AltDec self, signed int Value) { return self.IntDivOp(Value); }
-        friend AltDec operator/(AltDec self, signed __int64 Value) { return self.IntDivOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator/(AltDec self, MirroredInt Value) { return self.IntDivOp(Value); }
-#endif
-
-        /// <summary>
-        /// / Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator/(AltDec self, unsigned char Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/(AltDec self, unsigned short Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/(AltDec self, unsigned int Value) { return self.UnsignedIntDivOp(Value); }
-        friend AltDec operator/(AltDec self, unsigned __int64 Value) { return self.UnsignedIntDivOp(Value); }
-
-        friend AltDec operator/(AltDec self, float Value) { return self / (AltDec)Value; }
-        friend AltDec operator/(AltDec self, double Value) { return self / (AltDec)Value; }
-        friend AltDec operator/(AltDec self, ldouble Value) { return self / (AltDec)Value; }
-        friend AltDec operator/(float Value, AltDec self) { return (AltDec)Value / self; }
-        friend AltDec operator/(double Value, AltDec self) { return (AltDec)Value / self; }
-        friend AltDec operator/(ldouble Value, AltDec self) { return (AltDec)Value / self; }
+        friend AltDec operator/(AltDec self, AltDec rValue) { return self; }
+        friend AltDec operator/(AltDec self, int rValue) { return self; }
+        friend AltDec operator/(AltDec self, unsigned int rValue) { return self; }
+        friend AltDec operator/(AltDec self, signed long long rValue) { return self; }
+        friend AltDec operator/(AltDec self, unsigned __int64 rValue) { return self; }
 
         /// <summary>
         /// Multiplication Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator*(AltDec self, AltDec Value) { return self.MultOp(Value); }
-        friend AltDec operator*(AltDec* self, AltDec Value) { return self->MultOp(Value); }
-
-        ///// <summary>
-        ///// *= Operation
-        ///// </summary>
-        ///// <param name="self">The self.</param>
-        ///// <param name="Value">The value.</param>
-        ///// <returns>AltDec</returns>
-        friend AltDec& operator*=(AltDec& self, AltDec Value) { return self.MultOp(Value); }
-        friend AltDec& operator*=(AltDec* self, AltDec Value) { return self->MultOp(Value); }
+        AltDec& operator*=(AltDec rValue) { return *this; }
 
         /// <summary>
-        /// *= Operation Between AltDec and Integer Value
+        /// Multiplication Operation Between AltDec and Integer Value
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator*=(AltDec& self, signed char Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, signed short Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, signed int Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, signed __int64 Value) { return self.IntMultOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator*=(AltDec& self, MirroredInt Value) { return self.MultOp(Value); }
-#endif
+        AltDec& operator*=(signed int rValue) { return *this; }
+        AltDec& operator*=(const unsigned int& rValue) { return *this; }
+        AltDec& operator*=(const unsigned __int64& rValue) { return *this; }
+        AltDec& operator*=(const unsigned __int16& rValue) { return *this; }
+        AltDec& operator*=(const unsigned __int8& rValue) { return *this; }
 
-        friend AltDec operator*=(AltDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*=(AltDec& self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="RValue">The right side value.</param>
+        /// <returns>AltDec</returns>
+        friend AltDec operator*(AltDec self, AltDec rValue) { return self; }
+        friend AltDec operator*(AltDec self, int rValue) { return self; }
+        friend AltDec operator*(AltDec self, signed long long rValue) { return self; }
+        friend AltDec operator*(AltDec self, const unsigned int& rValue) { return self; }
+        friend AltDec operator*(AltDec self, const unsigned __int64& rValue) { return self; }
+        friend AltDec operator*(AltDec self, const unsigned __int16& rValue) { return self; }
+        friend AltDec operator*(AltDec self, const unsigned __int8& rValue) { return self; }
 
-        friend AltDec operator*(AltDec self, signed char Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*(AltDec self, signed short Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*(AltDec self, signed int Value) { return self.IntMultOp(Value); }
-        friend AltDec operator*(AltDec self, signed __int64 Value) { return self.IntMultOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator*(AltDec self, MirroredInt Value) { return self.IntMultOp(Value); }
-#endif
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>AltDec</returns>
+        AltDec& operator+=(AltDec rValue) { return *this; }
 
-        friend AltDec operator*(AltDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*(AltDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*(AltDec self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
-        friend AltDec operator*(AltDec self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
-
-        friend AltDec operator*(AltDec self, float Value) { return self * (AltDec)Value; }
-        friend AltDec operator*(float Value, AltDec self) { return (AltDec)Value * self; }
-        friend AltDec operator*(AltDec self, double Value) { return self * (AltDec)Value; }
-        friend AltDec operator*(AltDec self, ldouble Value) { return self * (AltDec)Value; }
-        friend AltDec operator*(ldouble Value, AltDec self) { return (AltDec)Value * self; }
+        /// <summary>
+        /// /= Operation Between AltDec and Integer Value
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec</returns>
+        AltDec& operator+=(signed int rValue) { return *this; }
+        AltDec& operator+=(const unsigned int& rValue) { return *this; }
+        AltDec& operator+=(const unsigned __int64& rValue) { return *this; }
+        AltDec& operator+=(const unsigned __int16& rValue) { return *this; }
+        AltDec& operator+=(const unsigned __int8& rValue) { return *this; }
 
         /// <summary>
         /// Addition Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator+(AltDec self, AltDec Value) { return self.AddOp(Value); }
-        friend AltDec operator+(AltDec* self, AltDec Value) { return self->AddOp(Value); }
+        friend AltDec operator+(AltDec self, AltDec rValue) { return self; }
+        friend AltDec operator+(AltDec self, int rValue) { return self; }
+        friend AltDec operator+(AltDec self, signed long long rValue) { return self; }
 
-        /// <summary>
-        /// += Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec& operator+=(AltDec& self, AltDec Value) { return self.AddOp(Value); }
-        friend AltDec& operator+=(AltDec* self, AltDec Value) { return self->AddOp(Value); }
-
-        /// <summary>
-        /// += Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator+=(AltDec& self, signed char Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, signed short Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, signed int Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, signed __int64 Value) { return self.IntAddOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator+=(AltDec& self, MirroredInt Value) { return self.IntAddOp(Value); }
-#endif
-
-        /// <summary>
-        /// += Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator+=(AltDec& self, unsigned char Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, unsigned short Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, unsigned int Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+=(AltDec& self, unsigned __int64 Value) { return self.IntAddOp(Value); }
-
-        /// <summary>
-        /// + Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator+(AltDec self, signed char Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, signed short Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, signed int Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, signed __int64 Value) { return self.IntAddOp(Value); }
-#if defined(AltDec_UseMirroredInt)
-        friend AltDec operator+(AltDec self, MirroredInt Value) { return self.IntAddOp(Value); }
-#endif
-
-        /// <summary>
-        /// + Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator+(AltDec self, unsigned char Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, unsigned short Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, unsigned int Value) { return self.IntAddOp(Value); }
-        friend AltDec operator+(AltDec self, unsigned __int64 Value) { return self.IntAddOp(Value); }
-
-        friend AltDec operator+(AltDec self, float Value) { return self + (AltDec)Value; }
-        friend AltDec operator+(AltDec self, double Value) { return self + (AltDec)Value; }
-        friend AltDec operator+(AltDec self, ldouble Value) { return self + (AltDec)Value; }
-        friend AltDec operator+(float Value, AltDec self) { return (AltDec)Value + self; }
-        friend AltDec operator+(double Value, AltDec self) { return (AltDec)Value + self; }
-        friend AltDec operator+(ldouble Value, AltDec self) { return (AltDec)Value + self; }
+        friend AltDec operator+(AltDec self, const unsigned int& rValue) { return self; }
+        friend AltDec operator+(AltDec self, const unsigned __int64& rValue) { return self; }
+        friend AltDec operator+(AltDec self, const unsigned __int16& rValue) { return self; }
+        friend AltDec operator+(AltDec self, const unsigned __int8& rValue) { return self; }
 
         /// <summary>
         /// Subtraction Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec operator-(AltDec self, AltDec Value) { return self.SubOp(Value); }
-        friend AltDec operator-(AltDec* self, AltDec Value) { return self->SubOp(Value); }
+        AltDec& operator-=(AltDec rValue) { return *this; }
 
         /// <summary>
-        /// -= Operation
+        /// Subtraction Operation Between AltDec and Integer Value
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="rValue">The value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator-=(AltDec& self, AltDec Value) { return self.SubOp(Value); }
+        AltDec& operator-=(signed int rValue) { return *this; }
+        AltDec& operator-=(const unsigned int& rValue) { return *this; }
+        AltDec& operator-=(const unsigned __int64& rValue) { return *this; }
+        AltDec& operator-=(const unsigned __int16& rValue) { return *this; }
+        AltDec& operator-=(const unsigned __int8& rValue) { return *this; }
 
         /// <summary>
-        /// -= Operation
+        /// Subtraction Operation
         /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="RValue">The right side value.</param>
         /// <returns>AltDec</returns>
-        friend AltDec& operator-=(AltDec* self, AltDec Value) { return self->SubOp(Value); }
+        friend AltDec operator-(AltDec self, AltDec rValue) { return self; }
+        friend AltDec operator-(AltDec self, int rValue) { return self; }
+        friend AltDec operator-(AltDec self, signed long long rValue) { return self; }
 
-        /// <summary>
-        /// -= Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator-=(AltDec& self, signed char Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, signed short Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, signed int Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, signed __int64 Value) { return self.IntSubOp(Value); }
-    #if defined(AltDec_UseMirroredInt)
-        friend AltDec operator-=(AltDec& self, MirroredInt Value) { return self.IntSubOp(Value); }
-    #endif
-
-        /// <summary>
-        /// -= Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator-=(AltDec& self, unsigned char Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, unsigned short Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, unsigned int Value) { return self.IntSubOp(Value); }
-        friend AltDec operator-=(AltDec& self, unsigned __int64 Value) { return self.IntSubOp(Value); }
-
-        /// <summary>
-        /// - Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator-(AltDec self, signed char Value) { return self.Int8SubOp(Value); }
-        friend AltDec operator-(AltDec self, signed short Value) { return self.Int16SubOp(Value); }
-        friend AltDec operator-(AltDec self, signed int Value) { return self.Int32SubOp(Value); }
-        friend AltDec operator-(AltDec self, signed __int64 Value) { return self.Int64SubOp(Value); }
-    #if defined(AltDec_UseMirroredInt)
-        friend AltDec operator-(AltDec self, MirroredInt Value) { return self.IntSubOp(Value); }
-    #endif
-
-        /// <summary>
-        /// - Operation Between AltDec and unsigned Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>AltDec</returns>
-        friend AltDec operator-(AltDec self, unsigned char Value) { return self.UInt8SubOp(Value); }
-        friend AltDec operator-(AltDec self, unsigned short Value) { return self.UInt16SubOp(Value); }
-        friend AltDec operator-(AltDec self, unsigned int Value) { return self.UInt32SubOp(Value); }
-        friend AltDec operator-(AltDec self, unsigned __int64 Value) { return self.UInt64SubOp(Value); }
-
-        friend AltDec operator-(AltDec self, float Value) { return self - (AltDec)Value; }
-        friend AltDec operator-(AltDec self, double Value) { return self - (AltDec)Value; }
-        friend AltDec operator-(AltDec self, ldouble Value) { return self - (AltDec)Value; }
-        friend AltDec operator-(float Value, AltDec self) { return (AltDec)Value - self; }
-        friend AltDec operator-(double Value, AltDec self) { return (AltDec)Value - self; }
-        friend AltDec operator-(ldouble Value, AltDec self) { return (AltDec)Value - self; }
+        friend AltDec operator-(AltDec self, const unsigned int& rValue) { return self; }
+        friend AltDec operator-(AltDec self, const unsigned __int64& rValue) { return self; }
+        friend AltDec operator-(AltDec self, const unsigned __int16& rValue) { return self; }
+        friend AltDec operator-(AltDec self, const unsigned __int8& rValue) { return self; }
 
     #pragma endregion Main Operator Overrides
 
