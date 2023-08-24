@@ -10863,7 +10863,7 @@ public:
                 int WPow = 3;
                 do
                 {
-                    AddRes = W.Int32Pow(WPow) / WPow;
+                    AddRes = W.IntPow(WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > AltDec::JustAboveZero);
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * AltDec::HalfLN10Mult)/ baseTotalRes;
@@ -10954,7 +10954,7 @@ public:
                 for (int i = 0; i < 7; ++i)
                 { // That's Taylor series!!
                     NewValue += Radius.Pow(2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                }//x[1].Int32Pow(nMinus1)
+                }//x[1].IntPow(nMinus1)
                 return NewValue;
             }
         }
