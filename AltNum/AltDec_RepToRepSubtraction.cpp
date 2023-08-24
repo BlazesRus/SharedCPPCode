@@ -28,7 +28,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 #endif
 		default:
-			Value.ConvertToNormTypeOp(RRep);
+			Value.ConvertToNormType(RRep);
 			self.BasicSubOp(Value);
 			break;
 	}
@@ -99,7 +99,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
                 else
                 {
                     self.IntValue *= -Value.ExtraRep;
-                    self.IntHalfAdditionOp(&self.DecimalHalf);//adding as negative of the representation
+                    self.IntHalfAdditionOp(self.DecimalHalf);//adding as negative of the representation
                     if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                     {
                         self.ExtraRep = 0; return;
@@ -191,7 +191,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
             else
             {
                 self.IntValue *= -Value.ExtraRep;
-                self.IntHalfAdditionOp(&self.DecimalHalf);//adding as negative of the representation
+                self.IntHalfAdditionOp(self.DecimalHalf);//adding as negative of the representation
                 if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                 {
                     self.ExtraRep = 0; return;
@@ -446,7 +446,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
 #endif
 #if defined(AltNum_EnableComplexNumbers)
-		Value.ConvertToNormTypeOp(RRep);
+		Value.ConvertToNormType(RRep);
 		RRep = RepType::NormalType;
 #else
 		throw "Complex number operations not enabled";
@@ -719,7 +719,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 #if defined(AltNum_EnableMixedFractional)
             if(RRep==RepType::MixedFrac)
 			{
-				self.ConvertToNormTypeOp(LRep);
+				self.ConvertToNormType(LRep);
 				self.BasicMixedFracSubOp(Value);
 			}
 	#if defined(AltNum_EnableMixedPiFractional)
@@ -728,7 +728,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
             else if(RRep==RepType::MixedE)
 	#endif
 	#if defined(AltNum_MixedPiOrEEnabled)
-    			self.ConvertToNormTypeOp(LRep);
+    			self.ConvertToNormType(LRep);
     		#if defined(AltNum_EnableMixedPiFractional)
     			self.BasicMixedPiFracSubOp(Value);
     		#else
