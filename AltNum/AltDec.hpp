@@ -18,6 +18,8 @@
 #include "..\DLLAPI.h"
 #endif
 
+#include "AltNumBase.hpp"
+
 #include <string>
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
@@ -377,7 +379,7 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API AltDec
+    class DLL_API AltDec : public virtual AltNumBase
     {
     public:
         /// <summary>
