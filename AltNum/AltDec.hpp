@@ -6373,9 +6373,9 @@ public:
 						rValue *= -1;
 						SwapNegativeStatus();
 					}
-					int DivRes = ExtraRep / rValue;
+					int divRes = ExtraRep / rValue;
 					if((ExtraRep - rValue * divRes)==0)
-						ExtraRep = DivRes;
+						ExtraRep = divRes;
 					else
 						BasicUIntMultOp(rValue);
                 }
@@ -6413,9 +6413,9 @@ public:
 						rValue *= -1;
 						SwapNegativeStatus();
 					}
-					int DivRes = ExtraRep / rValue;
+					int divRes = ExtraRep / rValue;
 					if((ExtraRep - rValue * divRes)==0)
-						ExtraRep = DivRes;
+						ExtraRep = divRes;
 					else
 						BasicUIntMultOp(rValue);
                 }
@@ -6768,9 +6768,9 @@ public:
 #if defined(AltNum_EnableAlternativeRepFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
-					int DivRes = ExtraRep / rValue;
+					int divRes = ExtraRep / rValue;
 					if((ExtraRep - rValue * divRes)==0)
-						ExtraRep = DivRes;
+						ExtraRep = divRes;
 					else
 						BasicUIntMultOp(rValue);
                 }
@@ -6803,9 +6803,9 @@ public:
                 case RepType::INumByDiv:
                     #endif
                 {
-					int DivRes = ExtraRep / rValue;
+					int divRes = ExtraRep / rValue;
 					if((ExtraRep - rValue * divRes)==0)
-						ExtraRep = DivRes;
+						ExtraRep = divRes;
 					else
 						BasicUIntMultOp(rValue);
                 }
@@ -7597,12 +7597,12 @@ public:
                         NumRes = rValue.DecimalHalf * IntValue;
                         DenomRes = DecimalHalf * rValue.IntValue;
                     }
-                    signed int DivRes = NumRes / DenomRes;
+                    signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     DecimalHalf = 0;
                     if (RemRes == 0)
                     {
-                        IntValue = DivRes;
+                        IntValue = divRes;
                         ExtraRep = 0;
                     }
                     else
@@ -7625,7 +7625,7 @@ public:
                 {
                     int LeftDiv = -ExtraRep; int RightDiv = -rValue.ExtraRep;
                     AltDec NumRes = AltDec(IntValue, DecimalHalf);
-                    signed int DivRes = RightDiv / LeftDiv;
+                    signed int divRes = RightDiv / LeftDiv;
                     signed int RemRes = RightDiv - LeftDiv / RightDiv;
                     //NumRes /= AltDec(rValue.IntValue, rValue.DecimalHalf);
                     NumRes.BasicDivOp(AltDec(rValue.IntValue, rValue.DecimalHalf));
@@ -8102,16 +8102,16 @@ public:
                         valIsPositive = false;
                     int DenomRes = DecimalHalf / rValue.DecimalHalf;
                     //Reduce size of fractional if viable
-                    signed int DivRes = NumRes / DenomRes;
+                    signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     if (RemRes == 0)
                     {
                         #ifdef AltNum_EnablePiPowers
-                        //Set as DivRes*Pi^2
-                        IntValue = DivRes;
+                        //Set as divRes*Pi^2
+                        IntValue = divRes;
                         ExtraRep = -2;
                         #else
-                        SetPiVal(DivRes);
+                        SetPiVal(divRes);
                         *this *= PiNum;
                         #endif
                     }
@@ -8147,11 +8147,11 @@ public:
                         valIsPositive = false;
                     int DenomRes = DecimalHalf / rValue.DecimalHalf;
                     //Reduce size of fractional if viable
-                    signed int DivRes = NumRes / DenomRes;
+                    signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     if (RemRes == 0)
                     {
-                        SetEVal(DivRes);
+                        SetEVal(divRes);
                         *this *= ENum;
                     }
                     else
@@ -8178,12 +8178,12 @@ public:
                     //==-1*(IntValue/DecimalHalf)*(rValue.IntValue/rValue.DecimalHalf)
                     int NumRes = -IntValue * rValue.IntValue;
                     int DenomRes = DecimalHalf * rValue.DecimalHalf;
-                    signed int DivRes = NumRes / DenomRes;
+                    signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     DecimalHalf = 0;
                     if (RemRes == 0)
                     {
-                        IntValue = DivRes;
+                        IntValue = divRes;
                         ExtraRep = 0;
                     }
                     else
@@ -9351,7 +9351,7 @@ public:
         /// <summary>
         /// Division Operation
         /// </summary>
-        /// <param name="RValue">The right side value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator*(AltDec self, const AltDec& rValue) { return self.MultOp(rValue); }
         friend AltDec operator*(AltDec self, const int& rValue) { return self.IntMultOp(rValue); }
@@ -9423,7 +9423,7 @@ public:
         /// <summary>
         /// Subtraction Operation
         /// </summary>
-        /// <param name="RValue">The right side value.</param>
+        /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec</returns>
         friend AltDec operator-(AltDec self, const AltDec& rValue) { return self.SubOp(rValue); }
         friend AltDec operator-(AltDec self, const int& rValue) { return self.IntSubOp(rValue); }
