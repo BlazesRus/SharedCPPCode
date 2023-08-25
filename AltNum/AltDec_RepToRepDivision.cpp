@@ -7,12 +7,12 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 	switch (RRep)
 	{
 	case RepType::NormalType://Fail safe for when converted before switch
-		self.BasicDivOp(Value);
+		self.BasicUnsignedDivOp(Value);
 		break;
 		#if defined(AltNum_EnableFractionals)
 	case RepType::NumByDiv://X / (Y / Z) = (XZ)/Y
 	{
-		self.BasicDivOp(Value);
+		self.BasicUnsignedDivOp(Value);
 		self.BasicIntMultOp(Value.ExtraRep);
 		break;
 	}
@@ -21,7 +21,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 	{
 		//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
 		self.BasicIntMultOp(Value.DecimalHalf);
-		self.BasicDivOp(AltDec::PiNum * Value.IntValue);//self.BasicDivOp(PiNumMultByInt(Value.IntValue))
+		self.BasicUnsignedDivOp(AltDec::PiNum * Value.IntValue);//self.BasicUnsignedDivOp(PiNumMultByInt(Value.IntValue))
 		break;
 	}
 		#endif
@@ -29,7 +29,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 		{
 			self.BasicIntMultOp(Value.DecimalHalf);
-			self.BasicDivOp(AltDec::ENum * Value.IntValue);
+			self.BasicUnsignedDivOp(AltDec::ENum * Value.IntValue);
 			break;
 		}
 		#endif
@@ -47,7 +47,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 			#elif defined(AltNum_EnableDecimaledEFractionals)
 			Value.ConvertToNormType(RepType::ENum);
 			#endif
-			self.BasicDivOp(Value);
+			self.BasicUnsignedDivOp(Value);
 			break;
 		}
 		#endif
@@ -57,7 +57,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 	//Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
 		case RepType::INum:
 		{
-			self.BasicDivOp(Value);
+			self.BasicUnsignedDivOp(Value);
 			if (self.IntValue == AltDec::NegativeRep)
 				self.IntValue = 0;
 			else
@@ -79,7 +79,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		#if defined(AltNum_EnableAlternativeRepFractionals)||defined(AltNum_EnableMixedIFractional)
 		{
 			Value.ConvertToNormalIRep(RRep);
-			self.BasicDivOp(Value);
+			self.BasicUnsignedDivOp(Value);
 			if (self.IntValue == AltDec::NegativeRep)
 				self.IntValue = 0;
 			else
@@ -91,7 +91,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 	#endif*/
 		default:
 			Value.ConvertToNormType(RRep);
-			self.BasicDivOp(Value);
+			self.BasicUnsignedDivOp(Value);
 			break;
 	}
 }
