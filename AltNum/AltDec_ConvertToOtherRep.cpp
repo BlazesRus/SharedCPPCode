@@ -192,7 +192,7 @@ inline void BlazesRusCode::AltDec::ConvertPiByDivToNumByDiv()
 
 inline void BlazesRusCode::AltDec::ConvertFromPiByDivToNorm()
 {
-	PartialIntDiv(-ExtraRep);
+	BasicIntDivOp(-ExtraRep);
 	ExtraRep = 0;
 	__int64 SRep;
 	__int64 divRes;
@@ -294,7 +294,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToNum()
 	int powerExponent = -ExtraRep;
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PiSide.Int32PowOp(powerExponent);
+	PiSide.IntPowOp(powerExponent);
 	BasicMultOp(PiSide);
 }
 
@@ -302,7 +302,7 @@ inline AltDec BlazesRusCode::AltDec::PiPowerNum(int powerExponent)
 {
 	ExtraRep = 0;
 	AltDec PiSide = PiNum;
-	PiSide.Int32PowOp(powerExponent);
+	PiSide.IntPowOp(powerExponent);
 	return PiSide;
 }
 
@@ -318,7 +318,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 		{
 			AltDec PiSide = PiNum;
 			powerExponent -= 1;
-			PiSide.Int32PowOp(powerExponent);
+			PiSide.IntPowOp(powerExponent);
 			BasicMultOp(PiSide);
 		}
 	}

@@ -2147,6 +2147,18 @@ public:
 
 #pragma region ConversionFromType
 #pragma endregion ConversionFromType
+
+		//Based lValue*(2PowOf(rValue))(https://www.geeksforgeeks.org/left-shift-right-shift-operators-c-cpp/)
+		MirroredInt LeftShiftCalc()
+		{
+		
+		}
+		
+		//Based lValue/(2PowOf(rValue))(https://www.geeksforgeeks.org/left-shift-right-shift-operators-c-cpp/)
+		MirroredInt RightShiftCalc()
+		{
+		
+		}
     };
 
 #pragma region ValueDefine Source

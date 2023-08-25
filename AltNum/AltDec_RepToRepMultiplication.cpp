@@ -1,4 +1,4 @@
-﻿#include "AltDec.hpp"
+#include "AltDec.hpp"
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::AltDec::RepType;
 
@@ -196,7 +196,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 }
 #endif
 
-inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec Value)
 {
     //LRep Overrides
 #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)

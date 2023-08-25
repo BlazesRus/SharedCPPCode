@@ -112,7 +112,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 #endif
 		default:
-			self.CatchAllSubtraction(&Value, RepType::PiNum, &RRep);
+			self.CatchAllSubtraction(Value, RepType::PiNum, RRep);
 			break;
 	}
 }
@@ -204,7 +204,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 #endif
 		default:
-			self.CatchAllSubtraction(&Value, RepType::ENum, &RRep);
+			self.CatchAllSubtraction(Value, RepType::ENum, RRep);
 			break;
 	}
 }
@@ -319,7 +319,7 @@ void MixedFracOp(RepType& RRep, AltDec& self, AltDec& Value)
 		}
 		#endif
 		default:
-			self.CatchAllSubtraction(&Value, RepType::MixedFrac, &RRep);
+			self.CatchAllSubtraction(Value, RepType::MixedFrac, RRep);
 			break;
 	}
 }
@@ -387,9 +387,9 @@ void MixedPiEOp(RepType& RRep, AltDec& self, AltDec& Value)
 		}
 		default:
 	#if defined(AltNum_EnableMixedPiFractional)
-			self.CatchAllSubtraction(&Value, RepType::MixedPi, &RRep);
+			self.CatchAllSubtraction(Value, RepType::MixedPi, RRep);
 	#else
-			self.CatchAllSubtraction(&Value, RepType::MixedE, &RRep);
+			self.CatchAllSubtraction(Value, RepType::MixedE, RRep);
 	#endif
 			break;
 	}
@@ -458,7 +458,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 }
 #endif
 
-inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec Value)
 {
 	bool LeftIsNegative = self.IntValue<0;
 #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)//LRep Overrides
@@ -737,7 +737,7 @@ inline void BlazesRusCode::AltDec::RepToRepSubOp(RepType& LRep, RepType& RRep, A
 	#else
             else
 	#endif
-			    self.CatchAllSubtraction(&Value, &LRep, &RRep);
+			    self.CatchAllSubtraction(Value, LRep, RRep);
 			break;
 #endif
 #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later

@@ -5773,6 +5773,7 @@ public:
                 }
                 break;
     #endif
+#endif
     #if defined(AltNum_EnableDecimaledAlternativeFractionals)
                 #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
@@ -5891,7 +5892,7 @@ public:
             #endif
         #endif
                 {
-                    ConvertToNormalIRep(&LRep);
+                    ConvertToNormalIRep(LRep);
                     BasicIntDivOp(rValue);
                 }
                 break;
@@ -6087,6 +6088,7 @@ public:
                 }
                 break;
     #endif
+#endif
     #if defined(AltNum_EnableDecimaledAlternativeFractionals)
                 #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
@@ -6171,7 +6173,7 @@ public:
             #endif
         #endif
                 {
-                    ConvertToNormalIRep(&LRep);
+                    ConvertToNormalIRep(LRep);
                     BasicIntDivOp(rValue);
                 }
                 break;
@@ -7349,7 +7351,7 @@ public:
 	#endif
 
 public:
-        static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec Value);
 
         /// <summary>
         /// Division Operation
@@ -7823,7 +7825,7 @@ public:
         { AltDec self = *this; CatchAllImaginaryMultiplicationV3(rValue); return self; }
 	#endif
 
-        static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& rValue);
+        static void RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec rValue);
 
         /// <summary>
         /// Multiplication Operation
@@ -9506,6 +9508,35 @@ public:
         {
             return *this;
         }
+
+        /// <summary>
+        /// LeftShift operation lValue*(2ToPowOf(rValue))
+        /// (Variation without modifying owner object)
+        /// Based on (https://www.geeksforgeeks.org/left-shift-right-shift-operators-c-cpp/)
+        /// </summary>
+        /// <returns>AltDec &</returns>
+        AltDec operator<<(const AltDec& rValue)//AltDec& operator<<(const AltDec& rValue)
+        {
+            AltDec rightSideMultiplier = Two;
+            rightSideMultiplier.IntPowOp(rValue);
+            AltDec self = *this;
+            return self.MultOp(rightSideMultiplier);
+        }
+
+        /// <summary>
+        /// RightShift operation lValue/(2ToPowOf(rValue))
+        /// (Variation without modifying owner object)
+        /// Based on (https://www.geeksforgeeks.org/left-shift-right-shift-operators-c-cpp/)
+        /// </summary>
+        /// <returns>AltDec &</returns>
+        AltDec operator>>(const AltDec& rValue)//operator<<(const AltDec& rValue)
+        {
+            AltDec rightSideDivisor = Two;
+            rightSideDivisor.IntPowOp(rValue);
+            AltDec self = *this;
+            return self.DivOp(rightSideDivisor);
+        }
+
     #pragma endregion Other Operators
 
     #pragma region Modulus Operations
@@ -9556,10 +9587,10 @@ public:
 
         //Performs modulus operation based on "C = A - B * (A / B)" formula
         template<typename IntType=int>
-        AltDec IntRemOp(IntType RValue)
+        AltDec IntRemOp(const IntType& RValue)
         {
-            AltDec divRes = Int32Division(RValue);
-            AltDec C = *this - divRes.Int32Multiplication(RValue);
+            AltDec divRes = DivideByInt(RValue);
+            AltDec C = *this - divRes.MultipleByInt(RValue);
             return C;
         }
 
@@ -9810,7 +9841,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>AltDec&</returns>
-        AltDec& Floor()
+        AltDec& FloorOp()
         {
             RepType repType = GetRepType();
             switch (repType)
@@ -9840,22 +9871,11 @@ public:
         }
 
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
-        /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
-        /// <returns>AltDec&</returns>
-        template<typename AltDecVariant = AltDec>
-        static AltDec Floor(AltDecVariant Value)
-        {
-            return Value.Floor();
-        }
-
-        /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
-        static AltDec Floor(AltDec Value, int precision)
+        static AltDec Floor(AltDec Value, int precision=0)
         {
             Value.ConvertToNormTypeV2();
             switch (precision)
@@ -9879,7 +9899,7 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>AltDec&</returns>
-        AltDec& Ceil()
+        AltDec& CeilOp()
         {
             RepType repType = GetRepType();
             switch (repType)
@@ -9913,6 +9933,8 @@ public:
             }
             return *this;
         }
+
+        static AltDec Ceil(AltDec Value) { return Value.CeilOp(); }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
@@ -9952,17 +9974,16 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>AltDec&</returns>
-        template<typename AltDecVariant = AltDec>
-        static int CeilInt(AltDecVariant Value)
+        int CeilIntOp()
         {
-            RepType repType = Value.GetRepType();
+            RepType repType = GetRepType();
             switch (repType)
             {
 				case RepType::NormalType:
 					break;
 				case RepType::PiNum:
 				{
-					Value.ConvertPiToNum();//return CeilInt(Value.ConvertPiToNum());
+					ConvertPiToNum();//return CeilInt(ConvertPiToNum());
 					break;
 				}
 	#if defined(AltNum_EnableERep)
@@ -10143,14 +10164,13 @@ public:
 			BasicSqrt(value, precision);
 		}
 
-public:
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        AltDec BasicIntPowOpV2(ValueType expValue)
+        template<typename IntType>
+        AltDec BasicIntPowOp(const IntType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -10203,21 +10223,53 @@ public:
             return *this;
         }
 
-public:
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename IntType>
+        AltDec BasicUIntPowOp(const IntType& expValue)
+        {
+            if (expValue == 1) { return *this; }//Return self
+            else if (expValue == 0)
+            {
+                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+            }
+            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
+                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
+                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                AltDec self = *this;
+                IntValue = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+            }
+            return *this;
+        }
 
-        template<typename ValueType>
-        AltDec BasicIntPowOp(ValueType& expValue) { return BasicIntPowOpV2(expValue); }
+        template<typename IntType>
+        AltDec BasicIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
 
-        template<typename ValueType>
-        AltDec BasicIntPow(ValueType expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
+        template<typename IntType>
+        AltDec BasicUIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
 
-protected:
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        AltDec IntPowOpV2(ValueType expValue)
+        template<typename IntType>
+        AltDec IntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -10239,8 +10291,8 @@ protected:
                 return BasicIntPowOp(expValue);
         }
 
-        template<typename ValueType>
-        AltDec UnsignedIntPowV2(ValueType expValue)
+        template<typename IntType>
+        AltDec UIntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -10259,18 +10311,12 @@ protected:
             else
                 return BasicUIntPowOp(expValue);
         }
-public:
-        template<typename ValueType>
-        AltDec IntPowOp(ValueType& expValue) { return IntPowOpV2(expValue); }
 
-        template<typename ValueType>
-        AltDec UnsignedIntPowOp(ValueType& expValue) { return UnsignedIntPowV2(expValue); }
+        template<typename IntType>
+        AltDec IntPow(const IntType& expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
 
-        template<typename ValueType>
-        AltDec IntPow(ValueType expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
-
-        template<typename ValueType>
-        AltDec UnsignedIntPow(ValueType expValue) { AltDec self = *this; return self.UnsignedIntPowOp(expValue); }
+        template<typename IntType>
+        AltDec UnsignedIntPow(const IntType& expValue) { AltDec self = *this; return self.UIntPowOp(expValue); }
 public:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -10301,7 +10347,7 @@ public:
                 // value by newton's method
                 xK = xPre * nMinus1;
                 xPrePower = xPre.IntPow(nMinus1);
-                xK += DivideBy(xPrePower); (//*this/xPrePower;
+                xK += DivideBy(xPrePower); //*this/xPrePower;
                 xK.IntDivOp(n);
                 delX = AltDec::Abs(xK - xPre);
                 xPre = xK;
