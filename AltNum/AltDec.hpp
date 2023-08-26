@@ -33,7 +33,7 @@
 
 #include "AltNumModChecker.hpp"
 
-//#include "AltNumBase.hpp"
+#include "AltNumBase.hpp"
 //Preprocessor options
 /*
 AltNum_EnableFractionals =
@@ -218,161 +218,6 @@ AltNum_StoreBasicFunctionsInBase
     #define AltNum_EnableApproachingValues
     #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
     //#define AltNum_EnableERep
-#endif
-
-#if defined(AltNum_EnableAutoToggleOfPreferedSettings)
-    #define AltNum_EnablePiRep
-    #define AltNum_EnableInfinityRep
-	#define AltNum_EnableAlternativeRepFractionals
-    #define AltNum_EnableDecimaledPiFractionals
-    #define AltNum_EnableApproachingValues
-    #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
-#endif
-
-#if defined(AltNum_UseDeveloperExtraDefaults)
-    #define AltNum_EnableImaginaryNum
-    #define AltNum_EnableApproachingI
-    #define AltNum_EnableMixedPiFractional
-    #define AltNum_EnableERep
-#endif
-
-//If Pi rep is neither disabled or enabled, default to enabling Pi representation
-#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
-#endif
-
-#if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
-    #undef AltNum_DisablePiRep
-#endif
-
-#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
-    #define AltNum_EnableAlternativeMixedFrac
-    #if !defined(AltNum_EnableMixedFractional)
-        #define AltNum_EnableMixedFractional
-    #endif
-    #if !defined(AltNum_EnableAlternativeRepFractionals)
-        #define AltNum_EnableAlternativeRepFractionals
-    #endif
-    #if !defined(AltNum_EnablePiRep) && defined(AltNum_EnableMixedPiFractional)
-        #define AltNum_EnablePiRep
-    #endif
-    #if !defined(AltNum_EnableERep) && defined(AltNum_EnableMixedEFractional)
-        #define AltNum_EnableERep
-    #endif
-    #if !defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableMixedIFractional)
-        #define AltNum_EnableImaginaryNum
-    #endif
-#endif
-
-#if defined(AltNum_EnableImaginaryInfinity)
-    #define AltNum_EnableImaginaryNum
-	#define AltNum_EnableInfinityRep
-#endif
-
-//Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableImaginaryNum)
-		#undef AltNum_EnableAlternativeRepFractionals//Alternative Fractionals require the related representations enabled
-	#elif !defined(AltNum_EnableFractionals)
-		#define AltNum_EnableFractionals
-	#endif
-#endif
-
-#if defined(AltNum_AvoidUsingLargeInt)
-    #undef AltNum_UseOldDivisionCode
-#endif
-
-//Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
-#if !defined(AltNum_EnableApproachingValues)
-	#if defined(AltNum_EnableApproachingDivided)
-		#define AltNum_EnableApproachingValues
-	#elif defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI)
-		#define AltNum_EnableApproachingValues
-	#endif
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledEFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledIFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledEFractionals)
-    #undef AltNum_EnableDecimaledEFractionals
-#endif
-
-#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledIFractionals)
-    #undef AltNum_EnableDecimaledIFractionals
-#endif
-
-//Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
-#if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePiPowers)
-	#undef AltNum_EnablePiPowers
-#endif
-
-#if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePiPowers)) && defined(AltNum_EnableNormalPowers)
-	#undef AltNum_EnableNormalPowers
-#endif
-
-//Force enable Pi features if near Pi enabled
-#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
-#endif
-
-#if defined(AltNum_EnableApproachingE) && !defined(AltNum_EnableERep)
-	#define AltNum_EnableERep
-#endif
-
-#if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-    #define AltNum_EnableImaginaryNum
-#endif
-
-#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnablePiFractional
-#endif
-#if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableEFractional
-#endif
-#if !defined(AltNum_EnableIFractional) &&defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableIFractional
-#endif
-
-#if defined(AltNum_EnablePiFractional) || defined(AltNum_EnableEFractional) || defined(AltNum_EnableIFractional)
-	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
-#endif
-
-#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
-    #define AltNum_MixedPiOrEEnabled
-#endif
-
-#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedEFractional)
-    #define AltNum_MixedAltEnabled
-#endif
-
-#if defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnableDecimaledPiFractionals)
-    #define AltNum_MixedPiHasDecimaledFracAccess
-#elif defined(AltNum_EnableMixedEFractional) && defined(AltNum_EnableDecimaledEFractionals)
-    #define AltNum_MixedEHasDecimaledFracAccess
-#elif defined(AltNum_EnableMixedIFractional) && defined(AltNum_EnableDecimaledIFractionals)
-    #define AltNum_MixedIHasDecimaledFracAccess
-#endif
-
-#if defined(AltNum_MixedPiHasDecimaledFracAccess) || defined(AltNum_MixedEHasDecimaledFracAccess) || defined(AltNum_MixedPiHasDecimaledFracAccess)
-    #define AltNum_MixedAltFracHasDecimaledFractionalAccess
-#endif
-
-#if defined(AltNum_MixedPiHasDecimaledFracAccess)|| defined(AltNum_MixedEHasDecimaledFracAccess)
-    #define AltNum_MixedPiOrEHasDecimaledFracAccess
-#endif
-
-#if defined(AltNum_EnableDecimaledPiFractionals) || defined(AltNum_EnableDecimaledEFractionals)
-    #define AltNum_EnableDecimaledPiOrEFractionals
 #endif
 
 namespace BlazesRusCode
@@ -4140,6 +3985,7 @@ public:
     #pragma endregion AltDec-To-Int Comparison Methods
 
     #pragma region NormalRep Integer Division Operations
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 
         template<typename IntType=int>
@@ -4270,9 +4116,10 @@ protected:
             else
                 return false;
         }
+#endif
 
 public:
-
+#if !defined(AltNum_StoreBasicFunctionsInBase)
         template<typename IntType=int>
         AltDec& BasicUIntDivOp(const IntType& rValue)
         {
@@ -4314,6 +4161,7 @@ public:
             else if(PartialUIntDivOp(rValue))
                 DecimalHalf = 1;//Prevent Dividing into nothing
         }
+#endif
 
 		void BasicInt32DivOp(signed int& rValue) { BasicIntDivOp(rValue); }
 		void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
@@ -4355,7 +4203,7 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
-
+#if defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 		/// <summary>
         /// Partial Multiplication Operation Between AltDec and Integer Value
@@ -4439,6 +4287,7 @@ protected:
                 }
             }
         }
+#endif
 
 public:
         /// <summary>
@@ -4531,7 +4380,7 @@ public:
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
-
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
         /// <summary>
         /// Addition Operation that skips negative zero(for when decimal half is empty)
@@ -4550,7 +4399,7 @@ protected:
                 IntHalfAdditionOp(rValue);
             return;
         }
-
+#endif
 public:
 
         /// <summary>
@@ -4595,7 +4444,7 @@ public:
 	#pragma endregion NormalRep Integer Addition Operations
 
     #pragma region NormalRep Integer Subtraction Operations
-
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
         /// <summary>
         /// Subtraction Operation that skips negative zero(for when decimal half is empty)
@@ -4615,8 +4464,16 @@ protected:
             return;
         }
 
+#else
+protected:
+        //Derived Functions test to check if properly automatically impli
+        template<typename IntType=int>
+        AltDec& BasicIntSubOverrideOp(const IntType& rValue)
+        {
+            BasicIntSubBaseOp(rValue);
+        }
+#endif
 public:
-
 		/// <summary>
         /// Basic Subtraction Operation between AltDec and Integer value 
         /// that ignores special representation status
@@ -4838,6 +4695,7 @@ public:
     #pragma endregion Mixed Fraction Operations
 
 	#pragma region NormalRep AltNum Division Operations
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 		/// <summary>
         /// Basic Division Operation(main code block)
@@ -4922,6 +4780,29 @@ protected:
             else
                 return false;
         }
+#else
+		/// <summary>
+        /// Basic Division Operation(main code block)
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rValue</param
+        bool PartialDivOp(const AltDec& rValue)
+        {
+            PartialDivBaseOp(rValue);
+        }
+
+		/// <summary>
+        /// Basic Division Operation(main code block)
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rValue</param
+        bool PartialUnsignedDivOp(const AltDec& rValue)
+        {
+            PartialUnsignedDivBaseOp(rValue);
+        }
+#endif
 public:
 
 		/// <summary>
@@ -4974,7 +4855,7 @@ public:
         
 	#pragma region NormalRep AltNum Multiplication Operations
 public:
-		
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 		/// <summary>
         /// Basic Multiplication Operation that ignores special decimal status
         /// Return true if divide into zero
@@ -5475,15 +5356,48 @@ public:
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
-#if defined(AltNum_DisableMultiplyDownToNothingPrevention)
+    #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
                 ExtraRep = 0;
-#else
+    #else
             if(DecimalHalf==0&&IntValue==0)
                 DecimalHalf = 1;
-#endif
+    #endif
             return *this;
 		}
+#else
+		/// <summary>
+        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDec
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+		AltDec& BasicMultOp(const AltDec& rValue)
+		{
+            AltDec& Res =  BasicMultBaseOp(rValue);
+    #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
+                ExtraRep = 0;
+    #endif
+            return Res;
+        }
+
+		/// <summary>
+        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDec
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+		AltDec& BasicUnsignedMultOp(const AltDec& rValue)
+		{
+            AltDec& Res =  BasicUnsignedMultBaseOp(rValue);
+    #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
+                ExtraRep = 0;
+    #endif
+            return Res;
+        }
+#endif
 
         AltDec BasicMult(const AltDec& rValue) { AltDec self = *this; self.BasicUnsignedDivOp(rValue); return self; }
 
@@ -5505,7 +5419,7 @@ public:
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
-
+#if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
         /// Basic Addition Operation
         /// (Modifies owner object)
@@ -5585,11 +5499,26 @@ public:
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
+#else
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicAddOp(const AltDec& rValue) { BasicAddBaseOp(rValue); }
+
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicUnsignedAddOp(const AltDec& rValue) { BasicUnsignedAddBaseOp(rValue); }
+#endif
 
 	#pragma endregion NormalRep AltNum Addition Operations
         
 	#pragma region NormalRep AltNum Subtraction Operations
-
+#if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
         /// Basic Subtraction Operation
         /// (Modifies owner object)
@@ -5671,7 +5600,21 @@ public:
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
+#else
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicSubOp(const AltDec& rValue) { BasicSubBaseOp(rValue); }
 
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void BasicUnsignedSubOp(const AltDec& rValue) { BasicUnsignedSubBaseOp(rValue); }
+#endif
 	#pragma endregion NormalRep AltNum Subtraction Operations
 	
     #pragma region Other Division Operations
@@ -12207,7 +12150,6 @@ public:
                 return Tan(Pi * Value / 180);
             }
         }
-
         /// <summary>
         /// Gets Inverse Tangent from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
