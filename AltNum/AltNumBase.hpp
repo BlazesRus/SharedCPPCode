@@ -345,6 +345,110 @@ namespace BlazesRusCode
 
     #pragma region From Standard types to this type
 
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetFloatVal(const float& Value)
+        {
+            bool IsNegative = Value < 0.0f;
+            if (IsNegative) { Value *= -1.0f; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (Value >= 2147483648.0f)
+            {
+                if (IsNegative)
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(Value);
+                DecimalHalf = (signed int)((Value - (float)WholeValue) * 10000000000.0f);
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = IsNegative ? NegativeRep : 0;
+            }
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetDoubleVal(const double& Value)
+        {
+            bool IsNegative = Value < 0.0;
+            if (IsNegative) { Value *= -1.0; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (Value >= 2147483648.0)
+            {
+                if (IsNegative)
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(Value);
+                DecimalHalf = (signed int)((Value - (double)WholeValue) * 10000000000.0);
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = IsNegative ? NegativeRep : 0;
+            }
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetDecimalVal(const ldouble& Value)
+        {
+            bool IsNegative = Value < 0.0L;
+            if (IsNegative) { Value *= -1.0L; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (Value >= 2147483648.0L)
+            {
+                if (IsNegative)
+                    IntValue = -2147483647;
+                else
+                    IntValue = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(Value);
+                Value -= ;
+                DecimalHalf = (signed int)(Value-(ldouble)(WholeValue) * 10000000000.0L);
+                if(DecimalHalf!=0)
+                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                else
+                    IntValue = IsNegative ? NegativeRep : 0;
+            }
+        }
+
+        /// <summary>
+        /// Sets the value(false equals zero; otherwise is true).
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetBooleanVal(const bool& Value)
+        {
+            IntValue = Value ? 1 : 0;
+            DecimalHalf = 0;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetIntVal(const int& Value)
+        {
+            IntValue = Value; DecimalHalf = 0;
+        }
+
     #pragma endregion From this type to Standard types
 
     #pragma region MirroredIntBased Operations

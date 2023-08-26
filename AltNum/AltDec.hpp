@@ -275,9 +275,9 @@ namespace BlazesRusCode
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
 #if !defined(AltDec_UseMirroredInt)
-        signed int IntValue;
+        //signed int IntValue;////Defined in base class
 #else
-        MirroredInt IntValue;
+        //MirroredInt IntValue;
 #endif
 
         bool IsNegative()
@@ -292,7 +292,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
-        signed int DecimalHalf;
+        //signed int DecimalHalf;//Defined in base class
 		
         /// <summary>
 		/// (Used exclusively for alternative represents of numbers including imaginery numbers and for fractionals)
@@ -317,17 +317,7 @@ namespace BlazesRusCode
             return IntValue != 0 && IntValue != NegativeRep;
         }
 
-        signed int GetIntHalf()
-        {
-#if defined(AltDec_UseMirroredInt)
-            return IntValue.GetValue();
-#else
-            if(IntValue == NegativeRep)
-                return 0;
-            else
-                return IntValue;
-#endif
-        }
+        using GetIntHalf::GetIntHalf;
 
         //Return IntValue part as Absolute value
         signed int IntHalfAsAbs()
@@ -1731,106 +1721,49 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(float Value)
+        void SetFloatVal(const float& Value)
         {
-            bool IsNegative = Value < 0.0f;
-            if (IsNegative) { Value *= -1.0f; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0f)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (float)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
+            AltNumBase::SetFloatVal(Value);
+            ExtraRep = 0;
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(double Value)
+        void SetDoubleVal(const double& Value)
         {
-            bool IsNegative = Value < 0.0;
-            if (IsNegative) { Value *= -1.0; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (double)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
+            AltNumBase::SetDoubleVal(Value);
+            ExtraRep = 0;
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(ldouble Value)
+        void SetDecimalVal(const ldouble& Value)
         {
-            bool IsNegative = Value < 0.0L;
-            if (IsNegative) { Value *= -1.0L; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0L)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (ldouble)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
+            AltNumBase::SetDecimalVal(Value);
+            ExtraRep = 0;
         }
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(bool Value)
+        void SetBooleanVal(const bool& Value)
         {
-            IntValue = Value==false ? 0 : 1;
-            DecimalHalf = 0;
+            AltNumBase::SetBooleanVal(Value);
+            ExtraRep = 0;
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(int Value)
+        void SetIntVal(const int& Value)
         {
-            IntValue = Value; DecimalHalf = 0;
+            IntValue = Value; DecimalHalf = 0; ExtraRep = 0;
         }
 
         /// <summary>
@@ -1848,7 +1781,7 @@ public:
         /// <param name="Value">The value.</param>
         AltDec(double Value)
         {
-            this->SetVal(Value);
+            this->SetDoubleVal(Value);
         }
 
         /// <summary>
@@ -1857,7 +1790,7 @@ public:
         /// <param name="Value">The value.</param>
         AltDec(ldouble Value)
         {
-            this->SetVal(Value);
+            this->SetDecimalVal(Value);
         }
 
         /// <summary>
@@ -1866,7 +1799,7 @@ public:
         /// <param name="Value">The value.</param>
         AltDec(bool Value)
         {
-            this->SetVal(Value);
+            this->SetBooleanVal(Value);
         }
 
     #if defined(AltNum_EnableMediumDecBasedSetValues)
