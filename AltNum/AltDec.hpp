@@ -1721,7 +1721,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetFloatVal(const float& Value)
+        virtual void SetFloatVal(const float& Value)
         {
             AltNumBase::SetFloatVal(Value);
             ExtraRep = 0;
@@ -1731,7 +1731,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDoubleVal(const double& Value)
+        virtual void SetDoubleVal(const double& Value)
         {
             AltNumBase::SetDoubleVal(Value);
             ExtraRep = 0;
@@ -1741,7 +1741,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDecimalVal(const ldouble& Value)
+        virtual void SetDecimalVal(const ldouble& Value)
         {
             AltNumBase::SetDecimalVal(Value);
             ExtraRep = 0;
@@ -1751,7 +1751,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetBooleanVal(const bool& Value)
+        virtual void SetBooleanVal(const bool& Value)
         {
             AltNumBase::SetBooleanVal(Value);
             ExtraRep = 0;
@@ -1761,7 +1761,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetIntVal(const int& Value)
+        virtual void SetIntVal(const int& Value)
         {
             IntValue = Value; DecimalHalf = 0; ExtraRep = 0;
         }
