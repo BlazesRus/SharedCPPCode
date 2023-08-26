@@ -1090,11 +1090,7 @@ namespace BlazesRusCode
         void SetAsApproachingMidRight(int value, int Divisor=0)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
-			#if defined(AltNum_EnableApproachingDivided)
             ExtraRep = Divisor;
-			#else
-            ExtraRep = 0;
-			#endif
         }
             #endif
         #endif
