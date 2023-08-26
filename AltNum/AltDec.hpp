@@ -41,16 +41,16 @@ AltNum_EnableFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
       (Enables NumByDiv etc)
 AltNum_EnableAlternativeRepFractionals =
-      Enables integer based fractionals for alternative representations such as Pi(partially implimented)
+      Enables integer based fractionals for alternative representations such as Pi(partially Implemented)
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
       When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
-	 (Mostly Implimented)
+	 (Mostly Implemented)
 AltNum_EnableApproachingValues
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483646 and ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
-     (Not Fully Implimented)
+     (Not Fully Implemented)
 AltNum_EnableApproachingPi = Enables IntValue.9..9*Pi representation
 AltNum_EnableApproachingE = Enables IntValue.9..9*e representation
 AltNum_EnableApproachingI = Enables IntValue.9..9*i representation
@@ -58,37 +58,37 @@ AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
 	When DecimalHalf is -2147483647 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
 	When DecimalHalf is -2147483646 and ExtraRep>1, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
-	(Partially Implimented)
+	(Partially Implemented)
 
 
 AltNum_EnableInfinityPowers =
       Allows powers of infinity for operations where infinity is somehow more infinite than normal
-      (Not Implimented)
+      (Not Implemented)
 
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 //----
 
 AltNum_EnableNaN =
-      Enable NaN based representations and operations(Not Fully Implimented)
+      Enable NaN based representations and operations(Not Fully Implemented)
 
 AltNum_EnableHigherPrecisionPiConversion =
-      (Not Implimented)
+      (Not Implemented)
 
 AltNum_UseAltDecBasedRepresentations =
       Forces to calculate certain representations like AltDec does 
       (preference for storing non-normal representations within value of negative DecimalHalf)
-	  (Not Implimented)
+	  (Not Implemented)
 	  
 AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
-      (Not Implimented Yet)
+      (Not Implemented Yet)
 	  
-AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully implimented)
+AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully Implemented)
 
 AltNum_DisablePiRep =
       Force toggles AltNum_EnablePiRep to off
-      AltNum_EnablePiRep given greator priority if both both AltNum_DisablePiRep and AltNum_EnablePiRep
+      AltNum_EnablePiRep given greater priority if both both AltNum_DisablePiRep and AltNum_EnablePiRep
       are set by preprocessor settings of project
 
 AltNum_EnablePiRep =
@@ -97,22 +97,22 @@ AltNum_EnablePiRep =
         (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*Pi))
       Otherwise represents Pi within format of
          If DecimalHalf is positive and ExtraRep is -2147483647,
-         then AltDec represents +- 2147483647.999999999 * Pi (Not Fully Implimented)
+         then AltDec represents +- 2147483647.999999999 * Pi (Not Fully Implemented)
          If DecimalHalf is positive and and ExtraRep is between AlternativeFractionalLowerBound and 0,
          then AltDec represents (+- 2147483647.999999999 * Pi)/(ExtraRep*-1)
-	  (Not Fully Implimented--Enabled by default if AltNum_DisablePiRep not set)
+	  (Not Fully Implemented--Enabled by default if AltNum_DisablePiRep not set)
 
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
 If AltNum_EnableFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
 Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
 (Might be better to just store as formula class feature or as another number class holding 2 AltDec or other AltNum values)
-      (Requires AltNum_EnableImaginaryNum, Not Implimented)
+      (Requires AltNum_EnableImaginaryNum, Not Implemented)
 
 AltNum_EnableMixedFractional =
       If DecimalHalf is negative and ExtraRep is Positive,
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
-      (Not Fully Implimented)
+      (Not Fully Implemented)
 
 AltNum_EnableERep =
       If AltNum_UseAltDecBasedRepresentations enabled, then
@@ -123,21 +123,21 @@ AltNum_EnableERep =
        represents +- 2147483647.999999999 * e
     If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
         represents (+- 2147483647.999999999 * e)/(ExtraRep*-1)
-      (Not Fully Implimented)
+      (Not Fully Implemented)
 
 AltNum_EnableImaginaryNum =
       If DecimalHalf is positive and ExtraRep is -2147483647, then
       represents +- 2147483647.999999999i
       If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
       represents (+- 2147483647.999999999i)/(ExtraRep*-1)
-      (Not Fully Implimented--Giving lesser priority to finish unless I need to use)
+      (Not Fully Implemented--Giving lesser priority to finish unless I need to use)
 
 //----
 AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
 
-AltNum_DisableAutoToggleOfPreferedSettings =
-      If not toggled, force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep,
+AltNum_EnableAutoToggleOfPreferredSettings =
+      Force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep,
 	  AltNum_EnableAlternativeRepFractionals & AltNum_EnableDecimaledPiFractionals
 
 AltNum_DisableSwitchBasedConversion =
@@ -149,25 +149,25 @@ AltNum_EnableDecimaledAlternativeFractionals =
    Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
 
 ---Only one of the next set of 5 switches can be enabled at once:
-AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not implimented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
 
 AltNum_EnablePiPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
-      (Not Fully Implimented)
+      (Not Fully Implemented)
 AltNum_EnableNormalPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf^(ExtraRep*-1)
 	  Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePiPowers
-      (Not Implimented)
+      (Not Implemented)
 ----===============================================================================================================
 
 AltNum_OutputTruncatedTrailingDigits =
-    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
-	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
+    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
+	(Implement this before work to making working version with trailing digits such as for MixedDec (fixed point combined with floating point implementations of decimal-like format classes)
 
-AltNum_UseOldDivisionCode = Depressated (Working on removing all traces)
+AltNum_UseOldDivisionCode = Deprecated (Working on removing all traces)
 AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
 AltNum_UseOldRemOpCode
 
@@ -179,28 +179,28 @@ Only one of 3 alternative mixed fraction representations can be enabled at a tim
 AltNum_EnableMixedPiFractional
 AltNum_EnableMixedEFractional
 AltNum_EnableMixedIFractional
-Autotoggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
-Autotoggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
+Auto toggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
+Auto toggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
 
 AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
 
 
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc
 AltNum_EnableWithinMinMaxRange
-AltNum_EnableUnknownTrigExpressions = (Not Implimented)
+AltNum_EnableUnknownTrigExpressions = (Not Implemented)
 
 AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
 AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
 AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 
-AltNum_EnablePiFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnablePiRep enabled without AltNum_EnableDecimaledPiFractionals toggled
-AltNum_EnableEFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableERep enabled without AltNum_EnableDecimaledEFractionals toggled
-AltNum_EnableIFractional = Autotoggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableImaginaryNum enabled without AltNum_EnableDecimaledIFractionals toggled
-AltNum_UsingAltFractional = Autotoggled if any of the above 3 are toggled
+AltNum_EnablePiFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnablePiRep enabled without AltNum_EnableDecimaledPiFractionals toggled
+AltNum_EnableEFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableERep enabled without AltNum_EnableDecimaledEFractionals toggled
+AltNum_EnableIFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableImaginaryNum enabled without AltNum_EnableDecimaledIFractionals toggled
+AltNum_UsingAltFractional = Auto toggled if any of the above 3 are toggled
 
 AltDec_UseMirroredInt
-AltNum_UseDeveloperExtraDefaults = Autotoggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
-AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bitchecks instead of case statements(Not implimented yet)
+AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
+AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bit checks instead of case statements(Not Implemented yet)
 
 AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
 */
@@ -235,39 +235,39 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API AltDec : public virtual AltNumBase
+    class DLL_API AltDec : public AltNumBase
     {
     public:
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
+        //static signed int const DecimalOverflow = 1000000000;
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
+        //static signed _int64 const DecimalOverflowX = 1000000000;
 
 	protected:
         /// <summary>
         /// The decimal overflow value * -1
         /// </summary>
-		static signed _int64 const NegDecimalOverflowX = -1000000000;
+		//static signed _int64 const NegDecimalOverflowX = -1000000000;
 	public:
 
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
-        using ldouble = long double;
+        //using ldouble = long double;
 
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
 #if !defined(AltDec_UseMirroredInt)
-        static signed int const NegativeRep = -2147483648;
+        //static signed int const NegativeRep = -2147483648;
 #else
-        static MirroredInt NegativeRep;
-        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
+        //static MirroredInt NegativeRep;
+        //static signed int const NegativeRepVal = MirroredInt::NegativeRep;
 #endif
 
         /// <summary>
@@ -368,10 +368,10 @@ namespace BlazesRusCode
         } const
 
         //Detect if at exactly zero
-		bool IsZero()
+        bool const IsZero() const
 		{
             return DecimalHalf==0&&IntValue==0;
-		} const
+		}
 
         /// <summary>
         /// Sets the value.
@@ -381,7 +381,7 @@ namespace BlazesRusCode
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
-        } const
+        }
 
         void SetAsZero()
         {
@@ -392,7 +392,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        //void SwapNegativeStatus()
+        using AltNumBase::SwapNegativeStatus;
 
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
@@ -501,7 +501,7 @@ namespace BlazesRusCode
             ComplexIRep = 255,
 		#endif
 	#endif
-	#if defined(AltNum_EnableMixedFractional)
+#if defined(AltNum_EnableMixedFractional)
             MixedFrac = 32,//IntValue +- (-DecimalHalf)/ExtraRep
             #if defined(AltNum_EnableMixedPiFractional)
             MixedPi = 33,//IntValue +- (-DecimalHalf/-ExtraRep)
@@ -714,7 +714,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        RepType const GetRepType()
+        RepType GetRepType() const
         {
 		#if defined(AltNum_EnableInfinityRep)
             if(DecimalHalf==InfinityRep)
@@ -806,7 +806,6 @@ namespace BlazesRusCode
 			}
 			else if(IntValue==0&&DecimalHalf==0)
 			{
-				ExtraRep = 0;
 				return RepType::NormalType;
 			}
 	#ifdef AltNum_EnablePiRep
@@ -1114,7 +1113,6 @@ namespace BlazesRusCode
             ExtraRep = ERep;
         }
 			#endif
-		#endif
 	#endif
 
 	#if defined(AltNum_EnableApproachingI)
@@ -1651,7 +1649,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(const float& Value)
+        void SetFloatVal(const float& Value)
         {
             AltNumBase::SetFloatVal(Value);
             ExtraRep = 0;
@@ -1661,7 +1659,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(const double& Value)
+        void SetDoubleVal(const double& Value)
         {
             AltNumBase::SetDoubleVal(Value);
             ExtraRep = 0;
@@ -1671,7 +1669,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const ldouble& Value)
         {
             AltNumBase::SetDecimalVal(Value);
             ExtraRep = 0;
@@ -1681,7 +1679,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetBooleanVal(const bool& Value)
+        void SetBooleanVal(const bool& Value)
         {
             AltNumBase::SetBooleanVal(Value);
             ExtraRep = 0;
@@ -1691,7 +1689,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetIntVal(const int& Value)
+        void SetIntVal(const int& Value)
         {
             IntValue = Value; DecimalHalf = 0; ExtraRep = 0;
         }
@@ -1702,7 +1700,7 @@ public:
         /// <param name="Value">The value.</param>
         AltDec(float Value)
         {
-            this->SetVal(Value);
+            this->SetFloatVal(Value);
         }
 
         /// <summary>
@@ -1742,340 +1740,340 @@ public:
 
     #pragma region MirroredIntBased Operations
 
-        template<typename IntType=int>
-        void IntHalfDivision(IntType RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value /= RValue;
-        #else
-            IntValue.DivideByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-            if(RValue<0)
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                    IntValue.Value -= NegativeRepVal;
-                    RValue -= NegativeRepVal;
-                    IntValue.Value /= RValue; 
-                }
-                else
-                {
-
-                } 
-            }
-            else
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                }
-                else
-                {
-                    IntValue.Value /= RValue;
-                } 
-            }
-    #else
-            IntValue.DivideByOp(RValue);
-    #endif
-#else
-            IntValue /= RValue;
-#endif
-        }
-
-        //this is reference version
-        template<typename IntType=int>
-        void IntHalfDivisionOp(IntType& RValue) { IntHalfDivision(RValue); }
-
-        template<typename IntType=int>
-        void IntHalfMultiplication(IntType RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value *= RValue;
-        #else
-            IntValue.MultipleByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
-        #else
-            if(RValue<0)
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                    IntValue.Value -= NegativeRepVal;
-                    RValue -= NegativeRepVal;
-                    IntValue.Value *= RValue;
-                }
-                else
-                {
-
-                } 
-            }
-            else
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                }
-                else
-                {
-                    IntValue.Value *= RValue;
-                } 
-            }
-        #endif
-    #else
-            IntValue.MultipleByOp(RValue);
-    #endif
-#else
-            if(IntValue!=0&&IntValue!=NegativeRep)
-                IntValue *= RValue;
-#endif
-        }
-
-        template<typename IntType=int>
-        void UIntHalfMultiplication(IntType RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value *= RValue;
-        #else
-            IntValue.MultipleByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
-        #else
-            if(IntValue.Value>=NegativeRepVal)//Currently Negative
-            {
-            }
-            else
-            {
-                IntValue.Value *= RValue;
-            }
-        #endif
-    #else
-            IntValue.MultipleByOp(RValue);
-    #endif
-#else
-            if(IntValue!=0&&IntValue!=NegativeRep)
-                IntValue *= RValue;
-#endif
-        }
-
-        //this is reference version
-        template<typename IntType=int>
-        void IntHalfMultiplicationOp(IntType& RValue) { IntHalfMultiplication(RValue); }
-
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
-        template<typename IntType>
-        void IntHalfAdditionOp(const IntType& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue += RValue;
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-        #else
-        #endif
-    #endif
-#else//Can be used without modifying RValue
-            if (RValue==0)
-                return;
-            if (IntValue == 0)
-                IntValue = RValue;
-            else if (IntValue == NegativeRep)
-            {
-                //-0.XXXX + 2 = 1.XXXX
-                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
-                //-0.XXXX + -5 = -5.XXXX
-                if (RValue < 0)
-                {
-                    IntValue = RValue;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-                else//(RValue>=0)
-                    IntValue = (int)RValue - 1;
-            }
-            else if (IntValue < 0)
-            {
-                //-1.XXXX + -5 = -6.XXXX
-                //-6.XXXX + 5 = -1.XXXX
-                //-6.XXXX + 6 = -0.XXXX
-                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
-                //-5.XXXX + 7 = 1.XXXX
-                int InvertedLValue = -IntValue;
-                if (IntValue == InvertedLValue)
-                    IntValue = NegativeRep;
-                else if (RValue > InvertedLValue)
-                    IntValue += (int)RValue - 1;
-                else
-                {
-                    IntValue += (int)RValue;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-            }
-            else
-            {
-                //5.XXXX + 5 = 10.XXXX
-                //5.XXXX + -5 = 0.XXXX
-                //5.XXXX + -6 = -0.XXXX (Flips to other side)
-                //5.XXXX + -7 = -1.XXXX 
-                int InversionPoint = -IntValue - 1;
-                if (RValue == InversionPoint)
-                    IntValue = NegativeRep;
-                else if (RValue < InversionPoint)
-                {
-                    IntValue = (int)RValue + 1;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-                else
-                    IntValue += (int)RValue;
-            }
-#endif
-        }
-
-        //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
-        //this is copy by value and pointer version
-        template<typename IntType>
-        void IntHalfSubtractionOp(const IntType& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue -= RValue;
-    #endif
-#else//Can be used without modifying RValue
-            if (RValue==0)
-                return;
-            if (IntValue == 0)
-                IntValue = -(int)RValue;
-            else if (IntValue == NegativeRep)
-            {
-                //-0.XXXX - -2 = 1.XXXX
-                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
-                //-0.XXXX - 1 = -1.XXXX 
-                //-0.XXXX - 6 = -6.XXXX
-                if (RValue < 0)
-                    IntValue = -(int)RValue - 1;
-                else
-                {
-                    IntValue = -(int)RValue;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-            }
-            else if (IntValue < 0)
-            {
-                //-5.XXXX - -7 = 1.XXXX 
-                //-5.XXXX - -6 = 0.XXXX            
-                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
-                //-5.XXXX - -4 = -1.XXXX
-                if (RValue == IntValue)
-                    IntValue = NegativeRep;
-                else if (RValue < IntValue)
-                    IntValue -= (int)RValue - 1;
-                else//(RValue>=LValue.Value)
-                {
-                    IntValue -= (int)RValue;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-            }
-            else
-            {
-                //5.XXXX - -5 = 10.XXXX
-                //5.XXXX - 5 = 0.XXXX
-                //5.XXXX - 6 = -0.XXXX (Flips to other side)
-                //5.XXXX - 7 = -1.XXXX
-                int InversionPoint = IntValue + 1;
-                if (RValue == InversionPoint)
-                    IntValue = NegativeRep;
-                else if (RValue > InversionPoint)
-                {
-                    IntValue -= (int)RValue - 1;
-                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
-                    if (IntValue == NegativeRep)
-                        throw "MirroredInt value has underflowed";
-                    #endif
-                }
-                else
-                    IntValue += (int)RValue;
-            }
-#endif
-        }
-
-		bool IntPartEqualTo(AltDec& RValue)
-		{
-            return IntValue == RValue.IntValue;
-        }
-
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
-
-        template<typename IntType=int>
-        bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
-
-		bool IntPartNotEqualTo(AltDec& RValue)
-		{
-            return IntValue != RValue.IntValue;
-        }
-
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
-
-        template<typename IntType=int>
-        bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
-
-        /// <summary>
-        /// Less than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec>
-		bool IntHalfLessThan(AltDecVariant RValue)
-		{
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue<RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-                return RValue.IntValue < 0 && RValue.IntValue != NegativeRep;
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue < 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue<RValue.IntValue;
-#endif
-		}
-		
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
+//        template<typename IntType=int>
+//        void IntHalfDivision(IntType RValue)
+//        {
+//#if defined(AltDec_UseMirroredInt)
+//    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+//            IntValue.Value /= RValue;
+//        #else
+//            IntValue.DivideByOp(RValue);
+//        #endif
+//    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+//            if(RValue<0)
+//            {
+//                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+//                {
+//                    IntValue.Value -= NegativeRepVal;
+//                    RValue -= NegativeRepVal;
+//                    IntValue.Value /= RValue; 
+//                }
+//                else
+//                {
+//
+//                } 
+//            }
+//            else
+//            {
+//                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+//                {
+//                }
+//                else
+//                {
+//                    IntValue.Value /= RValue;
+//                } 
+//            }
+//    #else
+//            IntValue.DivideByOp(RValue);
+//    #endif
+//#else
+//            IntValue /= RValue;
+//#endif
+//        }
+//
+//        //this is reference version
+//        template<typename IntType=int>
+//        void IntHalfDivision(IntType& RValue) { IntHalfDivision(RValue); }
+//
+//        template<typename IntType=int>
+//        void IntHalfMultiplication(IntType RValue)
+//        {
+//#if defined(AltDec_UseMirroredInt)
+//    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+//            IntValue.Value *= RValue;
+//        #else
+//            IntValue.MultipleByOp(RValue);
+//        #endif
+//    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+//        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+//            IntValue.MultipleByOp(RValue);
+//        #else
+//            if(RValue<0)
+//            {
+//                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+//                {
+//                    IntValue.Value -= NegativeRepVal;
+//                    RValue -= NegativeRepVal;
+//                    IntValue.Value *= RValue;
+//                }
+//                else
+//                {
+//
+//                } 
+//            }
+//            else
+//            {
+//                if(IntValue.Value>=NegativeRepVal)//Currently Negative
+//                {
+//                }
+//                else
+//                {
+//                    IntValue.Value *= RValue;
+//                } 
+//            }
+//        #endif
+//    #else
+//            IntValue.MultipleByOp(RValue);
+//    #endif
+//#else
+//            if(IntValue!=0&&IntValue!=NegativeRep)
+//                IntValue *= RValue;
+//#endif
+//        }
+//
+//        template<typename IntType=int>
+//        void UIntHalfMultiplication(IntType RValue)
+//        {
+//#if defined(AltDec_UseMirroredInt)
+//    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
+//            IntValue.Value *= RValue;
+//        #else
+//            IntValue.MultipleByOp(RValue);
+//        #endif
+//    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+//        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+//            IntValue.MultipleByOp(RValue);
+//        #else
+//            if(IntValue.Value>=NegativeRepVal)//Currently Negative
+//            {
+//            }
+//            else
+//            {
+//                IntValue.Value *= RValue;
+//            }
+//        #endif
+//    #else
+//            IntValue.MultipleByOp(RValue);
+//    #endif
+//#else
+//            if(IntValue!=0&&IntValue!=NegativeRep)
+//                IntValue *= RValue;
+//#endif
+//        }
+//
+//        //this is reference version
+//        template<typename IntType=int>
+//        void IntHalfMultiplication(IntType& RValue) { IntHalfMultiplication(RValue); }
+//
+//        //Replace usage of IntValue += RValue; with AltNumBase::IntHalfAddition(RValue); or AltNumBase::IntHalfAddition(RValue);
+//        template<typename IntType>
+//        void AltNumBase::IntHalfAddition(const IntType& RValue)
+//        {
+//#if defined(AltDec_UseMirroredInt)
+//    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//            IntValue += RValue;
+//    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
+//        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
+//        #else
+//        #endif
+//    #endif
+//#else//Can be used without modifying RValue
+//            if (RValue==0)
+//                return;
+//            if (IntValue == 0)
+//                IntValue = RValue;
+//            else if (IntValue == NegativeRep)
+//            {
+//                //-0.XXXX + 2 = 1.XXXX
+//                //-0.XXXX + 1 = 0.XXXX (Flips to other side)
+//                //-0.XXXX + -5 = -5.XXXX
+//                if (RValue < 0)
+//                {
+//                    IntValue = RValue;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//                else//(RValue>=0)
+//                    IntValue = (int)RValue - 1;
+//            }
+//            else if (IntValue < 0)
+//            {
+//                //-1.XXXX + -5 = -6.XXXX
+//                //-6.XXXX + 5 = -1.XXXX
+//                //-6.XXXX + 6 = -0.XXXX
+//                //-5.XXXX + 6 = 0.XXXX (Flips to other side)
+//                //-5.XXXX + 7 = 1.XXXX
+//                int InvertedLValue = -IntValue;
+//                if (IntValue == InvertedLValue)
+//                    IntValue = NegativeRep;
+//                else if (RValue > InvertedLValue)
+//                    IntValue += (int)RValue - 1;
+//                else
+//                {
+//                    IntValue += (int)RValue;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//            }
+//            else
+//            {
+//                //5.XXXX + 5 = 10.XXXX
+//                //5.XXXX + -5 = 0.XXXX
+//                //5.XXXX + -6 = -0.XXXX (Flips to other side)
+//                //5.XXXX + -7 = -1.XXXX 
+//                int InversionPoint = -IntValue - 1;
+//                if (RValue == InversionPoint)
+//                    IntValue = NegativeRep;
+//                else if (RValue < InversionPoint)
+//                {
+//                    IntValue = (int)RValue + 1;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//                else
+//                    IntValue += (int)RValue;
+//            }
+//#endif
+//        }
+//
+//        //Replace usage of IntValue -= RValue; with AltNumBase::IntHalfSubtraction(RValue);
+//        //this is copy by value and pointer version
+//        template<typename IntType>
+//        void AltNumBase::IntHalfSubtraction(const IntType& RValue)
+//        {
+//#if defined(AltDec_UseMirroredInt)
+//    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
+//            IntValue -= RValue;
+//    #endif
+//#else//Can be used without modifying RValue
+//            if (RValue==0)
+//                return;
+//            if (IntValue == 0)
+//                IntValue = -(int)RValue;
+//            else if (IntValue == NegativeRep)
+//            {
+//                //-0.XXXX - -2 = 1.XXXX
+//                //-0.XXXX - -1 = 0.XXXX (Flips to other side)
+//                //-0.XXXX - 1 = -1.XXXX 
+//                //-0.XXXX - 6 = -6.XXXX
+//                if (RValue < 0)
+//                    IntValue = -(int)RValue - 1;
+//                else
+//                {
+//                    IntValue = -(int)RValue;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//            }
+//            else if (IntValue < 0)
+//            {
+//                //-5.XXXX - -7 = 1.XXXX 
+//                //-5.XXXX - -6 = 0.XXXX            
+//                //-5.XXXX - -5 = -0.XXXX (Flips to other side)
+//                //-5.XXXX - -4 = -1.XXXX
+//                if (RValue == IntValue)
+//                    IntValue = NegativeRep;
+//                else if (RValue < IntValue)
+//                    IntValue -= (int)RValue - 1;
+//                else//(RValue>=LValue.Value)
+//                {
+//                    IntValue -= (int)RValue;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//            }
+//            else
+//            {
+//                //5.XXXX - -5 = 10.XXXX
+//                //5.XXXX - 5 = 0.XXXX
+//                //5.XXXX - 6 = -0.XXXX (Flips to other side)
+//                //5.XXXX - 7 = -1.XXXX
+//                int InversionPoint = IntValue + 1;
+//                if (RValue == InversionPoint)
+//                    IntValue = NegativeRep;
+//                else if (RValue > InversionPoint)
+//                {
+//                    IntValue -= (int)RValue - 1;
+//                    #if !defined(BlazesMirroredInt_PreventNZeroUnderflowCheck)
+//                    if (IntValue == NegativeRep)
+//                        throw "MirroredInt value has underflowed";
+//                    #endif
+//                }
+//                else
+//                    IntValue += (int)RValue;
+//            }
+//#endif
+//        }
+//
+//		bool IntPartEqualTo(AltDec& RValue)
+//		{
+//            return IntValue == RValue.IntValue;
+//        }
+//
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
+//
+//        template<typename IntType=int>
+//        bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
+//
+//		bool IntPartNotEqualTo(AltDec& RValue)
+//		{
+//            return IntValue != RValue.IntValue;
+//        }
+//
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
+//
+//        template<typename IntType=int>
+//        bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
+//
+//        /// <summary>
+//        /// Less than Operation for just IntValue section
+//        /// </summary>
+//        /// <param name="LValue">The left side value</param>
+//        /// <param name="RValue">The right side value</param>
+//        /// <returns>bool</returns>
+//        template<typename AltDecVariant = AltDec>
+//		bool IntHalfLessThan(AltDecVariant RValue)
+//		{
+//#if defined(AltDec_UseMirroredInt)
+//            if(IntValue<RValue)
+//                return true;
+//            else
+//                return false;
+//#else
+//            if (IntValue == NegativeRep)
+//                return RValue.IntValue < 0 && RValue.IntValue != NegativeRep;
+//            else if (RValue.IntValue == NegativeRep)
+//            {
+//                if (IntValue < 0)
+//                    return true;
+//                else
+//                    return false;
+//            }
+//            else
+//                return IntValue<RValue.IntValue;
+//#endif
+//		}
+//		
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
 
 		static bool IntPartLessThan(AltDec LValue, AltDec RValue) 
         {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
@@ -2083,38 +2081,38 @@ public:
 		static bool IntPartLessThanOp(AltDec& LValue, AltDec& RValue) 
         {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
-        /// <summary>
-        /// Less than or Equal Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec>
-		bool IntHalfLessThanOrEqual(AltDecVariant RValue)
-		{
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue<=RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-                return RValue.IntValue < 0;
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return false;
-                else
-                    return true;
-            }
-            else
-                return IntValue <= RValue.IntValue;
-#endif
-		}
-		
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
+//        /// <summary>
+//        /// Less than or Equal Operation for just IntValue section
+//        /// </summary>
+//        /// <param name="LValue">The left side value</param>
+//        /// <param name="RValue">The right side value</param>
+//        /// <returns>bool</returns>
+//        template<typename AltDecVariant = AltDec>
+//		bool IntHalfLessThanOrEqual(AltDecVariant RValue)
+//		{
+//#if defined(AltDec_UseMirroredInt)
+//            if(IntValue<=RValue)
+//                return true;
+//            else
+//                return false;
+//#else
+//            if (IntValue == NegativeRep)
+//                return RValue.IntValue < 0;
+//            else if (RValue.IntValue == NegativeRep)
+//            {
+//                if (IntValue >= 0)
+//                    return false;
+//                else
+//                    return true;
+//            }
+//            else
+//                return IntValue <= RValue.IntValue;
+//#endif
+//		}
+//		
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
 
         /// <summary>
         /// Less than or Equal Operation for just IntValue section
@@ -2128,43 +2126,43 @@ public:
 		static bool IntPartLessThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
         {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
-        /// <summary>
-        /// Greater than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec>
-		bool IntHalfGreaterThan(AltDecVariant RValue)
-		{
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue>RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-            {
-                if (RValue.IntValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue > RValue.IntValue;
-#endif
-		}
-		
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
+//        /// <summary>
+//        /// Greater than Operation for just IntValue section
+//        /// </summary>
+//        /// <param name="LValue">The left side value</param>
+//        /// <param name="RValue">The right side value</param>
+//        /// <returns>bool</returns>
+//        template<typename AltDecVariant = AltDec>
+//		bool IntHalfGreaterThan(AltDecVariant RValue)
+//		{
+//#if defined(AltDec_UseMirroredInt)
+//            if(IntValue>RValue)
+//                return true;
+//            else
+//                return false;
+//#else
+//            if (IntValue == NegativeRep)
+//            {
+//                if (RValue.IntValue < 0)
+//                    return false;
+//                else
+//                    return true;
+//            }
+//            else if (RValue.IntValue == NegativeRep)
+//            {
+//                if (IntValue >= 0)
+//                    return true;
+//                else
+//                    return false;
+//            }
+//            else
+//                return IntValue > RValue.IntValue;
+//#endif
+//		}
+//		
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
         /// Greater than Operation for just IntValue section
@@ -2178,45 +2176,45 @@ public:
 		static bool IntPartGreaterThanOp(AltDec& LValue, AltDec& RValue) 
         {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
 		
-        /// <summary>
-        /// Greater than or Equal to Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        template<typename AltDecVariant = AltDec>
-		bool IntHalfGreaterThanOrEqual(AltDecVariant RValue)
-		{
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue>=RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == RValue.IntValue)
-                return true;
-            if (IntValue == NegativeRep)
-            {
-                if (RValue.IntValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue >= RValue.IntValue;
-#endif
-		}
-		
-        //Reference version
-        template<typename IntType=int>
-        bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
+//        /// <summary>
+//        /// Greater than or Equal to Operation for just IntValue section
+//        /// </summary>
+//        /// <param name="LValue">The left side value</param>
+//        /// <param name="RValue">The right side value</param>
+//        /// <returns>bool</returns>
+//        template<typename AltDecVariant = AltDec>
+//		bool IntHalfGreaterThanOrEqual(AltDecVariant RValue)
+//		{
+//#if defined(AltDec_UseMirroredInt)
+//            if(IntValue>=RValue)
+//                return true;
+//            else
+//                return false;
+//#else
+//            if (IntValue == RValue.IntValue)
+//                return true;
+//            if (IntValue == NegativeRep)
+//            {
+//                if (RValue.IntValue < 0)
+//                    return false;
+//                else
+//                    return true;
+//            }
+//            else if (RValue.IntValue == NegativeRep)
+//            {
+//                if (IntValue >= 0)
+//                    return true;
+//                else
+//                    return false;
+//            }
+//            else
+//                return IntValue >= RValue.IntValue;
+//#endif
+//		}
+//		
+//        //Reference version
+//        template<typename IntType=int>
+//        bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
 
         /// <summary>
         /// Greater than or Equal to Operation for just IntValue section
@@ -2420,20 +2418,100 @@ public:
     #endif
     #if defined(AltNum_EnableMixedPiFractional)
                 case RepType::MixedPi:
-                    return;//Add Conversion Code from MixedPi later
+                    return *this;//Add Conversion Code from MixedPi later
     #endif
                 default:
                     break;
             }
             ExtraRep = PiRep;
-        } const
+        } //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
+        const
 	#endif
     #pragma endregion Pi Conversion
 	
     #pragma region E Conversion
 	#if defined(AltNum_EnableERep)
 		//2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
-        void ConvertENumToNum();
+        void ConvertENumToNum()
+        {
+            if (IntValue >= 790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
+                IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+            }
+            else if (IntValue <= -790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
+                IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+            }
+            __int64 SRep;
+            __int64 divRes;
+            if (DecimalHalf == 0)
+            {
+                bool IsNegative = IntValue<0;
+                if (IsNegative)
+                    IntValue *= -1;
+                SRep = 2718281828;
+                SRep *= IntValue;
+                divRes = SRep / DecimalOverflowX;
+                DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+                if (divRes == 0 && IsNegative)
+                {
+                    if (DecimalHalf == 0)
+                        IntValue = 0;
+                    else
+                        IntValue = NegativeRep;
+                }
+                else if (IsNegative)
+                    IntValue = (int)-divRes;
+                else
+                    IntValue = (int)divRes;
+            }
+            else if (IntValue == 0)
+            {
+                SRep = 2718281828;
+                SRep *= DecimalHalf;
+                divRes = SRep / 1000000000000000000;
+                DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
+            }
+            else if (IntValue == NegativeRep)
+            {
+                SRep = 2718281828;
+                SRep *= DecimalHalf;
+                divRes = SRep / 1000000000000000000;
+                DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
+                if (divRes == 0)
+                    IntValue = NegativeRep;
+                else
+                    IntValue = (int)-divRes;
+            }
+            else
+            {
+                bool IsNegative = IntValue<0;
+                if (IsNegative)
+                    IntValue *= -1;
+                SRep = DecimalOverflowX * IntValue + DecimalHalf;
+                SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
+                //X.Y *.V
+                __int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+                __int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
+                Temp04 /= AltDec::DecimalOverflow;
+                //Temp04 holds __int64 version of .Y * .V
+                __int64 IntegerRep = SRep + Temp03 + Temp04;
+                __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
+                IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+                DecimalHalf = (signed int)IntegerRep;
+                if (IntHalf == 0 && IsNegative)
+                {
+                    IntValue = NegativeRep;
+                }
+                else if (IsNegative)
+                    IntValue = (int)-IntHalf;
+                else
+                    IntValue = (int)IntHalf;
+            }
+            ExtraRep = 0;
+        }
 		
 		#if defined(AltNum_EnableDecimaledEFractionals)
 		void ConvertEByDivToNumByDiv();
@@ -2544,16 +2622,142 @@ public:
 		{
 			DecimalHalf = (DecimalOverflow / ExtraRep) + 1;
 			ExtraRep = IRep;
-		}
+		} const
 	#endif
     #endif
 #endif
 	
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        void ConvertToNormType(const RepType& repType); const
+        void ConvertToNormType(const RepType& repType)//template<typename RepTypeVariant>
+        {
+            switch (repType)
+            {
+            case RepType::NormalType:
+                break;
+#if defined(AltNum_EnableInfinityRep)
+            case RepType::PositiveInfinity:
+                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+            case RepType::NegativeInfinity:
+                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottom:
+                DecimalHalf = 1;
+                break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTop:
+                DecimalHalf = 999999999;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidLeft:
+                ConvertFromApproachingMidLeftToNorm(); break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingMidRight:
+                ConvertFromApproachingMidRightToNorm(); break;
+#endif
+#endif
+#endif
+#if defined(AltNum_EnablePiRep)
+            case RepType::PiNum:
+                ConvertPiToNum(); break;
+#if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                ConvertPiPowerToNum(); break;
+#endif
+#if defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                ConvertFromPiByDivToNorm(); break;
+#elif defined(AltNum_EnablePiFractional)
+            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                ConvertFromPiFractionalToNorm(); break;
+#endif
+#endif		
+            case RepType::NumByDiv:
+            {
+                BasicIntDivOp(ExtraRep);
+                ExtraRep = 0;
+                break;
+            }
+#if defined(AltNum_EnableERep)
+            case RepType::ENum:
+                ConvertENumToNum(); break;
+#if defined(AltNum_EnableDecimaledEFractionals)
+            case RepType::ENumByDiv:
+                ConvertFromEByDivToNorm(); break;
+#elif defined(AltNum_EnableEFractional)
+            case RepType::EFractional://IntValue/DecimalHalf*e Representation
+                ConvertFromEFractionalToNorm(); break;
+#endif
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            {
+                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
+                Res /= ExtraRep;
+                if (IntValue != 0 && IntValue != NegativeRep)
+                    Res += IntValue;
+                IntValue = Res.IntValue;
+                DecimalHalf = Res.DecimalHalf;
+                ExtraRep = 0;
+                break;
+            }
+#endif
+
+#if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+#if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+#elif defined(AltNum_EnableIFractional)
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+            {
+                if (IntValue == 0 && DecimalHalf != 0)
+                    ExtraRep = 0;
+                else
+                    throw "Can't convert imaginery number into real number unless is zero.";
+                break;
+            }
+#endif
+#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingImaginaryBottom:
+                DecimalHalf = 1;
+                break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryTop:
+                DecimalHalf = 999999999;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingImaginaryMidLeft:
+                ConvertFromApproachingIMidLeftToNorm(); break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryMidRight:
+                ConvertFromApproachingIMidRightToNorm(); break;
+#endif
+#endif
+#endif
+#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+                throw "Conversion from complex number to real number not supported yet.";
+                break;
+#endif
+            default:
+                throw "Conversion to normal number not supported yet?";
+                break;
+            }
+        } const
 
         //Switch based return of value as normal type representation
-        AltDec ConvertAsNormType(const RepType& repType); const
+        AltDec ConvertAsNormType(const RepType& repType) const
+        {
+            AltDec Res = *this;
+            Res.ConvertToNormType(repType);
+            return Res;
+        }
 
 		//Converts value to normal type representation
         void ConvertToNormTypeV2()
@@ -3839,7 +4043,7 @@ public:
     #pragma endregion AltDec-To-Int Comparison Methods
 
     #pragma region NormalRep Integer Division Operations
-protected:
+/*protected:
 
         template<typename IntType=int>
         bool PartialIntDivOp(const IntType& rValue)
@@ -3969,6 +4173,7 @@ protected:
             else
                 return false;
         }
+*/
 
 public:
 
@@ -3993,7 +4198,7 @@ public:
         template<typename IntType=int>
         void BasicIntDivOp(const IntType& rValue)
         {
-            if (Value == 0)
+            if (rValue == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
                 IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
@@ -4033,7 +4238,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
+		static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
         /// <summary>
         /// Division Operation Between AltDec and Integer Value that ignores special representation status
@@ -4049,13 +4254,13 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-		static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
+		static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 
-protected:
+/*protected:
 		/// <summary>
         /// Partial Multiplication Operation Between AltDec and Integer Value
         /// (Modifies owner object) 
@@ -4138,6 +4343,7 @@ protected:
                 }
             }
         }
+*/
 
 public:
         /// <summary>
@@ -4153,7 +4359,7 @@ public:
             if (rValue == 0)
                 SetAsZero();
             else
-                PartialIntMultOp(rValue);
+                AltNumBase::PartialIntMultOp(rValue);
         }
 
         /// <summary>
@@ -4169,7 +4375,7 @@ public:
             if (rValue == 0)
                 SetAsZero();
             else
-                PartialIntMultOpV2(rValue);
+                AltNumBase::PartialIntMultOpV2(rValue);
         }
 
         /// <summary>
@@ -4187,9 +4393,6 @@ public:
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
         void BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
-
-		void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
-		void BasicInt64MultOp(signed long long& rValue) { BasicIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
@@ -4231,7 +4434,7 @@ public:
 
     #pragma region NormalRep Integer Addition Operations
 
-protected:
+/*protected:
         /// <summary>
         /// Addition Operation that skips negative zero(for when decimal half is empty)
         /// (Modifies owner object)
@@ -4246,9 +4449,9 @@ protected:
             if (IntValue == 0)
                 IntValue = (int)rValue;
             else
-                IntHalfAdditionOp(rValue);
+                AltNumBase::IntHalfAddition(rValue);
             return;
-        }
+        }*/
 
 public:
 
@@ -4263,11 +4466,11 @@ public:
         AltDec& BasicIntAddOp(const IntType& rValue)
         {
             if(DecimalHalf==0)
-                NRepSkippingIntAddOp(rValue);
+                AltNumBase::NRepSkippingIntAddOp(rValue);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(rValue);
+                AltNumBase::IntHalfAddition(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -4295,7 +4498,7 @@ public:
 
     #pragma region NormalRep Integer Subtraction Operations
 
-protected:
+/*protected:
         /// <summary>
         /// Subtraction Operation that skips negative zero(for when decimal half is empty)
         /// (Modifies owner object)
@@ -4310,9 +4513,9 @@ protected:
             if (IntValue == 0)
                 IntValue = -(int)rValue;
             else
-                IntHalfSubtractionOp(rValue);
+                AltNumBase::IntHalfSubtraction(rValue);
             return;
-        }
+        }*/
 
 public:
 
@@ -4327,11 +4530,11 @@ public:
         AltDec BasicIntSubOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
-                NRepSkippingIntSubOp(Value);
+                AltNumBase::NRepSkippingIntSubOp(rValue);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(rValue);
+                AltNumBase::IntHalfSubtraction(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -4537,7 +4740,7 @@ public:
     #pragma endregion Mixed Fraction Operations
 
 	#pragma region NormalRep AltNum Division Operations
-protected:
+/*protected:
 		/// <summary>
         /// Basic Division Operation(main code block)
         /// Return true if divide into zero
@@ -4620,7 +4823,7 @@ protected:
                 return true;
             else
                 return false;
-        }
+        }*/
 public:
 
 		/// <summary>
@@ -4628,7 +4831,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        AltDec& BasicUnsignedDivOp(const AltDec& rValue)
+        AltDec& BasicDivOp(const AltDec& rValue)
         {
 			if (PartialDivOp(rValue))//Prevent Dividing into nothing
 				DecimalHalf = 1;
@@ -5204,7 +5407,7 @@ public:
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
-
+/*
         /// <summary>
         /// Basic Addition Operation
         /// (Modifies owner object)
@@ -5215,7 +5418,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
+            AltNumBase::IntHalfAddition(rValue.IntValue);
             if (rValue.DecimalHalf != 0)
             {
                 if (rValue.IntValue < 0)
@@ -5264,7 +5467,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
+            AltNumBase::IntHalfAddition(rValue.IntValue);
             if (rValue.DecimalHalf != 0)
             {
                 if (WasNegative)
@@ -5283,12 +5486,12 @@ public:
             //If flips to other side of negative, invert the decimals
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
+        }*/
 
 	#pragma endregion NormalRep AltNum Addition Operations
         
 	#pragma region NormalRep AltNum Subtraction Operations
-
+/*
         /// <summary>
         /// Basic Subtraction Operation
         /// (Modifies owner object)
@@ -5299,7 +5502,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
+            AltNumBase::IntHalfSubtraction(rValue.IntValue);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
@@ -5349,7 +5552,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
+            AltNumBase::IntHalfSubtraction(rValue.IntValue);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
@@ -5369,7 +5572,7 @@ public:
             //If flips to other side of negative, invert the decimals
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
+        }*/
 
 	#pragma endregion NormalRep AltNum Subtraction Operations
 	
@@ -6409,15 +6612,15 @@ public:
 						SwapNegativeStatus();
 					}
 					DecimalHalf *= rValue;
-					IntHalfMultiplicationOp(rValue);
+					IntHalfMultiplication(rValue);
 					int divRes = DecimalHalf / -ExtraRep;
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            AltNumBase::IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            AltNumBase::IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf + increment;
                     }
 				}
@@ -6437,15 +6640,15 @@ public:
 						SwapNegativeStatus();
 					}
                     DecimalHalf *= rValue;
-					IntHalfMultiplicationOp(rValue);
+					IntHalfMultiplication(rValue);
                     int divRes = DecimalHalf / ExtraRep;
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            AltNumBase::IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            AltNumBase::IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf - increment;
                     }
                     break;
@@ -6752,15 +6955,15 @@ public:
                 case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
                 {
 					DecimalHalf *= rValue;
-					UIntHalfMultiplicationOp(rValue);
+					IntHalfMultiplication(rValue);
 					int divRes = DecimalHalf / -ExtraRep;
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            AltNumBase::IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            AltNumBase::IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf + increment;
                     }
 				}
@@ -6775,15 +6978,15 @@ public:
 		#if defined(AltNum_EnableAlternativeMixedFrac)
                 {
                     DecimalHalf *= rValue;
-					UIntHalfMultiplicationOp(rValue);
+					IntHalfMultiplication(rValue);
                     int divRes = DecimalHalf / ExtraRep;
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            AltNumBase::IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            AltNumBase::IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf - increment;
                     }
                 }
@@ -6820,7 +7023,6 @@ public:
         /// <returns>AltDec</returns>
         template<typename IntType = int>
         static AltDec& UIntMultiplication(AltDec self, const IntType& rValue) { return self.UIntMultOp(rValue); }
-
 
         template<typename IntType = int>
         AltDec MultiplyByInt(const AltDec& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
@@ -6878,7 +7080,7 @@ public:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
+			AltNumBase::IntHalfAddition(rValue);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -6963,7 +7165,7 @@ public:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
+			AltNumBase::IntHalfAddition(rValue);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -7502,7 +7704,7 @@ public:
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& UnsignedDivOp(const AltDec& rValue)
+        AltDec& UnsignedDivOp(AltDec rValue)
         {
             //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
             if (IsZero())
@@ -8492,7 +8694,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& UnsignedMultOp(const AltDec& rValue)
+        AltDec& UnsignedMultOp(AltDec rValue)
         {
             if (rValue.IntValue==0&&rValue.DecimalHalf==0) { SetAsZero(); return *this; }
             if (IsZero() || rValue == AltDec::One)
@@ -9972,7 +10174,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
 #endif
-            IntHalfAdditionOp(One);
+            AltNumBase::IntHalfAddition(One);
             return *this;
         }
 
@@ -9986,7 +10188,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
 #endif
-            IntHalfSubtractionOp(One);
+            AltNumBase::IntHalfSubtraction(One);
             return *this;
         }
 
@@ -10724,7 +10926,7 @@ public:
                 {
                     // If expValue is odd, multiply self with result
                     if (expValue % 2 == 1)
-                        this *= self;
+                        UnsignedMultOp(self);//this *= self;
                     // n must be even now
                     expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
@@ -10759,7 +10961,7 @@ public:
                 {
                     // If expValue is odd, multiply self with result
                     if (expValue % 2 == 1)
-                        this *= self;
+                        UnsignedMultOp(self);
                     // n must be even now
                     expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
@@ -12023,7 +12225,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntHalfAdditionOp(TempInt02);
+                AltNumBase::IntHalfAddition(TempInt02);
             }
             PlaceNumber--;
         }

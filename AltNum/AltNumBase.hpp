@@ -18,6 +18,10 @@
 #include "..\DLLAPI.h"
 #endif
 
+#include <string>
+#include <cmath>//Needed for floating point floor function
+#include "..\OtherFunctions\VariableConversionFunctions.h"
+
 #if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
@@ -201,6 +205,17 @@ namespace BlazesRusCode
         /// </summary>
         using ldouble = long double;
 	public:
+
+        /// <summary>
+        /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// </summary>
+#if !defined(AltDec_UseMirroredInt)
+        static signed int const NegativeRep = -2147483648;
+#else
+        static MirroredInt NegativeRep;
+        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
+#endif
+
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
@@ -217,23 +232,23 @@ namespace BlazesRusCode
         signed int DecimalHalf;
 	
         //Detect if at exactly zero
-		virtual bool IsZero()
+		bool IsZero() const
 		{
             return DecimalHalf==0&&IntValue==0;
-		} const
+		}
 
         //Is at either zero or negative zero IntHalf of AltNum
-        virtual bool IsAtZeroInt()
+        bool IsAtZeroInt() const
         {
             return IntValue==0||IntValue==NegativeRep;
-        } const
+        }
 
-        virtual bool IsNotAtZeroInt()
+        bool IsNotAtZeroInt() const
         {
             return IntValue != 0 && IntValue != NegativeRep;
-        } const
+        }
 
-        virtual signed int GetIntHalf()
+        signed int GetIntHalf() const
         {
 #if defined(AltDec_UseMirroredInt)
             return IntValue.GetValue();
@@ -243,10 +258,10 @@ namespace BlazesRusCode
             else
                 return IntValue;
 #endif
-        } const
+        }
 
         //Return IntValue part as Absolute value
-        virtual signed int IntHalfAsAbs()
+        signed int IntHalfAsAbs() const
         {
 #if defined(AltDec_UseMirroredInt)
             return IntValue.GetAbsValue();
@@ -260,7 +275,7 @@ namespace BlazesRusCode
 #endif
         }
 
-        virtual std::string IntHalfAsString()
+        std::string IntHalfAsString() const
         {
 #if defined(AltDec_UseMirroredInt)
             return (std::string) IntValue;
@@ -269,6 +284,41 @@ namespace BlazesRusCode
                 return "-0";
             return VariableConversionFunctions::IntToStringConversion(IntValue);
 #endif
+        }
+
+#if defined(AltDec_UseMirroredInt)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        /// <param name="extraVal">ExtraRep flags etc</param>
+        AltNumBase(const MirroredInt& intVal = MirroredInt::Zero, const signed int& decVal = 0)
+        {
+
+            IntValue = intVal;
+            DecimalHalf = decVal;
+        }
+#endif
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDec"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        /// <param name="extraVal">ExtraRep flags etc</param>
+#if !defined(AltDec_UseMirroredInt)
+        AltNumBase(const int& intVal=0, const signed int& decVal = 0)
+#else
+        AltNumBase(const int& intVal, const signed int& decVal = 0)
+#endif
+        {
+#if defined(AltDec_UseMirroredInt)&&defined(BlazesMirroredInt_UseLegacyValueBehavior)
+            IntValue.Value = intVal;
+#else
+            IntValue = intVal;
+#endif
+            DecimalHalf = decVal;
         }
 
         virtual void SetAsZero()
@@ -280,7 +330,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        virtual void SwapNegativeStatus()
+        void SwapNegativeStatus()
         {
             if (IntValue == NegativeRep)
             {
@@ -354,10 +404,10 @@ namespace BlazesRusCode
 //        {
 //        }
 
-        void const GetRepType() = 0;
+        //virtual void const GetRepType() = 0;
 
 
-    #endpragma region Const Representation values
+    #pragma endregion Const Representation values
 
     #pragma region PiNum Setters
 
@@ -439,8 +489,9 @@ protected:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(const float& Value)
+        void SetFloatVal(const float& value)
         {
+            float Value = value;
             bool IsNegative = Value < 0.0f;
             if (IsNegative) { Value *= -1.0f; }
             //Cap value if too big on initialize (preventing overflow on conversion)
@@ -467,8 +518,9 @@ protected:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(const double& Value)
+        void SetDoubleVal(const double& value)
         {
+            double Value = value;
             bool IsNegative = Value < 0.0;
             if (IsNegative) { Value *= -1.0; }
             //Cap value if too big on initialize (preventing overflow on conversion)
@@ -495,8 +547,9 @@ protected:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const ldouble& value)
         {
+            ldouble Value = value;
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { Value *= -1.0L; }
             //Cap value if too big on initialize (preventing overflow on conversion)
@@ -511,7 +564,6 @@ protected:
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= ;
                 DecimalHalf = (signed int)(Value-(ldouble)(WholeValue) * 10000000000.0L);
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
@@ -524,7 +576,7 @@ protected:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetBooleanVal(const bool& Value)
+        void SetBooleanVal(const bool& Value)
         {
             IntValue = Value ? 1 : 0;
             DecimalHalf = 0;
@@ -534,7 +586,7 @@ protected:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetIntVal(const int& Value)
+        void SetIntVal(const int& Value)
         {
             IntValue = Value; DecimalHalf = 0;
         }
@@ -543,10 +595,12 @@ public:
     #pragma endregion From this type to Standard types
 
     #pragma region MirroredIntBased Operations
+    //Templates can not be virtual
 
         template<typename IntType=int>
-        virtual void IntHalfDivision(IntType RValue)
+        void IntHalfDivision(IntType rValue)
         {
+            int RValue = rValue;
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
@@ -586,12 +640,8 @@ public:
 #endif
         }
 
-        //this is reference version
         template<typename IntType=int>
-        virtual void IntHalfDivisionOp(IntType& RValue) { IntHalfDivision(RValue); }
-
-        template<typename IntType=int>
-        virtual void IntHalfMultiplication(IntType RValue)
+        void IntHalfMultiplication(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -638,7 +688,7 @@ public:
         }
 
         template<typename IntType=int>
-        virtual void UIntHalfMultiplication(IntType RValue)
+        void UIntHalfMultiplication(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -668,13 +718,9 @@ public:
 #endif
         }
 
-        //this is reference version
-        template<typename IntType=int>
-        virtual void IntHalfMultiplicationOp(IntType& RValue) { IntHalfMultiplication(RValue); }
-
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAddition(RValue);
         template<typename IntType>
-        virtual void IntHalfAdditionOp(const IntType& RValue)
+        void IntHalfAddition(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -752,7 +798,7 @@ public:
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
         //this is copy by value and pointer version
         template<typename IntType>
-        virtual void IntHalfSubtractionOp(const IntType& RValue)
+        void IntHalfSubtraction(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -822,29 +868,29 @@ public:
 #endif
         }
 
-		virtual bool IntPartEqualTo(AltDec& RValue)
-		{
-            return IntValue == RValue.IntValue;
-        }
+		//bool IntPartEqualTo(AltDec& RValue)
+		//{
+  //          return IntValue == RValue.IntValue;
+  //      }
 
         //Reference version
         template<typename IntType=int>
-        virtual bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
+        bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
 
         template<typename IntType=int>
-        virtual bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
+        bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
 
-		virtual bool IntPartNotEqualTo(AltDec& RValue)
-		{
-            return IntValue != RValue.IntValue;
-        }
+		//bool IntPartNotEqualTo(AltDec& RValue)
+		//{
+  //          return IntValue != RValue.IntValue;
+  //      }
 
         //Reference version
         template<typename IntType=int>
-        virtual bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
+        bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
 
         template<typename IntType=int>
-        virtual bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
+        bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
 
         /// <summary>
         /// Less than Operation for just IntValue section
@@ -853,7 +899,7 @@ public:
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
         template<typename AltDecVariant = AltDec>
-		virtual bool IntHalfLessThan(AltDecVariant RValue)
+		bool IntHalfLessThan(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue<RValue)
@@ -877,7 +923,7 @@ public:
 		
         //Reference version
         template<typename IntType=int>
-        virtual bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
+        bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
 		
         /// <summary>
         /// Less than or Equal Operation for just IntValue section
@@ -886,7 +932,7 @@ public:
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
         template<typename AltDecVariant>
-		virtual bool IntHalfLessThanOrEqual(AltDecVariant RValue)
+		bool IntHalfLessThanOrEqual(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue<=RValue)
@@ -910,7 +956,7 @@ public:
 		
         //Reference version
         template<typename IntType=int>
-        virtual bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
+        bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
 		
         /// <summary>
         /// Greater than Operation for just IntValue section
@@ -919,7 +965,7 @@ public:
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
         template<typename AltDecVariant>
-		virtual bool IntHalfGreaterThan(AltDecVariant RValue)
+		bool IntHalfGreaterThan(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue>RValue)
@@ -948,7 +994,7 @@ public:
 		
         //Reference version
         template<typename IntType=int>
-        virtual bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
+        bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
         /// Greater than or Equal to Operation for just IntValue section
@@ -957,7 +1003,7 @@ public:
         /// <param name="RValue">The right side value</param>
         /// <returns>bool</returns>
         template<typename AltDecVariant>
-		virtual bool IntHalfGreaterThanOrEqual(AltDecVariant RValue)
+		bool IntHalfGreaterThanOrEqual(AltDecVariant RValue)
 		{
 #if defined(AltDec_UseMirroredInt)
             if(IntValue>=RValue)
@@ -987,7 +1033,7 @@ public:
 		}
 
         template<typename IntType=int>
-        virtual bool IntHalfGreaterThanOrEqualOp(const IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
+        bool IntHalfGreaterThanOrEqualOp(const IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
 
     #pragma endregion MirroredIntBased Operations
 
@@ -1017,7 +1063,7 @@ public:
 protected:
 
         template<typename IntType=int>
-        virtual bool PartialIntDivOp(const IntType& rValue)
+        bool PartialIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
             signed _int64 SelfRes;
@@ -1086,7 +1132,7 @@ protected:
         }
 
         template<typename IntType=int>
-        virtual bool PartialUIntDivOp(const IntType& rValue)
+        bool PartialUIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
             signed _int64 SelfRes;
@@ -1146,9 +1192,9 @@ protected:
         }
 
 public:
-
+/*
         template<typename IntType=int>
-        virtual void BasicUIntDivOp(const IntType& rValue)
+        void BasicUIntDivOp(const IntType& rValue)
         {
             if (rValue == 0)
             {
@@ -1166,7 +1212,7 @@ public:
         }
 
         template<typename IntType=int>
-        virtual void BasicIntDivOp(const IntType& rValue)
+        void BasicIntDivOp(const IntType& rValue)
         {
             if (Value == 0)
             {
@@ -1188,6 +1234,7 @@ public:
             else if(PartialUIntDivOp(rValue))
                 DecimalHalf = 1;//Prevent Dividing into nothing
         }
+*/
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -1278,14 +1325,14 @@ protected:
             }
         }
 
-public:
+public:/*
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType>
-        virtual void BasicIntMultOp(const IntType& rValue)
+        void BasicIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
                 return *this;
@@ -1301,7 +1348,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType>
-        virtual void BasicUIntMultOp(const IntType& rValue)
+        void BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
                 return *this;
@@ -1317,7 +1364,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        virtual AltNumBase BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
+        AltNumBase BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value
@@ -1325,8 +1372,8 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        virtual AltNumBase BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
-
+        AltNumBase BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
+*/
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -1340,19 +1387,19 @@ protected:
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
         template<typename IntType=int>
-        virtual void NRepSkippingIntAddOp(const IntType& rValue)
+        void NRepSkippingIntAddOp(const IntType& rValue)
         {
-            if (RValue == 0)
+            if (rValue == 0)
                 return;
             if (IntValue == 0)
                 IntValue = (int)rValue;
             else
-                IntHalfAdditionOp(rValue);
+                IntHalfAddition(rValue);
             return;
         }
 
 public:
-
+/*
         /// <summary>
         /// Basic Addition Operation between AltDec and Integer value 
         /// that ignores special representation status
@@ -1368,13 +1415,13 @@ public:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(rValue);
+                IntHalfAddition(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+                    DecimalHalf = DecimalOverflow - DecimalHalf;
             }
             return *this;
-        }
+        }*/
 
     #pragma endregion NormalRep Integer Addition Operations
 
@@ -1388,18 +1435,18 @@ protected:
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
         template<typename IntType=int>
-        virtual void NRepSkippingIntSubOp(const IntType& rValue)
+        void NRepSkippingIntSubOp(const IntType& rValue)
         {
-            if (RValue == 0)
+            if (rValue == 0)
                 return;
             if (IntValue == 0)
                 IntValue = -(int)rValue;
             else
-                IntHalfSubtractionOp(rValue);
+                IntHalfSubtraction(rValue);
             return;
         }
 
-public:
+public:/*
 
 		/// <summary>
         /// Basic Subtraction Operation between AltDec and Integer value 
@@ -1416,13 +1463,13 @@ public:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(rValue);
+                IntHalfSubtraction(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
+                    DecimalHalf = DecimalOverflow - DecimalHalf;
             }
             return *this;
-        }
+        }*/
 
     #pragma endregion NormalRep Integer Subtraction Operations
 
@@ -1444,12 +1491,182 @@ public:
 
 	#pragma region NormalRep AltNum Addition Operations
 
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        template<typename AltDecVariant>
+        void BasicAddOp(const AltDecVariant& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfAddition(rValue.IntValue);
+            if (rValue.DecimalHalf != 0)
+            {
+                if (rValue.IntValue < 0)
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                    }
+                    else
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = DecimalOverflow - DecimalHalf;
+        }
+
+        /// <summary>
+        /// Basic Addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        template<typename AltDecVariant>
+        void BasicUnsignedAddOp(const AltDecVariant& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfAddition(rValue.IntValue);
+            if (rValue.DecimalHalf != 0)
+            {
+                if (WasNegative)
+                {
+                    DecimalHalf -= rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                    else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                }
+                else
+                {
+                    DecimalHalf += rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                    else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = DecimalOverflow - DecimalHalf;
+        }
+
 	#pragma endregion NormalRep AltNum Addition Operations
 
 	#pragma region NormalRep AltNum Subtraction Operations
 
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        template<typename AltDecVariant>
+		void BasicSubOp(const AltDecVariant& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfSubtraction(rValue.IntValue);
+            //Now deal with the decimal section
+            if(rValue.DecimalHalf!=0)
+            {
+                if (rValue.IntValue < 0)
+                {
+                    if (WasNegative)//-4.0 - -0.5 = -3.5
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                    }
+                    else//4.3 -  - 1.8
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                    }
+                }
+                else
+                {
+                    if (WasNegative)//-4.5 - 5.6
+                    {
+                        DecimalHalf += rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                    }
+                    else//0.995 - 1 = 
+                    {
+                        DecimalHalf -= rValue.DecimalHalf;
+                        if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                        else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                    }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = DecimalOverflow - DecimalHalf;
+        }
+
+        /// <summary>
+        /// Basic Subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        template<typename AltDecVariant>
+		void BasicUnsignedSubOp(const AltDecVariant& rValue)
+        {
+            //NegativeBeforeOperation
+            bool WasNegative = IntValue < 0;
+            //Deal with Int section first
+            IntHalfSubtraction(rValue.IntValue);
+            //Now deal with the decimal section
+            if(rValue.DecimalHalf!=0)
+            {
+                if (WasNegative)//-4.5 - 5.6
+                {
+                    DecimalHalf += rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; ++IntValue; }
+                    else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; --IntValue; }
+                }
+                else//0.995 - 1
+                {
+                    DecimalHalf -= rValue.DecimalHalf;
+                    if (DecimalHalf < 0) { DecimalHalf += DecimalOverflow; --IntValue; }
+                    else if (DecimalHalf >= DecimalOverflow) { DecimalHalf -= DecimalOverflow; ++IntValue; }
+                }
+            }
+            //If flips to other side of negative, invert the decimals
+            if(WasNegative ^(IntValue<0))
+                DecimalHalf = DecimalOverflow - DecimalHalf;
+        }
+
 	#pragma endregion NormalRep AltNum Subtraction Operations
 
+    #pragma region Other Division Operations
+
+protected:
 		/// <summary>
         /// Basic Division Operation(main code block)
         /// Return true if divide into zero
@@ -1457,7 +1674,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The rValue</param
         template<typename AltDecVariant>
-        virtual bool PartialDivOp(const AltDecVariant& rValue)
+        bool PartialDivOp(const AltDecVariant& rValue)
         {
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
@@ -1505,7 +1722,7 @@ public:
         }
 
         template<typename AltDecVariant>
-        virtual bool UnsignedPartialDivOp(const AltDecVariant& rValue)
+        bool UnsignedPartialDivOp(const AltDecVariant& rValue)
         {
             bool ResIsPositive = true;
             signed _int64 SelfRes;
@@ -1535,7 +1752,8 @@ public:
             else
                 return false;
         }
-public:
+
+public:/*
 		/// <summary>
         /// Basic Division Operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
@@ -1560,12 +1778,12 @@ public:
             if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
                 DecimalHalf = 1;
             return *this;
-        }
-
-    #pragma endregion Other Division Operations
+        }*/
+		
+	#pragma endregion Other Division Operations	
 
     #pragma region Other Multiplication Operations
-
+/*
 		/// <summary>
         /// Basic Multiplication Operation that ignores special decimal status
         /// Return true if divide into zero
@@ -1573,7 +1791,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         template<typename AltDecVariant>
-		virtual AltDecVariant& BasicMultOp(const AltDecVariant& rValue)
+		AltDecVariant& BasicMultOp(const AltDecVariant& rValue)
 		{
             if (DecimalHalf == 0)
             {
@@ -1655,7 +1873,7 @@ public:
                 {
                     __int64 SRep = (__int64)DecimalHalf;
                     SRep *= rValue.DecimalHalf;
-                    SRep /= AltDec::DecimalOverflowX;
+                    SRep /= DecimalOverflowX;
                     if (rValue.IntValue == 0)
                     {
                         DecimalHalf = (signed int)SRep;
@@ -1671,10 +1889,10 @@ public:
                     else
                     {
                         SRep += (__int64)DecimalHalf * rValue.IntValue;
-                        if (SRep >= AltDec::DecimalOverflowX)
+                        if (SRep >= DecimalOverflowX)
                         {
-                            __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                            SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                            __int64 OverflowVal = SRep / DecimalOverflowX;
+                            SRep -= OverflowVal * DecimalOverflowX;
                             IntValue = SelfIsNegative?-(int)OverflowVal:OverflowVal;
                             DecimalHalf = (signed int)SRep;
     						return *this;
@@ -1701,7 +1919,7 @@ public:
                 }
                 else if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = DecimalOverflowX * IntValue + DecimalHalf;
                     if (rValue < 0)
                     {
                         SRep *= -rValue.IntValue;
@@ -1709,10 +1927,10 @@ public:
                     }
                     else
                         SRep *= rValue.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return *this;
@@ -1731,19 +1949,19 @@ public:
                                 DecimalHalf = 1;
     #endif
                             }
-                            IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                            IntValue = SelfIsNegative ? NegativeRep : 0;
                             return *this;
                     }
                 }
                 else if (rValue.IntValue == 0)
                 {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
-                    SRep /= AltDec::DecimalOverflowX;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    SRep /= DecimalOverflowX;
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
 						return *this;
@@ -1762,20 +1980,20 @@ public:
                             DecimalHalf = 1;
 #endif
                         }
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? NegativeRep : 0;
                         return *this;
                     }
                 }
                 else if (rValue.IntValue == NegativeRep)
                 {
                     SelfIsNegative = !SelfIsNegative;
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
-                    SRep /= AltDec::DecimalOverflowX;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    SRep /= DecimalOverflowX;
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
 						return *this;
@@ -1794,14 +2012,14 @@ public:
                             DecimalHalf = 1;
 #endif
                         }
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? NegativeRep : 0;
                         return *this;
                     }
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
                     //X.Y *.V
                     if(rValue<0)
                     {
@@ -1813,13 +2031,13 @@ public:
                     
                     __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
-                    Temp04 /= AltDec::DecimalOverflow;
+                    Temp04 /= DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+                    __int64 IntHalf = IntegerRep / DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)DecimalOverflow;
                     if (IntHalf == 0)
-                        IntValue = (signed int)SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = (signed int)SelfIsNegative ? NegativeRep : 0;
                     else
                         IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
                     DecimalHalf = (signed int)IntegerRep;
@@ -1834,7 +2052,9 @@ public:
 #endif
             return *this;
 		}
+*/
 
+/*
 		/// <summary>
         /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDec
         /// Return true if divide into zero
@@ -1842,7 +2062,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         template<typename AltDecVariant>
-		virtual AltDecVariant& BasicUnsignedMultOp(const AltDecVariant& rValue)
+		AltDecVariant& BasicUnsignedMultOp(const AltDecVariant& rValue)
 		{
             if (DecimalHalf == 0)
             {
@@ -1899,7 +2119,7 @@ public:
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf;
-                SRep /= AltDec::DecimalOverflowX;
+                SRep /= DecimalOverflowX;
                 if (rValue.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -1915,10 +2135,10 @@ public:
                 else
                 {
                     SRep += (__int64)DecimalHalf * rValue.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return *this;
@@ -1937,11 +2157,11 @@ public:
                     }
                 }
             }
-            else if (IntValue == AltDec::NegativeRep)
+            else if (IntValue == NegativeRep)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf;
-                SRep /= AltDec::DecimalOverflowX;
+                SRep /= DecimalOverflowX;
                 if (rValue.IntValue == 0)
                 {
                     DecimalHalf = (signed int)SRep;
@@ -1956,10 +2176,10 @@ public:
                 else
                 {
                     SRep += (__int64)DecimalHalf * rValue.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return *this;
@@ -1991,12 +2211,12 @@ public:
                 }
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.IntValue;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2014,19 +2234,19 @@ public:
                             DecimalHalf = 1;
                     #endif
                         }
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? NegativeRep : 0;
                     }
 				    return *this;
                 }
                 else if (rValue.IntValue == 0)
                 {
-                    __int64 SRep = AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
-                    SRep /= AltDec::DecimalOverflowX;
-                    if (SRep >= AltDec::DecimalOverflowX)
+                    SRep /= DecimalOverflowX;
+                    if (SRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = SRep / AltDec::DecimalOverflowX;
-                        SRep -= OverflowVal * AltDec::DecimalOverflowX;
+                        __int64 OverflowVal = SRep / DecimalOverflowX;
+                        SRep -= OverflowVal * DecimalOverflowX;
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                     }
@@ -2044,25 +2264,25 @@ public:
                             DecimalHalf = 1;
                     #endif
                         }
-                        IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? NegativeRep : 0;
                     }
                     return *this;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
-                    Temp04 /= AltDec::DecimalOverflow;
+                    Temp04 /= DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
-                    IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+                    __int64 IntHalf = IntegerRep / DecimalOverflow;
+                    IntegerRep -= IntHalf * (__int64)DecimalOverflow;
                     if (IntHalf == 0)
-                        IntValue = (signed int)SelfIsNegative ? AltDec::NegativeRep : 0;
+                        IntValue = (signed int)SelfIsNegative ? NegativeRep : 0;
                     else
                         IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
                     DecimalHalf = (signed int)IntegerRep;
@@ -2076,177 +2296,15 @@ public:
                 DecimalHalf = 1;
 #endif
             return *this;
-		}
+		}*/
 
     #pragma endregion Other Multiplication Operations
 
     #pragma region Other Addition Operations
 
-        /// <summary>
-        /// Basic Addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        virtual void BasicAddOp(const AltDec& rValue)
-        {
-            //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
-            if (rValue.DecimalHalf != 0)
-            {
-                if (rValue.IntValue < 0)
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
-
-        /// <summary>
-        /// Basic Addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        virtual void BasicUnsignedAddOp(const AltDec& rValue)
-        {
-            //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
-            if (rValue.DecimalHalf != 0)
-            {
-                if (WasNegative)
-                {
-                    DecimalHalf -= rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                }
-                else
-                {
-                    DecimalHalf += rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
-
     #pragma endregion Other Addition Operations
 
     #pragma region Other Subtraction Operations
-
-        /// <summary>
-        /// Basic Subtraction Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-		virtual void BasicSubOp(const AltDec& rValue)
-        {
-            //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
-            //Now deal with the decimal section
-            if(rValue.DecimalHalf!=0)
-            {
-                if (rValue.IntValue < 0)
-                {
-                    if (WasNegative)//-4.0 - -0.5 = -3.5
-                    {
-                        DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else//4.3 -  - 1.8
-                    {
-                        DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)//-4.5 - 5.6
-                    {
-                        DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                    }
-                    else//0.995 - 1 = 
-                    {
-                        DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
-
-        /// <summary>
-        /// Basic Subtraction Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-		virtual void BasicUnsignedSubOp(const AltDec& rValue)
-        {
-            //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
-            //Now deal with the decimal section
-            if(rValue.DecimalHalf!=0)
-            {
-                if (WasNegative)//-4.5 - 5.6
-                {
-                    DecimalHalf += rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; ++IntValue; }
-                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; --IntValue; }
-                }
-                else//0.995 - 1
-                {
-                    DecimalHalf -= rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDec::DecimalOverflow; --IntValue; }
-                    else if (DecimalHalf >= AltDec::DecimalOverflow) { DecimalHalf -= AltDec::DecimalOverflow; ++IntValue; }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
-        }
 
     #pragma endregion Other Subtraction Operations
 
