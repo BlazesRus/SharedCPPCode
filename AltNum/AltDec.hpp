@@ -307,43 +307,16 @@ namespace BlazesRusCode
         signed int ExtraRep;
 
         //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt()
-        {
-            return IntValue==0||IntValue==NegativeRep;
-        }
+        //bool IsAtZeroInt()
 
-        bool IsNotAtZeroInt()
-        {
-            return IntValue != 0 && IntValue != NegativeRep;
-        }
+        //bool IsNotAtZeroInt()
 
-        using GetIntHalf::GetIntHalf;
+        //using GetIntHalf::GetIntHalf;
 
         //Return IntValue part as Absolute value
-        signed int IntHalfAsAbs()
-        {
-#if defined(AltDec_UseMirroredInt)
-            return IntValue.GetAbsValue();
-#else
-            if (IsAtZeroInt())
-                return 0;
-            else if (IntValue < 0)
-                return -IntValue;
-            else
-                return IntValue;
-#endif
-        }
+        //signed int IntHalfAsAbs()
 
-        std::string IntHalfAsString()
-        {
-#if defined(AltDec_UseMirroredInt)
-            return (std::string) IntValue;
-#else
-            if (IntValue == NegativeRep)
-                return "-0";
-            return VariableConversionFunctions::IntToStringConversion(IntValue);
-#endif
-        }
+        //std::string IntHalfAsString()
 
 #if defined(AltDec_UseMirroredInt)
         /// <summary>
@@ -419,40 +392,26 @@ namespace BlazesRusCode
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        void SwapNegativeStatus()
+        //void SwapNegativeStatus()
+
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMaximum()
         {
-            if (IntValue == NegativeRep)
-            {
-                IntValue = 0;
-            }
-            else if (IntValue == 0)
-            {
-                IntValue = NegativeRep;
-            }
-            else
-            {
-                IntValue *= -1;
-            }
+            IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMinimum()
+        {
+            IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
         }
 
         #pragma region Const Representation values
-	#if defined(AltNum_EnableInfinityRep)
-        //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
-		//(other values only used if AltNum_EnableInfinityPowers is enabled)
-		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
-        static const signed int InfinityRep = -2147483648;
-	#endif
 	#if defined(AltNum_EnableApproachingValues)
-        //Is Approaching Bottom when DecimalHalf==-2147483647:
-        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
-		//If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
-		//If ExtraRep=PiRep, then it represents Approaching IntValue from right towards left (IntValue.0__1)Pi
-        static const signed int ApproachingBottomRep = -2147483647;
-		//Is Approaching Top i when DecimalHalf==-2147483646:
-		//If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
-		//If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
-		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
-		static const signed int ApproachingTopRep = -2147483646;
         #if defined(AltNum_EnableApproachingI)
 		//Is Approaching Bottom i when DecimalHalf==-2147483645:
 		//If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)i
@@ -486,25 +445,10 @@ namespace BlazesRusCode
         static const signed int EByDivisorRep = -2147483643;
 		#endif
 	#endif
-	#if defined(AltNum_EnableUndefinedButInRange)
-		//Such as result of Cos of infinity
-		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
-        static const signed int UndefinedInRangeRep = -2147483642;
-		
-		#if defined(AltNum_EnableWithinMinMaxRange)
-		//Undefined but in ranged of IntValue to DecimalHalf
-        static const signed int WithinMinMaxRangeRep = -2147483642;
-		#endif
-	#endif
+
         static const signed int AlternativeFractionalLowerBound = -2147483640;
 		//Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
 		static const signed int InfinityBasedLowerBound = -2147483644;
-	#if defined(AltNum_EnableNaN)
-        //Is NaN when DecimalHalf==2147483647
-        static const signed int NaNRep = 2147483647;
-        //Is NaN when DecimalHalf==2147483646
-        static const signed int UndefinedRep = 2147483646;
-	#endif
 
     #if defined(AltNum_EnableNilRep)
         //When both IntValue and DecimalHalf equal -2147483648 it is Nil
@@ -942,22 +886,6 @@ namespace BlazesRusCode
 				throw "Unknown or non-enabled representation type detected";
             return RepType::UnknownType;//Catch-All Value;
         }
-
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum()
-        {
-            IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
-        {
-            IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-        }
 		
 	#pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
@@ -1132,30 +1060,34 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableApproachingValues)
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
-		//If AltNum_EnableApproachingDivided is enabled and Divisor value is greator than 1, Approaching Fractional from left;ExtraRep value of 2 results in value.499...9(for positive value:value.(1/Divisor-JustAboveZero))
-		#if defined(AltNum_EnableApproachingDivided)
-		void SetAsApproachingBottom(int value=0, int Divisor=0)
-		#else
         void SetAsApproachingBottom(int value=0)
-		#endif
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
-		#if defined(AltNum_EnableApproachingDivided)
-            ExtraRep = Divisor;
-		#else
             ExtraRep = 0;
-		#endif
         }
+
+		#if defined(AltNum_EnableApproachingDivided)
+        void SetAsApproachingMidLeft(int value=0, int Divisor=0)
+        {
+            IntValue = value; DecimalHalf = ApproachingBottomRep;
+            ExtraRep = Divisor;
+        }
+        #endif
         
 		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
-			#if defined(AltNum_EnableApproachingDivided)
-		void SetAsApproachingTop(int value, int Divisor=0)
-			#else
         void SetAsApproachingTop(int value)
-			#endif
+        {
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+            ExtraRep = 0;
+        }
+
+		    #if defined(AltNum_EnableApproachingDivided)
+		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
+		//If Divisor is negative, Approaching Fractional from right;ExtraRep value of 2 results in value.500...1(for positive value:value.(1/Divisor+JustAboveZero))
+        void SetAsApproachingMidRight(int value, int Divisor=0)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
 			#if defined(AltNum_EnableApproachingDivided)
@@ -1164,6 +1096,8 @@ namespace BlazesRusCode
             ExtraRep = 0;
 			#endif
         }
+            #endif
+        #endif
 		
 			#if defined(AltNum_EnableApproachingPi)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi

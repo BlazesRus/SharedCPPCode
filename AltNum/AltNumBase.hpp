@@ -226,12 +226,12 @@ namespace BlazesRusCode
         virtual bool IsAtZeroInt()
         {
             return IntValue==0||IntValue==NegativeRep;
-        }
+        } const
 
         virtual bool IsNotAtZeroInt()
         {
             return IntValue != 0 && IntValue != NegativeRep;
-        }
+        } const
 
         virtual signed int GetIntHalf()
         {
@@ -243,7 +243,7 @@ namespace BlazesRusCode
             else
                 return IntValue;
 #endif
-        }
+        } const
 
         //Return IntValue part as Absolute value
         virtual signed int IntHalfAsAbs()
@@ -296,13 +296,65 @@ namespace BlazesRusCode
             }
         }
 
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        virtual void SetAsMaximum()
+        {
+            IntValue = 2147483647; DecimalHalf = 999999999;
+        }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        virtual void SetAsMinimum()
+        {
+            IntValue = -2147483647; DecimalHalf = 999999999;
+        }
+
     #pragma region Const Representation values
+	#if defined(AltNum_EnableInfinityRep)
+        //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
+		//(other values only used if AltNum_EnableInfinityPowers is enabled)
+		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
+        static const signed int InfinityRep = -2147483648;
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+        //Is Approaching Bottom when DecimalHalf==-2147483647:
+        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
+		//If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+		//If ExtraRep=PiRep, then it represents Approaching IntValue from right towards left (IntValue.0__1)Pi
+        static const signed int ApproachingBottomRep = -2147483647;
+		//Is Approaching Top i when DecimalHalf==-2147483646:
+		//If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+		//If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
+		static const signed int ApproachingTopRep = -2147483646;
+    #endif
+
+	#if defined(AltNum_EnableUndefinedButInRange)
+		//Such as result of Cos of infinity
+		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
+        static const signed int UndefinedInRangeRep = -2147483642;
+		
+		#if defined(AltNum_EnableWithinMinMaxRange)
+		//Undefined but in ranged of IntValue to DecimalHalf
+        static const signed int WithinMinMaxRangeRep = -2147483642;
+		#endif
+	#endif
+
+	#if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf==2147483647
+        static const signed int NaNRep = 2147483647;
+        //Is NaN when DecimalHalf==2147483646
+        static const signed int UndefinedRep = 2147483646;
+	#endif
 
 //        virtual RepType const GetRepType()
 //        {
 //        }
 
-        //RepType const GetRepType()
+        void const GetRepType() = 0;
 
 
     #endpragma region Const Representation values
@@ -323,17 +375,55 @@ namespace BlazesRusCode
 
     #pragma endregion MixedFrac Setters
 
+protected:
     #pragma region Infinity Setters
+    //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
+    // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
+    #if defined(AltNum_EnableInfinityRep)
+        virtual void SetAsInfinity()
+        {
+            IntValue = 1; DecimalHalf = -2147483648;
+        }
 
+        virtual void SetAsNegativeInfinity()
+        {
+            IntValue = -1; DecimalHalf = -2147483648;
+        }
+	#endif
     #pragma endregion Infinity Setters
 
     #pragma region ApproachingZero Setters
+		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
+        //Approaching Towards values from right to left side(IntValue.000...1)
+        virtual void SetAsApproachingBottom(int value=0)
+        {
+            IntValue = value; DecimalHalf = ApproachingBottomRep;
+        }
 
+		#if !defined(AltNum_DisableApproachingTop)
+		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
+        void SetAsApproachingTop(int value)
+        {
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+        }
+        #endif
     #pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
+	#if defined(AltNum_EnableNaN)
+        virtual void SetAsNaN()
+        {
+            IntValue = 0; DecimalHalf = NaNRep;
+        }
 
+        virtual void SetAsUndefined()
+        {
+            IntValue = 0; DecimalHalf = UndefinedRep;
+        }
+	#endif
     #pragma endregion NaN Setters
+public:
 
     #pragma region ValueDefines
 
@@ -344,7 +434,7 @@ namespace BlazesRusCode
     #pragma endregion String Commands
 
     #pragma region From Standard types to this type
-
+protected:
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -448,6 +538,7 @@ namespace BlazesRusCode
         {
             IntValue = Value; DecimalHalf = 0;
         }
+public:
 
     #pragma endregion From this type to Standard types
 
@@ -900,6 +991,7 @@ namespace BlazesRusCode
 
     #pragma endregion MirroredIntBased Operations
 
+protected:
     #pragma region Pi Conversion
 	
     #pragma endregion Pi Conversion
@@ -911,6 +1003,7 @@ namespace BlazesRusCode
     #pragma region Other RepType Conversion
 
     #pragma endregion Other RepType Conversion
+public:
 
     #pragma region Comparison Operators
 
