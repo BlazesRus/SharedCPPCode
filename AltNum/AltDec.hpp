@@ -202,6 +202,12 @@ AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully tes
 AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bit checks instead of case statements(Not Implemented yet)
 
 AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
+
+AltNum_StoreCommonFunctionsInBase
+AltNum_StoreCommonVariablesInBase
+AltNum_StoreIntSectionFunctionsInBase
+AltNum_StoreBasicFunctionsInBase
+
 */
 
 #if !defined(AltNum_DisableAltDecDefaultToggles)
@@ -391,6 +397,7 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API AltDec
     {
+#if !defined(AltNum_StoreCommonVariablesInBase)
     public:
         /// <summary>
         /// The decimal overflow
@@ -417,37 +424,29 @@ namespace BlazesRusCode
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-#if !defined(AltDec_UseMirroredInt)
+    #if !defined(AltDec_UseMirroredInt)
         static signed int const NegativeRep = -2147483648;
-#else
+    #else
         static MirroredInt NegativeRep;
         static signed int const NegativeRepVal = MirroredInt::NegativeRep;
-#endif
+    #endif
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-#if !defined(AltDec_UseMirroredInt)
+    #if !defined(AltDec_UseMirroredInt)
         signed int IntValue;
-#else
+    #else
         MirroredInt IntValue;
-#endif
-
-        bool IsNegative()
-        {
-#if !defined(AltDec_UseMirroredInt)
-            return IntValue<0;
-#else
-            return IntValue.IsNegative();
-#endif
-        }
+    #endif
 
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
         signed int DecimalHalf;
-		
+#endif
+
         /// <summary>
 		/// (Used exclusively for alternative represents of numbers including imaginery numbers and for fractionals)
         /// If both DecimalHalf&ExtraRep are Positive with ExtraRep as non-zero, then ExtraRep acts as denominator
@@ -459,6 +458,22 @@ namespace BlazesRusCode
         /// If DecimalHalf is positive and ExtraRep is -2147483648 and AltNum_EnablePiRep is enabled, then AltDec represents +- 2147483647.999999999 * Pi
         /// </summary>
         signed int ExtraRep;
+
+#if !defined(AltNum_StoreCommonFunctionsInBase)
+        bool IsNegative()
+        {
+    #if !defined(AltDec_UseMirroredInt)
+            return IntValue<0;
+    #else
+            return IntValue.IsNegative();
+    #endif
+        }
+
+        //Detect if at exactly zero
+		bool IsZero()
+		{
+            return DecimalHalf==0&&IntValue==0;
+		} const
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
@@ -473,41 +488,42 @@ namespace BlazesRusCode
 
         signed int GetIntHalf()
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return IntValue.GetValue();
-#else
+    #else
             if(IntValue == NegativeRep)
                 return 0;
             else
                 return IntValue;
-#endif
+    #endif
         }
 
         //Return IntValue part as Absolute value
         signed int IntHalfAsAbs()
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return IntValue.GetAbsValue();
-#else
+    #else
             if (IsAtZeroInt())
                 return 0;
             else if (IntValue < 0)
                 return -IntValue;
             else
                 return IntValue;
-#endif
+    #endif
         }
 
         std::string IntHalfAsString()
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return (std::string) IntValue;
-#else
+    #else
             if (IntValue == NegativeRep)
                 return "-0";
             return VariableConversionFunctions::IntToStringConversion(IntValue);
-#endif
+    #endif
         }
+#endif
 
 #if defined(AltDec_UseMirroredInt)
         /// <summary>
@@ -558,12 +574,6 @@ namespace BlazesRusCode
             return *this;
         } const
 
-        //Detect if at exactly zero
-		bool IsZero()
-		{
-            return DecimalHalf==0&&IntValue==0;
-		} const
-
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -574,6 +584,7 @@ namespace BlazesRusCode
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
         } const
 
+#if !defined(AltNum_StoreCommonFunctionsInBase)
         void SetAsZero()
         {
             IntValue = 0;
@@ -599,7 +610,26 @@ namespace BlazesRusCode
             }
         }
 
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMaximum()
+        {
+            IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMinimum()
+        {
+            IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+        }
+
+#endif
+
         #pragma region Const Representation values
+#if !defined(AltNum_StoreCommonVariablesInBase)
 	#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//(other values only used if AltNum_EnableInfinityPowers is enabled)
@@ -617,6 +647,29 @@ namespace BlazesRusCode
 		//If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
 		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
 		static const signed int ApproachingTopRep = -2147483646;
+    #endif
+	#if defined(AltNum_EnableUndefinedButInRange)
+		//Such as result of Cos of infinity
+		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
+        static const signed int UndefinedInRangeRep = -2147483642;
+		
+		#if defined(AltNum_EnableWithinMinMaxRange)
+		//Undefined but in ranged of IntValue to DecimalHalf
+        static const signed int WithinMinMaxRangeRep = -2147483642;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf==2147483647
+        static const signed int NaNRep = 2147483647;
+        //Is NaN when DecimalHalf==2147483646
+        static const signed int UndefinedRep = 2147483646;
+	#endif
+    #if defined(AltNum_EnableNilRep)
+        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
+        static signed int const NilRep = -2147483648;
+    #endif
+#endif
+	#if defined(AltNum_EnableApproachingValues)
         #if defined(AltNum_EnableApproachingI)
 		//Is Approaching Bottom i when DecimalHalf==-2147483645:
 		//If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)i
@@ -650,30 +703,9 @@ namespace BlazesRusCode
         static const signed int EByDivisorRep = -2147483643;
 		#endif
 	#endif
-	#if defined(AltNum_EnableUndefinedButInRange)
-		//Such as result of Cos of infinity
-		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
-        static const signed int UndefinedInRangeRep = -2147483642;
-		
-		#if defined(AltNum_EnableWithinMinMaxRange)
-		//Undefined but in ranged of IntValue to DecimalHalf
-        static const signed int WithinMinMaxRangeRep = -2147483642;
-		#endif
-	#endif
         static const signed int AlternativeFractionalLowerBound = -2147483640;
 		//Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
 		static const signed int InfinityBasedLowerBound = -2147483644;
-	#if defined(AltNum_EnableNaN)
-        //Is NaN when DecimalHalf==2147483647
-        static const signed int NaNRep = 2147483647;
-        //Is NaN when DecimalHalf==2147483646
-        static const signed int UndefinedRep = 2147483646;
-	#endif
-
-    #if defined(AltNum_EnableNilRep)
-        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
-        static signed int const NilRep = -2147483648;
-    #endif
 
     #pragma endregion Const Representation values
         /// <summary>
@@ -1105,22 +1137,6 @@ namespace BlazesRusCode
             else
 				throw "Unknown or non-enabled representation type detected";
             return RepType::UnknownType;//Catch-All Value;
-        }
-
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum()
-        {
-            IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
-        {
-            IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
         }
 		
 	#pragma region PiNum Setters
@@ -2032,6 +2048,7 @@ public:
     #pragma endregion From Standard types to this type
 
     #pragma region MirroredIntBased Operations
+#if !defined(AltNum_StoreIntSectionFunctionsInBase)
 
         template<typename IntType=int>
         void IntHalfDivision(IntType RValue)
@@ -2074,10 +2091,6 @@ public:
             IntValue /= RValue;
 #endif
         }
-
-        //this is reference version
-        template<typename IntType=int>
-        void IntHalfDivisionOp(IntType& RValue) { IntHalfDivision(RValue); }
 
         template<typename IntType=int>
         void IntHalfMultiplication(IntType RValue)
@@ -2157,13 +2170,9 @@ public:
 #endif
         }
 
-        //this is reference version
-        template<typename IntType=int>
-        void IntHalfMultiplicationOp(IntType& RValue) { IntHalfMultiplication(RValue); }
-
-        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
+        //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
         template<typename IntType>
-        void IntHalfAdditionOp(const IntType& RValue)
+        void IntHalfAddition(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -2241,7 +2250,7 @@ public:
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
         //this is copy by value and pointer version
         template<typename IntType>
-        void IntHalfSubtractionOp(const IntType& RValue)
+        void IntHalfSubtraction(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
@@ -2311,22 +2320,12 @@ public:
 #endif
         }
 
-		bool IntPartEqualTo(AltDec& RValue)
-		{
-            return IntValue == RValue.IntValue;
-        }
-
         //Reference version
         template<typename IntType=int>
         bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
 
         template<typename IntType=int>
         bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
-
-		bool IntPartNotEqualTo(AltDec& RValue)
-		{
-            return IntValue != RValue.IntValue;
-        }
 
         //Reference version
         template<typename IntType=int>
@@ -2367,12 +2366,6 @@ public:
         //Reference version
         template<typename IntType=int>
         bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
-
-		static bool IntPartLessThan(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-
-		static bool IntPartLessThanOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
         /// <summary>
         /// Less than or Equal Operation for just IntValue section
@@ -2406,18 +2399,6 @@ public:
         //Reference version
         template<typename IntType=int>
         bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
-
-        /// <summary>
-        /// Less than or Equal Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-		static bool IntPartHalfLessThanOrEqual(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-
-		static bool IntPartLessThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
 		
         /// <summary>
         /// Greater than Operation for just IntValue section
@@ -2458,18 +2439,6 @@ public:
         bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
-        /// Greater than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-		static bool IntPartGreaterThan(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
-
-		static bool IntPartGreaterThanOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
-		
-        /// <summary>
         /// Greater than or Equal to Operation for just IntValue section
         /// </summary>
         /// <param name="LValue">The left side value</param>
@@ -2504,10 +2473,51 @@ public:
                 return IntValue >= RValue.IntValue;
 #endif
 		}
-		
-        //Reference version
+
         template<typename IntType=int>
         bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
+
+#endif
+		
+		bool IntPartEqualTo(AltDec& RValue)
+		{
+            return IntValue == RValue.IntValue;
+        }
+		
+		bool IntPartNotEqualTo(AltDec& RValue)
+		{
+            return IntValue != RValue.IntValue;
+        }
+		
+		static bool IntPartLessThan(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+
+		static bool IntPartLessThanOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+		
+        /// <summary>
+        /// Less than or Equal Operation for just IntValue section
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+		static bool IntPartHalfLessThanOrEqual(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+
+		static bool IntPartLessThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
+		
+        /// <summary>
+        /// Greater than Operation for just IntValue section
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="RValue">The right side value</param>
+        /// <returns>bool</returns>
+		static bool IntPartGreaterThan(AltDec LValue, AltDec RValue) 
+        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
+
+		static bool IntPartGreaterThanOp(AltDec& LValue, AltDec& RValue) 
+        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
 
         /// <summary>
         /// Greater than or Equal to Operation for just IntValue section

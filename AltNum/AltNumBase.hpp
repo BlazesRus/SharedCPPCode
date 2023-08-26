@@ -22,7 +22,7 @@
 #include <cmath>//Needed for floating point floor function
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
-#if !defined(AltNum_DisableAutoToggleOfPreferedSettings)||defined(AltNum_EnableAutoToggleOfPreferedSettings)
+#if defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
 	#define AltNum_EnableAlternativeRepFractionals
@@ -182,6 +182,7 @@ namespace BlazesRusCode
 	//Base class for AltDec and MediumDec to help initial structure of classes
     class DLL_API AltNumBase
     {
+#if defined(AltNum_StoreCommonVariablesInBase)
     public:
         /// <summary>
         /// The decimal overflow
@@ -204,7 +205,6 @@ namespace BlazesRusCode
         /// long double (Extended precision double)
         /// </summary>
         using ldouble = long double;
-	public:
 
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
@@ -230,7 +230,18 @@ namespace BlazesRusCode
         /// Stores decimal section info and other special info
         /// </summary>
         signed int DecimalHalf;
-	
+#endif
+
+#if defined(AltNum_StoreCommonFunctionsInBase)
+        bool IsNegative()
+        {
+    #if !defined(AltDec_UseMirroredInt)
+            return IntValue<0;
+    #else
+            return IntValue.IsNegative();
+    #endif
+        }
+
         //Detect if at exactly zero
 		bool IsZero() const
 		{
@@ -250,41 +261,42 @@ namespace BlazesRusCode
 
         signed int GetIntHalf() const
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return IntValue.GetValue();
-#else
+    #else
             if(IntValue == NegativeRep)
                 return 0;
             else
                 return IntValue;
-#endif
+    #endif
         }
 
         //Return IntValue part as Absolute value
         signed int IntHalfAsAbs() const
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return IntValue.GetAbsValue();
-#else
+    #else
             if (IsAtZeroInt())
                 return 0;
             else if (IntValue < 0)
                 return -IntValue;
             else
                 return IntValue;
-#endif
+    #endif
         }
 
         std::string IntHalfAsString() const
         {
-#if defined(AltDec_UseMirroredInt)
+    #if defined(AltDec_UseMirroredInt)
             return (std::string) IntValue;
-#else
+    #else
             if (IntValue == NegativeRep)
                 return "-0";
             return VariableConversionFunctions::IntToStringConversion(IntValue);
-#endif
+    #endif
         }
+#endif
 
 #if defined(AltDec_UseMirroredInt)
         /// <summary>
@@ -321,6 +333,7 @@ namespace BlazesRusCode
             DecimalHalf = decVal;
         }
 
+#if defined(AltNum_StoreCommonFunctionsInBase)
         virtual void SetAsZero()
         {
             IntValue = 0;
@@ -361,8 +374,10 @@ namespace BlazesRusCode
         {
             IntValue = -2147483647; DecimalHalf = 999999999;
         }
+#endif
 
     #pragma region Const Representation values
+#if defined(AltNum_StoreCommonVariablesInBase)
 	#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//(other values only used if AltNum_EnableInfinityPowers is enabled)
@@ -381,7 +396,6 @@ namespace BlazesRusCode
 		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
 		static const signed int ApproachingTopRep = -2147483646;
     #endif
-
 	#if defined(AltNum_EnableUndefinedButInRange)
 		//Such as result of Cos of infinity
 		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
@@ -392,14 +406,17 @@ namespace BlazesRusCode
         static const signed int WithinMinMaxRangeRep = -2147483642;
 		#endif
 	#endif
-
 	#if defined(AltNum_EnableNaN)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
         //Is NaN when DecimalHalf==2147483646
         static const signed int UndefinedRep = 2147483646;
 	#endif
-
+    #if defined(AltNum_EnableNilRep)
+        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
+        static signed int const NilRep = -2147483648;
+    #endif
+#endif
 //        virtual RepType const GetRepType()
 //        {
 //        }
@@ -485,6 +502,7 @@ public:
 
     #pragma region From Standard types to this type
 protected:
+/*//Need to copy the const reference before enable this section
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -590,17 +608,17 @@ protected:
         {
             IntValue = Value; DecimalHalf = 0;
         }
+*/
 public:
 
     #pragma endregion From this type to Standard types
 
     #pragma region MirroredIntBased Operations
-    //Templates can not be virtual
-
+#if defined(AltNum_StoreIntSectionFunctionsInBase)//Templates can not be virtual
+        
         template<typename IntType=int>
-        void IntHalfDivision(IntType rValue)
+        void IntHalfDivision(IntType RValue)
         {
-            int RValue = rValue;
 #if defined(AltDec_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
@@ -1034,6 +1052,8 @@ public:
 
         template<typename IntType=int>
         bool IntHalfGreaterThanOrEqualOp(const IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
+
+#endif
 
     #pragma endregion MirroredIntBased Operations
 
