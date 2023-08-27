@@ -136,25 +136,25 @@
 #endif
 
 #if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnablePiFractional
+    #define AltNum_EnablePiFractional//PiFractional enabled (AltNum_EnablePiRep and AltNum_EnableAlternativeRepFractionals active)
 #endif
 #if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableEFractional
+    #define AltNum_EnableEFractional//EFractional enabled (AltNum_EnableERep and AltNum_EnableAlternativeRepFractionals active)
 #endif
 #if !defined(AltNum_EnableIFractional) &&defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableIFractional
+    #define AltNum_EnableIFractional//IFractional enabled (AltNum_EnableImaginaryNum and AltNum_EnableAlternativeRepFractionals active)
 #endif
 
 #if defined(AltNum_EnablePiFractional) || defined(AltNum_EnableEFractional) || defined(AltNum_EnableIFractional)
-	#define AltNum_UsingAltFractional//Shorthand for having any of above toggles active
+	#define AltNum_UsingAltFractional//AltNum_EnablePiFractional, AltNum_EnableEFractional, or AltNum_EnableIFractional active
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
-    #define AltNum_MixedPiOrEEnabled
+    #define AltNum_MixedPiOrEEnabled//Either MixedPi or MixedE enabled
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedEFractional)
-    #define AltNum_MixedAltEnabled
+    #define AltNum_MixedAltEnabled//Either MixedPi, MixedE, or MixedI enabled
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional) && defined(AltNum_EnableDecimaledPiFractionals)
