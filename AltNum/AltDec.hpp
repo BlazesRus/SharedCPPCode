@@ -33,7 +33,6 @@
 
 #include "AltNumModChecker.hpp"
 
-#include "AltNumBase.hpp"
 //Preprocessor options
 /*
 AltNum_EnableFractionals =
@@ -220,6 +219,8 @@ AltNum_StoreBasicFunctionsInBase
     //#define AltNum_EnableERep
 #endif
 
+#include "AltNumBase.hpp"
+
 namespace BlazesRusCode
 {
     class AltDec;
@@ -240,7 +241,7 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API AltDec
+    class DLL_API AltDec// : public virtual AltNumBase
     {
 #if !defined(AltNum_StoreCommonVariablesInBase)
     public:
@@ -2795,7 +2796,317 @@ public:
 
     #endif
     #pragma endregion Other RepType Conversion
+
+    //ToDo: Combine AltDEc to AltDec and AltDec to Int comparison code(using alternative function if IntType)
+
+    #pragma region AltDec-To-Int Comparison Functions
+        /// <summary>
+        /// Equality operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+        template<typename IntType=int>
+        static bool RightSideIntEqualTo(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                return false;
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                return false;
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
+		}
+		
+        /// <summary>
+        /// Not Equal to operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                return false;
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                return false;
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.IntValue == RValue)
+                return false;
+            else
+                return true;
+		}
+		
+        /// <summary>
+        /// Less than operation between <see cref="AltDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+		template<typename IntType=int>
+        static bool RightSideIntLessThan(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
+            {
+                if (LValue.IntValue == -1)
+                    return true;
+                else
+                    return false;
+            }
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                throw "Can't compare real values against imaginary.";
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue < RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Less than or equal to operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
+            {
+                if (LValue.IntValue == -1)
+                    return true;
+                else
+                    return false;
+            }
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                throw "Can't compare real values against imaginary.";
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue <= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool RightSideIntGreaterThan(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
+            {
+                if (LValue.IntValue == 1)
+                    return true;
+                else
+                    return false;
+            }
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                throw "Can't compare real values against imaginary.";
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue > RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5>-1
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than or equal to operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side AltDec value</param>
+        /// <param name="RValue">Right side integer value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType RValue)
+        {
+#if defined(AltNum_EnableInfinityRep)
+            if (LValue.ExtraRep == InfinityRep)
+            {
+                if (LValue.IntValue == 1)
+                    return true;
+                else
+                    return false;
+            }
+#endif
+#if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableDecimaledIFractionals)
+            if (LValue.ExtraRep<0)
+    #else
+            if (LValue.ExtraRep == IRep)
+    #endif
+                throw "Can't compare real values against imaginary.";
+    #if defined(AltNum_EnableIFractional)
+            else if(LValue.ExtraRep==IByDivisorRep)
+                throw "Can't compare real values against imaginary.";
+    #endif
+#endif
+            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
+                LValue.ConvertToNormTypeV2();
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue >= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
+            }
+            return false;
+		}
 	
+        /// <summary>
+        /// Equality operation between Integer Type and <see cref="AltDec&"/> 
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool LeftSideIntEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
+	
+        /// <summary>
+        /// Not equal to operation between Integer Type and <see cref="AltDec&"/> 
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool LeftSideIntNotEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
+		
+        /// <summary>
+        /// Less than operation between Integer Type and <see cref="AltDec&"/> 
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool LeftSideIntLessThan(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
+		
+        /// <summary>
+        /// Less than or equal operation between Integer Type and <see cref="AltDec&"/> 
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+	    template<typename IntType=int>
+        static bool LeftSideIntLessThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
+		
+        /// <summary>
+        /// Greater than operation between Integer Type and <see cref="AltDec&"/> 
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+		template<typename IntType=int>
+        static bool LeftSideIntGreaterThan(IntType LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
+		
+        /// <summary>
+        /// Greater than or equal to operation between <see cref="AltDec&"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">Left side integer value</param>
+        /// <param name="RValue">Right side AltDec value</param>
+        /// <returns>bool</returns>
+		template<typename IntType=int>
+        static bool LeftSideIntGreaterThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
+
+    #pragma endregion AltDec-To-Int Comparison Methods
+
     #pragma region Comparison Operators
 
         /// <summary>
@@ -3676,314 +3987,6 @@ public:
 
     #pragma endregion Comparison Operators
 
-    #pragma region AltDec-To-Int Comparison Functions
-        /// <summary>
-        /// Equality operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-        template<typename IntType=int>
-        static bool RightSideIntEqualTo(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                return false;
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                return false;
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
-		}
-		
-        /// <summary>
-        /// Not Equal to operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool RightSideIntNotEqualTo(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                return false;
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                return false;
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            if (LValue.IntValue == RValue)
-                return false;
-            else
-                return true;
-		}
-		
-        /// <summary>
-        /// Less than operation between <see cref="AltDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-		template<typename IntType=int>
-        static bool RightSideIntLessThan(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if (LValue.ExtraRep == InfinityRep)
-            {
-                if (LValue.IntValue == -1)
-                    return true;
-                else
-                    return false;
-            }
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                throw "Can't compare real values against imaginary.";
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                throw "Can't compare real values against imaginary.";
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue < RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5<0
-                    if (RValue >= 0)
-                        return true;
-                }
-                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
-            }
-            return false;
-		}
-		
-        /// <summary>
-        /// Less than or equal to operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if (LValue.ExtraRep == InfinityRep)
-            {
-                if (LValue.IntValue == -1)
-                    return true;
-                else
-                    return false;
-            }
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                throw "Can't compare real values against imaginary.";
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                throw "Can't compare real values against imaginary.";
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue <= RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5<0
-                    if (RValue >= 0)
-                        return true;
-                }
-                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
-            }
-            return false;
-		}
-		
-        /// <summary>
-        /// Greater than operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool RightSideIntGreaterThan(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if (LValue.ExtraRep == InfinityRep)
-            {
-                if (LValue.IntValue == 1)
-                    return true;
-                else
-                    return false;
-            }
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                throw "Can't compare real values against imaginary.";
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                throw "Can't compare real values against imaginary.";
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue > RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5>-1
-                    if (RValue <= -1)
-                        return true;
-                }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
-            }
-            return false;
-		}
-		
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side AltDec value</param>
-        /// <param name="RValue">Right side integer value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType RValue)
-        {
-#if defined(AltNum_EnableInfinityRep)
-            if (LValue.ExtraRep == InfinityRep)
-            {
-                if (LValue.IntValue == 1)
-                    return true;
-                else
-                    return false;
-            }
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-    #if defined(AltNum_EnableDecimaledIFractionals)
-            if (LValue.ExtraRep<0)
-    #else
-            if (LValue.ExtraRep == IRep)
-    #endif
-                throw "Can't compare real values against imaginary.";
-    #if defined(AltNum_EnableIFractional)
-            else if(LValue.ExtraRep==IByDivisorRep)
-                throw "Can't compare real values against imaginary.";
-    #endif
-#endif
-            if (LValue.ExtraRep != 0 || LValue.DecimalHalf < 0)
-                LValue.ConvertToNormTypeV2();
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue >= RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {
-                    if (RValue <= -1)
-                        return true;
-                }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
-            }
-            return false;
-		}
-	
-        /// <summary>
-        /// Equality operation between Integer Type and <see cref="AltDec&"/> 
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool LeftSideIntEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
-	
-        /// <summary>
-        /// Not equal to operation between Integer Type and <see cref="AltDec&"/> 
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool LeftSideIntNotEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
-		
-        /// <summary>
-        /// Less than operation between Integer Type and <see cref="AltDec&"/> 
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool LeftSideIntLessThan(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
-		
-        /// <summary>
-        /// Less than or equal operation between Integer Type and <see cref="AltDec&"/> 
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-	    template<typename IntType=int>
-        static bool LeftSideIntLessThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
-		
-        /// <summary>
-        /// Greater than operation between Integer Type and <see cref="AltDec&"/> 
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-		template<typename IntType=int>
-        static bool LeftSideIntGreaterThan(IntType LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
-		
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="AltDec&"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">Left side integer value</param>
-        /// <param name="RValue">Right side AltDec value</param>
-        /// <returns>bool</returns>
-		template<typename IntType=int>
-        static bool LeftSideIntGreaterThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
-
-    #pragma endregion AltDec-To-Int Comparison Methods
-
     #pragma region NormalRep Integer Division Operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
@@ -4203,7 +4206,7 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
-#if defined(AltNum_StoreBasicFunctionsInBase)
+#if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 		/// <summary>
         /// Partial Multiplication Operation Between AltDec and Integer Value
@@ -4396,7 +4399,7 @@ protected:
             if (IntValue == 0)
                 IntValue = (int)rValue;
             else
-                IntHalfAdditionOp(rValue);
+                IntHalfAddition(rValue);
             return;
         }
 #endif
@@ -4417,7 +4420,7 @@ public:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(rValue);
+                IntHalfAddition(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -4460,7 +4463,7 @@ protected:
             if (IntValue == 0)
                 IntValue = -(int)rValue;
             else
-                IntHalfSubtractionOp(rValue);
+                IntHalfSubtraction(rValue);
             return;
         }
 
@@ -4489,7 +4492,7 @@ public:
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(rValue);
+                IntHalfSubtraction(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
@@ -4919,14 +4922,14 @@ public:
                         DecimalHalf = (signed int)rRep;
                         if(DecimalHalf==0)
                         {
-#if defined(AltNum_DisableMultiplyDownToNothingPrevention)
+    #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
                             if(ExtraRep!=0)
                                 ExtraRep = 0;
                             return *this;
-#else
+    #else
                             DecimalHalf = 1;
-#endif
+    #endif
                         }
                         IntValue = ResIsNegative ? NegativeRep : 0;
                         return *this;
@@ -5042,14 +5045,14 @@ public:
                         DecimalHalf = (signed int)SRep;
                         if(DecimalHalf==0)
                         {
-#if defined(AltNum_DisableMultiplyDownToNothingPrevention)
+    #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
                             if(ExtraRep!=0)
                                 ExtraRep = 0;
                             return *this;
-#else
+    #else
                             DecimalHalf = 1;
-#endif
+    #endif
                         }
                         IntValue = SelfIsNegative ? AltDec::NegativeRep : 0;
                         return *this;
@@ -5430,7 +5433,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
+            IntHalfAddition(rValue.IntValue);
             if (rValue.DecimalHalf != 0)
             {
                 if (rValue.IntValue < 0)
@@ -5479,7 +5482,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfAdditionOp(rValue.IntValue);
+            IntHalfAddition(rValue.IntValue);
             if (rValue.DecimalHalf != 0)
             {
                 if (WasNegative)
@@ -5529,7 +5532,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
+            IntHalfSubtraction(rValue.IntValue);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
@@ -5579,7 +5582,7 @@ public:
             //NegativeBeforeOperation
             bool WasNegative = IntValue < 0;
             //Deal with Int section first
-            IntHalfSubtractionOp(rValue.IntValue);
+            IntHalfSubtraction(rValue.IntValue);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
@@ -5668,7 +5671,7 @@ public:
             {
                 case RepType::NormalType:
                 {
-                    #if defined(AltNum_EnableAlternativeRepFractionals)
+                    #if defined(AltNum_EnableFractionals)
                     if (rValue < 0)
                     {
                         ExtraRep = -rValue;
@@ -5681,7 +5684,7 @@ public:
                     #endif
                 }
                 break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
                     int result = ExtraRep;
@@ -5705,6 +5708,8 @@ public:
                     }
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
     #if defined(AltNum_UsingAltFractional)
                 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional:
@@ -6023,7 +6028,7 @@ public:
                     #endif
                 }
                 break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {
                     int result = ExtraRep * rValue;
@@ -6033,6 +6038,8 @@ public:
                         BasicUIntDivOp(rValue);
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
     #if defined(AltNum_UsingAltFractional)
                 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional:
@@ -6330,7 +6337,7 @@ public:
                 case RepType::NormalType:
 					BasicIntMultOp(rValue);
 					break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
 					if(rValue<0)
@@ -6345,6 +6352,8 @@ public:
 						BasicUIntMultOp(rValue);
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
     #if defined(AltNum_UsingAltFractional)
                 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional:
@@ -6659,9 +6668,9 @@ public:
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf + increment;
                     }
 				}
@@ -6687,9 +6696,9 @@ public:
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf - increment;
                     }
                     break;
@@ -6730,7 +6739,7 @@ public:
                 case RepType::NormalType:
 					BasicUIntMultOp(rValue);
 					break;
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
 					int divRes = ExtraRep / rValue;
@@ -6740,6 +6749,8 @@ public:
 						BasicUIntMultOp(rValue);
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
     #if defined(AltNum_UsingAltFractional)
                 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional:
@@ -7002,9 +7013,9 @@ public:
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf + increment;
                     }
 				}
@@ -7025,9 +7036,9 @@ public:
                     {
                         int increment = ExtraRep * divRes;
                         if (IntValue < 0)
-                            IntHalfSubtractionOp(increment);
+                            IntHalfSubtraction(increment);
                         else
-                            IntHalfAdditionOp(increment);
+                            IntHalfAddition(increment);
                         DecimalHalf = DecimalHalf - increment;
                     }
                 }
@@ -7122,7 +7133,7 @@ public:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
+			IntHalfAddition(rValue);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -7207,7 +7218,7 @@ public:
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormTypeV2();
 			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
+			IntHalfAddition(rValue);
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
 			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
@@ -7514,7 +7525,7 @@ public:
     #endif
 #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
+#if defined(AltNum_EnableFractionals)//Unfinished code
                 case RepType::NumByDiv://(AltDec(IntValue,DecimalHalf))/ExtraRep
                 {
                     //((AltDec(IntValue,DecimalHalf))/ExtraRep) / (AltDec(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
@@ -7542,6 +7553,8 @@ public:
                     }
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
                 //(Self.IntValue/DecimalHalf)/(rValue.IntValue/rValue.DecimalHalf) =
                 //(IntValue*rValue.DecimalHalf)/(DecimalHalf*rValue.IntValue)
     #if defined(AltNum_EnablePiFractional)
@@ -7746,7 +7759,7 @@ public:
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& UnsignedDivOp(const AltDec& rValue)
+        AltDec& UnsignedDivOp(AltDec rValue)
         {
             //Warning:Modifies Negative value into positive number(Don't use with target Value that is important not to modify)
             if (IsZero())
@@ -7938,7 +7951,7 @@ public:
     #endif
 #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
+#if defined(AltNum_EnableFractionals)//Unfinished code
                 case RepType::NumByDiv://(AltDec(IntValue,DecimalHalf))/ExtraRep
                 {
                     //((AltDec(IntValue,DecimalHalf))/ExtraRep) / (AltDec(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
@@ -7961,6 +7974,8 @@ public:
                     }
                 }
                 break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
                 //(Self.IntValue/DecimalHalf)/(rValue.IntValue/rValue.DecimalHalf) =
                 //(IntValue*rValue.DecimalHalf)/(DecimalHalf*rValue.IntValue)
     #if defined(AltNum_EnablePiFractional)
@@ -8458,7 +8473,7 @@ public:
     #endif
 #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
+#if defined(AltNum_EnableFractionals)//Unfinished code
                 case RepType::NumByDiv://(AltDec(IntValue,DecimalHalf))/ExtraRep
                 {
                     //((AltDec(IntValue,DecimalHalf))/ExtraRep) * (AltDec(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
@@ -8467,7 +8482,8 @@ public:
                     ExtraRep *= rValue.ExtraRep;
                 }
                 break;
-
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
                 //(IntValue*rValue.IntValue)*Pi^2/(DecimalHalf*rValue.DecimalHalf)
     #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -8736,7 +8752,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The rightside rValue</param>
         /// <returns>AltDec&</returns>
-        AltDec& UnsignedMultOp(const AltDec& rValue)
+        AltDec& UnsignedMultOp(AltDec rValue)
         {
             if (rValue.IntValue==0&&rValue.DecimalHalf==0) { SetAsZero(); return *this; }
             if (IsZero() || rValue == AltDec::One)
@@ -8882,7 +8898,7 @@ public:
     #endif
 #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)//Unfinished code
+#if defined(AltNum_EnableFractionals)//Unfinished code
                 case RepType::NumByDiv://(AltDec(IntValue,DecimalHalf))/ExtraRep
                 {
                     //((AltDec(IntValue,DecimalHalf))/ExtraRep) * (AltDec(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
@@ -8891,7 +8907,8 @@ public:
                     ExtraRep *= rValue.ExtraRep;
                 }
                 break;
-
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
                 //(IntValue*rValue.IntValue)*Pi^2/(DecimalHalf/rValue.DecimalHalf)
     #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
@@ -9848,13 +9865,15 @@ public:
 #endif
 #endif
 
-#if defined(AltNum_EnableAlternativeRepFractionals)
+#if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                     if (ExtraRep == rValue.ExtraRep)
                         BasicSubOp(rValue);
                     else
                         CatchAllSubtractionV2(rValue, RepType::NumByDiv);
                     break;
+#endif
+#if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 #endif
@@ -9914,7 +9933,7 @@ public:
                     {
                         IntValue -= rValue.IntValue;
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf<0)//Subtract the overflow
+                        if (DecimalHalf < 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
                             --IntValue;
@@ -9930,7 +9949,7 @@ public:
                         IntValue *= rValue.ExtraRep;
                         IntValue -= rValue.IntValue * ExtraRep;
                         DecimalHalf -= rValue.DecimalHalf * ExtraRep;
-                        if (DecimalHalf<0)//Subtract the overflow
+                        if (DecimalHalf < 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
                             --IntValue;
@@ -9955,7 +9974,7 @@ public:
                     {
                         IntValue -= rValue.IntValue;
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf>0)//Subtract the overflow
+                        if (DecimalHalf > 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
                             --IntValue;
@@ -9971,7 +9990,7 @@ public:
                         IntValue *= -rValue.ExtraRep;
                         IntValue -= rValue.IntValue * -ExtraRep;
                         DecimalHalf -= rValue.DecimalHalf * -ExtraRep;
-                        if (DecimalHalf>0)//Subtract the overflow
+                        if (DecimalHalf > 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
                             --IntValue;
@@ -10216,7 +10235,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
 #endif
-            IntHalfAdditionOp(One);
+            IntHalfAddition(One);
             return *this;
         }
 
@@ -10230,7 +10249,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
 #endif
-            IntHalfSubtractionOp(One);
+            IntHalfSubtraction(One);
             return *this;
         }
 
@@ -12266,7 +12285,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntHalfAdditionOp(TempInt02);
+                IntHalfAddition(TempInt02);
             }
             PlaceNumber--;
         }

@@ -91,7 +91,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
     			}
             #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
                 if(Value.IntValue!=0)
-                    self.IntHalfSubtractionOp(Value.IntValue);
+                    self.IntHalfSubtraction(Value.IntValue);
                 if(self.IntValue==0)
                 {
                     self.IntValue = Value.DecimalHalf;
@@ -99,7 +99,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
                 else
                 {
                     self.IntValue *= -Value.ExtraRep;
-                    self.IntHalfAdditionOp(self.DecimalHalf);//adding as negative of the representation
+                    self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
                     if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                     {
                         self.ExtraRep = 0; return;
@@ -183,7 +183,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
 			}
             #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
             if(Value.IntValue!=0)
-                self.IntHalfSubtractionOp(Value.IntValue);
+                self.IntHalfSubtraction(Value.IntValue);
             if(self.IntValue==0)
             {
                 self.IntValue = Value.DecimalHalf;
@@ -191,7 +191,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
             else
             {
                 self.IntValue *= -Value.ExtraRep;
-                self.IntHalfAdditionOp(self.DecimalHalf);//adding as negative of the representation
+                self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
                 if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                 {
                     self.ExtraRep = 0; return;

@@ -298,6 +298,7 @@ namespace BlazesRusCode
         }
 #endif
 
+#if defined(AltNum_StoreCommonVariablesInBase)
 #if defined(AltDec_UseMirroredInt)
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
@@ -332,6 +333,7 @@ namespace BlazesRusCode
 #endif
             DecimalHalf = decVal;
         }
+#endif
 
 #if defined(AltNum_StoreCommonFunctionsInBase)
         virtual void SetAsZero()
@@ -444,6 +446,7 @@ namespace BlazesRusCode
 
 protected:
     #pragma region Infinity Setters
+#if defined(AltNum_StoreCommonFunctionsInBase)
     //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
     // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
     #if defined(AltNum_EnableInfinityRep)
@@ -457,9 +460,11 @@ protected:
             IntValue = -1; DecimalHalf = -2147483648;
         }
 	#endif
+#endif
     #pragma endregion Infinity Setters
 
     #pragma region ApproachingZero Setters
+#if defined(AltNum_StoreCommonFunctionsInBase)
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
         virtual void SetAsApproachingBottom(int value=0)
@@ -475,9 +480,11 @@ protected:
             IntValue = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
+#endif
     #pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
+#if defined(AltNum_StoreCommonFunctionsInBase)
 	#if defined(AltNum_EnableNaN)
         virtual void SetAsNaN()
         {
@@ -489,6 +496,7 @@ protected:
             IntValue = 0; DecimalHalf = UndefinedRep;
         }
 	#endif
+#endif
     #pragma endregion NaN Setters
 public:
 
@@ -1071,7 +1079,7 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
-
+#if defined(AltNum_StoreBasicFunctionsInBase)
         template<typename IntType=int>
         bool PartialIntDivOp(const IntType& rValue)
         {
@@ -1200,7 +1208,7 @@ protected:
             else
                 return false;
         }
-
+#endif
 public:
 /*
         template<typename IntType=int>
@@ -1249,8 +1257,7 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
-
-
+#if defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 		/// <summary>
         /// Partial Multiplication Operation Between AltDec and Integer Value
@@ -1334,7 +1341,7 @@ protected:
                 }
             }
         }
-
+#endif
 public:/*
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value
@@ -1388,7 +1395,7 @@ public:/*
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
-
+#if defined(AltNum_StoreBasicFunctionsInBase)
 protected:
         /// <summary>
         /// Addition Operation that skips negative zero(for when decimal half is empty)
@@ -1432,7 +1439,7 @@ public:
             }
             return *this;
         }*/
-
+#endif
     #pragma endregion NormalRep Integer Addition Operations
 
     #pragma region NormalRep Integer Subtraction Operations
