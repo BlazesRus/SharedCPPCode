@@ -179,6 +179,10 @@
 
 namespace BlazesRusCode
 {
+    //Integer type
+    template<typename T>
+    concept IntegerType = std::is_integral<T>::value;
+
 	//Base class for AltDec and MediumDec to help initial structure of classes
     class DLL_API AltNumBase
     {
