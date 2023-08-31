@@ -336,7 +336,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 }
 #endif
 
-inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec Value)
+inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     //LRep Overrides
 #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)
