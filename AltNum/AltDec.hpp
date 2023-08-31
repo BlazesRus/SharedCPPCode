@@ -2567,26 +2567,107 @@ public:
     #endif
     #if defined(AltNum_EnableMixedPiFractional)
                 case RepType::MixedPi:
-                    return;//Add Conversion Code from MixedPi later
+                    return *this;//Add Conversion Code from MixedPi later
     #endif
                 default:
                     break;
             }
             ExtraRep = PiRep;
-        } const
+            return *this;
+        } //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
+        const
     #endif
     #pragma endregion Pi Conversion
-    
+
     #pragma region E Conversion
     #if defined(AltNum_EnableERep)
         //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
-        void ConvertENumToNum();
-        
+        void ConvertENumToNum()
+        {
+            if (IntValue >= 790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
+                IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+            }
+            else if (IntValue <= -790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            {
+                throw "Conversion of e multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
+                IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+        }
+            __int64 SRep;
+            __int64 divRes;
+            if (DecimalHalf == 0)
+            {
+                bool IsNegative = IntValue<0;
+                if (IsNegative)
+                    IntValue *= -1;
+                SRep = 2718281828;
+                SRep *= IntValue;
+                divRes = SRep / DecimalOverflowX;
+                DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+                if (divRes == 0 && IsNegative)
+                {
+                    if (DecimalHalf == 0)
+                        IntValue = 0;
+                    else
+                        IntValue = NegativeRep;
+                }
+                else if (IsNegative)
+                    IntValue = (int)-divRes;
+                else
+                    IntValue = (int)divRes;
+            }
+            else if (IntValue == 0)
+            {
+                SRep = 2718281828;
+                SRep *= DecimalHalf;
+                divRes = SRep / 1000000000000000000;
+                DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
+            }
+            else if (IntValue == NegativeRep)
+            {
+                SRep = 2718281828;
+                SRep *= DecimalHalf;
+                divRes = SRep / 1000000000000000000;
+                DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
+                if (divRes == 0)
+                    IntValue = NegativeRep;
+                else
+                    IntValue = (int)-divRes;
+            }
+            else
+            {
+                bool IsNegative = IntValue<0;
+                if (IsNegative)
+                    IntValue *= -1;
+                SRep = DecimalOverflowX * IntValue + DecimalHalf;
+                SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
+                //X.Y *.V
+                __int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+                __int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
+                Temp04 /= AltDec::DecimalOverflow;
+                //Temp04 holds __int64 version of .Y * .V
+                __int64 IntegerRep = SRep + Temp03 + Temp04;
+                __int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
+                IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+                DecimalHalf = (signed int)IntegerRep;
+                if (IntHalf == 0 && IsNegative)
+                {
+                    IntValue = NegativeRep;
+                }
+                else if (IsNegative)
+                    IntValue = (int)-IntHalf;
+                else
+                    IntValue = (int)IntHalf;
+            }
+            ExtraRep = 0;
+}
+
         #if defined(AltNum_EnableDecimaledEFractionals)
         void ConvertEByDivToNumByDiv();
 
         void ConvertFromEByDivToNorm();
-        
+
         //void ConvertFromEByDivToNorm();
         #else
         void ConvertFromEFractionalToNorm();
@@ -2653,12 +2734,13 @@ public:
     #endif
     #if defined(AltNum_EnableMixedEFractional)
                 case RepType::MixedE:
-                    return;//Add Conversion Code from MixedPi later
+                    return *this;//Add Conversion Code from MixedPi later
     #endif
                 default:
                     break;
             }
             ExtraRep = ERep;
+            return *this;
         } const
     #endif
     #pragma endregion E Conversion
@@ -2697,7 +2779,128 @@ public:
 #endif
     
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        void ConvertToNormType(const RepType& repType); const
+        void ConvertToNormType(const RepType& repType)
+        {
+            switch (repType)
+            {
+            case RepType::NormalType:
+                break;
+#if defined(AltNum_EnableInfinityRep)
+            case RepType::PositiveInfinity:
+                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+            case RepType::NegativeInfinity:
+                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottom:
+                DecimalHalf = 1;
+                break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTop:
+                DecimalHalf = 999999999;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidLeft:
+                ConvertFromApproachingMidLeftToNorm(); break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingMidRight:
+                ConvertFromApproachingMidRightToNorm(); break;
+#endif
+#endif
+#endif
+#if defined(AltNum_EnablePiRep)
+            case RepType::PiNum:
+                ConvertPiToNum(); break;
+#if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                ConvertPiPowerToNum(); break;
+#endif
+#if defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                ConvertFromPiByDivToNorm(); break;
+#elif defined(AltNum_EnablePiFractional)
+            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                ConvertFromPiFractionalToNorm(); break;
+#endif
+#endif
+            case RepType::NumByDiv:
+            {
+                BasicIntDivOp(ExtraRep);
+                ExtraRep = 0;
+                break;
+            }
+#if defined(AltNum_EnableERep)
+            case RepType::ENum:
+                ConvertENumToNum(); break;
+#if defined(AltNum_EnableDecimaledEFractionals)
+            case RepType::ENumByDiv:
+                ConvertFromEByDivToNorm(); break;
+#elif defined(AltNum_EnableEFractional)
+            case RepType::EFractional://IntValue/DecimalHalf*e Representation
+                ConvertFromEFractionalToNorm(); break;
+#endif
+#endif
+
+#if defined(AltNum_EnableMixedFractional)
+            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            {
+                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
+                Res /= ExtraRep;
+                if (IntValue != 0 && IntValue != NegativeRep)
+                    Res += IntValue;
+                IntValue = Res.IntValue;
+                DecimalHalf = Res.DecimalHalf;
+                ExtraRep = 0;
+                break;
+            }
+#endif
+
+#if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+#if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+#elif defined(AltNum_EnableIFractional)
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+#endif
+            {
+                if (IntValue == 0 && DecimalHalf != 0)
+                    ExtraRep = 0;
+                else
+                    throw "Can't convert imaginery number into real number unless is zero.";
+                break;
+            }
+#endif
+#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingImaginaryBottom:
+                DecimalHalf = 1;
+                break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryTop:
+                DecimalHalf = 999999999;
+                break;
+#endif
+#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingImaginaryMidLeft:
+                ConvertFromApproachingIMidLeftToNorm(); break;
+#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryMidRight:
+                ConvertFromApproachingIMidRightToNorm(); break;
+#endif
+#endif
+#endif
+#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+                throw "Conversion from complex number to real number not supported yet.";
+                break;
+#endif
+            default:
+                throw "Conversion to normal number not supported yet?";
+                break;
+            }
+        } const
 
         //Switch based return of value as normal type representation
         AltDec ConvertAsNormType(const RepType& repType); const
@@ -4135,7 +4338,7 @@ public:
 #endif
             }
             else if (IsZero())
-                return;
+                return *this;
             if(PartialUIntDivOp(rValue))
                 DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
@@ -4144,7 +4347,7 @@ public:
         template<typename IntType=int>
         void BasicIntDivOp(const IntType& rValue)
         {
-            if (Value == 0)
+            if (rValue == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
                 IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
@@ -4185,7 +4388,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-        static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
+        static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
         /// <summary>
         /// Division Operation Between AltDec and Integer Value that ignores special representation status
@@ -4201,7 +4404,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType=int>
-        static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
+        static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -4394,7 +4597,7 @@ protected:
         template<typename IntType=int>
         void NRepSkippingIntAddOp(const IntType& rValue)
         {
-            if (RValue == 0)
+            if (rValue == 0)
                 return;
             if (IntValue == 0)
                 IntValue = (int)rValue;
@@ -4458,7 +4661,7 @@ protected:
         template<typename IntType=int>
         void NRepSkippingIntSubOp(const IntType& rValue)
         {
-            if (RValue == 0)
+            if (rValue == 0)
                 return;
             if (IntValue == 0)
                 IntValue = -(int)rValue;
@@ -4488,7 +4691,7 @@ public:
         AltDec BasicIntSubOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
-                NRepSkippingIntSubOp(Value);
+                NRepSkippingIntSubOp(rValue);
             else
             {
                 bool NegativeBeforeOperation = IntValue < 0;
