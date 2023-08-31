@@ -243,6 +243,28 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API AltDec// : public virtual AltNumBase
     {
+    protected://Spaceship operators (requires c++20 standard enabled)
+    //(https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/)
+    struct SignedIntTypes {
+      signed int i;
+      signed __int64 lg;
+      signed __int8 b;
+      signed __int16 s;
+      auto operator<=>(const SignedIntTypes&) const = default;
+    };
+
+    struct UIntTypes {
+      signed int i;
+      signed __int64 lg;
+      signed __int8 b;
+      signed __int16 s;
+      auto operator<=>(const UIntTypes&) const = default;
+    };
+
+    struct IntTypes : SignedIntTypes, UIntTypes
+    {
+        auto operator<=>(const IntTypes&) const = default;
+    };
 #if !defined(AltNum_StoreCommonVariablesInBase)
     public:
         /// <summary>
@@ -436,7 +458,7 @@ namespace BlazesRusCode
             IntValue = 0;
             DecimalHalf = 0; ExtraRep = 0;
         }
-        
+
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
@@ -663,7 +685,7 @@ namespace BlazesRusCode
     #endif
             UnknownType
         };
-        
+
         static std::string RepTypeAsString(RepType& repType)
         {
             switch(repType)
@@ -984,7 +1006,7 @@ namespace BlazesRusCode
                 throw "Unknown or non-enabled representation type detected";
             return RepType::UnknownType;//Catch-All Value;
         }
-        
+
     #pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
         #if defined(AltNum_EnableMediumDecBasedSetValues)
@@ -1117,7 +1139,7 @@ namespace BlazesRusCode
         #endif
     #endif
     #pragma endregion Fractional Setters
-    
+
     #pragma region MixedFrac Setters
     #if defined(AltNum_EnableMixedFractional)
         void SetMixedFractionalVal(int WholeNum, int Numerator, int Denom)
@@ -1135,7 +1157,7 @@ namespace BlazesRusCode
         }
     #endif
     #pragma endregion MixedFrac Setters
-    
+
     #pragma region Infinity Setters
     //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
     // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
@@ -1153,7 +1175,7 @@ namespace BlazesRusCode
         }
     #endif
     #pragma endregion Infinity Setters
-    
+
     #pragma region ApproachingZero Setters
     #if defined(AltNum_EnableApproachingValues)
         //Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
@@ -1249,7 +1271,7 @@ namespace BlazesRusCode
         #endif
     #endif
     #pragma endregion ApproachingZero Setters
-        
+
     #pragma region NaN Setters
     #if defined(AltNum_EnableNaN)
         void SetAsNaN()
@@ -1719,7 +1741,7 @@ public:
 
 private:
         std::string BasicToStringOp();
-        
+
         std::string BasicToFullStringOp();
 public:
 
@@ -4722,7 +4744,7 @@ public:
         static AltDec BasicSubtractByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
     #pragma endregion NormalRep Integer Subtraction Operations
-    
+
     #pragma region NormalRep Integer Bitwise Operations
 
     #pragma endregion NormalRep Integer Bitwise Operations
@@ -5059,7 +5081,7 @@ public:
         }
 
     #pragma endregion NormalRep AltNum Division Operations
-        
+
     #pragma region NormalRep AltNum Multiplication Operations
 public:
 #if !defined(AltNum_StoreBasicFunctionsInBase)
@@ -5723,7 +5745,7 @@ public:
 #endif
 
     #pragma endregion NormalRep AltNum Addition Operations
-        
+
     #pragma region NormalRep AltNum Subtraction Operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
@@ -5823,7 +5845,7 @@ public:
         void BasicUnsignedSubOp(const AltDec& rValue) { BasicUnsignedSubBaseOp(rValue); }
 #endif
     #pragma endregion NormalRep AltNum Subtraction Operations
-    
+
     #pragma region Other Division Operations
 
         template<typename IntType=int>
