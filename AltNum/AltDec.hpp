@@ -2463,7 +2463,7 @@ public:
             }
             return Value;
         }
-        
+
         /// <summary>
         /// AltDec to int explicit conversion
         /// </summary>
@@ -2477,22 +2477,22 @@ public:
     #if defined(AltNum_EnablePiRep)
         //3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
         void ConvertPiToNum();
-    
+
         #if defined(AltNum_EnableDecimaledPiFractionals)
         void ConvertPiByDivToNumByDiv();
-        
+
         void ConvertFromPiByDivToNorm();
         #else
         void ConvertFromPiFractionalToNorm();
-        
+
         #endif
-        
+
         void ConvertPiPowerToNum();
-        
+
         AltDec PiPowerNum(int powerExponent);
-        
+
         void ConvertPiPowerToPiRep();
-        
+
         void ConvertToPiRep(const RepType& repType)
         {
             switch (repType)
@@ -2506,19 +2506,19 @@ public:
                     break;
     #endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 {
                     BasicUIntDivOp(-ExtraRep);
                 }
-    #else
+        #else
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 {
                     int divisor = DecimalHalf;
                     DecimalHalf = 0;
                     BasicUnsignedDivOp(divisor);
                 }
-    #endif
+        #endif
                 break;
     #endif
     #if defined(AltNum_EnableMixedPiFractional)
@@ -2548,21 +2548,21 @@ public:
                 }
     #endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 {
                     AltDec Res = AltDec(IntValue, DecimalHalf, PiRep);
                     Res.BasicUIntDivOp(-ExtraRep);
                     return Res;
                 }
-    #else
+        #else
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 {
                     AltDec Res = AltDec(IntValue, 0, PiRep);
                     Res.BasicUIntDivOp(DecimalHalf);
                     return Res;
                 }
-    #endif
+        #endif
                 break;
     #endif
     #if defined(AltNum_EnableMixedPiFractional)
@@ -2680,12 +2680,12 @@ public:
                     return;
                     break;
     #if defined(AltNum_EnableAlternativeRepFractionals)
-    #if defined(AltNum_EnableDecimaledEFractionals)
+        #if defined(AltNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
                 {
                     BasicUIntDivOp(-ExtraRep);
                 }
-    #else
+        #else
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 {
                     int divisor = DecimalHalf;
@@ -2693,7 +2693,7 @@ public:
                     BasicUIntDivOp(divisor);
                     ExtraRep = ERep;
                 }
-    #endif
+        #endif
                 break;
     #endif
     #if defined(AltNum_EnableMixedEFractional)
@@ -2744,7 +2744,7 @@ public:
         } const
     #endif
     #pragma endregion E Conversion
-    
+
     #pragma region Other RepType Conversion
 #if defined(AltNum_EnableApproachingDivided)
         void ConvertFromApproachingMidLeftToNorm()
@@ -2752,7 +2752,7 @@ public:
             DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
             ExtraRep = 0;
         }
-        
+
     #if !defined(AltNum_DisableApproachingTop)
         void ConvertFromApproachingMidRightToNorm()
         {
@@ -2767,17 +2767,17 @@ public:
             DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
             ExtraRep = IRep;
         }
-    
-    #if !defined(AltNum_DisableApproachingTop)
+
+        #if !defined(AltNum_DisableApproachingTop)
         void ConvertFromApproachingIMidRightToINum()
         {
             DecimalHalf = (DecimalOverflow / ExtraRep) + 1;
             ExtraRep = IRep;
         }
-    #endif
+        #endif
     #endif
 #endif
-    
+
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
         void ConvertToNormType(const RepType& repType)
         {
@@ -2785,6 +2785,14 @@ public:
             {
             case RepType::NormalType:
                 break;
+#if defined(AltNum_EnableFractionals)
+            case RepType::NumByDiv:
+            {
+                BasicIntDivOp(ExtraRep);
+                ExtraRep = 0;
+                break;
+            }
+#endif
 #if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
                 IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
@@ -2797,42 +2805,36 @@ public:
             case RepType::ApproachingBottom:
                 DecimalHalf = 1;
                 break;
-#if !defined(AltNum_DisableApproachingTop)
+    #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingTop:
                 DecimalHalf = 999999999;
                 break;
-#endif
-#if defined(AltNum_EnableApproachingDivided)
+    #endif
+    #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidLeft:
                 ConvertFromApproachingMidLeftToNorm(); break;
-#if !defined(AltNum_DisableApproachingTop)
+        #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingMidRight:
                 ConvertFromApproachingMidRightToNorm(); break;
-#endif
-#endif
+        #endif
+    #endif
 #endif
 #if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 ConvertPiToNum(); break;
-#if defined(AltNum_EnablePiPowers)
+    #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
                 ConvertPiPowerToNum(); break;
-#endif
-#if defined(AltNum_EnableDecimaledPiFractionals)
+    #endif
+    #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 ConvertFromPiByDivToNorm(); break;
-#elif defined(AltNum_EnablePiFractional)
+    #elif defined(AltNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 ConvertFromPiFractionalToNorm(); break;
+    #endif
 #endif
-#endif
-            case RepType::NumByDiv:
-            {
-                BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
-                break;
-            }
-#if defined(AltNum_EnableERep)
+    #if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
 #if defined(AltNum_EnableDecimaledEFractionals)
@@ -2857,14 +2859,13 @@ public:
                 break;
             }
 #endif
-
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-#if defined(AltNum_EnableDecimaledIFractionals)
+    #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-#elif defined(AltNum_EnableIFractional)
+    #elif defined(AltNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-#endif
+    #endif
             {
                 if (IntValue == 0 && DecimalHalf != 0)
                     ExtraRep = 0;
@@ -2873,23 +2874,23 @@ public:
                 break;
             }
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproachingI)
             case RepType::ApproachingImaginaryBottom:
                 DecimalHalf = 1;
                 break;
-#if !defined(AltNum_DisableApproachingTop)
+    #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingImaginaryTop:
                 DecimalHalf = 999999999;
                 break;
-#endif
-#if defined(AltNum_EnableApproachingDivided)
+    #endif
+    #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingImaginaryMidLeft:
                 ConvertFromApproachingIMidLeftToNorm(); break;
-#if !defined(AltNum_DisableApproachingTop)
+        #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingImaginaryMidRight:
                 ConvertFromApproachingIMidRightToNorm(); break;
-#endif
-#endif
+        #endif
+    #endif
 #endif
 #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
