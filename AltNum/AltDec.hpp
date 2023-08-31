@@ -31,6 +31,9 @@
     #include "MediumDec.hpp"
 #endif
 
+#include <type_traits>
+#include <cstddef>
+#include <concepts>//C++20 feature
 #include "AltNumModChecker.hpp"
 
 //Preprocessor options
@@ -223,6 +226,9 @@ AltNum_StoreBasicFunctionsInBase
 
 namespace BlazesRusCode
 {
+    template<typename T>
+    concept IntegerType = std::is_integral<T>::value;
+
     class AltDec;
 
 /*---Accuracy Tests(with AltDec based settings):
@@ -265,6 +271,7 @@ namespace BlazesRusCode
     {
         auto operator<=>(const IntTypes&) const = default;
     };
+
 #if !defined(AltNum_StoreCommonVariablesInBase)
     public:
         /// <summary>
@@ -1918,7 +1925,7 @@ public:
     #pragma region MirroredIntBased Operations
 #if !defined(AltNum_StoreIntSectionFunctionsInBase)
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void IntHalfDivision(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -1960,7 +1967,7 @@ public:
 #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void IntHalfMultiplication(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -2007,7 +2014,7 @@ public:
 #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void UIntHalfMultiplication(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -2039,7 +2046,7 @@ public:
         }
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
-        template<typename IntType>
+        template<IntegerType IntType>
         void IntHalfAddition(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -2117,7 +2124,7 @@ public:
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
         //this is copy by value and pointer version
-        template<typename IntType>
+        template<IntegerType IntType>
         void IntHalfSubtraction(IntType RValue)
         {
 #if defined(AltDec_UseMirroredInt)
@@ -2189,17 +2196,17 @@ public:
         }
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
 
         /// <summary>
@@ -2232,7 +2239,7 @@ public:
         }
         
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
         
         /// <summary>
@@ -2265,7 +2272,7 @@ public:
         }
         
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
         
         /// <summary>
@@ -2303,7 +2310,7 @@ public:
         }
         
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
@@ -2342,7 +2349,7 @@ public:
 #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
 
 #endif
@@ -3032,7 +3039,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntEqualTo(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableImaginaryNum)
@@ -3058,7 +3065,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntNotEqualTo(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableImaginaryNum)
@@ -3087,7 +3094,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntLessThan(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -3136,7 +3143,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntLessThanOrEqual(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -3185,7 +3192,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntGreaterThan(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -3234,7 +3241,7 @@ public:
         /// <param name="LValue">Left side AltDec value</param>
         /// <param name="RValue">Right side integer value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool RightSideIntGreaterThanOrEqual(AltDec& LValue, IntType RValue)
         {
 #if defined(AltNum_EnableInfinityRep)
@@ -3283,7 +3290,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
     
         /// <summary>
@@ -3292,7 +3299,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntNotEqualTo(IntType LValue, AltDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
         
         /// <summary>
@@ -3301,7 +3308,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntLessThan(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
         
         /// <summary>
@@ -3310,7 +3317,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntLessThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
         
         /// <summary>
@@ -3319,7 +3326,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntGreaterThan(IntType LValue, AltDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
         
         /// <summary>
@@ -3328,7 +3335,7 @@ public:
         /// <param name="LValue">Left side integer value</param>
         /// <param name="RValue">Right side AltDec value</param>
         /// <returns>bool</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static bool LeftSideIntGreaterThanOrEqual(IntType LValue, AltDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
 
     #pragma endregion AltDec-To-Int Comparison Methods
@@ -4217,7 +4224,7 @@ public:
 #if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool PartialIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -4286,7 +4293,7 @@ protected:
                 return false;
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool PartialUIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -4349,7 +4356,7 @@ protected:
 
 public:
 #if !defined(AltNum_StoreBasicFunctionsInBase)
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& BasicUIntDivOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -4367,7 +4374,7 @@ public:
             return *this;
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void BasicIntDivOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -4401,7 +4408,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicDivideByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
         /// <summary>
@@ -4410,7 +4417,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicDivideByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
         /// <summary>
@@ -4418,7 +4425,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicDivideByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
         
         /// <summary>
@@ -4426,7 +4433,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicDivideByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
@@ -4440,7 +4447,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void PartialIntMultOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -4485,7 +4492,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void PartialIntMultOpV2(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -4524,7 +4531,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec BasicIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -4540,7 +4547,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType>
         void BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -4556,7 +4563,7 @@ public:
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
@@ -4564,7 +4571,7 @@ public:
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         void BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 
         void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
@@ -4576,7 +4583,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicMultipleByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
 
         /// <summary>
@@ -4585,7 +4592,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicMultipleByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
@@ -4594,7 +4601,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicMultipleByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
         
         /// <summary>
@@ -4603,7 +4610,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicMultipleByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
@@ -4617,7 +4624,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void NRepSkippingIntAddOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -4638,7 +4645,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& BasicIntAddOp(const IntType& rValue)
         {
             if(DecimalHalf==0)
@@ -4660,7 +4667,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicAddByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
 
         /// <summary>
@@ -4668,7 +4675,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicAddByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
     #pragma endregion NormalRep Integer Addition Operations
 
@@ -4681,7 +4688,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void NRepSkippingIntSubOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -4696,7 +4703,7 @@ protected:
 #else
 protected:
         //Derived Functions test to check if properly automatically impli
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& BasicIntSubOverrideOp(const IntType& rValue)
         {
             BasicIntSubBaseOp(rValue);
@@ -4710,7 +4717,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec BasicIntSubOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -4732,7 +4739,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicSubtractByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
         /// <summary>
@@ -4740,7 +4747,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltDec BasicSubtractByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
     #pragma endregion NormalRep Integer Subtraction Operations
@@ -5848,21 +5855,21 @@ public:
 
     #pragma region Other Division Operations
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicIntDivOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicUIntDivOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntDivisionV2(const IntType& rValue)
         {
             ConvertToNormTypeV2();
@@ -5875,7 +5882,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec& IntDivOp(const IntType& rValue)
         {
             if (rValue == 1)
@@ -6223,7 +6230,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& UIntDivOp(const IntType& rValue)
         {
             if (rValue == 1)
@@ -6503,13 +6510,13 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         static AltDec& IntDivision(AltDec self, const IntType& rValue) { return self.IntDivOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec DivideByInt(const AltDec& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec DivideByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
 
     #pragma endregion Other Division Operations
@@ -6517,21 +6524,21 @@ public:
     #pragma region Other Multiplication Operations
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntMultiplication(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicIntMultOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllUIntMultiplication(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicUIntMultOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntMultiplicationV2(const IntType& rValue)
         {
             ConvertToNormTypeV2();
@@ -6544,7 +6551,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& IntMultOp(IntType rValue)
         {
             if (IsZero()||rValue==1)
@@ -6944,7 +6951,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& UIntMultOp(const IntType& rValue)
         {
             if (IsZero()||rValue==1)
@@ -7282,7 +7289,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         static AltDec& IntMultiplication(AltDec self, const IntType& rValue) { return self.IntMultOp(rValue); }
 
         /// <summary>
@@ -7291,14 +7298,14 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         static AltDec& UIntMultiplication(AltDec self, const IntType& rValue) { return self.UIntMultOp(rValue); }
 
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec MultiplyByInt(const AltDec& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec MultipleByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
 
     #pragma endregion Other Multiplication Operations
@@ -7306,14 +7313,14 @@ public:
     #pragma region Other Addition Operations
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntAddition(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicIntAddOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntAdditionV2(const IntType& rValue)
         {
             ConvertToNormTypeV2();
@@ -7327,7 +7334,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& IntAddOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -7381,24 +7388,24 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         static AltDec& IntAddition(AltDec self, const IntType& rValue) { return self.IntAddOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec AdditionByInt(const AltDec& rValue) { AltDec self = *this; return self.IntAddOp(rValue); }
 
     #pragma endregion Other Addition Operations
 
     #pragma region Other Subtraction Operations
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntSubtraction(const IntType& rValue, const RepType& LRep)
         {
             ConvertToNormType(LRep);
             BasicIntSubOp(rValue);
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void CatchAllIntSubtractionV2(const IntType& rValue)
         {
             ConvertToNormTypeV2();
@@ -7412,7 +7419,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec& IntSubOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -7466,10 +7473,10 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>AltDec</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         static AltDec& IntSubtraction(AltDec self, const IntType& rValue) { return self.IntSubOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType = int>
         AltDec SubtractionByInt(const AltDec& rValue) { AltDec self = *this; return self.IntSubOp(rValue); }
 
     #pragma endregion Other Subtraction Operations
@@ -10428,7 +10435,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
     #endif
-            IntHalfAddition(One);
+            IntHalfAddition(1);
             return *this;
         }
 
@@ -10442,7 +10449,7 @@ public:
             if (DecimalHalf == InfinityRep)
                 return *this;
     #endif
-            IntHalfSubtraction(One);
+            IntHalfSubtraction(1);
             return *this;
         }
 
@@ -10511,7 +10518,7 @@ public:
         //Designed for use with normal, decimaled fractionals if both have same ExtraRep field, PiNum, and ENum  representation types
         //Will not work with non-decimaled format fractionals or mixed fractions
         //Modifies left side value with result
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec BasicIntRemOp(IntType rValue)
         {
             if (DecimalHalf == 0)
@@ -10552,7 +10559,7 @@ public:
         static AltDec UInt64BasicModulus(AltDec self, unsigned long long RValue) { return self.BasicIntRemOp(RValue); }
 
         //Performs modulus operation based on "C = A - B * (A / B)" formula
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         AltDec IntRemOp(const IntType& rValue)
         {
             AltDec divRes = DivideByInt(rValue);
@@ -10685,7 +10692,7 @@ public:
 
 
         #if defined(AltNum_EnableAlternativeModulusResult)//Return AltNumModChecker<AltDec> Result with both Remainder and division result
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         static AltNumModChecker<AltDec> IntModulusOp(IntType RValue)
         {
             AltNumModChecker<AltDec> Res;
@@ -10729,7 +10736,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         friend AltDec operator^(AltDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
@@ -10756,7 +10763,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         friend AltDec operator|(AltDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
@@ -11135,7 +11142,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec BasicIntPowOp(const IntType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
@@ -11194,7 +11201,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec BasicUIntPowOp(const IntType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
@@ -11224,17 +11231,17 @@ public:
             return *this;
         }
 
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec BasicIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
 
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec BasicUIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec IntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
@@ -11257,7 +11264,7 @@ public:
                 return BasicIntPowOp(expValue);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec UIntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
@@ -11278,10 +11285,10 @@ public:
                 return BasicUIntPowOp(expValue);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec IntPow(const IntType& expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
 
-        template<typename IntType>
+        template<IntegerType IntType>
         AltDec UnsignedIntPow(const IntType& expValue) { AltDec self = *this; return self.UIntPowOp(expValue); }
 public:
         /// <summary>
