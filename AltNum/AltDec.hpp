@@ -31,6 +31,7 @@
     #include "MediumDec.hpp"
 #endif
 
+#include <type_traits>
 #include "AltNumModChecker.hpp"
 
 //Preprocessor options
@@ -10729,8 +10730,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
-        friend AltDec operator^(AltDec self, IntType Value)
+        friend AltDec operator^(AltDec self, auto Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
             else
@@ -10756,8 +10756,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
-        friend AltDec operator|(AltDec self, IntType Value)
+        friend AltDec operator|(AltDec self, auto Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
             else
@@ -10860,7 +10859,7 @@ public:
             if (Value.IntValue == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
             return Value;
         }
-        
+
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
@@ -10993,7 +10992,7 @@ public:
                 return GetIntHalf() + 1;
             }
         }
-        
+
         static int CeilInt(AltDec Value) { return Value.CeilIntOp(); }
 
         /// <summary>
@@ -11023,7 +11022,7 @@ public:
 #endif
             return *this;
         }
-        
+
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
@@ -11036,7 +11035,7 @@ public:
         }
     #pragma endregion Math Etc Functions
 
-    #pragma region Pow and Sqrt Functions	
+    #pragma region Pow and Sqrt Functions
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
@@ -11080,11 +11079,11 @@ public:
             AltDec start = 0, end = number;
             AltDec mid;
 
-            // variable to store the answer 
+            // variable to store the answer
             AltDec ans;
 
-            // for computing integral part 
-            // of square root of number 
+            // for computing integral part
+            // of square root of number
             while (start <= end) {
                 mid = (start + end) / 2;
                 if (mid * mid == number) {
@@ -11106,21 +11105,21 @@ public:
                 }
             }
 
-            // For computing the fractional part 
-            // of square root up to given precision 
+            // For computing the fractional part
+            // of square root up to given precision
             AltDec increment = "0.1";
             for (int i = 0; i < precision; i++) {
                 while (ans * ans <= number) {
                     ans += increment;
                 }
 
-                // loop terminates when ans * ans > number 
+                // loop terminates when ans * ans > number
                 ans = ans - increment;
                 increment = increment / 10;
             }
             return ans;
         }
-        
+
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
@@ -11135,8 +11134,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
-        AltDec BasicIntPowOp(const IntType& expValue)
+        AltDec BasicIntPowOp(const auto& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -11194,8 +11192,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
-        AltDec BasicUIntPowOp(const IntType& expValue)
+        AltDec BasicUIntPowOp(const auto& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -11224,18 +11221,15 @@ public:
             return *this;
         }
 
-        template<typename IntType>
-        AltDec BasicIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
+        AltDec BasicIntPow(const auto& expValue) { AltDec self = *this; return self.BasicIntPowOp(expValue); }
 
-        template<typename IntType>
-        AltDec BasicUIntPow(const IntType& expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
+        AltDec BasicUIntPow(const auto& expValue) { AltDec self = *this; return self.BasicUIntPowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
-        AltDec IntPowOp(const IntType& expValue)
+        AltDec IntPowOp(const auto& expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -11257,8 +11251,7 @@ public:
                 return BasicIntPowOp(expValue);
         }
 
-        template<typename IntType>
-        AltDec UIntPowOp(const IntType& expValue)
+        AltDec UIntPowOp(const auto& expValue)
         {
             if (DecimalHalf == InfinityRep)
             {
@@ -11278,11 +11271,9 @@ public:
                 return BasicUIntPowOp(expValue);
         }
 
-        template<typename IntType>
-        AltDec IntPow(const IntType& expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
+        AltDec IntPow(const auto& expValue) { AltDec self = *this; return self.IntPowOp(expValue); }
 
-        template<typename IntType>
-        AltDec UnsignedIntPow(const IntType& expValue) { AltDec self = *this; return self.UIntPowOp(expValue); }
+        AltDec UnsignedIntPow(const auto& expValue) { AltDec self = *this; return self.UIntPowOp(expValue); }
 public:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
