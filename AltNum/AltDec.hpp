@@ -361,7 +361,7 @@ namespace BlazesRusCode
             return IntValue != 0 && IntValue != NegativeRep;
         }
 
-        signed int GetIntHalf()
+        signed int GetIntHalf() const
         {
     #if defined(AltDec_UseMirroredInt)
             return IntValue.GetValue();
@@ -841,7 +841,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        RepType const GetRepType()
+        RepType GetRepType()  const
         {
         #if defined(AltNum_EnableInfinityRep)
             if(DecimalHalf==InfinityRep)
@@ -875,7 +875,7 @@ namespace BlazesRusCode
                     return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
             #else
                     throw "EnableApproachingDivided feature not enabled";
-            #endif	
+            #endif
             }
             else if (DecimalHalf == ApproachingTopRep)
             {
@@ -894,7 +894,7 @@ namespace BlazesRusCode
                     return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
             #else
                     throw "EnableApproachingDivided feature not enabled";
-            #endif            
+            #endif
             }
             #if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
             else if (DecimalHalf == ApproachingImaginaryBottomRep)
@@ -906,7 +906,7 @@ namespace BlazesRusCode
                     return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
                 #else
                     throw "EnableApproachingDivided feature not enabled";
-                #endif            
+                #endif
             }
             else if (DecimalHalf == ApproachingImaginaryTopRep)
             {
@@ -917,7 +917,7 @@ namespace BlazesRusCode
                     return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
                 #else
                     throw "EnableApproachingDivided feature not enabled";
-                #endif            
+                #endif
             }
             #endif
         #endif
@@ -933,7 +933,6 @@ namespace BlazesRusCode
             }
             else if(IntValue==0&&DecimalHalf==0)
             {
-                ExtraRep = 0;
                 return RepType::NormalType;
             }
     #ifdef AltNum_EnablePiRep
@@ -10493,7 +10492,7 @@ public:
         AltDec operator<<(const AltDec& rValue)//AltDec& operator<<(const AltDec& rValue)
         {//Allowing negative shift operations based on formula instead of returning undefined
             AltDec rightSideMultiplier = Two;
-            rightSideMultiplier.IntPowOp(rValue);
+            rightSideMultiplier.PowOp(rValue);
             return MultipleByUnsigned(rightSideMultiplier);
         }
 
@@ -10506,7 +10505,7 @@ public:
         AltDec operator>>(const AltDec& rValue)//operator<<(const AltDec& rValue)
         {//Allowing negative shift operations based on formula instead of returning undefined
             AltDec rightSideDivisor = Two;
-            rightSideDivisor.IntPowOp(rValue);
+            rightSideDivisor.PowOp(rValue);
             return DivideByUnsigned(rightSideDivisor);
         }
 
@@ -11352,8 +11351,8 @@ public:
         /// <summary>
         /// Applies Power of operation
         /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        AltDec PowOp(AltDec& expValue);
+        /// <param name="exponent">The exponent value.</param>
+        AltDec PowOp(const AltDec& exponent);
 
         /// <summary>
         /// Applies Power of operation

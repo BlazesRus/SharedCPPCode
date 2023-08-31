@@ -51,14 +51,14 @@ inline AltDec BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
 	}
 }
 
-inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
+inline AltDec BlazesRusCode::AltDec::PowOp(const AltDec& exponent)
 {
-	if (expValue.DecimalHalf == 0)
-		return IntPowOp(expValue.IntValue);
+	if (exponent.DecimalHalf == 0)
+		return IntPowOp(exponent.IntValue);
 #if defined(AltNum_EnableInfinityRep)
 	else if (DecimalHalf == InfinityRep)
 	{
-		if (expValue == Zero)
+		if (exponent == Zero)
     #if defined(AltNum_EnableNaN)
 			return Undefined;
     #else
@@ -69,7 +69,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
         {
 	        case RepType::PositiveInfinity:
 	        case RepType::NegativeInfinity:
-                if(expValue.IntValue==1)
+                if(exponent.IntValue==1)
                     return *this;
                 else
                     return Zero;
@@ -88,10 +88,10 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
         #endif
     #endif
             default:
-            	RepType expType = expValue.GetRepType();
-        		if (expValue.IntValue < 0)
+            	RepType expType = exponent.GetRepType();
+        		if (exponent.IntValue < 0)
         			return Zero;
-        		else if (IntValue == -1 && expValue.GetIntHalf() % 2 == 0)
+        		else if (IntValue == -1 && exponent.GetIntHalf() % 2 == 0)
         			IntValue = 1;
         		else
         			return *this;//Returns infinity
@@ -99,30 +99,30 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
         return *this;
 	}
 #endif
-	RepType expType = expValue.GetRepType();
+	RepType expType = exponent.GetRepType();
 	switch (expType)
 	{
 		#if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
 		{
-			AltDec targetVal = AltDec(expValue.IntValue, expValue.DecimalHalf);
+			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, expValue.ExtraRep);
+			return AltDec::NthRoot(targetVal, exponent.ExtraRep);
 			break;
 		}
 		#endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv:
 		{
-			AltDec targetVal = AltDec(expValue.IntValue, expValue.DecimalHalf, PiRep);
+			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf, PiRep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, -expValue.ExtraRep);
+			return AltDec::NthRoot(targetVal, -exponent.ExtraRep);
 			break;
 		}
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv:
 		{
-			AltDec targetVal = AltDec(expValue.IntValue, expValue.DecimalHalf, ERep);
+			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf, ERep);
 			targetVal = Pow(targetVal);
 			return AltDec::NthRoot(targetVal, -expValue.ExtraRep);
 			break;
@@ -131,7 +131,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 		#if defined(AltNum_EnablePiFractional)
 		case RepType::PiFractional:
 		{
-			AltDec targetVal = AltDec(expValue.IntValue, 0, PiRep);
+			AltDec targetVal = AltDec(exponent.IntValue, 0, PiRep);
 			targetVal = Pow(targetVal);
 			return AltDec::NthRoot(targetVal, expValue.DecimalHalf);
 		}
@@ -139,9 +139,9 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 		#if defined(AltNum_EnableEFractional)
 		case RepType::EFractional:
 		{
-			AltDec targetVal = AltDec(expValue.IntValue, 0, ERep);
+			AltDec targetVal = AltDec(exponent.IntValue, 0, ERep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, expValue.DecimalHalf);
+			return AltDec::NthRoot(targetVal, exponent.DecimalHalf);
 			break;
 		}
 		#endif
@@ -155,7 +155,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 			if (IsNegative())
 				return NegativeInfinity;
 			else
-				return Infinity;//Techically within range of Positive and NegativeInfinity
+				return Infinity;//Technically within range of Positive and NegativeInfinity
 			return *this;
 			break;
 		case RepType::NegativeInfinity:
@@ -172,12 +172,12 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 		#endif
 		#if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
-			if(expValue.IntValue==0)
+			if(exponent.IntValue==0)
 				return ApproachingOneFromRightValue();
-			else if(expValue.IntValue==NegativeRep)
+			else if(exponent.IntValue==NegativeRep)
 				return ApproachingOneFromLeftValue();
 			else
-				expValue.ConvertToNormType(expType);
+				//exponent.ConvertToNormType(expType);
 			break;
 		#endif
 		#if defined(AltNum_EnableImaginaryNum)
@@ -210,9 +210,12 @@ inline AltDec BlazesRusCode::AltDec::PowOp(AltDec& expValue)
 			break;
 		#endif
 		default:
-			expValue.ConvertToNormType(expType);
+			//expValue.ConvertToNormType(expType);
 			break;
 	}
+	//If don't return value before this point convert into normal Type
+	AltDec expValue = exponent;//Copy the value to allow converting
+    expValue.ConvertToNormType(expType);
 	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
