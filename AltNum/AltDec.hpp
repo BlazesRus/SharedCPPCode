@@ -1971,11 +1971,11 @@ public:
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
         #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #endif
     #elif defined(BlazesMirroredInt_UsePseudoBitSet)
         #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #else
             if(RValue<0)
             {
@@ -2002,7 +2002,7 @@ public:
             }
         #endif
     #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
     #endif
 #else
             if(IntValue!=0&&IntValue!=NegativeRep)
@@ -2018,11 +2018,11 @@ public:
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
         #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #endif
     #elif defined(BlazesMirroredInt_UsePseudoBitSet)
         #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #else
             if(IntValue.Value>=NegativeRepVal)//Currently Negative
             {
@@ -2033,7 +2033,7 @@ public:
             }
         #endif
     #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
     #endif
 #else
             if(IntValue!=0&&IntValue!=NegativeRep)
@@ -4603,7 +4603,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=int>
-        static AltDec BasicMultipleByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+        static AltDec BasicMultiplyByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
@@ -4612,7 +4612,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=int>
-        static AltDec BasicMultipleByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+        static AltDec BasicMultiplyByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value that ignores special representation status
@@ -4621,7 +4621,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=int>
-        static AltDec BasicMultipleByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+        static AltDec BasicMultiplyByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
         
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
@@ -4630,7 +4630,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=int>
-        static AltDec BasicMultipleByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+        static AltDec BasicMultiplyByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -5899,11 +5899,11 @@ public:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
         template<IntegerType IntType = int>
-        AltDec& IntDivOp(const IntType& rValue)
+        AltDec& IntDivOp(const IntType& rightSideValue)
         {
-            if (rValue == 1)
+            if (rightSideValue == 1)
                 return *this;
-            if (rValue == 0)
+            if (rightSideValue == 0)
             {
                 #if defined(AltNum_EnableInfinityRep)
                 if (IntValue < 0)
@@ -5912,7 +5912,7 @@ public:
                     SetAsInfinity();
                 return *this;
                 #else
-                throw "Target rValue can not be divided by zero";
+                throw "Target rightSideValue can not be divided by zero";
                 #endif
             }
             RepType LRep = GetRepType();
@@ -5921,15 +5921,15 @@ public:
                 case RepType::NormalType:
                 {
                     #if defined(AltNum_EnableFractionals)
-                    if (rValue < 0)
+                    if (rightSideValue < 0)
                     {
-                        ExtraRep = -rValue;
+                        ExtraRep = -rightSideValue;
                         SwapNegativeStatus();
                     }
                     else
-                        ExtraRep = rValue;
+                        ExtraRep = rightSideValue;
                     #else
-                    BasicIntDivOp(rValue);
+                    BasicIntDivOp(rightSideValue);
                     #endif
                 }
                 break;
@@ -5937,9 +5937,9 @@ public:
                 case RepType::NumByDiv:
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
                     int result = ExtraRep;
-                    if (rValue < 0)
+                    if (rightSideValue < 0)
                     {
-                        int invertedR = -rValue;
+                        int invertedR = -rightSideValue;
                         SwapNegativeStatus();
                         result *= invertedR;
                         if (ExtraRep == result / invertedR)//checking for overflow
@@ -5949,11 +5949,11 @@ public:
                     }
                     else
                     {
-                        result *= rValue;
-                        if (ExtraRep == result / rValue)//checking for overflow
+                        result *= rightSideValue;
+                        if (ExtraRep == result / rightSideValue)//checking for overflow
                             ExtraRep = result;
                         else
-                            BasicUIntDivOp(rValue);
+                            BasicUIntDivOp(rightSideValue);
                     }
                 }
                 break;
@@ -5970,9 +5970,9 @@ public:
                 #endif
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
                     int result = DecimalHalf;
-                    if (rValue < 0)
+                    if (rightSideValue < 0)
                     {
-                        int invertedR = -rValue;
+                        int invertedR = -rightSideValue;
                         SwapNegativeStatus();
                         result *= invertedR;
                         if (DecimalHalf == result / invertedR)//checking for overflow
@@ -5982,11 +5982,11 @@ public:
                     }
                     else
                     {
-                        result *= rValue;
-                        if (DecimalHalf == result / rValue)//checking for overflow
+                        result *= rightSideValue;
+                        if (DecimalHalf == result / rightSideValue)//checking for overflow
                             DecimalHalf = result;
                         else
-                            CatchAllUIntDivision(rValue, LRep);
+                            CatchAllUIntDivision(rightSideValue, LRep);
                     }
                 }
                 break;
@@ -6001,9 +6001,9 @@ public:
                 #endif
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
                     int result = ExtraRep;
-                    if (rValue < 0)
+                    if (rightSideValue < 0)
                     {
-                        int invertedR = -rValue;
+                        int invertedR = -rightSideValue;
                         SwapNegativeStatus();
                         result *= invertedR;
                         if (ExtraRep == result / invertedR)//checking for overflow
@@ -6013,11 +6013,11 @@ public:
                     }
                     else
                     {
-                        result *= rValue;
-                        if (ExtraRep == result / rValue)//checking for overflow
+                        result *= rightSideValue;
+                        if (ExtraRep == result / rightSideValue)//checking for overflow
                             ExtraRep = result;
                         else
-                            BasicUIntDivOp(rValue);
+                            BasicUIntDivOp(rightSideValue);
                     }
                 }
                 break;
@@ -6025,7 +6025,7 @@ public:
     #ifdef AltNum_EnableInfinity
                 case RepType::PositiveInfinity:
                 case RepType::NegativeInfinity:
-                    if(rValue<0)
+                    if(rightSideValue<0)
                         IntValue *= -1;
                     return *this;
                     break;
@@ -6034,29 +6034,29 @@ public:
                 case RepType::INum:
                 {
                     #if defined(AltNum_EnableDecimaledIFractionals)
-                    if (rValue < 0)
+                    if (rightSideValue < 0)
                     {
-                        ExtraRep = rValue;
+                        ExtraRep = rightSideValue;
                         SwapNegativeStatus();
                     }
                     else
-                        ExtraRep = -rValue;
+                        ExtraRep = -rightSideValue;
                     #elif defined(AltNum_EnableIFractional)
                     if (DecimalHalf == 0)
                     {
-                        if (rValue < 0)
+                        if (rightSideValue < 0)
                         {
-                            DecimalHalf = -rValue;
+                            DecimalHalf = -rightSideValue;
                             SwapNegativeStatus();
                         }
                         else
-                            DecimalHalf = rValue;
+                            DecimalHalf = rightSideValue;
                         ExtraRep = IByDivisorRep;
                     }
                     else
-                        BasicUIntDivOp(rValue);
+                        BasicUIntDivOp(rightSideValue);
                     #else
-                    BasicUIntDivOp(rValue);
+                    BasicUIntDivOp(rightSideValue);
                     #endif
                 }
                 break;
@@ -6066,33 +6066,33 @@ public:
                 {
                     if (IsAtZeroInt())
                     {
-                        if (rValue < 0)
+                        if (rightSideValue < 0)
                             SwapNegativeStatus();
                         return *this;
                     }
                     ConvertToNormType(LRep);
-                    BasicIntDivOp(rValue);
+                    BasicIntDivOp(rightSideValue);
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 #endif
         #endif
                 {
                     ConvertToNormType(LRep);
-                    BasicUIntDivOp(rValue);
+                    BasicUIntDivOp(rightSideValue);
                 }
                 break;
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
                 case RepType::PositiveImaginaryInfinity:
                 case RepType::NegativeImaginaryInfinity:
-                    if(rValue<0)
+                    if(rightSideValue<0)
                         IntValue *= -1;
                     return *this;
                     break;
@@ -6103,14 +6103,14 @@ public:
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
             #endif
         #endif
                 {
                     ConvertToNormalIRep(LRep);
-                    BasicIntDivOp(rValue);
+                    BasicIntDivOp(rightSideValue);
                 }
                 break;
     #endif
@@ -6138,7 +6138,7 @@ public:
                             else
                                 IntValue = -DecimalHalf;
                             DecimalHalf = 0;
-                            ExtraRep *= rValue;
+                            ExtraRep *= rightSideValue;
                         }
                         return *this;
                     }
@@ -6234,7 +6234,7 @@ public:
                     break;
     #endif
                 default:
-                    BasicIntDivOp(rValue);
+                    BasicIntDivOp(rightSideValue);
                     break;
             }
             return *this;
@@ -6572,11 +6572,11 @@ public:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
         template<IntegerType IntType=int>
-        AltDec& IntMultOp(IntType rValue)
+        AltDec& IntMultOp(const IntType& rightSideValue)
         {
-            if (IsZero()||rValue==1)
+            if (IsZero()||rightSideValue==1)
                 return *this;
-            if (rValue == 0)
+            if (rightSideValue == 0)
             {
                 SetAsZero(); return *this;
             }
@@ -6584,11 +6584,12 @@ public:
             switch (LRep)
             {
                 case RepType::NormalType:
-                    BasicIntMultOp(rValue);
+                    BasicIntMultOp(rightSideValue);
                     break;
     #if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6613,7 +6614,7 @@ public:
                 case RepType::IFractional:
                 #endif
                 {
-                    IntValue *= rValue;
+                    IntValue *= rightSideValue;
                     if(IntValue==0)
                     {
                         DecimalHalf = 0; ExtraRep = 0;
@@ -6630,6 +6631,7 @@ public:
                 case RepType::INumByDiv:
         #endif
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6641,7 +6643,7 @@ public:
                     else
                         BasicUIntMultOp(rValue);
                 }
-                break; 
+                break;
     #endif
     #ifdef AltNum_EnableInfinity
                 case RepType::PositiveInfinity:
@@ -6651,25 +6653,26 @@ public:
     #endif
     #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
-                    BasicIntMultOp(rValue);
+                    BasicIntMultOp(rightSideValue);
                     break;
     #endif
     #if defined(AltNum_EnableApproachingValues)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     if(IntValue==0||IntValue==NegativeRep)
                     {
-                        if(rValue<0)
+                        if(rightSideValue<0)
                             IntValue = NegativeRep;
                     }
                     else
-                        CatchAllIntMultiplication(rValue, LRep);
+                        CatchAllIntMultiplication(rightSideValue, LRep);
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
-                        SwapNegativeStatus;
+                        SwapNegativeStatus();
                     }
                     if(IntValue==NegativeRep)
                         IntValue = -(int)rValue;
@@ -6682,8 +6685,9 @@ public:
                     break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6728,20 +6732,22 @@ public:
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                    if(rValue<0)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                {
+                    AltDec rValue = rightSideValue;
+                    if (rValue < 0)
                     {
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==0)
+                    if (IntValue == 0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep / rightSideValue;
+                        if ((ExtraRep - rightSideValue * divRes) == 0)
                         {
                             ExtraRep = divRes;
-                            if(divRes == 0)
+                            if (divRes == 0)
                             {
                                 IntValue = 1;
                                 DecimalHalf = ApproachingBottomRep;
@@ -6750,14 +6756,14 @@ public:
                                 ExtraRep = divRes;
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if (IntValue == NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep / rightSideValue;
+                        if ((ExtraRep - rightSideValue * divRes) == 0)
                         {
                             ExtraRep = divRes;
-                            if(divRes == 0)
+                            if (divRes == 0)
                             {
                                 IntValue = -1;
                                 DecimalHalf = ApproachingBottomRep;
@@ -6767,7 +6773,9 @@ public:
                         }
                     }
                     else
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
+                }
+                break;
                 #endif
         #endif
     #endif
@@ -6781,18 +6789,19 @@ public:
                 case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
                     if(IntValue==0||IntValue==NegativeRep)
                     {
-                        if(rValue<0)
+                        if(rightSideValue<0)
                             IntValue = NegativeRep;
                     }
                     else
-                        CatchAllIntMultiplication(rValue, LRep);
+                        CatchAllIntMultiplication(rightSideValue, LRep);
                     break;
             #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
-                        SwapNegativeStatus;
+                        SwapNegativeStatus();
                     }
                     if(IntValue==NegativeRep)
                         IntValue = -rValue;
@@ -6805,8 +6814,9 @@ public:
                     break;
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6851,8 +6861,9 @@ public:
                 }
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6903,6 +6914,7 @@ public:
     #if defined(AltNum_EnableMixedFractional)
                 case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6931,6 +6943,7 @@ public:
                 case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
+                    AltDec rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6959,7 +6972,7 @@ public:
                     break;
     #endif
                 default:
-                    CatchAllIntMultiplication(rValue, LRep);
+                    CatchAllIntMultiplication(rightSideValue, LRep);
                     break;
             }
             return *this;
@@ -6972,11 +6985,11 @@ public:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>AltDec&</returns>
         template<IntegerType IntType=int>
-        AltDec& UIntMultOp(const IntType& rValue)
+        AltDec& UIntMultOp(const IntType& rightSideValue)
         {
-            if (IsZero()||rValue==1)
+            if (IsZero()||rightSideValue==1)
                 return *this;
-            if (rValue == 0)
+            if (rightSideValue == 0)
             {
                 SetAsZero(); return *this;
             }
@@ -6984,16 +6997,16 @@ public:
             switch (LRep)
             {
                 case RepType::NormalType:
-                    BasicUIntMultOp(rValue);
+                    BasicUIntMultOp(rightSideValue);
                     break;
     #if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
-                    int divRes = ExtraRep / rValue;
-                    if((ExtraRep - rValue * divRes)==0)
+                    int divRes = ExtraRep / rightSideValue;
+                    if((ExtraRep - rightSideValue * divRes)==0)
                         ExtraRep = divRes;
                     else
-                        BasicUIntMultOp(rValue);
+                        BasicUIntMultOp(rightSideValue);
                 }
                 break;
     #endif
@@ -7008,7 +7021,7 @@ public:
                 case RepType::IFractional:
                 #endif
                 {
-                    IntValue *= rValue;
+                    IntValue *= rightSideValue;
                     if(IntValue==0)
                     {
                         DecimalHalf = 0; ExtraRep = 0;
@@ -7025,13 +7038,13 @@ public:
 				case RepType::INumByDiv:
 		#endif
                 {
-                    int divRes = ExtraRep / rValue;
-                    if((ExtraRep - rValue * divRes)==0)
+                    int divRes = ExtraRep / rightSideValue;
+                    if((ExtraRep - rightSideValue * divRes)==0)
                         ExtraRep = divRes;
                     else
-                        BasicUIntMultOp(rValue);
+                        BasicUIntMultOp(rightSideValue);
                 }
-                break; 
+                break;
     #endif
     #ifdef AltNum_EnableInfinity
                 case RepType::PositiveInfinity:
@@ -7041,34 +7054,34 @@ public:
     #endif
     #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
-                    BasicUIntMultOp(rValue);
+                    BasicUIntMultOp(rightSideValue);
                     break;
     #endif
     #if defined(AltNum_EnableApproachingValues)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     if(IntValue!=0&&IntValue!=NegativeRep)
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
                     if(IntValue==NegativeRep)
-                        IntValue = -(int)rValue;
+                        IntValue = -(int)rightSideValue;
                     else if(IntValue==0)
-                        IntValue = (int)rValue - 1;
+                        IntValue = (int)rightSideValue - 1;
                     else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*(int)rValue + 1;
+                        IntValue = (IntValue-1)*(int)rightSideValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*(int)rValue - 1;
+                        IntValue = (IntValue+1)*(int)rightSideValue - 1;
                     break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
                     if(IntValue==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
@@ -7083,8 +7096,8 @@ public:
                     else if(IntValue==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
@@ -7100,16 +7113,16 @@ public:
                         }
                     }
                     else
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                     if(IntValue==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             ExtraRep = divRes;
                             if(divRes == 0)
@@ -7122,8 +7135,8 @@ public:
                     else if(IntValue==NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             ExtraRep = divRes;
                             if(divRes == 0)
@@ -7134,7 +7147,7 @@ public:
                         }
                     }
                     else
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
                 #endif
         #endif
     #endif
@@ -7148,32 +7161,32 @@ public:
                 case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
                     if(IntValue==0||IntValue==NegativeRep)
                     {
-                        if(rValue<0)
+                        if(rightSideValue<0)
                             IntValue = NegativeRep;
                     }
                     else
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
             #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
                     if(IntValue==NegativeRep)
-                        IntValue = -(int)rValue;
+                        IntValue = -(int)rightSideValue;
                     else if(IntValue==0)
-                        IntValue = (int)rValue - 1;
+                        IntValue = (int)rightSideValue - 1;
                     else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*(int)rValue + 1;
+                        IntValue = (IntValue-1)*(int)rightSideValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*(int)rValue - 1;
+                        IntValue = (IntValue+1)*(int)rightSideValue - 1;
                     break;
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
                     if(IntValue==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
@@ -7187,8 +7200,8 @@ public:
                     else if(IntValue==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
@@ -7204,17 +7217,17 @@ public:
                         }
                     }
                     else
-                        CatchAllUIntMultiplication(rValue, LRep);
+                        CatchAllUIntMultiplication(rightSideValue, LRep);
                 }
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
                     if(IntValue==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             ExtraRep = divRes;
                             if(divRes == 0)
@@ -7227,8 +7240,8 @@ public:
                     else if(IntValue==NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
-                        int divRes = ExtraRep/rValue;
-                        if((ExtraRep - rValue * divRes)==0)
+                        int divRes = ExtraRep/rightSideValue;
+                        if((ExtraRep - rightSideValue * divRes)==0)
                         {
                             ExtraRep = divRes;
                             if(divRes == 0)
@@ -7241,7 +7254,7 @@ public:
                     else
                     {
                         ConvertToNormalIRep(LRep);
-                        BasicUIntMultOp(rValue);
+                        BasicUIntMultOp(rightSideValue);
                     }
                 }
                 break;
@@ -7251,8 +7264,8 @@ public:
     #if defined(AltNum_EnableMixedFractional)
                 case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
                 {
-                    DecimalHalf *= rValue;
-                    UIntHalfMultiplication(rValue);
+                    DecimalHalf *= rightSideValue;
+                    UIntHalfMultiplication(rightSideValue);
                     int divRes = DecimalHalf / -ExtraRep;
                     if (divRes > 0)
                     {
@@ -7274,8 +7287,8 @@ public:
         #endif
         #if defined(AltNum_EnableAlternativeMixedFrac)
                 {
-                    DecimalHalf *= rValue;
-                    UIntHalfMultiplication(rValue);
+                    DecimalHalf *= rightSideValue;
+                    UIntHalfMultiplication(rightSideValue);
                     int divRes = DecimalHalf / ExtraRep;
                     if (divRes > 0)
                     {
@@ -7297,7 +7310,7 @@ public:
                     break;
     #endif			
                 default:
-                    CatchAllUIntMultiplication(rValue, LRep);
+                    CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
             }
             return *this;
@@ -7323,10 +7336,10 @@ public:
 
 
         template<IntegerType IntType = int>
-        AltDec MultiplyByInt(const AltDec& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
+        AltDec MultiplyByInt(const IntType& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
 
         template<IntegerType IntType = int>
-        AltDec MultipleByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
+        AltDec MultiplyByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
 
     #pragma endregion Other Multiplication Operations
 
@@ -9001,7 +9014,7 @@ public:
             return *this;
         }
         
-        AltDec MultipleBy(const AltDec& rValue) { AltDec self = *this; self.MultOp(rValue); return self; }
+        AltDec MultiplyBy(const AltDec& rValue) { AltDec self = *this; self.MultOp(rValue); return self; }
 
         /// <summary>
         /// Multiplication Operation
@@ -9395,7 +9408,7 @@ public:
             return *this;
         }
 
-        AltDec MultipleByUnsigned(const AltDec& rValue) { AltDec self = *this; self.UnsignedMultOp(rValue); return self; }
+        AltDec MultiplyByUnsigned(const AltDec& rValue) { AltDec self = *this; self.UnsignedMultOp(rValue); return self; }
 
         void CatchAllAddition(AltDec& rValue, const RepType& LRep, const RepType& RRep)
         {
@@ -10348,26 +10361,26 @@ public:
         friend AltDec operator/(AltDec self, const signed __int8& rValue) { return self.IntDivOp(rValue); }
         friend AltDec operator/(AltDec self, const unsigned __int64& rValue) { return self.UIntDivOp(rValue); }
 
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="rValue">The right side value.</param>
-        /// <returns>AltDec</returns>
-        AltDec& operator*=(const AltDec& rValue) { return MultOp(rValue); }
+//protected:
+//        template<typename rightSideType=AltDec>
+//        void PerformMultiplicationAssignmentOperation(const rightSideType& rValue)
+//        {
+//            if (std::is_integral<rightSideType>::value)//Right side is integer
+//            {
+//                if (std::numeric_limits<rightSideType>::is_signed)
+//                    return IntMultOp(rValue);
+//                else
+//                    return UIntMultOp(rValue);
+//            }
+//            return MultOp(rValue);
+//        }
+//public:
 
-        /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>AltDec</returns>
-        AltDec& operator*=(const signed int& rValue) { return IntMultOp(rValue); }
-        AltDec& operator*=(const unsigned int& rValue) { return UIntMultOp(rValue); }
-        AltDec& operator*=(const unsigned __int64& rValue) { return UIntMultOp(rValue); }
-        AltDec& operator*=(const signed __int64& rValue) { return IntMultOp(rValue); }
-        AltDec& operator*=(const signed __int16& rValue) { return IntMultOp(rValue); }
-        AltDec& operator*=(const signed __int8& rValue) { return IntMultOp(rValue); }
-        AltDec& operator*=(const unsigned __int16& rValue) { return UIntMultOp(rValue); }
-        AltDec& operator*=(const unsigned __int8& rValue) { return UIntMultOp(rValue); }
+
+        //friend AltDec& operator*=(AltDec& self, const AltDec& rValue)
+        //{
+        //    return self.MultOp(rValue);
+        //}
 
         /// <summary>
         /// Division Operation
@@ -10383,6 +10396,26 @@ public:
         friend AltDec operator*(AltDec self, const unsigned __int16& rValue) { return self.UIntMultOp(rValue); }
         friend AltDec operator*(AltDec self, const signed __int8& rValue) { return self.IntMultOp(rValue); }
         friend AltDec operator*(AltDec self, const unsigned __int64& rValue) { return self.UIntMultOp(rValue); }
+
+        /// <summary>
+        /// Multiplication Operation with Integer right side value
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>AltDec</returns>
+        friend AltDec& operator*=(AltDec lhs, int rhs) {
+            lhs = lhs * rhs;
+            return lhs;
+        }
+
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>AltDec</returns>
+        friend AltDec& operator*=(AltDec lhs, AltDec rhs) {
+            lhs = lhs * rhs;
+            return lhs;
+        }
 
         /// <summary>
         /// Division Operation
@@ -10539,7 +10572,7 @@ public:
         {//Allowing negative shift operations based on formula instead of returning undefined
             AltDec rightSideMultiplier = Two;
             rightSideMultiplier.PowOp(rValue);
-            return MultipleByUnsigned(rightSideMultiplier);
+            return MultiplyByUnsigned(rightSideMultiplier);
         }
 
         /// <summary>
@@ -10608,7 +10641,7 @@ public:
         AltDec IntRemOp(const IntType& rValue)
         {
             AltDec divRes = DivideByInt(rValue);
-            AltDec C = *this - divRes.MultipleByInt(rValue);
+            AltDec C = *this - divRes.MultiplyByInt(rValue);
             return C;
         }
 

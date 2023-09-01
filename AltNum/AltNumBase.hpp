@@ -678,11 +678,11 @@ public:
             #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
             #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
             #endif
         #elif defined(BlazesMirroredInt_UsePseudoBitSet)
             #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
             #else
             if(RValue<0)
             {
@@ -709,7 +709,7 @@ public:
             }
             #endif
         #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #endif
     #else
             if(IntValue!=0&&IntValue!=NegativeRep)
@@ -725,11 +725,11 @@ public:
             #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
             #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
             #endif
         #elif defined(BlazesMirroredInt_UsePseudoBitSet)
             #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
             #else
             if(IntValue.Value>=NegativeRepVal)//Currently Negative
             {
@@ -740,7 +740,7 @@ public:
             }
             #endif
         #else
-            IntValue.MultipleByOp(RValue);
+            IntValue.MultiplyByOp(RValue);
         #endif
     #else
             if(IntValue!=0&&IntValue!=NegativeRep)
