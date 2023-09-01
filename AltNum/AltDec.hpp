@@ -5882,6 +5882,7 @@ public:
             BasicIntDivOp(rValue);
         }
 
+protected:
         /// <summary>
         /// Division Operation Between AltDec and Integer rValue.
         /// (Modifies owner object)
@@ -6230,8 +6231,6 @@ public:
             return *this;
         }
 
-        AltDec& Int32DivOp(const int& rValue) { return IntDivOp(rValue); }
-
         /// <summary>
         /// Division Operation Between AltDec and unsigned Integer rValue.
         /// (Modifies owner object)
@@ -6512,6 +6511,12 @@ public:
             return *this;
         }
 
+        template<IntegerType IntType = int>
+        AltDec DivideByInt(const IntType& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+
+        template<IntegerType IntType = int>
+        AltDec DivideByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
+
         /// <summary>
         /// Division Operation Between AltDec and Integer rValue.
         /// </summary>
@@ -6520,14 +6525,13 @@ public:
         /// <returns>AltDec</returns>
         template<IntegerType IntType = int>
         static AltDec& IntDivision(AltDec self, const IntType& rValue) { return self.IntDivOp(rValue); }
-
-        template<IntegerType IntType = int>
-        AltDec DivideByInt(const IntType& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+public:
+        AltDec& Int32DivOp(const int& rValue) { return IntDivOp(rValue); }
 
         AltDec DivideByInt32(const int& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+        AltDec DivideByUInt32(const int& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
 
-        template<IntegerType IntType = int>
-        AltDec DivideByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
+        AltDec DivideByInt32V2(const int& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
 
     #pragma endregion Other Division Operations
 
@@ -10639,7 +10643,12 @@ public:
         ///  Modulus Operation
         /// </summary>
         /// <param name="RValue">The value.</param>
-        AltDec Int32RemOp(signed int& RValue) { return IntRemOp(RValue); }
+        AltDec Int32RemOp(signed int& RValue)
+        { 
+            AltDec divRes = DivideByInt32(rValue);
+            AltDec C = *this - divRes.MultiplyByInt32(rValue);
+            return C;
+        }
         AltDec UInt32RemOp(unsigned int& RValue) { return IntRemOp(RValue); }
         AltDec Int64RemOp(signed long long& RValue) { return IntRemOp(RValue); }
         AltDec UInt64RemOp(unsigned long long& RValue) { return IntRemOp(RValue); }
