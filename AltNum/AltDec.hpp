@@ -4570,7 +4570,7 @@ public:
         void BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
-                return *this;
+                return;
             if (rValue == 0)
                 SetAsZero();
             else
@@ -6240,6 +6240,8 @@ public:
             return *this;
         }
 
+        AltDec& Int32DivOp(const int& rValue) { return IntDivOp(rValue); }
+
         /// <summary>
         /// Division Operation Between AltDec and unsigned Integer rValue.
         /// (Modifies owner object)
@@ -6530,7 +6532,9 @@ public:
         static AltDec& IntDivision(AltDec self, const IntType& rValue) { return self.IntDivOp(rValue); }
 
         template<IntegerType IntType = int>
-        AltDec DivideByInt(const AltDec& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+        AltDec DivideByInt(const IntType& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
+
+        AltDec DivideByInt32(const int& rValue) { AltDec self = *this; return self.IntDivOp(rValue); }
 
         template<IntegerType IntType = int>
         AltDec DivideByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntDivOp(rValue); }
