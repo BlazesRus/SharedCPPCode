@@ -1385,7 +1385,7 @@ public:/*
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        AltNumBase BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
+        AltNumBase BasicMultiplyByInt(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value
@@ -1393,7 +1393,7 @@ public:/*
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<typename IntType = int>
-        AltNumBase BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
+        AltNumBase BasicMultiplyByUInt(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 */
 
     #pragma endregion NormalRep Integer Multiplication Operations

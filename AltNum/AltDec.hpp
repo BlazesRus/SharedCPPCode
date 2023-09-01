@@ -4544,7 +4544,6 @@ protected:
         }
 #endif
 
-public:
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer Value
         /// (Modifies owner object)
@@ -4559,6 +4558,7 @@ public:
                 SetAsZero();
             else
                 PartialIntMultOp(rValue);
+            return *this;
         }
 
         /// <summary>
@@ -4567,70 +4567,60 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType>
-        void BasicUIntMultOp(const IntType& rValue)
+        AltDec BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
-                return;
+                return *this;
             if (rValue == 0)
                 SetAsZero();
             else
                 PartialIntMultOpV2(rValue);
+            return *this;
         }
 
         /// <summary>
-        /// Multiplication Operation Between AltDec and unsigned Integer Value
+        /// Multiplication Operation Between AltDec and Integer Value
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType = int>
-        AltDec BasicIntMult(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
+        AltDec BasicMultiplyByInt(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
         /// Multiplication Operation Between AltDec and unsigned Integer Value
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<IntegerType IntType = int>
-        void BasicUIntMult(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
+        template<IntegerType IntType = unsigned int>
+        void BasicMultiplyByUInt(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 
-        void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
-        void BasicInt64MultOp(signed long long& rValue) { BasicIntMultOp(rValue); }
-
+public:
         /// <summary>
-        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
-        /// (Modifies lValue during operation) 
+        /// Multiplication Operation Between AltDec and Integer Value
+        /// (Modifies owner object)
         /// </summary>
-        /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<IntegerType IntType=int>
-        static AltDec BasicMultiplyByUIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+        AltDec BasicInt32MultOp(const int& rValue) { return BasicIntMultOp(rValue); }
 
-        /// <summary>
-        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
-        /// (Modifies lValue during operation) 
-        /// </summary>
-        /// <param name="lValue">The left side value.</param>
-        /// <param name="rValue">The right side value.</param>
-        template<IntegerType IntType=int>
-        static AltDec BasicMultiplyByIntOp(AltDec& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+        //BasicInt32MultOp but instead using unsigned version of function
+        AltDec BasicInt32MultOpV2(const int& rValue) { return BasicUIntMultOp(rValue); }
+
+        AltDec BasicInt64MultOp(const signed __int64& rValue) { return BasicIntMultOp(rValue); }
+
+        AltDec BasicUInt32MultOp(const unsigned int& rValue) { return BasicUIntMultOp(rValue); }
+        AltDec BasicUInt64MultOp(const unsigned int& rValue) { return BasicUIntMultOp(rValue); }
+
+        static AltDec BasicMultiplyByInt32Op(AltDec& lValue, const int& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
-        /// Multiplication Operation Between AltDec and Integer Value that ignores special representation status
-        /// (lValue is copied variable) 
+        /// Multiplication Operation Between AltDec and Integer Value
+        /// (Avoids modifying owner object by copying lValue)
         /// </summary>
-        /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<IntegerType IntType=int>
-        static AltDec BasicMultiplyByUInt(AltDec lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
-        
-        /// <summary>
-        /// Multiplication Operation Between AltDec and unsigned Integer Value that ignores special representation status
-        /// (lValue is copied variable) 
-        /// </summary>
-        /// <param name="lValue">The left side value.</param>
-        /// <param name="rValue">The right side value.</param>
-        template<IntegerType IntType=int>
-        static AltDec BasicMultiplyByInt(AltDec lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+        AltDec BasicMultiplyByInt32(const int& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
+
+        //BasicMultiplyByInt32 but instead using unsigned version of function
+        AltDec BasicMultiplyByInt32V2(const int& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
