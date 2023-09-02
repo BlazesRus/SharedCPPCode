@@ -20,6 +20,7 @@
 
 #include <string>
 #include <cmath>//Needed for floating point floor function
+#include <compare>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
 #if defined(AltNum_EnableAutoToggleOfPreferedSettings)
@@ -177,16 +178,23 @@
     #define AltNum_EnableDecimaledPiOrEFractionals
 #endif
 
+//Require variables in base to allow functions to be in base class
+#if !defined(AltNum_DisableCommonVariablesInBase)&&defined(AltNum_StoreCommonFunctionsInBase)
+    #undef AltNum_StoreCommonFunctionsInBase
+#endif
+
 namespace BlazesRusCode
 {
-    //Integer type
+
+    //Integer type (concept)
     template<typename T>
     concept IntegerType = std::is_integral<T>::value;
 
 	//Base class for AltDec and MediumDec to help initial structure of classes
     class DLL_API AltNumBase
     {
-#if defined(AltNum_StoreCommonVariablesInBase)
+    public:
+#if !defined(AltNum_DisableCommonVariablesInBase)
     public:
         /// <summary>
         /// The decimal overflow
@@ -302,7 +310,7 @@ namespace BlazesRusCode
         }
 #endif
 
-#if defined(AltNum_StoreCommonVariablesInBase)
+#if !defined(AltNum_DisableCommonVariablesInBase)
 #if defined(AltDec_UseMirroredInt)
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
@@ -336,6 +344,10 @@ namespace BlazesRusCode
             IntValue = intVal;
 #endif
             DecimalHalf = decVal;
+        }
+#else
+        AltNumBase()
+        {
         }
 #endif
 
@@ -383,7 +395,7 @@ namespace BlazesRusCode
 #endif
 
     #pragma region Const Representation values
-#if defined(AltNum_StoreCommonVariablesInBase)
+#if defined(AltNum_StoreConstVariablesInBase)
 	#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//(other values only used if AltNum_EnableInfinityPowers is enabled)
@@ -448,7 +460,7 @@ namespace BlazesRusCode
 
     #pragma endregion MixedFrac Setters
 
-protected:
+//protected:
     #pragma region Infinity Setters
 #if defined(AltNum_StoreCommonFunctionsInBase)
     //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
@@ -502,7 +514,7 @@ protected:
 	#endif
 #endif
     #pragma endregion NaN Setters
-public:
+//public:
 
     #pragma region ValueDefines
 
@@ -1059,7 +1071,7 @@ public:
 
     #pragma endregion MirroredIntBased Operations
 
-protected:
+//protected:
     #pragma region Pi Conversion
 	
     #pragma endregion Pi Conversion
@@ -1074,12 +1086,40 @@ protected:
 public:
 
     #pragma region Comparison Operators
+#if !defined(AltNum_DisableCommonVariablesInBase)
+    auto operator<=>(const AltNumBase& that) const
+    {
+    #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+        if (std::weak_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+    #else
+        if (std::partial_ordering IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::partial_ordering DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+    #endif
+    }
 
+    bool operator==(const int& that) const
+    {
+        if (IntValue!=that)
+            return false;
+        if (DecimalHalf!=0)
+            return false;
+        return true;
+    }
+
+    bool operator==(const AltNumBase& that) const
+    {
+        if (IntValue!=that.IntValue)
+            return false;
+        if (DecimalHalf!=that.IntValue)
+            return false;
+    }
+#endif
     #pragma endregion Comparison Operators
-
-    #pragma region AltDec-To-Int Comparison Functions
-
-    #pragma endregion AltDec-To-Int Comparison Methods
 
     #pragma region NormalRep Integer Division Operations
 protected:
