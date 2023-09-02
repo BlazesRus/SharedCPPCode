@@ -10673,7 +10673,7 @@ public:
         ///  Modulus Operation
         /// </summary>
         /// <param name="RValue">The value.</param>
-        AltDec Int32RemOp(signed int& RValue)
+        AltDec Int32RemOp(signed int& rValue)
         { 
             AltDec divRes = DivideByInt32(rValue);
             AltDec C = *this - divRes.MultiplyByInt32(rValue);

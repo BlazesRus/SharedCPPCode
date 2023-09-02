@@ -13,14 +13,14 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 	case RepType::NumByDiv://X / (Y / Z) = (XZ)/Y
 	{
 		self.BasicUnsignedDivOp(Value);
-		self.BasicIntMultOp(Value.ExtraRep);
+		self.BasicInt32MultOp(Value.ExtraRep);
 		break;
 	}
 		#if defined(AltNum_EnablePiFractional)
 	case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 	{
 		//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
-		self.BasicIntMultOp(Value.DecimalHalf);
+		self.BasicInt32MultOp(Value.DecimalHalf);
 		self.BasicUnsignedDivOp(AltDec::PiNum * Value.IntValue);//self.BasicUnsignedDivOp(PiNumMultByInt(Value.IntValue))
 		break;
 	}
@@ -28,7 +28,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		#if defined(AltNum_EnableEFractional)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 		{
-			self.BasicIntMultOp(Value.DecimalHalf);
+			self.BasicInt32MultOp(Value.DecimalHalf);
 			self.BasicUnsignedDivOp(AltDec::ENum * Value.IntValue);
 			break;
 		}
@@ -41,7 +41,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		#endif
 		#if defined(AltNum_EnableDecimaledPiOrEFractionals)
 		{
-			self.BasicIntMultOp(-Value.ExtraRep);
+			self.BasicInt32MultOp(-Value.ExtraRep);
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 			Value.ConvertToNormType(RepType::PiNum);
 			#elif defined(AltNum_EnableDecimaledEFractionals)
