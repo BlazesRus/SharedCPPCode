@@ -28,7 +28,7 @@ void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 #endif
 		default:
-			self.CatchAllAddition(&Value, RepType::NumByDiv, &RRep);
+			self.CatchAllAddition(Value, RepType::NumByDiv, RRep);
 			break;
 	}
 }
@@ -65,7 +65,7 @@ void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 //    #endif
 //#endif
 //		default:
-//			self.CatchAllAddition(&Value, &LRep, &RRep);
+//			self.CatchAllAddition(Value, LRep, RRep);
 //			break;
 //	}
 //}
@@ -97,9 +97,8 @@ void PiNumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 	    #endif
 			break;
     #endif
-#endif
 		default:
-			self.CatchAllAddition(&Value, &LRep, &RRep);
+			self.CatchAllAddition(Value, LRep, RRep);
 			break;
 	}
 }

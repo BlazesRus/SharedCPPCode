@@ -15,20 +15,20 @@
 		#endif
 				case RepType::NumByDiv://(X*Pi) / (Y / Z) = (XZ)/Y
 					self.BasicDivOp(Value);
-					self.BasicIntMultOp(Value.ExtraRep);
+					self.BasicInt32MultOpV2(Value.ExtraRep);
 					break;
 							
 		#if defined(AltNum_EnablePiFractional)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
 					self.ExtraRep = 0;
-					self.BasicMultOp(Value.DecimalHalf);
-					self.BasicDivOp(Value.IntValue);
+					self.BasicInt32MultOpV2(Value.DecimalHalf);
+					self.BasicInt32DivOpV2(Value.IntValue);
 					break;
 		#endif
 		#if defined(AltNum_EnableEFractional)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-					self.BasicMultOp(Value.DecimalHalf);
+					self.BasicInt32MultOpV2(Value.DecimalHalf);
 					self.BasicDivOp(ENumValue()*Value.IntValue);
 					break;
 		#endif
@@ -37,7 +37,7 @@
 				case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
 					//(XPi) / (Y.Value*Pi / -Y.ExtraRep) = (X*-Y.ExtraRep)/(Y.Value)
 					self.ExtraRep = 0;
-					self.BasicDivOp(-Value.ExtraRep);
+					self.BasicInt32DivOpV2(-Value.ExtraRep);
 					self.BasicMultOp(Value);
 					break;
 		#elif defined(AltNum_EnableDecimaledEFractionals)
@@ -170,21 +170,21 @@
 			#if defined(AltNum_EnableAlternativeRepFractionals)
 				case RepType::NumByDiv://(X*E) / (Y / Z) = (XZ*E)/Y
 					self.BasicDivOp(Value);
-					self.BasicIntMultOp(Value.ExtraRep);
+					self.BasicInt32MultOpV2(Value.ExtraRep);
 					break;
 					
 				#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 					//(Xe) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
-					self.BasicMultOp(Value.DecimalHalf);
+					self.BasicInt32MultOpV2(Value.DecimalHalf);
 					self.BasicUnsignedDiv(PiNumValue()*Value.IntValue);
 					break;
 				#endif
 				#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 					self.ExtraRep = 0;
-					self.BasicMultOp(Value.DecimalHalf);
-					self.BasicDivOp(Value.IntValue);
+					self.BasicInt32MultOpV2(Value.DecimalHalf);
+					self.BasicInt32DivOpV2(Value.IntValue);
 					break;
 				#endif
 
@@ -584,7 +584,7 @@
 					//selfNum*i / (Value.IntValue/Value.DecimalHalf*i)
 					//selfNum / (Value.IntValue/Value.DecimalHalf)
 					//(selfNum*Value.DecimalHalf) / Value.IntValue
-					self.BasicMultOp(Value.DecimalHalf);
+					self.BasicInt32MultOpV2(Value.DecimalHalf);
 					self.ExtraRep = Value.IntValue;
 					break;//Return as NumByDiv
 			#if defined(AltNum_EnableDecimaledIFractionals)

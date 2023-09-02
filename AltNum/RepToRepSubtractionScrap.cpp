@@ -1,6 +1,6 @@
 ﻿
 #if defined(AltNum_EnableFractionals)
-void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void NumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -36,7 +36,7 @@ void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 
 
 	#if defined(AltNum_EnablePiPowers)
-void PiPowerSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+void PiPowerSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -69,7 +69,7 @@ void PiPowerSubOp(RepType& RRep, AltDec& self, AltDec& Value)
     #endif
 	#if defined(AltNum_EnableDecimaledPiFractionals)
 
-void PiNumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumByDivSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -101,7 +101,7 @@ void PiNumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 	#elif defined(AltNum_EnablePiFractional)
-void PiFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+void PiFractionalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -140,7 +140,7 @@ void PiFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
 #if defined(AltNum_EnableERep)
 
 	#if defined(AltNum_EnableDecimaledEFractionals)
-void ENumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ENumByDivSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -172,7 +172,7 @@ void ENumByDivSubOp(RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 	#elif defined(AltNum_EnableEFractional)
-void EFractionalSubOp(RepType& RRep, AltDec& self, AltDec& Value)
+void EFractionalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{

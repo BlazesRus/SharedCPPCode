@@ -6726,8 +6726,12 @@ public:
         AltDec CatchAllImaginaryDivisionAsCopiesV3(AltDec& rValue)
         { AltDec self = *this; CatchAllImaginaryDivisionV3(rValue); return self; }
     #endif
-
+protected:
+		static void DivOp_LRepImaginaryOverride(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+		static void MultOp_LRepImaginaryOverride(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+		static void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 public:
+
         static void RepToRepDivOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
 
         /// <summary>
@@ -9945,7 +9949,7 @@ public:
         static AltNumModChecker<AltDec> ModulusOp(AltDec& self, unsigned long long& RValue) { self.IntModulusOp(RValue); }
 
 
-        static AltNumModChecker<AltDec> ModulusOp(AltDecVariant RValue)
+        static AltNumModChecker<AltDec> ModulusOp(const AltDec& RValue)
         {
             AltNumModChecker<AltDec> Res;
             Res.CalcIfZero(*this, RValue);
@@ -10478,7 +10482,7 @@ public:
             {
                 if (expValue == 0)
 #if defined(AltNum_EnableNaN)
-                    tSetAsUndefined();
+                    SetAsUndefined();
 #else
                     throw "Infinity to power of Zero returns Undefined value";
 #endif
@@ -10501,7 +10505,7 @@ public:
             {
                 if (expValue == 0)
 #if defined(AltNum_EnableNaN)
-                    tSetAsUndefined();
+                    SetAsUndefined;
 #else
                     throw "Infinity to power of Zero returns Undefined value";
 #endif
