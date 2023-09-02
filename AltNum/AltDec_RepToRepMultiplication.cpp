@@ -2,71 +2,71 @@
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::AltDec::RepType;
 
-void NormalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NormalMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 #if defined(AltNum_EnableFractionals)
-void NumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NumByDivMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 #endif
 
 #if defined(AltNum_EnablePiRep)
-void PiNumOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 	#if defined(AltNum_EnablePiPowers)
-void PiPowerOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiPowerMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	
 	#if defined(AltNum_EnableDecimaledPiFractionals)
-void PiNumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumByDivMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnablePiFractional)
-void PiFractionalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiFractionalMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableERep)
-void ENumOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 	#if defined(AltNum_EnableDecimaledEFractionals)
-void ENumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumByDivMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableEFractional)
-void EFractionalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void EFractionalMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableApproachingValues)
-void ApproachingBottomOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingBottomMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-	#if !defined(AltNum_DisableApproachingTop)
-void ApproachingTopOp(const RepType& RRep, AltDec& self, AltDec& Value)
+	#if !defined(AltNum_DisableApproachingTMultOp)
+void ApproachingTMultOpMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-void ApproachingMidLeftOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidLeftMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-		#if !defined(AltNum_DisableApproachingTop)
-void ApproachingMidRightOp(const RepType& RRep, AltDec& self, AltDec& Value)
+		#if !defined(AltNum_DisableApproachingTMultOp)
+void ApproachingMidRightMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 		#endif
@@ -74,38 +74,38 @@ void ApproachingMidRightOp(const RepType& RRep, AltDec& self, AltDec& Value)
 #endif
 
 #if defined(AltNum_EnableImaginaryNum)
-void INumOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void INumMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
 	#if defined(AltNum_EnableDecimaledIFractionals)
-void INumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void INumByDivMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableIFractional)
-void IFractionalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void IFractionalMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableApproachingI)
-void ApproachingImaginaryBottomOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingImaginaryBottomMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-	#if !defined(AltNum_DisableApproachingTop)
-void ApproachingImaginaryTopOp(const RepType& RRep, AltDec& self, AltDec& Value)
+	#if !defined(AltNum_DisableApproachingTMultOp)
+void ApproachingImaginaryTMultOpMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-void ApproachingImaginaryMidLeftOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingImaginaryMidLeftMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-	    #if !defined(AltNum_DisableApproachingTop)
-void ApproachingImaginaryMidRightOp(const RepType& RRep, AltDec& self, AltDec& Value)
+	    #if !defined(AltNum_DisableApproachingTMultOp)
+void ApproachingImaginaryMidRightMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	    #endif
@@ -113,19 +113,19 @@ void ApproachingImaginaryMidRightOp(const RepType& RRep, AltDec& self, AltDec& V
 #endif
 
 #if defined(AltNum_EnableMixedFractional)
-void MixedFracOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedFracMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#if defined(AltNum_EnableMixedPiFractional)
-void MixedPiOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedPiMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableMixedEFractional)
-void MixedEOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedEMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableMixedIFractional)
-void MixedIOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedIMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
@@ -139,7 +139,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)"; return;
+			throw "UndefinedButInRange MultOperations not supported yet(from left side)"; return;
             break;
     #endif
 	#if defined(AltNum_EnableImaginaryNum)
@@ -180,7 +180,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 				}
 			break;
 
-		case RepType::ApproachingTop:
+		case RepType::ApproachingTMultOp:
 			Value.DecimalHalf = 999999999;
 			Value.ExtraRep = 0;
 			RRep = RepType::NormalType;
@@ -198,13 +198,13 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 	#endif
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from right side)";
+			throw "UndefinedButInRange MultOperations not supported yet(from right side)";
             break;
     #endif
 	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
+			throw "Can't perform MultOperations with NaN or Undefined number";
 			break;
 	#endif
 		default:
@@ -213,88 +213,88 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
     switch (LRep)//Main switch block starts here
     {
 		case RepType::NormalType:
-			NormalOp(RRep, self, Value); break;
+			NormalMultOp(RRep, self, Value); break;
 #if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
-			PiNumOp(RRep, self, Value); break;
+			PiNumMultOp(RRep, self, Value); break;
     #if defined(AltNum_EnablePiPowers)
 		case RepType::PiPower:
-			PiPowerOp(RRep, self, Value); break;
+			PiPowerMultOp(RRep, self, Value); break;
     #endif
 #endif
 #if defined(AltNum_EnableERep)
 		case RepType::ENum:
-			ENumOp(RRep, self, Value); break;
+			ENumMultOp(RRep, self, Value); break;
 #endif
 #if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
-			ApproachingBottomOp(RRep, self, Value); break;
-	#if defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTop:
-			ApproachingTopOp(RRep, self, Value); break;
+			ApproachingBottomMultOp(RRep, self, Value); break;
+	#if defined(AltNum_DisableApproachingTMultOp)
+		case RepType::ApproachingTMultOp:
+			ApproachingTMultOpMultOp(RRep, self, Value); break;
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
 		case RepType::ApproachingMidLeft:
-			ApproachingMidLeftOp(RRep, self, Value); break;
-		#if defined(AltNum_DisableApproachingTop)
+			ApproachingMidLeftMultOp(RRep, self, Value); break;
+		#if defined(AltNum_DisableApproachingTMultOp)
 		case RepType::ApproachingMidRight:
-			ApproachingMidRightOp(RRep, self, Value); break;
+			ApproachingMidRightMultOp(RRep, self, Value); break;
 		#endif
 	#endif
 #endif
 #if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
-			NumByDivOp(RRep, self, Value); break;
+			NumByDivMultOp(RRep, self, Value); break;
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 		#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-			PiFractionalOp(RRep, self, Value); break;
+			PiFractionalMultOp(RRep, self, Value); break;
 		#endif
 		#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-			EFractionalOp(RRep, self, Value); break;
+			EFractionalMultOp(RRep, self, Value); break;
 		#endif
 
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-			PiNumByDivOp(RRep, self, Value); break;
+			PiNumByDivMultOp(RRep, self, Value); break;
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-			ENumByDivOp(RRep, self, Value); break;
+			ENumByDivMultOp(RRep, self, Value); break;
 		#endif
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
 		case RepType::INum:
-			INumOp(RRep, self, Value); break;
+			INumMultOp(RRep, self, Value); break;
     #if defined(AltNum_EnableFractionals)
         #if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-			INumByDivOp(RRep, self, Value); break;
+			INumByDivMultOp(RRep, self, Value); break;
         #else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			IFractionalOp(RRep, self, Value); break;
+			IFractionalMultOp(RRep, self, Value); break;
         #endif
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-			EFractionalOp(RRep, self, Value); break;
+			EFractionalMultOp(RRep, self, Value); break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
-			MixedPiOp(RRep, self, Value); break;
+			MixedPiMultOp(RRep, self, Value); break;
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
-			MixedEOp(RRep, self, Value); break;
+			MixedEMultOp(RRep, self, Value); break;
 	#elif defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
-			MixedIOp(RRep, self, Value); break;
+			MixedIMultOp(RRep, self, Value); break;
     #endif
 #endif
 	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
+			throw "Can't perform MultOperations with NaN or Undefined number";
 			break;
 	#endif
 		default:

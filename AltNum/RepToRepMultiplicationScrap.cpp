@@ -280,8 +280,8 @@
 					break;
 			}
 			break;
-	#if defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTop:
+	#if defined(AltNum_DisableApproachingTMultOp)
+		case RepType::ApproachingTMultOp:
 			switch (RRep)
 			{
 				default:
@@ -299,7 +299,7 @@
 					break;
 			}
 			break;
-		#if defined(AltNum_DisableApproachingTop)
+		#if defined(AltNum_DisableApproachingTMultOp)
 		case RepType::ApproachingMidRight:
 			switch (RRep)
 			{
@@ -543,7 +543,7 @@
 				default:
                     self.ConvertToNormType(&LRep);
 					Value.ConvertToNormType(&RRep);
-					self.BasicDivOp(Value);
+					self.BasicDivMultOp(Value);
 			}
 			break;
     #endif
@@ -561,7 +561,7 @@
 				default:
                     self.ConvertToNormalIRep(&LRep);
 					Value.ConvertToNormType(&RRep);
-					self.BasicDivOp(Value);
+					self.BasicDivMultOp(Value);
             }
             break;
     #endif

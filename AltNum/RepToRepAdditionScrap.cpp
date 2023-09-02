@@ -2,13 +2,13 @@
 
 #if defined(AltNum_EnableFractionals)
 /*
-void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void NumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
 			self.ConvertToNormType(&LRep);
 			self.BasicMixedFracAddOp(Value);
 			break;
@@ -39,7 +39,7 @@ void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 
 
 //	#if defined(AltNum_EnablePiPowers)
-//void PiPowerOp(RepType& RRep, AltDec& self, AltDec& Value)
+//void PiPowerAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 //{
 //	switch (RRep)
 //	{
@@ -72,7 +72,7 @@ void NumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 	
 	#if defined(AltNum_EnableDecimaledPiFractionals)
 /*
-void PiNumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -91,7 +91,7 @@ void PiNumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
             self.ConvertToNormType(&LRep);
 			self.BasicMixedEFracAddOp(Value);
         #else
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
             self.ConvertToNormType(&LRep);
 			self.BasicMixedPiFracAddOp(Value);
 	    #endif
@@ -103,7 +103,7 @@ void PiNumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 	#elif defined(AltNum_EnablePiFractional)
-void PiFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
+void PiFractionalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -122,7 +122,7 @@ void PiFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
             self.ConvertToNormType(&LRep);
 			self.BasicMixedEFracAddOp(Value);
         #else
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
             self.ConvertToNormType(&LRep);
 			self.BasicMixedPiFracAddOp(Value);
 	    #endif
@@ -142,7 +142,7 @@ void PiFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
 
 /*
 	#if defined(AltNum_EnableDecimaledEFractionals)
-void ENumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
+void ENumByDivAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -161,7 +161,7 @@ void ENumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 			self.ConvertToNormType(&LRep);
 			self.BasicMixedEFracAddOp(Value);
         #else
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
 			self.ConvertToNormType(&LRep);
 			self.BasicMixedPiFracAddOp(Value);
 	    #endif
@@ -174,7 +174,7 @@ void ENumByDivOp(RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 	#elif defined(AltNum_EnableEFractional)
-void EFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
+void EFractionalAddOp(RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -193,7 +193,7 @@ void EFractionalOp(RepType& RRep, AltDec& self, AltDec& Value)
 			self.ConvertToNormType(&LRep);
 			self.BasicMixedEFracAddOp(Value);
         #else
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
 			self.ConvertToNormType(&LRep);
 			self.BasicMixedPiFracAddOp(Value);
 	    #endif

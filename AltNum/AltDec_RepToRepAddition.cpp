@@ -2,7 +2,7 @@
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::AltDec::RepType;
 
-void NormalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NormalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -35,13 +35,13 @@ void NormalOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 #if defined(AltNum_EnableFractionals)
-void NumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 #endif
 
 #if defined(AltNum_EnablePiRep)
-void PiNumOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -80,7 +80,7 @@ void PiNumOp(const RepType& RRep, AltDec& self, AltDec& Value)
     			else
     			{
     	            self.ConvertToNormType(RepType::PiNum);
-    	            self.BasicMixedPiFracSubOp(Value);
+    	            self.BasicMixedPiFracSubAddOp(Value);
     			}
 		#elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
                 if(Value.IntValue!=0)
@@ -104,7 +104,7 @@ void PiNumOp(const RepType& RRep, AltDec& self, AltDec& Value)
 	#elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:
 			self.ConvertToNormType(RepType::PiNum);
-			self.BasicMixedEFracSubOp(Value);
+			self.BasicMixedEFracSubAddOp(Value);
 			break;
 	#endif
 		default:
@@ -114,13 +114,13 @@ void PiNumOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 #if defined(AltNum_EnablePiPowers)
-void PiPowerOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiPowerAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 #endif
 	
 #if defined(AltNum_EnableDecimaledPiFractionals)
-void PiNumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -132,7 +132,7 @@ void PiNumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
 	#endif
 	#if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
-            //ToDo:Add more precise operation code here later
+            //ToDo:Add more precise AddOperation code here later
             self.ConvertToNormType(RepType::PiNumByDiv);
 			self.BasicMixedPiFracAddOp(Value);
 			break;
@@ -148,14 +148,14 @@ void PiNumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
 	}
 }
 #elif defined(AltNum_EnablePiFractional)
-void PiFractionalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiFractionalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 #endif
 #endif
 
 #if defined(AltNum_EnableERep)
-void ENumOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -197,7 +197,7 @@ void ENumOp(const RepType& RRep, AltDec& self, AltDec& Value)
     			else
     			{
     	            self.ConvertToNormType(RepType::ENum);
-    	            self.BasicMixedPiFracSubOp(Value);
+    	            self.BasicMixedPiFracSubAddOp(Value);
     			}
         #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
                 if(Value.IntValue!=0)
@@ -226,33 +226,33 @@ void ENumOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 	#if defined(AltNum_EnableDecimaledEFractionals)
-void ENumByDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableEFractional)
-void EFractionalOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void EFractionalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableApproachingValues)
-void ApproachingBottomOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingBottomAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-	#if !defined(AltNum_DisableApproachingTop)
-void ApproachingTopOp(const RepType& RRep, AltDec& self, AltDec& Value)
+	#if !defined(AltNum_DisableApproachingTAddOp)
+void ApproachingTAddOpAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-void ApproachingMidRightOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidRightAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 
-		#if !defined(AltNum_DisableApproachingTop)
-void ApproachingMidLeftOp(const RepType& RRep, AltDec& self, AltDec& Value)
+		#if !defined(AltNum_DisableApproachingTAddOp)
+void ApproachingMidLeftAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 }
 		#endif
@@ -260,7 +260,7 @@ void ApproachingMidLeftOp(const RepType& RRep, AltDec& self, AltDec& Value)
 #endif
 
 #if defined(AltNum_EnableImaginaryNum)
-void ImaginaryNumberOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+void ImaginaryNumberAddOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
 {
     switch (RRep)
     {
@@ -284,7 +284,7 @@ void ImaginaryNumberOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value
 #endif
 
 #if defined(AltNum_EnableMixedFractional)
-void MixedFracOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedFracAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -343,7 +343,7 @@ void MixedFracOp(const RepType& RRep, AltDec& self, AltDec& Value)
 #endif
 
 #if defined(AltNum_MixedPiOrEEnabled)
-void MixedPiEOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedPiEAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -420,7 +420,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from left side)";
+			throw "UndefinedButInRange AddOperations not supported yet(from left side)";
             break;
     #endif
 	#if defined(AltNum_EnableImaginaryNum)
@@ -447,7 +447,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 	#if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
 		{
-			if(LRep==RepType::ApproachingTop&&LeftIsNegative==false)
+			if(LRep==RepType::ApproachingTAddOp&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
 				self.IntValue += Value.IntValue+1;
@@ -460,8 +460,8 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			break;
 		}
-		#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTop:
+		#if !defined(AltNum_DisableApproachingTAddOp)
+		case RepType::ApproachingTAddOp:
 		{
 			if(LRep==RepType::ApproachingBottom&&LeftIsNegative==false)
 			{
@@ -495,7 +495,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			break;
 		}
-			#if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTAddOp)
 		case RepType::ApproachingMidRight:
         {//0.49..9+0.0.50..1
 			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==false)
@@ -518,7 +518,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 	#if defined(AltNum_EnableApproachingI)
 		case RepType::ApproachingImaginaryBottom:
 		{
-			if(LRep==RepType::ApproachingImaginaryTop&&LeftIsNegative==false)
+			if(LRep==RepType::ApproachingImaginaryTAddOp&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
 				self.ExtraRep = IRep;
@@ -533,8 +533,8 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			break;
 		}
-		#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingImaginaryTop:
+		#if !defined(AltNum_DisableApproachingTAddOp)
+		case RepType::ApproachingImaginaryTAddOp:
 		{
 			if(LRep==RepType::ApproachingImaginaryBottom&&LeftIsNegative==false)
 			{
@@ -569,7 +569,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			}
 			break;
 		}
-			#if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTAddOp)
 		case RepType::ApproachingImaginaryMidRight:
         {
 			if(LRep==RepType::ApproachingImaginaryMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==RightIsNegative)
@@ -591,13 +591,13 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 	#endif
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
         case RepType::UndefinedButInRange:
-			throw "UndefinedButInRange operations not supported yet(from right side)";
+			throw "UndefinedButInRange AddOperations not supported yet(from right side)";
             break;
     #endif
 	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
+			throw "Can't perform AddOperations with NaN or Undefined number";
 			break;
 	#endif
 		default:
@@ -607,12 +607,12 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
     {
 #if defined(AltNum_EnablePiRep)
 		case RepType::PiNum:
-            PiNumOp(RRep, self, Value);
+            PiNumAddOp(RRep, self, Value);
             break;
 #endif
 #if defined(AltNum_EnableERep)
 		case RepType::ENum:
-            ENumOp(RRep, self, Value);
+            ENumAddOp(RRep, self, Value);
             break;
 #endif
 		case RepType::NormalType:
@@ -621,12 +621,12 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 #endif
 #if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
-    #if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingTop:
+    #if !defined(AltNum_DisableApproachingTAddOp)
+		case RepType::ApproachingTAddOp:
     #endif
     #if defined(AltNum_EnableApproachingDivided)
 		case RepType::ApproachingMidLeft:
-        #if !defined(AltNum_DisableApproachingTop)
+        #if !defined(AltNum_DisableApproachingTAddOp)
 		case RepType::ApproachingMidRight:
         #endif
     #endif
@@ -680,12 +680,12 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 	#if defined(AltNum_EnableMixedIFractional)
         case RepType::MixedI:
     #endif
-			ImaginaryNumberOp(LRep, RRep, self, Value); 
+			ImaginaryNumberAddOp(LRep, RRep, self, Value); 
             break;
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-            MixedFracOp(RRep, self, Value);
+            MixedFracAddOp(RRep, self, Value);
             break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
@@ -693,14 +693,14 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 		case RepType::MixedE:
     #endif
     #if defined(AltNum_MixedPiOrEEnabled)
-            MixedPiEOp(RRep, self, Value);
+            MixedPiEAddOp(RRep, self, Value);
             break;
     #endif
 #endif
 	#if defined(AltNum_EnableNaN)
 		case RepType::Undefined:
 		case RepType::NaN:
-			throw "Can't perform operations with NaN or Undefined number";
+			throw "Can't perform AddOperations with NaN or Undefined number";
 			break;
 	#endif
 		default:
