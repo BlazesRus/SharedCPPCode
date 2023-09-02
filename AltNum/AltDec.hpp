@@ -6663,21 +6663,23 @@ protected:
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                {
                     int rValue = rightSideValue;
-                    if(rValue<0)
+                    if (rValue < 0)
                     {
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==NegativeRep)
+                    if (IntValue == NegativeRep)
                         IntValue = -rValue;
-                    else if(IntValue==0)
+                    else if (IntValue == 0)
                         IntValue = rValue - 1;
-                    else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*rValue + 1;
+                    else if (IntValue < 0)//-5.9..9 * 100
+                        IntValue = (IntValue - 1) * rValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*rValue - 1;
-                    break;
+                        IntValue = (IntValue + 1) * rValue - 1;
+                }
+                break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
@@ -11246,25 +11248,25 @@ public:
         /// Applies Power of operation on references(for integer exponents)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="expValue">The exponent value.</param>
+        /// <param name="exponent">The exponent value.</param>
         template<IntegerType IntType>
-        AltDec BasicIntPowOp(const IntType& expValue)
+        AltDec BasicIntPowOp(const IntType& exponent)
         {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
+            if (exponent == 1) { return *this; }//Return self
+            else if (exponent == 0)
             {
                 IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
             }
-            else if (expValue < 0)//Negative Pow
+            else if (exponent < 0)//Negative Pow
             {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
+                if (DecimalHalf == 0 && IntValue == 10 && exponent >= -9)
                 {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
+                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exponent * -1];
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
+                    int expValue = exponent * -1;
                     AltDec self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
@@ -11280,12 +11282,13 @@ public:
                 }
             }
             else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+                IntValue = VariableConversionFunctions::PowerOfTens[exponent];
             else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
+                IntValue = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                int expValue = exponent;
                 AltDec self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
@@ -11302,25 +11305,26 @@ public:
         }
 
         /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
+        /// Applies Power of operation on references(for unsigned integer exponents)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="expValue">The exponent value.</param>
+        /// <param name="exponent">The exponent value.</param>
         template<IntegerType IntType>
-        AltDec BasicUIntPowOp(const IntType& expValue)
+        AltDec BasicUIntPowOp(const IntType& exponent)
         {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
+            if (exponent == 1) { return *this; }//Return self
+            else if (exponent == 0)
             {
                 IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
             }
             else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+                IntValue = VariableConversionFunctions::PowerOfTens[exponent];
             else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
+                IntValue = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                int expValue = exponent;
                 AltDec self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
