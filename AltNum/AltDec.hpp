@@ -6559,6 +6559,7 @@ public:
             BasicIntMultOp(rValue);
         }
 
+protected:
         /// <summary>
         /// Multiplication Operation Between AltDec and Integer rValue.
         /// (Modifies owner object)
@@ -6583,7 +6584,7 @@ public:
     #if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                 {//Reduce divisor if possible
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6625,7 +6626,7 @@ public:
                 case RepType::INumByDiv:
         #endif
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6662,26 +6663,26 @@ public:
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
                     if(IntValue==NegativeRep)
-                        IntValue = -(int)rValue;
+                        IntValue = -rValue;
                     else if(IntValue==0)
-                        IntValue = (int)rValue - 1;
+                        IntValue = rValue - 1;
                     else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*(int)rValue + 1;
+                        IntValue = (IntValue-1)*rValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*(int)rValue - 1;
+                        IntValue = (IntValue+1)*rValue - 1;
                     break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6728,7 +6729,7 @@ public:
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if (rValue < 0)
                     {
                         rValue *= -1;
@@ -6781,36 +6782,42 @@ public:
     #endif
     #if defined(AltNum_EnableApproachingI)
                 case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-                    if(IntValue==0||IntValue==NegativeRep)
+                {
+                    if (IntValue == 0 || IntValue == NegativeRep)
                     {
-                        if(rightSideValue<0)
+                        if (rightSideValue < 0)
                             IntValue = NegativeRep;
                     }
                     else
                         CatchAllIntMultiplication(rightSideValue, LRep);
-                    break;
+                }
+                break;
             #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-                    AltDec rValue = rightSideValue;
-                    if(rValue<0)
+                {
+                    int rValue = rightSideValue;
+                    if (rValue < 0)
                     {
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==NegativeRep)
+                    if (IntValue == NegativeRep)
                         IntValue = -rValue;
-                    else if(IntValue==0)
+                    else if (IntValue == 0)
+                    {
                         IntValue = rValue - 1;
-                    else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*rValue + 1;
+                    }
+                    else if (IntValue < 0)//-5.9..9 * 100
+                        IntValue = (IntValue - 1) * rValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*rValue - 1;
-                    break;
+                        IntValue = (IntValue + 1) * rValue - 1;
+                }
+                break;
             #endif
         #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6857,7 +6864,7 @@ public:
             #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6908,7 +6915,7 @@ public:
     #if defined(AltNum_EnableMixedFractional)
                 case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -6937,7 +6944,7 @@ public:
                 case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
-                    AltDec rValue = rightSideValue;
+                    int rValue = rightSideValue;
                     if(rValue<0)
                     {
                         rValue *= -1;
@@ -7302,7 +7309,7 @@ public:
                 case RepType::NaN:
                     throw "Can't perform operations with NaN or Undefined number";
                     break;
-    #endif			
+    #endif
                 default:
                     CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
@@ -7328,12 +7335,35 @@ public:
         template<IntegerType IntType = int>
         static AltDec& UIntMultiplication(AltDec self, const IntType& rValue) { return self.UIntMultOp(rValue); }
 
-
         template<IntegerType IntType = int>
         AltDec MultiplyByInt(const IntType& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
 
         template<IntegerType IntType = int>
         AltDec MultiplyByUInt(const IntType& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
+
+public:
+        AltDec& Int32MultOp(const int& rightSideValue) { return IntMultOp(rightSideValue); }
+
+        AltDec& Int32MultOpV2(const int& rightSideValue) { return UIntMultOp(rightSideValue); }
+
+        AltDec& Int64MultOp(const signed __int64& rightSideValue) { return IntMultOp(rightSideValue); }
+
+        AltDec& UInt32MultOp(const unsigned int& rightSideValue) { return UIntMultOp(rightSideValue); }
+
+        /// <summary>
+        /// Multiplication Operation Between AltDec and Integer Value.
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="rValue.">The rValue</param>
+        /// <returns>AltDec</returns>
+        AltDec MultiplyByInt32(const int& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
+
+        //MultiplyByInt32 but using unsigned version of function
+        AltDec MultiplyByInt32V2(const int& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
+
+        AltDec MultiplyByInt64(const signed __int64& rValue) { AltDec self = *this; return self.IntMultOp(rValue); }
+
+        AltDec MultiplyByUInt32(const unsigned int& rValue) { AltDec self = *this; return self.UIntMultOp(rValue); }
 
     #pragma endregion Other Multiplication Operations
 
