@@ -3480,7 +3480,7 @@ protected:
         }
 #endif
 
-public:
+protected:
 #if !defined(AltNum_StoreBasicFunctionsInBase)
         template<IntegerType IntType=int>
         AltDec& BasicUIntDivOp(const IntType& rValue)
@@ -3525,7 +3525,12 @@ public:
         }
 #endif
 
+public:
+
         void BasicInt32DivOp(signed int& rValue) { BasicIntDivOp(rValue); }
+
+        void BasicInt32DivOpV2(signed int& rValue) { BasicUIntDivOp(rValue); }
+
         void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
 
         /// <summary>
