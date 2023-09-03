@@ -432,7 +432,9 @@ void EFractionalDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
 
 #if defined(AltNum_EnableDecimaledPiFractionals)|| defined(AltNum_EnableDecimaledEFractionals)
 void PiOrENumByDivisorDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+{
 
+}
 #endif
 
 #if defined(AltNum_EnableApproachingValues)
