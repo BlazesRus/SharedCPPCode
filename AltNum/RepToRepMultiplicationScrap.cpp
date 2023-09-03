@@ -158,50 +158,14 @@
 			break;
         #else
 		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			switch (RRep)
-			{
-				case RepType::NormalType:
-					self.BasicMultOp(Value);
-					break;
-				case RepType::INum://Convert result into NumByDiv
-					self.ExtraRep = self.DecimalHalf;
-					self.DecimalHalf = 0;
-					self.BasicMultOp(-Value);
-					break;
-				default:
-					Value.ConvertToNormType(&RRep);
-					self.BasicMultOp(Value);
-			}
+
 			break;
         #endif
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
-			switch (RRep)
-			{
-	#if defined(AltNum_EnableMixedPiFractional)
-				//case RepType::MixedPi:
-	#else
-				//case RepType::MixedE:
-	#endif
-	#if defined(AltNum_MixedPiOrEEnabled)
-					//MixedFracMultOp(LRep, RRep, self, Value);
-					//break;
-	#endif
 
-	#if defined(AltNum_EnableAlternativeRepFractionals) && defined(AltNum_EnableImaginaryNum)
-
-	#endif
-	#if defined(AltNum_EnableMixedIFractional)
-				//case RepType::MixedI:
-					//MixedFracMultOp(LRep, RRep, self, Value);
-					//break;
-	#endif
-				default:
-					self.CatchAllMultiplication(Value, LRep, RRep);
-					break;
-			}
 			break;
     #if defined(AltNum_EnableMixedPiFractional)
 		case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
@@ -209,64 +173,12 @@
 		case RepType::MixedE:
     #endif
     #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)
-			switch (RRep)
-			{
-                case RepType::NormalType:
-                    if(Value.DecimalHalf==0)
-                    {
-                        self.IntValue *= Value.IntValue;
-                        self.DecimalHalf *= Value.IntValue;
-                        if(self.DecimalHalf <= self.ExtraRep)
-                        {//(-4 - -3)*1 = -1;
-                            int divRes = self.DecimalHalf / self.ExtraRep;
-                            int C = self.DecimalHalf - self.ExtraRep * divRes;
-                            if(C==0)//If no longer a mixed fraction so instead convert into PiNum/ENum
-                            {
-                                self.DecimalHalf = 0;
-        #if defined(AltNum_EnableMixedPiFractional)
-                                self.ExtraRep = PiRep;
-        #else
-                                self.ExtraRep = ERep;
-        #endif
-                                if(self.IntValue<0)
-                                    self.IntValue -= divRes;
-                                else
-                                    self.IntValue += divRes;
-                            }
-                            else
-                            {
-                                throw "ToDo:Finish this code later";
-                            }
-                        }
-                    }
-                    else//Convert result as NumByDiv
-                    {
-                        throw "ToDo:Finish this code later";
-                    }
-					break;
-				default:
-                    self.ConvertToNormType(&LRep);
-					Value.ConvertToNormType(&RRep);
-					self.BasicDivMultOp(Value);
-			}
+
 			break;
     #endif
 	#if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
-			switch (RRep)
-			{
-                case RepType::INum:
-        #if defined(AltNum_EnableDecimaledIFractionals)
-                case RepType::INumByDiv:
-        #elif defined(AltNum_EnableFractionals)
-                case RepType::IFractional:
-        #endif
-                    self.CatchAllImaginaryMultiplication(Value, LRep, RRep);
-				default:
-                    self.ConvertToNormalIRep(&LRep);
-					Value.ConvertToNormType(&RRep);
-					self.BasicDivMultOp(Value);
-            }
+
             break;
     #endif
 #endif

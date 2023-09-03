@@ -370,8 +370,15 @@ void INumByDivisorMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
             break;
         case RepType::INum://Convert result into NumByDiv
             self.BasicMultOp(-Value);
-            self.ExtraRep = -self.ExtraRep;
+            self.ExtraRep *= -1;
             break;
+	#if defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI:
+            Value.ConvertToNormalIRep(RepType::MixedI);
+            self.BasicMultOp(-Value);
+            self.ExtraRep *= -1;
+            break;
+    #endif
         default:
             Value.ConvertToNormType(&RRep);
             self.BasicMultOp(Value);
@@ -380,6 +387,29 @@ void INumByDivisorMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 #elif defined(AltNum_EnableIFractional)
 void IFractionalMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
+    switch (RRep)
+    {
+        case RepType::NormalType:
+            self.ConvertToNormalIRep(RepType::INumByDiv);
+            self.BasicMultOp(Value);
+            break;
+        case RepType::INum://Convert result into NumByDiv
+            self.ExtraRep = self.DecimalHalf;
+            self.DecimalHalf = 0;
+            self.BasicMultOp(-Value);
+            break;
+	#if defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI:
+            Value.ConvertToNormalIRep(RepType::MixedI);
+            self.ExtraRep = self.DecimalHalf;
+            self.DecimalHalf = 0;
+            self.BasicMultOp(-Value);
+            break;
+    #endif
+        default:
+            Value.ConvertToNormType(RRep);
+            self.BasicMultOp(Value);
+        }
 }
 #endif
 
@@ -409,20 +439,126 @@ void ApproachingImaginaryMidRightMultOp(const RepType& RRep, AltDec& self, AltDe
 #if defined(AltNum_EnableMixedFractional)
 void MixedFracMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
-}
+    switch (RRep)
+    {
+/* //Unfinished code
+        case RepType::NormalType:
+            if(Value.DecimalHalf==0)
+            {
+                self.IntValue *= Value.IntValue;
+                self.DecimalHalf *= Value.IntValue;
+                int invertedDecimalHalf = -self.DecimalHalf
+                if(invertedDecimalHalf >= self.ExtraRep)
+                {
+                    int divRes = invertedDecimalHalf / self.ExtraRep;
+                    int C = invertedDecimalHalf - self.ExtraRep * divRes;
+                    if(C==0)//If no longer a mixed fraction so instead convert into NormalType
+                    {
+                        throw "ToDo:Finish this code later";
+                    }
+                    else
+                    {
+                        throw "ToDo:Finish this code later";
+                    }
+                }
+                else
+                {
+                    throw "ToDo:Finish this code later";
+                }
+            }
+            else//Convert result as NumByDiv
+            {
+                throw "ToDo:Finish this code later";
+            }
+*/
 	#if defined(AltNum_EnableMixedPiFractional)
-void MixedPiMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
-{
+        case RepType::MixedPi:
+            MixedFracMultOp(RepType::MixedFrac, RepType::MixedPi, self, Value);
+            break;
+	#else
+        case RepType::MixedE:
+            MixedFracMultOp(RepType::MixedFrac, RepType::MixedE, self, Value);
+            break;
+	#endif
+	#if defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI:
+            MixedFracMultOp(RepType::MixedFrac, RepType::MixedI, self, Value);
+            break;
+	#endif
+        default:
+            self.CatchAllMultiplication(Value, RepType::MixedFrac, RRep);
+            break;
+    }
 }
-	#elif defined(AltNum_EnableMixedEFractional)
-void MixedEMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
+#endif
+#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+void MixedPiOrEMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
+    switch (RRep)
+    {
+/*
+        case RepType::NormalType:
+            if(Value.DecimalHalf==0)
+            {
+                self.IntValue *= Value.IntValue;
+                self.DecimalHalf *= Value.IntValue;
+                if(self.DecimalHalf <= self.ExtraRep)
+                {//(-4 - -3)*1 = -1;
+                    int divRes = self.DecimalHalf / self.ExtraRep;
+                    int C = self.DecimalHalf - self.ExtraRep * divRes;
+                    if(C==0)//If no longer a mixed fraction so instead convert into PiNum/ENum
+                    {
+                        self.DecimalHalf = 0;
+        #if defined(AltNum_EnableMixedPiFractional)
+                        self.ExtraRep = PiRep;
+        #else
+                        self.ExtraRep = ERep;
+        #endif
+                        if(self.IntValue<0)
+                            self.IntValue -= divRes;
+                        else
+                            self.IntValue += divRes;
+                    }
+                    else
+                    {
+                        throw "ToDo:Finish this code later";
+                    }
+                }
+            }
+            else//Convert result as NumByDiv, PiNumByDiv, or ENumByDiv
+            {
+                throw "ToDo:Finish this code later";
+            }
+            break;
+*/
+        default:
+        #if defined(AltNum_EnableMixedPiFractional)
+            self.ConvertToNormType(RepType::MixedPi);
+        #else
+            self.ConvertToNormType(RepType::MixedE);
+        #endif
+            Value.ConvertToNormType(RRep);
+            self.BasicDivMultOp(Value);
+    }
 }
-	#elif defined(AltNum_EnableMixedIFractional)
+#elif defined(AltNum_EnableMixedIFractional)
 void MixedIMultOp(const RepType& RRep, AltDec& self, AltDec& Value)
 {
+    switch (RRep)
+    {
+        case RepType::INum:
+        #if defined(AltNum_EnableDecimaledIFractionals)
+        case RepType::INumByDiv:
+        #elif defined(AltNum_EnableFractionals)
+        case RepType::IFractional:
+        #endif
+            self.CatchAllImaginaryMultiplication(Value, LRep, RRep);
+        default:
+            self.ConvertToNormalIRep(RepType::MixedI);
+            Value.ConvertToNormType(RRep);
+            self.BasicDivMultOp(Value);
+    }
 }
-	#endif
 #endif
 
 inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
