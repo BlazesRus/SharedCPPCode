@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -3296,7 +3296,12 @@ public:
         } const
 
         //Switch based return of value as normal type representation
-        AltDec ConvertAsNormType(const RepType& repType); const
+        AltDec ConvertAsNormType(const RepType& repType)
+        {
+            AltDec Res = *this;
+            Res.ConvertToNormType(repType);
+            return Res;
+        } const
 
         //Converts value to normal type representation
         void ConvertToNormTypeV2()

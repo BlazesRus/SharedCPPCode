@@ -119,13 +119,7 @@ inline void BlazesRusCode::AltDec::ConvertEByDivToNumByDiv()
 }
 
 #elif defined(AltNum_EnableEFractional)
-inline const AltDec BlazesRusCode::AltDec::ConvertAsNormType(const RepType& repType)
-{
-	AltDec Res = *this;
-	Res.ConvertToNormType(repType);
-	return Res;
-}
-	#endif
+#endif
 #endif
 
 
