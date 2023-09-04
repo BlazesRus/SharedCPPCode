@@ -360,7 +360,7 @@ void EFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Val
 #endif
 
 #if defined(AltNum_EnableDecimaledPiFractionals)|| defined(AltNum_EnableDecimaledEFractionals)
-void PiOrENumByDivisorDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiOrEByDivMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
 {
     switch (RRep)
     {
@@ -825,7 +825,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
         #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
         #endif
-            BlazesRusCode::AltDec::MultOp_LRepImaginaryOverride(LRep, RRep, self, Value);
+            AltDec::MultOp_LRepImaginaryOverride(LRep, RRep, self, Value);
 			break;
     #endif
 		default:
@@ -934,10 +934,10 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-			PiOrENumByDivisorDivOp(RRep, self, Value); break;
+			PiOrEByDivMultiplication(RRep, self, Value); break;
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
-			PiOrENumByDivisorDivOp(RRep, self, Value); break;
+			PiOrEByDivMultiplication(RRep, self, Value); break;
 		#endif
 	#endif
 #endif
