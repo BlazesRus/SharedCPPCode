@@ -4050,7 +4050,7 @@ public:
     #endif
 	
 		//NormalType,PiNum, PiPower, or ENum multiplied with Mixed Fraction representation
-		AltDec MixedFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
+		static AltDec MixedFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
 		{
 			AltDec LeftSide = LValue*RValue.IntValue;
 			AltDec RightSide = LValue/RValue.ExtraRep;
@@ -4060,7 +4060,7 @@ public:
 		
 	#if defined(AltNum_EnableMixedPiFractional)
 		//NormalType or ENum multiplied with Mixed Pi Fraction representation
-		AltDec MixedPiFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
+		static AltDec MixedPiFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
 		{
 			AltDec LeftSide = LValue*RValue.IntValue;
 			AltDec RightSide = LValue/-RValue.ExtraRep;
@@ -4096,7 +4096,7 @@ public:
 			return Res;
 		}
 		
-		AltDec MixedPiFracRtRMult_WithOther(const AltDec& LValue, const AltDec& RValue)
+		static AltDec MixedPiFracRtRMult_WithOther(const AltDec& LValue, const AltDec& RValue)
 		{
 			AltDec LeftSide = LValue*RValue.IntValue;
 			AltDec RightSide = LValue/-RValue.ExtraRep;
@@ -4108,7 +4108,7 @@ public:
 	#elif defined(AltNum_EnableMixedEFractional)
 		
 		//PiNum, PiPower, ENum, or NormalType multiplied with Mixed Fraction representation
-		AltDec MixedEFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
+		static AltDec MixedEFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
 		{
 			AltDec LeftSide = self*Value.IntValue;
 			AltDec RightSide = self/-Value.ExtraRep;
@@ -4118,7 +4118,7 @@ public:
 			return Res;
 		}
 		
-		AltDec MixedEFracRtRMult_WithOther(const AltDec& LValue, const AltDec& RValue)
+		static AltDec MixedEFracRtRMult_WithOther(const AltDec& LValue, const AltDec& RValue)
 		{
 			AltDec LeftSide = self*Value.IntValue;
 			AltDec RightSide = self/-Value.ExtraRep;
