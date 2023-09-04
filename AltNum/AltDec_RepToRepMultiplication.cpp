@@ -263,49 +263,49 @@ void ENumRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
             break;
 	#if defined(AltNum_EnablePiRep)
         case RepType::PiNum://Xe * (Y*Pi)
-					Value.ConvertPiToNum();
-					self.BasicMultOp(Value);
-					break;
+			Value.ConvertPiToNum();
+			self.BasicMultOp(Value);
+			break;
 		#if defined(AltNum_EnablePiPowers)
         case RepType::PiPower://Xe * (Y*Pi)^-ExtraRep
-					AltDec Res = Value;
-					Res.BasicMultOp(self);
-					Res.BasicMultOp(ENum);
-					self.SetVal(Res);
-					break;
+			AltDec Res = Value;
+			Res.BasicMultOp(self);
+			Res.BasicMultOp(ENum);
+			self.SetVal(Res);
+			break;
 		#endif
 	#endif
 	#if defined(AltNum_EnableFractionals)
         case RepType::NumByDiv:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledEFractionals)//Convert result to PiNumByDiv
-					self.ExtraRep = Value.ExtraRep;
-					self.BasicMultOp(Value);
+			self.ExtraRep = Value.ExtraRep;
+			self.BasicMultOp(Value);
 			#else
-				if(self.DecimalHalf==0&&Value.DecimalHalf==0)//If both left and right side values are whole numbers, convert result into EFractional
-				{//Becoming IntValue/DecimalHalf*e Representation
-					self.IntValue *= Value.IntValue;
-					self.DecimalHalf = Value.ExtraRep;
-					self.ExtraRep = EByDivisorRep;
-				}
-				else
-				{
-					self /= Value.ExtraRep;
-					self.BasicMultOp(Value);
-				}
+			if(self.DecimalHalf==0&&Value.DecimalHalf==0)//If both left and right side values are whole numbers, convert result into EFractional
+			{//Becoming IntValue/DecimalHalf*e Representation
+				self.IntValue *= Value.IntValue;
+				self.DecimalHalf = Value.ExtraRep;
+				self.ExtraRep = AltDec::EByDivisorRep;
+			}
+			else
+			{
+				self /= Value.ExtraRep;
+				self.BasicMultOp(Value);
+			}
 			#endif
 		#else//Else just keep as ENum type
-					self /= Value.ExtraRep;
-					self.BasicMultOp(Value);
+			self /= Value.ExtraRep;
+			self.BasicMultOp(Value);
 		#endif
-					break;
+			break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-				case RepType::INum:
-					self.BasicMultOp(Value);
-					self.ConvertEToNum();
-					self.ExtraRep = IRep;
-					break;
+		case RepType::INum:
+			self.BasicMultOp(Value);
+			self.ConvertToNormType(RepType::ENum);
+			self.ExtraRep = AltDec::IRep;
+			break;
 	#endif
     #if defined(AltNum_EnableMixedFractional)
         case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -336,7 +336,7 @@ void EFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Val
             if(Value.DecimalHalf==0)
                 self.IntValue *= Value.IntValue;
             else
-                self.CatchAllMultiplication(Value, LRep, RRep);
+                self.CatchAllMultiplication(Value, RepType::EFractional, RRep);
             break;
     #if defined(AltNum_EnableMixedFractional)
         case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
@@ -353,7 +353,7 @@ void EFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Val
 			break;
     #endif
         default:
-            self.CatchAllMultiplication(Value, LRep, RRep);
+            self.CatchAllMultiplication(Value, RepType::EFractional, RRep);
             break;
     }
 }
@@ -389,9 +389,9 @@ void PiOrENumByDivisorDivOp(const RepType& RRep, AltDec& self, AltDec& Value)
         #else
             self.ConvertToNormType(RepType::ENumByDiv);
         #endif
-            self.ExtraRep = IRep;
+            self.ExtraRep = AltDec::IRep;
             break;
-    #endif			
+    #endif
         default:
             Value.ConvertToNormType(RRep);
             self.BasicMultOp(Value);
