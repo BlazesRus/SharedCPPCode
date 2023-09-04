@@ -4067,21 +4067,25 @@ public:
 			//= ((RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf))+((AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf)/RValue.ExtraRep))/LValue.ExtraRep
 			AltDec NumSide = AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf;
 			NumSide.BasicDivOp(RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
-			NumSide.BasicAddOp(AltDec(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue);
-			return AltDec(NumSide, 0, LValue.ExtraRep);
+			AltDec additionalVal = AltDec(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue;
+			NumSide.BasicAddOp(additionalVal);
+			NumSide.ExtraRep = LValue.ExtraRep;
+			return NumSide;
 		}
 		
 	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
 		//NumByDiv multiplied with Mixed Pi or E Fraction representation
 		static AltDec MixedAltFracRtRMult_WithNumByDiv(const AltDec& LValue, const AltDec& RValue)
 		{
-			AltDec NumSide = AltDec(self.IntValue, self.DecimalHalf)*-Value.DecimalHalf;
-			NumSide.BasicDivOp(-Value.ExtraRep);//Avoid converting to NumByDiv because need to combine with (Value.IntValue*AltDec(self.IntValue, self.DecimalHalf))/self.ExtraRep
-			NumSide.BasicAddOp(AltDec(self.IntValue, self.DecimalHalf)*Value.IntValue);
+			AltDec NumSide = AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf;
+			NumSide.BasicDivOp(-RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
+			AltDec additionalVal = AltDec(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue;
+			NumSide.BasicAddOp(additionalVal);
 		#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))
-			return AltDec(NumSide, 0, -self.ExtraRep);
+			NumSide.ExtraRep = -LValue.ExtraRep;
+			return NumSide;
 		#else
-			NumSide.BasicDivOp(self.ExtraRep);
+			NumSide.BasicDivOp(LValue.ExtraRep);
 			#if defined(AltNum_EnableMixedPiFractional)
 			NumSide.ExtraRep = PiRep;
 			#else
