@@ -4058,6 +4058,40 @@ public:
 			return LeftSide+RightSide;
 		}
 
+		//NumByDiv multiplied with Mixed Fraction representation
+		static AltDec MixedFracRtRMult_WithNumByDiv(const AltDec& LValue, const AltDec& RValue)
+		{
+			//AltDec(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep * RValue.IntValue+(-RValue.DecimalHalf)/RValue.ExtraRep
+			//= RValue.IntValue*(AltDec(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDec(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep)((-RValue.DecimalHalf)/RValue.ExtraRep)
+			//= (RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf)/(LValue.ExtraRep*RValue.ExtraRep)
+			//= ((RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf))+((AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf)/RValue.ExtraRep))/LValue.ExtraRep
+			AltDec NumSide = AltDec(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf;
+			NumSide.BasicDivOp(RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*AltDec(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
+			NumSide.BasicAddOp(AltDec(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue);
+			return AltDec(NumSide, 0, LValue.ExtraRep);
+		}
+		
+	#if defined(AltNum_EnableMixedPiFractional)||defined(AltNum_EnableMixedEFractional)
+		//NumByDiv multiplied with Mixed Pi or E Fraction representation
+		static AltDec MixedAltFracRtRMult_WithNumByDiv(const AltDec& LValue, const AltDec& RValue)
+		{
+			AltDec NumSide = AltDec(self.IntValue, self.DecimalHalf)*-Value.DecimalHalf;
+			NumSide.BasicDivOp(-Value.ExtraRep);//Avoid converting to NumByDiv because need to combine with (Value.IntValue*AltDec(self.IntValue, self.DecimalHalf))/self.ExtraRep
+			NumSide.BasicAddOp(AltDec(self.IntValue, self.DecimalHalf)*Value.IntValue);
+		#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))
+			return AltDec(NumSide, 0, -self.ExtraRep);
+		#else
+			NumSide.BasicDivOp(self.ExtraRep);
+			#if defined(AltNum_EnableMixedPiFractional)
+			NumSide.ExtraRep = PiRep;
+			#else
+			NumSide.ExtraRep = ERep;
+			#endif
+			return NumSide;
+		#endif
+		}
+	#endif
+
 	#if defined(AltNum_EnableMixedPiFractional)
 		//NormalType or ENum multiplied with Mixed Pi Fraction representation
 		static AltDec MixedPiFracRtRMult_WithNormal(const AltDec& LValue, const AltDec& RValue)
