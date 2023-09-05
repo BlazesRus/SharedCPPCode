@@ -1921,136 +1921,27 @@ public:
         template<IntegerType IntType=int>
         void IntHalfDivision(IntType RValue)
         {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value /= RValue;
-        #else
-            IntValue.DivideByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-            if(RValue<0)
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                    IntValue.Value -= NegativeRepVal;
-                    RValue -= NegativeRepVal;
-                    IntValue.Value /= RValue; 
-                }
-                else
-                {
-
-                } 
-            }
-            else
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                }
-                else
-                {
-                    IntValue.Value /= RValue;
-                } 
-            }
-    #else
-            IntValue.DivideByOp(RValue);
-    #endif
-#else
             IntValue /= RValue;
-#endif
         }
 
         template<IntegerType IntType=int>
         void IntHalfMultiplication(IntType RValue)
         {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value *= RValue;
-        #else
-            IntValue.MultiplyByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultiplyByOp(RValue);
-        #else
-            if(RValue<0)
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                    IntValue.Value -= NegativeRepVal;
-                    RValue -= NegativeRepVal;
-                    IntValue.Value *= RValue;
-                }
-                else
-                {
-
-                } 
-            }
-            else
-            {
-                if(IntValue.Value>=NegativeRepVal)//Currently Negative
-                {
-                }
-                else
-                {
-                    IntValue.Value *= RValue;
-                } 
-            }
-        #endif
-    #else
-            IntValue.MultiplyByOp(RValue);
-    #endif
-#else
             if(IntValue!=0&&IntValue!=NegativeRep)
                 IntValue *= RValue;
-#endif
         }
 
         template<IntegerType IntType=int>
         void UIntHalfMultiplication(IntType RValue)
         {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-        #if defined(BlazesMirroredInt_UseLegacyIntOperations)
-            IntValue.Value *= RValue;
-        #else
-            IntValue.MultiplyByOp(RValue);
-        #endif
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-            IntValue.MultiplyByOp(RValue);
-        #else
-            if(IntValue.Value>=NegativeRepVal)//Currently Negative
-            {
-            }
-            else
-            {
-                IntValue.Value *= RValue;
-            }
-        #endif
-    #else
-            IntValue.MultiplyByOp(RValue);
-    #endif
-#else
             if(IntValue!=0&&IntValue!=NegativeRep)
                 IntValue *= RValue;
-#endif
         }
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue);
         template<IntegerType IntType>
         void IntHalfAddition(IntType RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue += RValue;
-    #elif defined(BlazesMirroredInt_UsePseudoBitSet)
-        #if defined(BlazesMirroredInt_UseBitwiseForIntOp)
-        #else
-        #endif
-    #endif
-#else//Can be used without modifying RValue
+        {//Can be used without modifying RValue (passing by value for speed) 
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2112,19 +2003,12 @@ public:
                 else
                     IntValue += (int)RValue;
             }
-#endif
         }
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
-        //this is copy by value and pointer version
         template<IntegerType IntType>
         void IntHalfSubtraction(IntType RValue)
         {
-#if defined(AltDec_UseMirroredInt)
-    #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue -= RValue;
-    #endif
-#else//Can be used without modifying RValue
             if (RValue==0)
                 return;
             if (IntValue == 0)
@@ -2185,216 +2069,8 @@ public:
                 else
                     IntValue += (int)RValue;
             }
+        }
 #endif
-        }
-
-/*      //Functions not really needed with current comparison functions
-        //Reference version
-        template<IntegerType IntType=int>
-        bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
-
-        template<IntegerType IntType=int>
-        bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
-
-        //Reference version
-        template<IntegerType IntType=int>
-        bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
-
-        template<IntegerType IntType=int>
-        bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
-
-        /// <summary>
-        /// Less than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        bool IntHalfLessThan(const AltDec& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue<RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-                return RValue.IntValue < 0 && RValue.IntValue != NegativeRep;
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue < 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue<RValue.IntValue;
-#endif
-        }
-
-        //Reference version
-        template<IntegerType IntType=int>
-        bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
-
-        /// <summary>
-        /// Less than or Equal Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        bool IntHalfLessThanOrEqual(const AltDec& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue<=RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-                return RValue.IntValue < 0;
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return false;
-                else
-                    return true;
-            }
-            else
-                return IntValue <= RValue.IntValue;
-#endif
-        }
-        
-        //Reference version
-        bool IntHalfLessThanOrEqualOp(const int& RValue) { return IntHalfLessThanOrEqual(RValue); } const
-        
-        /// <summary>
-        /// Greater than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        bool IntHalfGreaterThan(const AltDec& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue>RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == NegativeRep)
-            {
-                if (RValue.IntValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue > RValue.IntValue;
-#endif
-        }
-        
-        //Reference version
-        template<IntegerType IntType=int>
-        bool IntHalfGreaterThanOp(const IntType& RValue) { return IntHalfGreaterThan(RValue); }
-
-        /// <summary>
-        /// Greater than or Equal to Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        bool IntHalfGreaterThanOrEqual(const AltDec& RValue)
-        {
-#if defined(AltDec_UseMirroredInt)
-            if(IntValue>=RValue)
-                return true;
-            else
-                return false;
-#else
-            if (IntValue == RValue.IntValue)
-                return true;
-            if (IntValue == NegativeRep)
-            {
-                if (RValue.IntValue < 0)
-                    return false;
-                else
-                    return true;
-            }
-            else if (RValue.IntValue == NegativeRep)
-            {
-                if (IntValue >= 0)
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return IntValue >= RValue.IntValue;
-#endif
-        }
-
-        template<IntegerType IntType=int>
-        bool IntHalfGreaterThanOrEqualOp(const IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
-*/
-#endif
-/*
-        bool IntPartEqualTo(const AltDec& RValue)
-        {
-            return IntValue == RValue.IntValue;
-        }
-        
-        bool IntPartNotEqualTo(const AltDec& RValue)
-        {
-            return IntValue != RValue.IntValue;
-        }
-        
-        static bool IntPartLessThan(AltDec& LValue, const AltDec& RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-
-        static bool IntPartLessThanOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-        
-        /// <summary>
-        /// Less than or Equal Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        static bool IntPartHalfLessThanOrEqual(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-
-        static bool IntPartLessThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfLessThanOrEqualOp(RValue.IntValue); }
-        
-        /// <summary>
-        /// Greater than Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        static bool IntPartGreaterThan(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
-
-        static bool IntPartGreaterThanOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfGreaterThanOp(RValue.IntValue); }
-
-        /// <summary>
-        /// Greater than or Equal to Operation for just IntValue section
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="RValue">The right side value</param>
-        /// <returns>bool</returns>
-        static bool IntPartGreaterThanOrEqual(AltDec LValue, AltDec RValue) 
-        {	return LValue.IntHalfGreaterThanOrEqualOp(RValue.IntValue); }
-
-        static bool IntPartGreaterThanOrEqualOp(AltDec& LValue, AltDec& RValue) 
-        {	return LValue.IntHalfGreaterThanOrEqualOp(RValue.IntValue); }
-*/
     #pragma endregion MirroredIntBased Operations
 
     #pragma region From this type to Standard types
@@ -3267,25 +2943,21 @@ public:
 #endif
 #if defined(AltNum_EnableApproachingI)
             case RepType::ApproachingImaginaryBottom:
-                DecimalHalf = 1;
-                break;
     #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingImaginaryTop:
-                DecimalHalf = 999999999;
-                break;
     #endif
     #if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingImaginaryMidLeft:
-                ConvertFromApproachingIMidLeftToNorm(); break;
         #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingImaginaryMidRight:
-                ConvertFromApproachingIMidRightToNorm(); break;
         #endif
     #endif
+                throw "Can't convert imaginery number into real number unless is zero.";
+                break;
 #endif
 #ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
-                throw "Conversion from complex number to real number not supported yet.";
+                throw "Can't convert imaginery number into real number unless is zero.";
                 break;
 #endif
             default:
@@ -3325,7 +2997,7 @@ public:
                 {
                     break;
                 }
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                 {
                     int Divisor = -ExtraRep;
@@ -3341,13 +3013,31 @@ public:
                     break;
                 }
                 #endif
+	#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom:
+					DecimalHalf = 1;
+					break;
+		#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop:
+					DecimalHalf = 999999999;
+					break;
+		#endif
+		#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidLeft:
+					ConvertFromApproachingIMidLeftToNorm(); break;
+			#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidRight:
+					ConvertFromApproachingIMidRightToNorm(); break;
+			#endif
+		#endif
+	#endif
                 #ifdef AltNum_EnableComplexNumbers
                 case RepType::ComplexIRep:
                 {
                     throw "Conversion from complex number to real number not supported yet.";
                     break;
                 }
-    #endif
+				#endif
                 default:
                     throw "Conversion not supported.";
                     break;
