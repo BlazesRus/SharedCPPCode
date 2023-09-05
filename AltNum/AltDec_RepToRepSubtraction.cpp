@@ -2,7 +2,7 @@
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::AltDec::RepType;
 
-void NormalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NormalSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -35,13 +35,13 @@ void NormalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 #if defined(AltNum_EnableFractionals)
-void NumByDivSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void NumByDivSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 #endif
 
 #if defined(AltNum_EnablePiRep)
-void PiNumSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -118,24 +118,24 @@ void PiNumSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 	#if defined(AltNum_EnablePiPowers)
-void PiPowerSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiPowerSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	
 	#if defined(AltNum_EnableDecimaledPiFractionals)
-void PiNumByDivSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiNumByDivSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnablePiFractional)
-void PiFractionalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void PiFractionalSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableERep)
-void ENumSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -210,33 +210,33 @@ void ENumSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 
 	#if defined(AltNum_EnableDecimaledEFractionals)
-void ENumByDivSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ENumByDivSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#elif defined(AltNum_EnableEFractional)
-void EFractionalSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void EFractionalSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 #endif
 
 #if defined(AltNum_EnableApproachingValues)
-void ApproachingBottomSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingBottomSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 
 	#if !defined(AltNum_DisableApproachingTop)
-void ApproachingTopSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingTopSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-void ApproachingMidRightSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidRightSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 
 		#if !defined(AltNum_DisableApproachingTop)
-void ApproachingMidLeftSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void ApproachingMidLeftSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 }
 		#endif
@@ -267,7 +267,7 @@ void ImaginaryNumberSubOp(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Va
 #endif
 
 #if defined(AltNum_EnableMixedFractional)
-void MixedFracSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedFracSubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{
@@ -325,7 +325,7 @@ void MixedFracSubOp(const RepType& RRep, AltDec& self, AltDec& Value)
 }
 #endif
 #if defined(AltNum_MixedPiOrEEnabled)
-void MixedPiESubOp(const RepType& RRep, AltDec& self, AltDec& Value)
+void MixedPiESubOp(RepType RRep, AltDec& self, AltDec& Value)
 {
 	switch (RRep)
 	{

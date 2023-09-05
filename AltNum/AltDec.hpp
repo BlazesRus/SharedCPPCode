@@ -2467,7 +2467,7 @@ public:
 
         void ConvertPiPowerToPiRep();
 
-        void ConvertToPiRep(const RepType& repType)
+        void ConvertToPiRep(RepType repType)
         {
             switch (repType)
             {
@@ -2505,7 +2505,7 @@ public:
             ExtraRep = PiRep;
         }
 
-        AltDec ConvertAsPiRep(const RepType& repType)
+        AltDec ConvertAsPiRep(RepType repType)
         {
             switch (repType)
             {
@@ -2739,7 +2739,7 @@ public:
             BasicIntDivOp(divisor);
         }
         #endif
-        void ConvertToERep(const RepType& repType)
+        void ConvertToERep(RepType repType)
         {
             switch (repType)
             {
@@ -2773,7 +2773,7 @@ public:
             ExtraRep = ERep;
         }
 
-        AltDec ConvertAsERep(const RepType& repType)
+        AltDec ConvertAsERep(RepType repType)
         {
             switch (repType)
             {
@@ -2846,7 +2846,7 @@ public:
 #endif
 
         //Switch based version of ConvertToNormType(use ConvertAsNormType instead to return converted value without modifying base value)
-        void ConvertToNormType(const RepType& repType)
+        void ConvertToNormType(RepType repType)
         {
             switch (repType)
             {
@@ -2967,7 +2967,7 @@ public:
         } const
 
         //Switch based return of value as normal type representation
-        AltDec ConvertAsNormType(const RepType& repType)
+        AltDec ConvertAsNormType(RepType repType)
         {
             AltDec Res = *this;
             Res.ConvertToNormType(repType);
@@ -2989,7 +2989,7 @@ public:
             return Res;
         }
     #if defined(AltNum_EnableImaginaryNum)
-        void ConvertIRepToNormal(const RepType& repType)
+        void ConvertIRepToNormal(RepType repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
             {
@@ -3044,13 +3044,13 @@ public:
             }
         } const
         
-        void ConvertToNormalIRep(const RepType& repType)
+        void ConvertToNormalIRep(RepType repType)
         {//Assuming not zero(should not reach needing to convert the representation)
             ConvertIRepToNormal(repType);
             ExtraRep = IRep;
         } const
         
-        AltDec ConvertAsNormalIRep(const RepType& repType)
+        AltDec ConvertAsNormalIRep(RepType repType)
         {
             AltDec Res = *this;
             Res.ConvertToNormalIRep(repType);
@@ -5158,14 +5158,14 @@ public:
     #pragma region Other Division Operations
 
         template<IntegerType IntType=int>
-        void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
+        void CatchAllIntDivision(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicIntDivOp(rValue);
         }
 
         template<IntegerType IntType=int>
-        void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
+        void CatchAllUIntDivision(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicUIntDivOp(rValue);
@@ -5835,14 +5835,14 @@ public:
 public:
 
         template<IntegerType IntType=int>
-        void CatchAllIntMultiplication(const IntType& rValue, const RepType& LRep)
+        void CatchAllIntMultiplication(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicIntMultOp(rValue);
         }
 
         template<IntegerType IntType=int>
-        void CatchAllUIntMultiplication(const IntType& rValue, const RepType& LRep)
+        void CatchAllUIntMultiplication(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicUIntMultOp(rValue);
@@ -6669,7 +6669,7 @@ public:
 public:
 
         template<IntegerType IntType=int>
-        void CatchAllIntAddition(const IntType& rValue, const RepType& LRep)
+        void CatchAllIntAddition(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicIntAddOp(rValue);
@@ -6759,7 +6759,7 @@ public:
     #pragma region Other Subtraction Operations
 
         template<IntegerType IntType=int>
-        void CatchAllIntSubtraction(const IntType& rValue, const RepType& LRep)
+        void CatchAllIntSubtraction(const IntType& rValue, RepType LRep)
         {
             ConvertToNormType(LRep);
             BasicIntSubOp(rValue);
@@ -6849,7 +6849,7 @@ public:
     #pragma region Main AltNum Operations
 public:
 
-        void CatchAllDivision(const AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllDivision(const AltDec& rValue, RepType LRep, RepType RRep)
         {
             ConvertToNormType(LRep);
             AltDec convertedRVal = rValue;
@@ -6857,10 +6857,10 @@ public:
             BasicMultOp(convertedRVal);
         }
 
-        AltDec CatchAllDivisionAsCopies(const AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        AltDec CatchAllDivisionAsCopies(const AltDec& rValue, RepType LRep, RepType RRep)
         { AltDec self = *this; CatchAllDivision(rValue, LRep, RRep); return self; }
         
-        void CatchAllDivisionV2(const AltDec& rValue, const RepType& SameRep)
+        void CatchAllDivisionV2(const AltDec& rValue, RepType SameRep)
         {
             ConvertToNormType(SameRep);
             AltDec convertedRVal = rValue;
@@ -6868,7 +6868,7 @@ public:
             BasicUnsignedDivOp(convertedRVal);
         }
 
-        AltDec CatchAllDivisionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        AltDec CatchAllDivisionAsCopiesV2(AltDec& rValue, RepType SameRep)
         { AltDec self = *this; CatchAllDivisionV2(rValue, SameRep); return self; }
     
        void CatchAllDivisionV3(AltDec& rValue)
@@ -6883,7 +6883,7 @@ public:
         
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
     #if defined(AltNum_EnableImaginaryNum)
-        void CatchAllImaginaryDivision(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllImaginaryDivision(AltDec& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
            AltDec convertedRVal = rValue.ConvertAsNormalIRep(RRep);
@@ -6891,10 +6891,10 @@ public:
            ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginaryDivisionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        AltDec CatchAllImaginaryDivisionAsCopies(AltDec& rValue, RepType LRep, RepType RRep)
         { AltDec self = *this; CatchAllImaginaryDivision(rValue, LRep, RRep); return self; }
         
-        void CatchAllImaginaryDivisionV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllImaginaryDivisionV2(AltDec& rValue, RepType SameRep)
         {
             ConvertIRepToNormal(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
@@ -6902,7 +6902,7 @@ public:
             ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginaryDivisionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        AltDec CatchAllImaginaryDivisionAsCopiesV2(AltDec& rValue, RepType SameRep)
         { AltDec self = *this; CatchAllImaginaryDivisionV2(rValue, SameRep); return self; }
     
         void CatchAllImaginaryDivisionV3(AltDec& rValue)
@@ -7146,7 +7146,7 @@ protected:
         }
 
         //NormalType representation multiplied by other representation types
-        static void NormalRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void NormalRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7240,7 +7240,7 @@ protected:
 
         #if defined(AltNum_EnableFractionals)
         //NumByDivisor representation multiplied by other representation types
-        static void NumByDivisorRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void NumByDivisorRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7279,7 +7279,7 @@ protected:
 
         #if defined(AltNum_EnablePiRep)
         //PiNum representation multiplied by other representation types
-        static void PiNumRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiNumRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7378,7 +7378,7 @@ protected:
         #endif
         #if defined(AltNum_EnablePiPowers)
         //PiPower representation multiplied by other representation types
-        static void PiPowerRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiPowerRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7435,7 +7435,7 @@ protected:
         #endif
         #if defined(AltNum_EnablePiFractional)
         //PiFractional representation multiplied by other representation types
-        static void PiFractionalRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiFractionalRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7476,7 +7476,7 @@ protected:
 
         #if defined(AltNum_EnableERep)
         //ENum representation multiplied by other representation types
-        static void ENumRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ENumRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7569,7 +7569,7 @@ protected:
         #endif
         #if defined(AltNum_EnablePiFractional)
         //EFractional representation multiplied by other representation types
-        static void EFractionalRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void EFractionalRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7610,7 +7610,7 @@ protected:
 
     #if defined(AltNum_EnableDecimaledPiOrEFractionals)
         //PiByDivisor or EByDivisor representation multiplied by other representation types
-        static void PiOrEByDivisorRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiOrEByDivisorRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7703,7 +7703,7 @@ protected:
 
         #if defined(AltNum_EnableApproachingValues)
         //ApproachingBottom representation multiplied by other representation types
-        static void ApproachingBottomRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingBottomRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7742,7 +7742,7 @@ protected:
         }
 	        #if !defined(AltNum_DisableApproachingTop)
         //ApproachingTop representation multiplied by other representation types
-        static void ApproachingTopRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingTopRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7783,7 +7783,7 @@ protected:
         #endif
         #if defined(AltNum_EnableApproachingDivided)
         //ApproachingMidLeft representation multiplied by other representation types
-        static void ApproachingMidLeftRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidLeftRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7822,7 +7822,7 @@ protected:
         }
 	        #if !defined(AltNum_DisableApproachingTop)
         //ApproachingMidRight representation multiplied by other representation types
-        static void ApproachingMidRightRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidRightRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7864,7 +7864,7 @@ protected:
 
         #if defined(AltNum_EnableImaginaryNum)
         //INum representation multiplied by other representation types
-        static void INumRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void INumRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7919,7 +7919,7 @@ protected:
         #endif
         #if defined(AltNum_EnableDecimaledIFractionals)
         //INumByDivisor representation multiplied by other representation types
-        static void INumByDivisorRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void INumByDivisorRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7955,7 +7955,7 @@ protected:
 
         #elif defined(AltNum_EnableIFractional)
         //IFractional representation multiplied by other representation types
-        static void IFractionalRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void IFractionalRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7989,7 +7989,7 @@ protected:
 
 #if defined(AltNum_EnableApproachingI)
         //ApproachingImaginaryBottom representation multiplied by other representation types
-        static void ApproachingImaginaryBottomRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryBottomRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8026,7 +8026,7 @@ protected:
         }
     #if !defined(AltNum_DisableApproachingTop)
         //ApproachingImaginaryTop representation multiplied by other representation types
-        static void ApproachingImaginaryTopRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryTopRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8063,7 +8063,7 @@ protected:
     #endif
     #if defined(AltNum_EnableApproachingDivided)
         //ApproachingImaginaryMidLeft representation multiplied by other representation types
-        static void ApproachingImaginaryMidLeftRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryMidLeftRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8099,7 +8099,7 @@ protected:
 
 	    #if !defined(AltNum_DisableApproachingTop)
         //ApproachingImaginaryMidRight representation multiplied by other representation types
-        static void ApproachingImaginaryMidRightRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryMidRightRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8139,7 +8139,7 @@ protected:
 
         #if defined(AltNum_EnableMixedFractional)
         //MixedFraction representation multiplied by other representation types
-        static void MixedFracRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedFracRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8152,7 +8152,7 @@ protected:
         #endif
         #if defined(AltNum_MixedPiOrEEnabled)
         //MixedPiFraction or MixedEFraction representation multiplied by other representation types
-        static void MixedPiOrERtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedPiOrERtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -8185,7 +8185,7 @@ protected:
         }
         #elif defined(AltNum_EnableMixedIFractional)
         //MixedIFraction representation multiplied by other representation types
-        static void MixedIRtRDivision(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedIRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9032,14 +9032,14 @@ protected:
 
         AltDec DivideByUnsigned(const AltDec& rValue) { AltDec self = *this; self.UnsignedDivOp(rValue); return self; }
 
-        void CatchAllMultiplication(AltDec rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllMultiplication(AltDec rValue, RepType LRep, RepType RRep)
         {
             ConvertToNormType(LRep);
             rValue.ConvertToNormType(RRep);
             BasicMultOp(rValue);
         }
 
-        void CatchAllMultiplicationV2(AltDec rValue, const RepType& SameRep)
+        void CatchAllMultiplicationV2(AltDec rValue, RepType SameRep)
         {
             ConvertToNormType(SameRep);
             rValue.ConvertToNormType(SameRep);
@@ -9055,7 +9055,7 @@ protected:
 
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
     #if defined(AltNum_EnableImaginaryNum)
-        void CatchAllImaginaryMultiplication(AltDec rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllImaginaryMultiplication(AltDec rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
            rValue.ConvertToNormalIRep(RRep);
@@ -9064,10 +9064,10 @@ protected:
            SwapNegativeStatus();
         }
 
-        AltDec CatchAllImaginaryMultiplicationAsCopies(const AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        AltDec CatchAllImaginaryMultiplicationAsCopies(const AltDec& rValue, RepType LRep, RepType RRep)
         { AltDec self = *this; CatchAllImaginaryMultiplication(rValue, LRep, RRep); return self; }
         
-        void CatchAllImaginaryMultiplicationV2(AltDec rValue, const RepType& SameRep)
+        void CatchAllImaginaryMultiplicationV2(AltDec rValue, RepType SameRep)
         {
             ConvertIRepToNormal(SameRep);
             rValue.ConvertToNormalIRep(SameRep);
@@ -9076,7 +9076,7 @@ protected:
             SwapNegativeStatus();
         }
 
-        AltDec CatchAllImaginaryMultiplicationAsCopiesV2(const AltDec& rValue, const RepType& SameRep) { AltDec self = *this; CatchAllImaginaryMultiplicationV2(rValue, SameRep); return self; }
+        AltDec CatchAllImaginaryMultiplicationAsCopiesV2(const AltDec& rValue, RepType SameRep) { AltDec self = *this; CatchAllImaginaryMultiplicationV2(rValue, SameRep); return self; }
     
        void CatchAllImaginaryMultiplicationV3(AltDec rValue)
        {
@@ -9093,7 +9093,7 @@ protected:
 protected:
 
         //NormalType representation multiplied by other representation types
-    static void NormalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+    static void NormalRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
     {
         switch (RRep)
         {
@@ -9156,7 +9156,7 @@ protected:
 
         #if defined(AltNum_EnableFractionals)
         //NumByDivisor representation multiplied by other representation types
-        static void NumByDivisorRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void NumByDivisorRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9218,7 +9218,7 @@ protected:
 
         #if defined(AltNum_EnablePiRep)
         //PiNum representation multiplied by other representation types
-        static void PiNumRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiNumRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9284,7 +9284,7 @@ protected:
         #endif
         #if defined(AltNum_EnablePiPowers)
         //PiPower representation multiplied by other representation types
-        static void PiPowerRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiPowerRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9317,7 +9317,7 @@ protected:
         #endif
         #if defined(AltNum_EnablePiFractional)
         //PiFractional representation multiplied by other representation types
-        static void PiFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiFractionalRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9350,7 +9350,7 @@ protected:
 
         #if defined(AltNum_EnableERep)
         //ENum representation multiplied by other representation types
-        static void ENumRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ENumRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9425,7 +9425,7 @@ protected:
         #endif
         #if defined(AltNum_EnableEFractional)
         //EFractional representation multiplied by other representation types
-        static void EFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void EFractionalRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9457,7 +9457,7 @@ protected:
         #endif
 
         //PiByDivisor or EByDivisor representation multiplied by other representation types
-        static void PiOrEByDivMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiOrEByDivMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9498,7 +9498,7 @@ protected:
 
         #if defined(AltNum_EnableApproachingValues)
         //ApproachingBottm representation multiplied by other representation types
-        static void ApproachingBottomRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingBottomRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9557,7 +9557,7 @@ protected:
         }
 	        #if !defined(AltNum_DisableApproachingTop)
         //ApproachingTop representation multiplied by other representation types
-        static void ApproachingTopRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingTopRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             //switch (RRep)
             //{
@@ -9570,7 +9570,7 @@ protected:
         #endif
         #if defined(AltNum_EnableApproachingDivided)
         //ApproachingMidLeft representation multiplied by other representation types
-        static void ApproachingMidLeftRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidLeftRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             //switch (RRep)
             //{
@@ -9581,7 +9581,7 @@ protected:
         }
 	        #if !defined(AltNum_DisableApproachingTop)
         //ApproachingMidRight representation multiplied by other representation types
-        static void ApproachingMidRightRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidRightRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             //switch (RRep)
             //{
@@ -9595,7 +9595,7 @@ protected:
 
         #if defined(AltNum_EnableImaginaryNum)
         //INum representation multiplied by other representation types
-        static void INumRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void INumRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9627,7 +9627,7 @@ protected:
         #endif
         #if defined(AltNum_EnableDecimaledIFractionals)
         //INumByDivisor representation multiplied by other representation types
-        static void INumByDivisorRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void INumByDivisorRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9652,7 +9652,7 @@ protected:
 }
         #elif defined(AltNum_EnableIFractional)
         //IFractional representation multiplied by other representation types
-        static void IFractionalRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void IFractionalRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9683,7 +9683,7 @@ protected:
 #if defined(AltNum_EnableApproachingI)
 
         //ApproachingImaginaryBottom representation multiplied by other representation types
-        static void ApproachingImaginaryBottomRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryBottomRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9708,7 +9708,7 @@ protected:
         }
     #if !defined(AltNum_DisableApproachingTop)
         //ApproachingImaginaryTop representation multiplied by other representation types
-        static void ApproachingImaginaryTopRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryTopRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9734,7 +9734,7 @@ protected:
     #endif
     #if defined(AltNum_EnableApproachingDivided)
         //ApproachingImaginaryMidLeft representation multiplied by other representation types
-        static void ApproachingImaginaryMidLeftRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryMidLeftRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9759,7 +9759,7 @@ protected:
         }
 	    #if !defined(AltNum_DisableApproachingTop)
         //ApproachingImaginaryMidRight representation multiplied by other representation types
-        static void ApproachingImaginaryMidRightRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingImaginaryMidRightRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9788,7 +9788,7 @@ protected:
 
         #if defined(AltNum_EnableMixedFractional)
         //MixedFraction representation multiplied by other representation types
-        static void MixedFracRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedFracRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9857,7 +9857,7 @@ protected:
         #endif
         #if defined(AltNum_MixedPiOrEEnabled)
         //MixedPiFraction or MixedEFraction representation multiplied by other representation types
-        static void MixedPiOrERtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedPiOrERtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -9979,7 +9979,7 @@ protected:
 }
         #elif defined(AltNum_EnableMixedIFractional)
         //MixedIFraction representation multiplied by other representation types
-        static void MixedIRtRMultiplication(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedIRtRMultiplication(RepType RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -11105,24 +11105,24 @@ public:
 
         AltDec MultiplyByUnsigned(const AltDec& rValue) { AltDec self = *this; self.UnsignedMultOp(rValue); return self; }
 
-        void CatchAllAddition(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllAddition(AltDec& rValue, RepType LRep, RepType RRep)
         {
             ConvertToNormType(LRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(RRep);
             BasicMultOp(convertedRVal);
         }
 
-        AltDec CatchAllAdditionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        AltDec CatchAllAdditionAsCopies(AltDec& rValue, RepType LRep, RepType RRep)
         { AltDec self = *this; CatchAllAddition(rValue, LRep, RRep); return self; }
         
-        void CatchAllAdditionV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllAdditionV2(AltDec& rValue, RepType SameRep)
         {
             ConvertToNormType(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(SameRep);
             BasicAddOp(convertedRVal);
         }
 
-        AltDec CatchAllAdditionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        AltDec CatchAllAdditionAsCopiesV2(AltDec& rValue, RepType SameRep)
         { AltDec self = *this; CatchAllAdditionV2(rValue, SameRep); return self; }
     
        void CatchAllAdditionV3(AltDec& rValue)
@@ -11137,7 +11137,7 @@ public:
         
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
     #if defined(AltNum_EnableImaginaryNum)
-        void CatchAllImaginaryAddition(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllImaginaryAddition(AltDec& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
            AltDec convertedRVal = rValue.ConvertAsNormalIRep(RRep);
@@ -11145,10 +11145,10 @@ public:
            ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginaryAdditionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        AltDec CatchAllImaginaryAdditionAsCopies(AltDec& rValue, RepType LRep, RepType RRep)
         { AltDec self = *this; CatchAllImaginaryAddition(rValue, LRep, RRep); return self; }
         
-        void CatchAllImaginaryAdditionV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllImaginaryAdditionV2(AltDec& rValue, RepType SameRep)
         {
             ConvertIRepToNormal(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
@@ -11156,7 +11156,7 @@ public:
             ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginaryAdditionAsCopiesV2(AltDec& rValue, const RepType& SameRep)
+        AltDec CatchAllImaginaryAdditionAsCopiesV2(AltDec& rValue, RepType SameRep)
         { AltDec self = *this; CatchAllImaginaryAdditionV2(rValue, SameRep); return self; }
     
         void CatchAllImaginaryAdditionV3(AltDec& rValue)
@@ -11172,7 +11172,7 @@ public:
     #endif
 
 protected:
-        static void NormalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void NormalAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -11205,13 +11205,13 @@ protected:
         }
 
         #if defined(AltNum_EnableFractionals)
-        static void NumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void NumByDivAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
         #endif
 
         #if defined(AltNum_EnablePiRep)
-        static void PiNumAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiNumAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -11284,13 +11284,13 @@ protected:
         }
 
         #if defined(AltNum_EnablePiPowers)
-        static void PiPowerAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiPowerAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
         #endif
 	
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        static void PiNumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiNumByDivAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -11318,14 +11318,14 @@ protected:
 	        }
         }
         #elif defined(AltNum_EnablePiFractional)
-        static void PiFractionalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void PiFractionalAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
         #endif
         #endif
 
         #if defined(AltNum_EnableERep)
-        static void ENumAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ENumAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -11396,33 +11396,33 @@ protected:
         }
 
 	        #if defined(AltNum_EnableDecimaledEFractionals)
-        static void ENumByDivAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ENumByDivAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 	        #elif defined(AltNum_EnableEFractional)
-        static void EFractionalAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void EFractionalAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 	        #endif
         #endif
 
         #if defined(AltNum_EnableApproachingValues)
-        static void ApproachingBottomAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingBottomAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 
 	        #if !defined(AltNum_DisableApproachingTop)
-        static void ApproachingTopAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingTopAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 	        #endif
 	        #if defined(AltNum_EnableApproachingDivided)
-        static void ApproachingMidRightAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidRightAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 
 		        #if !defined(AltNum_DisableApproachingTop)
-        static void ApproachingMidLeftAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidLeftAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 		        #endif
@@ -11454,7 +11454,7 @@ protected:
         #endif
 
         #if defined(AltNum_EnableMixedFractional)
-        static void MixedFracAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedFracAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -11513,7 +11513,7 @@ protected:
         #endif
 
         #if defined(AltNum_MixedPiOrEEnabled)
-        static void MixedPiEAddOp(const RepType& RRep, AltDec& self, AltDec& Value)
+        static void MixedPiEAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
 	        switch (RRep)
 	        {
@@ -12274,23 +12274,23 @@ public:
 
         AltDec AddBy(const AltDec& rValue) { AltDec self = *this; self.AddOp(rValue); return self; }
 
-        void CatchAllSubtraction(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllSubtraction(AltDec& rValue, RepType LRep, RepType RRep)
         {
             ConvertToNormType(LRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(RRep);
             BasicMultOp(convertedRVal);
         }
 
-        AltDec CatchAllSubtractionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep) { AltDec self = *this; CatchAllSubtraction(rValue, LRep, RRep); return self; }
+        AltDec CatchAllSubtractionAsCopies(AltDec& rValue, RepType LRep, RepType RRep) { AltDec self = *this; CatchAllSubtraction(rValue, LRep, RRep); return self; }
 
-        void CatchAllSubtractionV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllSubtractionV2(AltDec& rValue, RepType SameRep)
         {
             ConvertToNormType(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(SameRep);
             BasicSubOp(convertedRVal);
         }
 
-        AltDec CatchAllSubtractionAsCopiesV2(AltDec& rValue, const RepType& SameRep) { AltDec self = *this; CatchAllSubtractionV2(rValue, SameRep); return self; }
+        AltDec CatchAllSubtractionAsCopiesV2(AltDec& rValue, RepType SameRep) { AltDec self = *this; CatchAllSubtractionV2(rValue, SameRep); return self; }
 
        void CatchAllSubtractionV3(AltDec& rValue)
        {
@@ -12303,7 +12303,7 @@ public:
 
         //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
     #if defined(AltNum_EnableImaginaryNum)
-        void CatchAllImaginarySubtraction(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllImaginarySubtraction(AltDec& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
            AltDec convertedRVal = rValue.ConvertAsNormalIRep(RRep);
@@ -12311,9 +12311,9 @@ public:
            ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginarySubtractionAsCopies(AltDec& rValue, const RepType& LRep, const RepType& RRep) { AltDec self = *this; CatchAllImaginarySubtraction(rValue, LRep, RRep); return self; }
+        AltDec CatchAllImaginarySubtractionAsCopies(AltDec& rValue, RepType LRep, RepType RRep) { AltDec self = *this; CatchAllImaginarySubtraction(rValue, LRep, RRep); return self; }
 
-        void CatchAllImaginarySubtractionV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllImaginarySubtractionV2(AltDec& rValue, RepType SameRep)
         {
             ConvertIRepToNormal(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
@@ -12321,7 +12321,7 @@ public:
             ExtraRep = 0;
         }
 
-        AltDec CatchAllImaginarySubtractionAsCopiesV2(AltDec& rValue, const RepType& SameRep) { AltDec self = *this; CatchAllImaginarySubtractionV2(rValue, SameRep); return self; }
+        AltDec CatchAllImaginarySubtractionAsCopiesV2(AltDec& rValue, RepType SameRep) { AltDec self = *this; CatchAllImaginarySubtractionV2(rValue, SameRep); return self; }
 
         void CatchAllImaginarySubtractionV3(AltDec& rValue)
         {
@@ -13148,14 +13148,14 @@ public:
         /// <returns>AltDec&</returns>
         static AltDec Modulus(AltDec self, AltDec Value) { return self.RemOp(Value); }
 
-        void CatchAllRem(AltDec& rValue, const RepType& LRep, const RepType& RRep)
+        void CatchAllRem(AltDec& rValue, RepType LRep, RepType RRep)
         {
             ConvertToNormType(LRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(RRep);
             BasicRemOp(convertedRVal);
         }
         
-        void CatchAllRemV2(AltDec& rValue, const RepType& SameRep)
+        void CatchAllRemV2(AltDec& rValue, RepType SameRep)
         {
             ConvertToNormType(SameRep);
             AltDec convertedRVal = rValue.ConvertAsNormType(SameRep);
