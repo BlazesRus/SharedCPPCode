@@ -6917,7 +6917,7 @@ public:
         { AltDec self = *this; CatchAllImaginaryDivisionV3(rValue); return self; }
     #endif
 protected:
-        static void DivOp_LRepImaginaryOverride(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        static void DivOp_LRepImaginaryOverride(RepType& RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {
@@ -7024,7 +7024,8 @@ protected:
                 break;
             }
         }
-        static void MultOp_LRepImaginaryOverride(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+
+        static void Multiplication_LRepImaginaryOverride(RepType& RRep, AltDec& Value)
         {
             switch (RRep)
             {
@@ -10032,7 +10033,7 @@ protected:
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
                 #endif
-                AltDec::MultOp_LRepImaginaryOverride(LRep, RRep, self, Value);
+                AltDec::Multiplication_LRepImaginaryOverride(RRep, Value);
                 break;
                 #endif
             default:
@@ -10080,13 +10081,13 @@ protected:
                 #endif
                 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             case RepType::UndefinedButInRange:
-                throw "UndefinedButInRange MultOperations not supported yet(from right side)";
+                throw "UndefinedButInRange operations not supported yet(from right side)";
                 break;
                 #endif
                 #if defined(AltNum_EnableNaN)
             case RepType::Undefined:
             case RepType::NaN:
-                throw "Can't perform MultOperations with NaN or Undefined number";
+                throw "Can't perform operations with NaN or Undefined number";
                 break;
                 #endif
             default:
@@ -11614,7 +11615,7 @@ protected:
             #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
             #endif
-                BlazesRusCode::AltDec::LRepImaginaryOverridePt2(LRep, rValue);
+                BlazesRusCode::AltDec::LRepImaginaryOverridePt2(RRep, rValue);
                 break;
         #endif
             default:
@@ -12750,7 +12751,8 @@ protected:
                 #if defined(AltNum_EnableMixedIFractional)
         		case RepType::MixedI:
                 #endif
-        			BlazesRusCode::AltDec::LRepImaginaryOverridePt2(LRep, RRep, self, Value);
+        			BlazesRusCode::AltDec::LRepImaginaryOverridePt2(RRep, Value);
+                    break;
         	#endif
         		default:
         			break;
