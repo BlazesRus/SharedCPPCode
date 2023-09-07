@@ -6917,7 +6917,7 @@ public:
         { AltDec self = *this; CatchAllImaginaryDivisionV3(rValue); return self; }
     #endif
 protected:
-        static void DivOp_LRepImaginaryOverride(RepType& RRep, AltDec& self, AltDec& Value)
+        static void Division_LRepImaginaryOverride(RepType& RRep, AltDec& self, AltDec& Value)
         {
             switch (RRep)
             {

@@ -74,7 +74,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivision(RepType& LRep, RepType& RRep
         #if defined(AltNum_EnableMixedIFractional)
 		case RepType::MixedI:
         #endif
-            BlazesRusCode::AltDec::DivOp_LRepImaginaryOverride(LRep, RRep, self, Value);
+            BlazesRusCode::AltDec::Division_LRepImaginaryOverride(LRep, RRep, self, Value);
             break;
     #endif
 		default:
