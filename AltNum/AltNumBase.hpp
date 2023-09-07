@@ -37,6 +37,7 @@
     #define AltNum_EnableApproachingI
     #define AltNum_EnableMixedPiFractional
     #define AltNum_EnableERep
+    //#define AltNum_EnableApproachingDivided
 #endif
 
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation

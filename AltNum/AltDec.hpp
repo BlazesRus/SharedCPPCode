@@ -7440,37 +7440,37 @@ protected:
         {
             switch (RRep)
             {
-            case RepType::NormalType:
-                if (Value.DecimalHalf == 0)
-                    self.DecimalHalf *= Value.IntValue;
-                else
-                {
-                    //Convert to NumByDiv instead
-                    self.ExtraRep = self.DecimalHalf;
-                    self.DecimalHalf = 0;
-                    self.BasicUnsignedMultOp(AltDec::PiNum);
-                    self.BasicDivOp(Value);
-                }
-                break;
-            #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
-            case RepType::INum:
-                #if defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #elif defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                case RepType::NormalType:
+                    if (Value.DecimalHalf == 0)
+                        self.DecimalHalf *= Value.IntValue;
+                    else
+                    {
+                        //Convert to NumByDiv instead
+                        self.ExtraRep = self.DecimalHalf;
+                        self.DecimalHalf = 0;
+                        self.BasicUnsignedMultOp(AltDec::PiNum);
+                        self.BasicDivOp(Value);
+                    }
+                    break;
+                #if defined(AltNum_EnableImaginaryNum)
+                    //ToDo::Add more specific operation code later
+                case RepType::INum:
+                    #if defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    #endif
+                    #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    #endif
+                    //Skip to performing DivOperation as normal type
+                    self.ConvertToNormType(RepType::PiFractional);
+                    RepToRepDivision(RepType::NormalType, RRep, self, Value);
+                    break;
                 #endif
-                #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI:
-                #endif
-                //Skip to performing DivOperation as normal type
-                self.ConvertToNormType(RepType::PiFractional);
-                RepToRepDivision(RepType::NormalType, RRep, self, Value);
-                break;
-            #endif
-            default:
-                self.CatchAllDivision(Value, RepType::PiFractional, RRep);
-                break;
+                default:
+                    self.CatchAllDivision(Value, RepType::PiFractional, RRep);
+                    break;
             }
         }
         #endif
@@ -7568,7 +7568,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(AltNum_EnableEFractional)
         //EFractional representation multiplied by other representation types
         static void EFractionalRtRDivision(RepType RRep, AltDec& self, AltDec& Value)
         {
@@ -7599,7 +7599,7 @@ protected:
                 #endif
                 //Skip to performing DivOperation as normal type
                 self.ConvertToNormType(RepType::EFractional);
-                RepToRepDivOp(RRep, self, Value);
+                NormalRtRDivision(RRep, self, Value);
                 break;
                 #endif
             default:
@@ -7720,37 +7720,37 @@ protected:
         {
             switch (RRep)
             {
-            #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
-            case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #endif
-                #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI:
-                #endif
-                #if defined(AltNum_EnableApproachingI)
-                if (self.IntValue == 0 && self.IntValue == NegativeRep)
-                {
-                    AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
-                    if (convertedVal.DecimalHalf == 0)
+                #if defined(AltNum_EnableImaginaryNum)
+                    //ToDo::Add more specific DivOperation code later
+                case RepType::INum:
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #endif
+                    #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    #endif
+                    #if defined(AltNum_EnableApproachingI)
+                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
                     {
-                        self.ExtraRep = convertedVal.IntValue;
-                        self.DecimalHalf = ApproachingImaginaryBottomRep;
-                        return;
+                        AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
+                        if (convertedVal.DecimalHalf == 0)
+                        {
+                            self.ExtraRep = convertedVal.IntValue;
+                            self.DecimalHalf = ApproachingImaginaryBottomRep;
+                            return;
+                        }
                     }
-                }
+                    #endif
+                    //Skip to performing DivOperation as normal type
+                    self.ConvertToNormType(RepType::ApproachingBottom);
+                    NormalRtRDivision(RRep, self, Value);
+                    break;
                 #endif
-                //Skip to performing DivOperation as normal type
-                self.ConvertToNormType(RepType::ApproachingBottom);
-                NormalRtRDivision(RRep, self, Value);
-                break;
-            #endif
-            default:
-                self.CatchAllDivision(Value, RepType::ApproachingBottom, RRep);
-                break;
+                default:
+                    self.CatchAllDivision(Value, RepType::ApproachingBottom, RRep);
+                    break;
             }
         }
 	        #if !defined(AltNum_DisableApproachingTop)
@@ -7759,37 +7759,37 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
-            case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #endif
-                #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI:
-                #endif
-        #if defined(AltNum_EnableApproachingI)
-                if (self.IntValue == 0 && self.IntValue == NegativeRep)
-                {
-                    AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
-                    if (convertedVal.DecimalHalf == 0)
+                    #if defined(AltNum_EnableImaginaryNum)
+                    //ToDo::Add more specific operation code later
+                case RepType::INum:
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #endif
+                    #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    #endif
+            #if defined(AltNum_EnableApproachingI)
+                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
                     {
-                        self.ExtraRep = convertedVal.IntValue;
-                        self.DecimalHalf = ApproachingImaginaryTopRep;
-                        return;
+                        AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
+                        if (convertedVal.DecimalHalf == 0)
+                        {
+                            self.ExtraRep = convertedVal.IntValue;
+                            self.DecimalHalf = ApproachingImaginaryTopRep;
+                            return;
+                        }
                     }
-                }
-        #endif
-                //Skip to performing DivOperation as normal type
-                self.ConvertToNormType(RepType::ApproachingTop);
-                NormalRtRDivision(RRep, self, Value);
-                break;
-                #endif
-            default:
-                self.CatchAllDivision(Value, RepType::ApproachingTop, RRep);
-                break;
+            #endif
+                    //Skip to performing DivOperation as normal type
+                    self.ConvertToNormType(RepType::ApproachingTop);
+                    NormalRtRDivision(RRep, self, Value);
+                    break;
+                    #endif
+                default:
+                    self.CatchAllDivision(Value, RepType::ApproachingTop, RRep);
+                    break;
             }
         }
             #endif
@@ -7800,8 +7800,8 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
+    #if defined(AltNum_EnableImaginaryNum)
+                //ToDo::Add more specific operation code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
@@ -7827,7 +7827,7 @@ protected:
                 self.ConvertToNormType(RepType::ApproachingMidLeft);
                 NormalRtRDivision(RRep, self, Value);
                 break;
-                #endif
+    #endif
             default:
                 self.CatchAllDivision(Value, RepType::ApproachingMidLeft, RRep);
                 break;
@@ -7839,37 +7839,37 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
-            case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #endif
-                #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI:
-                #endif
-        #if defined(AltNum_EnableApproachingI)
-                if (self.IntValue == 0 && self.IntValue == NegativeRep)
-                {
-                    AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
-                    if (convertedVal.DecimalHalf == 0)
+        #if defined(AltNum_EnableImaginaryNum)
+                    //ToDo::Add more specific operation code later
+                case RepType::INum:
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #endif
+                    #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    #endif
+            #if defined(AltNum_EnableApproachingI)
+                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
                     {
-                        self.ExtraRep *= convertedVal.IntValue;
-                        self.DecimalHalf = ApproachingImaginaryTopRep;
-                        return;
+                        AltDec convertedVal = Value.ConvertAsNormalIRep(RRep);
+                        if (convertedVal.DecimalHalf == 0)
+                        {
+                            self.ExtraRep *= convertedVal.IntValue;
+                            self.DecimalHalf = ApproachingImaginaryTopRep;
+                            return;
+                        }
                     }
-                }
+            #endif
+                    //Skip to performing DivOperation as normal type
+                    self.ConvertToNormType(RepType::ApproachingMidRight);
+                    NormalRtRDivision(RRep, self, Value);
+                    break;
         #endif
-                //Skip to performing DivOperation as normal type
-                self.ConvertToNormType(RepType::ApproachingMidRight);
-                NormalRtRDivision(RRep, self, Value);
-                break;
-                #endif
-            default:
-                self.CatchAllDivision(Value, RepType::ApproachingMidRight, RRep);
-                break;
+                default:
+                    self.CatchAllDivision(Value, RepType::ApproachingMidRight, RRep);
+                    break;
             }
         }
             #endif
@@ -7881,51 +7881,51 @@ protected:
         {
             switch (RRep)
             {
-            case RepType::NormalType:
-                self.BasicDivOp(Value);
-                break;
-    #if defined(AltNum_EnablePiRep)
-            case RepType::PiNum:
-                Value.ConvertPiToNum();
-                self.BasicDivOp(Value);
-                break;
-    #endif
-    #if defined(AltNum_EnableENum)
-            case RepType::ENum:
-                Value.ConvertToNormType(RepType::PiNum);
-                self.BasicDivOp(Value);
-                break;
-    #endif
-
-    #if defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                //selfNum*i / (Value.IntValue/Value.DecimalHalf*i)
-                //selfNum / (Value.IntValue/Value.DecimalHalf)
-                //(selfNum*Value.DecimalHalf) / Value.IntValue
-                self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.ExtraRep = Value.IntValue;
-                break;//Return as NumByDiv
-    #elif defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://Value/(-ExtraRep))*i Representation
-                //(AltDec(self.IntValue, self.DecimalHalf)i)/(Value/(-Value.ExtraRep))*i)
-                //=(AltDec(self.IntValue, self.DecimalHalf))/(Value/(-Value.ExtraRep)))
-                //=(AltDec(self.IntValue, self.DecimalHalf)*-Value.ExtraRep)/Value
-                self.BasicUnsignedIntDiv(-Value.ExtraRep);
-                if (Value.DecimalHalf == 0)
-                {
-                    self.ExtraRep = Value.ExtraRep;
-                }
-                else
-                {
-                    self.ExtraRep = 0;
+                case RepType::NormalType:
                     self.BasicDivOp(Value);
-                }
-                break;
-    #endif
-            default:
-                Value.ConvertToNormType(RRep);
-                self.BasicDivOp(Value);
-                break;
+                    break;
+        #if defined(AltNum_EnablePiRep)
+                case RepType::PiNum:
+                    Value.ConvertPiToNum();
+                    self.BasicDivOp(Value);
+                    break;
+        #endif
+        #if defined(AltNum_EnableENum)
+                case RepType::ENum:
+                    Value.ConvertToNormType(RepType::PiNum);
+                    self.BasicDivOp(Value);
+                    break;
+        #endif
+
+        #if defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    //selfNum*i / (Value.IntValue/Value.DecimalHalf*i)
+                    //selfNum / (Value.IntValue/Value.DecimalHalf)
+                    //(selfNum*Value.DecimalHalf) / Value.IntValue
+                    self.BasicInt32MultOpV2(Value.DecimalHalf);
+                    self.ExtraRep = Value.IntValue;
+                    break;//Return as NumByDiv
+        #elif defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://Value/(-ExtraRep))*i Representation
+                    //(AltDec(self.IntValue, self.DecimalHalf)i)/(Value/(-Value.ExtraRep))*i)
+                    //=(AltDec(self.IntValue, self.DecimalHalf))/(Value/(-Value.ExtraRep)))
+                    //=(AltDec(self.IntValue, self.DecimalHalf)*-Value.ExtraRep)/Value
+                    self.BasicUnsignedIntDiv(-Value.ExtraRep);
+                    if (Value.DecimalHalf == 0)
+                    {
+                        self.ExtraRep = Value.ExtraRep;
+                    }
+                    else
+                    {
+                        self.ExtraRep = 0;
+                        self.BasicDivOp(Value);
+                    }
+                    break;
+        #endif
+                default:
+                    Value.ConvertToNormType(RRep);
+                    self.BasicDivOp(Value);
+                    break;
             }
         }
 #endif
@@ -7935,33 +7935,33 @@ protected:
         {
             switch (RRep)
             {
-            case RepType::NormalType:
-                self.BasicDivOp(Value);
-                break;
-            case RepType::INum:
-                //SelfNum*i / ValueNum*i
-                //SelfNum/ValueNum
-                if (Value.DecimalHalf == 0)
-                    self.ExtraRep = Value.ExtraRep;
-                else
-                {
-                    self.ExtraRep = 0;
+                case RepType::NormalType:
                     self.BasicDivOp(Value);
-                }
+                    break;
+                case RepType::INum:
+                    //SelfNum*i / ValueNum*i
+                    //SelfNum/ValueNum
+                    if (Value.DecimalHalf == 0)
+                        self.ExtraRep = Value.ExtraRep;
+                    else
+                    {
+                        self.ExtraRep = 0;
+                        self.BasicDivOp(Value);
+                    }
+                    break;
+                #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI://Return result as either MixedFraction or NumByDivisor
+			    {
+				    //if(self.DecimalHalf==0)//Add code here that returns return as MixedFraction
+				    self.SwapNegativeStatus();
+				    self.BasicInt32MultOpV2(-Value.ExtraRep);
+				    self.ExtraRep *= (Value.IntValue*Value.ExtraRep) + Value.DecimalHalf;//ToDo::Check for overflow and perform alternative code on overflow
+			    }
                 break;
-            #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI://Return result as either MixedFraction or NumByDivisor
-			{
-				//if(self.DecimalHalf==0)//Add code here that returns return as MixedFraction
-				self.SwapNegativeStatus();
-				self.BasicInt32MultOpV2(-Value.ExtraRep);
-				self.ExtraRep *= (Value.IntValue*Value.ExtraRep) + Value.DecimalHalf;//ToDo::Check for overflow and perform alternative code on overflow
-			}
-                break;
-            #endif
-            default:
-                Value.ConvertToNormType(RRep);
-                self.BasicDivOp(Value);
+                #endif
+                default:
+                    Value.ConvertToNormType(RRep);
+                    self.BasicDivOp(Value);
             }
         }
 
@@ -8005,35 +8005,38 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
-                //ToDo::Add more specific DivOperation code later
-            case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #endif
-                #if defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI:
-                #endif
-                //Skip to performing DivOperation as normal type
-                self.ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
-                self.SwapNegativeStatus();
-                self.ExtraRep = 0;
-                NormalRtRDivision(RRep, self, Value);
-                #endif
-            default:
-                Value.ConvertToNormType(RRep);
-                if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
+        #if defined(AltNum_EnableImaginaryNum)
+                    //ToDo::Add more specific operation code later
+                case RepType::INum:
+                    #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                    #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    #endif
+                    #if defined(AltNum_EnableMixedIFractional)
+                case RepType::MixedI:
+                    #endif
                 {
-                    self.ExtraRep = Value.IntValue;
-                }
-                else
-                {
-                    self.ConvertToNormalIRep(RepType::ApproachingImaginaryBottom);
-                    self.BasicUnsignedDivOp(Value);
+                    //Skip to performing DivOperation as normal type
+                    self.ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
+                    self.SwapNegativeStatus();
+                    self.ExtraRep = 0;
+                    NormalRtRDivision(RRep, self, Value);
                 }
                 break;
+        #endif
+                default:
+                    Value.ConvertToNormType(RRep);
+                    if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
+                    {
+                        self.ExtraRep = Value.IntValue;
+                    }
+                    else
+                    {
+                        self.ConvertToNormalIRep(RepType::ApproachingImaginaryBottom);
+                        self.BasicUnsignedDivOp(Value);
+                    }
+                    break;
             }
         }
     #if !defined(AltNum_DisableApproachingTop)
@@ -8206,7 +8209,192 @@ protected:
         }
         #endif
 
-        static void RepToRepDivision(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value);
+        static void RepToRepDivision(RepType& LRep, RepType& RRep, AltDec& self, AltDec& Value)
+        {
+            //LRep Overrides
+            #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)
+            switch (LRep)
+            {
+                #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            case RepType::UndefinedButInRange:
+                throw "UndefinedButInRange operations not supported yet(from left side)"; return;
+                break;
+                #endif
+                #if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+                #if defined(AltNum_EnableAlternativeRepFractionals)
+                #if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                #else
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                #endif
+                #endif
+                #if defined(AltNum_EnableMixedIFractional)
+            case RepType::MixedI:
+                #endif
+                BlazesRusCode::AltDec::Division_LRepImaginaryOverride(RRep, self, Value);
+                break;
+                #endif
+            default:
+                break;
+            }
+            #endif
+            //RRep Overrides before Main RepToRep Code
+            switch (RRep)
+            {
+                #if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottom:
+                //Any real number / 0.0..1 = Infinity
+                if (Value.IntValue == 0)
+                {
+                    self.DecimalHalf = InfinityRep;
+                    if (self.IntValue<0)
+                        self.IntValue = -1;
+                    else
+                        self.IntValue = 1;
+                    self.ExtraRep = 0;
+                    return;
+                }
+                else
+                {
+                    Value.DecimalHalf = 1;
+                    RRep = RepType::NormalType;
+                }
+                break;
+
+            case RepType::ApproachingTop:
+            {
+                if (Value.IntValue == 0 && LRep == RepType::NormalType)//1/0.9..9 = 1.0..1
+                {//(For positive left side values);Technically should return self.IntValue + 0.0..self.IntValue
+                    self.DecimalHalf = ApproachingBottomRep;
+                    self.ExtraRep = 0;
+                    return;
+                }
+                else
+                {
+                    Value.DecimalHalf = 999999999;
+                    Value.ExtraRep = 0;
+                    RRep = RepType::NormalType;
+                }
+                break;
+            }
+            #if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidLeft:
+                Value.ConvertToNormType(RepType::ApproachingMidLeft);
+                RRep = RepType::NormalType;
+                break;
+            case RepType::ApproachingMidRight:
+                Value.ConvertToNormType(RepType::ApproachingMidRight);
+                RRep = RepType::NormalType;
+                break;
+                #endif
+                #endif
+                #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            case RepType::UndefinedButInRange:
+                throw "UndefinedButInRange operations not supported yet(from right side)";
+                break;
+                #endif
+                #if defined(AltNum_EnableNaN)
+            case RepType::Undefined:
+            case RepType::NaN:
+                throw "Can't perform operations with NaN or Undefined number";
+                break;
+                #endif
+            default:
+                break;
+            }
+            switch (LRep)//Main switch block starts here
+            {
+            case RepType::NormalType:
+                NormalRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_EnablePiRep)
+            case RepType::PiNum:
+                PiNumRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                PiPowerRtRDivision(RRep, self, Value); break;
+                #endif
+                #endif
+                #if defined(AltNum_EnableERep)
+            case RepType::ENum:
+                ENumRtRDivision(RRep, self, Value); break;
+                #endif
+                #if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottom:
+                ApproachingBottomRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTRtRDivision:
+                ApproachingTopRtRDivision(RRep, self, Value); break;
+                #endif
+                #if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidLeft:
+                ApproachingMidLeftRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingMidRight:
+                ApproachingMidRightRtRDivision(RRep, self, Value); break;
+                #endif
+                #endif
+                #endif
+                #if defined(AltNum_EnableFractionals)
+            case RepType::NumByDiv:
+                NumByDivisorRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_EnableAlternativeRepFractionals)
+                #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                PiFractionalRtRDivision(RRep, self, Value); break;
+                #endif
+                #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                EFractionalRtRDivision(RRep, self, Value); break;
+                #endif
+
+                #if defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
+                PiOrEByDivisorRtRDivision(RRep, self, Value); break;
+                #elif defined(AltNum_EnableDecimaledEFractionals)
+            case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
+                PiOrEByDivisorRtRDivision(RRep, self, Value); break;
+                #endif
+                #endif
+                #endif
+                #if defined(AltNum_EnableImaginaryNum)
+            case RepType::INum:
+                INumRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_EnableFractionals)
+                #if defined(AltNum_EnableDecimaledIFractionals)
+            case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
+                INumByDivisorRtRDivision(RRep, self, Value); break;
+                #else
+            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                IFractionalRtRDivision(RRep, self, Value); break;
+                #endif
+                #endif
+                #endif
+                #if defined(AltNum_EnableMixedFractional)
+            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+                EFractionalRtRDivision(RRep, self, Value); break;
+                #if defined(AltNum_EnableMixedPiFractional)
+            case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
+                MixedPiOrERtRDivision(RRep, self, Value); break;
+                #elif defined(AltNum_EnableMixedEFractional)
+            case RepType::MixedE:
+                MixedPiOrERtRDivision(RRep, self, Value); break;
+                #elif defined(AltNum_EnableMixedIFractional)
+            case RepType::MixedI:
+                MixedIRtRDivision(RRep, self, Value); break;
+                #endif
+                #endif
+                #if defined(AltNum_EnableNaN)
+            case RepType::Undefined:
+            case RepType::NaN:
+                throw "Can't perform RtRDivisionerations with NaN or Undefined number";
+                break;
+                #endif
+            default:
+                throw AltDec::RepTypeAsString(LRep) + " RepType division with" + AltDec::RepTypeAsString(RRep) + "not supported yet";
+                break;
+            }
+        }
 
         /// <summary>
         /// Division Operation
