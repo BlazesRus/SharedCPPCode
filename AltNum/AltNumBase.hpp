@@ -23,6 +23,8 @@
 #include <compare>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
+#pragma region PreprocessorToggles
+
 #if defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
@@ -183,6 +185,8 @@
 #if !defined(AltNum_DisableCommonVariablesInBase)&&defined(AltNum_StoreCommonFunctionsInBase)
     #undef AltNum_StoreCommonFunctionsInBase
 #endif
+
+#pragma endregion PreprocessorToggles
 
 namespace BlazesRusCode
 {

@@ -3840,10 +3840,10 @@ public:
                 NRepSkippingIntAddOp(rValue);
             else
             {
-                bool NegativeBeforeOperation = IntValue < 0;
+                bool WasNegative = IntValue < 0;
                 IntHalfAddition(rValue);
                 //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
+                if ((IntValue<0)!=WasNegative)
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
             return *this;
@@ -3912,10 +3912,10 @@ public:
                 NRepSkippingIntSubOp(rValue);
             else
             {
-                bool NegativeBeforeOperation = IntValue < 0;
+                bool WasNegative = IntValue < 0;
                 IntHalfSubtraction(rValue);
                 //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
+                if ((IntValue<0)!=WasNegative)
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
             return *this;
@@ -5003,7 +5003,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if ((IntValue<0)!=WasNegative)
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 
@@ -5034,7 +5034,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if ((IntValue<0)!=WasNegative)
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 #else
@@ -5103,7 +5103,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if ((IntValue<0)!=WasNegative)
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 
@@ -5135,7 +5135,7 @@ public:
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if ((IntValue<0)!=WasNegative)
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
         }
 #else
@@ -6717,7 +6717,7 @@ protected:
             IntHalfAddition(rValue);
             //If flips to other side of negative, invert the decimals
     #if defined(AltNum_EnableMixedFractional)
-            if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+            if ((IntValue<0)!=WasNegative)
             {
                 if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
                 {
@@ -6807,7 +6807,7 @@ protected:
             IntHalfAddition(rValue);
             //If flips to other side of negative, invert the decimals
     #if defined(AltNum_EnableMixedFractional)
-            if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+            if ((IntValue<0)!=WasNegative)
             {
                 if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
                 {
@@ -6815,14 +6815,14 @@ protected:
                     if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
                         DecimalHalf = ExtraRep - DecimalHalf;
                     else
-        #endif			
+        #endif
                         DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
                 }
                 else
                     DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
             }
     #else
-            if(WasNegative ^ (IntValue >= 0))
+            if ((IntValue<0)!=WasNegative)
                 DecimalHalf = AltDec::DecimalOverflow - DecimalHalf;
     #endif
             return *this;
