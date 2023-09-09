@@ -34,7 +34,7 @@ inline AltDec BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
 		break;
 	default:
 	{
-		if (expValue.IntValue < 0)//Negative Exponent 
+		if (expValue.IntValue < 0)//Negative Exponent
 		{
 			AltDec CalcVal = One / IntPow(expValue.IntValue * -1);
 			CalcVal /= FractionalPow(Frac);
