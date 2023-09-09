@@ -44,7 +44,7 @@
 /*
 FlaggedNum_EnableFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
-	  (functions same as having all variants of AltNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableFractionals from AltDec)
+	  (functions same as having all variants of FlaggedNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableFractionals from AltDec)
       If FlaggedNum_PreventUsageOfExtraRep is active, then functions the same as AltNum_EnableFractionals
 
 //--Infinity based preprocessors--
@@ -148,6 +148,28 @@ Automatically toggles FlaggedNum_ExtraRepIsActive
 FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus for 
                                         Approaching value and infinity representations
 
+FlaggedNum_PreventUsageOfExtraRep
+
+FlaggedNum_EnablePiFractions = Autotoggled if FlaggedNum_EnableFractionals
+    and AltNum_EnablePiRep enabled
+FlaggedNum_EnableEFractions = Autotoggled if FlaggedNum_EnableFractionals
+    and AltNum_EnableERep enabled
+FlaggedNum_EnableIFractions = Autotoggled if FlaggedNum_EnableFractionals 
+    and AltNum_EnableImaginaryNum enabled
+
+FlaggedNum_EnablePiFractional = Autotoggled if FlaggedNum_EnablePiFractions
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+FlaggedNum_EnableEFractional = Autotoggled if FlaggedNum_EnableEFractions
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+FlaggedNum_EnableIFractional = Autotoggled if FlaggedNum_EnableIFractions 
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+
+FlaggedNum_EnableDecimaledPiFractionals = Autotoggled if FlaggedNum_EnablePiFractions
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
+FlaggedNum_EnableDecimaledEFractionals = Autotoggled if FlaggedNum_EnableEFractions
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
+FlaggedNum_EnableDecimaledIFractionals = Autotoggled if FlaggedNum_EnableIFractions 
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
 */
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation
 #include "AlNumBase.hpp"
@@ -158,16 +180,31 @@ FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus
 	#endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnablePiRep) && !defined(AltNum_EnableDecimaledPiFractionals)
-    #define FlaggedNum_EnableDecimaledPiFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnablePiRep)
+    #define FlaggedNum_EnablePiFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledPiFractionals)
+        #define FlaggedNum_EnableDecimaledPiFractionals
+    #elif defined(FlaggedNum_EnablePiFractional)
+        #define FlaggedNum_EnablePiFractional
+    #endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableERep) && !defined(AltNum_EnableDecimaledEFractionals)
-    #define FlaggedNum_EnableDecimaledEFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableERep)
+    #define FlaggedNum_EnableEFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledEFractionals)
+        #define FlaggedNum_EnableDecimaledEFractionals
+    #elif defined(FlaggedNum_EnableEFractional)
+        #define FlaggedNum_EnableEFractional
+    #endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableImaginaryNum) && !defined(AltNum_EnableDecimaledIFractionals)
-    #define FlaggedNum_EnableDecimaledIFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableImaginaryNum)
+    #define FlaggedNum_EnableIFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledIFractionals)
+        #define FlaggedNum_EnableDecimaledIFractionals
+    #elif defined(FlaggedNum_EnableIFractional)
+        #define FlaggedNum_EnableIFractional
+    #endif
 #endif
 
 namespace BlazesRusCode
@@ -463,7 +500,6 @@ namespace BlazesRusCode
 #if !defined(AltNum_StoreConstVariablesInBase)
     #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
-        //(other values only used if AltNum_EnableInfinityPowers is enabled)
         //If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
 		#if !defined(AltNum_UsePositiveInfinityRep)
         static const signed int InfinityRep = -2147483648;
@@ -1093,21 +1129,21 @@ namespace BlazesRusCode
         }
     #endif
         
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
         //Set value for PiNumByDiv
         void SetDecimaledPiFractional(int IntHalf, int DecHalf, int Divisor)
         {
             IntValue = IntHalf; DecimalHalf = DecHalf;
             ExtraRep = -Divisor;
         }
-    #elif defined(AltNum_EnableDecimaledEFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledEFractionals)
         //Set value for ENumByDiv
         void SetDecimaledEFractional(int IntHalf, int DecHalf, int Divisor)
         {
             IntValue = Value; DecimalHalf = 0;
             ExtraRep = -Divisor;
         }
-    #elif defined(AltNum_EnableDecimaledIFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
         //Set value for INumByDiv
         void SetDecimaledIFractional(int IntHalf, int DecHalf, int Divisor)
         {
@@ -1116,21 +1152,21 @@ namespace BlazesRusCode
         }
     #endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
         void SetPiFractional(int Num, int Divisor)//IntValue/DecimalHalf*Pi Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
             ExtraRep = PiRep;
         }
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
         void SetEFractional(int Num, int Divisor)//IntValue/DecimalHalf*e Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
             ExtraRep = ERep;
         }
         #endif
-        #if defined(AltNum_EnableIFractional)
+        #if defined(FlaggedNum_EnableIFractional)
         void SetIFractional(int Num, int Divisor)//IntValue/DecimalHalf*i Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
@@ -2284,7 +2320,7 @@ public:
             }
         }
 
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
         //Convert from PiByDiv to NumByDivisor representation
         void ConvertPiByDivToNumByDiv()
         {
@@ -2480,7 +2516,7 @@ public:
                     break;
     #endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 {
                     BasicUIntDivOp(-ExtraRep);
@@ -2522,7 +2558,7 @@ public:
                 }
     #endif
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 {
                     FlaggedDec Res = FlaggedDec(IntValue, DecimalHalf, PiRep);
@@ -2637,7 +2673,7 @@ public:
             ExtraRep = 0;
 }
 
-        #if defined(AltNum_EnableDecimaledEFractionals)
+        #if defined(FlaggedNum_EnableDecimaledEFractionals)
         //Convert from ENumByDiv into NumByDivisor representation
         void ConvertEByDivToNumByDiv();
 
@@ -2747,7 +2783,7 @@ public:
                     return;
                     break;
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnableDecimaledEFractionals)
+        #if defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
                 {
                     BasicUIntDivOp(-ExtraRep);
@@ -2781,7 +2817,7 @@ public:
                     return *this;
                     break;
     #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnableDecimaledEFractionals)
+        #if defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
                 {
                     FlaggedDec Res = FlaggedDec(IntValue, DecimalHalf, ERep);
@@ -2893,10 +2929,10 @@ public:
             case RepType::PiPower:
                 ConvertPiPowerToNum(); break;
     #endif
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 ConvertPiByDivToNorm(); break;
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 ConvertPiFracToNorm(); break;
     #endif
@@ -2904,10 +2940,10 @@ public:
     #if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
-#if defined(AltNum_EnableDecimaledEFractionals)
+#if defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 ConvertEByDivToNorm(); break;
-#elif defined(AltNum_EnableEFractional)
+#elif defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
                 ConvertEFracToNorm(); break;
 #endif
@@ -2928,9 +2964,9 @@ public:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-    #if defined(AltNum_EnableDecimaledIFractionals)
+    #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-    #elif defined(AltNum_EnableIFractional)
+    #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
     #endif
             {
@@ -2997,14 +3033,14 @@ public:
                 {
                     break;
                 }
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                 {
                     int Divisor = -ExtraRep;
                     BasicUnsignedDivOp(Divisor);
                     break;
                 }
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 {
                     int Divisor = DecimalHalf;
@@ -3101,7 +3137,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -3158,7 +3194,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -3203,7 +3239,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -3273,7 +3309,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -3324,7 +3360,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -3364,7 +3400,7 @@ public:
 	#if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
+			#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -4148,7 +4184,7 @@ public:
 			NumSide.BasicDivOp(-RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*FlaggedDec(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
 			FlaggedDec additionalVal = FlaggedDec(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue;
 			NumSide.BasicAddOp(additionalVal);
-		#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))
+		#if (defined(AltNum_EnableMixedPiFractional)&&defined(FlaggedNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(FlaggedNum_EnableDecimaledEFractionals))
 			NumSide.ExtraRep = -LValue.ExtraRep;
 			return NumSide;
 		#else
@@ -5246,13 +5282,13 @@ protected:
                 break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional:
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional:
                 #endif
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional:
                 #endif
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
@@ -5278,12 +5314,12 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv:
-                #elif defined(AltNum_EnableDecimaledIFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv:
                 #endif
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
@@ -5320,7 +5356,7 @@ protected:
     #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                 {
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                     if (rightSideValue < 0)
                     {
                         ExtraRep = rightSideValue;
@@ -5328,7 +5364,7 @@ protected:
                     }
                     else
                         ExtraRep = -rightSideValue;
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                     if (DecimalHalf == 0)
                     {
                         if (rightSideValue < 0)
@@ -5574,13 +5610,13 @@ protected:
                 break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional:
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional:
                 #endif
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional:
                 #endif
                 {//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
@@ -5592,12 +5628,12 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
-                    #elif defined(AltNum_EnableDecimaledEFractionals)
+                    #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv:
-                    #elif defined(AltNum_EnableDecimaledIFractionals)
+                    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv:
                     #endif
                 {
@@ -5618,9 +5654,9 @@ protected:
     #if defined(AltNum_EnableImaginaryNum)
                 case RepType::INum:
                 {
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                     ExtraRep = -rValue;
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                     if (DecimalHalf == 0)
                     {
                         DecimalHalf = rValue;
@@ -5895,13 +5931,13 @@ protected:
                 break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional:
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional:
                 #endif
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional:
                 #endif
                 {
@@ -5913,12 +5949,12 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
-        #elif defined(AltNum_EnableDecimaledEFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv:
-        #elif defined(AltNum_EnableDecimaledIFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv:
         #endif
                 {
@@ -6310,13 +6346,13 @@ protected:
                 break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional:
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional:
                 #endif
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional:
                 #endif
                 {
@@ -6328,12 +6364,12 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-		#if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+		#if defined(FlaggedNum_EnableDecimaledPiFractionals)
 				case RepType::PiNumByDiv:
-		#elif defined(AltNum_EnableDecimaledEFractionals)
+		#elif defined(FlaggedNum_EnableDecimaledEFractionals)
 				case RepType::ENumByDiv:
-		#elif defined(AltNum_EnableDecimaledIFractionals)
+		#elif defined(FlaggedNum_EnableDecimaledIFractionals)
 				case RepType::INumByDiv:
 		#endif
                 {
@@ -6985,17 +7021,17 @@ protected:
     #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
     #endif
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
     #endif
     #endif
     #if defined(AltNum_EnableERep)
             case RepType::ENum:
-    #if defined(AltNum_EnableDecimaledEFractionals)
+    #if defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-    #elif defined(AltNum_EnableEFractional)
+    #elif defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
     #endif
     #endif
@@ -7038,18 +7074,18 @@ protected:
     #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
     #endif
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
     #endif
     #endif
 
     #if defined(AltNum_EnableERep)
             case RepType::ENum:
-    #if defined(AltNum_EnableDecimaledEFractionals)
+    #if defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-    #elif defined(AltNum_EnableEFractional)
+    #elif defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
     #endif
     #endif
@@ -7095,18 +7131,18 @@ protected:
     #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
     #endif
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
     #endif
     #endif
 
     #if defined(AltNum_EnableERep)
             case RepType::ENum:
-    #if defined(AltNum_EnableDecimaledEFractionals)
+    #if defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-    #elif defined(AltNum_EnableEFractional)
+    #elif defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
     #endif
     #endif
@@ -7161,7 +7197,7 @@ protected:
                 self.BasicInt32MultOpV2(Value.ExtraRep);
                 break;
             }
-            #if defined(AltNum_EnablePiFractional)
+            #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             {
                 //X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
@@ -7170,7 +7206,7 @@ protected:
                 break;
             }
             #endif
-            #if defined(AltNum_EnableEFractional)
+            #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
             {
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
@@ -7179,17 +7215,17 @@ protected:
             }
             #endif
 
-            #if defined(AltNum_EnableDecimaledPiOrEFractionals)
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiOrEFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 #endif
             {
                 self.BasicInt32MultOpV2(-Value.ExtraRep);
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 Value.ConvertToNormType(RepType::PiNum);
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 Value.ConvertToNormType(RepType::ENum);
                 #endif
                 self.BasicUnsignedDivOp(Value);
@@ -7210,9 +7246,9 @@ protected:
                 self.ExtraRep = FlaggedDec::IRep;
                 break;
             }
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7254,9 +7290,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #elif defined(AltNum_EnableDecimaledIFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7297,7 +7333,7 @@ protected:
                 self.BasicInt32MultOpV2(Value.ExtraRep);
                 break;
 
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             {
                 //(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
@@ -7307,7 +7343,7 @@ protected:
             }
             break;
             #endif
-            #if defined(AltNum_EnableEFractional)
+            #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
             {
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
@@ -7317,7 +7353,7 @@ protected:
             break;
             #endif
 
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
             {
                 //(XPi) / (Y.Value*Pi / -Y.ExtraRep) = (X*-Y.ExtraRep)/(Y.Value)
@@ -7327,7 +7363,7 @@ protected:
                 self.BasicUnsignedMultOp(Value);
             }
             break;
-            #elif defined(AltNum_EnableDecimaledEFractionals)
+            #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
             {
                 //(XPi) / (Y.Value*e / -Y.ExtraRep) = (X*-Y.ExtraRep)/(Y.Value*e)
@@ -7350,9 +7386,9 @@ protected:
                     self.IntValue = self.IntValue == 0 ? FlaggedDec::FlaggedDec::NegativeRep : -self.IntValue;
                 self.ExtraRep = FlaggedDec::IRep;
                 break;
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7405,9 +7441,9 @@ protected:
             }
             break;
             #endif
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-            #elif defined(AltNum_EnableIFractional)
+            #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             #endif
             #if defined(AltNum_EnableMixedIFractional)
@@ -7434,7 +7470,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
         //PiFractional representation multiplied by other representation types
         static void PiFractionalRtRDivision(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -7455,9 +7491,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableIFractional)
+                    #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                    #elif defined(AltNum_EnableDecimaledIFractionals)
+                    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
@@ -7503,26 +7539,26 @@ protected:
                 self.BasicInt32MultOpV2(Value.ExtraRep);
                 break;
         #endif
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 //(Xe) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
                 self.BasicUnsignedDiv(FlaggedDec::PiNumValue() * Value.IntValue);
                 break;
-        #elif defined(AltNum_EnableDecimaledPiFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
                 self.BasicInt32MultOpV2(-Value.ExtraRep);
                 Value.ConvertToNormType(RepType::PiNum);
                 self.BasicDivOp(Value);
                 break;
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 self.ExtraRep = 0;
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
                 self.BasicInt32DivOpV2(Value.IntValue);
                 break;
-        #elif defined(AltNum_EnableDecimaledEFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 self.BasicUnsignedIntMult(-Value.ExtraRep);
                 self.ExtraRep = 0;
@@ -7542,9 +7578,9 @@ protected:
                 self.ExtraRep = FlaggedDec::IRep;
                 break;
         #endif
-        #if defined(AltNum_EnableDecimaledIFractionals)
+        #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-        #elif defined(AltNum_EnableIFractional)
+        #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
         #endif
         #if defined(AltNum_EnableMixedIFractional)
@@ -7568,7 +7604,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
         //EFractional representation multiplied by other representation types
         static void EFractionalRtRDivision(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -7589,9 +7625,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
-                #if defined(AltNum_EnableIFractional)
+                #if defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                #elif defined(AltNum_EnableDecimaledIFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7609,7 +7645,7 @@ protected:
 }
         #endif
 
-    #if defined(AltNum_EnableDecimaledPiOrEFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiOrEFractionals)
         //PiByDivisor or EByDivisor representation multiplied by other representation types
         static void PiOrEByDivisorRtRDivision(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -7621,7 +7657,7 @@ protected:
             #if defined(AltNum_EnablePiRep)
                 case RepType::PiNum:
                 {
-                    #if defined(AltNum_EnableDecimaledPiFractionals)//Becomes NumByDiv instead
+                    #if defined(FlaggedNum_EnableDecimaledPiFractionals)//Becomes NumByDiv instead
                     self.ExtraRep *= -1;
                     if (Value.DecimalHalf == 0)
                         self.ExtraRep *= Value.IntValue;
@@ -7640,7 +7676,7 @@ protected:
             #if defined(AltNum_EnableERep)
                 case RepType::ENum:
                 {
-                #if defined(AltNum_EnableDecimaledEFractionals)//Becomes NumByDiv instead
+                #if defined(FlaggedNum_EnableDecimaledEFractionals)//Becomes NumByDiv instead
                     if (Value.DecimalHalf == 0)
                     {
                         self.ExtraRep *= -Value.IntValue;
@@ -7669,14 +7705,14 @@ protected:
 				    self.BasicInt32MultOpV2(Value.ExtraRep);
                     break;
             #endif
-            #if defined(AltNum_EnablePiFractional)
+            #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional:
 				    self.ExtraRep *= Value.IntValue;
 				    self.BasicInt32MultOpV2(Value.DecimalHalf);
 				    self.BasicUnsignedDivOp(PiNum);
                     break;
             #endif
-            #if defined(AltNum_EnableEFractional)
+            #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional:
 				    self.ExtraRep *= Value.IntValue;
 				    self.BasicInt32MultOpV2(Value.DecimalHalf);
@@ -7686,16 +7722,16 @@ protected:
             #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific DivOperation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableIFractional)
+                    #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                    #elif defined(AltNum_EnableDecimaledIFractionals)
+                    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
                     #endif
                     //Skip to performing DivOperation as normal type
-                    #if defined(AltNum_EnableDecimaledPiFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                     self.ConvertToNormType(RepType::PiNumByDiv);
                     #else
                     self.ConvertToNormType(RepType::PiNumByDiv);
@@ -7704,7 +7740,7 @@ protected:
                     break;
             #endif
                 default:
-                    #if defined(AltNum_EnableDecimaledPiFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                     self.CatchAllDivision(Value, RepType::PiNumByDiv, RRep);
                     #else
                     self.CatchAllDivision(Value, RepType::ENumByDiv, RRep);
@@ -7723,9 +7759,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific DivOperation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
@@ -7762,9 +7798,9 @@ protected:
                     #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
@@ -7803,9 +7839,9 @@ protected:
     #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific operation code later
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7842,9 +7878,9 @@ protected:
         #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
@@ -7897,7 +7933,7 @@ protected:
                     break;
         #endif
 
-        #if defined(AltNum_EnableIFractional)
+        #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     //selfNum*i / (Value.IntValue/Value.DecimalHalf*i)
                     //selfNum / (Value.IntValue/Value.DecimalHalf)
@@ -7905,7 +7941,7 @@ protected:
                     self.BasicInt32MultOpV2(Value.DecimalHalf);
                     self.ExtraRep = Value.IntValue;
                     break;//Return as NumByDiv
-        #elif defined(AltNum_EnableDecimaledIFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://Value/(-ExtraRep))*i Representation
                     //(FlaggedDec(self.IntValue, self.DecimalHalf)i)/(Value/(-Value.ExtraRep))*i)
                     //=(FlaggedDec(self.IntValue, self.DecimalHalf))/(Value/(-Value.ExtraRep)))
@@ -7929,7 +7965,7 @@ protected:
             }
         }
 #endif
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
         //INumByDivisor representation multiplied by other representation types
         static void INumByDivisorRtRDivision(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -7965,7 +8001,7 @@ protected:
             }
         }
 
-#elif defined(AltNum_EnableIFractional)
+#elif defined(FlaggedNum_EnableIFractional)
         //IFractional representation multiplied by other representation types
         static void IFractionalRtRDivision(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -8008,9 +8044,9 @@ protected:
         #if defined(AltNum_EnableImaginaryNum)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
-                    #if defined(AltNum_EnableDecimaledIFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                    #elif defined(AltNum_EnableIFractional)
+                    #elif defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
@@ -8048,9 +8084,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -8085,9 +8121,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -8121,9 +8157,9 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -8223,7 +8259,7 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -8339,19 +8375,19 @@ protected:
             case RepType::NumByDiv:
                 NumByDivisorRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(AltNum_EnablePiRep)&&!defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 PiFractionalRtRDivision(RRep, self, Value); break;
                 #endif
-                #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
+                #if defined(AltNum_EnableERep)&&!defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 EFractionalRtRDivision(RRep, self, Value); break;
                 #endif
 
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
                 PiOrEByDivisorRtRDivision(RRep, self, Value); break;
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 PiOrEByDivisorRtRDivision(RRep, self, Value); break;
                 #endif
@@ -8361,7 +8397,7 @@ protected:
             case RepType::INum:
                 INumRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_EnableFractionals)
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 INumByDivisorRtRDivision(RRep, self, Value); break;
                 #else
@@ -8626,13 +8662,13 @@ protected:
 #if defined(AltNum_UsingAltFractional)
                 //(Self.IntValue/DecimalHalf)/(rightSideValue.IntValue/rightSideValue.DecimalHalf) =
                 //(IntValue*rightSideValue.DecimalHalf)/(DecimalHalf*rightSideValue.IntValue)
-    #if defined(AltNum_EnablePiFractional)
+    #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
     #endif
-    #if defined(AltNum_EnableEFractional)
+    #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
     #endif
-    #if defined(AltNum_EnableIFractional)
+    #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
     #endif
                 {
@@ -8660,12 +8696,12 @@ protected:
                 }
                 break;
 #endif
-#if defined(AltNum_EnableDecimaledAlternativeFractionals)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+#if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-    #elif defined(AltNum_EnableDecimaledEFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-    #elif defined(AltNum_EnableDecimaledIFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
     #endif
                 {
@@ -9057,13 +9093,13 @@ protected:
 #if defined(AltNum_UsingAltFractional)
                 //(Self.IntValue/DecimalHalf)/(rValue.IntValue/rValue.DecimalHalf) =
                 //(IntValue*rValue.DecimalHalf)/(DecimalHalf*rValue.IntValue)
-    #if defined(AltNum_EnablePiFractional)
+    #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
     #endif
-    #if defined(AltNum_EnableEFractional)
+    #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
     #endif
-    #if defined(AltNum_EnableIFractional)
+    #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
     #endif
                 {
@@ -9085,12 +9121,12 @@ protected:
                 }
                 break;
 #endif
-#if defined(AltNum_EnableDecimaledAlternativeFractionals)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+#if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-    #elif defined(AltNum_EnableDecimaledEFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-    #elif defined(AltNum_EnableDecimaledIFractionals)
+    #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
     #endif
                 {
@@ -9332,7 +9368,7 @@ protected:
             self.ExtraRep = FlaggedDec::IRep;
             break;
             #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
         case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
             #else
         case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -9365,7 +9401,7 @@ protected:
                 break;
                 #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
             case RepType::PiNum:
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 self.BasicMultOp(Value);
                 self.ExtraRep *= -1;
                 #else
@@ -9375,7 +9411,7 @@ protected:
                 #endif
                 #if defined(AltNum_EnableERep)
             case RepType::ENum:
-                #if defined(AltNum_EnableDecimaledEFractionals)
+                #if defined(FlaggedNum_EnableDecimaledEFractionals)
                 self.BasicMultOp(Value);
                 self.ExtraRep *= -1;
                 #else
@@ -9399,7 +9435,7 @@ protected:
                 #endif
                 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 self.BasicMultOp(Value);
                 self.ExtraRep *= -1;
                 #else
@@ -9440,10 +9476,10 @@ protected:
                 #endif
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
-                #if defined(AltNum_EnableDecimaledPiFractionals)//Convert result to PiNumByDiv
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)//Convert result to PiNumByDiv
                 self.ExtraRep = Value.ExtraRep;
                 self.BasicMultOp(Value);
-                #elif defined(AltNum_EnablePiFractional)
+                #elif defined(FlaggedNum_EnablePiFractional)
                 if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//If both left and right side values are whole numbers, convert result into PiFractional
                 {//Becoming IntValue/DecimalHalf*Pi Representation
                     self.IntValue *= Value.IntValue;
@@ -9515,7 +9551,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
         //PiFractional representation multiplied by other representation types
         static void PiFractionalRtRMultiplication(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -9574,7 +9610,7 @@ protected:
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnableDecimaledEFractionals)//Convert result to PiNumByDiv
+                #if defined(FlaggedNum_EnableDecimaledEFractionals)//Convert result to PiNumByDiv
                 self.ExtraRep = Value.ExtraRep;
                 self.BasicMultOp(Value);
                 #else
@@ -9623,7 +9659,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
         //EFractional representation multiplied by other representation types
         static void EFractionalRtRMultiplication(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -9681,7 +9717,7 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
                 self.BasicMultOp(Value);
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 self.ConvertToNormType(RepType::PiNumByDiv);
                 #else
                 self.ConvertToNormType(RepType::ENumByDiv);
@@ -9722,7 +9758,7 @@ protected:
                 }
                 break;
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation	
@@ -9806,9 +9842,9 @@ protected:
                 self.BasicMultOp(Value);
                 self.ExtraRep = 0;
                 break;
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
-                #elif defined(AltNum_EnableIFractionals)
+                #elif defined(FlaggedNum_EnableIFractionals)
             case RepType::IFractional:
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -9825,7 +9861,7 @@ protected:
             }
         }
         #endif
-        #if defined(AltNum_EnableDecimaledIFractionals)
+        #if defined(FlaggedNum_EnableDecimaledIFractionals)
         //INumByDivisor representation multiplied by other representation types
         static void INumByDivisorRtRMultiplication(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -9850,7 +9886,7 @@ protected:
                 self.BasicMultOp(Value);
             }
 }
-        #elif defined(AltNum_EnableIFractional)
+        #elif defined(FlaggedNum_EnableIFractional)
         //IFractional representation multiplied by other representation types
         static void IFractionalRtRMultiplication(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
@@ -9888,9 +9924,9 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
-                #elif defined(AltNum_EnableIFractionals)
+                #elif defined(FlaggedNum_EnableIFractionals)
             case RepType::IFractional:
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -9913,9 +9949,9 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
-                #elif defined(AltNum_EnableIFractionals)
+                #elif defined(FlaggedNum_EnableIFractionals)
             case RepType::IFractional:
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -9939,9 +9975,9 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
-                #elif defined(AltNum_EnableIFractionals)
+                #elif defined(FlaggedNum_EnableIFractionals)
             case RepType::IFractional:
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -9964,9 +10000,9 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
-                #elif defined(AltNum_EnableIFractionals)
+                #elif defined(FlaggedNum_EnableIFractionals)
             case RepType::IFractional:
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -10113,21 +10149,21 @@ protected:
                 break;
                 #endif
                 #endif
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional:
                 MixedPiFracRtRMult_WithOther(Value, self);
                 break;
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional:
                 FlaggedDec::MixedPiFracRtRMult_WithOther(Value, self);
                 break;
                 #endif
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 #endif
                 FlaggedDec::MixedPiFracRtRMult_WithNormal(Value, self);
@@ -10146,21 +10182,21 @@ protected:
                 #endif
                 self = FlaggedDec::MixedEFracRtRMult_WithNormal(Value, self);
                 break;
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional:
                 MixedEFracRtRMult_WithOther(Value, self);
                 break;
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional:
                 MixedEFracRtRMult_WithOther(Value, self);
                 break;
                 #endif
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 #endif
                 MixedEFracRtRMult_WithNormal(Value, self);
@@ -10184,7 +10220,7 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
                 #elif defined(AltNum_EnableFractionals)
             case RepType::IFractional:
@@ -10212,7 +10248,7 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -10319,19 +10355,19 @@ protected:
             case RepType::NumByDiv:
                 NumByDivisorRtRMultiplication(RRep, self, Value); break;
                 #if defined(AltNum_EnableAlternativeRepFractionals)
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 PiFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 EFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
 
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
                 PiOrEByDivMultiplication(RRep, self, Value); break;
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 PiOrEByDivMultiplication(RRep, self, Value); break;
                 #endif
@@ -10340,10 +10376,10 @@ protected:
                 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
                 INumRtRMultiplication(RRep, self, Value); break;
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 INumByDivisorRtRMultiplication(RRep, self, Value); break;
-                #elif defined(AltNum_EnableIFractional)
+                #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 IFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
@@ -10642,7 +10678,7 @@ public:
                 break;
 #endif
     //(IntValue*rightSideValue.IntValue)*Pi^2/(DecimalHalf*rightSideValue.DecimalHalf)
-    #if defined(AltNum_EnablePiFractional)
+    #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 {//Become either PiNum, NumByDiv, or PiPower
         #if defined(AltNum_EnablePiPowers)//Becoming PiPower
@@ -10663,7 +10699,7 @@ public:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableEFractional)
+    #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 {
                     IntValue *= rightSideValue.IntValue;
@@ -10700,13 +10736,13 @@ public:
                 break;
     #endif
 
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (rightSideValue/-ExtraRep)*Pi Representation
                     //(rightSideValue/(-ExtraRep))*Pi * (rightSideValue.rightSideValue/(-rightSideValue.ExtraRep))*Pi
-        #elif defined(AltNum_EnableDecimaledEFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(rightSideValue/-ExtraRep)*e Representation
-        #elif defined(AltNum_EnableDecimaledIFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(rightSideValue/-ExtraRep)*i Representation
                     //(rightSideValue/(-ExtraRep))*i * (rightSideValue.rightSideValue/(-rightSideValue.ExtraRep))*i
         #endif
@@ -10719,14 +10755,14 @@ public:
                     }
                     ExtraRep *= -rValue.ExtraRep;
                     BasicUnsignedMultOp(rValue);
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 #ifdef AltNum_EnablePiPowers//Convert to PiPower representation
                     BasicUnsignedDivOp(-ExtraRep);
                     ExtraRep = -2;
                 #else
                     BasicUnsignedMultOp(PiNum);
                 #endif
-            #elif defined(AltNum_EnableDecimaledEFractionals)
+            #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                     BasicUnsignedMultOp(ENum);
             #else
                     SwapNegativeStatus();
@@ -10781,7 +10817,7 @@ public:
                     break;
                     int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
 
-                    #if defined(AltNum_EnableDecimaledEFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledEFractionals)
                     //Becomes PiNumByDiv
                     //And then multiply by Pi
                     IntValue = LeftSideNum * RightSideNum;
@@ -10823,7 +10859,7 @@ public:
                     else
                         LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
                     int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
-                    #if defined(AltNum_EnableDecimaledEFractionals)
+                    #if defined(FlaggedNum_EnableDecimaledEFractionals)
                     //Becomes ENumByDiv
                     //And then multiply by e
                     IntValue = LeftSideNum * RightSideNum;
@@ -11075,7 +11111,7 @@ public:
                     break;
     #endif
                     //(IntValue*rValue.IntValue)*Pi^2/(DecimalHalf/rValue.DecimalHalf)
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
                     case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                     {
             #if defined(AltNum_EnablePiPowers)//Becoming PiPower
@@ -11096,7 +11132,7 @@ public:
                     }
                     break;
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
                     case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                     {
                         IntValue *= rValue.IntValue;
@@ -11132,27 +11168,27 @@ public:
                     }
                     break;
         #endif
-        #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                     case RepType::PiNumByDiv://  (rValue/-ExtraRep)*Pi Representation
                         //(rValue/(-ExtraRep))*Pi * (rValue.rValue/(-rValue.ExtraRep))*Pi
-            #elif defined(AltNum_EnableDecimaledEFractionals)
+            #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                     case RepType::ENumByDiv://(rValue/-ExtraRep)*e Representation
-            #elif defined(AltNum_EnableDecimaledIFractionals)
+            #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                     case RepType::INumByDiv://(rValue/-ExtraRep)*i Representation
                         //(rValue/(-ExtraRep))*i * (rValue.rValue/(-rValue.ExtraRep))*i
             #endif
                     {
                         ExtraRep *= -rValue.ExtraRep;
                         BasicUnsignedMultOp(rValue);
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                     #ifdef AltNum_EnablePiPowers//Convert to PiPower representation
                         BasicUnsignedDivOp(-ExtraRep);
                         ExtraRep = -2;
                     #else
                         BasicUnsignedMultOp(PiNum);
                     #endif
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                         BasicUnsignedMultOp(ENum);
                 #else
                         SwapNegativeStatus();
@@ -11195,7 +11231,7 @@ public:
                         break;
                         int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
 
-                        #if defined(AltNum_EnableDecimaledEFractionals)
+                        #if defined(FlaggedNum_EnableDecimaledEFractionals)
                         //Becomes PiNumByDiv
                         //And then multiply by Pi
                         IntValue = LeftSideNum * RightSideNum;
@@ -11231,7 +11267,7 @@ public:
                         else
                             LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
                         int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
-                        #if defined(AltNum_EnableDecimaledEFractionals)
+                        #if defined(FlaggedNum_EnableDecimaledEFractionals)
                         //Becomes ENumByDiv
                         //And then multiply by e
                         IntValue = LeftSideNum * RightSideNum;
@@ -11425,7 +11461,7 @@ protected:
 	        #endif
 	        #if defined(AltNum_EnableMixedPiFractional)
 		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
-		        #if defined(AltNum_EnablePiFractional)
+		        #if defined(FlaggedNum_EnablePiFractional)
     			        if(self.DecimalHalf==0)//Result is PiFractional
     			        {
                             int divisor = -Value.ExtraRep;
@@ -11452,7 +11488,7 @@ protected:
     	                    self.ConvertToNormType(RepType::PiNum);
     	                    self.BasicMixedPiFracSubAddOp(Value);
     			        }
-		        #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
+		        #elif defined(FlaggedNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
                         if(Value.IntValue!=0)
                             self.IntHalfSubtraction(Value.IntValue);
                         if(self.IntValue==0)
@@ -11489,7 +11525,7 @@ protected:
         }
         #endif
 	
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
         static void PiNumByDivAddOp(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
 	        switch (RRep)
@@ -11517,7 +11553,7 @@ protected:
 			        break;
 	        }
         }
-        #elif defined(AltNum_EnablePiFractional)
+        #elif defined(FlaggedNum_EnablePiFractional)
         static void PiFractionalAddOp(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
@@ -11542,7 +11578,7 @@ protected:
 			        break;
 	        #elif defined(AltNum_EnableMixedEFractional)
 		        case RepType::MixedE:
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
     			        if(self.DecimalHalf==0)//Result is EFractional
     			        {
                             int divisor = -Value.ExtraRep;
@@ -11569,7 +11605,7 @@ protected:
     	                    self.ConvertToNormType(RepType::ENum);
     	                    self.BasicMixedPiFracSubAddOp(Value);
     			        }
-                #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
                         if(Value.IntValue!=0)
                             self.IntHalfSubtraction(Value.IntValue);
                         if(self.IntValue==0)
@@ -11595,11 +11631,11 @@ protected:
 	        }
         }
 
-	        #if defined(AltNum_EnableDecimaledEFractionals)
+	        #if defined(FlaggedNum_EnableDecimaledEFractionals)
         static void ENumByDivAddOp(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
-	        #elif defined(AltNum_EnableEFractional)
+	        #elif defined(FlaggedNum_EnableEFractional)
         static void EFractionalAddOp(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
@@ -11635,7 +11671,7 @@ protected:
             switch (RRep)
             {
                 case RepType::INum:
-        #if defined(AltNum_EnableDecimaledIFractionals)
+        #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv:
         #elif defined(AltNum_EnableFractionals)
                 case RepType::IFractional:
@@ -11754,15 +11790,15 @@ protected:
 		        }
         /*
             #if defined(AltNum_MixedPiOrEHasDecimaledFracAccess)
-	            #if defined(AltNum_EnableDecimaledPiFractionals)
+	            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                         case RepType::PiNumByDiv:
                 #else
                         case RepType::ENumByDiv:
                 #endif
                             //ToDo:Add more precise code here later
                             break;
-            #elif defined(AltNum_EnablePiFractional)|| defined(AltNum_EnableEFractional)
-	            #if defined(AltNum_EnablePiFractional)
+            #elif defined(FlaggedNum_EnablePiFractional)|| defined(FlaggedNum_EnableEFractional)
+	            #if defined(FlaggedNum_EnablePiFractional)
 
                 #else
 
@@ -11795,9 +11831,9 @@ protected:
                 #endif
         #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-            #elif defined(AltNum_EnableIFractional)
+            #elif defined(FlaggedNum_EnableIFractional)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
             #endif
             #if defined(AltNum_EnableMixedIFractional)
@@ -12002,15 +12038,15 @@ protected:
                 #endif
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 #endif
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
                 #endif
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-                #elif defined(AltNum_EnableDecimaledEFractionals)
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 #endif
                 #endif
@@ -12041,7 +12077,7 @@ protected:
 
                 #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableFractionals)
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -12299,13 +12335,13 @@ public:
                     break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
         #endif
-        #if defined(AltNum_EnableIFractional)
+        #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*e Representation
         #endif
                     if (DecimalHalf == rValue.DecimalHalf)
@@ -12320,12 +12356,12 @@ public:
                     }
                     break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (rValue/(ExtraRep*-1))*Pi Representation
-        #elif defined(AltNum_EnableDecimaledEFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(rValue/(ExtraRep*-1))*e Representation
-        #elif defined(AltNum_EnableDecimaledIFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(rValue/(ExtraRep*-1))*e Representation
         #endif
                     if (ExtraRep == rValue.ExtraRep)
@@ -12591,7 +12627,7 @@ protected:
                 self.ConvertToNormType(RepType::);
                 self.BasicMixedEFracSubOp(Value);
                 #else
-                #if defined(AltNum_EnablePiFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
                 if (self.DecimalHalf == 0)//Result is PiFractional
                 {
                     int divisor = -Value.ExtraRep;
@@ -12618,7 +12654,7 @@ protected:
                     self.ConvertToNormType(RepType::);
                     self.BasicMixedPiFracSubOp(Value);
                 }
-                #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
+                #elif defined(FlaggedNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
                 if (Value.IntValue != 0)
                     self.IntHalfSubtraction(Value.IntValue);
                 if (self.IntValue == 0)
@@ -12668,7 +12704,7 @@ protected:
                 self.ConvertENumToNum();
                 self.BasicMixedPiFracSubOp(Value); return;
                 #else
-                #if defined(AltNum_EnableEFractional)
+                #if defined(FlaggedNum_EnableEFractional)
                 if (self.DecimalHalf == 0)//Result is EFractional
                 {
                     int divisor = -Value.ExtraRep;
@@ -12695,7 +12731,7 @@ protected:
                     self.ConvertENumToNum();
                     self.BasicMixedEFracSubOp(Value);
                 }
-                #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
+                #elif defined(FlaggedNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
                 if (Value.IntValue != 0)
                     self.IntHalfSubtraction(Value.IntValue);
                 if (self.IntValue == 0)
@@ -12731,7 +12767,7 @@ protected:
             switch (RRep)
             {
             case RepType::INum:
-                #if defined(AltNum_EnableDecimaledIFractionals)
+                #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
                 #elif defined(AltNum_EnableFractionals)
             case RepType::IFractional:
@@ -12852,15 +12888,15 @@ protected:
                 break;
                 /*
                 #if defined(AltNum_MixedPiOrEHasDecimaledFracAccess)
-                #if defined(AltNum_EnableDecimaledPiFractionals)
+                #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv:
                 #else
                 case RepType::ENumByDiv:
                 #endif
                 //ToDo:Add more precise code here later
                 break;
-                #elif defined(AltNum_EnablePiFractional)|| defined(AltNum_EnableEFractional)
-                #if defined(AltNum_EnablePiFractional)
+                #elif defined(FlaggedNum_EnablePiFractional)|| defined(FlaggedNum_EnableEFractional)
+                #if defined(FlaggedNum_EnablePiFractional)
 
                 #else
 
@@ -12894,22 +12930,22 @@ protected:
         }
         #endif
 
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
         static void PiNumByDivRtRSubtraction(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
         #endif
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
         static void PiFractionalRtRSubtraction(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
         static void EFractionalRtRSubtraction(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
         #endif
-        #if defined(AltNum_EnableDecimaledPiOrEFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiOrEFractionals)
         static void PiOrEByDivSubtraction(RepType RRep, FlaggedDec& self, FlaggedDec& Value)
         {
         }
@@ -12930,7 +12966,7 @@ protected:
         	#if defined(AltNum_EnableImaginaryNum)
         		case RepType::INum:
         		#if defined(AltNum_EnableAlternativeRepFractionals)
-        			#if defined(AltNum_EnableDecimaledIFractionals)
+        			#if defined(FlaggedNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
         			#else
         		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -13163,15 +13199,15 @@ protected:
         #endif
         #if defined(AltNum_EnableFractionals)
         		case RepType::NumByDiv:
-            #if defined(AltNum_EnablePiFractional)
+            #if defined(FlaggedNum_EnablePiFractional)
         		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             #endif
-            #if defined(AltNum_EnableEFractional)
+            #if defined(FlaggedNum_EnableEFractional)
         		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
             #endif
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
         		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
-            #elif defined(AltNum_EnableDecimaledEFractionals)
+            #elif defined(FlaggedNum_EnableDecimaledEFractionals)
         		case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
             #endif
         #endif
@@ -13201,7 +13237,7 @@ protected:
         #endif
         #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
         		case RepType::INum:
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
             #elif defined(AltNum_EnableFractionals)
         		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -13445,13 +13481,13 @@ public:
                     break;
     #endif
     #if defined(AltNum_UsingAltFractional)
-        #if defined(AltNum_EnablePiFractional)
+        #if defined(FlaggedNum_EnablePiFractional)
                 case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
         #endif
-        #if defined(AltNum_EnableEFractional)
+        #if defined(FlaggedNum_EnableEFractional)
                 case RepType::EFractional://  IntValue/DecimalHalf*e Representation
         #endif
-        #if defined(AltNum_EnableIFractional)
+        #if defined(FlaggedNum_EnableIFractional)
                 case RepType::IFractional://  IntValue/DecimalHalf*e Representation
         #endif
                     if (DecimalHalf == rValue.DecimalHalf)
@@ -13465,12 +13501,12 @@ public:
                     }
                     break;
     #endif
-    #if defined(AltNum_EnableDecimaledAlternativeFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledAlternativeFractionals)
+        #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (rValue/(ExtraRep*-1))*Pi Representation
-        #elif defined(AltNum_EnableDecimaledEFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(rValue/(ExtraRep*-1))*e Representation
-        #elif defined(AltNum_EnableDecimaledIFractionals)
+        #elif defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(rValue/(ExtraRep*-1))*e Representation
         #endif
                     if (ExtraRep == rValue.ExtraRep)
@@ -14356,7 +14392,7 @@ public:
     #if defined(AltNum_EnableERep)
                 case RepType::ENum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledEFractionals)
+            #if defined(FlaggedNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(Value/(ExtraRep*-1))*E Representation
             #else
                 case RepType::EFractional://  IntValue/DecimalHalf*E Representation
@@ -14369,7 +14405,7 @@ public:
                 case RepType::INum:
                     break;
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -14881,7 +14917,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -14941,7 +14977,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15046,7 +15082,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15156,7 +15192,7 @@ public:
     #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15190,7 +15226,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15309,7 +15345,7 @@ public:
     #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15394,7 +15430,7 @@ public:
     #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15525,7 +15561,7 @@ public:
                     break;
                 }
         #if defined(AltNum_EnableAlternativeRepFractionals)||defined(AltNum_EnablePiPowers)
-            #if defined(AltNum_EnableDecimaledPiFractionals)
+            #if defined(FlaggedNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
             #elif defined(AltNum_EnablePiPowers)
                 case RepType::PiPower:
@@ -15686,7 +15722,7 @@ public:
     #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
-            #if defined(AltNum_EnableDecimaledIFractionals)
+            #if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
             case RepType::IFractional://  IntValue/DecimalHalf*i Representation
@@ -15777,9 +15813,9 @@ public:
         static FlaggedDec ArcTan2(FlaggedDec y, FlaggedDec x)
         {
 #if defined(AltNum_EnablePiRep)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             FlaggedDec coeff_1 = FlaggedDec(1, 0, -4);
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             FlaggedDec coeff_1 = FlaggedDec(1, 4, PiByDivisorRep);
     #else
             FlaggedDec coeff_1 = FlaggedDec(0, 250000000, PiRep);//Pi / 4;
@@ -15788,9 +15824,9 @@ public:
             FlaggedDec coeff_1 = PiNum / 4;
 #endif
 #if defined(AltNum_EnablePiRep)
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(FlaggedNum_EnableDecimaledPiFractionals)
             FlaggedDec coeff_2 = FlaggedDec(3, 0, -4);
-    #elif defined(AltNum_EnablePiFractional)
+    #elif defined(FlaggedNum_EnablePiFractional)
             FlaggedDec coeff_2 = FlaggedDec(3, 4, PiByDivisorRep);
     #else
             FlaggedDec coeff_2 = FlaggedDec(0, 750000000, PiRep);//Pi / 4;

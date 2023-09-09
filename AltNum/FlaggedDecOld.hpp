@@ -44,7 +44,7 @@
 /*
 FlaggedNum_EnableFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
-	  (functions same as having all variants of AltNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableFractionals from AltDec)
+	  (functions same as having all variants of FlaggedNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableFractionals from AltDec)
       If FlaggedNum_PreventUsageOfExtraRep is active, then functions the same as AltNum_EnableFractionals
 
 //--Infinity based preprocessors--
@@ -148,6 +148,28 @@ Automatically toggles FlaggedNum_ExtraRepIsActive
 FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus for 
                                         Approaching value and infinity representations
 
+FlaggedNum_PreventUsageOfExtraRep
+
+FlaggedNum_EnablePiFractions = Autotoggled if FlaggedNum_EnableFractionals
+    and AltNum_EnablePiRep enabled
+FlaggedNum_EnableEFractions = Autotoggled if FlaggedNum_EnableFractionals
+    and AltNum_EnableERep enabled
+FlaggedNum_EnableIFractions = Autotoggled if FlaggedNum_EnableFractionals 
+    and AltNum_EnableImaginaryNum enabled
+
+FlaggedNum_EnablePiFractional = Autotoggled if FlaggedNum_EnablePiFractions
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+FlaggedNum_EnableEFractional = Autotoggled if FlaggedNum_EnableEFractions
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+FlaggedNum_EnableIFractional = Autotoggled if FlaggedNum_EnableIFractions 
+    and FlaggedNum_PreventUsageOfExtraRep enabled
+
+FlaggedNum_EnableDecimaledPiFractionals = Autotoggled if FlaggedNum_EnablePiFractions
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
+FlaggedNum_EnableDecimaledEFractionals = Autotoggled if FlaggedNum_EnableEFractions
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
+FlaggedNum_EnableDecimaledIFractionals = Autotoggled if FlaggedNum_EnableIFractions 
+    and FlaggedNum_PreventUsageOfExtraRep not enabled
 */
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation
 #include "AlNumBase.hpp"
@@ -158,16 +180,39 @@ FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus
 	#endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnablePiRep) && !defined(AltNum_EnableDecimaledPiFractionals)
-    #define FlaggedNum_EnableDecimaledPiFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnablePiRep)
+    #define FlaggedNum_EnablePiFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledPiFractionals)
+        #define FlaggedNum_EnableDecimaledPiFractionals
+    #elif defined(FlaggedNum_EnablePiFractional)
+        #define FlaggedNum_EnablePiFractional
+    #endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableERep) && !defined(AltNum_EnableDecimaledEFractionals)
-    #define FlaggedNum_EnableDecimaledEFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableERep)
+    #define FlaggedNum_EnableEFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledEFractionals)
+        #define FlaggedNum_EnableDecimaledEFractionals
+    #elif defined(FlaggedNum_EnableEFractional)
+        #define FlaggedNum_EnableEFractional
+    #endif
 #endif
 
-#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableImaginaryNum) && !defined(AltNum_EnableDecimaledIFractionals)
-    #define FlaggedNum_EnableDecimaledIFractionals
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableImaginaryNum)
+    #define FlaggedNum_EnableIFractions
+    #if !defined(FlaggedNum_PreventUsageOfExtraRep) && !defined(FlaggedNum_EnableDecimaledIFractionals)
+        #define FlaggedNum_EnableDecimaledIFractionals
+    #elif defined(FlaggedNum_EnableIFractional)
+        #define FlaggedNum_EnableIFractional
+    #endif
+#endif
+
+#if defined(FlaggedNum_EnablePowers) && defined(AltNum_EnablePiRep) && !defined(FlaggedNum_EnablePiPowers)
+    #define FlaggedNum_EnablePiPowers
+#endif
+
+#if defined(FlaggedNum_EnablePowers) && defined(AltNum_EnablePiRep) && !defined(FlaggedNum_EnableEPowers)
+    #define FlaggedNum_EnableEPowers
 #endif
 
 namespace BlazesRusCode
@@ -885,19 +930,19 @@ namespace BlazesRusCode
         }
 		
 #if defined(AltNum_EnableAlternativeRepFractionals)
-	#if defined(AltNum_EnableDecimaledPiFractionals)
+	#if defined(FlaggedNum_EnableDecimaledPiFractionals)
         void SetDecimaledPiFractional(int IntHalf, int DecHalf, int Divisor)
         {
             IntValue = IntHalf; DecimalHalf = DecHalf;
             ExtraRep = -Divisor;
         }
-	#elif defined(AltNum_EnableDecimaledEFractionals)
+	#elif defined(FlaggedNum_EnableDecimaledEFractionals)
         void SetDecimaledEFractional(int IntHalf, int DecHalf, int Divisor)
         {
             IntValue = Value; DecimalHalf = 0;
             ExtraRep = -Divisor;
         }
-	#elif defined(AltNum_EnableDecimaledIFractionals)
+	#elif defined(FlaggedNum_EnableDecimaledIFractionals)
         void SetDecimaledIFractional(int IntHalf, int DecHalf, int Divisor)
         {
             IntValue = Value; DecimalHalf = 0;
@@ -1293,7 +1338,7 @@ public:
                 break;
 #endif
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledPiFractionals)
+#if defined(FlaggedNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 BasicMultOp(PiNum);
                 ExtraRep *= -1;
@@ -1332,7 +1377,7 @@ public:
                 ExtraRep = 0;
                 break;
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledEFractionals)
+#if defined(FlaggedNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 BasicMultOp(ENum);
                 ExtraRep *= -1;
@@ -1366,7 +1411,7 @@ public:
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 				if(IntValue==0&&DecimalHalf==0)
 					ExtraRep = 0
@@ -1403,7 +1448,7 @@ public:
 					ExtraRep = 0
 				break;
 #if defined(AltNum_EnableAlternativeRepFractionals)
-#if defined(AltNum_EnableDecimaledIFractionals)
+#if defined(FlaggedNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 				if(IntValue==0&&DecimalHalf==0)
 					ExtraRep = 0
@@ -3554,10 +3599,10 @@ public:
 
 					break;*/
 
-/*#if defined(AltNum_EnableDecimaledPiFractionals)
+/*#if defined(FlaggedNum_EnableDecimaledPiFractionals)
 				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 #endif
-#if defined(AltNum_EnableDecimaledEFractionals)
+#if defined(FlaggedNum_EnableDecimaledEFractionals)
 				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 #endif
 
