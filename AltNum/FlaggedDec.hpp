@@ -23,8 +23,8 @@
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 #include <bitset>
 
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
 #if defined(AltNum_EnableBoostFractionalReduction) || defined(AltNum_UseOldDivisionCode)
-#include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 #endif
 
@@ -32,52 +32,48 @@
     #include "MediumDec.hpp"
 #endif
 
+#include <type_traits>
+#include <cstddef>
+#include <concepts>//C++20 feature
+#include <compare>//used for C++20 feature of spaceship operator
 #include "AltNumModChecker.hpp"
 //Preprocessor options
 /*
-FlaggedNum_EnableByDecimaledFractionals =
+FlaggedNum_EnableFractionals =
       Enables fractional representations in attempt to preserve more accuracy during operations
-	  (functions same as having all variants of AltNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableByDecimaledFractionals from AltDec)
+	  (functions same as having all variants of AltNum_EnableDecimaledAlternativeFractionals active as well as AltNum_EnableFractionals from AltDec)
+      If FlaggedNum_PreventUsageOfExtraRep is active, then functions the same as AltNum_EnableFractionals
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
       When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
 AltNum_EnableApproachingValues
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
-	  When DecimalHalf is -2147483647 and ExtraRep==-1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
-AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
-AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
-AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
+	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
+AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implemented)
+AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implemented)
+AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implemented)
 AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
 	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
 	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
 	(Assumes AltNum_EnableInfinityRep is enabled)
-	(Partially Implimented)
-
-
-AltNum_EnableInfinityPowers =
-      Allows powers of infinity for operations where infinity is somehow more infinite than normal
-      (Not Implimented)
+	(Partially Implemented)
 
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 
-//--
-
-//----
-
 AltNum_EnableNaN =
-      Enable NaN based representations and operations(Not Fully Implimented)
+      Enable NaN based representations and operations(Not Fully Implemented)
 
 AltNum_EnableHigherPrecisionPiConversion =
-      (Not Implimented)
+      (Not Implemented)
 	  
 AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)
-      (Not Implimented Yet)
+      (Not Implemented Yet)
 	  
-AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully implimented)
+AltNum_DisableInfinityRepTypeReturn = Disables infinity variables while allowing approaching variables to function(Not fully Implemented)
 
 AltNum_DisablePiRep =
       Force toggles AltNum_EnablePiRep to off
@@ -90,15 +86,15 @@ AltNum_EnablePiRep =
         (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*Pi))
       Otherwise represents Pi within format of
          If DecimalHalf is positive and ExtraRep is -2147483647,
-         then FlaggedDec represents +- 2147483647.999999999 * Pi (Not Fully Implimented)
+         then FlaggedDec represents +- 2147483647.999999999 * Pi (Not Fully Implemented)
          If DecimalHalf is positive and and ExtraRep is between AlternativeFractionalLowerBound and 0,
          then FlaggedDec represents (+- 2147483647.999999999 * Pi)/(ExtraRep*-1)
-	  (Not Fully Implimented--Enabled by default if AltNum_DisablePiRep not set)
+	  (Not Fully Implemented--Enabled by default if AltNum_DisablePiRep not set)
 
 FlaggedNum_EnableMixedFractional =
       If DecimalHalf is negative and ExtraRep is Positive,
       then FlaggedDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
-      (Not Fully Implimented)
+      (Not Fully Implemented)
 
 AltNum_EnableERep =
       If AltNum_UseMediumDecBasedRepresentations enabled, then
@@ -109,14 +105,14 @@ AltNum_EnableERep =
        represents +- 2147483647.999999999 * e
     If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
         represents (+- 2147483647.999999999 * e)/(ExtraRep*-1)
-      (Not Fully Implimented)
+      (Not Fully Implemented)
 
 AltNum_EnableImaginaryNum =
       If DecimalHalf is positive and ExtraRep is -2147483647, then
       represents +- 2147483647.999999999i
       If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
       represents (+- 2147483647.999999999i)/(ExtraRep*-1)
-      (Not Fully Implimented--Giving lesser priority to finish unless I need to use)
+      (Not Fully Implemented--Giving lesser priority to finish unless I need to use)
 
 AltNum_EnablePrivateRepType =
       Sets GetRepType code to be private instead of public
@@ -129,7 +125,7 @@ AltNum_EnableUndefinedButInRange = Enable representation of unknown number betwe
 ----===============================================================================================================
 
 AltNum_OutputTruncatedTrailingDigits =
-    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implimented yet)
+    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
 	(Impliment this before work to making working version with trailing digits such as for MixedDec (fixedpoint combined with floating point implimentations of decimal-like format classes)
 
 AltNum_UseOldDivisionCode
@@ -142,78 +138,33 @@ AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 FlaggedNum_UseBitset = Use bitset instead of unsigned byte value(pseudo-bitset)
 
 ExtraRep value is used only if:
-FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional
+FlaggedNum_EnableFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional
 are enabled
-Automatically toggles FlaggedNum_ExtraRepIsInactive.
+Automatically toggles FlaggedNum_ExtraRepIsActive
 
 FlaggedNum_UseFlagForInfinitesimalRep = Use flag values instead of DecimalStatus for 
                                         Approaching value and infinity representations
 
 */
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation
-#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
-#endif
+#include "AlNumBase.hpp"
 
-#if defined(FlaggedNum_TogglePreferedSettings)
-    //#define AltNum_EnablePiRep//Automatically on unless toggled off with AltNum_DisablePiRep
-    #define AltNum_EnableInfinityRep
-	#define AltNum_EnableApproachingDivided
-	#define FlaggedNum_EnableByDecimaledFractionals
-#endif
-
-#if defined(AltNum_EnableImaginaryInfinity)
-	#if !defined(AltNum_EnableImaginaryNum)//Prevent redefinition warning
-		#define AltNum_EnableImaginaryNum
-	#endif
-	#if !defined(AltNum_EnableInfinityRep)//Prevent redefinition warning
-		#define AltNum_EnableInfinityRep
-	#endif
-#endif
-
-//Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
-#if defined(AltNum_EnableApproachingDivided)
-	#if !defined(AltNum_EnableInfinityRep)//Prevent redefinition warning
-		#define AltNum_EnableInfinityRep
-	#endif
-	#if !defined(AltNum_EnableApproachingValues)//Prevent redefinition warning
-		#define AltNum_EnableApproachingValues
-	#endif
-#endif
-
-#if defined(AltNum_AvoidUsingLargeInt)
-#undef AltNum_UseOldDivisionCode
-#endif
-
-#if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
-    #undef AltNum_DisablePiRep
-#endif
-
-//Force enable Pi features if near Pi enabled
-#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
-#endif
-
-#if defined(AltNum_EnableENum) && (defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnablePiPowers))
-    #undef AltNum_EnableENum
-#endif
-
-#if defined(AltNum_EnableApproachingPi) && !defined(AltNum_EnablePiRep)
-    #undef AltNum_EnableApproachingPi
-#endif
-
-#if defined(AltNum_EnableApproachingE) && !defined(AltNum_EnableERep)
-    #undef AltNum_EnableApproachingE
-#endif
-
-#if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-    #undef AltNum_EnableApproachingI
-#endif
-
-#if defined(FlaggedNum_EnableByDecimaledFractionals) || defined(FlaggedNum_EnablePowers) || defined(FlaggedNum_EnableMixedFractional) || defined(AltNum_EnableApproachingDivided) || defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI) || defined(AltNum_EnableUndefinedButInRange)
+#if defined(FlaggedNum_EnableFractionals) || defined(FlaggedNum_EnablePowers) || defined(FlaggedNum_EnableMixedFractional) || defined(AltNum_EnableApproachingDivided) || defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI) || defined(AltNum_EnableUndefinedButInRange)
 	#if !defined(FlaggedNum_ExtraRepIsActive)//Prevent redefinition warning
 		#define FlaggedNum_ExtraRepIsActive
 	#endif
+#endif
+
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnablePiRep) && !defined(AltNum_EnableDecimaledPiFractionals)
+    #define FlaggedNum_EnableDecimaledPiFractionals
+#endif
+
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableERep) && !defined(AltNum_EnableDecimaledEFractionals)
+    #define FlaggedNum_EnableDecimaledEFractionals
+#endif
+
+#if defined(FlaggedNum_EnableFractionals) && defined(AltNum_EnableImaginaryNum) && !defined(AltNum_EnableDecimaledIFractionals)
+    #define FlaggedNum_EnableDecimaledIFractionals
 #endif
 
 namespace BlazesRusCode
@@ -235,13 +186,18 @@ namespace BlazesRusCode
     /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
     /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
     /// plus support for Pi, e, i, fractionals, and infinity depending on options enabled
-	///  (If neither FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional are used
+	///  (If neither FlaggedNum_EnableFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional are used
 	///  uses 9 bytes of variable storage in class per instance)
     /// (13 bytes worth of Variable Storage inside class for each instance if ExtraRep variable used)
 	/// </summary>
+#if defined(AltNum_DisableCommonVariablesInBase)
     class DLL_API FlaggedDec
+#else
+    class DLL_API FlaggedDec: public virtual AltNumBase
+#endif
     {
     public:
+#if defined(AltNum_DisableCommonVariablesInBase)
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -252,15 +208,18 @@ namespace BlazesRusCode
         /// </summary>
         static signed _int64 const DecimalOverflowX = 1000000000;
 		
-	//private:
-	//	static signed _int64 const NegDecimalOverflowX = -1000000000;//Shouldn't need to use this variable
+    /*protected://
+        /// <summary>
+        /// The decimal overflow value * -1
+        /// </summary>
+        static signed _int64 const NegDecimalOverflowX = -1000000000;*/
 	public:
 
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
         using ldouble = long double;
-    public:
+
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
@@ -276,6 +235,7 @@ namespace BlazesRusCode
         /// Stores decimal section info and other special info
         /// </summary>
         signed int DecimalHalf;
+#endif
 		
 		//BitFlag 01 = PiRep, 02 = ERep, 03 = IRep, 04 = Fractional Rep, 05 = Power of, 06 = Mixed Fractional
 	#if !defined(FlaggedNum_UseBitset)
@@ -286,7 +246,7 @@ namespace BlazesRusCode
 		
 	#if defined(FlaggedNum_ExtraRepIsActive)
         /// <summary>
-		/// (Used exclusively for alternative representations if FlaggedNum_EnableByDecimaledFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional enabled)
+		/// (Used exclusively for alternative representations if FlaggedNum_EnableFractionals, FlaggedNum_EnablePowers, or FlaggedNum_EnableMixedFractional enabled)
         /// </summary>
         signed int ExtraRep;
 	#endif
@@ -365,7 +325,7 @@ namespace BlazesRusCode
 		//BitFlag 05 = Power of flag
 		static const unsigned char NumByPowerRep = 16;
 	#endif
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 		//BitFlag 04 = Fractional Rep
 		static const unsigned char NumByDivRep = 8;
 	#endif
@@ -377,7 +337,7 @@ namespace BlazesRusCode
 #if defined(AltNum_EnablePiRep)
         //BitFlag 01 = PiRep
 		static const unsigned char PiNumRep = 1;
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 		static const unsigned char PiNumByDivRep = 9;
 	#endif
 	#if defined(FlaggedNum_EnablePowers)
@@ -387,10 +347,10 @@ namespace BlazesRusCode
 		static const unsigned char MixedFracPiRep = 33;
 	#endif
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 		//BitFlag 02 = ERep
 		static const unsigned char ENumRep = 2;
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 		static const unsigned char ENumByDivRep = 10;
 	#endif
 	#if defined(FlaggedNum_EnablePowers)
@@ -405,7 +365,7 @@ namespace BlazesRusCode
 	#if !defined(FlaggedNum_UseBitset)
 		static const unsigned char INumRep = 4;
 	#endif
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 		static const unsigned char INumByDivRep = 11;
 	#endif
 	#if defined(FlaggedNum_EnableMixedFractional)
@@ -462,22 +422,22 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnablePowers)
             PiPower = 17,//with flag 05, and 01 active
 	#endif
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
 	#endif
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
             ENum = 2,//with flag 02 active
 	#if defined(FlaggedNum_EnablePowers)
             EPower = 18,//with flag 05, and 02 active
 	#endif
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
             ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             INum = 4,//with flag 03 active
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
             INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
 	#endif
 #endif
@@ -532,7 +492,10 @@ namespace BlazesRusCode
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange = 130,//(Enum Bits:8, 2)
 #endif
-            UnknownType = 136//(Enum Bits:8, 4)
+    #if defined(AltNum_EnableNilRep)
+            Nil = 131,
+    #endif
+            UnknownType = 132
         };
 
 		static std::string RepTypeAsString(RepType& repType)
@@ -541,7 +504,7 @@ namespace BlazesRusCode
 			{
 				case RepType::NormalType:
 					return "NormalType"; break;
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 				case RepType::NumByDiv:
 					return "NumByDiv"; break;
 	#endif
@@ -552,7 +515,7 @@ namespace BlazesRusCode
 				case RepType::PiPower:
 					return "PiPower"; break;
 		#endif
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 					return "PiNumByDiv"; break;
 		#endif
@@ -560,7 +523,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					return "ENum"; break;
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 					return "ENumByDiv"; break;
 		#endif
@@ -568,7 +531,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableImaginaryNum)
 				case RepType::INum:
                     return "INum"; break;
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 					return "INumByDiv"; break;
 		#endif
@@ -768,7 +731,7 @@ namespace BlazesRusCode
 	#endif
 						return RepType::NormalType;
 						break;
-	#if defined(FlaggedNum_EnableByDecimaledFractionals)
+	#if defined(FlaggedNum_EnableFractionals)
 					case NumByDivRep:
 						return RepType::NumByDiv;
 						break;
@@ -787,7 +750,7 @@ namespace BlazesRusCode
 					case PiNumRep:
 						return RepType::PiNum;
 						break;
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 					case PiNumByDivRep:
 						return RepType::PiNumByDiv;
 						break;
@@ -807,7 +770,7 @@ namespace BlazesRusCode
 					case ENumRep:
 						return RepType::ENum;
 						break;
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 					case ENumByDivRep:
 						return RepType::ENumByDiv;
 						break;
@@ -827,7 +790,7 @@ namespace BlazesRusCode
 					case INumRep:
 						return RepType::INum;
 						break;
-		#if defined(FlaggedNum_EnableByDecimaledFractionals)
+		#if defined(FlaggedNum_EnableFractionals)
 					case INumByDivRep:
 						return RepType::INumByDiv;
 						break;
@@ -957,7 +920,7 @@ namespace BlazesRusCode
             ExtraRep = PiRep;
         }
 	#endif
-	#if defined(AltNum_EnableENum)
+	#if defined(AltNum_EnableERep)
         void SetEFractional(int Num, int Divisor)//IntValue/DecimalHalf*e Representation
         {
             IntValue = Num; DecimalHalf = Divisor;
@@ -1269,7 +1232,7 @@ public:
 		}
 #endif
 
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
         void ConvertEToNum()
         {
             BasicMultOp(ENum);
@@ -1372,7 +1335,7 @@ public:
                 BasicIntDivOp(ExtraRep);
                 ExtraRep = 0;
                 break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
             case RepType::ENum:
                 BasicMultOp(ENum);
                 ExtraRep = 0;
@@ -1574,7 +1537,7 @@ private:
         
         static MediumDecVariant EValue()
         {
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
             return MediumDecVariant(1, 0, ERep);
 #else
             return MediumDecVariant(2, 718281828, 0);
@@ -2607,7 +2570,7 @@ public:
 		//For Imaginary number based mixed fractions
 		void MixedIFracRtRAddOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-			throw "Imaginary MixedFraction operation code not implimented yet";
+			throw "Imaginary MixedFraction operation code not Implemented yet";
 		}
 #endif
 #endif
@@ -2624,7 +2587,7 @@ public:
 		//For Imaginary number based mixed fractions
 		void MixedIFracRtRSubOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-			throw "Imaginary MixedFraction operation code not implimented yet";
+			throw "Imaginary MixedFraction operation code not Implemented yet";
 		}
 #endif
 #endif
@@ -2643,7 +2606,7 @@ public:
 		//For Imaginary number based mixed fractions
 		void MixedIFracRtRMultOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-			throw "Imaginary MixedFraction operation code not implimented yet";
+			throw "Imaginary MixedFraction operation code not Implemented yet";
 		}
 #endif
 #endif
@@ -2660,7 +2623,7 @@ public:
 		//For Imaginary number based mixed fractions
 		void MixedIFracRtRDivOp(RepType& LRep, RepType& RRep, MediumDecVariant& self, MediumDecVariant& Value)
 		{
-			throw "Imaginary MixedFraction operation code not implimented yet";
+			throw "Imaginary MixedFraction operation code not Implemented yet";
 		}
 #endif
 #endif
@@ -2928,7 +2891,7 @@ public:
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableENum)
+#elif defined(AltNum_EnableERep)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -2995,7 +2958,7 @@ public:
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableENum)
+#elif defined(AltNum_EnableERep)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3149,7 +3112,7 @@ public:
                 throw "Can't convert MediumDecVariant into complex number at moment";
             }
             else if(self.ExtraRep>0)
-#elif defined(AltNum_EnableENum)
+#elif defined(AltNum_EnableERep)
             else if(self.ExtraRep==IERep)
             {
             }
@@ -3479,7 +3442,7 @@ public:
 					self.PartialMultOp(PiNum);
 					break;		
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					self.PartialMultOp(Value);
 					self.PartialMultOp(ENum);
@@ -3507,13 +3470,13 @@ public:
 #if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::MixedE:
 #endif
 #if defined(AltNum_EnableImaginaryNum)
 				case RepType::MixedI:
 #endif
-					throw "BasicMixedMultOp code not implimented yet";//self.BasicMixedMultOp(Value);
+					throw "BasicMixedMultOp code not Implemented yet";//self.BasicMixedMultOp(Value);
 					break;
 #endif
 
@@ -3594,7 +3557,7 @@ public:
 #if defined(AltNum_EnablePiRep)
 				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
 #endif
 
@@ -3614,11 +3577,11 @@ public:
 #if defined(AltNum_EnablePiNum)
 				case RepType::MixedPi:
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
 				case RepType::MixedE:
 #endif
 #endif
-					throw "BasicMixedMultOp code not implimented yet";
+					throw "BasicMixedMultOp code not Implemented yet";
 					break;*/
 #endif
 
@@ -3631,7 +3594,7 @@ public:
 
 					break;
 				case RepType::MixedI:
-					throw "BasicMixedMultOp code not implimented yet";
+					throw "BasicMixedMultOp code not Implemented yet";
 					break;*/
 #endif
 
@@ -3969,7 +3932,7 @@ public:
             {
                 self.PartialIntDivOp(Value);
             }
-#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
+#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableERep)
             else if (self.ExtraRep == IERep)
             {
             }
@@ -3980,7 +3943,7 @@ public:
             {
                 self.ExtraRep *= Value;
             }
-#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableENum)
+#if defined(AltNum_EnableImaginaryNum) || defined(AltNum_EnableERep)
             else
             {
 
@@ -5664,7 +5627,7 @@ public:
                 Value.ConvertPiToNum();//return CeilInt(Value.ConvertPiToNum());
                 break;
             }
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
             case RepType::ENum:
 #if defined(AltNum_EnableByDecimaledFractionals)
             case RepType::ENumByDiv:
@@ -6355,7 +6318,7 @@ public:
 #if defined(AltNum_EnableByDecimaledFractionals)
                 case RepType::NumByDiv:
                     return FractionalPow(value, MediumDecVariant(expValue.IntValue, expValue.DecimalHalf), expValue.ExtraRep);
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
                 case RepType::ENumByDiv:
                     return FractionalPow(value, value.ExtraRep*-1);
                     break;
@@ -6469,7 +6432,7 @@ public:
             default:
                 if(value.ExtraRep==PiRep)
                     ConvertPiToNum();
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
@@ -6666,7 +6629,7 @@ public:
             default:
                 if(value.ExtraRep==PiRep)
                     ConvertPiToNum();
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
@@ -6815,7 +6778,7 @@ public:
             default:
                 if(value.ExtraRep==PiRep)
                     ConvertPiToNum();
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
                 else if(value.ExtraRep<0)
                     ConvertEToNum();
 #endif
@@ -7225,7 +7188,7 @@ public:
 #if defined(AltNum_EnablePiRep)
             case RepType::RepType::PiNum:
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
             case RepType::RepType::ENum:
 #if defined(AltNum_EnableByDecimaledFractionals)
             case RepType::RepType::ENumByDiv:
@@ -7510,7 +7473,7 @@ public:
         case RepType::NaN:
             return "NaN";
 #endif
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
         case RepType::ENum:
 #if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
@@ -7573,7 +7536,7 @@ public:
         case RepType::PiNum:
             Value += "Pi";
             break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
         case RepType::ENum:
             Value += "e";
             break;
@@ -7630,7 +7593,7 @@ public:
 #endif
             break;
 /*
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
         case RepType::ENum:
 #if defined(AltNum_EnableByDecimaledFractionals)
         case RepType::ENumByDiv:
@@ -7690,7 +7653,7 @@ public:
         case RepType::PiNum:
             Value += "Pi";
             break;
-#if defined(AltNum_EnableENum)
+#if defined(AltNum_EnableERep)
         case RepType::ENum:
             Value += "e";
             break;
