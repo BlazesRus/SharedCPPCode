@@ -345,6 +345,8 @@ namespace BlazesRusCode
         #endif
         }
 
+    public:
+        #pragma region Const Representation value
     #if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
 		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
@@ -457,6 +459,11 @@ namespace BlazesRusCode
         //Is NaN when DecimalHalf==2147483646
         static const signed int UndefinedRep = 2147483646;
 #endif
+
+        #pragma endregion Const Representation values
+        /// <summary>
+        /// Enum representing value type stored
+        /// </summary>
         enum class RepType: int
         {
             NormalType = 0,
@@ -466,7 +473,7 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnablePowers)
             PiPower = 17,//with flag 05, and 01 active
 	#endif
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnablePiFractions)
 			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
 	#endif
 #endif
@@ -475,13 +482,13 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnablePowers)
             EPower = 18,//with flag 05, and 02 active
 	#endif
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnableEFractions)
             ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             INum = 4,//with flag 03 active
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnableIFractions)
             INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
 	#endif
 #endif

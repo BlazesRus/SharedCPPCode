@@ -657,7 +657,7 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnablePowers)
             PiPower = 17,//with flag 05, and 01 active
 	#endif
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnablePiFractions)
 			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
 	#endif
 #endif
@@ -666,13 +666,13 @@ namespace BlazesRusCode
 	#if defined(FlaggedNum_EnablePowers)
             EPower = 18,//with flag 05, and 02 active
 	#endif
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnableEFractions)
             ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryNum)
             INum = 4,//with flag 03 active
-	#if defined(FlaggedNum_EnableFractionals)
+	#if defined(FlaggedNum_EnableIFractions)
             INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
 	#endif
 #endif
@@ -750,7 +750,7 @@ namespace BlazesRusCode
 				case RepType::PiPower:
 					return "PiPower"; break;
 		#endif
-		#if defined(FlaggedNum_EnableDecimaledPiFractionals)
+		#if defined(FlaggedNum_EnablePiFractions)
 				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 					return "PiNumByDiv"; break;
 		#endif
@@ -758,7 +758,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableERep)
 				case RepType::ENum:
 					return "ENum"; break;
-		#if defined(FlaggedNum_EnableDecimaledEFractionals)
+		#if defined(FlaggedNum_EnableEFractions)
 				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 					return "ENumByDiv"; break;
 		#endif
@@ -766,7 +766,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableImaginaryNum)
 				case RepType::INum:
                     return "INum"; break;
-		#if defined(FlaggedNum_EnableDecimaledIFractionals)
+		#if defined(FlaggedNum_EnableIFractions)
 				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 					return "INumByDiv"; break;
 		#endif
@@ -985,7 +985,7 @@ namespace BlazesRusCode
 					case PiNumRep:
 						return RepType::PiNum;
 						break;
-		#if defined(FlaggedNum_EnableFractionals)
+		#if defined(FlaggedNum_EnablePiFractions)
 					case PiNumByDivRep:
 						return RepType::PiNumByDiv;
 						break;
@@ -1005,7 +1005,7 @@ namespace BlazesRusCode
 					case ENumRep:
 						return RepType::ENum;
 						break;
-		#if defined(FlaggedNum_EnableFractionals)
+		#if defined(FlaggedNum_EnableEFractions)
 					case ENumByDivRep:
 						return RepType::ENumByDiv;
 						break;
@@ -1025,7 +1025,7 @@ namespace BlazesRusCode
 					case INumRep:
 						return RepType::INum;
 						break;
-		#if defined(FlaggedNum_EnableFractionals)
+		#if defined(FlaggedNum_EnableIFractions)
 					case INumByDivRep:
 						return RepType::INumByDiv;
 						break;
@@ -1049,23 +1049,27 @@ namespace BlazesRusCode
         void SetPiValFromMediumDec(MediumDec Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-            ExtraRep = PiRep;
+            FlagsActive = PiRep; ExtraRep = 0;
+        }
+        #endif
+        #if defined(AltNum_EnableAltDecBasedSetValues)
+        void SetPiValFromMediumDec(AltDec Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            FlagsActive = PiRep; ExtraRep = 0;
         }
         #endif
 
-        void SetPiVal(const FlaggedDec& Value)
+        void SetPiVal(const FlaggedDec& rValue)
         {
-            if(ExtraRep==0)
-            {
-                IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                ExtraRep = PiRep;
-            }
+            IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+            FlagsActive = PiRep; ExtraRep = 0;
         }
         
-        void SetPiVal(int Value)
+        void SetPiVal(int rValue)
         {
-            IntValue = Value; DecimalHalf = 0;
-            ExtraRep = PiRep;
+            IntValue = rValue; DecimalHalf = 0;
+            FlagsActive = PiRep; ExtraRep = 0;
         }
     #endif
     #pragma endregion PiNum Setters
@@ -1076,23 +1080,27 @@ namespace BlazesRusCode
         void SetEValFromMediumDec(const MediumDec& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-            ExtraRep = ERep;
+            FlagsActive = ERep; ExtraRep = 0;
+        }
+        #endif
+        #if defined(AltNum_EnableMediumDecBasedSetValues)
+        void SetEValFromMediumDec(const AltDec& Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            FlagsActive = ERep; ExtraRep = 0;
         }
         #endif
 
         void SetEVal(const FlaggedDec& Value)
         {
-            if(ExtraRep==0)
-            {
-                IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
-                ExtraRep = ERep;
-            }
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            FlagsActive = ERep; ExtraRep = 0;
         }
         
         void SetEVal(int Value)
         {
             IntValue = Value; DecimalHalf = 0;
-            ExtraRep = ERep;
+            FlagsActive = ERep; ExtraRep = 0;
         }
     #endif
     #pragma endregion ENum Setters
