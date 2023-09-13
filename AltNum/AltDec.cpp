@@ -289,15 +289,15 @@ using RepType = BlazesRusCode::AltDec::RepType;
 				int DecimalPart = DecimalOverflowX/ExtraRep;//ToDo:check for truncated digits later
 				return IntHalfAsString()+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalPart)+"0..1i";
 			}
-                #endif
+            #endif
 				break;
 		#endif
     #endif
         #if defined(AltNum_EnableNaN)
             case RepType::Undefined:
-                return "Undefined";
+                return "Undefined"; break;
             case RepType::NaN:
-                return "NaN";
+                return "NaN"; break;
         #endif
         #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             case UndefinedButInRange:
@@ -311,7 +311,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
         #endif
         #if defined(AltNum_EnableNilRep)
             case RepType::Nil:
-                return "Nil";
+                return "Nil"; break;
         #endif
             default:
                 ConvertToNormType(repType);
@@ -531,7 +531,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
 				int DecimalPart = DecimalOverflowX/ExtraRep;//ToDo:check for truncated digits later
 				return IntHalfAsString()+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalPart)+"0..1i";
 			}
-                #endif
+            #endif
 				break;
 		#endif
     #endif
@@ -559,9 +559,9 @@ using RepType = BlazesRusCode::AltDec::RepType;
 		#endif
 		#if defined(AltNum_EnableNaN)
 			case RepType::Undefined:
-				return "Undefined";
+				return "Undefined"; break;
 			case RepType::NaN:
-				return "NaN";
+				return "NaN"; break;
 		#endif
 		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
 			case UndefinedButInRange:
@@ -575,7 +575,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
 		#endif
 		#if defined(AltNum_EnableNilRep)
 			case RepType::Nil:
-				return "Nil";
+				return "Nil"; break;
 		#endif
 			default:
 				ConvertToNormType(repType);

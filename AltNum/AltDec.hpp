@@ -768,8 +768,10 @@ namespace BlazesRusCode
         #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingMidLeft:
                     return "ApproachingMidLeft"; break;
+			#if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidRight:
                     return "ApproachingMidRight"; break;
+			#endif
         #endif
     #endif
     #if defined(AltNum_EnableNaN)
@@ -2879,13 +2881,10 @@ public:
         #endif
     #endif
 #endif
-#if defined(AltNum_EnablePiRep)
+	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 ConvertPiToNum(); break;
-    #if defined(AltNum_EnablePiPowers)
-            case RepType::PiPower:
-                ConvertPiPowerToNum(); break;
-    #endif
+	#endif
     #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 ConvertPiByDivToNorm(); break;
@@ -2893,20 +2892,23 @@ public:
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
                 ConvertPiFracToNorm(); break;
     #endif
-#endif
-    #if defined(AltNum_EnableERep)
+    #if defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                ConvertPiPowerToNum(); break;
+    #endif
+	#if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
-#if defined(AltNum_EnableDecimaledEFractionals)
+	#endif
+	#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 ConvertEByDivToNorm(); break;
-#elif defined(AltNum_EnableEFractional)
+	#elif defined(AltNum_EnableEFractional)
             case RepType::EFractional://IntValue/DecimalHalf*e Representation
                 ConvertEFracToNorm(); break;
-#endif
-#endif
+	#endif
 
-#if defined(AltNum_EnableMixedFractional)
+	#if defined(AltNum_EnableMixedFractional)
             case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
             {
                 AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
@@ -2918,7 +2920,35 @@ public:
                 ExtraRep = 0;
             }
             break;
-#endif
+	#endif
+	#if defined(AltNum_EnableMixedPiFractional)
+            case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+            {
+                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
+                Res /= -ExtraRep;
+                if (IntValue != 0 && IntValue != NegativeRep)
+                    Res += IntValue;
+				Res *= PiNum;
+                IntValue = Res.IntValue;
+                DecimalHalf = Res.DecimalHalf;
+                ExtraRep = 0;
+            }
+            break;
+	#endif
+	#if defined(AltNum_EnableMixedEFractional)
+            case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+            {
+                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
+                Res /= -ExtraRep;
+                if (IntValue != 0 && IntValue != NegativeRep)
+                    Res += IntValue;
+				Res *= ENum;
+                IntValue = Res.IntValue;
+                DecimalHalf = Res.DecimalHalf;
+                ExtraRep = 0;
+            }
+            break;
+	#endif
 #if defined(AltNum_EnableImaginaryNum)
             case RepType::INum:
     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5358,10 +5388,10 @@ protected:
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-                #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-                #endif
+                #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				#endif
         #endif
                 {
                     ConvertToNormType(LRep);
@@ -5383,10 +5413,10 @@ protected:
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-            #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-            #endif
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+			#endif
         #endif
                 {
                     ConvertToNormalIRep(LRep);
@@ -5640,10 +5670,10 @@ protected:
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                #endif
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+            #endif
         #endif
                 {
                     ConvertToNormType(LRep);
@@ -5663,10 +5693,10 @@ protected:
                 case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-            #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-            #endif
+            #if !defined(AltNum_DisableApproachingTop)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+			#endif
         #endif
                 {
                     ConvertToNormalIRep(LRep);
@@ -6150,7 +6180,7 @@ protected:
                     }
                     else
                         CatchAllUIntMultiplication(rValue, LRep);
-                }
+				}
                 break;
             #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
@@ -6410,6 +6440,7 @@ protected:
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				{
                     if(IntValue==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
@@ -6440,6 +6471,8 @@ protected:
                     }
                     else
                         CatchAllUIntMultiplication(rightSideValue, LRep);
+				}
+				break;
                 #endif
         #endif
     #endif
@@ -6993,8 +7026,10 @@ protected:
     #endif
     #endif
     #if defined(AltNum_EnableApproachingDivided)
+	        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+
             case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-            case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+
     #endif
     #if defined(AltNum_EnableNearPi)
             case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
@@ -7052,8 +7087,10 @@ protected:
             case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
             case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+
+            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+
     #endif
 
     #if defined(AltNum_EnableNearPi)
@@ -7109,8 +7146,10 @@ protected:
             case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
             case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+
+            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+
     #endif
 
     #if defined(AltNum_EnableNearPi)
@@ -11610,12 +11649,12 @@ protected:
         }
 	        #endif
 	        #if defined(AltNum_EnableApproachingDivided)
-        static void ApproachingMidRightAddOp(RepType RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidLeftAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 
 		        #if !defined(AltNum_DisableApproachingTop)
-        static void ApproachingMidLeftAddOp(RepType RRep, AltDec& self, AltDec& Value)
+        static void ApproachingMidRightAddOp(RepType RRep, AltDec& self, AltDec& Value)
         {
         }
 		        #endif
