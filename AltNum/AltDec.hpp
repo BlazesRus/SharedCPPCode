@@ -212,7 +212,10 @@ AltNum_StoreBasicFunctionsInBase
 AltNum_StoreConstVariablesInBase
 
 AltNum_UsePositiveInfinityRep
-
+AltNum_AllowOverflowRep = Allow representation of numbers greator than 2147483647.999999999 and smaller than -2147483647.999999999
+	If AltNum_EnableFractionals is disabled, represents numbers 2147483647.999999999 x 10^ExtraRep with the smallest digits truncated for each value above normal limit
+	If AltNum_EnableFractionals is enabled and negative ExtraRep values are not used for any representation, represents numbers 2147483647.999999999 x 10^-ExtraRep with similar above truncation
+	(Not Implimented)
 */
 
 #if !defined(AltNum_DisableAltDecDefaultToggles)
