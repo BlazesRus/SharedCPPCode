@@ -96,6 +96,16 @@ public:
 			TrailingDigits = trailingDigits;
         }
 		
+        void SetAsZero()
+        {
+            IntValue = 0;
+            DecimalHalf = 0;
+	#if defined(MixedDec_DeriveFromAltDec)
+			ExtraRep = 0;
+	#endif
+			TrailingDigits = 0.0f;	
+        }
+		
 protected:
 
     #pragma region Const Representation values

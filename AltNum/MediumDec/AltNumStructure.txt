@@ -55,6 +55,11 @@ namespace BlazesRusCode
 
     #pragma endregion Const Representation values
 
+    #pragma region RepType
+
+    #pragma endregion RepType
+
+public:
     #pragma region PiNum Setters
 
     #pragma endregion PiNum Setters
