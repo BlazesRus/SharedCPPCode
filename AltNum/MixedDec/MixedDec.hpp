@@ -106,6 +106,10 @@ public:
 			TrailingDigits = 0.0f;	
         }
 		
+    #pragma region RepType
+
+    #pragma endregion RepType
+
 protected:
 
     #pragma region Const Representation values
@@ -167,6 +171,38 @@ protected:
     #pragma region Other RepType Conversion
 
     #pragma endregion Other RepType Conversion
+
+    #pragma region NormalRep Integer Division Operations
+
+    #pragma endregion NormalRep Integer Division Operations
+
+    #pragma region NormalRep Integer Multiplication Operations
+
+    #pragma endregion NormalRep Integer Multiplication Operations
+
+    #pragma region NormalRep Integer Addition Operations
+
+    #pragma endregion NormalRep Integer Addition Operations
+
+    #pragma region NormalRep Integer Subtraction Operations
+
+    #pragma endregion NormalRep Integer Subtraction Operations
+
+    #pragma region NormalRep Integer Bitwise Operations
+
+	#pragma endregion NormalRep Integer Bitwise Operations
+
+    #pragma region Mixed Fraction Operations
+
+    #pragma endregion Mixed Fraction Operations
+
+	#pragma region NormalRep AltNum Division Operations
+
+	#pragma endregion NormalRep AltNum Division Operations
+
+	#pragma region NormalRep AltNum Multiplication Operations
+
+	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
 
