@@ -38,7 +38,14 @@ namespace BlazesRusCode
 	// that might mess up polymorphism functionality of the class
     class DLL_API MediumDecBase
     {
-    public:
+	public:
+
+        /// <summary>
+        /// long double (Extended precision double)
+        /// </summary>
+        using ldouble = long double;
+
+	protected:
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -49,17 +56,10 @@ namespace BlazesRusCode
         /// </summary>
         static signed _int64 const DecimalOverflowX = 1000000000;
 
-	protected:
         /// <summary>
         /// The decimal overflow value * -1
         /// </summary>
 		static signed _int64 const NegDecimalOverflowX = -1000000000;
-	public:
-
-        /// <summary>
-        /// long double (Extended precision double)
-        /// </summary>
-        using ldouble = long double;
 
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
@@ -100,7 +100,7 @@ namespace BlazesRusCode
 
 #pragma region Check_if_Zero
         //Detect if at exactly zero
-		bool IsZero() const
+		virtual bool IsZero() const
 		{
             return DecimalHalf==0&&IntValue==0;
 		}

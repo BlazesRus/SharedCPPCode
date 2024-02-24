@@ -49,15 +49,14 @@ namespace BlazesRusCode
 
 #pragma region class_constructors
 #pragma endregion class_constructors
-	protected:
+protected:
+    #pragma region RepType
+
+    #pragma endregion RepType
 
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
-
-    #pragma region RepType
-
-    #pragma endregion RepType
 
 public:
     #pragma region PiNum Setters

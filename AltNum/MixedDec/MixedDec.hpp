@@ -37,7 +37,7 @@ namespace BlazesRusCode
 	
 	//Hybrid fixed point storage with trailing digits stored as float
 	// (or optionally larger floating point models if preprocessor flag is set to toggle)
-	class DLL_API MixedDec :
+	class DLL_API MixedDec:
 #ifdef MixedDec_DeriveFromAltDec
     public virtual AltDecBase
 #else
@@ -51,6 +51,11 @@ protected:
 
 public:
 #pragma region Check_if_Zero
+        //Detect if at exactly zero
+		bool IsZero() const
+		{
+            return DecimalHalf==0&&IntValue==0&&TrailingDigits==0;
+		}
 #pragma endregion Check_if_Zero
 
 #pragma region class_constructors
@@ -106,15 +111,16 @@ public:
 			TrailingDigits = 0.0f;	
         }
 		
+protected:
     #pragma region RepType
 
     #pragma endregion RepType
 
-protected:
-
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
+
+public:
 
     #pragma region PiNum Setters
 
