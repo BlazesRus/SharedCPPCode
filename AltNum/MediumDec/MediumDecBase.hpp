@@ -115,6 +115,12 @@ namespace BlazesRusCode
         {
             return IntValue != 0 && IntValue != NegativeRep;
         }
+
+        virtual void SetAsZero()
+        {
+            IntValue = 0;
+            DecimalHalf = 0;
+        }
 #pragma endregion Check_if_Zero
 
         signed int GetIntHalf() const
@@ -188,12 +194,6 @@ namespace BlazesRusCode
             IntValue = intVal;
     #endif
             DecimalHalf = decVal;
-        }
-
-        virtual void SetAsZero()
-        {
-            IntValue = 0;
-            DecimalHalf = 0;
         }
         
         /// <summary>
@@ -359,7 +359,7 @@ public:
 	
     #pragma endregion String Commands
 
-    #pragma region From Standard types to this type
+    #pragma region ConvertFromOtherTypes
 protected:
         //Need to copy the const reference before enable this section
         /// <summary>
@@ -468,7 +468,7 @@ protected:
             IntValue = Value; DecimalHalf = 0;
         }
 
-    #pragma endregion From this type to Standard types
+    #pragma endregion ConvertFromOtherTypes
 
 protected:
     #pragma region MirroredIntBased Operations

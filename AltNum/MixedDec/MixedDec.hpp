@@ -56,6 +56,16 @@ public:
 		{
             return DecimalHalf==0&&IntValue==0&&TrailingDigits==0;
 		}
+
+        void SetAsZero()
+        {
+            IntValue = 0;
+            DecimalHalf = 0;
+	#if defined(MixedDec_DeriveFromAltDec)
+			ExtraRep = 0;
+	#endif
+			TrailingDigits = 0.0f;	
+        }
 #pragma endregion Check_if_Zero
 
 #pragma region class_constructors
@@ -99,16 +109,6 @@ public:
 			ExtraRep = extraVal;
 	#endif
 			TrailingDigits = trailingDigits;
-        }
-		
-        void SetAsZero()
-        {
-            IntValue = 0;
-            DecimalHalf = 0;
-	#if defined(MixedDec_DeriveFromAltDec)
-			ExtraRep = 0;
-	#endif
-			TrailingDigits = 0.0f;	
         }
 		
 protected:
@@ -158,9 +158,13 @@ public:
 	
     #pragma endregion String Commands
 
-    #pragma region From this type to Standard types
+    #pragma region ConvertFromOtherTypes
 
-    #pragma endregion From this type to Standard types
+    #pragma endregion ConvertFromOtherTypes
+
+    #pragma region ConvertToOtherTypes
+
+    #pragma endregion ConvertToOtherTypes
 
     #pragma region MirroredIntBased Operations
 
