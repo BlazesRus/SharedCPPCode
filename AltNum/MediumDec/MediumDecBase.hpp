@@ -89,6 +89,8 @@ namespace BlazesRusCode
 
 #pragma endregion DigitStorage
 
+public:
+
         bool IsNegative()
         {
     #if !defined(AltDec_UseMirroredInt)
@@ -123,7 +125,7 @@ namespace BlazesRusCode
         }
 #pragma endregion Check_if_Zero
 
-        signed int GetIntHalf() const
+        signed int GetIntegerPartition() const
         {
     #if defined(AltDec_UseMirroredInt)
             return IntValue.GetValue();
@@ -133,6 +135,32 @@ namespace BlazesRusCode
             else
                 return IntValue;
     #endif
+        }
+
+        void SetIntegerPartition(int intPart) const
+        {
+            IntValue = intPart;
+        }
+
+        virtual bool IsWholeNumber()
+        {
+            return DecimalHalf==0;
+        }
+
+        bool IsAtOrBelowTwo()
+        {
+            if(IntValue<=1)
+                return true;
+            else
+                return IntValue==2 && DecimalHalf==0;
+        }
+
+        bool IsAtOrBelowOne()
+        {
+            if(IntValue<=0)
+                return true;
+            else
+                return IntValue==1 && DecimalHalf==0;
         }
 
         //Return IntValue part as Absolute value

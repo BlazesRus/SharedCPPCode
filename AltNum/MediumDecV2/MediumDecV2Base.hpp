@@ -89,9 +89,9 @@ namespace BlazesRusCode
 	
     #pragma endregion String Commands
 
-    #pragma region From this type to Standard types
+    #pragma region ConvertToOtherTypes
 
-    #pragma endregion From this type to Standard types
+    #pragma endregion ConvertToOtherTypes
 
     #pragma region MirroredIntBased Operations
 
