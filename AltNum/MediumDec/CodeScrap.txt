@@ -1,0 +1,380 @@
+        /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(MediumDec LValue, MediumDec Value)
+        {
+			return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
+        }
+
+        /// <summary>
+        /// Not equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(MediumDec LValue, MediumDec Value)
+        {
+            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
+        }
+
+        /// <summary>
+        /// Lesser than Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue < Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue < Value.IntValue)
+                        return LValue.DecimalHalf < Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue < Value.IntValue)
+                return LValue.DecimalHalf < Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Lesser than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue <= Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue <= Value.IntValue)
+                        return LValue.DecimalHalf <= Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue <= Value.IntValue)
+                return LValue.DecimalHalf <= Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Greater than Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The right side value.</param>
+        /// <returns>bool</returns>
+        friend bool operator>(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue > Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue > Value.IntValue)
+                        return LValue.DecimalHalf > Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue > Value.IntValue)
+                return LValue.DecimalHalf > Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>=(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue >= Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue >= Value.IntValue)
+                        return LValue.DecimalHalf >= Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue >= Value.IntValue)
+                return LValue.DecimalHalf >= Value.DecimalHalf;
+            else
+                return false;
+        }
+		
+        /// <summary>
+        /// Equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+        template<typename IntType>
+        static bool RightSideIntEqualTo(MediumDec& LValue, IntType& RValue)
+        {
+            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
+		}
+		
+        /// <summary>
+        /// Not Equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntNotEqualTo(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.IntValue == RValue)
+                return false;
+            else
+                return true;
+		}
+		
+        /// <summary>
+        /// Less than operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+		template<typename IntType>
+        static bool RightSideIntLessThan(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue < RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Less than or Equal operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntLessThanOrEqual(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue <= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5<0
+                    if (RValue >= 0)
+                        return true;
+                }
+                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="RValue">The RValue.</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntGreaterThan(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue > RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {//-0.5>-1
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
+            }
+            return false;
+		}
+		
+        /// <summary>
+        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <param name="LValue">LeftSide MediumDec RValue</param>
+        /// <param name="RValue">RightSide integer RValue</param>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool RightSideIntGreaterThanOrEqual(MediumDec& LValue, IntType& RValue)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                return LValue.IntValue >= RValue;
+            }
+            else
+            {
+                if (LValue.IntValue == NegativeRep)
+                {
+                    if (RValue <= -1)
+                        return true;
+                }
+                else if (LValue.IntValue > RValue) { return true; }
+                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
+            }
+            return false;
+		}
+	
+        /// <summary>
+        /// Equal to operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
+	
+        /// <summary>
+        /// Not equal to operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntNotEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
+		
+        /// <summary>
+        /// Less than operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntLessThan(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
+		
+        /// <summary>
+        /// Less than or equal operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+	    template<typename IntType>
+        static bool LeftSideIntLessThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
+		
+        /// <summary>
+        /// Greater than operation between Integer Type and <see cref="MediumDec"/> 
+        /// </summary>
+        /// <returns>bool</returns>
+		template<typename IntType>
+        static bool LeftSideIntGreaterThan(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
+		
+        /// <summary>
+        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
+        /// </summary>
+        /// <returns>bool</returns>
+		template<typename IntType>
+        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
+		
+//protected:
+//        template<typename IntType>
+//        void BasicIntDivOpV2(IntType& Value)
+//        {
+//            if (IsZero())
+//                return;
+//            if (Value < 0)
+//            {
+//                Value *= -1;
+//                SwapNegativeStatus();
+//            }
+//            PartialIntDivOp(Value);
+//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//        }
+//
+//        template<typename IntType>
+//        void BasicUnsignedIntDivOpV2(IntType& Value)
+//        {
+//            if (IsZero())
+//                return;
+//            PartialIntDivOp(Value);
+//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//        }
+//public:
+//
+//		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
+//		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
+//		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
+//        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
+//
+//		static void BasicDivOpV2(MediumDec& self, signed int& Value) { self.BasicIntDivOpV2(Value); }
+//		static void BasicDivOpV2(MediumDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOpV2(Value); }
+//		static void BasicDivOpV2(MediumDec& self, signed long long& Value) { self.BasicIntDivOpV2(Value); }
+//        static void BasicDivOpV2(MediumDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOpV2(Value); }
+//
+//		MediumDec BasicDivV2(signed int Value)
+//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
+//		MediumDec BasicDivV2(unsigned int Value)
+//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+//		MediumDec BasicDivV2(signed long long Value)
+//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
+//        MediumDec BasicDivV2(unsigned long long Value)
+//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+//
+//		static MediumDec BasicDivV2(signed int Value) { self.BasicIntDivOpV2(Value); return self; }
+//		static MediumDec BasicDivV2(unsigned int Value) { self.BasicUnsignedIntDivOpV2(Value); return self; }
+//		static MediumDec BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
+//        static MediumDec BasicDivV2(unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+
+        template<typename IntType>
+        MediumDec& BasicIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            if (Value < 0)
+            {
+                Value *= -1;
+                SwapNegativeStatus();
+            }
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            return *this;
+        }
+
+        template<typename IntType>
+        MediumDec& BasicUnsignedIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            return *this;
+        }

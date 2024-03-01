@@ -1,57 +1,57 @@
-﻿#include "AltDec.hpp"
-using AltDec = BlazesRusCode::AltDec;
-using RepType = BlazesRusCode::AltDec::RepType;
+﻿#include "AltDecBase.hpp"
+using AltDecBase = BlazesRusCode::AltDecBase;
+using RepType = BlazesRusCode::AltDecBase::RepType;
 
-#if defined(AltDec_UseMirroredInt)
-	MirroredInt AltDec::NegativeRep = MirroredInt::NegativeZero;
+#if defined(AltDecBase_UseMirroredInt)
+	MirroredInt AltDecBase::NegativeRep = MirroredInt::NegativeZero;
 #endif
     #pragma region ValueDefine Source
 #if defined(AltNum_EnableApproachingValues)
-    AltDec AltDec::AlmostOne = AltDec::ApproachingRightRealValue();
+    AltDecBase AltDecBase::AlmostOne = AltDecBase::ApproachingRightRealValue();
 #endif
-    AltDec AltDec::Pi = AltDec::PiValue();
-    AltDec AltDec::One = AltDec::OneValue();
-    AltDec AltDec::Two = AltDec::TwoValue();
-    AltDec AltDec::NegativeOne = AltDec::NegativeOneValue();
-    AltDec AltDec::Zero = AltDec::ZeroValue();
-    AltDec AltDec::PointFive = AltDec::Point5Value();
-    AltDec AltDec::JustAboveZero = AltDec::JustAboveZeroValue();
-    AltDec AltDec::OneMillionth = AltDec::OneMillionthValue();
-    AltDec AltDec::FiveThousandth = AltDec::FiveThousandthValue();
-    AltDec AltDec::Minimum = AltDec::MinimumValue();
-    AltDec AltDec::Maximum = AltDec::MaximumValue();
-    AltDec AltDec::E = AltDec::EValue();
-    AltDec AltDec::LN10 = AltDec::LN10Value();
-    AltDec AltDec::LN10Mult = AltDec::LN10MultValue();
-    AltDec AltDec::HalfLN10Mult = AltDec::HalfLN10MultValue();
-    AltDec AltDec::TenMillionth = AltDec::TenMillionthValue();
-    AltDec AltDec::FiveMillionth = AltDec::FiveMillionthValue();
-    AltDec AltDec::FiveBillionth = AltDec::FiveBillionthValue();
-    AltDec AltDec::OneGMillionth = AltDec::OneHundredMillionthValue();
+    AltDecBase AltDecBase::Pi = AltDecBase::PiValue();
+    AltDecBase AltDecBase::One = AltDecBase::OneValue();
+    AltDecBase AltDecBase::Two = AltDecBase::TwoValue();
+    AltDecBase AltDecBase::NegativeOne = AltDecBase::NegativeOneValue();
+    AltDecBase AltDecBase::Zero = AltDecBase::ZeroValue();
+    AltDecBase AltDecBase::PointFive = AltDecBase::Point5Value();
+    AltDecBase AltDecBase::JustAboveZero = AltDecBase::JustAboveZeroValue();
+    AltDecBase AltDecBase::OneMillionth = AltDecBase::OneMillionthValue();
+    AltDecBase AltDecBase::FiveThousandth = AltDecBase::FiveThousandthValue();
+    AltDecBase AltDecBase::Minimum = AltDecBase::MinimumValue();
+    AltDecBase AltDecBase::Maximum = AltDecBase::MaximumValue();
+    AltDecBase AltDecBase::E = AltDecBase::EValue();
+    AltDecBase AltDecBase::LN10 = AltDecBase::LN10Value();
+    AltDecBase AltDecBase::LN10Mult = AltDecBase::LN10MultValue();
+    AltDecBase AltDecBase::HalfLN10Mult = AltDecBase::HalfLN10MultValue();
+    AltDecBase AltDecBase::TenMillionth = AltDecBase::TenMillionthValue();
+    AltDecBase AltDecBase::FiveMillionth = AltDecBase::FiveMillionthValue();
+    AltDecBase AltDecBase::FiveBillionth = AltDecBase::FiveBillionthValue();
+    AltDecBase AltDecBase::OneGMillionth = AltDecBase::OneHundredMillionthValue();
     #if defined(AltNum_EnableNilRep)
-    AltDec AltDec::Nil = AltDec::NilValue();
+    AltDecBase AltDecBase::Nil = AltDecBase::NilValue();
     #endif
 
-    AltDec AltDec::PiNum = AltDec::PiNumValue();
-    AltDec AltDec::ENum = AltDec::ENumValue();
+    AltDecBase AltDecBase::PiNum = AltDecBase::PiNumValue();
+    AltDecBase AltDecBase::ENum = AltDecBase::ENumValue();
     
 #if defined(AltNum_EnableInfinityRep)
-    AltDec AltDec::Infinity = AltDec::InfinityValue();
+    AltDecBase AltDecBase::Infinity = AltDecBase::InfinityValue();
 #endif
 #if defined(AltNum_EnableApproachingValues)
-    AltDec AltDec::NegativeInfinity = AltDec::NegativeInfinityValue();
-    AltDec AltDec::ApproachingZero = AltDec::ApproachingZeroValue();
+    AltDecBase AltDecBase::NegativeInfinity = AltDecBase::NegativeInfinityValue();
+    AltDecBase AltDecBase::ApproachingZero = AltDecBase::ApproachingZeroValue();
 #endif
 #if defined(AltNum_EnableNaN)
-    AltDec AltDec::NaN = AltDec::NaNValue();
-	AltDec AltDec::Undefined = AltDec::UndefinedValue();
+    AltDecBase AltDecBase::NaN = AltDecBase::NaNValue();
+	AltDecBase AltDecBase::Undefined = AltDecBase::UndefinedValue();
 #endif
     #pragma endregion ValueDefine Source
 	
 #if defined(AltNum_EnableImaginaryNum)
 #endif
 
-    std::string AltDec::BasicToStringOp()
+    std::string AltDecBase::BasicToStringOp()
     {
         std::string Value = IntHalfAsString();
         if (DecimalHalf != 0)
@@ -82,7 +82,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
         return Value;
     }
 
-    std::string AltDec::ToString()
+    std::string AltDecBase::ToString()
     {
         RepType repType = GetRepType();
         switch (repType)
@@ -320,7 +320,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
         }
     }
 
-    std::string AltDec::BasicToFullStringOp()
+    std::string AltDecBase::BasicToFullStringOp()
     {
         std::string Value = IntHalfAsString();
         if (DecimalHalf != 0)
@@ -348,7 +348,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
         return Value;
     }
 
-    std::string AltDec::ToFullString()
+    std::string AltDecBase::ToFullString()
     {
         RepType repType = GetRepType();
         switch (repType)

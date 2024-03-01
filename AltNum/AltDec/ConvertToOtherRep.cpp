@@ -1,29 +1,29 @@
-#include "AltDec.hpp"
-using AltDec = BlazesRusCode::AltDec;
+#include "AltDecBase.hpp"
+using AltDecBase = BlazesRusCode::AltDecBase;
 
 #if defined(AltNum_EnablePiRep)
 #if defined(AltNum_EnableDecimaledPiFractionals)
 #elif defined(AltNum_EnablePiFractional)
 #endif
 
-inline void BlazesRusCode::AltDec::ConvertPiPowerToNum()
+inline void BlazesRusCode::AltDecBase::ConvertPiPowerToNum()
 {
 	int powerExponent = -ExtraRep;
 	ExtraRep = 0;
-	AltDec PiSide = PiNum;
+	AltDecBase PiSide = PiNum;
 	PiSide.IntPowOp(powerExponent);
 	BasicMultOp(PiSide);
 }
 
-inline AltDec BlazesRusCode::AltDec::PiPowerNum(int powerExponent)
+inline AltDecBase BlazesRusCode::AltDecBase::PiPowerNum(int powerExponent)
 {
 	ExtraRep = 0;
-	AltDec PiSide = PiNum;
+	AltDecBase PiSide = PiNum;
 	PiSide.IntPowOp(powerExponent);
 	return PiSide;
 }
 
-inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
+inline void BlazesRusCode::AltDecBase::ConvertPiPowerToPiRep()
 {
 	int powerExponent = -ExtraRep;
 	if (powerExponent == 0)
@@ -33,7 +33,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 		ExtraRep = PiRep;
 		if (powerExponent != 1)
 		{
-			AltDec PiSide = PiNum;
+			AltDecBase PiSide = PiNum;
 			powerExponent -= 1;
 			PiSide.IntPowOp(powerExponent);
 			BasicMultOp(PiSide);
@@ -45,7 +45,7 @@ inline void BlazesRusCode::AltDec::ConvertPiPowerToPiRep()
 
 #if defined(AltNum_EnableERep)
 #if defined(AltNum_EnableDecimaledEFractionals)
-inline void BlazesRusCode::AltDec::ConvertEByDivToNumByDiv()
+inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 {
 	BasicIntDivOp(-ExtraRep);
 	ExtraRep = 0;
@@ -100,11 +100,11 @@ inline void BlazesRusCode::AltDec::ConvertEByDivToNumByDiv()
 		//X.Y *.V
 		__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
 		__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
-		Temp04 /= AltDec::DecimalOverflow;
+		Temp04 /= AltDecBase::DecimalOverflow;
 		//Temp04 holds __int64 version of .Y * .V
 		__int64 IntegerRep = SRep + Temp03 + Temp04;
-		__int64 IntHalf = IntegerRep / AltDec::DecimalOverflow;
-		IntegerRep -= IntHalf * (__int64)AltDec::DecimalOverflow;
+		__int64 IntHalf = IntegerRep / AltDecBase::DecimalOverflow;
+		IntegerRep -= IntHalf * (__int64)AltDecBase::DecimalOverflow;
 		DecimalHalf = (signed int)IntegerRep;
 		if(IntHalf == 0&&IsNegative)
 		{

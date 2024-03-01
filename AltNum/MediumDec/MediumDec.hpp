@@ -18,18 +18,7 @@
 #include "..\DLLAPI.h"
 #endif
 
-#include <string>
-#include <cmath>
-#include "..\OtherFunctions\VariableConversionFunctions.h"
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#if defined(AltNum_UseOldDivisionCode)
-	#include <boost/multiprecision/cpp_int.hpp>
-#endif
-
-#include "AltNumModChecker.hpp"
-
-#include "MirroredInt.hpp"
+#include "MediumDecBase.hpp"
 
 /*
 AltNum_PreventModulusOverride
@@ -37,7 +26,7 @@ AltNum_EnableAlternativeModulusResult
 */
 
 namespace BlazesRusCode
-{//"Not used for this variant" comment used as placeholder between unused regions to help with code compare between variants and keep structure similar
+{
 
     class MediumDec;
 
@@ -57,68 +46,14 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDec
+    class DLL_API MediumDec : public virtual MediumDecBase
     {
-    public:
-    #undef MediumDecVariant
-    #define MediumDecVariant MediumDec
-#if defined(AltNum_EnableAlternativeModulusResult)
-		class ModRes
-		{
-			//Division Result
-			MediumDecVariant DivRes;
-			//Modulo Operation Result
-			MediumDecVariant RemRes;
-		}
-#endif
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
-
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
-
-	protected:
-        /// <summary>
-        /// The decimal overflow value * -1
-        /// </summary>
-		static signed _int64 const NegDecimalOverflowX = -1000000000;
 	public:
 
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
         using ldouble = long double;
-
-        /// <summary>
-        /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
-        /// </summary>
-        static MirroredInt NegativeRep;
-        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
-
-        /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-		/// (in the case of infinity is used to determine if positive vs negative infinity)
-        /// </summary>
-        MirroredInt IntValue;
-
-        signed int GetIntHalf()
-        {
-            return IntValue.GetValue();
-        }
-
-        bool IsNegative()
-        {
-            return IntValue.IsNegative();
-        }
-
-        /// <summary>
-        /// Stores decimal section info and other special info
-        /// </summary>
-        signed int DecimalHalf;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.(Default constructor)
@@ -146,12 +81,6 @@ namespace BlazesRusCode
 
         MediumDec& operator=(const MediumDec&) = default;
 
-        //Detect if at exactly zero
-		bool IsZero()
-		{
-            return DecimalHalf==0&&IntValue.Value==0;
-		}
-
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -162,72 +91,17 @@ namespace BlazesRusCode
             DecimalHalf = Value.DecimalHalf;
         }
 
-        void SetAsZero()
-        {
-            IntValue = 0;
-            DecimalHalf = 0;
-        }
-        
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-            if (IntValue == NegativeRep)
-            {
-                IntValue = 0;
-            }
-            else if (IntValue == 0)
-            {
-                IntValue = NegativeRep;
-            }
-            else
-            {
-                IntValue *= -1;
-            }
-        }
+
 
     #pragma region Const Representation values
-    protected:
-	#if defined(AltNum_EnableNaN)
-        //Is NaN when DecimalHalf==2147483647
-        static const signed int NaNRep = 2147483647;
-        //Is NaN when DecimalHalf==2147483646
-        static const signed int UndefinedRep = 2147483646;
-	#endif
-
-    #if defined(AltNum_EnableNilRep)
-        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
-        static signed int const NilRep = -2147483648;
-    #endif
 
     #pragma endregion Const Representation values
-        /// <summary>
-        /// Enum representing value type stored
-        /// </summary>
-        //enum class RepType: int;
 
-        /// <summary>
-        /// Returns representation type data that is stored in value
-        /// </summary>
-        //RepType GetRepType();
+    #pragma region RepType
+	//Not used for this variant
+    #pragma endregion RepType
 
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum()
-        {
-            IntValue = 2147483647; DecimalHalf = 999999999;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
-        {
-            IntValue = -2147483647; DecimalHalf = 999999999;
-        }
-	
+public:
 	#pragma region PiNum Setters
 	//Not used for this variant
 	#pragma endregion PiNum Setters
@@ -245,25 +119,15 @@ namespace BlazesRusCode
 	#pragma endregion MixedFrac Setters
 		
 	#pragma region Infinity Setters
-	//Not used for this variant
+	//Stored in Base Class
 	#pragma endregion Infinity Setters
 	
 	#pragma region ApproachingZero Setters
-	//Not used for this variant
+	//Stored in Base Class
 	#pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
-	#if defined(AltNum_EnableNaN)
-        void SetAsNaN()
-        {
-            IntValue = 0; DecimalHalf = NaNRep;
-        }
-
-        void SetAsUndefined()
-        {
-            IntValue = 0; DecimalHalf = UndefinedRep;
-        }
-	#endif
+	//Stored in Base Class
 	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
@@ -583,37 +447,12 @@ public:
 
     #pragma region String Commands
         /// <summary>
-        /// Reads the string.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void ReadString(std::string Value);
-
-        /// <summary>
-        /// Gets the value from string.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        MediumDec GetValueFromString(std::string Value);
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
         MediumDec(const char* strVal)
         {
-            std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            ReadFromCharString(strVal);
         }
 
         /// <summary>
@@ -622,153 +461,18 @@ public:
         /// <param name="Value">The value.</param>
         MediumDec(std::string Value)
         {
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            ReadFromString(Value);
         }
 
-#pragma endregion String Commands
-
-//private:
-        //std::string BasicToStringOp();
-		
-		//std::string BasicToFullStringOp();
-public:
-
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToString();
-
-        /// <summary>
-        /// Converts to string with digits filled in even when empty
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToFullString();
-
-        /// <summary>
-        /// Implements the operator std::string operator.
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator std::string() { return ToString(); }
     #pragma endregion String Commands
 
-    #pragma region From Standard types to this type
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetVal(float Value)
-        {
-            bool IsNegative = Value < 0.0f;
-            if (IsNegative) { Value *= -1.0f; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0f)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (float)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
-        }
+protected:
+    #pragma region MirroredIntBased Operations
+    //--Not currently used here
+    #pragma endregion MirroredIntBased Operations
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetVal(double Value)
-        {
-            bool IsNegative = Value < 0.0;
-            if (IsNegative) { Value *= -1.0; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (double)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
-        }
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetVal(ldouble Value)
-        {
-            bool IsNegative = Value < 0.0L;
-            if (IsNegative) { Value *= -1.0L; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0L)
-            {
-                if (IsNegative)
-                    IntValue = -2147483647;
-                else
-                    IntValue = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (ldouble)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
-            }
-        }
-
-        /// <summary>
-        /// Sets the value(false equals zero; otherwise is true).
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetVal(bool Value)
-        {
-            IntValue = Value==false ? 0 : 1;
-            DecimalHalf = 0;
-        }
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetVal(int Value)
-        {
-            IntValue = Value; DecimalHalf = 0;
-        }
+public:
+    #pragma region ConvertFromOtherTypes
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
@@ -812,14 +516,10 @@ public:
             this->SetVal(Value);
         }
 #endif
-    #pragma endregion From Standard types to this type
+    #pragma endregion ConvertFromOtherTypes
 
-    #pragma region From this type to Standard types
-        /// <summary>
-        /// MediumDec to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator float()
+    #pragma region ConvertToOtherTypes
+        virtual float toFloat()
         {
             float Value;
             if (IsNegative())
@@ -832,7 +532,16 @@ public:
                 Value = (float)IntValue.GetValue();
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
-            return Value;
+            return Value
+        }
+
+        /// <summary>
+        /// MediumDec to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float()
+        {
+            return toFloat();
         }
 
         /// <summary>
@@ -882,7 +591,7 @@ public:
         explicit operator int() { return IntValue.GetValue(); }
 
         explicit operator bool() { return IntValue.IsZero() ? false : true; }
-    #pragma endregion From this type to Standard types
+    #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
 	//Not used for this variant
@@ -897,355 +606,42 @@ public:
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
-        /// <summary>
-        /// Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator==(MediumDec LValue, MediumDec Value)
-        {
-			return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
-        }
+    auto operator<=>(const AltNumBase& that) const
+    {
+    #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+        if (std::weak_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+    #else
+        if (std::partial_ordering IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::partial_ordering DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+    #endif
+    }
 
-        /// <summary>
-        /// Not equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator!=(MediumDec LValue, MediumDec Value)
-        {
-            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
-        }
-
-        /// <summary>
-        /// Lesser than Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<(MediumDec LValue, MediumDec Value)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                if (Value.DecimalHalf == 0)
-                    return LValue.IntValue < Value.IntValue;
-                else
-                {
-                    if (LValue.IntValue < Value.IntValue)
-                        return LValue.DecimalHalf < Value.DecimalHalf;
-                    else
-                        return false;
-                }
-            }
-            else if (LValue.IntValue < Value.IntValue)
-                return LValue.DecimalHalf < Value.DecimalHalf;
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// Lesser than or Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<=(MediumDec LValue, MediumDec Value)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                if (Value.DecimalHalf == 0)
-                    return LValue.IntValue <= Value.IntValue;
-                else
-                {
-                    if (LValue.IntValue <= Value.IntValue)
-                        return LValue.DecimalHalf <= Value.DecimalHalf;
-                    else
-                        return false;
-                }
-            }
-            else if (LValue.IntValue <= Value.IntValue)
-                return LValue.DecimalHalf <= Value.DecimalHalf;
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// Greater than Operation
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>bool</returns>
-        friend bool operator>(MediumDec LValue, MediumDec Value)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                if (Value.DecimalHalf == 0)
-                    return LValue.IntValue > Value.IntValue;
-                else
-                {
-                    if (LValue.IntValue > Value.IntValue)
-                        return LValue.DecimalHalf > Value.DecimalHalf;
-                    else
-                        return false;
-                }
-            }
-            else if (LValue.IntValue > Value.IntValue)
-                return LValue.DecimalHalf > Value.DecimalHalf;
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// Greater than or Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator>=(MediumDec LValue, MediumDec Value)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                if (Value.DecimalHalf == 0)
-                    return LValue.IntValue >= Value.IntValue;
-                else
-                {
-                    if (LValue.IntValue >= Value.IntValue)
-                        return LValue.DecimalHalf >= Value.DecimalHalf;
-                    else
-                        return false;
-                }
-            }
-            else if (LValue.IntValue >= Value.IntValue)
-                return LValue.DecimalHalf >= Value.DecimalHalf;
-            else
-                return false;
-        }
-		
-        /// <summary>
-        /// Equal to operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="RValue">The RValue.</param>
-        /// <returns>bool</returns>
-        template<typename IntType>
-        static bool RightSideIntEqualTo(MediumDec& LValue, IntType& RValue)
-        {
-            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
-		}
-		
-        /// <summary>
-        /// Not Equal to operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="RValue">The RValue.</param>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool RightSideIntNotEqualTo(MediumDec& LValue, IntType& RValue)
-        {
-            if (LValue.IntValue == RValue)
-                return false;
-            else
-                return true;
-		}
-		
-        /// <summary>
-        /// Less than operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="RValue">The RValue.</param>
-        /// <returns>bool</returns>
-		template<typename IntType>
-        static bool RightSideIntLessThan(MediumDec& LValue, IntType& RValue)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue < RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5<0
-                    if (RValue >= 0)
-                        return true;
-                }
-                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
-            }
+    bool operator==(const int& that) const
+    {
+        if (IntValue!=that)
             return false;
-		}
-		
-        /// <summary>
-        /// Less than or Equal operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="RValue">The RValue.</param>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool RightSideIntLessThanOrEqual(MediumDec& LValue, IntType& RValue)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue <= RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5<0
-                    if (RValue >= 0)
-                        return true;
-                }
-                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
-            }
+        if (DecimalHalf!=0)
             return false;
-		}
-		
-        /// <summary>
-        /// Greater than operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="RValue">The RValue.</param>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool RightSideIntGreaterThan(MediumDec& LValue, IntType& RValue)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue > RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {//-0.5>-1
-                    if (RValue <= -1)
-                        return true;
-                }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
-            }
+        return true;
+    }
+
+    bool operator==(const AltNumBase& that) const
+    {
+        if (IntValue!=that.IntValue)
             return false;
-		}
-		
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <param name="LValue">LeftSide MediumDec RValue</param>
-        /// <param name="RValue">RightSide integer RValue</param>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool RightSideIntGreaterThanOrEqual(MediumDec& LValue, IntType& RValue)
-        {
-            if (LValue.DecimalHalf == 0)
-            {
-                return LValue.IntValue >= RValue;
-            }
-            else
-            {
-                if (LValue.IntValue == NegativeRep)
-                {
-                    if (RValue <= -1)
-                        return true;
-                }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
-            }
+        if (DecimalHalf!=that.IntValue)
             return false;
-		}
-	
-        /// <summary>
-        /// Equal to operation between Integer Type and <see cref="MediumDec"/> 
-        /// </summary>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool LeftSideIntEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
-	
-        /// <summary>
-        /// Not equal to operation between Integer Type and <see cref="MediumDec"/> 
-        /// </summary>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool LeftSideIntNotEqualTo(IntType& LValue, MediumDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
-		
-        /// <summary>
-        /// Less than operation between Integer Type and <see cref="MediumDec"/> 
-        /// </summary>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool LeftSideIntLessThan(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
-		
-        /// <summary>
-        /// Less than or equal operation between Integer Type and <see cref="MediumDec"/> 
-        /// </summary>
-        /// <returns>bool</returns>
-	    template<typename IntType>
-        static bool LeftSideIntLessThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
-		
-        /// <summary>
-        /// Greater than operation between Integer Type and <see cref="MediumDec"/> 
-        /// </summary>
-        /// <returns>bool</returns>
-		template<typename IntType>
-        static bool LeftSideIntGreaterThan(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
-		
-        /// <summary>
-        /// Greater than or equal to operation between <see cref="MediumDec"/> and Integer Type.
-        /// </summary>
-        /// <returns>bool</returns>
-		template<typename IntType>
-        static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, MediumDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
+    }
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<typename IntType>
-        void PartialIntDivOp(IntType& Value)
-        {
-            if (DecimalHalf == 0)
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                    IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-            else
-            {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    IntValue = 0;
-                    DecimalHalf = (signed int)SRep;
-                }
-            }
-        }
+
 public:
 
 		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
@@ -1254,9 +650,9 @@ public:
         void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
 
 		static void PartialDivOp(MediumDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDec& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(MediumDec& self, unsigned int& Value) { self.PartialUIntDivOp(Value); }
 		static void PartialDivOp(MediumDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(MediumDec& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+        static void PartialDivOp(MediumDec& self, unsigned long long& Value) { self.PartialUIntDivOp(Value); }
 
 		MediumDec PartialDiv(signed int Value)
         { MediumDec self = *this; PartialIntDivOp(Value); return self; }
@@ -1268,9 +664,9 @@ public:
         { MediumDec self = *this; PartialIntDivOp(Value); return self; }
 
 		static MediumDec PartialDiv(MediumDec& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDec PartialDiv(MediumDec& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static MediumDec PartialDiv(MediumDec& self, unsigned int Value) { self.PartialUIntDivOp(Value); return self; }
 		static MediumDec PartialDiv(MediumDec& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static MediumDec PartialDiv(MediumDec& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+        static MediumDec PartialDiv(MediumDec& self, unsigned long long Value) { self.PartialUIntDivOp(Value); return self; }
 
 protected:
         template<typename IntType>
@@ -1330,55 +726,6 @@ public:
 		static MediumDec BasicDiv(MediumDec& self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
 		static MediumDec BasicDiv(MediumDec& self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
         static MediumDec BasicDiv(MediumDec& self, unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-
-//protected:
-//        template<typename IntType>
-//        void BasicIntDivOpV2(IntType& Value)
-//        {
-//            if (IsZero())
-//                return;
-//            if (Value < 0)
-//            {
-//                Value *= -1;
-//                SwapNegativeStatus();
-//            }
-//            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-//        }
-//
-//        template<typename IntType>
-//        void BasicUnsignedIntDivOpV2(IntType& Value)
-//        {
-//            if (IsZero())
-//                return;
-//            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-//        }
-//public:
-//
-//		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
-//		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
-//		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
-//        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
-//
-//		static void BasicDivOpV2(MediumDec& self, signed int& Value) { self.BasicIntDivOpV2(Value); }
-//		static void BasicDivOpV2(MediumDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOpV2(Value); }
-//		static void BasicDivOpV2(MediumDec& self, signed long long& Value) { self.BasicIntDivOpV2(Value); }
-//        static void BasicDivOpV2(MediumDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOpV2(Value); }
-//
-//		MediumDec BasicDivV2(signed int Value)
-//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
-//		MediumDec BasicDivV2(unsigned int Value)
-//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-//		MediumDec BasicDivV2(signed long long Value)
-//        { MediumDec self = *this; BasicIntDivOpV2(Value); return self; }
-//        MediumDec BasicDivV2(unsigned long long Value)
-//        { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-//
-//		static MediumDec BasicDivV2(signed int Value) { self.BasicIntDivOpV2(Value); return self; }
-//		static MediumDec BasicDivV2(unsigned int Value) { self.BasicUnsignedIntDivOpV2(Value); return self; }
-//		static MediumDec BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
-//        static MediumDec BasicDivV2(unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
 
     #pragma endregion NormalRep Integer Division Operations
 	
@@ -2492,7 +1839,7 @@ public:
 
 
         //void RepToRepSubOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
-#pragma endregion Addition/Subtraction Operations
+    #pragma endregion Addition/Subtraction Operations
 
     #pragma region Main Operator Overrides
         /// <summary>
