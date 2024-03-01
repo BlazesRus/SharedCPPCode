@@ -1,5 +1,5 @@
-#include "AltDec.hpp"
-using AltDec = BlazesRusCode::AltDec;
+#include "MixedDec.hpp"
+using MixedDec = BlazesRusCode::MixedDec;
 
 /// <summary>
 /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
@@ -7,42 +7,42 @@ using AltDec = BlazesRusCode::AltDec;
 /// <param name="value">The target value.</param>
 /// <param name="expNum">The numerator of the exponent value.</param>
 /// <param name="expDenom">The denominator of the exponent value.</param>
-inline AltDec BlazesRusCode::AltDec::FractionalPow(int expNum, int expDenom)
+inline MixedDec BlazesRusCode::MixedDec::FractionalPow(int expNum, int expDenom)
 {
-	AltDec targetVal = IntPowOp(expNum);
-    AltDec CalcVal = AltDec::NthRoot(targetVal, expDenom);
+	MixedDec targetVal = IntPowOp(expNum);
+    MixedDec CalcVal = MixedDec::NthRoot(targetVal, expDenom);
     return CalcVal;
 }
 
-inline AltDec BlazesRusCode::AltDec::FractionalPow(boost::rational<int>& Frac)
+inline MixedDec BlazesRusCode::MixedDec::FractionalPow(boost::rational<int>& Frac)
 {
-	AltDec targetVal = IntPow(Frac.numerator());
-	AltDec CalcVal = AltDec::NthRoot(targetVal, Frac.denominator());
+	MixedDec targetVal = IntPow(Frac.numerator());
+	MixedDec CalcVal = MixedDec::NthRoot(targetVal, Frac.denominator());
 	return CalcVal;
 }
 
-inline AltDec BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
+inline MixedDec BlazesRusCode::MixedDec::BasicPowOp(MixedDec& expValue)
 {
-	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
+	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MixedDec::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 	case 0:
 		return FractionalPow(Frac);
 		break;
-	case AltDec::NegativeRep:
+	case MixedDec::NegativeRep:
 		return One / FractionalPow(Frac);
 		break;
 	default:
 	{
 		if (expValue.IntValue < 0)//Negative Exponent
 		{
-			AltDec CalcVal = One / IntPow(expValue.IntValue * -1);
+			MixedDec CalcVal = One / IntPow(expValue.IntValue * -1);
 			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		}
 		else
 		{
-			AltDec CalcVal = IntPowOp(expValue.IntValue);
+			MixedDec CalcVal = IntPowOp(expValue.IntValue);
 			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
@@ -51,7 +51,7 @@ inline AltDec BlazesRusCode::AltDec::BasicPowOp(AltDec& expValue)
 	}
 }
 
-inline AltDec BlazesRusCode::AltDec::PowOp(const AltDec& exponent)
+inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 {
 	if (exponent.DecimalHalf == 0)
 		return IntPowOp(exponent.IntValue);
@@ -91,7 +91,7 @@ inline AltDec BlazesRusCode::AltDec::PowOp(const AltDec& exponent)
             	RepType expType = exponent.GetRepType();
         		if (exponent.IntValue < 0)
         			return Zero;
-        		else if (IntValue == -1 && exponent.GetIntHalf() % 2 == 0)
+        		else if (IntValue == -1 && exponent.GetIntegerPartition() % 2 == 0)
         			IntValue = 1;
         		else
         			return *this;//Returns infinity
@@ -105,43 +105,43 @@ inline AltDec BlazesRusCode::AltDec::PowOp(const AltDec& exponent)
 		#if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
 		{
-			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf);
+			MixedDec targetVal = MixedDec(exponent.IntValue, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, exponent.ExtraRep);
+			return MixedDec::NthRoot(targetVal, exponent.ExtraRep);
 			break;
 		}
 		#endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv:
 		{
-			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf, PiRep);
+			MixedDec targetVal = MixedDec(exponent.IntValue, exponent.DecimalHalf, PiRep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, -exponent.ExtraRep);
+			return MixedDec::NthRoot(targetVal, -exponent.ExtraRep);
 			break;
 		}
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv:
 		{
-			AltDec targetVal = AltDec(exponent.IntValue, exponent.DecimalHalf, ERep);
+			MixedDec targetVal = MixedDec(exponent.IntValue, exponent.DecimalHalf, ERep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, -expValue.ExtraRep);
+			return MixedDec::NthRoot(targetVal, -expValue.ExtraRep);
 			break;
 		}
 		#endif
 		#if defined(AltNum_EnablePiFractional)
 		case RepType::PiFractional:
 		{
-			AltDec targetVal = AltDec(exponent.IntValue, 0, PiRep);
+			MixedDec targetVal = MixedDec(exponent.IntValue, 0, PiRep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, expValue.DecimalHalf);
+			return MixedDec::NthRoot(targetVal, expValue.DecimalHalf);
 		}
 		#endif
 		#if defined(AltNum_EnableEFractional)
 		case RepType::EFractional:
 		{
-			AltDec targetVal = AltDec(exponent.IntValue, 0, ERep);
+			MixedDec targetVal = MixedDec(exponent.IntValue, 0, ERep);
 			targetVal = Pow(targetVal);
-			return AltDec::NthRoot(targetVal, exponent.DecimalHalf);
+			return MixedDec::NthRoot(targetVal, exponent.DecimalHalf);
 			break;
 		}
 		#endif
@@ -214,27 +214,27 @@ inline AltDec BlazesRusCode::AltDec::PowOp(const AltDec& exponent)
 			break;
 	}
 	//If don't return value before this point convert into normal Type
-	AltDec expValue = exponent;//Copy the value to allow converting
+	MixedDec expValue = exponent;//Copy the value to allow converting
     expValue.ConvertToNormType(expType);
-	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDec::DecimalOverflow);
+	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MixedDec::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 		case 0:
 			return FractionalPow(Frac);
 			break;
-		case AltDec::NegativeRep:
+		case MixedDec::NegativeRep:
 			return One / FractionalPow(Frac);
 			break;
 		default:
 			if (expValue.IntValue < 0)//Negative Exponent 
 			{
-				AltDec CalcVal = One / IntPow(expValue.IntValue * -1);
+				MixedDec CalcVal = One / IntPow(expValue.IntValue * -1);
 				CalcVal /= FractionalPow(Frac);
 				return CalcVal;
 			}
 			else
 			{
-				AltDec CalcVal = IntPowOp(expValue.IntValue);
+				MixedDec CalcVal = IntPowOp(expValue.IntValue);
 				CalcVal *= FractionalPow(Frac);
 				return CalcVal;
 			}

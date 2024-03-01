@@ -68,27 +68,90 @@ public:
         }
 #pragma endregion Check_if_Zero
 
+        bool IsWholeNumber()
+        {
+#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
+
+#else
+            return DecimalHalf==0 && TrailingDigits==0.0f;
+#endif
+        }
+
+        bool IsAtOrBelowTwo()
+        {
+#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
+
+#else
+            if(IntValue<=1)
+                return true;
+            else
+                return IntValue==2 && DecimalHalf==0 && TrailingDigits==0.0f;
+#endif
+        }
+
+        bool IsAtOrBelowOne()
+        {
+#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
+
+#else
+            if(IntValue<=0)
+                return true;
+            else
+                return IntValue==1 && DecimalHalf==0 && TrailingDigits==0.0f;
+#endif
+        }
+
 #pragma region class_constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MixedDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(MixedDec_DeriveFromAltDec)&&!defined(AltDec_UseMirroredInt)
-		MixedDec(const int& intVal, const signed int& decVal = 0, const signed int& extraVal = 0, float trailingDigits = 0.0f)
-#elif defined(MixedDec_DeriveFromAltDec)
-        MixedDec(const MirroredInt& intVal = MirroredInt::Zero, const signed int& decVal = 0, const signed int& extraVal = 0, float trailingDigits = 0.0f)
-#elif defined(AltDec_UseMirroredInt)
-        MixedDec(MirroredInt intVal, signed int decVal = 0, float trailingDigits = 0.0f)
+#if defined(AltDec_UseMirroredInt)
+	#if defined(MixedDec_DontInitializeFromConstRef)
+        MixedDec(MirroredInt intVal, signed int decVal = 0
+	#else
+        MixedDec(const MirroredInt& intVal, const signed int& decVal = 0
+	#endif
 #else
-        MixedDec(int intVal, signed int decVal = 0, float trailingDigits = 0.0f)
+	#if defined(MixedDec_DontInitializeFromConstRef)
+        MixedDec(signed int intVal, signed int decVal = 0
+	#else
+        MixedDec(const int& intVal, signed int decVal = 0
+	#endif
 #endif
+#if defined(MixedDec_ExtraRepEnabled)
+	    #if defined(MixedDec_DontInitializeFromConstRef)
+        , signed int extraVal = 0
+	    #else
+        , const int& extraVal = 0
+	    #endif
+#endif
+#if defined(MixedDec_DeriveFromFlaggedDec)
+	#if defined(MixedDec_DontInitializeFromConstRef)
+        #if !defined(FlaggedNum_UseBitset)
+        unsigned char flagsActive=0
+        #else
+        std::bitset<6> flagsActive = {})
+        #endif
+	#else
+        #if !defined(FlaggedNum_UseBitset)
+        const unsigned char& flagsActive=0
+        #else
+        const std::bitset<6>& flagsActive = {})
+        #endif
+	#endif
+#endif
+		, float trailingDigits = 0.0f)
         {
             IntValue.Value = intVal;
             DecimalHalf = decVal;
-	#if defined(MixedDec_DeriveFromAltDec)
+#if defined(MixedDec_ExtraRepEnabled)
 			ExtraRep = extraVal;
-	#endif
+#endif
+#if defined(MixedDec_DeriveFromFlaggedDec)
+			FlagsActive = flagsActive;
+#endif
 			TrailingDigits = trailingDigits;
         }
 
@@ -105,9 +168,12 @@ public:
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
-	#if defined(MixedDec_DeriveFromAltDec)
+#if defined(MixedDec_ExtraRepEnabled)
 			ExtraRep = extraVal;
-	#endif
+#endif
+#if defined(MixedDec_DeriveFromFlaggedDec)
+			FlagsActive = flagsActive;
+#endif
 			TrailingDigits = trailingDigits;
         }
 		
