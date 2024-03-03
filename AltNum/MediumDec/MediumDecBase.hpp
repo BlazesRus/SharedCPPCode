@@ -38,6 +38,12 @@ namespace BlazesRusCode
 	// that might mess up polymorphism functionality of the class
     class DLL_API MediumDecBase
     {
+#if !defined(AltNum_DisableDefaultStringFormatOption)
+	enum class DefaultStringFormatEnum : int
+	{
+	
+	}
+#endif
 	public:
 
         /// <summary>
@@ -302,7 +308,7 @@ public:
             NormalType = 0,
         };
 
-        void std::string AsString()
+        void std::string RepTypeAsString(RepType& repType)
         {
             return "NormalType";
         }
@@ -310,7 +316,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        virtual RepType GetRepType()  const
+        virtual RepType GetRepType()
         {
             return RepType::NormalType;
         }

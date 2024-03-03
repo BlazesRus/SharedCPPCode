@@ -523,7 +523,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        RepType GetRepType()  const
+        virtual RepType GetRepType()
         {
         #if defined(AltNum_EnableInfinityRep)
             if(DecimalHalf==InfinityRep)
