@@ -2,7 +2,7 @@
 using AltDecBase = BlazesRusCode::AltDecBase;
 using RepType = BlazesRusCode::AltDecBase::RepType;
 
-#if defined(AltDecBase_UseMirroredInt)
+#if defined(AltDec_UseMirroredInt)
 	MirroredInt AltDecBase::NegativeRep = MirroredInt::NegativeZero;
 #endif
     #pragma region ValueDefine Source

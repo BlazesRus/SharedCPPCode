@@ -259,6 +259,7 @@ public:
             IntValue = -2147483647; DecimalHalf = 999999999;
         }
 
+    protected:
     #pragma region Const Representation values
 	#if defined(AltNum_EnableInfinityRep)
         //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
@@ -278,16 +279,6 @@ public:
 		//If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
 		static const signed int ApproachingTopRep = -2147483646;
     #endif
-	#if defined(AltNum_EnableUndefinedButInRange)
-		//Such as result of Cos of infinity
-		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
-        static const signed int UndefinedInRangeRep = -2147483642;
-		
-		#if defined(AltNum_EnableWithinMinMaxRange)
-		//Undefined but in ranged of IntValue to DecimalHalf
-        static const signed int WithinMinMaxRangeRep = -2147483642;
-		#endif
-	#endif
 	#if defined(AltNum_EnableNaN)
         //Is NaN when DecimalHalf==2147483647
         static const signed int NaNRep = 2147483647;
@@ -302,7 +293,29 @@ public:
     #pragma endregion Const Representation values
 
     #pragma region RepType
-	//Not used for this variant
+
+        /// <summary>
+        /// Enum representing value type stored
+        /// </summary>
+        enum class RepType: int
+        {
+            NormalType = 0,
+        };
+
+        static std::string RepTypeAsString(RepType& repType)
+        {
+            return "NormalType";
+        }
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        virtual RepType GetRepType()  const
+        {
+            return RepType::NormalType;
+        }
+
+
     #pragma endregion RepType
 
 public:
