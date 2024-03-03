@@ -185,8 +185,31 @@ namespace BlazesRusCode
 
 #endif
 
-    protected:
-    #pragma region Const Representation values
+    public:
+        #pragma region Const Representation values
+#if !defined(AltNum_StoreConstVariablesInBase)
+    #if defined(AltNum_EnableInfinityRep)
+        //Is Infinity Representation when DecimalHalf==-2147483648 (IntValue==1 for positive infinity;IntValue==-1 for negative Infinity)
+        //(other values only used if AltNum_EnableInfinityPowers is enabled)
+        //If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
+		#if !defined(AltNum_UsePositiveInfinityRep)
+        static const signed int InfinityRep = -2147483648;
+		#else
+        static const signed int InfinityRep = 2147483647;
+		#endif
+    #endif
+    #if defined(AltNum_EnableApproachingValues)
+        //Is Approaching Bottom when DecimalHalf==-2147483647:
+        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
+        //If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+        //If ExtraRep=PiRep, then it represents Approaching IntValue from right towards left (IntValue.0..1)Pi
+        static const signed int ApproachingBottomRep = -2147483647;
+        //Is Approaching Top i when DecimalHalf==-2147483646:
+        //If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+        //If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
+        //If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
+        static const signed int ApproachingTopRep = -2147483646;
+    #endif
     #if defined(AltNum_EnableUndefinedButInRange)
         //Such as result of Cos of infinity
         //https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
@@ -195,6 +218,27 @@ namespace BlazesRusCode
         #if defined(AltNum_EnableWithinMinMaxRange)
         //Undefined but in ranged of IntValue to DecimalHalf
         static const signed int WithinMinMaxRangeRep = -2147483642;
+        #endif
+    #endif
+    #if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf==2147483647
+        static const signed int NaNRep = 2147483647;
+        //Is NaN when DecimalHalf==2147483646
+        static const signed int UndefinedRep = 2147483646;
+    #endif
+    #if defined(AltNum_EnableNilRep)
+        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
+        static signed int const NilRep = -2147483648;
+    #endif
+#endif
+    #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproachingI)
+        //Is Approaching Bottom i when DecimalHalf==-2147483645:
+        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)i
+        static const signed int ApproachingImaginaryBottomRep = -2147483645;
+        //Is Approaching Top i when DecimalHalf==-2147483644:
+        //If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)i
+        static const signed int ApproachingImaginaryTopRep = -2147483644;
         #endif
     #endif
     #if defined(AltNum_EnablePiRep)
@@ -225,10 +269,7 @@ namespace BlazesRusCode
         //Upper limit for Mixed Fractions; infinite approaching type representations at and after this DecimalHalf value
         static const signed int InfinityBasedLowerBound = -2147483644;
 
-    #pragma endregion Const Representation values
-
-    #pragma region RepType
-
+        #pragma endregion Const Representation values
         /// <summary>
         /// Enum representing value type stored
         /// </summary>
@@ -240,33 +281,33 @@ namespace BlazesRusCode
     #endif
     #if defined(AltNum_EnablePiRep)
             PiNum = 1,
-	    #if defined(AltNum_EnablePiPowers)
-            PiPower = 17,
-	    #endif
-	    #if defined(AltNum_EnableDecimaledPiFractionals)
-            PiNumByDiv = 9,//  (Value/(ExtraRep*-1))*Pi Representation
-	    #elif defined(AltNum_EnablePiFractional)
-            PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
-	    #endif
     #endif
+	#if defined(AltNum_EnablePiPowers)
+            PiPower = 17,
+	#endif
+	#if defined(AltNum_EnableDecimaledPiFractionals)
+            PiNumByDiv = 9,//  (Value/(ExtraRep*-1))*Pi Representation
+	#elif defined(AltNum_EnablePiFractional)
+            PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
+	#endif
     #if defined(AltNum_EnableERep)
             ENum = 2,
-        #if defined(AltNum_EnableDecimaledEFractionals)
-            ENumByDiv = 10,//(Value/(ExtraRep*-1))*e Representation
-	    #elif defined(AltNum_EnableEFractional)
-            EFractional = 10,//  IntValue/DecimalHalf*e Representation
-	    #endif
     #endif
+    #if defined(AltNum_EnableDecimaledEFractionals)
+            ENumByDiv = 10,//(Value/(ExtraRep*-1))*e Representation
+	#elif defined(AltNum_EnableEFractional)
+            EFractional = 10,//  IntValue/DecimalHalf*e Representation
+	#endif
     #if defined(AltNum_EnableImaginaryNum)
             INum = 4,
-	    #if defined(AltNum_EnableDecimaledIFractionals)
+    #endif
+	#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv = 11,//(Value/(ExtraRep*-1))*i Representation
-	    #elif defined(AltNum_EnableIFractional)
+	#elif defined(AltNum_EnableIFractional)
             IFractional = 11,//  IntValue/DecimalHalf*i Representation
-	    #endif
-        #ifdef AltNum_EnableComplexNumbers
+	#endif
+    #ifdef AltNum_EnableComplexNumbers
             ComplexIRep = 255,
-        #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
             MixedFrac = 32,//IntValue +- (-DecimalHalf)/ExtraRep
@@ -479,9 +520,181 @@ namespace BlazesRusCode
             }
         }
 
-    #pragma endregion RepType
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        RepType GetRepType()  const
+        {
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf==InfinityRep)
+            {
+            #if defined(AltNum_EnableImaginaryInfinity)
+                if (ExtraRep == IRep)
+                    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
+                else
+            #endif
+            #if defined(AltNum_EnableUndefinedButInRange)
+                if (ExtraRep == UndefinedInRangeRep)
+                    return RepType::UndefinedButInRange;
+                else
+            #endif
+            #if defined(WithinMinMaxRangeRep)
+                if (ExtraRep == WithinMinMaxRangeRep)
+                    return RepType::WithinMinMaxRange;
+                else
+            #endif
+                    return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
+            }
+            else
+        #endif
+        #if defined(AltNum_EnableApproachingValues)//old value = ApproachingValRep
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+                if(ExtraRep==0)
+                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
+                else
+            #if defined(AltNum_EnableApproachingDivided)//if(ExtraRep>1)
+                    return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
+            #else
+                    throw "EnableApproachingDivided feature not enabled";
+            #endif
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+                if(ExtraRep==0)
+                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+            #if defined(AltNum_EnableApproachingPi)
+                else if (ExtraRep == PiRep)
+                    return RepType::ApproachingTopPi;
+            #endif
+            #if defined(AltNum_EnableApproachingE)
+                else if (ExtraRep == ERep)
+                    return RepType::ApproachingTopE;
+            #endif
+                else
+            #if defined(AltNum_EnableApproachingDivided)
+                    return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
+            #else
+                    throw "EnableApproachingDivided feature not enabled";
+            #endif
+            }
+            #if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
+            else if (DecimalHalf == ApproachingImaginaryBottomRep)
+            {
+                if(ExtraRep==0)
+                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
+                else
+                #if defined(AltNum_EnableApproachingDivided)
+                    return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
+                #else
+                    throw "EnableApproachingDivided feature not enabled";
+                #endif
+            }
+            else if (DecimalHalf == ApproachingImaginaryTopRep)
+            {
+                if(ExtraRep==0)
+                    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
+                else
+                #if defined(AltNum_EnableApproachingDivided)
+                    return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
+                #else
+                    throw "EnableApproachingDivided feature not enabled";
+                #endif
+            }
+            #endif
+        #endif
+            if(ExtraRep==0)
+            {
+    #if defined(AltNum_EnableNaN)
+                if(DecimalHalf==NaNRep)
+                    return RepType::NaN;
+                else if(DecimalHalf==UndefinedRep)
+                    return RepType::Undefined;
+    #endif
+                return RepType::NormalType;
+            }
+            else if(IntValue==0&&DecimalHalf==0)
+            {
+                return RepType::NormalType;
+            }
+    #ifdef AltNum_EnablePiRep
+            else if(ExtraRep==PiRep)
+                return RepType::PiNum;
+        #if defined(AltNum_EnablePiFractional)
+            else if(ExtraRep==PiByDivisorRep)
+                return RepType::PiFractional;
+        #endif
+    #endif
+            else if(ExtraRep>0)
+            {
+    #if defined(AltNum_EnableMixedFractional)
+                if(DecimalHalf<0)
+                    return RepType::MixedFrac;
+    #endif
+    #if defined(AltNum_EnableFractionals)
+                return RepType::NumByDiv;
+    #endif
+                throw "Non-enabled representation detected";
+            }
+    #if defined(AltNum_EnableERep)
+            else if(ExtraRep==ERep)
+            {
+                return RepType::ENum;
+            }
+        #if defined(AltNum_EnableEFractional)
+            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
+                return RepType::EFractional;
+        #endif
+    #endif
 
-public:
+    #if defined(AltNum_EnableImaginaryNum)
+            else if(ExtraRep==IRep)
+            {
+                return RepType::INum;
+            }
+        #if defined(AltNum_EnableIFractional)
+            else if(ExtraRep==IByDivisorRep)
+                    return RepType::IFractional;
+        #endif
+    #endif
+    #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+           else if(ExtraRep==UndefinedButInRange)
+                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
+        #if defined(AltNum_EnableWithinMinMaxRange)
+            //If IntValue==NegativeRep, then left side range value equals negative infinity
+            //If DecimalHalf==InfinityRep, then right side range value equals positive infinity
+           else if(ExtraRep==WithinMinMaxRangeRep)
+                return RepType::WithinMinMaxRange;
+        #endif
+    #endif
+            else if(ExtraRep<0)
+    #if defined(AltNum_EnableAlternativeMixedFrac)
+                if(DecimalHalf<0)
+        #if defined(AltNum_EnableMixedPiFractional)
+                    return RepType::MixedPi;
+        #elif defined(AltNum_EnableMixedEFractional)
+                    return RepType::MixedE;
+        #elif defined(AltNum_EnableMixedIFractional)
+                    return RepType::MixedI;
+        #else
+                    throw "Non-enabled Alternative Mixed Fraction representation type detected";
+        #endif
+                else
+    #endif
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+                    return RepType::PiNumByDiv;
+    #elif defined(AltNum_EnableDecimaledEFractionals)
+                    return RepType::ENumByDiv;
+    #elif defined(AltNum_EnableDecimaledIFractionals)
+                    return RepType::INumByDiv;
+    #else
+                    throw "Non-enabled Negative ExtraRep representation type detected";
+    #endif
+            else
+                throw "Unknown or non-enabled representation type detected";
+            return RepType::UnknownType;//Catch-All Value;
+        }
+
     #pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
         #if defined(AltNum_EnableMediumDecBasedSetValues)
@@ -763,398 +976,9 @@ public:
     #endif
     #pragma endregion NaN Setters
 
-    #pragma region ValueDefines
     protected:
-    #if defined(AltNum_EnableNaN)
-        static AltDecBase NaNValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, NaNRep);
-            return NewSelf;
-        }
-        
-        static AltDecBase UndefinedValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, UndefinedRep);
-            return NewSelf;
-        }
-    #endif
-
-    #if defined(AltNum_EnableInfinityRep)
-        static AltDecBase InfinityValue()
-        {
-            AltDecBase NewSelf = AltDecBase(1, InfinityRep);
-            return NewSelf;
-        }
-        
-        static AltDecBase NegativeInfinityValue()
-        {
-            AltDecBase NewSelf = AltDecBase(-1, InfinityRep);
-            return NewSelf;
-        }
-    #endif
-        
-    #if defined(AltNum_EnableApproachingValues)
-        static AltDecBase ApproachingZeroValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, ApproachingBottomRep);
-            return NewSelf;
-        }
-        
-        static AltDecBase ApproachingOneFromLeftValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, ApproachingTopRep);
-            return NewSelf;
-        }
-        
-        static AltDecBase ApproachingOneFromRightValue()
-        {
-            AltDecBase NewSelf = AltDecBase(1, ApproachingBottomRep);
-            return NewSelf;
-        }
-
-        static AltDecBase NegativeApproachingZeroValue()
-        {
-            AltDecBase NewSelf = AltDecBase(NegativeRep, ApproachingBottomRep);
-            return NewSelf;
-        }
-    #endif
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase PiNumValue()
-        {
-            return AltDecBase(3, 141592654);
-        }
-        
-        static AltDecBase PiValue()
-        {
-#if defined(AltNum_EnableERep)
-            return AltDecBase(1, PiRep);
-#else
-            return AltDecBase(3, 141592654);
-#endif
-        }
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        static AltDecBase HundredMilPiNumVal()
-        {
-            return AltDecBase(314159265, 358979324);
-        }
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        static AltDecBase TenMilPiNumVal()
-        {
-            return AltDecBase(31415926, 535897932);
-        }
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        static AltDecBase OneMilPiNumVal()
-        {
-            return AltDecBase(3141592, 653589793);
-        }
-
-        //10xPi(Rounded to 9th decimal digit)
-        static AltDecBase TenPiNumVal()
-        {
-            return AltDecBase(31, 415926536);
-        }
-        
-        static AltDecBase ENumValue()
-        {
-            return AltDecBase(2, 718281828);
-        }
-
-        static AltDecBase EValue()
-        {
-#if defined(AltNum_EnableERep)
-            return AltDecBase(1, ERep);
-#else
-            return AltDecBase(2, 718281828);
-#endif
-        }
-        
-        static AltDecBase ZeroValue()
-        {
-            return AltDecBase();
-        }
-
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase OneValue()
-        {
-            AltDecBase NewSelf = AltDecBase(1);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase TwoValue()
-        {
-            AltDecBase NewSelf = AltDecBase(2);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase NegativeOneValue()
-        {
-            AltDecBase NewSelf = AltDecBase(-1);
-            return NewSelf;
-        }
-
-        /// <summary>
-        /// Returns the value at 0.5
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase Point5Value()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 500000000);
-            return NewSelf;
-        }
-
-        static AltDecBase JustAboveZeroValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 1);
-            return NewSelf;
-        }
-
-        static AltDecBase OneMillionthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 1000);
-            return NewSelf;
-        }
-
-        static AltDecBase FiveThousandthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 5000000);
-            return NewSelf;
-        }
-
-        static AltDecBase FiveMillionthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 5000);
-            return NewSelf;
-        }
-
-        static AltDecBase TenMillionthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 100);
-            return NewSelf;
-        }
-
-        static AltDecBase OneHundredMillionthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 10);
-            return NewSelf;
-        }
-
-        static AltDecBase FiveBillionthValue()
-        {
-            AltDecBase NewSelf = AltDecBase(0, 5);
-            return NewSelf;
-        }
-
-        static AltDecBase LN10Value()
-        {
-            return AltDecBase(2, 302585093);
-        }
-
-        static AltDecBase LN10MultValue()
-        {
-            return AltDecBase(0, 434294482);
-        }
-
-        static AltDecBase HalfLN10MultValue()
-        {
-            return AltDecBase(0, 868588964);
-        }
-        
-    #if defined(AltNum_EnableNilRep)
-        static AltDecBase NilValue()
-        {
-            return AltDecBase(NilRep, NilRep);
-        }
-    #endif
-
-        static AltDecBase MinimumValue()
-        {
-            return AltDecBase(2147483647, 999999999);
-        }
-
-        static AltDecBase MaximumValue()
-        {
-            return AltDecBase(2147483647, 999999999);
-        }
-public:
-        static AltDecBase AlmostOne;
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase PiNum;
-        
-        /// <summary>
-        /// Euler's number (Non-Alternative Representation)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase ENum;
-        
-#if defined(AltNum_EnableInfinityRep)
-        static AltDecBase Infinity;
-        static AltDecBase NegativeInfinity;
-        static AltDecBase ApproachingZero;
-#endif
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) Representation
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase Pi;
-      
-        /// <summary>
-        /// Euler's number (Non-Alternative Representation)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase E;
-        
-        /// <summary>
-        /// Returns the value at zero
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase Zero;
-        
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase One;
-
-        /// <summary>
-        /// Returns the value at two
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase Two;
-
-        /// <summary>
-        /// Returns the value at 0.5
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase PointFive;
-
-        /// <summary>
-        /// Returns the value at digit one more than zero (0.000000001)
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase JustAboveZero;
-
-        /// <summary>
-        /// Returns the value at .000000005
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase FiveBillionth;
-
-        /// <summary>
-        /// Returns the value at .000001000
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase OneMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.005"
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase FiveThousandth;
-
-        /// <summary>
-        /// Returns the value at .000000010
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase OneGMillionth;
-
-        //0e-7
-        static AltDecBase TenMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.000005"
-        /// </summary>
-        static AltDecBase FiveMillionth;
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>AltDecBase</returns>
-        static AltDecBase NegativeOne;
-
-        /// <summary>
-        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
-        /// (-2147483647.999999999)
-        /// </summary>
-        static AltDecBase Minimum;
-        
-        /// <summary>
-        /// Returns value of highest non-infinite/Special Decimal State Value that can store
-        /// (2147483647.999999999)
-        /// </summary>
-        static AltDecBase Maximum;
-        
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        static AltDecBase LN10;
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static AltDecBase LN10Mult;
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static AltDecBase HalfLN10Mult;
-
-    #if defined(AltNum_EnableNilRep)
-        /// <summary>
-        /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
-        /// </summary>
-        static AltDecBase Nil;
-    #endif
-    
-#if defined(AltNum_EnableApproachingValues)
-        static AltDecBase ApproachingRightRealValue(int IntValue=0)
-        {
-            return AltDecBase(IntValue, 999999999);
-        }
-
-        static AltDecBase ApproachingLeftRealValue(int IntValue=0)
-        {
-            return AltDecBase(IntValue, 1);
-        }
-
-        static AltDecBase LeftAlmostPointFiveRealValue(int IntValue=0)
-        {
-            return AltDecBase(IntValue, 499999999);
-        }
-
-        static AltDecBase RightAlmostPointFiveRealValue(int IntValue=0)
-        {
-            return AltDecBase(IntValue, 500000001);
-        }
-#endif
-    
+    #pragma region ValueDefines
+    //Static member variables are in full version of the class to prevent conflict on derivation
     #pragma endregion ValueDefines
 
 #pragma region String Commands
