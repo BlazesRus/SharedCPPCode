@@ -8,6 +8,7 @@
 /*
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
+MixedDec_UseAltFloat
 MixedDec_DeriveFromAltDec =
 	Deriving MixedDec from AltDec
 	(includes ExtraRep field for extended representation)

@@ -45,6 +45,8 @@ namespace BlazesRusCode
 #endif
     {
 protected:
+		//How many trailing digits to display when converted to string
+		static TrailingDigitsDisplayed = 9;
 #pragma region DigitStorage
 		float TrailingDigits;
 #pragma endregion DigitStorage
@@ -64,7 +66,13 @@ public:
 	#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = 0;
 	#endif
-			TrailingDigits = 0.0f;	
+	#if !defined(MixedDec_UseAltFloat)
+			TrailingDigits = 0.0f;
+	#else//AltFloat range planned to be from 0.0 to (0.9..9) with no support for infinity
+		//AltFloat support range planned to be extended to 0.0 to 9..9.9..9 range during multiplication/division operations
+		//AltFloat support range planned to be extended to 1.9..9 range during addition/subtraction operation
+			TrailingDigits = 0;
+	#endif
         }
 #pragma endregion Check_if_Zero
 
@@ -142,7 +150,11 @@ public:
         #endif
 	#endif
 #endif
+#if !defined(MixedDec_UseAltFloat)
 		, float trailingDigits = 0.0f)
+#else
+		, AltFloat trailingDigits = 0)
+#endif
         {
             IntValue.Value = intVal;
             DecimalHalf = decVal;
