@@ -22,6 +22,7 @@
 #include <cmath>//Needed for floating point floor function
 #include <compare>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
+#include "..\IntegerConcept.hpp"
 
 #pragma region PreprocessorToggles
 #include "MediumDecPreprocessors.h"
@@ -29,10 +30,6 @@
 
 namespace BlazesRusCode
 {
-    //Integer type (concept)
-    template<typename T>
-    concept IntegerType = std::is_integral<T>::value;
-
 	//Base class for MediumDec to help initial structure of classes
 	//MediumDec class holds finished implimentation of AltNum data including static variables
 	// that might mess up polymorphism functionality of the class
