@@ -4,19 +4,40 @@
 // ***********************************************************************
 #pragma once
 
+#ifdef BlazesSharedCode_LocalLayout
+#ifndef DLL_API
+#ifdef UsingBlazesSharedCodeDLL
+#define DLL_API __declspec(dllimport)
+#elif defined(BLAZESSharedCode_LIBRARY)
+#define DLL_API __declspec(dllexport)
+#else
+#define DLL_API
+#endif
+#endif
+#else
+#include "..\DLLAPI.h"
+#endif
+
+#include "..\IntegerConcept.hpp"
+
+#if defined(AltFloat_DontUseTinyUDec)
+	#include "TinyUDec.hpp"
+#endif
+
 namespace BlazesRusCode
 {
-    //Integer type (concept)
-    template<typename T>
-    concept IntegerType = std::is_integral<T>::value;
-
 	//Designed to store trailing digits of number to reduce trunction loss(as replacement for float)
 	//Based on https://medium.com/@JeffreyLean/the-secret-life-of-floating-point-types-in-programming-languages-e25bc55d6123
+	//https://floating-point-gui.de/formats/fp/
 	//and https://float.exposed
     class DLL_API AltFloat
     {
+#if defined(AltFloat_DontUseTinyUDec)
+		unsigned short Significant;
+#else
+		TinyUDec Significant;
+#endif
 		short Exponent;
-		short Significant;
 		
 	#pragma region Addition Operations
         template<IntegerType IntType=int>
