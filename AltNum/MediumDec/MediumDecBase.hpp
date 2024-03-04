@@ -629,7 +629,7 @@ protected:
     #pragma region MirroredIntBased Operations
     //Templates can not be virtual
         
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void IntHalfDivision(IntType RValue)
         {
     #if defined(AltDec_UseMirroredInt)
@@ -671,7 +671,7 @@ protected:
     #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void IntHalfMultiplication(IntType RValue)
         {
     #if defined(AltDec_UseMirroredInt)
@@ -718,7 +718,7 @@ protected:
     #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void UIntHalfMultiplication(IntType RValue)
         {
     #if defined(AltDec_UseMirroredInt)
@@ -916,17 +916,17 @@ public:
     #pragma region Comparison Operators
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
 
         /// <summary>
@@ -959,7 +959,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
 		
         /// <summary>
@@ -992,7 +992,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
 		
         /// <summary>
@@ -1030,7 +1030,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
@@ -1069,7 +1069,7 @@ public:
     #endif
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         bool IntHalfGreaterThanOrEqualOp(const IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
 
     auto operator<=>(const MediumDecBase& that) const
@@ -1107,7 +1107,7 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual void PartialIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -1170,7 +1170,7 @@ protected:
         }
 
         //Version of PartialIntDivOp that returns TruncatedDigits
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual signed _int64 TrailingIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -1236,7 +1236,7 @@ protected:
         #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual void PartialUIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -1290,7 +1290,7 @@ protected:
         }
 
         //Version of PartialUIntDivOp that returns TruncatedDigits
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual signed _int64 TrailingUIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -1346,7 +1346,7 @@ protected:
         }
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual void BasicUIntDivOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -1368,7 +1368,7 @@ public:
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual void BasicIntDivOp(const IntType& rValue)
         {
             if (Value == 0)
@@ -1396,7 +1396,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void PartialIntMultOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -1441,7 +1441,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>AltDec</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void PartialIntMultOpV2(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -1533,7 +1533,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void NRepSkippingIntAddOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -1554,7 +1554,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         virtual MediumDecBase& BasicIntAddOp(const IntType& rValue)
         {
             if(DecimalHalf==0)
@@ -1579,7 +1579,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=int>
         void NRepSkippingIntSubOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -1744,7 +1744,6 @@ public:/*
 	#pragma endregion NormalRep AltNum Division Operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
-#if defined(AltNum_StoreBasicFunctionsInBase)
 		/// <summary>
         /// Basic Multiplication Operation that ignores special decimal status
         /// Return true if divide into zero
@@ -2256,11 +2255,10 @@ public:/*
     #endif
             return *this;
 		}
-#endif
+		
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
-#if defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
         /// Basic Addition Operation
         /// (Modifies owner object)
@@ -2342,12 +2340,10 @@ public:/*
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = DecimalOverflow - DecimalHalf;
         }
-#endif
 
 	#pragma endregion NormalRep AltNum Addition Operations
 
 	#pragma region NormalRep AltNum Subtraction Operations
-#if defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
         /// Basic Subtraction Operation
         /// (Modifies owner object)
@@ -2431,7 +2427,6 @@ public:/*
             if(WasNegative ^(IntValue<0))
                 DecimalHalf = DecimalOverflow - DecimalHalf;
         }
-#endif
 	#pragma endregion NormalRep AltNum Subtraction Operations
 
     #pragma region Other Division Operations
