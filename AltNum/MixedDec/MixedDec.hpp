@@ -26,8 +26,12 @@
 	#include "..\AltDec\AltDecBase.hpp"
 #elif MixedDec_DeriveFromFlaggedDec
 	#include "..\FlaggedDec\FlaggedDecBase.hpp"
+#elif MixedDec_DeriveFromMediumDecV2
+	#include "..\MediumDecV2\MediumDecV2Base.hpp"
+	#include "..\MediumDecV2\MediumDecV2.hpp"
 #else
 	#include "..\MediumDec\MediumDecBase.hpp"
+	#include "..\MediumDec\MediumDec.hpp"
 #endif
 
 namespace BlazesRusCode
@@ -40,6 +44,10 @@ namespace BlazesRusCode
 	class DLL_API MixedDec:
 #ifdef MixedDec_DeriveFromAltDec
     public virtual AltDecBase
+#elif MixedDec_DeriveFromFlaggedDec
+    public virtual FlaggedDecBase
+#elif MixedDec_DeriveFromMediumDecV2
+    public virtual MediumDecV2Base
 #else
     public virtual MediumDecBase
 #endif
@@ -48,10 +56,15 @@ protected:
 		//How many trailing digits to display when converted to string
 		static TrailingDigitsDisplayed = 9;
 #pragma region DigitStorage
+	#if !defined(MixedDec_UseAltFloat)
 		float TrailingDigits;
+	#else
+		AltFloat TrailingDigits;
+	#endif
 #pragma endregion DigitStorage
 
 public:
+
 #pragma region Check_if_Zero
         //Detect if at exactly zero
 		bool IsZero() const
