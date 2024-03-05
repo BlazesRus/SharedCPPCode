@@ -32,8 +32,7 @@
 #include "MirroredInt.hpp"
 
 /*
-AltNum_PreventModulusOverride
-AltNum_EnableAlternativeModulusResult
+TinyUDec_IncludeFractionRepresentation
 */
 
 namespace BlazesRusCode
@@ -71,6 +70,7 @@ namespace BlazesRusCode
 
         /// <summary>
         /// Stores decimal section info and other special info
+		/// if negative treat TinyUDec as a fraction
         /// </summary>
         signed short DecimalHalf;
 

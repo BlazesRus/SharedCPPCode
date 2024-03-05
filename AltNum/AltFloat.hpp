@@ -37,6 +37,9 @@ namespace BlazesRusCode
 #else
 		TinyUDec Significant;
 #endif
+		//If Exponent is zero,TinyUDec_IncludeFractionRepresentation not toggled, 
+		// ,AltFloat_IncludeFractionalRep is toggled, and TinyUDec has negative DecimalHalf,
+		// then treat AltFloat as a fraction
 		short Exponent;
 		
 	#pragma region Addition Operations
