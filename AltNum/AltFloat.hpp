@@ -41,7 +41,44 @@ namespace BlazesRusCode
 		// ,AltFloat_IncludeFractionalRep is toggled, and TinyUDec has negative DecimalHalf,
 		// then treat AltFloat as a fraction
 		short Exponent;
-		
+	
+        /// <summary>
+        /// Sets value to the highest non-infinite value that is can be stored in s
+        /// </summary>
+        void SetAsMaximum()
+        {
+            Significant.
+        }
+
+        /// <summary>
+        /// Sets value as zero
+        /// </summary>
+        void SetAsZero()
+        {
+            Significant.SetAsZero();
+            Exponent = 0;
+        }
+    	
+	#pragma region Infinity Setters
+
+	#pragma endregion Infinity Setters
+	
+	#pragma region ApproachingZero Setters
+
+	#pragma endregion ApproachingZero Setters
+
+    #pragma region String Commands
+
+    #pragma endregion String Commands
+
+    #pragma region From Standard types to this type
+
+    #pragma endregion From Standard types to this type
+
+    #pragma region Other RepType Conversion
+
+    #pragma endregion Other RepType Conversion
+
 	#pragma region Addition Operations
         template<IntegerType IntType=int>
         void AdditionByIntOp(const IntType& rValue)

@@ -50,7 +50,7 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API TinyUDec
     {
-	public:
+	protected:
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
@@ -58,9 +58,25 @@ namespace BlazesRusCode
         /// </summary>
         unsigned char IntValue;
 
+        /// <summary>
+        /// Stores decimal section info
+		/// plus flags
+        /// If DecimalHalf==16384, then treat as negative or positive infinity
+        /// If bit slot#15 is false, than treat as fixed point.
+        /// If bit slot#15 is true, than treat as a fraction with GetDecimalSide() as denominator.
+        /// </summary>
+        unsigned short DecimalHalf;
+
+    public:
+
         signed int GetIntHalf()
         {
             return IntValue.GetValue();
+        }
+
+        void SetIntHalf(unsigned rValue)
+        {
+            IntValue = rValue;
         }
 
         bool IsNegative()
@@ -68,11 +84,24 @@ namespace BlazesRusCode
             return IntValue.IsNegative();
         }
 
-        /// <summary>
-        /// Stores decimal section info and other special info
-		/// if negative treat TinyUDec as a fraction
-        /// </summary>
-        signed short DecimalHalf;
+        //Returns DecimalHalf without flag variables
+        unsigned short GetDecimalSide()
+        {
+            if(DecimalHalf>16384)
+                return DecimalHalf - 16384;
+            return DecimalHalf;
+        }
+
+        //Sets decimal half as denominator
+        void SetDenominator(unsigned short rValue)
+        {
+            DecimalHalf = rValue+16384;
+        }
+
+        void SetDecimalHalf(unsigned short rValue)
+        {
+            DecimalHalf = rValue;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyUDec"/> class.
