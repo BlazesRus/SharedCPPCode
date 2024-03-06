@@ -29,17 +29,18 @@ namespace BlazesRusCode
 	//Designed to store trailing digits of number to reduce trunction loss(as replacement for float)
 	//Based on https://medium.com/@JeffreyLean/the-secret-life-of-floating-point-types-in-programming-languages-e25bc55d6123
 	//https://floating-point-gui.de/formats/fp/
-	//and https://float.exposed
+	//and https://en.wikipedia.org/wiki/Single-precision_floating-point_format
     class DLL_API AltFloat
     {
 #if defined(AltFloat_DontUseTinyUDec)
-		unsigned short Significant;
+		//Holds first 7 bits of Significant field
+		//If last bit is 1, then treat Significant as in fixed point mode(with support for value 0 to 127.9999 in signicant field)
+		unsigned char SignificantPt1;
+		//Last 16 Bits of Significant field stored here
+		unsigned short SignificantPt2;
 #else
 		TinyUDec Significant;
 #endif
-		//If Exponent is zero,TinyUDec_IncludeFractionRepresentation not toggled, 
-		// ,AltFloat_IncludeFractionalRep is toggled, and TinyUDec has negative DecimalHalf,
-		// then treat AltFloat as a fraction
 		short Exponent;
 	
         /// <summary>
