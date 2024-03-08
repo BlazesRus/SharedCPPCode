@@ -30,7 +30,7 @@
 #include "IntegerConcept.hpp"
 /*
 AltFloat_IncludeFixedPoint
-AltFloat_IncludeFractionRepresentation
+AltFloat_IncludeFractionRepresentation = Requires AltFloat_IncludeFixedPoint as well
 */
 
 namespace BlazesRusCode
@@ -41,6 +41,7 @@ namespace BlazesRusCode
     /// <summary>
     /// Alternative fixed point number representation designed for use with AltFloat
     /// Represents 0 to 9.9999 x 10^127 when in fixed point mode(when SignificantPt1 is greater than 128)
+    /// If AltFloat_IncludeFixedPoint is not toggled, then last bit becomes sign bit instead(not needed for storage of trailing digits)
     /// (Restricting SignificantPt1 field from values 0-9 to make easier to compare operations even if could fit 0 to 127 in field)
     /// When not in fixed point mode, represents range of approximately 0 to 3.4028235 × 10^38
     /// (switches out of fixed point mode when value would truncate instead to nearest floating format representation)
@@ -60,11 +61,13 @@ namespace BlazesRusCode
         // if SignificantPt1 not equal to 128
 		unsigned short SignificantPt2;
 
-		short Exponent;
+		signed char Exponent;
     public:
     #if defined(AltFloat_IncludeFixedPoint)
         signed int GetIntHalf()
         {
+            if(SignificantPt1>128)
+                return SignificantPt1 - 128;
             return SignificantPt1;
         }
 
@@ -78,13 +81,6 @@ namespace BlazesRusCode
         {
             return SignificantPt2;
         }
-        #if defined(AltFloat_IncludeFractionRepresentation)
-        //Sets decimal half as denominator
-        void SetDenominator(unsigned char rValue)
-        {
-
-        }
-        #endif
 
         void SetDecimalHalf(unsigned short rValue)
         {
@@ -97,7 +93,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="significantPt1">Holds first 7 bits of Significant field plus flag for fixed point mode</param>
         /// <param name="SignificantPt2">The non-whole based half of the representation(and other special statuses)</param>
-        AltFloat(unsigned char significantPt1=0, unsigned short significantPt2=0, signed short exponent=0)
+        AltFloat(unsigned char significantPt1=0, unsigned short significantPt2=0, signed char exponent=0)
         {
             SignificantPt1 = significantPt1;
             SignificantPt2 = significantPt2;
@@ -143,9 +139,11 @@ namespace BlazesRusCode
         void SetAsMaximum()
         {
     #if defined(AltFloat_IncludeFixedPoint)
-
+            SignificantPt1 = 137;
+            SignificantPt2 = 9999;
+            Exponent = 127;
     #else
-
+            //Add code here later
     #endif
         }
 
@@ -154,11 +152,21 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
+    #if defined(AltFloat_IncludeFixedPoint)
             SetAsZero();
+    #else
+            //Add code here later
+    #endif
         }
 
     #pragma region Fractional Setters
-
+        #if defined(AltFloat_IncludeFractionRepresentation)
+        //Sets decimal half as denominator
+        void SetDenominator(unsigned char rValue)
+        {
+            //Add code here later
+        }
+        #endif
     #pragma endregion Fractional Setters
 
     #pragma region ApproachingZero Setters
@@ -167,7 +175,21 @@ namespace BlazesRusCode
 
     #pragma region ValueDefines
 
+        static AltFloat ZeroValue()
+        {
+            return AltFloat();
+        }
+
     #pragma endregion ValueDefines
+    #if !defined(AltFloat_IncludeFixedPoint)
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus()
+        {
+            SignificantPt1 = SignificantPt1 ^ 128;//Flip the last bit (SignificantPt1 bits xor 10000000)
+        }
+    #endif
 
     #pragma region String Commands
         /// <summary>
@@ -205,23 +227,27 @@ namespace BlazesRusCode
             this->ReadString(Value);
         }
 
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>std.string</returns>
+        std::string ToString()
+        {
+            //Add code here later
+            return "";//placeholder
+        }
+
+        /// <summary>
+        /// Implements the operator std::string operator.
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator std::string() { return ToString(); }
+
     #pragma endregion String Commands
 
     #pragma region ConvertToOtherTypes
 
     #pragma endregion ConvertToOtherTypes
-
-    #pragma region Pi Conversion
-	
-    #pragma endregion Pi Conversion
-
-    #pragma region E Conversion
-	
-    #pragma endregion E Conversion
-
-    #pragma region Other RepType Conversion
-
-    #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
     //To-Do:Place code here
