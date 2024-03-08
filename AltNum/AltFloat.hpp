@@ -222,6 +222,34 @@ namespace BlazesRusCode
 
     #pragma endregion Other RepType Conversion
 
+    #pragma region Comparison Operators
+    //To-Do:Place code here
+    #pragma endregion Comparison Operators
+
+	#pragma region Division Operations
+        template<IntegerType IntType=int>
+        void DivideByIntOp(const IntType& rValue)
+		{
+			//Division by 10s can directly divide Exponent by rValue
+		}
+		
+        void DivideOp(const AltFloat& rValue)
+		{
+		}
+	#pragma endregion Division Operations
+
+	#pragma region Multiplication Operations
+        template<IntegerType IntType=int>
+        void MultiplyByIntOp(const IntType& rValue)
+		{
+			//Multiplication by 10s can directly multiple Exponent by rValue
+		}
+		
+        void MultiplyOp(const AltFloat& rValue)
+		{
+		}
+	#pragma endregion Multiplication Operations
+
 	#pragma region Addition Operations
         template<IntegerType IntType=int>
         void AdditionByIntOp(const IntType& rValue)
@@ -244,32 +272,58 @@ namespace BlazesRusCode
 		}
 	#pragma endregion Subtraction Operations
 	
-	#pragma region Multiplication Operations
-        template<IntegerType IntType=int>
-        void MultiplyByIntOp(const IntType& rValue)
-		{
-			//Multiplication by 10s can directly multiple Exponent by rValue
-		}
-		
-        void MultiplyOp(const AltFloat& rValue)
-		{
-		}
-	#pragma endregion Multiplication Operations
-	
-	#pragma region Division Operations
-        template<IntegerType IntType=int>
-        void DivideByIntOp(const IntType& rValue)
-		{
-			//Division by 10s can directly divide Exponent by rValue
-		}
-		
-        void DivideOp(const AltFloat& rValue)
-		{
-		}
-	#pragma endregion Division Operations
-	
     #pragma region Other Operators
 
+        /// <summary>
+        /// ++AltFloat Operator
+        /// </summary>
+        /// <returns>AltFloat &</returns>
+        AltFloat& operator ++()
+        {
+            *this = *this + 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// --AltFloat Operator
+        /// </summary>
+        /// <returns>AltFloat &</returns>
+        AltFloat& operator --()
+        {
+            *this = *this - 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// AltFloat++ Operator
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        AltFloat operator ++(int)
+        {
+            AltFloat tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// AltFloat-- Operator
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        AltFloat operator --(int)
+        {
+            AltFloat tmp(*this);
+            --* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// AltFloat* Operator
+        /// </summary>
+        /// <returns>AltFloat &</returns>
+        AltFloat& operator *()
+        {
+            return *this;
+        }
     #pragma endregion Other Operators
 
 	#pragma region Modulus Operations
