@@ -159,20 +159,10 @@ namespace BlazesRusCode
 	#pragma region Fractional Setters
 	//Not used for this variant
 	#pragma endregion Fractional Setters
-        
-	#pragma region MixedFrac Setters
-	//Not used for this variant
-	#pragma endregion MixedFrac Setters
 	
 	#pragma region ApproachingZero Setters
 	//Not used for this variant
 	#pragma endregion ApproachingZero Setters
-
-	#pragma region NaN Setters
-	#if defined(AltNum_EnableNaN)
-
-	#endif
-	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
     protected:

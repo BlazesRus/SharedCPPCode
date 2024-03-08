@@ -156,49 +156,59 @@ namespace BlazesRusCode
             SetAsZero();
         }
 
-    #pragma region PiNum Setters
-
-    #pragma endregion PiNum Setters
-
-    #pragma region ENum Setters
-
-    #pragma endregion ENum Setters
-
     #pragma region Fractional Setters
 
     #pragma endregion Fractional Setters
-    
-    #pragma region MixedFrac Setters
-
-    #pragma endregion MixedFrac Setters
-
-    #pragma region Infinity Setters
-
-    #pragma endregion Infinity Setters
 
     #pragma region ApproachingZero Setters
 
     #pragma endregion ApproachingZero Setters
-
-    #pragma region NaN Setters
-
-    #pragma endregion NaN Setters
 
     #pragma region ValueDefines
 
     #pragma endregion ValueDefines
 
     #pragma region String Commands
-	
+        /// <summary>
+        /// Reads the string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void ReadString(std::string Value)
+        {
+            //Add code here later
+        }
+
+        /// <summary>
+        /// Gets the value from string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        AltFloat GetValueFromString(std::string Value);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltFloat"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        AltFloat(const char* strVal)
+        {
+            std::string Value = strVal;
+            this->ReadString(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltFloat"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltFloat(std::string Value)
+        {
+            this->ReadString(Value);
+        }
+
     #pragma endregion String Commands
 
     #pragma region ConvertToOtherTypes
 
     #pragma endregion ConvertToOtherTypes
-
-    #pragma region MirroredIntBased Operations
-
-    #pragma endregion MirroredIntBased Operations
 
     #pragma region Pi Conversion
 	
