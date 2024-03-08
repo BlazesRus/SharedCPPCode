@@ -40,7 +40,8 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with AltFloat
-    /// Represents 0 to 127.9999 x 10^127 when in fixed point mode(when SignificantPt1 is greater than 128)
+    /// Represents 0 to 9.9999 x 10^127 when in fixed point mode(when SignificantPt1 is greater than 128)
+    /// (Restricting SignificantPt1 field from values 0-9 to make easier to compare operations even if could fit 0 to 127 in field)
     /// When not in fixed point mode, represents range of approximately 0 to 3.4028235 × 10^38
     /// (switches out of fixed point mode when value would truncate instead to nearest floating format representation)
     /// (4 bytes worth of Variable Storage inside class for each instance)
@@ -228,50 +229,124 @@ namespace BlazesRusCode
 
 	#pragma region Division Operations
         template<IntegerType IntType=int>
-        void DivideByIntOp(const IntType& rValue)
+        void DivByIntOp(const IntType& rValue)
 		{
 			//Division by 10s can directly divide Exponent by rValue
 		}
 		
-        void DivideOp(const AltFloat& rValue)
+        //Division by AltFloat operation
+        void DivOp(const AltFloat& rValue)
 		{
 		}
 	#pragma endregion Division Operations
 
 	#pragma region Multiplication Operations
+        //Multiply by Integer Operation
         template<IntegerType IntType=int>
-        void MultiplyByIntOp(const IntType& rValue)
+        void MultByIntOp(const IntType& rValue)
 		{
 			//Multiplication by 10s can directly multiple Exponent by rValue
 		}
 		
-        void MultiplyOp(const AltFloat& rValue)
+        //Multiply operation
+        void MultOp(const AltFloat& rValue)
 		{
 		}
 	#pragma endregion Multiplication Operations
 
 	#pragma region Addition Operations
+        //Addition by Integer Operation
         template<IntegerType IntType=int>
-        void AdditionByIntOp(const IntType& rValue)
+        void AddByIntOp(const IntType& rValue)
 		{
 		}
 		
-        void AdditionOp(const AltFloat& rValue)
+        //Addition by AltFloat Operation
+        void AddOp(const AltFloat& rValue)
 		{
 		}
 	#pragma endregion Addition Operations
 	
 	#pragma region Subtraction Operations
+        //Subtraction by Integer Operation
         template<IntegerType IntType=int>
-        void SubtractionByIntOp(const IntType& rValue)
+        void SubtractByIntOp(const IntType& rValue)
 		{
 		}
 		
-        void SubtractionOp(const AltFloat& rValue)
+        //Subtraction by AltFloat Operation
+        void SubtractOp(const AltFloat& rValue)
 		{
 		}
 	#pragma endregion Subtraction Operations
 	
+    #pragma region Main Operator Overrides
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat operator/(AltFloat self, AltFloat Value) { return DivOp(self, Value); }
+
+        /// <summary>
+        /// /= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat& operator/=(AltFloat& self, AltFloat Value) { return DivOp(self, Value); }
+
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat operator*(AltFloat self, AltFloat Value) { return MultOp(self, Value); }
+
+        ///// <summary>
+        ///// *= Operation
+        ///// </summary>
+        ///// <param name="self">The self.</param>
+        ///// <param name="Value">The value.</param>
+        ///// <returns>AltFloat</returns>
+        friend AltFloat& operator*=(AltFloat& self, AltFloat Value) { return MultOp(self, Value); }
+
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat operator+(AltFloat self, AltFloat Value) { return AddOp(self, Value); }
+
+        /// <summary>
+        /// += Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat& operator+=(AltFloat& self, AltFloat Value) { return AddOp(self, Value); }
+
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat operator-(AltFloat self, AltFloat Value) { return SubtractOp(self, Value); }
+
+        /// <summary>
+        /// -= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>AltFloat</returns>
+        friend AltFloat& operator-=(AltFloat& self, AltFloat Value) { return SubtractOp(self, Value); }
+
+    #pragma endregion Main Operator Overrides
+
     #pragma region Other Operators
 
         /// <summary>
