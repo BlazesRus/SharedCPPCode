@@ -669,7 +669,7 @@ public:
         static MediumDec PartialDiv(MediumDec& self, unsigned long long Value) { self.PartialUIntDivOp(Value); return self; }
 
 protected:
-        template<typename IntType>
+        template<IntegerType IntType=int>
         MediumDec& BasicIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -688,7 +688,7 @@ protected:
             return *this;
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=int>
         MediumDec& BasicUnsignedIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -842,7 +842,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntDivOp(IntType& Value)
         {
             if (Value < 0)
@@ -1071,7 +1071,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntDivOp(MediumDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
 		/// <summary>
@@ -1297,7 +1297,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void PartialIntMultOp(IntType& Value)
         {
             if (DecimalHalf == 0)
@@ -1334,7 +1334,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void BasicIntMultOp(IntType& Value)
         {
             if (Value < 0)
@@ -1355,7 +1355,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void BasicIntMultOpV2(IntType& Value)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -1366,7 +1366,7 @@ public:
                 PartialIntMultOp(Value);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntMultOpPt2(IntType& Value)
         {
             LRep = this->GetRepType();
@@ -1495,7 +1495,7 @@ public:
         }
 
         //IntMultOp without negative check
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& UnsignedIntMultOp(IntType& Value)
         {
             if (self == Zero||Value==1)
@@ -1512,7 +1512,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntMultOp(IntType& Value)
         {
             if (Value < 0)
@@ -1537,7 +1537,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntMultOp(MediumDec& self, IntType& Value) { return self.IntMultOp(Value); }
 
         static MediumDec& MultOp(MediumDec& self, int& Value) { return self.IntMultOp(Value); }
@@ -1548,7 +1548,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& UnsignedMultOp(MediumDec& self, IntType& Value)
         {
             if (self == Zero) {}
@@ -1641,7 +1641,7 @@ protected:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntAddOp(IntType& value)
         {
             if (value == 0)
@@ -1695,7 +1695,7 @@ protected:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntAddOp(MediumDec& self, IntType& value)
         {
             return self.IntAddOp(value);
@@ -1767,7 +1767,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntSubOp(IntType& value)
         {
             if (value == 0)
@@ -1821,7 +1821,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         static MediumDec& IntSubOp(MediumDec& self, IntType& value)
         {
             return self.IntSubOp(value);
@@ -1920,7 +1920,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec& operator+=(MediumDec& self, int Value) { return IntAddOp(self, Value); }
 
         //friend MediumDec operator+=(MediumDec* self, int Value) { return IntAddOp(**self, Value); }
@@ -1957,7 +1957,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec& operator*=(MediumDec& self, int Value) { return IntMultOp(self, Value); }
 
         ///// <summary>
@@ -2000,7 +2000,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec& operator+=(MediumDec& self, signed long long Value) { return IntAddOp(self, Value); }
 
         /// <summary>
@@ -2033,7 +2033,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec operator*=(MediumDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
@@ -2233,7 +2233,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec operator^(MediumDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
@@ -2260,7 +2260,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         friend MediumDec operator|(MediumDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
