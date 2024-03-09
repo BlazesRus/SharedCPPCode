@@ -52,6 +52,7 @@ namespace BlazesRusCode
 		//Holds first 7 bits of Significant field
 		//If last bit is 1, then treat Significant as in fixed point mode(with support for value 0 to 127.9999 in signicant field)
 		unsigned char SignificantPt1;
+
 		//Last 16 Bits of Significant field stored here
         //If AltFloat_IncludeFractionRepresentation and AltFloat_IncludeFixedPoint is enabled
         // and the last bit is 1,

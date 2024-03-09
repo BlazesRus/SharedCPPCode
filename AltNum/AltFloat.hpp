@@ -52,8 +52,10 @@ namespace BlazesRusCode
 	protected://^ in comments refers to power of instead of XOR
 
 		//Holds first 7 bits of Significant field
-		//If last bit is 1, then treat Significant as in fixed point mode(with support for value 0 to 127.9999 in signicant field)
+		//If last bit is 1, then treat Significant as in fixed point mode
+        //(with support for value 0 to 9.9999 in Significant field)
 		unsigned char SignificantPt1;
+
 		//Last 16 Bits of Significant field stored here
         //If AltFloat_IncludeFractionRepresentation and AltFloat_IncludeFixedPoint is enabled
         // and the last bit is 1,
@@ -65,30 +67,6 @@ namespace BlazesRusCode
         //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
 		signed char Exponent;
     public:
-    #if defined(AltFloat_IncludeFixedPoint)
-        signed int GetIntHalf()
-        {
-            if(SignificantPt1>128)
-                return SignificantPt1 - 128;
-            return SignificantPt1;
-        }
-
-        void SetIntHalf(unsigned char rValue)
-        {
-            SignificantPt1 = rValue;
-        }
-
-        //Returns DecimalHalf
-        unsigned short GetDecimalSide()
-        {
-            return SignificantPt2;
-        }
-
-        void SetDecimalHalf(unsigned short rValue)
-        {
-            SignificantPt2 = rValue;
-        }
-    #endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
@@ -131,6 +109,13 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
+    #if defined(AltFloat_IncludeFixedPoint)
+        //If SignificantPt1 is above FixedPointBit
+        static unsigned char FixedPointBit = 128;
+    #else
+        //signed number bit
+        static unsigned char SignedNumberBit = 128;
+    #endif
 
     #pragma endregion Const Representation values
 	public:
@@ -160,6 +145,31 @@ namespace BlazesRusCode
             //Add code here later
     #endif
         }
+
+    #if defined(AltFloat_IncludeFixedPoint)
+        signed int GetIntHalf()
+        {
+            if(SignificantPt1>128)
+                return SignificantPt1 - 128;
+            return SignificantPt1;
+        }
+
+        void SetIntHalf(unsigned char rValue)
+        {
+            SignificantPt1 = rValue;
+        }
+
+        //Returns DecimalHalf
+        unsigned short GetDecimalSide()
+        {
+            return SignificantPt2;
+        }
+
+        void SetDecimalHalf(unsigned short rValue)
+        {
+            SignificantPt2 = rValue;
+        }
+    #endif
 
     #pragma region Fractional Setters
         #if defined(AltFloat_IncludeFractionRepresentation)
