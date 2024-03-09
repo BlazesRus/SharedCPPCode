@@ -186,11 +186,19 @@ namespace BlazesRusCode
     #pragma endregion ApproachingZero Setters
 
     #pragma region ValueDefines
-
+protected:
         static AltFloat ZeroValue()
         {
             return AltFloat();
         }
+
+public:
+
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat Zero;
 
     #pragma endregion ValueDefines
     #if !defined(AltFloat_IncludeFixedPoint)
@@ -256,6 +264,68 @@ namespace BlazesRusCode
         explicit operator std::string() { return ToString(); }
 
     #pragma endregion String Commands
+
+    #pragma region ConvertFromOtherTypes
+
+        float toFloat()
+        {
+            float Value;
+            //Add code here later
+            return Value
+        }
+
+        /// <summary>
+        /// AltFloat to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float()
+        {
+            return toFloat();
+        }
+
+        float toDouble()
+        {
+            double Value;
+            //Add code here later
+            return Value
+        }
+
+        /// <summary>
+        /// AltFloat to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double()
+        {
+            return toFloat();
+        }
+
+        template<IntegerType IntType=int>
+        IntType toIntType()
+        {
+            IntType Value;
+            //Add code here later
+            return Value
+        }
+
+        /// <summary>
+        /// AltFloat to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int()
+        {
+            return toIntType();
+        }
+
+        /// <summary>
+        /// AltFloat to int64 explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator long long()
+        {
+            return toIntType();
+        }
+
+    #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
 
