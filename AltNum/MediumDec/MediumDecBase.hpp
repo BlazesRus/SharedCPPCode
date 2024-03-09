@@ -622,6 +622,10 @@ protected:
 
     #pragma endregion ConvertFromOtherTypes
 
+    #pragma region ConvertToOtherTypes
+
+    #pragma endregion ConvertToOtherTypes
+
 protected:
     #pragma region MirroredIntBased Operations
     //Templates can not be virtual
@@ -747,7 +751,7 @@ protected:
         }
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAddition(RValue);
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void IntHalfAddition(IntType RValue)
         {
     #if defined(AltDec_UseMirroredInt)
@@ -825,7 +829,7 @@ protected:
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
         //this is copy by value and pointer version
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void IntHalfSubtraction(IntType RValue)
         {
     #if defined(AltDec_UseMirroredInt)
@@ -1476,7 +1480,7 @@ public:/*
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void BasicIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -1492,7 +1496,7 @@ public:/*
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=int>
         void BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
