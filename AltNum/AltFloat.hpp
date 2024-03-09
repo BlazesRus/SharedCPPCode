@@ -49,7 +49,7 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API AltFloat
     {//Right side operations are assumed to be positive
-	protected:
+	protected://^ in comments refers to power of instead of XOR
 
 		//Holds first 7 bits of Significant field
 		//If last bit is 1, then treat Significant as in fixed point mode(with support for value 0 to 127.9999 in signicant field)
@@ -61,6 +61,8 @@ namespace BlazesRusCode
         // if SignificantPt1 not equal to 128
 		unsigned short SignificantPt2;
 
+        //In fixed point mode refers to the Exponent of 10 in "(SignificantPt1.SignificantPt2) * 10^Exponent" formula
+        //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
 		signed char Exponent;
     public:
     #if defined(AltFloat_IncludeFixedPoint)
