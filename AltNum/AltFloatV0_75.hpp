@@ -45,14 +45,23 @@ namespace BlazesRusCode
     /// (Restricting SignificantPt1 field from values 0-9 to make easier to compare operations even if could fit 0 to 127 in field)
     /// When not in fixed point mode, represents range of approximately 0 to 3.4028235 × 10^38
     /// (switches out of fixed point mode when value would truncate instead to nearest floating format representation)
-    /// (5 bytes worth of Variable Storage inside class for each instance)
+    /// (4 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
     {//Right side operations are assumed to be positive
 	protected://^ in comments refers to power of instead of XOR
 
-		//Only 3 Bytes of this is actually used (Value is the Numberator/8388608)
-		signed int SignifNum;
+		//Holds first 7 bits of Significant field
+		//If last bit is 1, then treat Significant as in fixed point mode
+        //(with support for value 0 to 9.9999 in Significant field)
+		unsigned char SignificantPt1;
+
+		//Last 16 Bits of Significant field stored here
+        //If AltFloat_IncludeFractionRepresentation and AltFloat_IncludeFixedPoint is enabled
+        // and the last bit is 1,
+        // then represents a fractional or mixed fraction 
+        // if SignificantPt1 not equal to 128
+		unsigned short SignificantPt2;
 
         //In fixed point mode refers to the Exponent of 10 in "(SignificantPt1.SignificantPt2) * 10^Exponent" formula
         //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
@@ -63,9 +72,11 @@ namespace BlazesRusCode
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
         /// <param name="significantPt1">Holds first 7 bits of Significant field plus flag for fixed point mode</param>
-        AltFloat(signed int signifNum=0, signed char exponent=0)
+        /// <param name="SignificantPt2">The non-whole based half of the representation(and other special statuses)</param>
+        AltFloat(unsigned char significantPt1=0, unsigned short significantPt2=0, signed char exponent=0)
         {
-            SignifNum = signifNum;
+            SignificantPt1 = significantPt1;
+            SignificantPt2 = significantPt2;
             Exponent = exponent;
         }
 
@@ -76,7 +87,7 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return SignifNum==0&&Exponent==0;
+            return SignificantPt1==0&&SignificantPt2==0;
 		}
 
         /// <summary>
@@ -85,18 +96,26 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         void SetVal(AltFloat Value)
         {
-            SignifNum = Value.SignifNum;
+            SignificantPt1 = Value.SignificantPt1;
+            SignificantPt2 = Value.SignificantPt2;
             Exponent = Value.Exponent;
         }
 
         void SetAsZero()
         {
-            SignifNum = 0;
+            SignificantPt1 = 0; SignificantPt2 = 0;
             Exponent = 0;
         }
 
     #pragma region Const Representation values
     protected:
+    #if defined(AltFloat_IncludeFixedPoint)
+        //If SignificantPt1 is above FixedPointBit
+        static unsigned char FixedPointBit = 128;
+    #else
+        //signed number bit
+        static unsigned char SignedNumberBit = 128;
+    #endif
 
     #pragma endregion Const Representation values
 	public:
@@ -106,8 +125,13 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-            SignifNum = 8388607;
-			Exponent = 127;
+    #if defined(AltFloat_IncludeFixedPoint)
+            SignificantPt1 = 137;
+            SignificantPt2 = 9999;
+            Exponent = 127;
+    #else
+            //Add code here later
+    #endif
         }
 
         /// <summary>
@@ -115,9 +139,47 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
-            SignifNum = -8388607;
-			Exponent = 127;
+    #if defined(AltFloat_IncludeFixedPoint)
+            SetAsZero();
+    #else
+            //Add code here later
+    #endif
         }
+
+    #if defined(AltFloat_IncludeFixedPoint)
+        signed int GetIntHalf()
+        {
+            if(SignificantPt1>128)
+                return SignificantPt1 - 128;
+            return SignificantPt1;
+        }
+
+        void SetIntHalf(unsigned char rValue)
+        {
+            SignificantPt1 = rValue;
+        }
+
+        //Returns DecimalHalf
+        unsigned short GetDecimalSide()
+        {
+            return SignificantPt2;
+        }
+
+        void SetDecimalHalf(unsigned short rValue)
+        {
+            SignificantPt2 = rValue;
+        }
+    #endif
+
+    #pragma region Fractional Setters
+        #if defined(AltFloat_IncludeFractionRepresentation)
+        //Sets decimal half as denominator
+        void SetDenominator(unsigned char rValue)
+        {
+            //Add code here later
+        }
+        #endif
+    #pragma endregion Fractional Setters
 
     #pragma region ApproachingZero Setters
 
@@ -241,42 +303,40 @@ public:
         IntType toIntType()
         {
             IntType Value;
-            if(SignifNum==0&&SignificantPt2==0)
+            if(SignificantPt1==0&&SignificantPt2==0)
                 return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent*(SignificantBit Fractional+1)
             else
             {
-				int ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
-				
-//                bool IsNegative = SignificantPt1<0;
-//                int Pt1 = IsNegative?SignificantPt1*-1:SignificantPt1;
-//                int Numberator;
-//                //Bit values displayed on https://evanw.github.io/float-toy/
-//                switch(Pt1)
-//                {
-//                    case 64://0.5
-//                        Numberator = 4194304;
-//                    case 48://0.375
-//                        Numberator = 3145728;
-//                    case 32://0.25
-//                        Numberator = 2097152;
-//                    case 16://0.125
-//                        Numberator = 1048576;
-//                    case 8://Bit 20(0.0625)
-//                        Numberator = 524288;
-//                    case 4://Bit 19(0.03125)
-//                        Numberator = 262144;
-//                    case 2://Bit 18(0.)
-//                        Numberator = 131072;
-//                    case 1://Bit 17(0.)
-//                        Numberator = 65536;
-//                    default:
-//                        Numberator = 0;
-//                }
-//                //Add bit total from SignificantPt2
-//
-//                //Each bit after if half the previous
-//
-//                //+1 after bit totals
+                bool IsNegative = SignificantPt1<0;
+                int Pt1 = IsNegative?SignificantPt1*-1:SignificantPt1;
+                int Numberator;
+                //Bit values displayed on https://evanw.github.io/float-toy/
+                switch(Pt1)
+                {
+                    case 64://0.5
+                        Numberator = 4194304;
+                    case 48://0.375
+                        Numberator = 3145728;
+                    case 32://0.25
+                        Numberator = 2097152;
+                    case 16://0.125
+                        Numberator = 1048576;
+                    case 8://Bit 20(0.0625)
+                        Numberator = 524288;
+                    case 4://Bit 19(0.03125)
+                        Numberator = 262144;
+                    case 2://Bit 18(0.)
+                        Numberator = 131072;
+                    case 1://Bit 17(0.)
+                        Numberator = 65536;
+                    default:
+                        Numberator = 0;
+                }
+                //Add bit total from SignificantPt2
+
+                //Each bit after if half the previous
+
+                //+1 after bit totals
                 //Add code here later
             }
             return 0;//Placeholder;
