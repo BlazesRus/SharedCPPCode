@@ -50,8 +50,14 @@ namespace BlazesRusCode
     class DLL_API AltFloat
     {//Right side operations are assumed to be positive
 	protected://^ in comments refers to power of instead of XOR
-
+#if defined(AltFloat_ExtendedRange)
+		static signed long long DenomMax = 2147483648;
+#else
+		static signed int DenomMax = 8388608;
+#endif
+ 
 		//Only 3 Bytes of this is actually used (Value is the Numberator/8388608)
+		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 		signed int SignifNum;
 
         //In fixed point mode refers to the Exponent of 10 in "(SignificantPt1.SignificantPt2) * 10^Exponent" formula
@@ -106,7 +112,11 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
+#if !defined(AltFloat_ExtendedRange)
             SignifNum = 8388607;
+#else
+			SignifNum = 2147483647;
+#endif
 			Exponent = 127;
         }
 
@@ -115,8 +125,21 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
+#if !defined(AltFloat_ExtendedRange)
             SignifNum = -8388607;
+#else
+			SignifNum = -2147483647;
+#endif
 			Exponent = 127;
+        }
+
+        /// <summary>
+        /// Sets value as smallest non-zero whole number that is not approaching zero
+        /// </summary>
+        void SetAsSmallestNonZero()
+        {
+            SignifNum = 1;
+			Exponent = -127;
         }
 
     #pragma region ApproachingZero Setters
