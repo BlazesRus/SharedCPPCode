@@ -32,7 +32,13 @@
 /*
 AltFloat_IncludeFixedPoint
 AltFloat_IncludeFractionRepresentation = Requires AltFloat_IncludeFixedPoint as well
+AltFloat_UseLeadingZeroInSignificant
+AltFloat_TreatZeroAsZeroExponent
+AltFloat_ExtendedRange
 */
+#if defined(AltFloat_UseLeadingZeroInSignificant) && !defined(AltFloat_TreatZeroAsZeroExponent)
+	#define AltFloat_TreatZeroAsZeroExponent
+#endif
 
 namespace BlazesRusCode
 {
@@ -58,7 +64,7 @@ namespace BlazesRusCode
 #endif
 
 		//Exponent value that zero is defined at
-#if defined(AltFloat_TreatZeroAsZeroExponent)||defined(AltFloat_UseLeadingZeroInSignificant)
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
 		static signed char ZeroRep = -128;
 #else
 		static signed char ZeroRep = 0;
@@ -166,7 +172,7 @@ protected:
             return AltFloat();
         }
 		
-#if !defined(AltFloat_TreatZeroAsZeroExponent)&&!defined(AltFloat_UseLeadingZeroInSignificant)
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
         static AltFloat OneValue()
         {
             return AltFloat(0,0);
@@ -289,42 +295,37 @@ public:
         IntType toIntType()
         {
             IntType Value;
-            if(SignifNum==0&&SignificantPt2==0)
-                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent*(SignificantBit Fractional+1)
+            if(Exponent==ZeroRep)
+            {
+				if(SignifNum==0)
+					return 0;
+				else
+				{
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
+					//Add code here later
+	#else
+					//Add code here later
+	#endif
+				}
+            }
+	#if !defined(AltFloat_TreatZeroAsZeroExponent)
+			else if(Exponent==0)
+			{
+				//Add code here later
+			}
+	#endif
+            else if(SignifNum==0)
+                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent
+            else if(Exponent<0)
+            {
+				int ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);//
+				//signed long long Result = ;//(1+(SignifNum/DenomMax))*1/ExpDenomTotal
+                //Add code here later
+            }
             else
             {
 				int ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
-				
-//                bool IsNegative = SignificantPt1<0;
-//                int Pt1 = IsNegative?SignificantPt1*-1:SignificantPt1;
-//                int Numberator;
-//                //Bit values displayed on https://evanw.github.io/float-toy/
-//                switch(Pt1)
-//                {
-//                    case 64://0.5
-//                        Numberator = 4194304;
-//                    case 48://0.375
-//                        Numberator = 3145728;
-//                    case 32://0.25
-//                        Numberator = 2097152;
-//                    case 16://0.125
-//                        Numberator = 1048576;
-//                    case 8://Bit 20(0.0625)
-//                        Numberator = 524288;
-//                    case 4://Bit 19(0.03125)
-//                        Numberator = 262144;
-//                    case 2://Bit 18(0.)
-//                        Numberator = 131072;
-//                    case 1://Bit 17(0.)
-//                        Numberator = 65536;
-//                    default:
-//                        Numberator = 0;
-//                }
-//                //Add bit total from SignificantPt2
-//
-//                //Each bit after if half the previous
-//
-//                //+1 after bit totals
+				//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
                 //Add code here later
             }
             return 0;//Placeholder;
@@ -589,18 +590,8 @@ public:
         /// <returns>MediumDec &</returns>
         AltFloat& Trunc()
         {
-    #if defined(AltFloat_IncludeFixedPoint)
-            if(SignificantPt1>128)//Fixed point mode
-            {
-                SignificantPt2=0;
-            }
-            else
-            {//Floating point mode
-    #endif
-                //Add code here later
-    #if defined(AltFloat_IncludeFixedPoint)
-            }
-    #endif
+            signed long long ValueAsInt = (signed long long)*this;
+			SetInt64Value(ValueAsInt);
             return *this;
         }
 
