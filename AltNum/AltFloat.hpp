@@ -271,7 +271,7 @@ public:
         {
             float Value;
             //Add code here later
-            return Value
+            return 0.0f;//placeholder //Value;
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ public:
         {
             double Value;
             //Add code here later
-            return Value
+            return 0.0;//plaheholder //Value;
         }
 
         /// <summary>
@@ -303,8 +303,13 @@ public:
         IntType toIntType()
         {
             IntType Value;
-            //Add code here later
-            return Value
+            if(SignificantPt1==0&&SignificantPt2==0)
+                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent*(Significant+1)
+            else
+            {
+                //Add code here later
+            }
+            return 0;//Placeholder;
         }
 
         /// <summary>
