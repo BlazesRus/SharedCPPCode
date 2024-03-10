@@ -28,6 +28,7 @@
 #endif
 
 #include "IntegerConcept.hpp"
+#include "..\MediumDec\MediumDec.hpp"
 /*
 AltFloat_IncludeFixedPoint
 AltFloat_IncludeFractionRepresentation = Requires AltFloat_IncludeFixedPoint as well
@@ -337,12 +338,13 @@ public:
         template<IntegerType IntType=int>
         void DivByIntOp(const IntType& rValue)
 		{
-			//Division by 10s can directly divide Exponent by rValue
+
 		}
 		
         //Division by AltFloat operation
         void DivOp(const AltFloat& rValue)
 		{
+			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))/((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
 		}
 	#pragma endregion Division Operations
 
@@ -351,12 +353,13 @@ public:
         template<IntegerType IntType=int>
         void MultByIntOp(const IntType& rValue)
 		{
-			//Multiplication by 10s can directly multiple Exponent by rValue
+
 		}
 		
         //Multiply operation
         void MultOp(const AltFloat& rValue)
 		{
+			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))*((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
 		}
 	#pragma endregion Multiplication Operations
 
@@ -370,6 +373,7 @@ public:
         //Addition by AltFloat Operation
         void AddOp(const AltFloat& rValue)
 		{
+			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))+((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
 		}
 	#pragma endregion Addition Operations
 	
@@ -383,6 +387,7 @@ public:
         //Subtraction by AltFloat Operation
         void SubtractOp(const AltFloat& rValue)
 		{
+			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))+((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
 		}
 	#pragma endregion Subtraction Operations
 	
