@@ -334,6 +334,7 @@ public:
     //To-Do:Place code here
     #pragma endregion Comparison Operators
 
+	protected:
 	#pragma region Division Operations
         template<IntegerType IntType=int>
         void DivByIntOp(const IntType& rValue)
@@ -344,7 +345,11 @@ public:
         //Division by AltFloat operation
         void DivOp(const AltFloat& rValue)
 		{
-			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))/((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
+#if !defined(AltFloat_UseLeadingZeroInSignificant)
+			//((1+(lValue.SignifNum/lValue.DenomMax))*(2^lValue.Exponent))/((1+(rValue.SignifNum/rValue.DenomMax))* (2^rValue.Exponent))
+#else
+			//((lValue.SignifNum/lValue.DenomMax)*(2^lValue.Exponent))/((rValue.SignifNum/rValue.DenomMax) * (2^rValue.Exponent))
+#endif
 		}
 	#pragma endregion Division Operations
 
@@ -359,7 +364,11 @@ public:
         //Multiply operation
         void MultOp(const AltFloat& rValue)
 		{
-			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))*((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
+#if !defined(AltFloat_UseLeadingZeroInSignificant)
+			//((1+(lValue.SignifNum/lValue.DenomMax))*(2^lValue.Exponent))*((1+(rValue.SignifNum/rValue.DenomMax))* (2^rValue.Exponent))
+#else
+			//((lValue.SignifNum/lValue.DenomMax)*(2^lValue.Exponent))*((rValue.SignifNum/rValue.DenomMax) * (2^rValue.Exponent))
+#endif
 		}
 	#pragma endregion Multiplication Operations
 
@@ -373,7 +382,11 @@ public:
         //Addition by AltFloat Operation
         void AddOp(const AltFloat& rValue)
 		{
-			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))+((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
+#if !defined(AltFloat_UseLeadingZeroInSignificant)
+			//((1+(lValue.SignifNum/lValue.DenomMax))*(2^lValue.Exponent))+((1+(rValue.SignifNum/rValue.DenomMax))* (2^rValue.Exponent))
+#else
+			//((lValue.SignifNum/lValue.DenomMax)*(2^lValue.Exponent))+((rValue.SignifNum/rValue.DenomMax) * (2^rValue.Exponent))
+#endif
 		}
 	#pragma endregion Addition Operations
 	
@@ -387,10 +400,15 @@ public:
         //Subtraction by AltFloat Operation
         void SubtractOp(const AltFloat& rValue)
 		{
-			//((1+(lValue.SignifNum/lValue.DenomMax) )*(2^lValue.Exponent))+((1+(rValue.SignifNum/rValue.DenomMax) )* (2^rValue.Exponent))
+#if !defined(AltFloat_UseLeadingZeroInSignificant)
+			//((1+(lValue.SignifNum/lValue.DenomMax))*(2^lValue.Exponent))-((1+(rValue.SignifNum/rValue.DenomMax))* (2^rValue.Exponent))
+#else
+			//((lValue.SignifNum/lValue.DenomMax)*(2^lValue.Exponent))-((rValue.SignifNum/rValue.DenomMax) * (2^rValue.Exponent))
+#endif
 		}
 	#pragma endregion Subtraction Operations
 	
+	public:
     #pragma region Main Operator Overrides
         /// <summary>
         /// Division Operation
