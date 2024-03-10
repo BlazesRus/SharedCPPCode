@@ -304,9 +304,39 @@ public:
         {
             IntType Value;
             if(SignificantPt1==0&&SignificantPt2==0)
-                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent*(Significant+1)
+                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent*(SignificantBit Fractional+1)
             else
             {
+                bool IsNegative = SignificantPt1<0;
+                int Pt1 = IsNegative?SignificantPt1*-1:SignificantPt1;
+                int Numberator;
+                //Bit values displayed on https://evanw.github.io/float-toy/
+                switch(Pt1)
+                {
+                    case 64://0.5
+                        Numberator = 4194304;
+                    case 48://0.375
+                        Numberator = 3145728;
+                    case 32://0.25
+                        Numberator = 2097152;
+                    case 16://0.125
+                        Numberator = 1048576;
+                    case 8://Bit 20(0.0625)
+                        Numberator = 524288;
+                    case 4://Bit 19(0.03125)
+                        Numberator = 262144;
+                    case 2://Bit 18(0.)
+                        Numberator = 131072;
+                    case 1://Bit 17(0.)
+                        Numberator = 65536;
+                    default:
+                        Numberator = 0;
+                }
+                //Add bit total from SignificantPt2
+
+                //Each bit after if half the previous
+
+                //+1 after bit totals
                 //Add code here later
             }
             return 0;//Placeholder;
