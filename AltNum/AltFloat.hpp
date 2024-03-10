@@ -69,8 +69,11 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        /// <param name="significantPt1">Holds first 7 bits of Significant field plus flag for fixed point mode</param>
+#if defined(AltFloat_TreatZeroAsZeroExponent)||defined(AltFloat_UseLeadingZeroInSignificant)
         AltFloat(signed int signifNum=0, signed char exponent=0)
+#else
+        AltFloat(signed int signifNum=0, signed char exponent=-128)
+#endif
         {
             SignifNum = signifNum;
             Exponent = exponent;
@@ -83,7 +86,11 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
+            return SignifNum==0&&Exponent==-128;
+#else
             return SignifNum==0&&Exponent==0;
+#endif
 		}
 
         /// <summary>
@@ -98,8 +105,14 @@ namespace BlazesRusCode
 
         void SetAsZero()
         {
+#if defined(AltFloat_TreatZeroAsZeroExponent)||defined(AltFloat_UseLeadingZeroInSignificant)//If toggled treats SignifNum 0 with Exponent 0, 
             SignifNum = 0;
             Exponent = 0;
+#else//instead let exponent of 0 count as 2^0 which equals 1 for formula
+//Treat Exponent -128 as for special values and zero so that formula for exact value is exact to formula except if Exponent is -128
+            SignifNum = 0;
+            Exponent = -128;
+#endif
         }
 
     #pragma region Const Representation values
@@ -153,6 +166,18 @@ protected:
         {
             return AltFloat();
         }
+		
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
+        static AltFloat OneValue()
+        {
+            return AltFloat(0,0);
+        }
+		
+        static AltFloat TwoValue()
+        {
+            return AltFloat(0,1);
+        }
+#endif
 
 public:
 
