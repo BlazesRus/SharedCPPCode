@@ -30,11 +30,13 @@
 #include "IntegerConcept.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 /*
-AltFloat_IncludeFixedPoint
+AltFloat_IncludeFixedPoint = Not Implimented yet
 AltFloat_IncludeFractionRepresentation = Requires AltFloat_IncludeFixedPoint as well
 AltFloat_UseLeadingZeroInSignificant
 AltFloat_TreatZeroAsZeroExponent
-AltFloat_ExtendedRange
+AltFloat_ExtendedRange = Extends SignifNum range to 2147483647
+AltFloat_EnableApproachingZero = Not Implimented yet
+AltFloat_EnableInfinity = Not Implimented yet
 */
 #if defined(AltFloat_UseLeadingZeroInSignificant) && !defined(AltFloat_TreatZeroAsZeroExponent)
 	#define AltFloat_TreatZeroAsZeroExponent
@@ -47,11 +49,19 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with AltFloat
-    /// Represents 0 to 9.9999 x 10^127 when in fixed point mode(when SignificantPt1 is greater than 128)
-    /// If AltFloat_IncludeFixedPoint is not toggled, then last bit becomes sign bit instead(not needed for storage of trailing digits)
-    /// (Restricting SignificantPt1 field from values 0-9 to make easier to compare operations even if could fit 0 to 127 in field)
-    /// When not in fixed point mode, represents range of approximately 0 to 3.4028235 × 10^38
-    /// (switches out of fixed point mode when value would truncate instead to nearest floating format representation)
+#if AltFloat_IncludeFixedPoint
+    /// When SignificantPt1 is greater than 128, AltFloat is in in fixed point mode and represents range of 0 to 9.9999 x 10^127
+	#if AltFloat_ExtendedRange
+	/// Otherwise, represents floating range between 0 and (1+(2147483647/DenomMax))*10^8388607(approximately 0 to 3.4028235 × 10^38)
+#elif AltFloat_ExtendedRange
+	//Represents floating range between 0 and (1+(2147483647/DenomMax))*10^8388607(approximately 0 to 3.4028235 × 10^38)
+#else
+	//(approximately 0 to 3.4028235 × 10^38)
+#endif
+	// Floating formula representation is "(1+(SignifNum/DenomMax))*10^Exponent"
+	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*10^127"
+	// (When Exponent<0, formula also represented as ...ToDo add alternative formula)
+	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*10^Exponent"
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
@@ -59,8 +69,28 @@ namespace BlazesRusCode
 	protected://^ in comments refers to power of instead of XOR
 #if defined(AltFloat_ExtendedRange)
 		static signed long long DenomMax = 2147483648;
+		static signed long long AlmostApproachingOne = 2147483647;
 #else
 		static signed int DenomMax = 8388608;
+		static signed int AlmostApproachingOne = 8388607;
+#endif
+
+#if defined(AltFloat_TreatZeroAsZeroExponent)
+#if !defined(AltFloat_EnableApproachingZero) || defined(AltFloat_EnableInfinity)
+		//Special Status representations not enabled if AltFloat_TreatZeroAsZeroExponent is not toggled for now(unless exponent range is reduced)
+		//If Exponent==-128 and SignifNum!=-128, then represents approaching zero range with SignifNum representing 
+		static signed int SpecialStatusRep = -128;
+#endif
+#if AltFloat_EnableInfinity
+		//If Exponent==-128 and SignifNum==-128, then represents infinity range with SignifNum==1 when positive and SignifNum==-1 when negative 
+		static signed int InfinityRep = -128;
+#endif
+#else
+	#if defined(AltFloat_EnableApproachingZero)
+		//When SignifNum==-128 and Exponent!=-128, than value is equal to Exponent.0..01
+		//When SignifNum==-128 and Exponent==-128, than value is equal to -0.0..01
+		static signed int ApproachingZeroRep = -128;
+	#endif
 #endif
 
 		//Exponent value that zero is defined at
@@ -70,12 +100,28 @@ namespace BlazesRusCode
 		static signed char ZeroRep = 0;
 #endif
  
-		//Only 3 Bytes of this is actually used (Value is the Numberator/8388608)
+		//Only 3 Bytes of this is actually used unless AltFloat_ExtendedRange is toggled (Value is the Numberator/8388608)
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 		signed int SignifNum;
 
-        //In fixed point mode refers to the Exponent of 10 in "(SignificantPt1.SignificantPt2) * 10^Exponent" formula
+#if AltFloat_IncludeFixedPoint
+        //In fixed point mode refers to the Exponent of 10 in "(SignifNum first 2 bytes).(SignifNum last 2 bytes)) * 10^Exponent" formula
+	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
         //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		#endif
+	#elif defined(AltFloat_TreatZeroAsZeroExponent)
+	#endif
+#else
+	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
+        //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		#endif
+	#elif defined(AltFloat_TreatZeroAsZeroExponent)
+	#endif
+#endif
 		signed char Exponent;
     public:
 
@@ -319,7 +365,7 @@ public:
             else if(Exponent<0)
             {
 				int ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);//
-				//signed long long Result = ;//(1+(SignifNum/DenomMax))*1/ExpDenomTotal
+				//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
                 //Add code here later
             }
             else
