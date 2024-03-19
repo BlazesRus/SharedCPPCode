@@ -388,7 +388,8 @@ public:
             {
 				if(SignifNum==0)
 					return 0;
-				else
+	#if !defined(AltFloat_TreatZeroAsZeroExponent)
+				else//Should only be used for special status
 				{
 	#if defined(AltFloat_TreatZeroAsZeroExponent)
 					//Add code here later
@@ -396,6 +397,7 @@ public:
 					//Add code here later
 	#endif
 				}
+	#endif
             }
 	#if !defined(AltFloat_TreatZeroAsZeroExponent)
 			else if(Exponent==0)
@@ -404,18 +406,39 @@ public:
 			}
 	#endif
             else if(SignifNum==0)
-                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent
+				//Will overflow at: 
+				//exponent value 32 for signed int
+				//exponent value 33 for unsigned int
+				//exponent value 64 for signed int 64
+				//exponent value 65 for unsigned int 64
+				//exponent value 128 for signed int 128
+				//exponent value 129 for unsigned int 128
+                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent 
             else if(Exponent<0)
             {
-				int ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);//
-				//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
-                //Add code here later
+				if(Exponent<=-65)
+				{
+					//Add Code here later
+				}
+				else
+				{
+					unsigned long long ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);
+					//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
+					//Add code here later
+				}
             }
             else
             {
-				int ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
-				//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
-                //Add code here later
+				if(Exponent<=65)
+				{
+					//Add Code here later
+				}
+				else
+				{
+					unsigned long long ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
+					//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
+					//Add code here later
+				}
             }
             return 0;//Placeholder;
         }
