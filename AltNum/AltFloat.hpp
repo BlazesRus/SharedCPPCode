@@ -61,10 +61,10 @@ namespace BlazesRusCode
 #else
 	//Represents floating range between 0 and (1+(8388607/8388608))*2^127      (Approximately 340 282 346 638 528 859 811 704 183 484 516 925 440)
 #endif
-	// Floating formula representation is "(1+(SignifNum/DenomMax))*2^Exponent"
+	// Floating formula representation is SignifNum>=0?"(1+(SignifNum/DenomMax))*2^Exponent":"(1+(-SignifNum/DenomMax))*2^Exponent";
 	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*2^127"
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
-	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/12^-Exponent)"
+	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exponent))"
 	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
