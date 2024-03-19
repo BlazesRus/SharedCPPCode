@@ -48,19 +48,22 @@ namespace BlazesRusCode
     class AltFloat;
 
     /// <summary>
-    /// Alternative fixed point number representation designed for use with AltFloat
+    /// Alternative fixed point number representation designed for use with MixedDec
 #if AltFloat_IncludeFixedPoint
     /// When SignificantPt1 is greater than 128, AltFloat is in in fixed point mode and represents range of 0 to 9.9999 x 10^127
 	#if AltFloat_ExtendedRange
-	/// Otherwise, represents floating range between 0 and (1+(2147483647/DenomMax))*10^8388607(approximately 0 to 3.4028235 × 10^38)
-#elif AltFloat_ExtendedRange
-	//Represents floating range between 0 and (1+(2147483647/DenomMax))*10^8388607(approximately 0 to 3.4028235 × 10^38)
+	//Represents floating range between 0 and (1+(2147483647/2147483648))*10^127
+	#else
+	//Represents floating range between 0 and (1+(8388607/8388608))*10^127
+	#endif
+#elif AltFloat_ExtendedRange//Extended range can represent more digits of decimal places 
+	//Represents floating range between 0 and (1+(2147483647/2147483648))*10^127(Approximately 1.9999 x 10^127)
 #else
-	//(approximately 0 to 3.4028235 × 10^38)
+	//Represents floating range between 0 and (1+(8388607/8388608))*10^127(Approximately 1.9999 x 10^127)
 #endif
 	// Floating formula representation is "(1+(SignifNum/DenomMax))*10^Exponent"
 	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*10^127"
-	// (When Exponent<0, formula also represented as ...ToDo add alternative formula)
+	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/10^-Exponent)"
 	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*10^Exponent"
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
