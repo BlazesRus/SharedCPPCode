@@ -290,6 +290,44 @@ public:
             this->ReadString(Value);
         }
 
+		//Outputs string in "1+SignifNum/DenomMax * 2^Exponent" format 
+		std::string ToFormulaFormat()
+		{
+			if(IsZero())
+				return "0";
+#if defined(AltFloat_EnableApproachingZero)
+#endif
+			else if(SignifNum<0)
+			{
+				string outputStr = 
+#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"-1+"+(std::string)-SignifNum;
+#else
+				(std::string)SignifNum;
+#endif
+#if defined(AltFloat_ExtendedRange)
+				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
+#else
+				outputStr += "/8388607 * 2^"+(std::string)Exponent;
+#endif
+				return outputStr;
+			}
+			else
+			{
+				string outputStr = 
+#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"1+"+(std::string)SignifNum;
+#else
+				(std::string)SignifNum;
+#endif
+#if defined(AltFloat_ExtendedRange)
+				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
+#else
+				outputStr += "/8388607 * 2^"+(std::string)Exponent;
+#endif
+				return outputStr;
+		}
+
         /// <summary>
         /// Converts to string.
         /// </summary>
@@ -304,7 +342,7 @@ public:
         /// Implements the operator std::string operator.
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator std::string() { return ToString(); }
+        explicit operator std::string() { return ToFormulaFormat(); }
 
     #pragma endregion String Commands
 
