@@ -78,6 +78,8 @@ namespace BlazesRusCode
 		static signed int DenomMax = 8388608;
 		static signed int AlmostApproachingOne = 8388607;
 #endif
+		static unsigned long long uDenomMax = (unsigned long long) DenomMax;
+		static signed long long sDenomMax = (signed long long) DenomMax;
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
 
 #if defined(AltFloat_TreatZeroAsZeroExponent)
@@ -402,7 +404,10 @@ public:
 	#if !defined(AltFloat_TreatZeroAsZeroExponent)
 			else if(Exponent==0)
 			{
-				//Add code here later
+				bool IsNegative = SignifNum<0;
+				signed long long numSide = sDenomMax+IsNegative?-SignifNum:SignifNum;
+				numSide /= sDenomMax;
+				return (IntType) numSide;
 			}
 	#endif
             else if(SignifNum==0)
@@ -413,33 +418,70 @@ public:
 				//exponent value 65 for unsigned int 64
 				//exponent value 128 for signed int 128
 				//exponent value 129 for unsigned int 128
-                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent 
-            else if(Exponent<0)
-            {
-				if(Exponent<=-65)
+                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent
+			else
+			{
+				bool IsNegative = SignifNum<0;
+				unsigned long long numSide = uDenomMax+IsNegative?-SignifNum:SignifNum;
+				//unsigned long long denomSide = DenomMax;
+				if(Exponent<0)
 				{
-					//Add Code here later
+					if(Exponent<=-65)
+					{
+						//Add Code here later(need to deal with overflow so need to use alternative code)
+					}
+					else
+					{
+						unsigned long long denomSide = uDenomMax * BlazesFloatingCode::IntPow(2,-Exponent);
+						
+					}
 				}
 				else
 				{
-					unsigned long long ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);
-					//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
-					//Add code here later
+					if(Exponent>=65)
+					{
+						//Add Code here later(need to deal with overflow so need to use alternative code)
+					}
+					else
+					{
+						//numSide *= BlazesFloatingCode::IntPow(2,Exponent);
+						//Add code here later
+					}
 				}
-            }
-            else
-            {
-				if(Exponent<=65)
-				{
-					//Add Code here later
-				}
-				else
-				{
-					unsigned long long ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
-					//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
-					//Add code here later
-				}
-            }
+			}
+//            else if(Exponent<0)
+//            {
+//				if(Exponent<=-65)
+//				{
+//					//Add Code here later
+//				}
+//				else
+//				{
+//
+//					
+//					
+//					//unsigned long long ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);
+//					//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
+//					//Add code here later
+//				}
+//            }
+//            else
+//            {
+//				if(Exponent<=65)
+//				{
+//					//Add Code here later
+//				}
+//				else
+//				{
+//					bool IsNegative = SignifNum<0;
+//					unsigned long long numSide = DenomMax+IsNegative?-SignifNum:SignifNum;
+//						
+//					//unsigned long long ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
+//					
+//					//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
+//					//Add code here later
+//				}
+//            }
             return 0;//Placeholder;
         }
 
