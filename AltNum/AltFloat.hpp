@@ -50,21 +50,22 @@ namespace BlazesRusCode
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
 #if AltFloat_IncludeFixedPoint
-    /// When SignificantPt1 is greater than 128, AltFloat is in in fixed point mode and represents range of 0 to 9.9999 x 10^127
+    /// When SignifNum is negative, AltFloat is in in fixed point mode and represents range of 0 to 9.9999999 x 10^127
 	#if AltFloat_ExtendedRange
-	//Represents floating range between 0 and (1+(2147483647/2147483648))*10^127
+	//Represents floating range between 0 and (1+(2147483647/2147483648))*2^127
 	#else
-	//Represents floating range between 0 and (1+(8388607/8388608))*10^127
+	//Represents floating range between 0 and (1+(8388607/8388608))*2^127
 	#endif
 #elif AltFloat_ExtendedRange//Extended range can represent more digits of decimal places 
-	//Represents floating range between 0 and (1+(2147483647/2147483648))*10^127(Approximately 1.9999 x 10^127)
+	//Represents floating range between 0 and (1+(2147483647/2147483648))*2^127(Approximately 340 282 366 841 710 300 949 110 269 838 224 261 120)
 #else
-	//Represents floating range between 0 and (1+(8388607/8388608))*10^127(Approximately 1.9999 x 10^127)
+	//Represents floating range between 0 and (1+(8388607/8388608))*2^127      (Approximately 340 282 346 638 528 859 811 704 183 484 516 925 440)
 #endif
-	// Floating formula representation is "(1+(SignifNum/DenomMax))*10^Exponent"
-	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*10^127"
-	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/10^-Exponent)"
-	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*10^Exponent"
+	// Floating formula representation is "(1+(SignifNum/DenomMax))*2^Exponent"
+	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*2^127"
+	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
+	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/12^-Exponent)"
+	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
@@ -77,6 +78,7 @@ namespace BlazesRusCode
 		static signed int DenomMax = 8388608;
 		static signed int AlmostApproachingOne = 8388607;
 #endif
+		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
 
 #if defined(AltFloat_TreatZeroAsZeroExponent)
 #if !defined(AltFloat_EnableApproachingZero) || defined(AltFloat_EnableInfinity)
