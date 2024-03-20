@@ -79,11 +79,13 @@ namespace BlazesRusCode
 		static signed long long DenomMax = 2147483648;
 		//Equal to (2^31) - 1
 		static signed long long AlmostApproachingTop = 2147483647;
+		static signed int DenomMaxExponent = 31;
 #else
 		//Equal to 2^23
 		static signed int DenomMax = 8388608;
 		//Equal to (2^23) - 1
 		static signed int AlmostApproachingTop = 8388607;
+		static signed int DenomMaxExponent = 23;
 #endif
 		static unsigned long long uDenomMax = (unsigned long long) DenomMax;
 		static signed long long sDenomMax = (signed long long) DenomMax;
@@ -304,37 +306,70 @@ public:
 		{
 			if(IsZero())
 				return "0";
-#if defined(AltFloat_EnableApproachingZero)
-#endif
+	#if defined(AltFloat_EnableApproachingZero)
+	#endif
+#if defined(AltFloat_UseThreeVariableFormula)
 			else if(SignifNum<0)
 			{
 				string outputStr = 
-#if defined(AltFloat_TreatZeroAsZeroExponent)
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
 				"-1+"+(std::string)-SignifNum;
-#else
+	#else
 				(std::string)SignifNum;
-#endif
-#if defined(AltFloat_ExtendedRange)
+	#endif
+	#if defined(AltFloat_ExtendedRange)
 				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
-#else
+	#else
 				outputStr += "/8388607 * 2^"+(std::string)Exponent;
-#endif
+	#endif
 				return outputStr;
 			}
 			else
 			{
 				string outputStr = 
-#if defined(AltFloat_TreatZeroAsZeroExponent)
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
 				"1+"+(std::string)SignifNum;
-#else
+	#else
 				(std::string)SignifNum;
-#endif
-#if defined(AltFloat_ExtendedRange)
+	#endif
+	#if defined(AltFloat_ExtendedRange)
 				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
-#else
+	#else
 				outputStr += "/8388607 * 2^"+(std::string)Exponent;
-#endif
+	#endif
 				return outputStr;
+			}
+#else
+			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
+			else if(SignifNum<0)
+			{
+				string outputStr = 
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"-1+"+(std::string)-SignifNum;
+	#else
+				(std::string)SignifNum;
+	#endif
+				if(ExponentMultiplier<0)
+					outputStr += " /2^"+-ExponentMultiplier;
+				else
+					outputStr += " *2^"+ExponentMultiplier;
+				return outputStr;
+			}
+			else
+			{
+				string outputStr = 
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"1+"+(std::string)SignifNum;
+	#else
+				(std::string)SignifNum;
+	#endif
+				if(ExponentMultiplier<0)
+					outputStr += " /2^"+-ExponentMultiplier;
+				else
+					outputStr += " *2^"+ExponentMultiplier;
+				return outputStr;
+			}
+#endif
 		}
 
         /// <summary>
@@ -439,6 +474,7 @@ public:
 					signed int denomExponent = 23+-Exponent;
 #endif
 					//Add code here later
+					//numSide%2
 				}
 				else
 				{
