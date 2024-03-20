@@ -44,6 +44,8 @@ AltFloat_EnableInfinity = Not Implimented yet
 
 namespace BlazesRusCode
 {
+	//Right side operations are assumed to be positive
+	//^ in comments refers to power of instead of XOR
 
     class AltFloat;
 
@@ -69,14 +71,19 @@ namespace BlazesRusCode
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
-    {//Right side operations are assumed to be positive
-	protected://^ in comments refers to power of instead of XOR
+    {
+	protected:
+		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
 #if defined(AltFloat_ExtendedRange)
+		//Equal to 2^31
 		static signed long long DenomMax = 2147483648;
-		static signed long long AlmostApproachingOne = 2147483647;
+		//Equal to (2^31) - 1
+		static signed long long AlmostApproachingTop = 2147483647;
 #else
+		//Equal to 2^23
 		static signed int DenomMax = 8388608;
-		static signed int AlmostApproachingOne = 8388607;
+		//Equal to (2^23) - 1
+		static signed int AlmostApproachingTop = 8388607;
 #endif
 		static unsigned long long uDenomMax = (unsigned long long) DenomMax;
 		static signed long long sDenomMax = (signed long long) DenomMax;
