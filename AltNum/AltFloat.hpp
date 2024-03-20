@@ -433,15 +433,12 @@ public:
 				//unsigned long long denomSide = DenomMax;
 				if(Exponent<0)
 				{
-					if(Exponent<=-65)
-					{
-						//Add Code here later(need to deal with overflow so need to use alternative code)
-					}
-					else
-					{
-						unsigned long long denomSide = uDenomMax * BlazesFloatingCode::IntPow(2,-Exponent);
-						
-					}
+#if defined(AltFloat_ExtendedRange)
+					signed int denomExponent = 31+-Exponent;
+#else
+					signed int denomExponent = 23+-Exponent;
+#endif
+					//Add code here later
 				}
 				else
 				{
