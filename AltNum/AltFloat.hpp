@@ -496,21 +496,21 @@ public:
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exponent>=31)//Overflow Error
 					return 2147483647;//Return Error
-				else if(Exponent==30)
-				{
-				#if defined(AltFloat_ExtendedRange)
-					//1073741824 + (2147483646/2147483648)*1073741824 == 1073741824 + 1073741823
-					if(SignifNum>=2147483646)
-						return 2147483647;
-					else
-						return 2147483647;//Return Error
-
-				#else
-					//1073741824 + (8388607/8388608)*1073741824 == 1073741824 + 1073741696
-					//if(SignifNum<=8388607)
-					return 2147483647;
-				#endif
-				}
+//				else if(Exponent==30)
+//				{
+//				#if defined(AltFloat_ExtendedRange)
+//					//1073741824 + (2147483646/2147483648)*1073741824 == 1073741824 + 1073741823
+//					if(SignifNum>=2147483646)
+//						return 2147483647;
+//					else
+//						return 2147483647;//Return Error
+//
+//				#else
+//					//1073741824 + (8388607/8388608)*1073741824 == 1073741824 + 1073741696
+//					//if(SignifNum<=8388607)
+//					return 2147483647;
+//				#endif
+//				}
 			#else
 				if(Exponent>=31)//Max value it can hold is 2147483647
 					return 2147483647;
@@ -585,17 +585,17 @@ public:
         #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
             if(Exponent>=63)//Overflow Error
                 return 9223372036854775807;//Return Error
-            else if(Exponent==62)
-            {
-			#if defined(AltFloat_ExtendedRange)
-                if(SignifNum==2147483647)
-					return 9223372036854775807;
-			#else//4611686018427387903/4611686018427387904 * 8388608
-				//4611686018427387904 + /8388608 * 4611686018427387904
-                if(SignifNum==8388607)
-					return 9223372036854775807;
-			#endif
-            }
+   //         else if(Exponent==62)
+   //         {
+			//#if defined(AltFloat_ExtendedRange)
+   //             if(SignifNum==2147483647)
+			//		return 9223372036854775807;
+			//#else//4611686018427387903/4611686018427387904 * 8388608
+			//	//4611686018427387904 + /8388608 * 4611686018427387904
+   //             if(SignifNum==8388607)
+			//		return 9223372036854775807;
+			//#endif
+   //         }
         #else
             if(Exponent>=63)
                 return 9223372036854775807;
