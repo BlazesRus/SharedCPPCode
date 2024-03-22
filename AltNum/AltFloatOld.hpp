@@ -30,14 +30,21 @@
 #include "IntegerConcept.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 /*
+AltFloat_IncludeFixedPoint = Not Implimented yet
+AltFloat_IncludeFractionRepresentation = Requires AltFloat_IncludeFixedPoint as well
+AltFloat_UseLeadingZeroInSignificant
+AltFloat_TreatZeroAsZeroExponent
 AltFloat_ExtendedRange = Extends SignifNum range to 2147483647
 AltFloat_EnableApproachingZero = Not Implimented yet
 AltFloat_EnableInfinity = Not Implimented yet
 AltFloat_EnableBitwiseOperations = Not Implimented yet
 AltFloat_UseXorAsPowerOf = Not Implimented yet
-AltFloat_UseRestrictedRange = Restrict range to 0 and 1
-AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
+AltFloat_UseExperimentalSignedBit = 
+AltFloat_
 */
+#if (defined(AltFloat_UseLeadingZeroInSignificant) || defined(AltFloat_UseExperimentalSignedBit)) && !defined(AltFloat_TreatZeroAsZeroExponent)
+	#define AltFloat_TreatZeroAsZeroExponent
+#endif
 
 namespace BlazesRusCode
 {
@@ -48,119 +55,102 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
-#if defined(AltFloat_UseRestrictedRange)
-	///Represents floating range between 0 and 1
-    ///Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
-    ///Each InvertedExp holds DenomMax number of fractionals between InvertedExp and next highest InvertedExp
-#else
-    #if defined(AltFloat_ExtendedRange)//Extended range can represent more digits of decimal places 
+#if AltFloat_IncludeFixedPoint
+    /// When SignifNum is negative, AltFloat is in in fixed point mode and represents range of 0 to 9.9999999 x 10^127
+	#if AltFloat_ExtendedRange
+	//Represents floating range between 0 and (1+(2147483647/2147483648))*2^127
+	#else
+	//Represents floating range between 0 and (1+(8388607/8388608))*2^127
+	#endif
+#elif AltFloat_ExtendedRange//Extended range can represent more digits of decimal places 
 	//Represents floating range between 0 and (1+(2147483647/2147483648))*2^127(Approximately 340 282 366 841 710 300 949 110 269 838 224 261 120)
-    #else
+#else
 	//Represents floating range between 0 and (1+(8388607/8388608))*2^127      (Approximately 340 282 346 638 528 859 811 704 183 484 516 925 440)
-    #endif
+#endif
 	// Floating formula representation is SignifNum>=0?"(1+(SignifNum/DenomMax))*2^Exponent":"(1+(-SignifNum/DenomMax))*2^Exponent";
 	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*2^127"
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
 	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exponent))"
 	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
-
-#endif
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
     {
 	protected:
 		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
-    #if defined(AltFloat_UseRestrictedRange)
-        #if defined(AltFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
-		//Equal to 2^16
-		static unsigned long long DenomMax = 65536;
-		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 65535;
-		static unsigned int DenomMaxExponent = 16;
-        #else
-		//Equal to 2^32
-		static unsigned long long DenomMax = 4294967296;
-		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 4294967295;
-		static unsigned int DenomMaxExponent = 32;
-        #endif
-    #elif defined(AltFloat_ExtendedRange)
+#if defined(AltFloat_ExtendedRange)
 		//Equal to 2^31
 		static signed long long DenomMax = 2147483648;
 		//Equal to (2^31) - 1
 		static signed long long AlmostApproachingTop = 2147483647;
 		static signed int DenomMaxExponent = 31;
-    #else
+#else//Default and defined(AltFloat_UseExperimentalSignedBit)
 		//Equal to 2^23
 		static signed int DenomMax = 8388608;
 		//Equal to (2^23) - 1
 		static signed int AlmostApproachingTop = 8388607;
 		static signed int DenomMaxExponent = 23;
-    #endif
-    #if !defined(AltFloat_UseRestrictedRange)
+#endif
 		static unsigned long long uDenomMax = (unsigned long long) DenomMax;
 		static signed long long sDenomMax = (signed long long) DenomMax;
-    #endif
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
 
+#if defined(AltFloat_TreatZeroAsZeroExponent)
+	#if !defined(AltFloat_EnableApproachingZero) || defined(AltFloat_EnableInfinity)
+		//Special Status representations not enabled if AltFloat_TreatZeroAsZeroExponent is not toggled for now(unless exponent range is reduced)
+		//If Exponent==-128 and SignifNum!=-128, then represents approaching zero range with SignifNum representing 
+		static signed int SpecialStatusRep = -128;
+	#endif
+	#if AltFloat_EnableInfinity
+		//If Exponent==-128 and SignifNum==-128, then represents infinity range with SignifNum==1 when positive and SignifNum==-1 when negative 
+		static signed int InfinityRep = -128;
+	#endif
+#else
 	#if defined(AltFloat_EnableApproachingZero)
 		//When SignifNum==-128 and Exponent!=-128, than value is equal to Exponent.0..01
 		//When SignifNum==-128 and Exponent==-128, than value is equal to -0.0..01
 		static signed int ApproachingZeroRep = -128;
 	#endif
+#endif
 
 		//Exponent value that zero is defined at
-#if defined(AltFloat_UseRestrictedRange)
-		static unsigned char ZeroRep = 256;
-#else
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
 		static signed char ZeroRep = -128;
+#else
+		static signed char ZeroRep = 0;
 #endif
  
-#if defined(AltFloat_UseRestrictedRange)
-    #if defined(AltFloat_UseSmallerFractional)
-		unsigned short SignifNum;
-    #else
-		unsigned int SignifNum;
-    #endif
-
-        //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
-		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
-		unsigned char InvertedExp;
-#else
+ 	#if defined(AltFloat_UseExperimentalSignedBit)
+		//Add code here later
+	#else
 		//Only 3 Bytes of this is actually used unless AltFloat_ExtendedRange is toggled (Value is the Numberator/8388608)
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
-		union
-        signed int SignifNum;
-
-
-	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
-        //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
-		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		signed int SignifNum;
 	#endif
-		signed char Exponent;
+
+#if AltFloat_IncludeFixedPoint
+        //In fixed point mode refers to the Exponent of 10 in "(SignifNum first 2 bytes).(SignifNum last 2 bytes)) * 10^Exponent" formula
+	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
+        //Otherwise in floating point mode, refers to Exponent inside "Significant * 2^Exponent" formula
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		#endif
+	#elif defined(AltFloat_TreatZeroAsZeroExponent)
+	#endif
+#else
+	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
+        //Refers to Exponent inside "Significant * 2^Exponent" formula
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		#endif
+	#elif defined(AltFloat_TreatZeroAsZeroExponent)
+	#endif
 #endif
+		signed char Exponent;
     public:
 
-#if defined(AltFloat_UseRestrictedRange)
-    #if defined(AltFloat_UseSmallerFractional)
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltFloat"/> class.
-        /// </summary>
-        AltFloat(unsigned short signifNum=0, unsigned char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            InvertedExp = exponent;
-        }
-    #else
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltFloat"/> class.
-        /// </summary>
-        AltFloat(unsigned int signifNum=0, unsigned char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            InvertedExp = exponent;
-        }
+#if defined(AltFloat_UseExperimentalSignedBit)
+		//Add code here later
 #else
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
@@ -179,18 +169,8 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-#if defined(AltFloat_UseRestrictedRange)
-            return SignifNum==0&&InvertedExp==256;
-#else
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
             return SignifNum==0&&Exponent==-128;
-#endif
-		}
-
-        //Detect if at exactly one
-		bool IsOne()
-		{
-#if defined(AltFloat_UseRestrictedRange)
-            return SignifNum==0&&InvertedExp==0;
 #else
             return SignifNum==0&&Exponent==0;
 #endif
@@ -225,17 +205,14 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-#if defined(AltFloat_UseRestrictedRange)//Maximum set as One
-            SignifNum = 0;
-            InvertedExp = 0;
-#else
-    #if !defined(AltFloat_ExtendedRange)
+#if defined(AltFloat_UseExperimentalSignedBit)
+			//Add code here later
+#elif !defined(AltFloat_ExtendedRange)
             SignifNum = 8388607;
-    #else
+#else
 			SignifNum = 2147483647;
-    #endif
-			Exponent = 127;
 #endif
+			Exponent = 127;
         }
 
         /// <summary>
@@ -243,17 +220,14 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
-#if defined(AltFloat_UseRestrictedRange)//Minimum set as Zero
-            SignifNum = 0;
-            InvertedExp = ZeroRep;
-#else
-    #if !defined(AltFloat_ExtendedRange)
+#if defined(AltFloat_UseExperimentalSignedBit)
+			//Add code here later
+#elif !defined(AltFloat_ExtendedRange)
             SignifNum = -8388607;
-    #else
+#else
 			SignifNum = -2147483647;
-    #endif
-			Exponent = 127;
 #endif
+			Exponent = 127;
         }
 
         /// <summary>
@@ -261,13 +235,8 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsSmallestNonZero()
         {
-#if defined(AltFloat_UseRestrictedRange)
-            SignifNum = 0;
-            InvertedExp = 255;
-#else
             SignifNum = 0;
 			Exponent = -127;
-#endif
         }
 
     #pragma region ApproachingZero Setters
@@ -281,12 +250,7 @@ protected:
             return AltFloat();
         }
 		
-#if defined(AltFloat_UseRestrictedRange)
-        static AltFloat OneValue()
-        {
-            return AltFloat(0,0);
-        }
-#else
+#if !defined(AltFloat_TreatZeroAsZeroExponent)
         static AltFloat OneValue()
         {
             return AltFloat(0,0);
@@ -307,7 +271,7 @@ public:
         static AltFloat Zero;
 
     #pragma endregion ValueDefines
-    #if !defined(AltFloat_UseRestrictedRange)
+    #if !defined(AltFloat_IncludeFixedPoint)
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
@@ -353,45 +317,84 @@ public:
             this->ReadString(Value);
         }
 
-		//Outputs string in "2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+		//Outputs string in "(1+SignifNum/DenomMax) * 2^Exponent" format 
 		std::string ToFormulaFormat()
 		{
 			if(IsZero())
 				return "0";
-			else if(IsOne())
-				return "1";
-    #if defined(AltFloat_UseRestrictedRange)
-			unsigned int InvertedExpMult = InvertedExp + DenomMaxExponent;
-			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExp;
-            outputStr += " + ";
-            outputStr += (std::string)SignifNum;
-            outputStr += " * ";
-			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExpMult;
-    #else
+	#if defined(AltFloat_EnableApproachingZero)
+	#endif
+#if defined(AltFloat_UseThreeVariableFormula)
+			else if(SignifNum<0)
+			{
+				string outputStr = 
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"-1+"+(std::string)-SignifNum;
+	#else
+				(std::string)SignifNum;
+	#endif
+	#if defined(AltFloat_ExtendedRange)
+				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
+	#else
+				outputStr += "/8388607 * 2^"+(std::string)Exponent;
+	#endif
+				return outputStr;
+			}
+			else
+			{
+				string outputStr = 
+	#if defined(AltFloat_TreatZeroAsZeroExponent)
+				"1+"+(std::string)SignifNum;
+	#else
+				(std::string)SignifNum;
+	#endif
+	#if defined(AltFloat_ExtendedRange)
+				outputStr += "/2147483648 * 2^"+(std::string)Exponent;
+	#else
+				outputStr += "/8388607 * 2^"+(std::string)Exponent;
+	#endif
+				return outputStr;
+			}
+#else
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
+	#if defined(AltFloat_UseExperimentalSignedBit)
+			string outputStr = (std::string)SignedBit;
+			if(SignedBit<0)
+				outputStr +="-";
+			else
+				outputStr +="+";	
+			outputStr +=(std::string)SignifNum;
+	#else
 			if(SignifNum<0)
 			{
-				string outputStr = "-(";
-                outputStr += "2^"+(std::string)Exponent;
-                outputStr += " + ";
-                outputStr += (std::string)-SignifNum;
-                outputStr += " * ";
-                outputStr += "2^"+(std::string)ExponentMultiplier;
-				outputStr += ")";
-                return outputStr;
-            }
-            else
-            {
-				string outputStr = "2^"+(std::string)Exponent;
-                outputStr += " + ";
-                outputStr += (std::string)SignifNum;
-                outputStr += " * ";
-                outputStr += "2^"+(std::string)ExponentMultiplier;
-                return outputStr;
-            }
-    #endif
+				string outputStr = 
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+				"-1-"+(std::string)-SignifNum;
+		#else
+				(std::string)SignifNum;
+		#endif
+				if(ExponentMultiplier<0)
+					outputStr += " /2^"+(std::string)-ExponentMultiplier;
+				else
+					outputStr += " *2^"+(std::string)ExponentMultiplier;
+				return outputStr;
+			}
+			else
+			{
+				string outputStr = 
+		#if !defined(AltFloat_TreatZeroAsZeroExponent)
+				"1+"+(std::string)SignifNum;
+		#else
+				(std::string)SignifNum;
+		#endif
+				if(ExponentMultiplier<0)
+					outputStr += "/2^"+(std::string)-ExponentMultiplier;
+				else
+					outputStr += "*2^"+(std::string)ExponentMultiplier;
+				return outputStr;
+			}
+	#endif
+#endif
 		}
 
         /// <summary>
