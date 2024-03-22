@@ -135,11 +135,12 @@ namespace BlazesRusCode
     //To-Do Add Separate flag for if is negative and use in structure that is total of 4 bytes size
 
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
-#if defined(AltFloat_ExtendedRange)
-        signed int SignifNum : 31;
-#else
-        signed int SignifNum : 23;
-#endif
+        signed int SignifNum;
+//#if defined(AltFloat_ExtendedRange)
+//        signed int SignifNum : 31;
+//#else
+//        signed int SignifNum : 24;
+//#endif
 
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
 		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
@@ -462,7 +463,14 @@ public:
                 return 1;
     #if defined(AltFloat_UseRestrictedRange)
             return 0;
-    #else
+    #else//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
+			if(SignifNum<0)
+			{
+			}
+			else
+			{
+			}
             return 0;//Placeholder;
     #endif
         }
