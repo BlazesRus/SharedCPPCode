@@ -37,6 +37,7 @@ AltFloat_EnableBitwiseOperations = Not Implimented yet
 AltFloat_UseXorAsPowerOf = Not Implimented yet
 AltFloat_UseRestrictedRange = Restrict range to 0 and 1
 AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
+AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 */
 
 namespace BlazesRusCode
@@ -115,29 +116,33 @@ namespace BlazesRusCode
 		static unsigned char ZeroRep = 256;
 #else
 		static signed char ZeroRep = -128;
+        //When Exponent is zero and NegativeOneRep == -128 (until separate into single bit flag)
+        static signed char NegativeOneRep = -128;
 #endif
  
 #if defined(AltFloat_UseRestrictedRange)
     #if defined(AltFloat_UseSmallerFractional)
-		unsigned short SignifNum;
+		unsigned short SignifNum : 15;
     #else
-		unsigned int SignifNum;
+		unsigned int SignifNum : 31;
     #endif
 
         //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
 		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
 		unsigned char InvertedExp;
 #else
-		//Only 3 Bytes of this is actually used unless AltFloat_ExtendedRange is toggled (Value is the Numberator/8388608)
+
+    //To-Do Add Separate flag for if is negative and use in structure that is total of 4 bytes size
+
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
-		union
-        signed int SignifNum;
+#if defined(AltFloat_ExtendedRange)
+        signed int SignifNum : 31;
+#else
+        signed int SignifNum : 23;
+#endif
 
-
-	#if !defined(AltFloat_EnableApproachingZero&&!defined(AltFloat_EnableInfinity)
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
 		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
-	#endif
 		signed char Exponent;
 #endif
     public:
@@ -161,14 +166,16 @@ namespace BlazesRusCode
             SignifNum = signifNum;
             InvertedExp = exponent;
         }
+    #endif
 #else
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(signed int signifNum=0, signed char exponent=ZeroRep)
+        AltFloat(unsigned int signifNum=0, signed char exponent=ZeroRep)//, bool isNegative = false)
         {
             SignifNum = signifNum;
             Exponent = exponent;
+            //IsNegative = isNegative;
         }
 #endif
 
@@ -313,7 +320,7 @@ public:
         /// </summary>
         void SwapNegativeStatus()
         {
-            SignificantPt1 = SignificantPt1 ^ 128;//Flip the last bit (SignificantPt1 bits xor 10000000)
+            SignifNum *= -1;//Flip the last bit
         }
     #endif
 
@@ -449,110 +456,68 @@ public:
         template<IntegerType IntType=int>
         IntType toIntType()
         {
-            IntType Value;
-            if(Exponent==ZeroRep)
-            {
-				if(SignifNum==0)
-					return 0;
-	#if !defined(AltFloat_TreatZeroAsZeroExponent)
-				else//Should only be used for special status
-				{
-	#if defined(AltFloat_TreatZeroAsZeroExponent)
-					//Add code here later
-	#else
-					//Add code here later
-	#endif
-				}
-	#endif
-            }
-	#if !defined(AltFloat_TreatZeroAsZeroExponent)
-			else if(Exponent==0)
-			{
-				bool IsNegative = SignifNum<0;
-				signed long long numSide = sDenomMax+IsNegative?-SignifNum:SignifNum;
-				numSide /= sDenomMax;
-				return (IntType) numSide;
-			}
-	#endif
-            else if(SignifNum==0)
-				//Will overflow at: 
-				//exponent value 32 for signed int
-				//exponent value 33 for unsigned int
-				//exponent value 64 for signed int 64
-				//exponent value 65 for unsigned int 64
-				//exponent value 128 for signed int 128
-				//exponent value 129 for unsigned int 128
-                return BlazesFloatingCode::IntPow(2,Exponent);//2^Exponent
-			else
-			{
-				bool IsNegative = SignifNum<0;
-				unsigned long long numSide = uDenomMax+IsNegative?-SignifNum:SignifNum;
-				//unsigned long long denomSide = DenomMax;
-				if(Exponent<0)
-				{
-#if defined(AltFloat_ExtendedRange)
-					signed int denomExponent = 31+-Exponent;
-#else
-					signed int denomExponent = 23+-Exponent;
-#endif
-					//Add code here later
-					//numSide%2
-				}
-				else
-				{
-					if(Exponent>=65)
-					{
-						//Add Code here later(need to deal with overflow so need to use alternative code)
-					}
-					else
-					{
-						//numSide *= BlazesFloatingCode::IntPow(2,Exponent);
-						//Add code here later
-					}
-				}
-			}
-//            else if(Exponent<0)
-//            {
-//				if(Exponent<=-65)
-//				{
-//					//Add Code here later
-//				}
-//				else
-//				{
-//
-//					
-//					
-//					//unsigned long long ExpDenomTotal = BlazesFloatingCode::IntPow(2,-Exponent);
-//					//signed long long Result = ;//(1+(SignifNum/DenomMax))/ExpDenomTotal
-//					//Add code here later
-//				}
-//            }
-//            else
-//            {
-//				if(Exponent<=65)
-//				{
-//					//Add Code here later
-//				}
-//				else
-//				{
-//					bool IsNegative = SignifNum<0;
-//					unsigned long long numSide = DenomMax+IsNegative?-SignifNum:SignifNum;
-//						
-//					//unsigned long long ExpTotal = BlazesFloatingCode::IntPow(2,Exponent);
-//					
-//					//signed long long Result = ;//(1+(SignifNum/DenomMax))*ExpTotal
-//					//Add code here later
-//				}
-//            }
+            if(IsZero())
+                return 0;
+            else if(IsOne()))
+                return 1;
+    #if defined(AltFloat_UseRestrictedRange)
+            return 0;
+    #else
             return 0;//Placeholder;
+    #endif
         }
 
         /// <summary>
         /// AltFloat to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int()
+        explicit operator signed int()
+        {//XXX is placeholder for the closest value for reaching maximum storage value
+    #if !defined(AltFloat_UseRestrictedRange)
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>=31)//Overflow Error
+                return 2147483647;//Return Error
+            else if(Exponent==30)
+            {
+    #if defined(AltFloat_ExtendedRange)
+                if(SignifNum==XXX)
+                    return 2147483647;
+                else
+                    return 2147483647;//Return Error
+    #else
+
+    #endif
+            }
+        #else
+            if(Exponent>=31)//Max value it can hold is 2147483647
+                return 2147483647;
+        #endif           
+    #endif
+            return toIntType();
+        }
+
+        /// <summary>
+        /// AltFloat to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned int()
         {
+    #if !defined(AltFloat_UseRestrictedRange)
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>32)//Overflow Error
+                return 4294967296;//Return Error
+            else if(Exponent==32)//Max value it can hold is 4294967296
+            {
+                if(SignifNum==0)
+                    return 4294967296;
+                else
+                    return 4294967296;//Return Error
+            }
+        #else
+            if(Exponent>=32)
+                return 4294967296;
+        #endif           
+    #endif
             return toIntType();
         }
 
@@ -560,9 +525,128 @@ public:
         /// AltFloat to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator long long()
+        explicit operator signed long long()
         {
+    #if !defined(AltFloat_UseRestrictedRange)
+            if(SignifNum>0)
+            {
+            }
+            else
+            {
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>=63)//Overflow Error
+                return 9223372036854775807;//Return Error
+            else if(Exponent==62)
+            {
+    #if defined(AltFloat_ExtendedRange)
+                if(SignifNum==XXX)
+                    return 9223372036854775807;
+                else
+                    return 9223372036854775807;//Return Error
+    #else
+                if(SignifNum==XXX)
+                    return 9223372036854775807;
+                else
+                    return 9223372036854775807;//Return Error
+    #endif
+            }
+        #else
+            if(Exponent>=64)
+                return 9223372036854775807;
+        #endif
+            }           
+    #endif
             return toIntType();
+        }
+
+        /// <summary>
+        /// AltFloat to int64 explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned long long()
+        {
+    #if !defined(AltFloat_UseRestrictedRange)
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>64)//Overflow Error
+                return 18446744073709551616;//Return Error
+            else if(Exponent==64)
+            {
+                if(SignifNum==0)
+                    return 18446744073709551616;
+                else
+                    return 18446744073709551616;//Return Error
+            }
+        #else
+            if(Exponent>=32)
+                return 18446744073709551616;
+        #endif           
+    #endif
+            return toIntType();
+        }
+
+        /// <summary>
+        /// AltFloat to MediumDec explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator MediumDec()
+        {
+            if(IsZero())
+                return 0;
+            else if(IsOne()))
+                return 1;
+    #if !defined(AltFloat_UseRestrictedRange)
+            if(SignifNum<0)
+            {
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>=31)
+                return MediumDec::MinimumValue();//Return Error
+            else if(Exponent==30)
+            {
+                //Add Code here
+            }
+            else
+            {
+            }
+        #else
+            if(Exponent>=31)//Minimum value it can store is -2147483647.999999999
+                return MediumDec::MinimumValue();//Return Error
+            else if(Exponent==30)
+            {
+                //Add Code here
+            }
+            else
+            {
+                //Add Code here
+            }
+        #endif           
+    #endif
+            }
+            else
+            {
+        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+            if(Exponent>=31)
+                return MediumDec::MaximumValue();//Return Error
+            else if(Exponent==30)
+            {
+                //Add Code here
+            }
+            else
+            {
+            }
+        #else
+            if(Exponent>=31)//Maximum value it can store is 2147483647.999999999
+                return MediumDec::MaximumValue();
+            else if(Exponent==30)//Maximum value it can store is 2147483647.999999999
+            {
+                //Add Code here
+            }
+            else
+            {
+                //Add Code here
+            }
+        #endif           
+    #endif
+            }
         }
 
     #pragma endregion ConvertFromOtherTypes
