@@ -472,26 +472,50 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed int()
-        {//XXX is placeholder for the closest value for reaching maximum storage value
+        {
     #if !defined(AltFloat_UseRestrictedRange)
-        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>=31)//Overflow Error
-                return 2147483647;//Return Error
-            else if(Exponent==30)
+            if(SignifNum<0)
             {
-    #if defined(AltFloat_ExtendedRange)
-                if(SignifNum==XXX)
-                    return 2147483647;
-                else
-                    return 2147483647;//Return Error
-    #else
-
-    #endif
+				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>31)//Overflow Error
+					return -2147483648;//Return Error
+				else if(Exponent==32)//Max value it can hold is 4294967296
+				{
+					if(SignifNum==0)
+						return -2147483648;
+					else
+						return -2147483648;//Return Error
+				}
+				#else
+					if(Exponent>=31)//Minimum value it can hold is -2147483648
+						return -2147483648;
+				#endif
             }
-        #else
-            if(Exponent>=31)//Max value it can hold is 2147483647
-                return 2147483647;
-        #endif           
+            else
+            {
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>=31)//Overflow Error
+					return 2147483647;//Return Error
+				else if(Exponent==30)
+				{
+				#if defined(AltFloat_ExtendedRange)
+					//1073741824 + (2147483646/2147483648)*1073741824 == 1073741824 + 1073741823
+					if(SignifNum>=2147483646)
+						return 2147483647;
+					else
+						return 2147483647;//Return Error
+
+				#else
+					//1073741824 + (8388607/8388608)*1073741824 == 1073741824 + 1073741696
+					//if(SignifNum<=8388607)
+					return 2147483647;
+				#endif
+				}
+			#else
+				if(Exponent>=31)//Max value it can hold is 2147483647
+					return 2147483647;
+			#endif
+			}
     #endif
             return toIntType();
         }
@@ -503,20 +527,31 @@ public:
         explicit operator unsigned int()
         {
     #if !defined(AltFloat_UseRestrictedRange)
-        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>32)//Overflow Error
-                return 4294967296;//Return Error
-            else if(Exponent==32)//Max value it can hold is 4294967296
+            if(SignifNum<0)
             {
-                if(SignifNum==0)
-                    return 4294967296;
-                else
-                    return 4294967296;//Return Error
-            }
-        #else
-            if(Exponent>=32)
-                return 4294967296;
-        #endif           
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				return 0;//Return Error
+			#else
+				return 0;
+			#endif
+			}
+			else
+			{
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>32)//Overflow Error
+					return 4294967296;//Return Error
+				else if(Exponent==32)//Max value it can hold is 4294967296
+				{
+					if(SignifNum==0)
+						return 4294967296;
+					else
+						return 4294967296;//Return Error
+				}
+			#else
+				if(Exponent>=32)
+					return 4294967296;
+			#endif
+			}
     #endif
             return toIntType();
         }
@@ -530,6 +565,20 @@ public:
     #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum>0)
             {
+				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>63)//Overflow Error
+					return -9223372036854775808;//Return Error
+				else if(Exponent==63)//Max value it can hold is 4294967296
+				{
+					if(SignifNum==0)
+						return -9223372036854775808;
+					else
+						return -9223372036854775808;//Return Error
+				}
+				#else
+					if(Exponent>=63)//Minimum value it can hold is -2147483648
+						return -9223372036854775808;
+				#endif
             }
             else
             {
@@ -538,20 +587,17 @@ public:
                 return 9223372036854775807;//Return Error
             else if(Exponent==62)
             {
-    #if defined(AltFloat_ExtendedRange)
-                if(SignifNum==XXX)
-                    return 9223372036854775807;
-                else
-                    return 9223372036854775807;//Return Error
-    #else
-                if(SignifNum==XXX)
-                    return 9223372036854775807;
-                else
-                    return 9223372036854775807;//Return Error
-    #endif
+			#if defined(AltFloat_ExtendedRange)
+                if(SignifNum==2147483647)
+					return 9223372036854775807;
+			#else//4611686018427387903/4611686018427387904 * 8388608
+				//4611686018427387904 + /8388608 * 4611686018427387904
+                if(SignifNum==8388607)
+					return 9223372036854775807;
+			#endif
             }
         #else
-            if(Exponent>=64)
+            if(Exponent>=63)
                 return 9223372036854775807;
         #endif
             }           
@@ -566,20 +612,31 @@ public:
         explicit operator unsigned long long()
         {
     #if !defined(AltFloat_UseRestrictedRange)
-        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>64)//Overflow Error
-                return 18446744073709551616;//Return Error
-            else if(Exponent==64)
+            if(SignifNum>0)
             {
-                if(SignifNum==0)
-                    return 18446744073709551616;
-                else
-                    return 18446744073709551616;//Return Error
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				return 0;//Return Error;
+			#else
+				return 0;
+			#endif
             }
-        #else
-            if(Exponent>=32)
-                return 18446744073709551616;
-        #endif           
+            else
+            {
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>64)//Overflow Error
+					return 18446744073709551616;//Return Error
+				else if(Exponent==64)
+				{
+					if(SignifNum==0)
+						return 18446744073709551616;
+					else
+						return 18446744073709551616;//Return Error
+				}
+			#else
+				if(Exponent>=32)
+					return 18446744073709551616;
+			#endif
+			}
     #endif
             return toIntType();
         }
@@ -592,61 +649,62 @@ public:
         {
             if(IsZero())
                 return 0;
-            else if(IsOne()))
+            else if(IsOne())
                 return 1;
     #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum<0)
             {
-        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>=31)
-                return MediumDec::MinimumValue();//Return Error
-            else if(Exponent==30)
-            {
-                //Add Code here
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>=31)
+					return MediumDec::MinimumValue();//Return Error
+				else if(Exponent==30)
+				{
+					//Add Code here
+				}
+				else
+				{
+				}
+			#else
+				if(Exponent>=31)//Minimum value it can store is -2147483647.999999999
+					return MediumDec::MinimumValue();//Return Error
+				else if(Exponent==30)
+				{
+					//Add Code here
+				}
+				else
+				{
+					//Add Code here
+				}
+			#endif
             }
             else
             {
-            }
-        #else
-            if(Exponent>=31)//Minimum value it can store is -2147483647.999999999
-                return MediumDec::MinimumValue();//Return Error
-            else if(Exponent==30)
-            {
-                //Add Code here
-            }
-            else
-            {
-                //Add Code here
-            }
-        #endif           
+			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				if(Exponent>=31)
+					return MediumDec::MaximumValue();//Return Error
+				else if(Exponent==30)
+				{
+					//Add Code here
+				}
+				else
+				{
+				}
+			#else
+				if(Exponent>=31)//Maximum value it can store is 2147483647.999999999
+					return MediumDec::MaximumValue();
+				else if(Exponent==30)//Maximum value it can store is 2147483647.999999999
+				{
+					//Add Code here
+				}
+				else
+				{
+					//Add Code here
+				}
+			#endif
+			}
+	#else
+	
     #endif
-            }
-            else
-            {
-        #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>=31)
-                return MediumDec::MaximumValue();//Return Error
-            else if(Exponent==30)
-            {
-                //Add Code here
-            }
-            else
-            {
-            }
-        #else
-            if(Exponent>=31)//Maximum value it can store is 2147483647.999999999
-                return MediumDec::MaximumValue();
-            else if(Exponent==30)//Maximum value it can store is 2147483647.999999999
-            {
-                //Add Code here
-            }
-            else
-            {
-                //Add Code here
-            }
-        #endif           
-    #endif
-            }
         }
 
     #pragma endregion ConvertFromOtherTypes
