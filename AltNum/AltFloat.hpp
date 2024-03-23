@@ -560,6 +560,7 @@ public:
 
         //Use Bitwise operations to convert fixed point into Formula Format
         //(Extract value of power of 2 and then deal with remaining)
+		//https://hackernoon.com/bit-manipulation-in-c-and-c-1cs2bux
 
         void SetUIntVal(const unsigned int& Value)
         {
@@ -575,8 +576,23 @@ public:
                 SetAsOne();
             else
             {
-                unsigned int RemainingVal = Value;
-                //To-Do Add code here
+                bool IsNegative = Value<0;
+                unsigned int RemainingVal = IsNegative?-Value:Value;
+				//Skip checking for bit 1 start at position 2
+				bool bitAtPosition;
+				signed int powerAtPos = 0;
+				signed int highestPower = 0;
+				unsigned int ValAtHighestPos = 0;
+				for(unsigned int position = 1;position<=RemainingVal;position<<1&&++powerAtPos)
+				{
+					bitAtPosition = RemainingVal & (1 << position);
+					if(bitAtPosition)
+					{
+						highestPower = powerAtPos;
+						ValAtHighestPos = position;
+					}
+				}
+				//To-Do Add code here
             }
     #endif
         }
@@ -599,7 +615,21 @@ public:
             {
                 bool IsNegative = Value<0;
                 unsigned int RemainingVal = IsNegative?-Value:Value;
-                //To-Do Add code here
+				//Skip checking for bit 1 start at position 2
+				bool bitAtPosition;
+				signed int powerAtPos = 0;
+				signed int highestPower = 0;
+				unsigned int ValAtHighestPos = 0;
+				for(unsigned int position = 1;position<=RemainingVal;position<<1&&++powerAtPos)
+				{
+					bitAtPosition = RemainingVal & (1 << position);
+					if(bitAtPosition)
+					{
+						highestPower = powerAtPos;
+						ValAtHighestPos = position;
+					}
+				}
+				//To-Do Add code here
             }
     #endif
         }
