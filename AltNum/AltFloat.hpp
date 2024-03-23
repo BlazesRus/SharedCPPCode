@@ -91,12 +91,14 @@ namespace BlazesRusCode
 		static signed long long DenomMax = 2147483648;
 		//Equal to (2^31) - 1
 		static signed long long AlmostApproachingTop = 2147483647;
+		static signed long long NegAlmostApproachingTop = -2147483647;
 		static signed int DenomMaxExponent = 31;
     #else
 		//Equal to 2^23
 		static signed int DenomMax = 8388608;
 		//Equal to (2^23) - 1
 		static signed int AlmostApproachingTop = 8388607;
+		static signed int NegAlmostApproachingTop = -8388607;
 		static signed int DenomMaxExponent = 23;
     #endif
     #if !defined(AltFloat_UseRestrictedRange)
@@ -187,21 +189,21 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-#if defined(AltFloat_UseRestrictedRange)
+    #if defined(AltFloat_UseRestrictedRange)
             return SignifNum==0&&InvertedExp==256;
-#else
+    #else
             return SignifNum==0&&Exponent==-128;
-#endif
+    #endif
 		}
 
         //Detect if at exactly one
 		bool IsOne()
 		{
-#if defined(AltFloat_UseRestrictedRange)
-            return SignifNum==0&&InvertedExp==0;
-#else
+    #if defined(AltFloat_UseRestrictedRange)
+            return SignifNum==0&&InvertedExp==OneRep;
+    #else
             return SignifNum==0&&Exponent==0;
-#endif
+    #endif
 		}
 
         /// <summary>
@@ -300,11 +302,56 @@ protected:
             return AltFloat(0,0);
         }
 		
+        static AltFloat NegativeOneValue()
+        {
+            return AltFloat(NegativeOneRep,0);
+        }
+		
         static AltFloat TwoValue()
         {
             return AltFloat(0,1);
         }
 #endif
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat Point5Value()
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            return AltFloat(0, 1);
+    #else
+            return AltFloat(0, -1);
+    #endif
+        }
+
+        static AltFloat JustAboveZeroValue()
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            return AltFloat(0, 255);
+    #else
+            return AltFloat(0, -127);
+    #endif
+        }
+
+        static AltFloat MinimumValue()
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            return AltFloat(0, ZeroRep);
+    #else
+            return AltFloat(NegAlmostApproachingTop, 127);
+    #endif
+        }
+
+        static AltFloat MaximumValue()
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            return AltFloat(0, 0);
+    #else
+            return AltFloat(AlmostApproachingTop, 127);
+    #endif
+        }
 
 public:
 
@@ -313,6 +360,50 @@ public:
         /// </summary>
         /// <returns>AltFloat</returns>
         static AltFloat Zero;
+		
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat One;
+		
+	#if defined(AltFloat_UseRestrictedRange)
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat NegativeOne;
+		
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        static AltFloat JustAboveZero;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite value that can stored
+        /// </summary>
+        static AltFloat Minimum;
+        
+        /// <summary>
+        /// Returns value of highest non-infinite value that can stored
+        /// </summary>
+        static AltFloat Maximum;
+
+	#endif
 
     #pragma endregion ValueDefines
     #if !defined(AltFloat_UseRestrictedRange)
@@ -321,7 +412,15 @@ public:
         /// </summary>
         void SwapNegativeStatus()
         {
-            SignifNum *= -1;//Flip the last bit
+	#if defined(AltFloat_StoreSignifInBitfield)
+	#else
+			if(SignifNum==NegativeOneRep)
+				SignifNum = 1;
+			else if(SignifNum==1)
+				SignifNum = NegativeOneRep;
+			else
+				SignifNum *= -1;//Flip the last bit
+	#endif
         }
     #endif
 
@@ -715,6 +814,8 @@ public:
     #endif
         }
 
+	//place AltFloat to MixedDec conversion in MixedDec class
+	
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
@@ -1108,6 +1209,27 @@ public:
 	#pragma endregion Math Etc Functions
 
     }
+
+    #pragma region ValueDefine Source
+
+    AltFloat AltFloat::Zero = ZeroValue();
+    AltFloat AltFloat::One = OneValue();
+
+	#if defined(AltFloat_UseRestrictedRange)
+    AltFloat AltFloat::NegativeOne = NegativeOneValue();
+    AltFloat AltFloat::Two = TwoValue();
+	#endif
+
+    AltFloat AltFloat::JustAboveZero = JustAboveZeroValue();
+
+    AltFloat AltFloat::Minimum = MinimumValue();
+    AltFloat AltFloat::Maximum = MaximumValue();
+
+    AltFloat AltFloat::PointFive = Point5Value();
+
+    #pragma endregion ValueDefine Source
+
     #pragma region String Function Source
 
     #pragma endregion String Function Source
+	
