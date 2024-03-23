@@ -224,6 +224,20 @@ namespace BlazesRusCode
             Exponent = ZeroRep;
         }
 
+        void SetAsOne()
+        {
+            SignifNum = 0;
+            Exponent = 0;
+        }
+
+#if defined(AltFloat_UseRestrictedRange)
+        void SetAsNegativeOne()
+        {
+            SignifNum = NegativeOneRep;
+            Exponent = 0;
+        }
+#endif
+
     #pragma region Const Representation values
     protected:
 
@@ -521,6 +535,115 @@ public:
 
     #pragma region ConvertFromOtherTypes
 
+        void SetFloatVal(const float& Value)
+        {//Should be able to extract the related similar bits
+            //To-Do Add code here
+        }
+
+        void SetDoubleVal(const double& Value)
+        {
+            //To-Do Add code here
+        }
+
+        void SetDecimalVal(const ldouble& Value)
+        {
+            //To-Do Add code here
+        }
+
+        void SetBoolVal(const bool& Value)
+        {
+            if(Value==true)
+                SetAsOne();
+            else
+                SetAsZero();
+        }
+
+        //Use Bitwise operations to convert fixed point into Formula Format
+        //(Extract value of power of 2 and then deal with remaining)
+
+        void SetUIntVal(const unsigned int& Value)
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            if(Value==1)
+                SetAsOne();
+            else
+                SetAsZero();
+    #else
+            if(Value==0)
+                SetAsZero();
+            else if(Value==1)
+                SetAsOne();
+            else
+            {
+                unsigned int RemainingVal = Value;
+                //To-Do Add code here
+            }
+    #endif
+        }
+
+        void SetIntVal(const signed int& Value)
+        {
+    #if defined(AltFloat_UseRestrictedRange)
+            if(Value==1)
+                SetAsOne();
+            else
+                SetAsZero();
+    #else
+            if(Value==0)
+                SetAsZero();
+            else if(Value==1)
+                SetAsOne();
+            else if(Value==-1)
+                SetAsNegativeOne();
+            else
+            {
+                bool IsNegative = Value<0;
+                unsigned int RemainingVal = IsNegative?-Value:Value;
+                //To-Do Add code here
+            }
+    #endif
+        }
+
+        AltFloat(const unsigned int& Value)
+        {
+            this->SetUIntVal(Value);
+        }
+
+        AltFloat(const signed int& Value)
+        {
+            this->SetIntVal(Value);
+        }
+
+        AltFloat(const float& Value)
+        {
+            this->SetFloatVal(Value);
+        }
+
+        AltFloat(const double& Value)
+        {
+            this->SetDoubleVal(Value);
+        }
+
+        AltFloat(const ldouble& Value)
+        {
+            this->SetDecimalVal(Value);
+        }
+
+        AltFloat(const bool& Value)
+        {
+            this->SetBoolVal(Value);
+        }
+
+        AltFloat(const MediumDec& Value)
+        {
+            this->SetMediumDecVal(Value);
+        }
+
+    #pragma endregion ConvertFromOtherTypes
+
+    #pragma region ConvertToOtherTypes
+
+
         float toFloat()
         {
             float Value;
@@ -815,10 +938,6 @@ public:
         }
 
 	//place AltFloat to MixedDec conversion in MixedDec class
-	
-    #pragma endregion ConvertFromOtherTypes
-
-    #pragma region ConvertToOtherTypes
 
     #pragma endregion ConvertToOtherTypes
 
