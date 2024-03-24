@@ -92,36 +92,6 @@ namespace BlazesRusCode
 		#else
 		static signed int DenomMaxExponent = 23;
 		#endif
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-			#if defined(AltFloat_ExtendedRange)
-		//Equal to 2^31
-		static signed long long DenomMax = 2147483648;
-		//Equal to (2^31) - 1
-		static signed long long AlmostApproachingTop = 2147483647;
-		static signed long long NegAlmostApproachingTop = -2147483647;
-			#else
-		//Equal to 2^23
-		static signed int DenomMax = 8388608;
-		//Equal to (2^23) - 1
-		static signed int AlmostApproachingTop = 8388607;
-		static signed int NegAlmostApproachingTop = -8388607;
-			#endif
-		#else
-			#if defined(AltFloat_ExtendedRange)
-		//Equal to 2^31
-		static unsigned long long DenomMax = 2147483648;
-		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 2147483647;
-		static unsigned long long NegAlmostApproachingTop = -2147483647;
-			#else
-		//Equal to 2^23
-		static unsigned int DenomMax = 8388608;
-		//Equal to (2^23) - 1
-		static unsigned int AlmostApproachingTop = 8388607;
-		static unsigned int NegAlmostApproachingTop = -8388607;
-			#endif
-		#endif
-	#else
 	#endif
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
  
@@ -175,6 +145,36 @@ namespace BlazesRusCode
 		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
 		signed char Exponent;
 #endif
+
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+			#if defined(AltFloat_ExtendedRange)
+		//Equal to 2^31
+		static signed long long DenomMax = 2147483648;
+		//Equal to (2^31) - 1
+		static signed long long AlmostApproachingTop = 2147483647;
+		static signed long long NegAlmostApproachingTop = -2147483647;
+			#else
+		//Equal to 2^23
+		static signed int DenomMax = 8388608;
+		//Equal to (2^23) - 1
+		static signed int AlmostApproachingTop = 8388607;
+		static signed int NegAlmostApproachingTop = -8388607;
+			#endif
+		#elif !defined(AltFloat_UseRestrictedRange)
+			#if defined(AltFloat_ExtendedRange)
+		//Equal to 2^31
+		static unsigned long long DenomMax = 2147483648;
+		//Equal to (2^31) - 1
+		static SignifBitfield AlmostApproachingTop = 2147483647;
+		static SignifBitfield NegAlmostApproachingTop = -2147483647;
+			#else
+		//Equal to 2^23
+		static unsigned int DenomMax = 8388608;
+		//Equal to (2^23) - 1
+		static SignifBitfield AlmostApproachingTop = 8388607;
+		static SignifBitfield NegAlmostApproachingTop = -8388607;
+			#endif
+		#endif
 
 		//Exponent value that zero is defined at
 #if defined(AltFloat_UseRestrictedRange)
@@ -731,10 +731,55 @@ public:
 						ValAtHighestPos = position;
 					}
 				}
+				signed int Denom = position<<1;
+				RemainingVal -=  ValAtHighestPos;
 				//To-Do Add code here
             }
     #endif
         }
+		
+		template<MediumDecVariant VariantType=int>
+		void SetMediumDecVVal(const VariantType& Value)
+		{
+    #if defined(AltFloat_UseRestrictedRange)
+            if(Value==1)
+                SetAsOne();
+            else
+                SetAsZero();
+    #else
+            if(Value==0)
+                SetAsZero();
+            else if(Value==1)
+                SetAsOne();
+            else if(Value==-1)
+                SetAsNegativeOne();
+            else
+            {
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+                bool IsNegative = Value<0;
+                unsigned int RemainingVal = IsNegative?-(int)Value:(int)Value;
+		#else
+				unsigned int RemainingVal = Value;
+		#endif
+				bool bitAtPosition;
+				signed int powerAtPos = 0;
+				signed int highestPower = 0;
+				unsigned int ValAtHighestPos = 0;
+				for(unsigned int position = 1;position<=RemainingVal;position<<1&&++powerAtPos)
+				{
+					bitAtPosition = RemainingVal & (1 << position);
+					if(bitAtPosition)
+					{
+						highestPower = powerAtPos;
+						ValAtHighestPos = position;
+					}
+				}
+				signed int Denom = position<<1;
+				RemainingVal -=  ValAtHighestPos;
+				//To-Do Add code here
+            }
+    #endif
+		}
 
         AltFloat(const unsigned int& Value)
         {
@@ -774,7 +819,6 @@ public:
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-
 
         float toFloat()
         {
