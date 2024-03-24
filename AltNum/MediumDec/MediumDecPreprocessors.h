@@ -8,4 +8,5 @@
 /*
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
+AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf (uses old behavior)
 */

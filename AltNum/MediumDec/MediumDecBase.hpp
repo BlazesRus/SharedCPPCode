@@ -30,6 +30,7 @@
 
 namespace BlazesRusCode
 {
+#if !defined(AltNum_UseIntForDecimalHalf)
 	struct PartialInt {
 	#pragma options align=bit_packed
 	//Stores Digits XXX XXX XXX
@@ -43,6 +44,7 @@ namespace BlazesRusCode
 			Flags = flags;
 		}
 	};
+#endif
 
 	//Base class for MediumDec to help initial structure of classes
 	//MediumDec class holds finished implimentation of AltNum data including static variables
@@ -73,26 +75,30 @@ namespace BlazesRusCode
         /// </summary>
         static unsigned _int64 const DecimalOverflowX = 1000000000;
 
+#if defined(AltNum_UseIntForDecimalHalf)
+
+#endif
+
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
         static signed int const NegativeRep = -2147483648;
 
-#pragma region DigitStorage
+	#pragma region DigitStorage
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-    #if !defined(AltDec_UseMirroredInt)
         signed int IntValue;
-    #else
-        MirroredInt IntValue;
-    #endif
 	
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
+#if defined(AltNum_UseIntForDecimalHalf)
+        signed int DecimalHalf;
+#else
         PartialInt DecimalHalf;
+#endif
 
 #pragma endregion DigitStorage
 
@@ -176,6 +182,16 @@ public:
             else
                 return IntValue;
         }
+		
+		//Get DecimalHalf without special status flags after ExtraRep applied
+		virtual unsigned int GetDecimalHalf() const
+		{
+	#if defined(AltNum_UseIntForDecimalHalf)
+			return DecimalHalf;
+	#else
+			return DecimalHalf.Value;
+	#endif
+		}
 
         std::string IntHalfAsString() const
         {
