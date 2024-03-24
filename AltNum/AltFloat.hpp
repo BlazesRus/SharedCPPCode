@@ -120,29 +120,49 @@ namespace BlazesRusCode
 		unsigned int Numerator : 23;
 		#endif
 		#pragma options align=reset
-			SignifBitfield(signed int signifNum=0, bool negativeZero=false)
+			//If specialStatus==1, then is negative number
+			//If specialStatus==2, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
+			SignifBitfield(unsigned int signifNum=0, unsigned char specialStatus=0)
 			{
-				if(negativeZero)
+				if(specialStatus==2)
 				{
 					IsNegative = 1;
 					Numerator = 0;
 				}
-				else if(signifNum<0)
+				else if(specialStatus==1)
 				{
 					IsNegative = 1;
-					Numerator = -signifNum
+					Numerator = signifNum;
 				}
 				else
 				{
 					IsNegative = 0;
-					Numerator = signifNum
+					Numerator = signifNum;
+				}
+			}
+			
+			//Separate constructor for translating from signed number
+			SignifBitfield(signed int signifNum=0)
+			{
+				if(signifNum<0)
+				{
+					IsNegative = 1;
+					Numerator = -signifNum;
+				}
+				else
+				{
+					IsNegative = 0;
+					Numerator = signifNum;
 				}
 			}
 		}SignifNum;
 	#endif
 
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
-		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
+		//If Exponent==-128 and SignifNum==0, in which case the value is at zero
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+		//If Exponent==-128 and SignifNum<0, then exponent
+		#endif
 		signed char Exponent;
 #endif
 
