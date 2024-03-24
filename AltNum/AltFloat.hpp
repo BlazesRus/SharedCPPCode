@@ -140,14 +140,16 @@ namespace BlazesRusCode
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 	#if defined(AltFloat_DontUseBitfieldInSignif)
         signed int SignifNum;
-	#else
+	#else//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
 		struct SignifBitfield {
-        unsigned char IsNegative:1;
+		#pragma options align=bit_packed
+        unsigned int IsNegative:1;
 		#if defined(AltFloat_ExtendedRange)
         unsigned int Numerator : 31;
 		#else
-		unsigned int Numerator : 24;
+		unsigned int Numerator : 23;
 		#endif
+		#pragma options align=reset
 			SignifBitfield(signed int signifNum=0, bool negativeZero=false)
 			{
 				if(negativeZero)
