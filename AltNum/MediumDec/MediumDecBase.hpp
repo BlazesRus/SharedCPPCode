@@ -30,6 +30,20 @@
 
 namespace BlazesRusCode
 {
+	struct PartialInt {
+	#pragma options align=bit_packed
+	//Stores Digits XXX XXX XXX
+	unsigned int Value:30;
+	//Can store up to 4 Flag states including normal state at 0
+	unsigned int Flags:2;
+	#pragma options align=reset
+		PartialInt(unsigned int value=0, unsigned int flags=0)
+		{
+			Value = value;
+			Flags = flags;
+		}
+	};
+
 	//Base class for MediumDec to help initial structure of classes
 	//MediumDec class holds finished implimentation of AltNum data including static variables
 	// that might mess up polymorphism functionality of the class
@@ -52,27 +66,17 @@ namespace BlazesRusCode
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
+        static unsigned int const DecimalOverflow = 1000000000;
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
-
-        /// <summary>
-        /// The decimal overflow value * -1
-        /// </summary>
-		static signed _int64 const NegDecimalOverflowX = -1000000000;
+        static unsigned _int64 const DecimalOverflowX = 1000000000;
 
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-    #if !defined(AltDec_UseMirroredInt)
         static signed int const NegativeRep = -2147483648;
-    #else
-        static MirroredInt NegativeRep;
-        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
-    #endif
 
 #pragma region DigitStorage
         /// <summary>
@@ -88,7 +92,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
-        signed int DecimalHalf;
+        PartialInt DecimalHalf;
 
 #pragma endregion DigitStorage
 
@@ -130,14 +134,10 @@ public:
 
         signed int GetIntegerPartition() const
         {
-    #if defined(AltDec_UseMirroredInt)
-            return IntValue.GetValue();
-    #else
             if(IntValue == NegativeRep)
                 return 0;
             else
                 return IntValue;
-    #endif
         }
 
         void SetIntegerPartition(int intPart) const
@@ -169,43 +169,20 @@ public:
         //Return IntValue part as Absolute value
         signed int IntHalfAsAbs() const
         {
-    #if defined(AltDec_UseMirroredInt)
-            return IntValue.GetAbsValue();
-    #else
             if (IsAtZeroInt())
                 return 0;
             else if (IntValue < 0)
                 return -IntValue;
             else
                 return IntValue;
-    #endif
         }
 
         std::string IntHalfAsString() const
         {
-    #if defined(AltDec_UseMirroredInt)
-            return (std::string) IntValue;
-    #else
             if (IntValue == NegativeRep)
                 return "-0";
             return VariableConversionFunctions::IntToStringConversion(IntValue);
-    #endif
         }
-
-    #if defined(AltDec_UseMirroredInt)
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltDec"/> class.(Default constructor)
-        /// </summary>
-        /// <param name="intVal">The whole number based half of the representation</param>
-        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        /// <param name="extraVal">ExtraRep flags etc</param>
-        MediumDecBase(const MirroredInt& intVal = MirroredInt::Zero, const signed int& decVal = 0)
-        {
-
-            IntValue = intVal;
-            DecimalHalf = decVal;
-        }
-    #endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDec"/> class.
@@ -213,17 +190,9 @@ public:
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-    #if !defined(AltDec_UseMirroredInt)
-        MediumDecBase(const int& intVal=0, const signed int& decVal = 0)
-    #else
-        MediumDecBase(const int& intVal, const signed int& decVal = 0)
-    #endif
+        MediumDecBase(const int& intVal, const PartialInt& decVal = 0)
         {
-    #if defined(AltDec_UseMirroredInt)&&defined(BlazesMirroredInt_UseLegacyValueBehavior)
-            IntValue.Value = intVal;
-    #else
             IntValue = intVal;
-    #endif
             DecimalHalf = decVal;
         }
         
