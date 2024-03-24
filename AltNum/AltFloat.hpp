@@ -203,10 +203,9 @@ namespace BlazesRusCode
 #else
 		static signed char ZeroRep = -128;
 	#if defined(AltFloat_DontUseBitfieldInSignif)
-        //When Exponent is zero and NegativeOneRep == -128 (until separate into single bit flag)
+        //When Exponent is zero and NegativeOneRep == -128, then at exactly -1
+		//If Exponent is -128 and SignifNum is negative, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
         static signed char NegativeOneRep = -128;
-	#else
-        static signed char NegativeOneRep = 
 	#endif
 #endif
 
@@ -692,12 +691,7 @@ public:
                 SetAsOne();
             else
             {
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-                bool IsNegative = Value<0;
-                unsigned int RemainingVal = IsNegative?-Value:Value;
-		#else
 				unsigned int RemainingVal = Value;
-		#endif
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -751,9 +745,16 @@ public:
 						ValAtHighestPos = position;
 					}
 				}
-				signed int Denom = position<<1;
+				unsigned _int64 denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
-				//To-Do Add code here
+				unsigned _int64 numerator = DenomMax;
+				numerator *= RemainingVal;
+				numerator /= denom;
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+				
+		#else
+		#endif
+				Exponent = highestPower;
             }
     #endif
         }
@@ -764,8 +765,12 @@ public:
     #if defined(AltFloat_UseRestrictedRange)
             if(Value==1)
                 SetAsOne();
-            else
+            else if(Value==0)
                 SetAsZero();
+			else
+			{
+				//To-Do Add code here
+			}
     #else
             if(Value==0)
                 SetAsZero();
@@ -775,12 +780,7 @@ public:
                 SetAsNegativeOne();
             else
             {
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-                bool IsNegative = Value<0;
-                unsigned int RemainingVal = IsNegative?-(int)Value:(int)Value;
-		#else
-				unsigned int RemainingVal = Value;
-		#endif
+				unsigned int RemainingVal = Value.IntHalfAsAbs();
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -794,9 +794,75 @@ public:
 						ValAtHighestPos = position;
 					}
 				}
-				signed int Denom = position<<1;
+				unsigned int denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
-				//To-Do Add code here
+				#if defined(AltFloat_ExtendedRange)
+				VariantType numerator = VariantType.Maximum();//Can't fit 2147483648 in exactly inside MediumDec 
+				numerator /= denom;
+				numerator *= VariantType(RemainingVal, Value.GetDecimalHalf());
+				#else
+				VariantType numerator = VariantType(DenomMax);
+				numerator *= VariantType(RemainingVal, Value.GetDecimalHalf());
+				numerator /= denom;
+				#endif
+				//return Value.IsNegative()?-numerator.GetIntegerHalf():numerator.GetIntegerHalf();
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+				numerator.ConvertToNormTypeV2();//Does nothing for MediumDec but for AltDec converts to fixed point MediumDec format
+				if(Value.IsNegative())
+				{
+					if(Exponent==0)//Negative 1 Exponent
+					{
+						if(numerator.GetIntegerPartition()==0)
+						{
+							if(numerator.GetDecimalPartition()<=499999999)//At exactly negative one
+							{//Round down to exactly negative one if don't have at least half
+								SignifNum = NegativeOneRep;
+								Exponent = 0;
+							}
+							else//Almost exactly negative one
+							{
+								SignifNum = -1;//Rounds it up to slightly more than -1
+								Exponent = NegativeOneRep;
+							}
+						}
+						else
+						{
+							SignifNum = -numerator.GetIntegerPartition();
+							Exponent = NegativeOneRep;
+						}
+					}
+					else
+					{
+						SignifNum = -numerator.GetIntegerPartition();
+						Exponent = highestPower;
+					}
+				}
+				else
+				{
+					SignifNum = Value.IsNegative()?-numerator.GetIntegerPartition():numerator.GetIntegerPartition();
+					Exponent = highestPower;
+				}
+
+		#else
+				if(Value.IsNegative())
+				{
+					if(Exponent==0)//Negative 1 Exponent
+					{
+						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),2);
+						Exponent==0;
+					}
+					else
+					{
+						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),1);
+						Exponent = highestPower;
+					}
+				}
+				else
+				{
+					SignifNum = SignifBitfield(numerator.GetIntegerHalf(),0);
+					Exponent = highestPower;
+				}
+		#endif
             }
     #endif
 		}
