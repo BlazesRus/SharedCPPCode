@@ -38,6 +38,7 @@ AltFloat_UseXorAsPowerOf = Not Implimented yet
 AltFloat_UseRestrictedRange = Restrict range to 0 and 1
 AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
 AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
+AltFloat_DontUseBitfieldInSignif = Prevent using bitfields to store significant number(uses previous int storage instead)
 */
 
 namespace BlazesRusCode
@@ -64,9 +65,8 @@ namespace BlazesRusCode
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
 	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exponent))"
 	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
-
 #endif
-    /// (5 bytes worth of Variable Storage inside class for each instance)
+    /// (4-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
     {
@@ -86,41 +86,44 @@ namespace BlazesRusCode
 		static unsigned long long AlmostApproachingTop = 4294967295;
 		static unsigned int DenomMaxExponent = 32;
         #endif
-    #elif defined(AltFloat_ExtendedRange)
+	#else
+		#if defined(AltFloat_ExtendedRange)
+		static signed int DenomMaxExponent = 31;
+		#else
+		static signed int DenomMaxExponent = 23;
+		#endif
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+			#if defined(AltFloat_ExtendedRange)
 		//Equal to 2^31
 		static signed long long DenomMax = 2147483648;
 		//Equal to (2^31) - 1
 		static signed long long AlmostApproachingTop = 2147483647;
 		static signed long long NegAlmostApproachingTop = -2147483647;
-		static signed int DenomMaxExponent = 31;
-    #else
+			#else
 		//Equal to 2^23
 		static signed int DenomMax = 8388608;
 		//Equal to (2^23) - 1
 		static signed int AlmostApproachingTop = 8388607;
 		static signed int NegAlmostApproachingTop = -8388607;
-		static signed int DenomMaxExponent = 23;
-    #endif
-    #if !defined(AltFloat_UseRestrictedRange)
-		static unsigned long long uDenomMax = (unsigned long long) DenomMax;
-		static signed long long sDenomMax = (signed long long) DenomMax;
-    #endif
-		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
-
-	#if defined(AltFloat_EnableApproachingZero)
-		//When SignifNum==-128 and Exponent!=-128, than value is equal to Exponent.0..01
-		//When SignifNum==-128 and Exponent==-128, than value is equal to -0.0..01
-		static signed int ApproachingZeroRep = -128;
+			#endif
+		#else
+			#if defined(AltFloat_ExtendedRange)
+		//Equal to 2^31
+		static unsigned long long DenomMax = 2147483648;
+		//Equal to (2^31) - 1
+		static unsigned long long AlmostApproachingTop = 2147483647;
+		static unsigned long long NegAlmostApproachingTop = -2147483647;
+			#else
+		//Equal to 2^23
+		static unsigned int DenomMax = 8388608;
+		//Equal to (2^23) - 1
+		static unsigned int AlmostApproachingTop = 8388607;
+		static unsigned int NegAlmostApproachingTop = -8388607;
+			#endif
+		#endif
+	#else
 	#endif
-
-		//Exponent value that zero is defined at
-#if defined(AltFloat_UseRestrictedRange)
-		static unsigned char ZeroRep = 256;
-#else
-		static signed char ZeroRep = -128;
-        //When Exponent is zero and NegativeOneRep == -128 (until separate into single bit flag)
-        static signed char NegativeOneRep = -128;
-#endif
+		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
  
 #if defined(AltFloat_UseRestrictedRange)
     #if defined(AltFloat_UseSmallerFractional)
@@ -134,20 +137,57 @@ namespace BlazesRusCode
 		unsigned char InvertedExp;
 #else
 
-    //To-Do Add Separate flag for if is negative and use in structure that is total of 4 bytes size
-
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
+	#if defined(AltFloat_DontUseBitfieldInSignif)
         signed int SignifNum;
-//#if defined(AltFloat_ExtendedRange)
-//        signed int SignifNum : 31;
-//#else
-//        signed int SignifNum : 24;
-//#endif
+	#else
+		struct SignifBitfield {
+        unsigned char IsNegative:1;
+		#if defined(AltFloat_ExtendedRange)
+        unsigned int Numerator : 31;
+		#else
+		unsigned int Numerator : 24;
+		#endif
+			SignifBitfield(signed int signifNum=0, bool negativeZero=false)
+			{
+				if(negativeZero)
+				{
+					IsNegative = 1;
+					Numerator = 0;
+				}
+				else if(signifNum<0)
+				{
+					IsNegative = 1;
+					Numerator = -signifNum
+				}
+				else
+				{
+					IsNegative = 0;
+					Numerator = signifNum
+				}
+			}
+		}SignifNum;
+	#endif
 
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
 		//Unless Exponent==-128 and SignifNum==0, in which case the value is at zero
 		signed char Exponent;
 #endif
+
+		//Exponent value that zero is defined at
+#if defined(AltFloat_UseRestrictedRange)
+		static unsigned char ZeroRep = 256;
+		
+#else
+		static signed char ZeroRep = -128;
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+        //When Exponent is zero and NegativeOneRep == -128 (until separate into single bit flag)
+        static signed char NegativeOneRep = -128;
+	#else
+        static signed char NegativeOneRep = 
+	#endif
+#endif
+
     public:
 
 #if defined(AltFloat_UseRestrictedRange)
@@ -174,12 +214,22 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(unsigned int signifNum=0, signed char exponent=ZeroRep)//, bool isNegative = false)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+        AltFloat(unsigned int signifNum=0, signed char exponent=ZeroRep)
         {
             SignifNum = signifNum;
             Exponent = exponent;
-            //IsNegative = isNegative;
         }
+	#else
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltFloat"/> class.
+        /// </summary>
+        AltFloat(SignifBitfield signifNum=0, signed char exponent=ZeroRep)
+        {
+            SignifNum = signifNum;
+            Exponent = exponent;
+        }
+	#endif
 #endif
 
         AltFloat(const AltFloat&) = default;
@@ -230,10 +280,17 @@ namespace BlazesRusCode
             Exponent = 0;
         }
 
-#if defined(AltFloat_UseRestrictedRange)
+#if defined(AltFloat_DontUseBitfieldInSignif)
         void SetAsNegativeOne()
         {
             SignifNum = NegativeOneRep;
+            Exponent = 0;
+        }
+#elif !defined(AltFloat_UseRestrictedRange)
+        void SetAsNegativeOne()
+        {
+            SignifNum.IsNegative = 1;
+            SignifNum.Numerator = 0;
             Exponent = 0;
         }
 #endif
@@ -252,11 +309,19 @@ namespace BlazesRusCode
 #if defined(AltFloat_UseRestrictedRange)//Maximum set as One
             SignifNum = 0;
             InvertedExp = 0;
-#else
+#elif defined(AltFloat_DontUseBitfieldInSignif)
     #if !defined(AltFloat_ExtendedRange)
             SignifNum = 8388607;
     #else
 			SignifNum = 2147483647;
+    #endif
+			Exponent = 127;
+#else
+			SignifNum.IsNegative = 0;
+    #if !defined(AltFloat_ExtendedRange)
+            SignifNum.Numerator = 8388607;
+    #else
+			SignifNum.Numerator = 2147483647;
     #endif
 			Exponent = 127;
 #endif
@@ -270,11 +335,19 @@ namespace BlazesRusCode
 #if defined(AltFloat_UseRestrictedRange)//Minimum set as Zero
             SignifNum = 0;
             InvertedExp = ZeroRep;
-#else
+#elif defined(AltFloat_DontUseBitfieldInSignif)
     #if !defined(AltFloat_ExtendedRange)
             SignifNum = -8388607;
     #else
 			SignifNum = -2147483647;
+    #endif
+			Exponent = 127;
+#else
+			SignifNum.IsNegative = 1;
+    #if !defined(AltFloat_ExtendedRange)
+            SignifNum.Numerator = 8388607;
+    #else
+			SignifNum.Numerator = 2147483647;
     #endif
 			Exponent = 127;
 #endif
@@ -316,15 +389,25 @@ protected:
             return AltFloat(0,0);
         }
 		
-        static AltFloat NegativeOneValue()
-        {
-            return AltFloat(NegativeOneRep,0);
-        }
-		
         static AltFloat TwoValue()
         {
             return AltFloat(0,1);
         }
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+	
+        static AltFloat NegativeOneValue()
+        {
+            return AltFloat(NegativeOneRep,0);
+        }
+	
+	#else
+	
+        static AltFloat NegativeOneValue()
+        {
+            return AltFloat(SignifBitfield(0,true),0);
+        }
+	
+	#endif
 #endif
 
         /// <summary>
@@ -426,14 +509,15 @@ public:
         /// </summary>
         void SwapNegativeStatus()
         {
-	#if defined(AltFloat_StoreSignifInBitfield)
-	#else
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 			if(SignifNum==NegativeOneRep)
 				SignifNum = 1;
 			else if(SignifNum==1)
 				SignifNum = NegativeOneRep;
 			else
 				SignifNum *= -1;//Flip the last bit
+	#else
+			SignifNum.IsNegative ^= 1;//Flip the last bit
 	#endif
         }
     #endif
@@ -492,6 +576,7 @@ public:
             outputStr += (std::string)InvertedExpMult;
     #else
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
+		#if defined(AltFloat_DontUseBitfieldInSignif)
 			if(SignifNum<0)
 			{
 				string outputStr = "-(";
@@ -506,12 +591,21 @@ public:
             else
             {
 				string outputStr = "2^"+(std::string)Exponent;
+		#else
+				string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exponent;
+		#endif
                 outputStr += " + ";
+		#if defined(AltFloat_DontUseBitfieldInSignif)
                 outputStr += (std::string)SignifNum;
+		#else
+                outputStr += (std::string)SignifNum.Numerator;
+		#endif
                 outputStr += " * ";
                 outputStr += "2^"+(std::string)ExponentMultiplier;
                 return outputStr;
+		#if defined(AltFloat_DontUseBitfieldInSignif)
             }
+		#endif
     #endif
 		}
 
@@ -576,9 +670,12 @@ public:
                 SetAsOne();
             else
             {
+		#if defined(AltFloat_DontUseBitfieldInSignif)
                 bool IsNegative = Value<0;
                 unsigned int RemainingVal = IsNegative?-Value:Value;
-				//Skip checking for bit 1 start at position 2
+		#else
+				unsigned int RemainingVal = Value;
+		#endif
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -613,9 +710,12 @@ public:
                 SetAsNegativeOne();
             else
             {
+		#if defined(AltFloat_DontUseBitfieldInSignif)
                 bool IsNegative = Value<0;
                 unsigned int RemainingVal = IsNegative?-Value:Value;
-				//Skip checking for bit 1 start at position 2
+		#else
+				unsigned int RemainingVal = Value;
+		#endif
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
