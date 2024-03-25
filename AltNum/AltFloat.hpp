@@ -96,11 +96,23 @@ namespace BlazesRusCode
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
  
 #if defined(AltFloat_UseRestrictedRange)
+ 		struct SignifBitfield {
+		#pragma options align=bit_packed
+		//If OverflowBit is 1 after a addition or subtraction operation, then overflowed or underflowed as a result during operation
+		//If OverflowBit is 1 after a division or multiplication operation, then overflowed as a result during operation
+        unsigned int OverflowBit:1;
     #if defined(AltFloat_UseSmallerFractional)
-		unsigned short SignifNum : 15;
+		unsigned int Numerator : 15;
     #else
-		unsigned int SignifNum : 31;
+		unsigned int Numerator : 31;
     #endif
+		#pragma options align=reset
+			SignifBitfield(unsigned int signifNum=0)
+			{
+				Numerator = signifNum;
+			}
+		}SignifNum;
+ 
 
         //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
 		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
