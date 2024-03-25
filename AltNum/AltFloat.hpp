@@ -124,20 +124,20 @@ namespace BlazesRusCode
 			//If specialStatus==2, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
 			SignifBitfield(unsigned int signifNum=0, unsigned char specialStatus=0)
 			{
-				if(specialStatus==2)
+				switch(specialStatus)
 				{
-					IsNegative = 1;
-					Numerator = 0;
-				}
-				else if(specialStatus==1)
-				{
-					IsNegative = 1;
-					Numerator = signifNum;
-				}
-				else
-				{
-					IsNegative = 0;
-					Numerator = signifNum;
+					case 2:
+						IsNegative = 1;
+						Numerator = 0;
+						break;
+					case 1:
+						IsNegative = 1;
+						Numerator = signifNum;
+						break;
+					case 0:
+						IsNegative = 0;
+						Numerator = signifNum;
+						break;
 				}
 			}
 			
@@ -705,7 +705,17 @@ public:
 						ValAtHighestPos = position;
 					}
 				}
-				//To-Do Add code here
+				unsigned _int64 denom = ValAtHighestPos<<1;
+				RemainingVal -=  ValAtHighestPos;
+				unsigned _int64 numerator = DenomMax;
+				numerator *= RemainingVal;
+				numerator /= denom;
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+				SignifNum = numerator;
+		#else
+				SignifNum = SignifBitfield(numerator,0)
+		#endif
+				Exponent = highestPower;
             }
     #endif
         }
@@ -726,12 +736,8 @@ public:
                 SetAsNegativeOne();
             else
             {
-		#if defined(AltFloat_DontUseBitfieldInSignif)
                 bool IsNegative = Value<0;
                 unsigned int RemainingVal = IsNegative?-Value:Value;
-		#else
-				unsigned int RemainingVal = Value;
-		#endif
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -750,11 +756,47 @@ public:
 				unsigned _int64 numerator = DenomMax;
 				numerator *= RemainingVal;
 				numerator /= denom;
+				if(IsNegative)
+				{
+
+					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero exponent field
+					{
 		#if defined(AltFloat_DontUseBitfieldInSignif)
-				
+						if(numerator==0)//At Exactly negative one value
+						{
+							Exponent = 0;
+							SignifNum = NegativeOneRep;
+						}
+						else
+						{
+							SignifNum = -numerator;
+							Exponent = NegativeOneRep;
+						}
 		#else
+						SignifNum = SignifBitfield(numerator,1)
+						Exponent = 0;
 		#endif
-				Exponent = highestPower;
+					}
+					else
+					{
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+						SignifNum = -numerator;
+		#else
+						SignifNum = SignifBitfield(numerator,1)
+		#endif
+
+						Exponent = highestPower;
+					}
+				}
+				else
+				{
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+					SignifNum = numerator;
+		#else
+					SignifNum = SignifBitfield(numerator,0)
+		#endif
+					Exponent = highestPower;
+				}
             }
     #endif
         }
