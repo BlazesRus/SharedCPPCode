@@ -1258,12 +1258,16 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Comparison Operators
-/* //ToDo code comparison operators after get basic operators working
+
     auto operator<=>(const AltFloat& that) const
     {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
     }
 	
@@ -1275,38 +1279,46 @@ public:
 	#endif
     }
 	
-    auto operator<=>(const int& that) const
-    {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-	#else
-	#endif
-    }
+//    auto operator<=>(const int& that) const
+//    {
+//	#if defined(AltFloat_UseExperimentalSignedBit)
+//	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+//	#else
+//	#endif
+//    }
+//
+//    bool operator==(const int& that) const
+//    {
+//	#if defined(AltFloat_UseExperimentalSignedBit)
+//	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+//	#else
+//	#endif
+//    }
 
-    bool operator==(const int& that) const
-    {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-	#else
-	#endif
-    }
+//    auto operator<=>(const MediumDec& that) const
+//    {
+//	#if defined(AltFloat_UseRestrictedRange)
+//	#elif defined(AltFloat_DontUseBitfieldInSignif)
+//	#else
+//		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+//		#if defined(AltFloat_ExtendedRange)
+//		#else
+//		#endif
+//	#endif
+//    }
+//
+//    bool operator==(const MediumDec& that) const
+//    {
+//	#if defined(AltFloat_UseRestrictedRange)
+//	#elif defined(AltFloat_DontUseBitfieldInSignif)
+//	#else
+//		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+//		#if defined(AltFloat_ExtendedRange)
+//		#else
+//		#endif
+//	#endif
+//    }
 
-    auto operator<=>(const MediumDec& that) const
-    {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-	#else
-	#endif
-    }
-
-    bool operator==(const MediumDec& that) const
-    {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-	#else
-	#endif
-    }
-*/
     #pragma endregion Comparison Operators
 
 	protected:
@@ -1314,18 +1326,26 @@ public:
         template<IntegerType IntType=int>
         void DivByIntOp(const IntType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
         //Division by AltFloat operation
         void DivOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
@@ -1333,9 +1353,13 @@ public:
         template<MediumDecVariant VariantType=int>
         void DivByMediumDecVOp(const VariantType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 	#pragma endregion Division Operations
@@ -1345,18 +1369,26 @@ public:
         template<IntegerType IntType=int>
         void MultByIntOp(const IntType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
         //Multiply operation
         void MultOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
@@ -1364,9 +1396,13 @@ public:
         template<MediumDecVariant VariantType=int>
         void MultByMediumDecVOp(const VariantType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 	#pragma endregion Multiplication Operations
@@ -1376,18 +1412,26 @@ public:
         template<IntegerType IntType=int>
         void AddByIntOp(const IntType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
         //Addition by AltFloat Operation
         void AddOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
@@ -1395,9 +1439,13 @@ public:
         template<MediumDecVariant VariantType=int>
         void AddByMediumDecVOp(const VariantType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 	#pragma endregion Addition Operations
@@ -1407,18 +1455,26 @@ public:
         template<IntegerType IntType=int>
         void SubtractByIntOp(const IntType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
         //Subtraction by AltFloat Operation
         void SubtractOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 		
@@ -1426,12 +1482,58 @@ public:
         template<MediumDecVariant VariantType=int>
         void SubtractByMediumDecVOp(const VariantType& rValue)
 		{
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
 	#endif
 		}
 	#pragma endregion Subtraction Operations
+	
+	#pragma region Modulus Operations
+        template<IntegerType IntType=int>
+        void ModByIntOp(const IntType& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+		
+        //Modulus by AltFloat operation
+        void ModOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+		
+        //Multiply by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void ModByMediumDecVOp(const VariantType& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Modulus Operations
 	
 	public:
     #pragma region Main Operator Overrides
@@ -1522,18 +1624,6 @@ public:
 		
         friend AltDec operator-(AltFloat self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
         friend AltDec& operator-=(AltFloat& self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
-		
-//        friend AltDec operator/(AltFloat self, MixedDec Value) { return DivByMediumDecVOp(self, Value); }
-//        friend AltDec& operator/=(AltFloat& self, MixedDec Value) { return DivByMediumDecVOp(self, Value); }
-//		
-//        friend AltDec operator*(AltFloat self, MixedDec Value) { return MultByMediumDecVOp(self, Value); }
-//        friend AltDec& operator*=(AltFloat& self, MixedDec Value) { return MultByMediumDecVOp(self, Value); }
-//
-//        friend AltDec operator+(AltFloat self, MixedDec Value) { return AddByMediumDecVOp(self, Value); }
-//        friend AltDec& operator+=(AltFloat& self, MixedDec Value) { return AddByMediumDecVOp(self, Value); }
-//		
-//        friend AltDec operator-(AltFloat self, MixedDec Value) { return SubtractByMediumDecVOp(self, Value); }
-//        friend AltDec& operator-=(AltFloat& self, MixedDec Value) { return SubtractByMediumDecVOp(self, Value); }
 
     #pragma endregion Main Operator Overrides
 

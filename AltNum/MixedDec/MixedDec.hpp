@@ -843,61 +843,341 @@ public:
 
     #pragma endregion Other RepType Conversion
 
-    #pragma region NormalRep Integer Division Operations
+	protected:
+	#pragma region Division Operations
+        template<IntegerType IntType=int>
+        void DivByIntOp(const IntType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Division by MixedDec operation
+        void DivOp(const MixedDec& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Multiply by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void DivByMediumDecVOp(const VariantType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Division by AltFloat Operation
+        void AltFloatDivByOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		// lValue /(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Division Operations
 
-    #pragma endregion NormalRep Integer Division Operations
+	#pragma region Multiplication Operations
+        //Multiply by Integer Operation
+        template<IntegerType IntType=int>
+        void MultByIntOp(const IntType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Multiply operation
+        void MultOp(const MixedDec& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Multiply by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void MultByMediumDecVOp(const VariantType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Multiply by AltFloat Operation
+        void AltFloatMultByOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		// lValue *(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Multiplication Operations
 
-    #pragma region NormalRep Integer Multiplication Operations
+	#pragma region Addition Operations
+        //Addition by Integer Operation
+        template<IntegerType IntType=int>
+        void AddByIntOp(const IntType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Addition by MixedDec Operation
+        void AddOp(const MixedDec& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Addition by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void AddByMediumDecVOp(const VariantType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Addition by AltFloat Operation
+        void AltFloatAddByOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		// lValue +(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Addition Operations
+	
+	#pragma region Subtraction Operations
+        //Subtraction by Integer Operation
+        template<IntegerType IntType=int>
+        void SubtractByIntOp(const IntType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Subtraction by MixedDec Operation
+        void SubtractOp(const MixedDec& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Subtraction by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void SubtractByMediumDecVOp(const VariantType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Subtraction by AltFloat Operation
+        void AltFloatSubtractByOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		// lValue -(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Subtraction Operations
+	
+	#pragma region Modulus Operations
+        template<IntegerType IntType=int>
+        void ModByIntOp(const IntType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Modulus by MixedDec operation
+        void ModOp(const MixedDec& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Multiply by MediumDec variant Operation
+        template<MediumDecVariant VariantType=int>
+        void ModByMediumDecVOp(const VariantType& rValue)
+		{
+			//Add Code here later
+		}
+		
+        //Modulus by AltFloat Operation
+        void AltFloatModByOp(const AltFloat& rValue)
+		{
+	#if defined(AltFloat_UseRestrictedRange)
+	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+		// lValue %(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
+		#if defined(AltFloat_ExtendedRange)
+		#else
+		#endif
+	#endif
+		}
+	#pragma endregion Modulus Operations
+	
+	public:
+    #pragma region Main Operator Overrides
+	
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec operator/(MixedDec self, MixedDec Value) { return DivOp(self, Value); }
 
-    #pragma endregion NormalRep Integer Multiplication Operations
+        /// <summary>
+        /// /= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec& operator/=(MixedDec& self, MixedDec Value) { return DivOp(self, Value); }
 
-    #pragma region NormalRep Integer Addition Operations
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec operator*(MixedDec self, MixedDec Value) { return MultOp(self, Value); }
 
-    #pragma endregion NormalRep Integer Addition Operations
+        ///// <summary>
+        ///// *= Operation
+        ///// </summary>
+        ///// <param name="self">The self.</param>
+        ///// <param name="Value">The value.</param>
+        ///// <returns>MixedDec</returns>
+        friend MixedDec& operator*=(MixedDec& self, MixedDec Value) { return MultOp(self, Value); }
 
-    #pragma region NormalRep Integer Subtraction Operations
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec operator+(MixedDec self, MixedDec Value) { return AddOp(self, Value); }
 
-    #pragma endregion NormalRep Integer Subtraction Operations
+        /// <summary>
+        /// += Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec& operator+=(MixedDec& self, MixedDec Value) { return AddOp(self, Value); }
 
-    #pragma region NormalRep Integer Bitwise Operations
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec operator-(MixedDec self, MixedDec Value) { return SubtractOp(self, Value); }
 
-	#pragma endregion NormalRep Integer Bitwise Operations
+        /// <summary>
+        /// -= Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MixedDec</returns>
+        friend MixedDec& operator-=(MixedDec& self, MixedDec Value) { return SubtractOp(self, Value); }
 
-    #pragma region Mixed Fraction Operations
+        friend MixedDec operator/(MixedDec self, int Value) { return DivByIntOp(self, Value); }
+        friend MixedDec& operator/=(MixedDec& self, int Value) { return DivByIntOp(self, Value); }
+		
+        friend MixedDec operator*(MixedDec self, int Value) { return MultByIntOp(self, Value); }
+        friend MixedDec& operator*=(MixedDec& self, int Value) { return MultByIntOp(self, Value); }
 
-    #pragma endregion Mixed Fraction Operations
+        friend MixedDec operator+(MixedDec self, int Value) { return AddByIntOp(self, Value); }
+        friend MixedDec& operator+=(MixedDec& self, int Value) { return AddByIntOp(self, Value); }
+		
+        friend MixedDec operator-(MixedDec self, int Value) { return SubtractByIntOp(self, Value); }
+        friend MixedDec& operator-=(MixedDec& self, int Value) { return SubtractByIntOp(self, Value); }
+	
+        friend MixedDec operator/(MixedDec self, MediumDec Value) { return DivByMediumDecVOp(self, Value); }
+        friend MixedDec& operator/=(MixedDec& self, MediumDec Value) { return DivByMediumDecVOp(self, Value); }
+		
+        friend MixedDec operator*(MixedDec self, MediumDec Value) { return MultByMediumDecVOp(self, Value); }
+        friend MixedDec& operator*=(MixedDec& self, MediumDec Value) { return MultByMediumDecVOp(self, Value); }
 
-	#pragma region NormalRep AltNum Division Operations
+        friend MixedDec operator+(MixedDec self, MediumDec Value) { return AddByMediumDecVOp(self, Value); }
+        friend MixedDec& operator+=(MixedDec& self, MediumDec Value) { return AddByMediumDecVOp(self, Value); }
+		
+        friend MixedDec operator-(MixedDec self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
+        friend MixedDec& operator-=(MixedDec& self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
+	
+        friend AltDec operator/(AltFloat self, MixedDec Value) { return AltFloatDivByOp(self, Value); }
+        friend AltDec& operator/=(AltFloat& self, MixedDec Value) { return AltFloatDivByOp(self, Value); }
+		
+        friend AltDec operator*(AltFloat self, MixedDec Value) { return AltFloatMultByOp(self, Value); }
+        friend AltDec& operator*=(AltFloat& self, MixedDec Value) { return AltFloatMultByOp(self, Value); }
 
-	#pragma endregion NormalRep AltNum Division Operations
+        friend AltDec operator+(AltFloat self, MixedDec Value) { return AltFloatAddByOp(self, Value); }
+        friend AltDec& operator+=(AltFloat& self, MixedDec Value) { return AltFloatAddByOp(self, Value); }
+		
+        friend AltDec operator-(AltFloat self, MixedDec Value) { return AltFloatSubtractByOp(self, Value); }
+        friend AltDec& operator-=(AltFloat& self, MixedDec Value) { return AltFloatSubtractByOp(self, Value); }
+	
+    #pragma endregion Main Operator Overrides
+	
+    #pragma region Other Operators
+	
+        /// <summary>
+        /// ++MixedDec Operator
+        /// </summary>
+        /// <returns>MixedDec &</returns>
+        MixedDec& operator ++()
+        {
+            *this = *this + One;
+            return *this;
+        }
 
-	#pragma region NormalRep AltNum Multiplication Operations
+        /// <summary>
+        /// --MixedDec Operator
+        /// </summary>
+        /// <returns>MixedDec &</returns>
+        MixedDec& operator --()
+        {
+            *this = *this - One;
+            return *this;
+        }
 
-	#pragma endregion NormalRep AltNum Multiplication Operations
+        /// <summary>
+        /// MixedDec++ Operator
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        MixedDec operator ++(int)
+        {
+            MixedDec tmp(*this);
+            ++* this;
+            return tmp;
+        }
 
-	#pragma region NormalRep AltNum Addition Operations
+        /// <summary>
+        /// MixedDec-- Operator
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        MixedDec operator --(int)
+        {
+            MixedDec tmp(*this);
+            --* this;
+            return tmp;
+        }
 
-	#pragma endregion NormalRep AltNum Addition Operations
-
-	#pragma region NormalRep AltNum Subtraction Operations
-
-	#pragma endregion NormalRep AltNum Subtraction Operations
-
-    #pragma region Other Division Operations
-
-	#pragma endregion Other Division Operations	
-
-    #pragma region Other Multiplication Operations
-
-    #pragma endregion Other Multiplication Operations
-
-    #pragma region Other Addition Operations
-
-    #pragma endregion Other Addition Operations
-
-    #pragma region Other Subtraction Operations
-
-    #pragma endregion Other Subtraction Operations
+        /// <summary>
+        /// MixedDec* Operator
+        /// </summary>
+        /// <returns>MixedDec &</returns>
+        MixedDec& operator *()
+        {
+            return *this;
+        }
+	
+    #pragma endregion Other Operators
+	
+	
     }
     #pragma region String Function Source
 }
