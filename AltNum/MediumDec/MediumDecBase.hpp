@@ -324,13 +324,13 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
-        std::string ToString();
+        virtual std::string ToString();
 
         /// <summary>
         /// Converts to string with digits filled in even when empty
         /// </summary>
         /// <returns>std.string</returns>
-        std::string ToFullString();
+        virtual std::string ToFullString();
 
         /// <summary>
         /// Implements the operator std::string operator.
@@ -344,7 +344,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(float Value)
+        virtual void SetFloatVal(float Value)
         {
             bool IsNegative = Value < 0.0f;
             if (IsNegative) { Value *= -1.0f; }
@@ -373,7 +373,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(double Value)
+        virtual void SetDoubleVal(double Value)
         {
             bool IsNegative = Value < 0.0;
             if (IsNegative) { Value *= -1.0; }
@@ -402,7 +402,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(ldouble Value)
+        virtual void SetDecimalVal(ldouble Value)
         {
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { Value *= -1.0L; }
@@ -431,7 +431,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(bool Value)
+        virtual SetBoolVal(bool Value)
         {
             IntValue = Value==false ? 0 : 1;
             DecimalHalf = 0;
@@ -441,7 +441,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(int Value)
+        virtual void SetIntVal(int Value)
         {
             IntValue = Value; DecimalHalf = 0;
         }
@@ -452,7 +452,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecBase(float Value)
         {
-            this->SetVal(Value);
+            this->SetFloatVal(Value);
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecBase(double Value)
         {
-            this->SetVal(Value);
+            this->SetDoubleVal(Value);
         }
 
         /// <summary>
@@ -470,7 +470,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecBase(ldouble Value)
         {
-            this->SetVal(Value);
+            this->SetDecimalVal(Value);
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecBase(bool Value)
         {
-            this->SetVal(Value);
+            this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableMediumDecBaseBasedSetValues)
@@ -497,7 +497,7 @@ public:
         /// MediumDecBase to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator float()
+        virtual float toFloat()
         {
             float Value;
             if (IsNegative())
@@ -517,7 +517,7 @@ public:
         /// MediumDecBase to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator double()
+        virtual double toDouble()
         {
             double Value;
             if (IsNegative())
@@ -537,7 +537,7 @@ public:
         /// MediumDecBase to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble()
+        virtual ldouble toDecimal()
         {
             ldouble Value;
             if (IsNegative())
@@ -557,9 +557,9 @@ public:
         /// MediumDecBase to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return IntValue.GetValue(); }
+        virtual int toInt() { return IntValue.GetValue(); }
 
-        explicit operator bool() { return IntValue.IsZero() ? false : true; }
+        virtual bool toBool() { return IntValue.IsZero() ? false : true; }
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion

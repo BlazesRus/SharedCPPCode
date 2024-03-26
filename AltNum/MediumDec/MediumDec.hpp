@@ -47,7 +47,7 @@ namespace BlazesRusCode
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API MediumDec : public virtual MediumDecBase
-    {
+    {//Most of function actually stored inside virtual base class
 	public:
 
         /// <summary>
@@ -480,7 +480,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDec(float Value)
         {
-            this->SetVal(Value);
+            this->SetFloatVal(Value);
         }
 
         /// <summary>
@@ -489,7 +489,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDec(double Value)
         {
-            this->SetVal(Value);
+            this->SetDoubleVal(Value);
         }
 
         /// <summary>
@@ -498,7 +498,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDec(ldouble Value)
         {
-            this->SetVal(Value);
+            this->SetDecimalVal(Value);
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDec(bool Value)
         {
-            this->SetVal(Value);
+            this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableMediumDecBasedSetValues)
@@ -519,7 +519,7 @@ public:
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-        virtual float toFloat()
+        float toFloat()
         {
             float Value;
             if (IsNegative())
@@ -606,11 +606,14 @@ public:
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
-    auto operator<=>(const AltNumBase& that) const
+
+	/* //Need to rework code
+    auto operator<=>(const MediumDec& that) const
     {
     #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
         if (std::weak_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
             return IntHalfCmp;
+		//Doesn't Reach this point because of return?
         if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
     #else
@@ -620,6 +623,7 @@ public:
             return DecimalHalfCmp;
     #endif
     }
+	*/
 
     bool operator==(const int& that) const
     {
@@ -630,7 +634,7 @@ public:
         return true;
     }
 
-    bool operator==(const AltNumBase& that) const
+    bool operator==(const MediumDec& that) const
     {
         if (IntValue!=that.IntValue)
             return false;
