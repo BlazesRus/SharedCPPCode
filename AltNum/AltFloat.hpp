@@ -1108,6 +1108,136 @@ public:
 
     #pragma region Comparison Operators
 
+        /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(AltFloat LValue, AltFloat RValue)
+        {
+			if (Exponent!=that.Exponent)
+				return false;
+	#if !defined(AltFloat_DontUseBitfieldInSignif)
+			if (LValue.SignifNum.IsNegative!=RValue.SignifNum.IsNegative)
+				return false;
+			if (LValue.SignifNum.Value!=RValue.SignifNum.Value)
+				return false;
+	#else
+			if (LValue.SignifNum!=RValue.SignifNum)
+				return false;
+	#endif
+		return true;
+        }
+
+        /// <summary>
+        /// Not equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(AltFloat LValue, AltFloat RValue)
+        {
+			if (Exponent!=that.Exponent)
+				return true;
+	#if !defined(AltFloat_DontUseBitfieldInSignif)
+			if (LValue.SignifNum.IsNegative!=RValue.SignifNum.IsNegative)
+				return true;
+			if (LValue.SignifNum.Value!=RValue.SignifNum.Value)
+				return true;
+	#else
+			if (SignifNum!=that.SignifNum)
+				return true;
+	#endif
+			return false;
+        }
+
+        /// <summary>
+        /// Lesser than Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<(AltFloat LValue, AltFloat Value)
+        {
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+			if(LValue.IsNegative==1&&RValue.IsNegative==0)
+				return false;
+			else if(LValue.IsNegative!=RValue.IsNegative)//
+			{
+			}
+			else
+			{
+			
+			}
+	#endif
+        }
+
+        /// <summary>
+        /// Lesser than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(AltFloat LValue, AltFloat Value)
+        {
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+			if(LValue.IsNegative==1&&RValue.IsNegative==0)
+				return false;
+			else if(LValue.IsNegative!=RValue.IsNegative)
+			{
+			}
+			else
+			{
+			}
+	#endif
+        }
+
+        /// <summary>
+        /// Greater than Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The right side value.</param>
+        /// <returns>bool</returns>
+        friend bool operator>(AltFloat LValue, AltFloat Value)
+        {
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+			if(LValue.IsNegative==0&&RValue.IsNegative==1)
+				return false;
+			else if(LValue.IsNegative!=RValue.IsNegative)//
+			{
+			}
+			else
+			{
+			}
+	#endif
+        }
+
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>=(AltFloat LValue, AltFloat RValue)
+        {
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+	#else
+			if(LValue.IsNegative==0&&RValue.IsNegative==1)
+				return false;
+			else if(LValue.IsNegative!=RValue.IsNegative)
+			{
+			}
+			else
+			{
+			}
+	#endif
+
+        }
+
 	/*
     auto operator<=>(const AltFloat& that) const
     {//Need to rework so that properly reaches each comparision
@@ -1128,7 +1258,7 @@ public:
     }
 	*/
 	
-    bool operator==(const AltFloat& that) const
+/*    bool operator==(const AltFloat& that) const
     {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
         if (SignifNum!=that.SignifNum)
@@ -1146,7 +1276,7 @@ public:
             return false;
 		return true;
 	#endif
-    }
+    }*/
 	
 //    auto operator<=>(const int& that) const
 //    {
