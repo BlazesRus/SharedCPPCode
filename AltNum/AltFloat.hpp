@@ -35,7 +35,6 @@ AltFloat_EnableApproachingZero = Not Implimented yet
 AltFloat_EnableInfinity = Not Implimented yet
 AltFloat_EnableBitwiseOperations = Not Implimented yet
 AltFloat_UseXorAsPowerOf = Not Implimented yet
-AltFloat_UseRestrictedRange = Restrict range to 0 and 1
 AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
 AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 AltFloat_DontUseBitfieldInSignif = Prevent using bitfields to store significant number(uses previous int storage instead)
@@ -50,11 +49,6 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
-#if defined(AltFloat_UseRestrictedRange)
-	///Represents floating range between 0 and 1
-    ///Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
-    ///Each InvertedExp holds DenomMax number of fractionals between InvertedExp and next highest InvertedExp
-#else
     #if defined(AltFloat_ExtendedRange)//Extended range can represent more digits of decimal places 
 	//Represents floating range between 0 and (1+(2147483647/2147483648))*2^127(Approximately 340 282 366 841 710 300 949 110 269 838 224 261 120)
     #else
@@ -65,7 +59,6 @@ namespace BlazesRusCode
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
 	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exponent))"
 	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
-#endif
     /// (4-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
@@ -93,15 +86,11 @@ namespace BlazesRusCode
 		#endif
 		#pragma options align=reset
 			//If specialStatus==1, then is negative number
-			//If specialStatus==2, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
+			//If specialStatus==1 and signifNum, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
 			SignifBitfield(unsigned int signifNum=0, unsigned char specialStatus=0)
 			{
 				switch(specialStatus)
 				{
-					case 2:
-						IsNegative = 1;
-						Numerator = 0;
-						break;
 					case 1:
 						IsNegative = 1;
 						Numerator = signifNum;
@@ -176,28 +165,6 @@ namespace BlazesRusCode
 	#endif
 
     public:
-
-#if defined(AltFloat_UseRestrictedRange)
-    #if defined(AltFloat_UseSmallerFractional)
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltFloat"/> class.
-        /// </summary>
-        AltFloat(unsigned short signifNum=0, unsigned char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            InvertedExp = exponent;
-        }
-    #else
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltFloat"/> class.
-        /// </summary>
-        AltFloat(unsigned int signifNum=0, unsigned char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            InvertedExp = exponent;
-        }
-    #endif
-#else
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
@@ -217,7 +184,6 @@ namespace BlazesRusCode
             Exponent = exponent;
         }
 	#endif
-#endif
 
         AltFloat(const AltFloat&) = default;
 
@@ -226,21 +192,13 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-    #if defined(AltFloat_UseRestrictedRange)
-            return SignifNum==0&&InvertedExp==256;
-    #else
             return SignifNum==0&&Exponent==-128;
-    #endif
 		}
 
         //Detect if at exactly one
 		bool IsOne()
 		{
-    #if defined(AltFloat_UseRestrictedRange)
-            return SignifNum==0&&InvertedExp==OneRep;
-    #else
             return SignifNum==0&&Exponent==0;
-    #endif
 		}
 
         /// <summary>
@@ -273,11 +231,10 @@ namespace BlazesRusCode
             SignifNum = NegativeOneRep;
             Exponent = 0;
         }
-#elif !defined(AltFloat_UseRestrictedRange)
+#else
         void SetAsNegativeOne()
         {
-            SignifNum.IsNegative = 1;
-            SignifNum.Numerator = 0;
+            SignifNum = SignifNumBitfield(0,1);
             Exponent = 0;
         }
 #endif
@@ -293,10 +250,7 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-#if defined(AltFloat_UseRestrictedRange)//Maximum set as One
-            SignifNum = 0;
-            InvertedExp = 0;
-#elif defined(AltFloat_DontUseBitfieldInSignif)
+#if defined(AltFloat_DontUseBitfieldInSignif)
     #if !defined(AltFloat_ExtendedRange)
             SignifNum = 8388607;
     #else
@@ -319,10 +273,7 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
-#if defined(AltFloat_UseRestrictedRange)//Minimum set as Zero
-            SignifNum = 0;
-            InvertedExp = ZeroRep;
-#elif defined(AltFloat_DontUseBitfieldInSignif)
+#if defined(AltFloat_DontUseBitfieldInSignif)
     #if !defined(AltFloat_ExtendedRange)
             SignifNum = -8388607;
     #else
@@ -345,13 +296,8 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsSmallestNonZero()
         {
-#if defined(AltFloat_UseRestrictedRange)
-            SignifNum = 0;
-            InvertedExp = 255;
-#else
             SignifNum = 0;
 			Exponent = -127;
-#endif
         }
 
     #pragma region ApproachingZero Setters
@@ -365,12 +311,6 @@ protected:
             return AltFloat();
         }
 		
-#if defined(AltFloat_UseRestrictedRange)
-        static AltFloat OneValue()
-        {
-            return AltFloat(0,0);
-        }
-#else
         static AltFloat OneValue()
         {
             return AltFloat(0,0);
@@ -395,7 +335,6 @@ protected:
         }
 	
 	#endif
-#endif
 
         /// <summary>
         /// Returns the value at 0.5
@@ -403,38 +342,22 @@ protected:
         /// <returns>AltFloat</returns>
         static AltFloat Point5Value()
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            return AltFloat(0, 1);
-    #else
             return AltFloat(0, -1);
-    #endif
         }
 
         static AltFloat JustAboveZeroValue()
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            return AltFloat(0, 255);
-    #else
             return AltFloat(0, -127);
-    #endif
         }
 
         static AltFloat MinimumValue()
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            return AltFloat(0, ZeroRep);
-    #else
             return AltFloat(NegAlmostApproachingTop, 127);
-    #endif
         }
 
         static AltFloat MaximumValue()
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            return AltFloat(0, 0);
-    #else
             return AltFloat(AlmostApproachingTop, 127);
-    #endif
         }
 
 public:
@@ -450,8 +373,6 @@ public:
         /// </summary>
         /// <returns>AltFloat</returns>
         static AltFloat One;
-		
-	#if defined(AltFloat_UseRestrictedRange)
 
         /// <summary>
         /// Returns the value at negative one
@@ -487,10 +408,8 @@ public:
         /// </summary>
         static AltFloat Maximum;
 
-	#endif
-
     #pragma endregion ValueDefines
-    #if !defined(AltFloat_UseRestrictedRange)
+
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
@@ -507,7 +426,6 @@ public:
 			SignifNum.IsNegative ^= 1;//Flip the last bit
 	#endif
         }
-    #endif
 
     #pragma region String Commands
         /// <summary>
@@ -552,16 +470,6 @@ public:
 				return "0";
 			else if(IsOne())
 				return "1";
-    #if defined(AltFloat_UseRestrictedRange)
-			unsigned int InvertedExpMult = InvertedExp + DenomMaxExponent;
-			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExp;
-            outputStr += " + ";
-            outputStr += (std::string)SignifNum;
-            outputStr += " * ";
-			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExpMult;
-    #else
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
 		#if defined(AltFloat_DontUseBitfieldInSignif)
 			if(SignifNum<0)
@@ -593,18 +501,29 @@ public:
 		#if defined(AltFloat_DontUseBitfieldInSignif)
             }
 		#endif
-    #endif
 		}
 
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToString()
-        {
-            //Add code here later
-            return "";//placeholder
-        }
+		//Outputs string in digit display format 
+		std::string ToDigitFormat()
+		{
+			if(IsZero())
+				return ".0";
+			else
+			{
+				//To-Do:Add code here
+			}
+			return "";//placeholder
+		}
+
+  //      /// <summary>
+  //      /// Converts to string.
+  //      /// </summary>
+  //      /// <returns>std.string</returns>
+  //      std::string ToString()
+  //      {
+  //          //Add code here later
+  //          return ToDigitFormat();//placeholder
+  //      }
 
         /// <summary>
         /// Implements the operator std::string operator.
@@ -645,12 +564,6 @@ public:
 
         void SetUIntVal(const unsigned int& Value)
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            if(Value==1)
-                SetAsOne();
-            else
-                SetAsZero();
-    #else
             if(Value==0)
                 SetAsZero();
             else if(Value==1)
@@ -683,17 +596,10 @@ public:
 		#endif
 				Exponent = highestPower;
             }
-    #endif
         }
 
         void SetIntVal(const signed int& Value)
         {
-    #if defined(AltFloat_UseRestrictedRange)
-            if(Value==1)
-                SetAsOne();
-            else
-                SetAsZero();
-    #else
             if(Value==0)
                 SetAsZero();
             else if(Value==1)
@@ -764,22 +670,11 @@ public:
 					Exponent = highestPower;
 				}
             }
-    #endif
         }
 		
-		template<MediumDecVariant VariantType=int>
+		template<MediumDecVariant VariantType=MediumDec>
 		void SetMediumDecVVal(const VariantType& Value)
 		{
-    #if defined(AltFloat_UseRestrictedRange)
-            if(Value==1)
-                SetAsOne();
-            else if(Value==0)
-                SetAsZero();
-			else
-			{
-				//To-Do Add code here
-			}
-    #else
             if(Value==0)
                 SetAsZero();
             else if(Value==1)
@@ -1304,7 +1199,7 @@ public:
 		}
 		
         //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=int>
+        template<MediumDecVariant VariantType=MediumDec>
         void DivByMediumDecVOp(const VariantType& rValue)
 		{
 	#if defined(AltFloat_UseRestrictedRange)
@@ -1347,7 +1242,7 @@ public:
 		}
 		
         //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=int>
+        template<MediumDecVariant VariantType=MediumDec>
         void MultByMediumDecVOp(const VariantType& rValue)
 		{
 	#if defined(AltFloat_UseRestrictedRange)
@@ -1390,7 +1285,7 @@ public:
 		}
 		
         //Addition by MediumDec variant Operation
-        template<MediumDecVariant VariantType=int>
+        template<MediumDecVariant VariantType=MediumDec>
         void AddByMediumDecVOp(const VariantType& rValue)
 		{
 	#if defined(AltFloat_UseRestrictedRange)
@@ -1433,7 +1328,7 @@ public:
 		}
 		
         //Subtraction by MediumDec variant Operation
-        template<MediumDecVariant VariantType=int>
+        template<MediumDecVariant VariantType=MediumDec>
         void SubtractByMediumDecVOp(const VariantType& rValue)
 		{
 	#if defined(AltFloat_UseRestrictedRange)
@@ -1463,8 +1358,7 @@ public:
         //Modulus by AltFloat operation
         void ModOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
 		#if defined(AltFloat_ExtendedRange)
@@ -1474,11 +1368,10 @@ public:
 		}
 		
         //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=int>
+        template<MediumDecVariant VariantType=MediumDec>
         void ModByMediumDecVOp(const VariantType& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
 		#if defined(AltFloat_ExtendedRange)
@@ -1693,10 +1586,8 @@ public:
     AltFloat AltFloat::Zero = ZeroValue();
     AltFloat AltFloat::One = OneValue();
 
-	#if defined(AltFloat_UseRestrictedRange)
     AltFloat AltFloat::NegativeOne = NegativeOneValue();
     AltFloat AltFloat::Two = TwoValue();
-	#endif
 
     AltFloat AltFloat::JustAboveZero = JustAboveZeroValue();
 

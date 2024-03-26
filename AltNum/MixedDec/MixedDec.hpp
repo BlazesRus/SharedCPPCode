@@ -57,6 +57,13 @@ protected:
 		static TrailingDigitsDisplayed = 9;
 #pragma region DigitStorage
 	#if defined(MixedDec_EnableRestrictedFloat)
+    /// <summary>
+    /// Alternative fixed point number representation designed for use with MixedDec
+	/// Represents floating range between 0 and just before 1
+    /// Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
+    /// Each InvertedExp holds DenomMax number of fractionals between InvertedExp and next highest InvertedExp
+    /// (4-5 bytes worth of Variable Storage inside class for each instance)
+	/// </summary>
 	public class RestrictedFloat
 	{
 	public:
@@ -106,6 +113,85 @@ protected:
             InvertedExp = exponent;
         }
     #endif
+	
+        //Detect if at exactly zero
+		bool IsZero()
+		{
+            return SignifNum==0&&InvertedExp==256;
+		}
+	
+        //Detect if at exactly one
+		bool IsOne()
+		{
+            return SignifNum==0&&InvertedExp==OneRep;
+		}
+	
+        void SetAsNegativeOne()
+        {
+            SignifNum.IsNegative = 1;
+            SignifNum.Numerator = 0;
+            Exponent = 0;
+        }
+		
+        /// <summary>
+        /// Sets value as smallest non-zero whole number that is not approaching zero
+        /// </summary>
+        void SetAsSmallestNonZero()
+        {
+            SignifNum = 0;
+            InvertedExp = 255;
+        }
+		
+    #pragma region ValueDefines
+protected:
+        static AltFloat ZeroValue()
+        {
+            return AltFloat();
+        }
+		
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>AltFloat</returns>
+        static AltFloat Point5Value()
+        {
+            return AltFloat(0, 1);
+		}
+		
+        static AltFloat JustAboveZeroValue()
+        {
+            return AltFloat(0, 255);
+        }
+		
+	#pragma endregion ValueDefines
+public:
+
+		//Outputs string in "2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+		std::string ToFormulaFormat()
+		{
+			if(IsZero())
+				return "0";
+			unsigned int InvertedExpMult = InvertedExp + DenomMaxExponent;
+			string outputStr = "1/2^"
+            outputStr += (std::string)InvertedExp;
+            outputStr += " + ";
+            outputStr += (std::string)SignifNum;
+            outputStr += " * ";
+			string outputStr = "1/2^"
+            outputStr += (std::string)InvertedExpMult;
+		}
+
+		//Outputs string in digit display format 
+		std::string ToDigitFormat()
+		{
+			if(IsZero())
+				return ".0";
+			else
+			{
+			}
+			return "";//placeholder
+		}
+
 	};
 		RestrictedFloat TrailingDigits;
 	#elif defined(MixedDec_EnableAltFloat)
