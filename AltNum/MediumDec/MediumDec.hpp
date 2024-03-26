@@ -607,6 +607,172 @@ public:
 	
     #pragma region Comparison Operators
 
+		bool operator!=(const int& that) const
+		{
+			if (IntValue==that)
+				if(DecimalHalf==0)
+					return false;
+				else
+					return true;
+			else
+				return true;
+		}
+
+		bool operator==(const int& that) const
+		{
+			if (IntValue!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+		
+		bool operator<(const int& that) const
+		{
+			return RightSideIntLessThan(that); 
+		}
+		
+		bool operator<=(const int& that) const
+		{
+			return RightSideIntLessThanOrEqual(that); 
+		}
+		
+		bool operator>(const int& that) const
+		{
+			return RightSideIntGreaterThan(that); 
+		}
+		
+		bool operator>=(const int& that) const
+		{
+			return RightSideIntGreaterThanOrEqual(that); 
+		}
+
+        /// <summary>
+        /// Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator==(MediumDec LValue, MediumDec Value)
+        {
+			return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf);
+        }
+
+        /// <summary>
+        /// Not equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator!=(MediumDec LValue, MediumDec Value)
+        {
+            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
+        }
+
+        /// <summary>
+        /// Lesser than Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue < Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue < Value.IntValue)
+                        return LValue.DecimalHalf < Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue < Value.IntValue)
+                return LValue.DecimalHalf < Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Lesser than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator<=(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue <= Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue <= Value.IntValue)
+                        return LValue.DecimalHalf <= Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue <= Value.IntValue)
+                return LValue.DecimalHalf <= Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Greater than Operation
+        /// </summary>
+        /// <param name="LValue">The LValue.</param>
+        /// <param name="Value">The right side value.</param>
+        /// <returns>bool</returns>
+        friend bool operator>(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue > Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue > Value.IntValue)
+                        return LValue.DecimalHalf > Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue > Value.IntValue)
+                return LValue.DecimalHalf > Value.DecimalHalf;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Greater than or Equal to Operation
+        /// </summary>
+        /// <param name="LValue">The left side value</param>
+        /// <param name="Value">The right side value</param>
+        /// <returns>bool</returns>
+        friend bool operator>=(MediumDec LValue, MediumDec Value)
+        {
+            if (LValue.DecimalHalf == 0)
+            {
+                if (Value.DecimalHalf == 0)
+                    return LValue.IntValue >= Value.IntValue;
+                else
+                {
+                    if (LValue.IntValue >= Value.IntValue)
+                        return LValue.DecimalHalf >= Value.DecimalHalf;
+                    else
+                        return false;
+                }
+            }
+            else if (LValue.IntValue >= Value.IntValue)
+                return LValue.DecimalHalf >= Value.DecimalHalf;
+            else
+                return false;
+        }
+
 	/* //Need to rework code
     auto operator<=>(const MediumDec& that) const
     {
@@ -625,7 +791,7 @@ public:
     }
 	*/
 
-    bool operator==(const int& that) const
+/*    bool operator==(const int& that) const
     {
         if (IntValue!=that)
             return false;
@@ -640,7 +806,7 @@ public:
             return false;
         if (DecimalHalf!=that.IntValue)
             return false;
-    }
+    }*/
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
