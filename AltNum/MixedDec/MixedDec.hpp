@@ -410,6 +410,7 @@ public:
 		}
 
 	};
+
 		RestrictedFloat TrailingDigits;
 	#elif defined(MixedDec_EnableAltFloat)
 		AltFloat TrailingDigits;

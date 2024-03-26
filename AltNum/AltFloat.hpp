@@ -1108,64 +1108,80 @@ public:
 
     #pragma region Comparison Operators
 
+	/*
     auto operator<=>(const AltFloat& that) const
-    {
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+    {//Need to rework so that properly reaches each comparision
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+        if (std::partial_ordering ExponentCmp = Exponent <=> that.Exponent; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::partial_ordering SignifNumCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
 	#else
 		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-		#if defined(AltFloat_ExtendedRange)
-		#else
-		#endif
+        if (std::partial_ordering ExponentCmp = Exponent <=> that.Exponent; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::partial_ordering SignifNumCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+        if (std::partial_ordering SignifValueCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
 	#endif
     }
+	*/
 	
     bool operator==(const AltFloat& that) const
     {
-	#if defined(AltFloat_UseExperimentalSignedBit)
-	#elif defined(AltFloat_UseLeadingZeroInSignificant)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+        if (SignifNum!=that.SignifNum)
+            return false;
+        if (Exponent!=that.Exponent)
+            return false;
+		return true;
 	#else
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+        if (IsNegative!=that.IsNegative)
+            return false;
+		if (SignifNum!=that.SignifNum)
+            return false;
+        if (Exponent!=that.Exponent)
+            return false;
+		return true;
 	#endif
     }
 	
 //    auto operator<=>(const int& that) const
 //    {
-//	#if defined(AltFloat_UseExperimentalSignedBit)
-//	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-//	#else
-//	#endif
+	//#if defined(AltFloat_DontUseBitfieldInSignif)
+	//#else
+	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+	//	
+	//#endif
 //    }
 //
 //    bool operator==(const int& that) const
 //    {
-//	#if defined(AltFloat_UseExperimentalSignedBit)
-//	#elif defined(AltFloat_UseLeadingZeroInSignificant)
-//	#else
-//	#endif
+	//#if defined(AltFloat_DontUseBitfieldInSignif)
+	//#else
+	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+	//	
+	//#endif
 //    }
 
 //    auto operator<=>(const MediumDec& that) const
 //    {
-//	#if defined(AltFloat_UseRestrictedRange)
-//	#elif defined(AltFloat_DontUseBitfieldInSignif)
-//	#else
-//		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-//		#if defined(AltFloat_ExtendedRange)
-//		#else
-//		#endif
-//	#endif
+	//#if defined(AltFloat_DontUseBitfieldInSignif)
+	//#else
+	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+	//	
+	//#endif
 //    }
 //
 //    bool operator==(const MediumDec& that) const
 //    {
-//	#if defined(AltFloat_UseRestrictedRange)
-//	#elif defined(AltFloat_DontUseBitfieldInSignif)
-//	#else
-//		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-//		#if defined(AltFloat_ExtendedRange)
-//		#else
-//		#endif
-//	#endif
+	//#if defined(AltFloat_DontUseBitfieldInSignif)
+	//#else
+	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+	//	
+	//#endif
 //    }
 
     #pragma endregion Comparison Operators
