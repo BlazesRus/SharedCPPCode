@@ -72,52 +72,12 @@ namespace BlazesRusCode
     {
 	protected:
 		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
-    #if defined(AltFloat_UseRestrictedRange)
-        #if defined(AltFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
-		//Equal to 2^16
-		static unsigned long long DenomMax = 65536;
-		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 65535;
-		static unsigned int DenomMaxExponent = 16;
-        #else
-		//Equal to 2^32
-		static unsigned long long DenomMax = 4294967296;
-		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 4294967295;
-		static unsigned int DenomMaxExponent = 32;
-        #endif
-	#else
 		#if defined(AltFloat_ExtendedRange)
 		static signed int DenomMaxExponent = 31;
 		#else
 		static signed int DenomMaxExponent = 23;
 		#endif
-	#endif
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
- 
-#if defined(AltFloat_UseRestrictedRange)
- 		struct SignifBitfield {
-		#pragma options align=bit_packed
-		//If OverflowBit is 1 after a addition or subtraction operation, then overflowed or underflowed as a result during operation
-		//If OverflowBit is 1 after a division or multiplication operation, then overflowed as a result during operation
-        unsigned int OverflowBit:1;
-    #if defined(AltFloat_UseSmallerFractional)
-		unsigned int Numerator : 15;
-    #else
-		unsigned int Numerator : 31;
-    #endif
-		#pragma options align=reset
-			SignifBitfield(unsigned int signifNum=0)
-			{
-				Numerator = signifNum;
-			}
-		}SignifNum;
- 
-
-        //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
-		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
-		unsigned char InvertedExp;
-#else
 
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 	#if defined(AltFloat_DontUseBitfieldInSignif)
@@ -176,7 +136,6 @@ namespace BlazesRusCode
 		//If Exponent==-128 and SignifNum<0, then exponent
 		#endif
 		signed char Exponent;
-#endif
 
 		#if defined(AltFloat_DontUseBitfieldInSignif)
 			#if defined(AltFloat_ExtendedRange)
@@ -209,17 +168,12 @@ namespace BlazesRusCode
 		#endif
 
 		//Exponent value that zero is defined at
-#if defined(AltFloat_UseRestrictedRange)
-		static unsigned char ZeroRep = 256;
-		
-#else
 		static signed char ZeroRep = -128;
 	#if defined(AltFloat_DontUseBitfieldInSignif)
         //When Exponent is zero and NegativeOneRep == -128, then at exactly -1
 		//If Exponent is -128 and SignifNum is negative, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
         static signed char NegativeOneRep = -128;
 	#endif
-#endif
 
     public:
 
@@ -1497,8 +1451,7 @@ public:
         template<IntegerType IntType=int>
         void ModByIntOp(const IntType& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
 		#if defined(AltFloat_ExtendedRange)

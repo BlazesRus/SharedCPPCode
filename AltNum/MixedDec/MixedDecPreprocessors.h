@@ -8,10 +8,14 @@
 /*
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
-MixedDec_UseAltFloat
+
 MixedDec_DeriveFromAltDec =
 	Deriving MixedDec from AltDec
+	(includes flags for Pi, E, and i within same bytes that store DecimalHalf)
 	(includes ExtraRep field for extended representation)
+MixedDec_DeriveFromMediumDecV2 =
+	Deriving MixedDec from MediumDecV2
+	(includes flags for Pi, E, and i within same bytes that store DecimalHalf)
 MixedDec_DeriveFromFlaggedDec =
 	Deriving MixedDec from FlaggedDec 
 	(includes flags field and optionally ExtraRep field field if needed)
@@ -19,6 +23,10 @@ MixedDec_DerivedFromExtendFlagDec =
 	Auto toggled if MixedDec_DeriveFromFlaggedDec and FlaggedNum_ExtraRepIsActive is true
 MixedDec_UsingExtendedRepresentations =
 	Autotoggled if MixedDec_DeriveFromAltDec or MixedDec_DeriveFromFlaggedDec enabled
+
+MixedDec_EnableAltFloat = Use custom floating point class that acts similar to float in how digits are stored to store trailing digits
+MixedDec_EnableRestrictedFloat = Uses builtin class RestrictedFloat to store trailing digits (representing only fractional range between 0 and 1 of trailing digits)
+If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled then trailing digits are stored inside float
 */
 
 #if defined(MixedDec_DeriveFromAltDec)||(defined(MixedDec_DeriveFromFlaggedDec)&&defined(FlaggedNum_ExtraRepIsActive))

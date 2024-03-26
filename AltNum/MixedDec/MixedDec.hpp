@@ -56,10 +56,62 @@ protected:
 		//How many trailing digits to display when converted to string
 		static TrailingDigitsDisplayed = 9;
 #pragma region DigitStorage
-	#if !defined(MixedDec_UseAltFloat)
-		float TrailingDigits;
-	#else
+	#if defined(MixedDec_EnableRestrictedFloat)
+	public class RestrictedFloat
+	{
+	public:
+        #if defined(AltFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
+		//Equal to 2^16
+		static unsigned long long DenomMax = 65536;
+		//Equal to (2^31) - 1
+		static unsigned long long AlmostApproachingTop = 65535;
+		static unsigned int DenomMaxExponent = 16;
+        #else
+		//Equal to 2^32
+		static unsigned long long DenomMax = 4294967296;
+		//Equal to (2^31) - 1
+		static unsigned long long AlmostApproachingTop = 4294967295;
+		static unsigned int DenomMaxExponent = 32;
+        #endif
+		
+		//#pragma options align=bit_packed
+    #if defined(RestrictedFloat_UseSmallerFractional)
+		unsigned short SignifNum;// : 16;
+    #else
+		unsigned int SignifNum;// : 32;
+    #endif
+	    //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
+		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
+		unsigned char InvertedExp;
+		/#pragma options align=reset
+		
+		static unsigned char ZeroRep = 256;
+		
+    #if defined(RestrictedFloat_UseSmallerFractional)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
+        /// </summary>
+        RestrictedFloat(unsigned short signifNum=0, unsigned char exponent=ZeroRep)
+        {
+            SignifNum = signifNum;
+            InvertedExp = exponent;
+        }
+    #else
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
+        /// </summary>
+        RestrictedFloat(unsigned int signifNum=0, unsigned char exponent=ZeroRep)
+        {
+            SignifNum = signifNum;
+            InvertedExp = exponent;
+        }
+    #endif
+	};
+		RestrictedFloat TrailingDigits;
+	#elif defined(MixedDec_EnableAltFloat)
 		AltFloat TrailingDigits;
+	#else
+		float TrailingDigits;
 	#endif
 #pragma endregion DigitStorage
 
@@ -864,6 +916,7 @@ public:
 			//Add Code here later
 		}
 		
+#if defined(MixedDec_EnableAltFloat)
         //Division by AltFloat Operation
         void AltFloatDivByOp(const AltFloat& rValue)
 		{
@@ -876,6 +929,7 @@ public:
 		#endif
 	#endif
 		}
+#endif
 	#pragma endregion Division Operations
 
 	#pragma region Multiplication Operations
@@ -883,27 +937,40 @@ public:
         template<IntegerType IntType=int>
         void MultByIntOp(const IntType& rValue)
 		{
+#if defined(MixedDec_EnableRestrictedFloat)
+#elif defined(MixedDec_EnableAltFloat)
+#else
 			//Add Code here later
+#endif
 		}
 		
         //Multiply operation
         void MultOp(const MixedDec& rValue)
 		{
+#if defined(MixedDec_EnableRestrictedFloat)
+#elif defined(MixedDec_EnableAltFloat)
+#else
 			//Add Code here later
+#endif
 		}
 		
         //Multiply by MediumDec variant Operation
         template<MediumDecVariant VariantType=int>
         void MultByMediumDecVOp(const VariantType& rValue)
 		{
+#if defined(MixedDec_EnableRestrictedFloat)
 			//Add Code here later
+#elif defined(MixedDec_EnableAltFloat)
+#else
+			//Add Code here later
+#endif
 		}
 		
+#if defined(MixedDec_EnableAltFloat)
         //Multiply by AltFloat Operation
         void AltFloatMultByOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		// lValue *(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
 		#if defined(AltFloat_ExtendedRange)
@@ -911,6 +978,7 @@ public:
 		#endif
 	#endif
 		}
+#endif
 	#pragma endregion Multiplication Operations
 
 	#pragma region Addition Operations
@@ -924,7 +992,12 @@ public:
         //Addition by MixedDec Operation
         void AddOp(const MixedDec& rValue)
 		{
+#if defined(MixedDec_EnableRestrictedFloat)
 			//Add Code here later
+#elif defined(MixedDec_EnableAltFloat)
+#else
+			//Add Code here later
+#endif
 		}
 		
         //Addition by MediumDec variant Operation
@@ -934,11 +1007,11 @@ public:
 			//Add Code here later
 		}
 		
+#if defined(MixedDec_EnableAltFloat)
         //Addition by AltFloat Operation
         void AltFloatAddByOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		// lValue +(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
 		#if defined(AltFloat_ExtendedRange)
@@ -946,6 +1019,7 @@ public:
 		#endif
 	#endif
 		}
+#endif
 	#pragma endregion Addition Operations
 	
 	#pragma region Subtraction Operations
@@ -959,7 +1033,12 @@ public:
         //Subtraction by MixedDec Operation
         void SubtractOp(const MixedDec& rValue)
 		{
+#if defined(MixedDec_EnableRestrictedFloat)
 			//Add Code here later
+#elif defined(MixedDec_EnableAltFloat)
+#else
+			//Add Code here later
+#endif
 		}
 		
         //Subtraction by MediumDec variant Operation
@@ -969,11 +1048,11 @@ public:
 			//Add Code here later
 		}
 		
+#if defined(MixedDec_EnableAltFloat)
         //Subtraction by AltFloat Operation
         void AltFloatSubtractByOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		// lValue -(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
 		#if defined(AltFloat_ExtendedRange)
@@ -981,6 +1060,7 @@ public:
 		#endif
 	#endif
 		}
+#endif
 	#pragma endregion Subtraction Operations
 	
 	#pragma region Modulus Operations
@@ -1003,11 +1083,11 @@ public:
 			//Add Code here later
 		}
 		
+#if defined(MixedDec_EnableAltFloat)
         //Modulus by AltFloat Operation
         void AltFloatModByOp(const AltFloat& rValue)
 		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
+	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
 		// lValue %(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
 		#if defined(AltFloat_ExtendedRange)
@@ -1015,6 +1095,7 @@ public:
 		#endif
 	#endif
 		}
+#endif
 	#pragma endregion Modulus Operations
 	
 	public:
