@@ -37,7 +37,6 @@ AltFloat_EnableBitwiseOperations = Not Implimented yet
 AltFloat_UseXorAsPowerOf = Not Implimented yet
 AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
 AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
-AltFloat_DontUseBitfieldInSignif = Prevent using bitfields to store significant number(uses previous int storage instead)
 */
 
 namespace BlazesRusCode
@@ -73,9 +72,7 @@ namespace BlazesRusCode
 		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
 
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-        signed int SignifNum;
-	#else//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
+		//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
 		struct SignifBitfield {
 		#pragma options align=bit_packed
         unsigned int IsNegative:1;
@@ -117,7 +114,6 @@ namespace BlazesRusCode
 				}
 			}
 		}SignifNum;
-	#endif
 
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
 		//If Exponent==-128 and SignifNum==0, in which case the value is at zero
@@ -126,21 +122,6 @@ namespace BlazesRusCode
 		#endif
 		signed char Exponent;
 
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-			#if defined(AltFloat_ExtendedRange)
-		//Equal to 2^31
-		static signed long long DenomMax = 2147483648;
-		//Equal to (2^31) - 1
-		static signed long long AlmostApproachingTop = 2147483647;
-		static signed long long NegAlmostApproachingTop = -2147483647;
-			#else
-		//Equal to 2^23
-		static signed int DenomMax = 8388608;
-		//Equal to (2^23) - 1
-		static signed int AlmostApproachingTop = 8388607;
-		static signed int NegAlmostApproachingTop = -8388607;
-			#endif
-		#elif !defined(AltFloat_UseRestrictedRange)
 			#if defined(AltFloat_ExtendedRange)
 		//Equal to 2^31
 		static unsigned long long DenomMax = 2147483648;
@@ -154,27 +135,11 @@ namespace BlazesRusCode
 		static SignifBitfield AlmostApproachingTop = 8388607;
 		static SignifBitfield NegAlmostApproachingTop = -8388607;
 			#endif
-		#endif
 
 		//Exponent value that zero is defined at
 		static signed char ZeroRep = -128;
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-        //When Exponent is zero and NegativeOneRep == -128, then at exactly -1
-		//If Exponent is -128 and SignifNum is positive, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
-        static signed char NegativeOneRep = -128;
-	#endif
 
     public:
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AltFloat"/> class.
-        /// </summary>
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-        AltFloat(unsigned int signifNum=0, signed char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            Exponent = exponent;
-        }
-	#else
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
@@ -183,7 +148,6 @@ namespace BlazesRusCode
             SignifNum = signifNum;
             Exponent = exponent;
         }
-	#endif
 
         AltFloat(const AltFloat&) = default;
 
@@ -225,19 +189,11 @@ namespace BlazesRusCode
             Exponent = 0;
         }
 
-#if defined(AltFloat_DontUseBitfieldInSignif)
-        void SetAsNegativeOne()
-        {
-            SignifNum = NegativeOneRep;
-            Exponent = 0;
-        }
-#else
         void SetAsNegativeOne()
         {
             SignifNum = SignifNumBitfield(0,1);
             Exponent = 0;
         }
-#endif
 
     #pragma region Const Representation values
     protected:
@@ -250,14 +206,6 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-#if defined(AltFloat_DontUseBitfieldInSignif)
-    #if !defined(AltFloat_ExtendedRange)
-            SignifNum = 8388607;
-    #else
-			SignifNum = 2147483647;
-    #endif
-			Exponent = 127;
-#else
 			SignifNum.IsNegative = 0;
     #if !defined(AltFloat_ExtendedRange)
             SignifNum.Numerator = 8388607;
@@ -265,7 +213,6 @@ namespace BlazesRusCode
 			SignifNum.Numerator = 2147483647;
     #endif
 			Exponent = 127;
-#endif
         }
 
         /// <summary>
@@ -273,14 +220,6 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
-#if defined(AltFloat_DontUseBitfieldInSignif)
-    #if !defined(AltFloat_ExtendedRange)
-            SignifNum = -8388607;
-    #else
-			SignifNum = -2147483647;
-    #endif
-			Exponent = 127;
-#else
 			SignifNum.IsNegative = 1;
     #if !defined(AltFloat_ExtendedRange)
             SignifNum.Numerator = 8388607;
@@ -288,7 +227,6 @@ namespace BlazesRusCode
 			SignifNum.Numerator = 2147483647;
     #endif
 			Exponent = 127;
-#endif
         }
 
         /// <summary>
@@ -320,21 +258,11 @@ protected:
         {
             return AltFloat(0,1);
         }
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-	
-        static AltFloat NegativeOneValue()
-        {
-            return AltFloat(NegativeOneRep,0);
-        }
-	
-	#else
 	
         static AltFloat NegativeOneValue()
         {
             return AltFloat(SignifBitfield(0,true),0);
         }
-	
-	#endif
 
         /// <summary>
         /// Returns the value at 0.5
@@ -415,16 +343,7 @@ public:
         /// </summary>
         void SwapNegativeStatus()
         {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(SignifNum==NegativeOneRep)
-				SignifNum = 1;
-			else if(SignifNum==1)
-				SignifNum = NegativeOneRep;
-			else
-				SignifNum *= -1;//Flip the last bit
-	#else
 			SignifNum.IsNegative ^= 1;//Flip the last bit
-	#endif
         }
 
     #pragma region String Commands
@@ -470,51 +389,13 @@ public:
 				return "0";
 			else if(IsOne())
 				return "1";
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-			else if(SignifNum==NegativeOneRep)
-				return "-1";
-			else if(Exponent==NegativeOneRep)//-1 to -2 number range
-			{
-				string outputStr = "-(";
-                outputStr += "1 + ";
-                outputStr += (std::string)SignifNum;
-                outputStr += " * ";
-                outputStr += "2^"+(std::string)-DenomMaxExponent;
-				outputStr += ")";
-                return outputStr;
-			}
-		#endif
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(SignifNum<0)
-			{
-				string outputStr = "-(";
-                outputStr += "2^"+(std::string)Exponent;
-                outputStr += " + ";
-                outputStr += (std::string)-SignifNum;
-                outputStr += " * ";
-                outputStr += "2^"+(std::string)ExponentMultiplier;
-				outputStr += ")";
-                return outputStr;
-            }
-            else
-            {
-				string outputStr = "2^"+(std::string)Exponent;
-		#else
-				string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exponent;
-		#endif
-                outputStr += " + ";
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-                outputStr += (std::string)SignifNum;
-		#else
-                outputStr += (std::string)SignifNum.Numerator;
-		#endif
-                outputStr += " * ";
-                outputStr += "2^"+(std::string)ExponentMultiplier;
-                return outputStr;
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-            }
-		#endif
+			string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exponent;
+			outputStr += " + ";
+			outputStr += (std::string)SignifNum.Numerator;
+			outputStr += " * ";
+			outputStr += "2^"+(std::string)ExponentMultiplier;
+			return outputStr;
 		}
 
 		//Outputs string in digit display format 
@@ -603,11 +484,7 @@ public:
 				unsigned _int64 numerator = DenomMax;
 				numerator *= RemainingVal;
 				numerator /= denom;
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-				SignifNum = numerator;
-		#else
 				SignifNum = SignifBitfield(numerator,0)
-		#endif
 				Exponent = highestPower;
             }
         }
@@ -647,40 +524,18 @@ public:
 
 					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero exponent field
 					{
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-						if(numerator==0)//At Exactly negative one value
-						{
-							Exponent = 0;
-							SignifNum = NegativeOneRep;
-						}
-						else
-						{
-							SignifNum = -numerator;
-							Exponent = NegativeOneRep;
-						}
-		#else
 						SignifNum = SignifBitfield(numerator,1)
 						Exponent = 0;
-		#endif
 					}
 					else
 					{
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-						SignifNum = -numerator;
-		#else
 						SignifNum = SignifBitfield(numerator,1)
-		#endif
-
 						Exponent = highestPower;
 					}
 				}
 				else
 				{
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-					SignifNum = numerator;
-		#else
 					SignifNum = SignifBitfield(numerator,0)
-		#endif
 					Exponent = highestPower;
 				}
             }
@@ -723,44 +578,6 @@ public:
 				numerator /= denom;
 				#endif
 				//return Value.IsNegative()?-numerator.GetIntegerHalf():numerator.GetIntegerHalf();
-		#if defined(AltFloat_DontUseBitfieldInSignif)
-				numerator.ConvertToNormTypeV2();//Does nothing for MediumDec but for AltDec converts to fixed point MediumDec format
-				if(Value.IsNegative())
-				{
-					if(Exponent==0)//Negative 1 Exponent
-					{
-						if(numerator.GetIntegerPartition()==0)
-						{
-							if(numerator.GetDecimalPartition()<=499999999)//At exactly negative one
-							{//Round down to exactly negative one if don't have at least half
-								SignifNum = NegativeOneRep;
-								Exponent = 0;
-							}
-							else//Almost exactly negative one
-							{
-								SignifNum = -1;//Rounds it up to slightly more than -1
-								Exponent = NegativeOneRep;
-							}
-						}
-						else
-						{
-							SignifNum = -numerator.GetIntegerPartition();
-							Exponent = NegativeOneRep;
-						}
-					}
-					else
-					{
-						SignifNum = -numerator.GetIntegerPartition();
-						Exponent = highestPower;
-					}
-				}
-				else
-				{
-					SignifNum = Value.IsNegative()?-numerator.GetIntegerPartition():numerator.GetIntegerPartition();
-					Exponent = highestPower;
-				}
-
-		#else
 				if(Value.IsNegative())
 				{
 					if(Exponent==0)//Negative 1 Exponent
@@ -779,7 +596,6 @@ public:
 					SignifNum = SignifBitfield(numerator.GetIntegerHalf(),0);
 					Exponent = highestPower;
 				}
-		#endif
             }
     #endif
 		}
@@ -862,9 +678,7 @@ public:
                 return 0;
             else if(IsOne()))
                 return 1;
-    #if defined(AltFloat_UseRestrictedRange)
-            return 0;
-    #else//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+			//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
 			if(SignifNum<0)
 			{
@@ -873,7 +687,6 @@ public:
 			{
 			}
             return 0;//Placeholder;
-    #endif
         }
 
         /// <summary>
@@ -882,7 +695,6 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator signed int()
         {
-    #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum<0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -905,27 +717,11 @@ public:
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exponent>=31)//Overflow Error
 					return 2147483647;//Return Error
-//				else if(Exponent==30)
-//				{
-//				#if defined(AltFloat_ExtendedRange)
-//					//1073741824 + (2147483646/2147483648)*1073741824 == 1073741824 + 1073741823
-//					if(SignifNum>=2147483646)
-//						return 2147483647;
-//					else
-//						return 2147483647;//Return Error
-//
-//				#else
-//					//1073741824 + (8388607/8388608)*1073741824 == 1073741824 + 1073741696
-//					//if(SignifNum<=8388607)
-//					return 2147483647;
-//				#endif
-//				}
 			#else
 				if(Exponent>=31)//Max value it can hold is 2147483647
 					return 2147483647;
 			#endif
 			}
-    #endif
             return toIntType();
         }
 
@@ -935,7 +731,6 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int()
         {
-    #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum<0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -961,7 +756,6 @@ public:
 					return 4294967296;
 			#endif
 			}
-    #endif
             return toIntType();
         }
 
@@ -971,7 +765,6 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator signed long long()
         {
-    #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum>0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -1010,7 +803,6 @@ public:
                 return 9223372036854775807;
         #endif
             }           
-    #endif
             return toIntType();
         }
 
@@ -1020,7 +812,6 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned long long()
         {
-    #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum>0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -1046,7 +837,6 @@ public:
 					return 18446744073709551616;
 			#endif
 			}
-    #endif
             return toIntType();
         }
 
@@ -1060,7 +850,6 @@ public:
                 return 0;
             else if(IsOne())
                 return 1;
-    #if !defined(AltFloat_UseRestrictedRange)
             if(SignifNum<0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -1125,77 +914,7 @@ public:
 
     std::strong_ordering operator<=>(const AltFloat& that) const
     {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
- 		int LSignif;
-		int LExp;
-		int LIsNegative;
-		if(Exponent==NegativeOneRep)//Either in -1 to -2 range or at exactly zero
-		{
-			if(SignifNum==0)//At Exactly one
-			{
-				LExp = ZeroRep;
-				LSignif = 0;
-				LIsNegative = 0;
-			}
-			else//In -1 to -2 range
-			{
-				LExp = 0;
-				LSignif = SignifNum*-1;
-				LIsNegative = 1;
-			}
-		}
-		else
-		{
-			if(that.SignifNum<0)
-			{
-				LSignif = SignifNum*-1;
-				LIsNegative = 1;
-			}
-			else
-			{
-				LSignif = SignifNum;
-				LIsNegative = 0;
-			}
-		}
-		int RSignif;
-		int RExp;
-		int RIsNegative;
-		if(that.Exponent==NegativeOneRep)
-		{
-			if(that.SignifNum==0)//At Exactly one
-			{
-				RExp = ZeroRep;
-				RSignif = 0;
-				RIsNegative = 0;
-			}
-			else
-			{
-				RExp = 0;
-				RSignif = that.SignifNum;
-				RIsNegative = 1;
-			}
-			RValue = that.SignifNum;
-		}
-		else
-		{
-			if(that.SignifNum<0)
-			{
-				RValue = that.SignifNum*-1;
-				RIsNegative = 1;
-			}
-			else
-			{
-				RValue = that.SignifNum;
-				RIsNegative = 0;
-			}
-		}
-        if (auto SignCmp = LIsNegative <=> RIsNegative; SignCmp != 0)
-			return SignCmp;
-        if (auto ExponentCmp = LExp <=> RExp.Exponent; ExponentCmp != 0)
-			return ExponentCmp;
-        if (auto SignifNumCmp = LValue <=> RValue; SignifNumCmp != 0)
-            return SignifNumCmp;
-	#else//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
 		
 		//Comparing if number is negative vs positive
         if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
@@ -1205,18 +924,10 @@ public:
 			return ExponentCmp;
         if (auto SignifFracCmp = SignifNum.Value <=> that.SignifNum.Value; SignifFracCmp != 0)
 			return SignifFracCmp;
-	#endif
     }
 	
     bool operator==(const AltFloat& that) const
     {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-        if (SignifNum!=that.SignifNum)
-            return false;
-        if (Exponent!=that.Exponent)
-            return false;
-		return true;
-	#else
 		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
         if (IsNegative!=that.IsNegative)
             return false;
@@ -1225,44 +936,7 @@ public:
         if (Exponent!=that.Exponent)
             return false;
 		return true;
-	#endif
     }
-	
-//    auto operator<=>(const int& that) const
-//    {
-	//#if defined(AltFloat_DontUseBitfieldInSignif)
-	//#else
-	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-	//	
-	//#endif
-//    }
-//
-//    bool operator==(const int& that) const
-//    {
-	//#if defined(AltFloat_DontUseBitfieldInSignif)
-	//#else
-	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-	//	
-	//#endif
-//    }
-
-//    auto operator<=>(const MediumDec& that) const
-//    {
-	//#if defined(AltFloat_DontUseBitfieldInSignif)
-	//#else
-	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-	//	
-	//#endif
-//    }
-//
-//    bool operator==(const MediumDec& that) const
-//    {
-	//#if defined(AltFloat_DontUseBitfieldInSignif)
-	//#else
-	//	//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-	//	
-	//#endif
-//    }
 
     #pragma endregion Comparison Operators
 
