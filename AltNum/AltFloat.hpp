@@ -192,7 +192,7 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return SignifNum==0&&Exponent==-128;
+            return SignifNum==0&&Exponent==ZeroRep;
 		}
 
         //Detect if at exactly one
@@ -470,6 +470,21 @@ public:
 				return "0";
 			else if(IsOne())
 				return "1";
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+			else if(SignifNum==NegativeOneRep)
+				return "-1";
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+			else if(Exponent==NegativeOneRep)//-1 to -2 number range
+			{
+				string outputStr = "-(";
+                outputStr += "1 + ";
+                outputStr += (std::string)SignifNum;
+                outputStr += " * ";
+                outputStr += "2^"+(std::string)-DenomMaxExponent;
+				outputStr += ")";
+                return outputStr;
+			}
+		#endif
 			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
 		#if defined(AltFloat_DontUseBitfieldInSignif)
 			if(SignifNum<0)
