@@ -575,6 +575,32 @@ public:
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
+
+    std::strong_ordering operator<=>(const MediumDecBase& that) const
+    {
+        if (auto IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
+            return IntHalfCmp;
+        if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+    }
+
+    bool operator==(const int& that) const
+    {
+        if (IntValue!=that)
+            return false;
+        if (DecimalHalf!=0)
+            return false;
+        return true;
+    }
+
+    bool operator==(const MediumDecBase& that) const
+    {
+        if (IntValue!=that.IntValue)
+            return false;
+        if (DecimalHalf!=that.IntValue)
+            return false;
+    }
+	
 		/// <summary>
         /// Equal to operation between <see cref="VariantType"/> and Integer Type.
         /// </summary>
