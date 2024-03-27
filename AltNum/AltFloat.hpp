@@ -473,7 +473,6 @@ public:
 		#if defined(AltFloat_DontUseBitfieldInSignif)
 			else if(SignifNum==NegativeOneRep)
 				return "-1";
-		#if defined(AltFloat_DontUseBitfieldInSignif)
 			else if(Exponent==NegativeOneRep)//-1 to -2 number range
 			{
 				string outputStr = "-(";
