@@ -1175,6 +1175,21 @@ public:
         friend bool operator<(AltFloat LValue, AltFloat Value)
         {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
+			{
+			}	
+			else if(LValue.Exponent==NegativeOneRep)
+			{
+				if(LValue.SignifNum==0)//LValue is 0
+				{
+				}
+				else//LValue is in -1 to -2 number range
+				{
+				}
+			}
+			else
+			{
+			}
 	#else
 			if(LValue.IsNegative==1&&RValue.IsNegative==0)
 				return false;
@@ -1197,6 +1212,28 @@ public:
         friend bool operator<=(AltFloat LValue, AltFloat Value)
         {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if (LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
+				return true;
+	#else
+			if (LValue.SignifNum.IsNegative==RValue.SignifNum.IsNegative&&LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
+				return true;
+	#endif
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
+			{
+			}	
+			else if(LValue.Exponent==NegativeOneRep)
+			{
+				if(LValue.SignifNum==0)//LValue is 0
+				{
+				}
+				else//LValue is in -1 to -2 number range
+				{
+				}
+			}
+			else
+			{
+			}
 	#else
 			if(LValue.IsNegative==1&&RValue.IsNegative==0)
 				return false;
@@ -1218,6 +1255,21 @@ public:
         friend bool operator>(AltFloat LValue, AltFloat Value)
         {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
+			{
+			}	
+			else if(LValue.Exponent==NegativeOneRep)
+			{
+				if(LValue.SignifNum==0)//LValue is 0
+				{
+				}
+				else//LValue is in -1 to -2 number range
+				{
+				}
+			}
+			else
+			{
+			}
 	#else
 			if(LValue.IsNegative==0&&RValue.IsNegative==1)
 				return false;
@@ -1239,6 +1291,28 @@ public:
         friend bool operator>=(AltFloat LValue, AltFloat RValue)
         {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if (LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
+				return true;
+	#else
+			if (LValue.SignifNum.IsNegative==RValue.SignifNum.IsNegative&&LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
+				return true;
+	#endif
+	#if defined(AltFloat_DontUseBitfieldInSignif)
+			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
+			{
+			}	
+			else if(LValue.Exponent==NegativeOneRep)
+			{
+				if(LValue.SignifNum==0)//LValue is 0
+				{
+				}
+				else//LValue is in -1 to -2 number range
+				{
+				}
+			}
+			else
+			{
+			}
 	#else
 			if(LValue.IsNegative==0&&RValue.IsNegative==1)
 				return false;
