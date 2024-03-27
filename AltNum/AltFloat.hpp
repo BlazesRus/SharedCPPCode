@@ -1121,232 +1121,94 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Comparison Operators
+	//https://www.foonathan.net/2018/09/three-way-comparison/
 
-        /// <summary>
-        /// Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator==(AltFloat LValue, AltFloat RValue)
-        {
-			if (Exponent!=that.Exponent)
-				return false;
-	#if !defined(AltFloat_DontUseBitfieldInSignif)
-			if (LValue.SignifNum.IsNegative!=RValue.SignifNum.IsNegative)
-				return false;
-			if (LValue.SignifNum.Value!=RValue.SignifNum.Value)
-				return false;
-	#else
-			if (LValue.SignifNum!=RValue.SignifNum)
-				return false;
-	#endif
-		return true;
-        }
-
-        /// <summary>
-        /// Not equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator!=(AltFloat LValue, AltFloat RValue)
-        {
-			if (Exponent!=that.Exponent)
-				return true;
-	#if !defined(AltFloat_DontUseBitfieldInSignif)
-			if (LValue.SignifNum.IsNegative!=RValue.SignifNum.IsNegative)
-				return true;
-			if (LValue.SignifNum.Value!=RValue.SignifNum.Value)
-				return true;
-	#else
-			if (SignifNum!=that.SignifNum)
-				return true;
-	#endif
-			return false;
-        }
-
-        /// <summary>
-        /// Lesser than Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<(AltFloat LValue, AltFloat Value)
-        {
+    std::strong_ordering operator<=>(const AltFloat& that) const
+    {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
+ 		int LSignif;
+		int LExp;
+		int LIsNegative;
+		if(Exponent==NegativeOneRep)//Either in -1 to -2 range or at exactly zero
+		{
+			if(SignifNum==0)//At Exactly one
 			{
-			}	
-			else if(LValue.Exponent==NegativeOneRep)
+				LExp = ZeroRep;
+				LSignif = 0;
+				LIsNegative = 0;
+			}
+			else//In -1 to -2 range
 			{
-				if(LValue.SignifNum==0)//LValue is 0
-				{
-				}
-				else//LValue is in -1 to -2 number range
-				{
-				}
+				LExp = 0;
+				LSignif = SignifNum*-1;
+				LIsNegative = 1;
+			}
+		}
+		else
+		{
+			if(that.SignifNum<0)
+			{
+				LSignif = SignifNum*-1;
+				LIsNegative = 1;
 			}
 			else
 			{
+				LSignif = SignifNum;
+				LIsNegative = 0;
 			}
-	#else
-			if(LValue.IsNegative==1&&RValue.IsNegative==0)
-				return false;
-			else if(LValue.IsNegative!=RValue.IsNegative)//
+		}
+		int RSignif;
+		int RExp;
+		int RIsNegative;
+		if(that.Exponent==NegativeOneRep)
+		{
+			if(that.SignifNum==0)//At Exactly one
 			{
-			}
-			else
-			{
-			
-			}
-	#endif
-        }
-
-        /// <summary>
-        /// Lesser than or Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator<=(AltFloat LValue, AltFloat Value)
-        {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if (LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
-				return true;
-	#else
-			if (LValue.SignifNum.IsNegative==RValue.SignifNum.IsNegative&&LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
-				return true;
-	#endif
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
-			{
-			}	
-			else if(LValue.Exponent==NegativeOneRep)
-			{
-				if(LValue.SignifNum==0)//LValue is 0
-				{
-				}
-				else//LValue is in -1 to -2 number range
-				{
-				}
+				RExp = ZeroRep;
+				RSignif = 0;
+				RIsNegative = 0;
 			}
 			else
 			{
+				RExp = 0;
+				RSignif = that.SignifNum;
+				RIsNegative = 1;
 			}
-	#else
-			if(LValue.IsNegative==1&&RValue.IsNegative==0)
-				return false;
-			else if(LValue.IsNegative!=RValue.IsNegative)
+			RValue = that.SignifNum;
+		}
+		else
+		{
+			if(that.SignifNum<0)
 			{
-			}
-			else
-			{
-			}
-	#endif
-        }
-
-        /// <summary>
-        /// Greater than Operation
-        /// </summary>
-        /// <param name="LValue">The LValue.</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>bool</returns>
-        friend bool operator>(AltFloat LValue, AltFloat Value)
-        {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
-			{
-			}	
-			else if(LValue.Exponent==NegativeOneRep)
-			{
-				if(LValue.SignifNum==0)//LValue is 0
-				{
-				}
-				else//LValue is in -1 to -2 number range
-				{
-				}
+				RValue = that.SignifNum*-1;
+				RIsNegative = 1;
 			}
 			else
 			{
+				RValue = that.SignifNum;
+				RIsNegative = 0;
 			}
-	#else
-			if(LValue.IsNegative==0&&RValue.IsNegative==1)
-				return false;
-			else if(LValue.IsNegative!=RValue.IsNegative)//
-			{
-			}
-			else
-			{
-			}
-	#endif
-        }
-
-        /// <summary>
-        /// Greater than or Equal to Operation
-        /// </summary>
-        /// <param name="LValue">The left side value</param>
-        /// <param name="Value">The right side value</param>
-        /// <returns>bool</returns>
-        friend bool operator>=(AltFloat LValue, AltFloat RValue)
-        {
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if (LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
-				return true;
-	#else
-			if (LValue.SignifNum.IsNegative==RValue.SignifNum.IsNegative&&LValue.SignifNum.Value==RValue.SignifNum.Value&&LValue.Exponent==RValue.Exponent)
-				return true;
-	#endif
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-			if(LValue.SignifNum==NegativeOneRep)//LValue is -1
-			{
-			}	
-			else if(LValue.Exponent==NegativeOneRep)
-			{
-				if(LValue.SignifNum==0)//LValue is 0
-				{
-				}
-				else//LValue is in -1 to -2 number range
-				{
-				}
-			}
-			else
-			{
-			}
-	#else
-			if(LValue.IsNegative==0&&RValue.IsNegative==1)
-				return false;
-			else if(LValue.IsNegative!=RValue.IsNegative)
-			{
-			}
-			else
-			{
-			}
-	#endif
-
-        }
-
-	/*
-    auto operator<=>(const AltFloat& that) const
-    {//Need to rework so that properly reaches each comparision
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-        if (std::partial_ordering ExponentCmp = Exponent <=> that.Exponent; IntHalfCmp != 0)
-            return IntHalfCmp;
-        if (std::partial_ordering SignifNumCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
-        if (std::partial_ordering ExponentCmp = Exponent <=> that.Exponent; IntHalfCmp != 0)
-            return IntHalfCmp;
-        if (std::partial_ordering SignifNumCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-        if (std::partial_ordering SignifValueCmp = SignifNum <=> that.SignifNum; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
+		}
+        if (auto SignCmp = LIsNegative <=> RIsNegative; SignCmp != 0)
+			return SignCmp;
+        if (auto ExponentCmp = LExp <=> RExp.Exponent; ExponentCmp != 0)
+			return ExponentCmp;
+        if (auto SignifNumCmp = LValue <=> RValue; SignifNumCmp != 0)
+            return SignifNumCmp;
+	#else//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		
+		//Comparing if number is negative vs positive
+        if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+			return SignCmp;
+		//The Smaller Exponent is the closer to zero(-128 is exactly at zero)
+        if (auto ExponentCmp = Exponent <=> that.Exponent; ExponentCmp != 0)
+			return ExponentCmp;
+        if (auto SignifFracCmp = SignifNum.Value <=> that.SignifNum.Value; SignifFracCmp != 0)
+			return SignifFracCmp;
 	#endif
     }
-	*/
 	
-/*    bool operator==(const AltFloat& that) const
+    bool operator==(const AltFloat& that) const
     {
 	#if defined(AltFloat_DontUseBitfieldInSignif)
         if (SignifNum!=that.SignifNum)
@@ -1364,7 +1226,7 @@ public:
             return false;
 		return true;
 	#endif
-    }*/
+    }
 	
 //    auto operator<=>(const int& that) const
 //    {
