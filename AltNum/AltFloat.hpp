@@ -122,7 +122,7 @@ namespace BlazesRusCode
         //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
 		//If Exponent==-128 and SignifNum==0, in which case the value is at zero
 		#if defined(AltFloat_DontUseBitfieldInSignif)
-		//If Exponent==-128 and SignifNum<0, then exponent
+		//If Exponent==-128 and SignifNum>0, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
 		#endif
 		signed char Exponent;
 
@@ -160,7 +160,7 @@ namespace BlazesRusCode
 		static signed char ZeroRep = -128;
 	#if defined(AltFloat_DontUseBitfieldInSignif)
         //When Exponent is zero and NegativeOneRep == -128, then at exactly -1
-		//If Exponent is -128 and SignifNum is negative, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
+		//If Exponent is -128 and SignifNum is positive, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
         static signed char NegativeOneRep = -128;
 	#endif
 
