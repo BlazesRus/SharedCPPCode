@@ -519,78 +519,32 @@ public:
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-        float toFloat()
-        {
-            float Value;
-            if (IsNegative())
-            {
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-            }
-            else
-            {
-                Value = (float)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-            }
-            return Value
-        }
 
         /// <summary>
         /// MediumDec to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator float()
-        {
-            return toFloat();
-        }
+        explicit operator float() { return toFloat(); }
 
         /// <summary>
         /// MediumDec to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator double()
-        {
-            double Value;
-            if (IsNegative())
-            {
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-            }
-            else
-            {
-                Value = (double)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-            }
-            return Value;
-        }
+        explicit operator double(){ return toDouble(); }
 
         /// <summary>
         /// MediumDec to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble()
-        {
-            ldouble Value;
-            if (IsNegative())
-            {
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            else
-            {
-                Value = (ldouble)IntValue.GetValue();
-                if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            return Value;
-        }
+        explicit operator ldouble() { return toDecimal(); }
 		
         /// <summary>
         /// MediumDec to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return IntValue.GetValue(); }
+        explicit operator int() { return toInt(); }
 
-        explicit operator bool() { return IntValue.IsZero() ? false : true; }
+        explicit operator bool() { return toBool(); }
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
@@ -638,83 +592,14 @@ protected:
 
 public:
 
-		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
-        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
-
-		static void PartialDivOp(MediumDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDec& self, unsigned int& Value) { self.PartialUIntDivOp(Value); }
-		static void PartialDivOp(MediumDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(MediumDec& self, unsigned long long& Value) { self.PartialUIntDivOp(Value); }
-
-		MediumDec PartialDiv(signed int Value)
-        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
-		MediumDec PartialDiv(unsigned int Value)
-        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
-		MediumDec PartialDiv(signed long long Value)
-        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
-        MediumDec PartialDiv(unsigned long long Value)
-        { MediumDec self = *this; PartialIntDivOp(Value); return self; }
-
-		static MediumDec PartialDiv(MediumDec& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDec PartialDiv(MediumDec& self, unsigned int Value) { self.PartialUIntDivOp(Value); return self; }
-		static MediumDec PartialDiv(MediumDec& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static MediumDec PartialDiv(MediumDec& self, unsigned long long Value) { self.PartialUIntDivOp(Value); return self; }
-
 protected:
-        template<IntegerType IntType=int>
-        MediumDec& BasicIntDivOp(IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-            return *this;
-        }
 
-        template<IntegerType IntType=int>
-        MediumDec& BasicUnsignedIntDivOp(IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-            return *this;
-        }
 public:
-
-		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
 		static void BasicDivOp(MediumDec& self, signed int& Value) { self.BasicIntDivOp(Value); }
 		static void BasicDivOp(MediumDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
 		static void BasicDivOp(MediumDec& self, signed long long& Value) { self.BasicIntDivOp(Value); }
         static void BasicDivOp(MediumDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
-
-		MediumDec BasicDiv(signed int Value)
-        { MediumDec self = *this; BasicIntDivOp(Value); return self; }
-		MediumDec BasicDiv(unsigned int Value)
-        { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		MediumDec BasicDiv(signed long long Value)
-        { MediumDec self = *this; BasicIntDivOp(Value); return self; }
-        MediumDec BasicDiv(unsigned long long Value)
-        { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
 		static MediumDec BasicDiv(MediumDec& self, signed int Value) { self.BasicIntDivOp(Value); return self; }
 		static MediumDec BasicDiv(MediumDec& self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }

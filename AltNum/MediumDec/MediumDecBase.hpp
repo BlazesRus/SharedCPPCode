@@ -494,7 +494,7 @@ public:
         //Adding more exact conversion from floating point to MediumDecBase variant later
 
         /// <summary>
-        /// MediumDecBase to float explicit conversion
+        /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         virtual float toFloat()
@@ -514,7 +514,7 @@ public:
         }
 
         /// <summary>
-        /// MediumDecBase to double explicit conversion
+        /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         virtual double toDouble()
@@ -534,7 +534,7 @@ public:
         }
 
         /// <summary>
-        /// MediumDecBase to long double explicit conversion
+        /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         virtual ldouble toDecimal()
@@ -554,7 +554,7 @@ public:
         }
 		
         /// <summary>
-        /// MediumDecBase to int explicit conversion
+        /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         virtual int toInt() { return IntValue.GetValue(); }
@@ -892,29 +892,19 @@ protected:
         }
 public:
 
-		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+		virtual void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
+		virtual void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		virtual void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
+        virtual void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
-		static void BasicDivOp(MediumDecBase& self, signed int& Value) { self.BasicIntDivOp(Value); }
-		static void BasicDivOp(MediumDecBase& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
-		static void BasicDivOp(MediumDecBase& self, signed long long& Value) { self.BasicIntDivOp(Value); }
-        static void BasicDivOp(MediumDecBase& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
-
-		MediumDecBase BasicDiv(signed int Value)
+		virtual MediumDecBase BasicDiv(signed int Value)
         { MediumDecBase self = *this; BasicIntDivOp(Value); return self; }
-		MediumDecBase BasicDiv(unsigned int Value)
+		virtual MediumDecBase BasicDiv(unsigned int Value)
         { MediumDecBase self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		MediumDecBase BasicDiv(signed long long Value)
+		virtual MediumDecBase BasicDiv(signed long long Value)
         { MediumDecBase self = *this; BasicIntDivOp(Value); return self; }
-        MediumDecBase BasicDiv(unsigned long long Value)
+        virtual MediumDecBase BasicDiv(unsigned long long Value)
         { MediumDecBase self = *this; BasicUnsignedIntDivOp(Value); return self; }
-
-		static MediumDecBase BasicDiv(MediumDecBase& self, signed int Value) { self.BasicIntDivOp(Value); return self; }
-		static MediumDecBase BasicDiv(MediumDecBase& self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
-		static MediumDecBase BasicDiv(MediumDecBase& self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
-        static MediumDecBase BasicDiv(MediumDecBase& self, unsigned long long Value) { MediumDecBase self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
 //protected:
 //        template<typename IntType>
@@ -2410,7 +2400,7 @@ public:
         }
 
         /// <summary>
-        /// MediumDecBase++ Operator
+        /// MediumDec Variant++ Operator
         /// </summary>
         /// <returns>MediumDecBase</returns>
         MediumDecBase operator ++(int)
@@ -2421,7 +2411,7 @@ public:
         }
 
         /// <summary>
-        /// MediumDecBase-- Operator
+        /// MediumDec Variant-- Operator
         /// </summary>
         /// <returns>MediumDecBase</returns>
         MediumDecBase operator --(int)
@@ -2432,7 +2422,7 @@ public:
         }
 
         /// <summary>
-        /// MediumDecBase* Operator
+        /// MediumDec Variant* Operator
         /// </summary>
         /// <returns>MediumDecBase &</returns>
         MediumDecBase& operator *()
