@@ -176,3 +176,7 @@ If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled
 		#define MixedDec_EnableNilRep
 	#endif
 #endif
+
+#if	defined(MixedDec_DeriveFromAltDec) || defined(MixedDec_DeriveFromFlaggedDec) || defined(MixedDec_DeriveFromMediumDecV2)
+	#define MixedDec_EnableAlternativeRepresentations
+#endif

@@ -36,8 +36,26 @@ AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
 
+//"Not used for this variant" comment used as placeholder
+// between unused regions to help with code compare between variants and keep structure similar
+
 namespace BlazesRusCode
-{//"Not used for this variant" comment used as placeholder between unused regions to help with code compare between variants and keep structure similar
+{
+#if !defined(AltNum_UseIntForDecimalHalf)
+	struct PartialInt {
+	#pragma options align=bit_packed
+	//Stores Digits XXX XXX XXX
+	unsigned int Value:30;
+	//Can store up to 4 Flag states including normal state at 0
+	unsigned int Flags:2;
+	#pragma options align=reset
+		PartialInt(unsigned int value=0, unsigned int flags=0)
+		{
+			Value = value;
+			Flags = flags;
+		}
+	};
+#endif
 
     class MediumDecBase;
 
@@ -59,7 +77,13 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecBase
     {
-    public:
+#if !defined(AltNum_DisableDefaultStringFormatOption)
+	enum class DefaultStringFormatEnum : int
+	{
+	
+	}
+#endif
+	public:
 #if defined(AltNum_EnableAlternativeModulusResult)
 		class ModRes
 		{
@@ -325,175 +349,7 @@ namespace BlazesRusCode
         /// </summary>
         virtual RepType const GetRepType()
         {
-		//#if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf==InfinityRep)
-            {
-			//#if defined(AltNum_EnableImaginaryInfinity)
-                if (ExtraRep == IRep)
-				    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
-				else
-			//#endif
-			//#if defined(AltNum_EnableUndefinedButInRange)
-                if (ExtraRep == UndefinedInRangeRep)
-				    return RepType::UndefinedButInRange;
-				else
-			//#endif
-			//#if defined(WithinMinMaxRangeRep)
-                if (ExtraRep == WithinMinMaxRangeRep)
-				    return RepType::WithinMinMaxRange;
-				else
-			//#endif
-					return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
-            }
-			else
-		//#endif
-		//#if defined(AltNum_EnableApproachingValues)//old value = ApproachingValRep
-            if (DecimalHalf == ApproachingBottomRep)
-            {
-				if(ExtraRep==0)
-					return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-				else
-			//#if defined(AltNum_EnableApproachingDivided)//if(ExtraRep>1)
-					return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-			//#else
-                    throw "EnableApproachingDivided feature not enabled";
-			//#endif	
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-			//#if defined(AltNum_EnableApproachingPi)
-                else if (ExtraRep == PiRep)
-                    return RepType::ApproachingTopPi;
-			//#endif
-			//#if defined(AltNum_EnableApproachingE)
-                else if (ExtraRep == ERep)
-                    return RepType::ApproachingTopE;
-			//#endif
-                else
-			//#if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-			//#else
-                    throw "EnableApproachingDivided feature not enabled";
-			//#endif            
-            }
-		    //#if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
-            else if (DecimalHalf == ApproachingImaginaryBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-			    //#if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-			    //#else
-                    throw "EnableApproachingDivided feature not enabled";
-			    //#endif            
-            }
-            else if (DecimalHalf == ApproachingImaginaryTopRep)
-            {
-				if(ExtraRep==0)
-				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-				else
-			    //#if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-			    //#else
-                    throw "EnableApproachingDivided feature not enabled";
-			    //#endif            
-            }
-		    //#endif
-	    //#endif
-            if(ExtraRep==0)
-			{
-	//#if defined(AltNum_EnableNaN)
-				if(DecimalHalf==NaNRep)
-					return RepType::NaN;
-				else if(DecimalHalf==UndefinedRep)
-					return RepType::Undefined;
-	//#endif
-                return RepType::NormalType;
-			}
-			else if(IntValue==0&&DecimalHalf==0)
-			{
-				ExtraRep = 0;
-				return RepType::NormalType;
-			}
-	//#ifdef AltNum_EnablePiRep
-            else if(ExtraRep==PiRep)
-                return RepType::PiNum;
-		//#if defined(AltNum_EnablePiFractional)
-            else if(ExtraRep==PiByDivisorRep)
-				return RepType::PiFractional;
-		//#endif
-	//#endif
-            else if(ExtraRep>0)
-			{
-	//#if defined(AltNum_EnableMixedFractional)
-				if(DecimalHalf<0)
-					return RepType::MixedFrac;
-    //#endif
-	//#if defined(AltNum_EnableFractionals)
-                return RepType::NumByDiv;
-    //#endif
-				throw "Non-enabled representation detected";
-			}
-    //#if defined(AltNum_EnableERep)
-            else if(ExtraRep==ERep)
-			{
-				return RepType::ENum;
-			}
-		//#if defined(AltNum_EnableEFractional)
-            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-				return RepType::EFractional;
-		//#endif
-    //#endif
-
-	//#if defined(AltNum_EnableImaginaryNum)
-            else if(ExtraRep==IRep)
-			{
-				return RepType::INum;
-			}
-		//#if defined(AltNum_EnableIFractional)
-            else if(ExtraRep==IByDivisorRep)
-					return RepType::IFractional;
-		//#endif
-	//#endif
-	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-           else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-		//#if defined(AltNum_EnableWithinMinMaxRange)
-			//If IntValue==NegativeRep, then left side range value equals negative infinity
-			//If DecimalHalf==InfinityRep, then right side range value equals positive infinity
-           else if(ExtraRep==WithinMinMaxRangeRep)
-                return RepType::WithinMinMaxRange;
-		//#endif
-	//#endif
-            else if(ExtraRep<0)
-	//#if defined(AltNum_EnableAlternativeMixedFrac)
-				if(DecimalHalf<0)
-		//#if defined(AltNum_EnableMixedPiFractional)
-					return RepType::MixedPi;
-		//#elif defined(AltNum_EnableMixedEFractional)
-					return RepType::MixedE;
-		//#elif defined(AltNum_EnableMixedIFractional)
-					return RepType::MixedI;
-        //#else
-					throw "Non-enabled Alternative Mixed Fraction representation type detected";
-		//#endif
-				else
-	//#endif
-	//#if defined(AltNum_EnableDecimaledPiFractionals)
-					return RepType::PiNumByDiv;
-	//#elif defined(AltNum_EnableDecimaledEFractionals)
-					return RepType::ENumByDiv;
-	//#elif defined(AltNum_EnableDecimaledIFractionals)
-					return RepType::INumByDiv;
-	//#else
-					throw "Non-enabled Negative ExtraRep representation type detected";
-	//#endif
-            else
-				throw "Unknown or non-enabled representation type detected";
-            return RepType::UnknownType;//Catch-All Value;
+            return RepType::UnknownType;//Virtual code replaced inside main class(Not actually used inside MediumDec class)
         }
 
     #pragma endregion RepType
@@ -501,7 +357,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        void SetAsMaximum()
+        virtual void SetAsMaximum()
         {
             IntValue = 2147483647; DecimalHalf = 999999999;
         }
@@ -509,7 +365,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        void SetAsMinimum()
+        virtual void SetAsMinimum()
         {
             IntValue = -2147483647; DecimalHalf = 999999999;
         }

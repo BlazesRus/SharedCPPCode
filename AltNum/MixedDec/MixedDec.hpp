@@ -565,94 +565,6 @@ public:
 
     #pragma region RepType
 
-        /// <summary>
-        /// Enum representing value type stored
-        /// </summary>
-        enum class RepType: int
-        {
-            NormalType = 0,
-            NumByDiv = 8,//with flag 04 active
-#if defined(MixedDec_EnablePiRep)
-            PiNum = 1,//with flag 01 active
-	#if defined(MixedDec_EnablePowers)
-            PiPower = 17,//with flag 05, and 01 active
-	#endif
-	#if defined(MixedDec_EnablePiFractions)
-			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
-	#endif
-#endif
-#if defined(MixedDec_EnableERep)
-            ENum = 2,//with flag 02 active
-	#if defined(MixedDec_EnablePowers)
-            EPower = 18,//with flag 05, and 02 active
-	#endif
-	#if defined(MixedDec_EnableEFractions)
-            ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
-	#endif
-#endif
-#if defined(MixedDec_EnableImaginaryNum)
-            INum = 4,//with flag 03 active
-	#if defined(MixedDec_EnableIFractions)
-            INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
-	#endif
-#endif
-#if defined(MixedDec_EnableMixedFractional)
-			MixedFrac = 32,//IntValue +- DecimalHalf/ExtraRep with flag 06 active 
-			MixedPi = 33,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 01 active
-			MixedE = 34,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 02 active
-			MixedI = 36,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 03 active
-#endif
-
-#if defined(MixedDec_EnableInfinityRep)
-			PositiveInfinity = 192,//IntValue == 1 and DecimalHalf==InfinityRep
-			NegativeInfinity = 112,//IntValue == -1 and DecimalHalf==InfinityRep
-#endif
-	#if defined(MixedDec_EnableApproachingValues)
-            ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)  (Enum Bits:7,5)
-		#if !defined(MixedDec_DisableApproachingTop)
-            ApproachingTop = 72,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9) (Enum Bits:7,6)
-		#endif
-		#if defined(MixedDec_EnableApproachingDivided)
-			ApproachingMidLeft = 80,//(Enum Bits:7,5,8)
-			#if !defined(MixedDec_DisableApproachingTop)
-            ApproachingMidRight = 96,//(Enum Bits:7,6,8)
-			#endif
-		#endif
-	#endif
-    #if defined(MixedDec_EnableNaN)
-            Undefined = 128,//(Enum Bits:8)
-            NaN = 129,//(Enum Bits:8, 1)
-    #endif
-#if defined(MixedDec_EnableApproachingPi)
-            ApproachingTopPi = 65,//equal to IntValue.9..9 Pi (Enum Bits:7,1,5)
-#endif
-#if defined(MixedDec_EnableApproachingE)
-            ApproachingTopE = 66,//equal to IntValue.9..9 e (Enum Bits:7,2, 5)
-#endif
-#if defined(MixedDec_EnableImaginaryInfinity)
-            PositiveImaginaryInfinity = 196,//IntValue == 1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3)
-			NegativeImaginaryInfinity = 228,//IntValue == -1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3,4)
-	#if defined(MixedDec_EnableApproachingI)
-            ApproachingImaginaryBottom = 68,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-		#if !defined(MixedDec_DisableApproachingTop)
-            ApproachingImaginaryTop = 76,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-		#endif
-	#if defined(MixedDec_EnableApproachingDivided)
-            ApproachingImaginaryMidRight = 84,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-		#if !defined(MixedDec_DisableApproachingTop)
-			ApproachingImaginaryMidLeft = 100,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-		#endif
-	#endif
-#endif
-#if defined(MixedDec_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-            UndefinedButInRange = 130,//(Enum Bits:8, 2)
-#endif
-    #if defined(MixedDec_EnableNilRep)
-            Nil = 131,
-    #endif
-            UnknownType = 132
-        };
-
 		static std::string RepTypeAsString(RepType& repType)
 		{
 			switch(repType)
@@ -1168,24 +1080,415 @@ public:
     #pragma endregion NaN Setters
 
     #pragma region ValueDefines
+    protected:
+	#if defined(AltNum_EnableNaN)
+        static MixedDec NaNValue()
+        {
+            MixedDec NewSelf = MixedDec(0, NaNRep);
+            return NewSelf;
+        }
+		
+        static MixedDec UndefinedValue()
+        {
+            MixedDec NewSelf = MixedDec(0, UndefinedRep);
+            return NewSelf;
+        }
+	#endif
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec PiNumValue()
+        {
+            return MixedDec(3, 141592654);
+        }
 
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static MixedDec HundredMilPiNumVal()
+        {
+            return MixedDec(314159265, 358979324);
+        }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static MixedDec TenMilPiNumVal()
+        {
+            return MixedDec(31415926, 535897932);
+        }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static MixedDec OneMilPiNumVal()
+        {
+            return MixedDec(3141592, 653589793);
+        }
+
+        //10xPi(Rounded to 9th decimal digit)
+        static MixedDec TenPiNumVal()
+        {
+            return MixedDec(31, 415926536);
+        }
+        
+        static MixedDec ENumValue()
+        {
+            return MixedDec(2, 718281828);
+        }
+        
+        static MixedDec ZeroValue()
+        {
+            return MixedDec();
+        }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec OneValue()
+        {
+            MixedDec NewSelf = MixedDec(1);
+            return NewSelf;
+        }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec TwoValue()
+        {
+            MixedDec NewSelf = MixedDec(2);
+            return NewSelf;
+        }
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec NegativeOneValue()
+        {
+            MixedDec NewSelf = MixedDec(-1);
+            return NewSelf;
+        }
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec Point5Value()
+        {
+            MixedDec NewSelf = MixedDec(0, 500000000);
+            return NewSelf;
+        }
+
+        static MixedDec JustAboveZeroValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 1);
+            return NewSelf;
+        }
+
+        static MixedDec OneMillionthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 1000);
+            return NewSelf;
+        }
+
+        static MixedDec FiveThousandthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 5000000);
+            return NewSelf;
+        }
+
+        static MixedDec FiveMillionthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 5000);
+            return NewSelf;
+        }
+
+        static MixedDec TenMillionthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 100);
+            return NewSelf;
+        }
+
+        static MixedDec OneHundredMillionthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 10);
+            return NewSelf;
+        }
+
+        static MixedDec FiveBillionthValue()
+        {
+            MixedDec NewSelf = MixedDec(0, 5);
+            return NewSelf;
+        }
+
+        static MixedDec LN10Value()
+        {
+            return MixedDec(2, 302585093);
+        }
+
+        static MixedDec LN10MultValue()
+        {
+            return MixedDec(0, 434294482);
+        }
+
+        static MixedDec HalfLN10MultValue()
+        {
+            return MixedDec(0, 868588964);
+        }
+        
+    #if defined(AltNum_EnableNilRep)
+        static MixedDec NilValue()
+        {
+            return MixedDec(NilRep, NilRep);
+        }
+    #endif
+
+        static MixedDec MinimumValue()
+        {
+            return MixedDec(2147483647, 999999999);
+        }
+
+        static MixedDec MaximumValue()
+        {
+            return MixedDec(2147483647, 999999999);
+        }
+public:
+        static MixedDec AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec PiNum;
+        
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec ENum;
+        
+#if defined(AltNum_EnableInfinityRep)
+        static MixedDec Infinity;
+        static MixedDec NegativeInfinity;
+        static MixedDec ApproachingZero;
+#endif
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec Pi;
+      
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec E;
+
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec Zero;
+        
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec One;
+
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec JustAboveZero;
+
+        /// <summary>
+        /// Returns the value at .000000005
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec FiveBillionth;
+
+        /// <summary>
+        /// Returns the value at .000001000
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec OneMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.005"
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec FiveThousandth;
+
+        /// <summary>
+        /// Returns the value at .000000010
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec OneGMillionth;
+
+        //0e-7
+        static MixedDec TenMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.000005"
+        /// </summary>
+        static MixedDec FiveMillionth;
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MixedDec</returns>
+        static MixedDec NegativeOne;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
+        /// </summary>
+        static MixedDec Minimum;
+        
+        /// <summary>
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
+        /// </summary>
+        static MixedDec Maximum;
+        
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        static MixedDec LN10;
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MixedDec LN10Mult;
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MixedDec HalfLN10Mult;
+
+    #if defined(AltNum_EnableNilRep)
+        /// <summary>
+        /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
+        /// </summary>
+        static MixedDec Nil;
+    #endif
+public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
-	
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MixedDec"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        MixedDec(const char* strVal)
+        {
+            ReadFromCharString(strVal);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MixedDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MixedDec(std::string Value)
+        {
+            ReadFromString(Value);
+        }
     #pragma endregion String Commands
 
+public:
     #pragma region ConvertFromOtherTypes
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MixedDec(float Value)
+        {
+            this->SetFloatVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MixedDec(double Value)
+        {
+            this->SetDoubleVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MixedDec(ldouble Value)
+        {
+            this->SetDecimalVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MixedDec(bool Value)
+        {
+            this->SetBoolVal(Value);
+        }
+
+#if defined(AltNum_EnableMediumDecBasedSetValues)
+        MixedDec(MediumDec Value)
+        {
+            this->SetVal(Value);
+        }
+#endif
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
 
+        /// <summary>
+        /// MediumDec to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float() { return toFloat(); }
+
+        /// <summary>
+        /// MediumDec to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double(){ return toDouble(); }
+
+        /// <summary>
+        /// MediumDec to long double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator ldouble() { return toDecimal(); }
+		
+        /// <summary>
+        /// MediumDec to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int() { return toInt(); }
+
+        explicit operator bool() { return toBool(); }
     #pragma endregion ConvertToOtherTypes
-
-    #pragma region MirroredIntBased Operations
-
-    #pragma endregion MirroredIntBased Operations
 
     #pragma region Pi Conversion
 	
@@ -1198,6 +1501,78 @@ public:
     #pragma region Other RepType Conversion
 
     #pragma endregion Other RepType Conversion
+
+    #pragma region Comparison Operators
+    std::strong_ordering operator<=>(const MediumDec& that) const
+    {
+#if	defined(MixedDec_EnableAlternativeRepresentations)
+		MixedDec lValue = this;
+		MixedDec rValue = that;
+		//Convert to normal representation before comparing
+		//To-Do:Use conversion function here(and use separate 3 way compare if AltNum with imaginary numbers to real numbers)
+		
+        int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
+        int rVal = rValue.IntValue==NegativeZero?0:rValue.IntValue;
+#else
+        int lVal = IntValue==NegativeZero?0:IntValue;
+        int rVal = that.IntValue==NegativeZero?0:that.IntValue;
+#endif
+        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
+            return IntHalfCmp;
+        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
+#if	defined(MixedDec_EnableAlternativeRepresentations)
+        lVal = IntValue==NegativeZero?0-lValue.DecimalHalf:lValue.DecimalHalf;
+        rVal = IntValue==NegativeZero?0-rValue.DecimalHalf:rValue.DecimalHalf;
+#else
+        lVal = IntValue==NegativeZero?0-DecimalHalf:DecimalHalf;
+        rVal = IntValue==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
+#endif
+        if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+		//Add Trailing Digit comparison code here later
+    }
+
+    std::strong_ordering operator<=>(const int& that) const
+    {
+#if	defined(MixedDec_EnableAlternativeRepresentations)
+		MixedDec lValue = this;
+		
+		
+        int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
+#else	
+        int lVal = IntValue==NegativeZero?0:IntValue;
+#endif
+        int rVal = that;
+        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
+            return IntHalfCmp;
+        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
+#if	defined(MixedDec_EnableAlternativeRepresentations)
+        lVal = lValue.DecimalHalf>0?1:0;
+#else
+        lVal = DecimalHalf>0?1:0;
+#endif
+        if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+		//Add Trailing Digit comparison code here later
+    }
+
+    bool operator==(const int& that) const
+    {
+        if (IntValue!=that)
+            return false;
+        if (DecimalHalf!=0)
+            return false;
+        return true;
+    }
+
+    bool operator==(const MediumDec& that) const
+    {
+        if (IntValue!=that.IntValue)
+            return false;
+        if (DecimalHalf!=that.IntValue)
+            return false;
+    }
+    #pragma endregion Comparison Operators
 
 	protected:
 	#pragma region Division Operations

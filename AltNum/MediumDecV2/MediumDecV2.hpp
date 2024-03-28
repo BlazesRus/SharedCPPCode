@@ -445,10 +445,6 @@ namespace BlazesRusCode
 
     #pragma endregion ConvertToOtherTypes
 
-    #pragma region MirroredIntBased Operations
-
-    #pragma endregion MirroredIntBased Operations
-
     #pragma region Pi Conversion
 	
     #pragma endregion Pi Conversion

@@ -118,10 +118,6 @@ namespace BlazesRusCode
 
     #pragma endregion ConvertToOtherTypes
 
-    #pragma region MirroredIntBased Operations
-
-    #pragma endregion MirroredIntBased Operations
-
     #pragma region Pi Conversion
 	
     #pragma endregion Pi Conversion
@@ -133,6 +129,10 @@ namespace BlazesRusCode
     #pragma region Other RepType Conversion
 
     #pragma endregion Other RepType Conversion
+
+    #pragma region Comparison Operators
+
+    #pragma endregion Comparison Operators
 
 	#pragma region NormalRep AltNum Addition Operations
 
