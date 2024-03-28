@@ -94,11 +94,156 @@ namespace BlazesRusCode
 
 
     #pragma region Const Representation values
-
+    //Variables for this section stored inside derivable base class
     #pragma endregion Const Representation values
 
     #pragma region RepType
-	//Not used for this variant
+
+		static std::string RepTypeAsString(RepType& repType)
+		{
+			switch(repType)
+			{
+				case RepType::NormalType:
+					return "NormalType"; break;
+	//#if defined(AltNum_EnableFractionals)
+				case RepType::NumByDiv:
+					return "NumByDiv"; break;
+	//#endif
+	//#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:
+					return "PiNum"; break;
+		//#if defined(AltNum_EnablePiPowers)
+				case RepType::PiPower:
+					return "PiPower"; break;
+		//#endif
+		//#if defined(AltNum_EnableAlternativeRepFractionals)
+			//#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+					return "PiNumByDiv"; break;
+			//#else
+				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+					return "PiFractional"; break;
+			//#endif
+		//#endif
+	//#endif
+	//#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+					return "ENum"; break;
+		//#if defined(AltNum_EnableAlternativeRepFractionals)
+			//#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+					return "ENumByDiv"; break;
+			//#else
+				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+					return "EFractional"; break;
+			//#endif
+		//#endif
+	//#endif
+	//#if defined(AltNum_EnableImaginaryNum)
+				case RepType::INum:
+                    return "INum"; break;
+		//#if defined(AltNum_EnableAlternativeRepFractionals)
+			//#if defined(AltNum_EnableDecimaledIFractionals)
+				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+					return "INumByDiv"; break;
+			//#else
+				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+					return "IFractional"; break;
+			//#endif
+		//#endif
+		//#ifdef AltNum_EnableComplexNumbers
+				case RepType::ComplexIRep:
+					return "ComplexIRep"; break;
+		//#endif
+	//#endif
+	//#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+					return "MixedFrac"; break;
+		//#if defined(AltNum_EnableMixedPiFractional)
+				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedPi"; break;
+		//#elif defined(AltNum_EnableMixedEFractional)
+				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedE"; break;
+		//#elif defined(AltNum_EnableMixedIFractional)
+				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+					return "MixedI"; break;
+		//#endif
+	//#endif
+
+	//#if defined(AltNum_EnableInfinityRep)
+				case RepType::PositiveInfinity://If Positive Infinity: then convert number into MaximumValue instead when need as real number
+					return "PositiveInfinity"; break;
+				case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
+					return "NegativeInfinity"; break;
+	//#endif
+	//#if defined(AltNum_EnableApproachingValues)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                    return "ApproachingBottom"; break;
+		//#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                    return "ApproachingTop"; break;
+		//#endif
+		//#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidLeft:
+					return "ApproachingMidLeft"; break;
+				case RepType::ApproachingMidRight:
+					return "ApproachingMidRight"; break;
+		//#endif
+	//#endif
+    //#if defined(AltNum_EnableNaN)
+				case RepType::Undefined:
+					return "Undefined"; break;
+				case RepType::NaN:
+					return "NaN"; break;
+    //#endif
+	//#if defined(AltNum_EnableApproachingPi)
+				case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+					return "ApproachingTopPi"; break;
+	//#endif
+	//#if defined(AltNum_EnableApproachingE)
+				case RepType::ApproachingTopE://equal to IntValue.9..9 e
+					return "ApproachingTopE"; break;
+	//#endif
+	//#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::PositiveImaginaryInfinity:
+					return "PositiveImaginaryInfinity"; break;
+				case RepType::NegativeImaginaryInfinity:
+					return "NegativeImaginaryInfinity"; break;
+	//#endif
+	//#if defined(AltNum_EnableApproachingI)
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+					return "ApproachingImaginaryBottom"; break;
+		//#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+					return "ApproachingImaginaryTop"; break;
+		//#endif
+		//#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingImaginaryMidLeft:
+					return "ApproachingImaginaryMidLeft"; break;
+			//#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingImaginaryMidRight:
+					return "ApproachingImaginaryMidRight"; break;
+			//#endif
+		//#endif
+    //#endif
+	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
+				case RepType::UndefinedButInRange:
+					return "UndefinedButInRange"; break;
+		//#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+				case RepType::WithinMinMaxRange:
+					return "WithinMinMaxRange"; break;
+		//#endif
+	//#endif
+    //#if defined(AltNum_EnableNilRep)
+				case RepType::Nil:
+					return "Nil"; break;
+    //#endif
+				default:
+					return "Unknown";
+			}
+		}
+
     #pragma endregion RepType
 
 public:
@@ -127,7 +272,7 @@ public:
 	#pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
-	//Stored in Base Class
+	//Stored inside Base Class
 	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
@@ -865,96 +1010,9 @@ public:
 
         static MediumDec& MultOp(MediumDec& self, int& Value) { return self.IntMultOp(Value); }
 
-        /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<IntegerType IntType=int>
-        static MediumDec& UnsignedMultOp(MediumDec& self, IntType& Value)
-        {
-            if (self == Zero) {}
-            else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
-            else if (self.DecimalHalf == 0)
-            {
-                self.IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
-
     #pragma endregion Multiplication/Division Operations
 
 #pragma region Addition/Subtraction Operations
-        /// <summary>
-        /// Basic Addition Operation
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void BasicAddOp(MediumDec& Value)
-        {
-            bool WasNegative = IntValue < 0;
-            //Deal with Int section first
-            IntValue += Value.IntValue;
-            if (Value.DecimalHalf != 0)
-            {
-                if (Value.IntValue < 0)
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-                else
-                {
-                    if (WasNegative)
-                    {
-                        DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; --IntValue; }
-                    }
-                    else
-                    {
-                        DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += MediumDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= MediumDec::DecimalOverflow) { DecimalHalf -= MediumDec::DecimalOverflow; ++IntValue; }
-                    }
-                }
-            }
-            //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
-                DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
-        }
 
 protected:
         /// <summary>
