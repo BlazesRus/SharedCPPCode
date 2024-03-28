@@ -897,70 +897,29 @@ public:
 		virtual void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
         virtual void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
-		virtual MediumDecBase BasicDiv(signed int Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+		virtual VariantType BasicDiv(signed int Value)
         { MediumDecBase self = *this; BasicIntDivOp(Value); return self; }
-		virtual MediumDecBase BasicDiv(unsigned int Value)
+		
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType BasicDiv(unsigned int Value)
         { MediumDecBase self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		virtual MediumDecBase BasicDiv(signed long long Value)
+		
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType BasicDiv(signed long long Value)
         { MediumDecBase self = *this; BasicIntDivOp(Value); return self; }
-        virtual MediumDecBase BasicDiv(unsigned long long Value)
+        
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType BasicDiv(unsigned long long Value)
         { MediumDecBase self = *this; BasicUnsignedIntDivOp(Value); return self; }
-
-//protected:
-//        template<typename IntType>
-//        void BasicIntDivOpV2(IntType& Value)
-//        {
-//            if (IsZero())
-//                return;
-//            if (Value < 0)
-//            {
-//                Value *= -1;
-//                SwapNegativeStatus();
-//            }
-//            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-//        }
-//
-//        template<typename IntType>
-//        void BasicUnsignedIntDivOpV2(IntType& Value)
-//        {
-//            if (IsZero())
-//                return;
-//            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-//        }
-//public:
-//
-//		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
-//		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
-//		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
-//        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
-//
-//		static void BasicDivOpV2(MediumDecBase& self, signed int& Value) { self.BasicIntDivOpV2(Value); }
-//		static void BasicDivOpV2(MediumDecBase& self, unsigned int& Value) { self.BasicUnsignedIntDivOpV2(Value); }
-//		static void BasicDivOpV2(MediumDecBase& self, signed long long& Value) { self.BasicIntDivOpV2(Value); }
-//        static void BasicDivOpV2(MediumDecBase& self, unsigned long long& Value) { self.BasicUnsignedIntDivOpV2(Value); }
-//
-//		MediumDecBase BasicDivV2(signed int Value)
-//        { MediumDecBase self = *this; BasicIntDivOpV2(Value); return self; }
-//		MediumDecBase BasicDivV2(unsigned int Value)
-//        { MediumDecBase self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-//		MediumDecBase BasicDivV2(signed long long Value)
-//        { MediumDecBase self = *this; BasicIntDivOpV2(Value); return self; }
-//        MediumDecBase BasicDivV2(unsigned long long Value)
-//        { MediumDecBase self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-//
-//		static MediumDecBase BasicDivV2(signed int Value) { self.BasicIntDivOpV2(Value); return self; }
-//		static MediumDecBase BasicDivV2(unsigned int Value) { self.BasicUnsignedIntDivOpV2(Value); return self; }
-//		static MediumDecBase BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
-//        static MediumDecBase BasicDivV2(unsigned long long Value) { MediumDecBase self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
 
     #pragma endregion NormalRep Integer Division Operations
 	
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
         //Return true if divide into zero
-        bool PartialDivOp(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual bool PartialDivOp(VariantType& Value)
         {
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
@@ -1009,13 +968,15 @@ protected:
 
 public:
 		
-        void BasicDivOp(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void BasicDivOp(VariantType& Value)
         {
 			if (PartialDivOp(Value))//Prevent Dividing into nothing
 				DecimalHalf = 1;
         }
 
-        MediumDecBase BasicDiv(MediumDecBase Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType BasicDiv(MediumDecBase Value)
         {
             MediumDecBase self = *this;
             self.BasicDivOp(Value);
@@ -1025,288 +986,62 @@ public:
         //void CatchAllDivision;
 
 public:
-        //bool RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecBase& self, MediumDecBase& Value);
+        template<MediumDecVariant VariantType=MediumDecBase>
+        bool RepToRepDivOp(RepType& LRep, RepType& RRep, const VariantType& self, const VariantType& Value)
+        {
+        }
 
         /// <summary>
         /// Division Operation
         /// </summary>
-        MediumDecBase& DivOp(MediumDecBase& Value) { BasicDivOp(Value); return *this; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType& DivOp(VariantType& Value) { BasicDivOp(Value); return *this; }
 
-        MediumDecBase DivideAsCopy(MediumDecBase Value) { MediumDecBase self = *this; self.BasicDivOp(Value); return self; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType DivideAsCopy(VariantType Value) { VariantType self = *this; self.BasicDivOp(Value); return self; }
 
         /// <summary>
         /// Multiplication Operation
         /// </summary>
-        MediumDecBase& MultOp(MediumDecBase& Value) { BasicMultOp(Value); return *this; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType& MultOp(VariantType& Value) { BasicMultOp(Value); return *this; }
 
-        MediumDecBase MultipleAsCopy(MediumDecBase Value) { MediumDecBase self = *this; self.BasicMultOp(Value); return self; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType MultipleAsCopy(VariantType Value) { VariantType self = *this; self.BasicMultOp(Value); return self; }
 
         /// <summary>
         /// Addition Operation
         /// </summary>
-        MediumDecBase& AddOp(MediumDecBase& Value) { BasicAddOp(Value); return *this; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType& AddOp(VariantType& Value) { BasicAddOp(Value); return *this; }
 
 
-        MediumDecBase AddAsCopy(MediumDecBase Value) { MediumDecBase self = *this; self.BasicAddOp(Value); return self; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType AddAsCopy(VariantType Value) { VariantType self = *this; self.BasicAddOp(Value); return self; }
 
         /// <summary>
         /// Subtraction Operation
         /// </summary>
-        MediumDecBase& SubOp(MediumDecBase& Value) { BasicSubOp(Value); return *this; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType& SubOp(VariantType& Value) { BasicSubOp(Value); return *this; }
 
 
-        MediumDecBase SubtractAsCopy(MediumDecBase Value) { MediumDecBase self = *this; self.BasicSubOp(Value); return self; }
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType SubtractAsCopy(VariantType Value) { MediumDecBase self = *this; self.BasicSubOp(Value); return self; }
 
-        //MediumDecBase& RemOp(MediumDecBase& Value) { BasicRemOp(Value); return *this; }
+        //MediumDecBase& RemOp(VariantType& Value) { BasicRemOp(Value); return *this; }
 
-        //MediumDecBase ModulusAsCopy(MediumDecBase Value) { MediumDecBase self = *this; self.BasicRemOp(Value); return self; }
+        //MediumDecBase ModulusAsCopy(VariantType Value) { VariantType self = *this; self.BasicRemOp(Value); return self; }
 
     #pragma endregion NormalRep AltNumToAltNum Operations
 	
     #pragma region Other Integer Operations
-        /// <summary>
-        /// Division Operation Between MediumDecBase and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase&</returns>
-        template<typename IntType>
-        static MediumDecBase& IntDivOp(IntType& Value)
-        {
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
-            if (Value==1)
-                return;
-            if (Value == 0)
-            {
-#if defined(AltNum_EnableInfinityRep)
-                if(IntValue < 0)
-                    SetAsNegativeInfinity()
-                else
-                    SetAsInfinity(); 
-                return;
-#else
-                throw "Target value can not be divided by zero";
-#endif
-            }
-			switch (LRep)
-			{
-	#if defined(AltNum_EnableAlternativeRepFractionals)
-		#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv:
-		#elif defined(AltNum_EnablePiFractional)
-				case RepType::PiFractional:
-		#endif
-		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv:
-		#elif defined(AltNum_EnableEFractional)
-				case RepType::EFractional:
-		#endif
-                    #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
-					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
-					break;
-                    #endif
-		#if defined(AltNum_EnableDecimaledIFractionals)
-				case RepType::INumByDiv:
-		#elif defined(AltNum_EnableEFractional)
-				case RepType::IFractional:
-		#endif
-                    #if defined(AltNum_EnableImaginaryNum)
-					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
-                    break;
-                    #endif
-	#endif
-    #ifdef AltNum_EnableImaginaryInfinity
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
-					return;
-					break;
-    #endif
-	#if defined(AltNum_EnableImaginaryNum)
-	#endif
-	#if defined(AltNum_EnableApproachingValues)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(self.IntValue.IsZero())
-						return;
-					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
-	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-	    #endif
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-            #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-			#endif
-		#endif
-					ConvertToNormType(LRep);
-					BasicIntDivOpV2(Value);
-					break;
-	#endif
-	#if defined(AltNum_EnableFractionals)
-	#endif
-	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
-					return;
-					break;
-		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-			#endif
-		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-			    #endif
-		    #endif
-					ConvertToNormalIRep(LRep);
-					BasicIntDivOpV2(Value);
-					break;
-	    #endif
-    #endif
-	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-                    int divRes;
-                    int C;
-                    if(IntValue.IsZero())//Become NumByDiv
-                    {
-                        divRes = DecimalHalf/ExtraRep;//-4/3
-                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
-                        if(C==0)
-                        {
-                            if(IntValue==NegativeRep)
-                                IntValue = divRes;
-                            else
-                                IntValue = -divRes;
-                            DecimalHalf = 0;
-                        }
-                        else
-                        {
-                            if(IntValue==NegativeRep)
-                                IntValue = DecimalHalf;
-                            else
-                                IntValue = -DecimalHalf;
-                            DecimalHalf = 0;
-                            ExtraRep *= Value;
-                        }
-                        return;
-                    }
-                    divRes = IntValue/ExtraRep;
-                    if(divRes!=0)
-                    {
-                        C = IntValue - ExtraRep * divRes;
-                        if(C==0)
-                        {
-                            throw "ToDo: Impliment code here"; 
-                        }
-                        else
-                        {
-                            throw "ToDo: Impliment code here";
-                        }
-                    }
-                    else
-                    {
-                        throw "ToDo: Impliment code here";
-                    }
-					break;
-		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-		#endif
-		#if defined(AltNum_EnableAlternativeMixedFrac)
-                    int divRes;
-                    int C;
-                    if(IntValue.IsZero())//Become Fractional
-                    {
-                        divRes = DecimalHalf/ExtraRep;//-4/-3
-                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
-                        if(C==0)
-                        {
-            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
-                            throw "ToDo: Impliment code here";
-			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
-                            throw "ToDo: Impliment code here";
-			#elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
-                            throw "ToDo: Impliment code here";
-            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
-                            throw "ToDo: Impliment code here";
-			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
-			
-            #endif
-                        }
-                        else
-                        {
-            #if defined(AltNum_MixedAltFracHasFractionalAccess)//Become Non-Decimaled Fractional
-                            throw "ToDo: Impliment code here";
-			#elif defined(AltNum_MixedAltFracHasDecimaledFractionalAccess)//Become Decimaled Fractional
-                            throw "ToDo: Impliment code here";
-			#elif defined(AltNum_EnableMixedPiFractional)//Become NumByDiv
-                            throw "ToDo: Impliment code here";
-            #elif defined(AltNum_EnableMixedEFractional)//Become NumByDiv
-                            throw "ToDo: Impliment code here";
-			#else//if(AltNum_EnableMixedEFractional)--Become NumByDiv
-			
-            #endif
-                        }
-                        //return;
-                    }
-                    divRes = IntValue/ExtraRep;
-                    if(divRes!=0)
-                    {
-                        C = IntValue - ExtraRep * divRes;
-                        if(C==0)
-                        {
-                            throw "ToDo: Impliment code here"; 
-                        }
-                        else
-                        {
-                            throw "ToDo: Impliment code here";
-                        }
-                    }
-                    else
-                    {
-                        throw "ToDo: Impliment code here";
-                    }
-					break;
-		#endif
-	#endif
-	#if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
-				case RepType::NaN:
-					throw "Can't perform operations with NaN or Undefined number";
-					break;
-	#endif			
-				default:
-					BasicIntDivOpV2(Value);
-					break;
-			}
-            return;
-        }
-
-        /// <summary>
-        /// Division Operation Between MediumDecBase and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        template<typename IntType>
-        static MediumDecBase& IntDivOp(MediumDecBase& self, IntType& Value) { return self.IntDivOp(Value); }
-
 		/// <summary>
         /// Basic Multiplication Operation(main code block)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOpPt2(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+		virtual bool BasicMultOpPt2(VariantType& Value)
 		{
             if (DecimalHalf == 0)
             {
@@ -1454,7 +1189,8 @@ public:
         /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOpPt1(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+		virtual bool BasicMultOpPt1(VariantType& Value)
         {//Warning:Modifies Value to make it a positive variable
         //Only checking for zero multiplication in main multiplication method
         //Not checking for special representation variations in this method(closer to MediumDecBase operation code)
@@ -1471,7 +1207,8 @@ public:
 		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
         /// <param name="Value">The value.</param>
-		bool BasicMultOp(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+		virtual bool BasicMultOp(VariantType& Value)
 		{
 			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
 /*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
@@ -1487,7 +1224,8 @@ public:
 		}
 
         //BasicMultOp without negative number check
-		bool BasicMultOpV2(MediumDecBase& Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+		virtual bool BasicMultOpV2(MediumDecBase& Value)
 		{
 			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
 /*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
@@ -1505,28 +1243,14 @@ public:
 protected:
 		//void CatchAllMultiplication(MediumDecBase& Value, RepType& LRep, RepType& RRep)
 
-public:
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase&</returns>
-        static MediumDecBase& MultOp(MediumDecBase& self, MediumDecBase& Value);
-
-		//Multiplies 2 AltNum variables together (Use normal AltNum + AltNum operation if need to use on 2 coPies of variables)
-		static MediumDecBase& MultOpV2(MediumDecBase& self, MediumDecBase Value)
-		{
-			return MultOp(self, Value);
-		}
-		
+public:		
 		/// <summary>
         /// Partial Multiplication Operation Between MediumDecBase and Integer Value
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
         template<typename IntType>
-        void PartialIntMultOp(IntType& Value)
+        virtual void PartialIntMultOp(IntType& Value)
         {
             if (DecimalHalf == 0)
             {
@@ -1563,7 +1287,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
         template<typename IntType>
-        void BasicIntMultOp(IntType& Value)
+        virtual void BasicIntMultOp(IntType& Value)
         {
             if (Value < 0)
             {
@@ -1584,7 +1308,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
         template<typename IntType>
-        void BasicIntMultOpV2(IntType& Value)
+        virtual void BasicIntMultOpV2(IntType& Value)
         {
             if (IntValue == 0 && DecimalHalf == 0)
                 return;
@@ -1594,139 +1318,11 @@ public:
                 PartialIntMultOp(Value);
         }
 
-        template<typename IntType>
-        static MediumDecBase& IntMultOpPt2(IntType& Value)
-        {
-            LRep = this->GetRepType();
-			switch (LRep)
-			{
-	#if defined(AltNum_EnableAlternativeRepFractionals)
-		#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv:
-		#elif defined(AltNum_EnablePiFractional)
-				case RepType::PiFractional:
-		#endif
-		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv:
-		#elif defined(AltNum_EnableEFractional)
-				case RepType::EFractional:
-		#endif
-					ConvertToNormType(LRep);
-					BasicIntMultOpV2(Value);
-					break;
-		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::INumByDiv:
-		#elif defined(AltNum_EnableEFractional)
-				case RepType::IFractional:
-		#endif
-					ConvertToNormType(LRep);
-					BasicIntMultOpV2(Value);
-					break;
-	#endif
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
-					return;
-					break;
-	#if defined(AltNum_EnableImaginaryNum)
-	#endif
-	#if defined(AltNum_EnableApproachingValues)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(self.IsZero())
-						return;
-					ConvertToNormType(LRep);
-					BasicIntMultOpV2(Value);
-					break;
-	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-	    #endif
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-            #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-			#endif
-		#endif
-					ConvertToNormType(LRep);
-					BasicIntMultOpV2(Value);
-					break;
-	#endif
-	#if defined(AltNum_EnableFractionals)
-	#endif
-	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
-					return;
-					break;
-		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-			#endif
-		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-			    #endif
-		    #endif
-					ConvertToNormalIRep(LRep);
-					BasicIntMultOpV2(Value);
-					break;
-	    #endif
-    #endif
-	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-					BasicIntMultOpV2(Value);
-					DecimalHalf *= Value;
-					int divRes = DecimalHalf / -ExtraRep;
-					if(divRes>0)
-					{
-						int increment = ExtraRep * divRes;
-						if(IntValue<0)
-							IntValue -= increment;
-						else
-							IntValue += increment;
-						DecimalHalf = DecimalHalf + increment;
-					}
-					break;
-		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-		#endif
-		#if defined(AltNum_EnableAlternativeMixedFrac)
-					BasicIntMultOpV2(Value);
-					DecimalHalf *= Value;
-					int divRes = DecimalHalf / ExtraRep;
-					if(divRes>0)
-					{
-						int increment = ExtraRep * divRes;
-						if(IntValue<0)
-							IntValue -= increment;
-						else
-							IntValue += increment;
-						DecimalHalf = DecimalHalf - increment;
-					}
-					break;
-		#endif
-	#endif
-	#if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
-				case RepType::NaN:
-					throw "Can't perform operations with NaN or Undefined number";
-					break;
-	#endif			
-				default:
-					BasicIntMultOpV2(Value);
-					break;
-			}
-        }
-
         //IntMultOp without negative check
-        template<typename IntType>
-        static MediumDecBase& UnsignedIntMultOp(IntType& Value)
+        template<MediumDecVariant VariantType=MediumDecBase, typename IntType>
+        virtual VariantType& UnsignedIntMultOp(IntType& Value)
         {
-            if (self == Zero||Value==1)
+            if (IsZero()||Value==1)
                 return;
             if (Value == 0)
             {
@@ -1740,15 +1336,15 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        template<typename IntType>
-        static MediumDecBase& IntMultOp(IntType& Value)
+        template<MediumDecVariant VariantType=MediumDecBase, typename IntType>
+        MediumDecBase& IntMultOp(IntType& Value)
         {
             if (Value < 0)
             {
                 Value *= -1;
                 SwapNegativeStatus();
             }
-            if (self == Zero||Value==1)
+            if (IsZero()||Value==1)
                 return;
             if (Value == 0)
             {
@@ -1759,59 +1355,7 @@ public:
 
         static MediumDecBase& MultOp(int& Value) { return IntMultOp(Value); }
 
-        /// <summary>
-        /// Multiplication Operation Between MediumDecBase and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        template<typename IntType>
-        static MediumDecBase& IntMultOp(MediumDecBase& self, IntType& Value) { return self.IntMultOp(Value); }
-
-        static MediumDecBase& MultOp(MediumDecBase& self, int& Value) { return self.IntMultOp(Value); }
-
-        /// <summary>
-        /// Multiplication Operation Between MediumDecBase and Integer Value
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        template<typename IntType>
-        static MediumDecBase& UnsignedMultOp(MediumDecBase& self, IntType& Value)
-        {
-            if (self == Zero) {}
-            else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
-            else if (self.DecimalHalf == 0)
-            {
-                self.IntValue *= Value;
-            }
-            else
-            {
-                bool SelfIsNegative = self.IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
-                }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
-                SRep *= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= OverflowVal * DecimalOverflowX;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
-                    self.DecimalHalf = (signed int)SRep;
-                }
-            }
-            return self;
-        }
-
-        void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecBase& self, MediumDecBase& Value);
+        //void RepToRepMultOp(RepType& LRep, RepType& RRep, MediumDecBase& self, MediumDecBase& Value);
     #pragma endregion Multiplication/Division Operations
 
 #pragma region Addition/Subtraction Operations
