@@ -37,21 +37,46 @@ AltNum_EnableAlternativeModulusResult
 */
 
 namespace BlazesRusCode
-{//"Not used for this variant" comment used as placeholder between unused regions to help with code compare between variants and keep structure similar
-
-    class MediumDecBase;//
+{
+    class MediumDecV2Base;
 
     /// <summary>
     /// Separating functions that don't use static variables inside this base class for deriving
     /// Completed class inside MediumDec
 	/// </summary>
-    class DLL_API MediumDecBaseV2 : public virtual MediumDecBase
+    class DLL_API MediumDecV2Base : public virtual MediumDecBase
     {
     public:
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDecV2(const int& intVal, const signed int& decVal = 0)
+        {
+            IntValue = intVal;
+            DecimalHalf = decVal;
+        }
+
+        MediumDecV2(const MediumDecV2Base&) = default;
+
+        MediumDecV2& operator=(const MediumDecV2& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        } const
 
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
+
+    #pragma region RepType
+    //Most of these are defined inside MediumDecBase (except for static function)
+    #pragma endregion RepType
 
     #pragma region PiNum Setters
 
