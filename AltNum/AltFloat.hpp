@@ -937,6 +937,18 @@ public:
             return false;
 		return true;
     }
+	
+    auto operator<=>(const int& that) const
+    {
+		rVal = (AltFloat)that;
+		return this <=> rValue;
+    }
+
+    bool operator==(const int& that) const
+    {
+		rVal = (AltFloat)that;
+		return this==rValue;
+    }
 
     #pragma endregion Comparison Operators
 
