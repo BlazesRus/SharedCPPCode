@@ -59,220 +59,6 @@ protected:
 	#if defined(MixedDec_EnableRestrictedFloat)
 	
 	class RestrictedFloat;
-	public class RestrictFloatResult
-	{
-	public:
-		bool UnderFlowed;
-		bool Overflowed;
-		RestrictedFloat Result;
-		RestrictedFloat ExcessAmount;
-		
-		RestrictFloatResult()
-		{
-			UnderFlowed = false;
-			Overflowed = false;
-		}
-		
-	protected:
-	#pragma region Division Operations
-        template<IntegerType IntType=int>
-        void DivByIntOp(const IntType& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Division by AltFloat operation
-        void DivOp(const AltFloat& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=MediumDec>
-        void DivByMediumDecVOp(const VariantType& rValue)
-		{
-			//To-Do:Add code here
-		}
-	#pragma endregion Division Operations
-
-	#pragma region Multiplication Operations
-        //Multiply by Integer Operation
-        template<IntegerType IntType=int>
-        void MultByIntOp(const IntType& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Multiply operation
-        void MultOp(const AltFloat& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=MediumDec>
-        void MultByMediumDecVOp(const VariantType& rValue)
-		{
-			//To-Do:Add code here
-		}
-	#pragma endregion Multiplication Operations
-
-	#pragma region Addition Operations
-        //Addition by Integer Operation
-        template<IntegerType IntType=int>
-        void AddByIntOp(const IntType& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Addition by AltFloat Operation
-        void AddOp(const AltFloat& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Addition by MediumDec variant Operation
-        template<MediumDecVariant VariantType=MediumDec>
-        void AddByMediumDecVOp(const VariantType& rValue)
-		{
-			//To-Do:Add code here
-		}
-	#pragma endregion Addition Operations
-	
-	#pragma region Subtraction Operations
-        //Subtraction by Integer Operation
-        template<IntegerType IntType=int>
-        void SubtractByIntOp(const IntType& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Subtraction by AltFloat Operation
-        void SubtractOp(const AltFloat& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Subtraction by MediumDec variant Operation
-        template<MediumDecVariant VariantType=MediumDec>
-        void SubtractByMediumDecVOp(const VariantType& rValue)
-		{
-			//To-Do:Add code here
-		}
-	#pragma endregion Subtraction Operations
-	
-	#pragma region Modulus Operations
-        template<IntegerType IntType=int>
-        void ModByIntOp(const IntType& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Modulus by AltFloat operation
-        void ModOp(const AltFloat& rValue)
-		{
-			//To-Do:Add code here
-		}
-		
-        //Multiply by MediumDec variant Operation
-        template<MediumDecVariant VariantType=MediumDec>
-        void ModByMediumDecVOp(const VariantType& rValue)
-		{
-			//To-Do:Add code here
-		}
-	#pragma endregion Modulus Operations
-		
-    #pragma region Main Operator Overrides
-        /// <summary>
-        /// Division Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult operator/(RestrictedFloat self, RestrictedFloat Value) { return DivOp(self, Value); }
-
-        /// <summary>
-        /// /= Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult& operator/=(RestrictedFloat& self, RestrictedFloat Value) { return DivOp(self, Value); }
-
-        /// <summary>
-        /// Multiplication Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult operator*(RestrictedFloat self, RestrictedFloat Value) { return MultOp(self, Value); }
-
-        ///// <summary>
-        ///// *= Operation
-        ///// </summary>
-        ///// <param name="self">The self.</param>
-        ///// <param name="Value">The value.</param>
-        ///// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult& operator*=(RestrictedFloat& self, RestrictedFloat Value) { return MultOp(self, Value); }
-
-        /// <summary>
-        /// Addition Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult operator+(RestrictedFloat self, RestrictedFloat Value) { return AddOp(self, Value); }
-
-        /// <summary>
-        /// += Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult& operator+=(RestrictedFloat& self, RestrictedFloat Value) { return AddOp(self, Value); }
-
-        /// <summary>
-        /// Subtraction Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult operator-(RestrictedFloat self, RestrictedFloat Value) { return SubtractOp(self, Value); }
-
-        /// <summary>
-        /// -= Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>RestrictedFloat</returns>
-        friend TrailingDigitResult& operator-=(RestrictedFloat& self, RestrictedFloat Value) { return SubtractOp(self, Value); }
-
-        friend TrailingDigitResult operator/(RestrictedFloat self, int Value) { return DivByIntOp(self, Value); }
-        friend TrailingDigitResult& operator/=(RestrictedFloat& self, int Value) { return DivByIntOp(self, Value); }
-		
-        friend TrailingDigitResult operator*(RestrictedFloat self, int Value) { return MultByIntOp(self, Value); }
-        friend TrailingDigitResult& operator*=(RestrictedFloat& self, int Value) { return MultByIntOp(self, Value); }
-
-        friend TrailingDigitResult operator+(RestrictedFloat self, int Value) { return AddByIntOp(self, Value); }
-        friend TrailingDigitResult& operator+=(RestrictedFloat& self, int Value) { return AddByIntOp(self, Value); }
-		
-        friend TrailingDigitResult operator-(RestrictedFloat self, int Value) { return SubtractByIntOp(self, Value); }
-        friend TrailingDigitResult& operator-=(RestrictedFloat& self, int Value) { return SubtractByIntOp(self, Value); }
-		
-        friend TrailingDigitResult operator/(RestrictedFloat self, MediumDec Value) { return DivByMediumDecVOp(self, Value); }
-        friend TrailingDigitResult& operator/=(RestrictedFloat& self, MediumDec Value) { return DivByMediumDecVOp(self, Value); }
-		
-        friend TrailingDigitResult operator*(RestrictedFloat self, MediumDec Value) { return MultByMediumDecVOp(self, Value); }
-        friend TrailingDigitResult& operator*=(RestrictedFloat& self, MediumDec Value) { return MultByMediumDecVOp(self, Value); }
-
-        friend TrailingDigitResult operator+(RestrictedFloat self, MediumDec Value) { return AddByMediumDecVOp(self, Value); }
-        friend TrailingDigitResult& operator+=(RestrictedFloat& self, MediumDec Value) { return AddByMediumDecVOp(self, Value); }
-		
-        friend TrailingDigitResult operator-(RestrictedFloat self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
-        friend TrailingDigitResult& operator-=(RestrictedFloat& self, MediumDec Value) { return SubtractByMediumDecVOp(self, Value); }
-
-    #pragma endregion Main Operator Overrides
-	}
 	
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
@@ -408,6 +194,25 @@ public:
 			}
 			return "";//placeholder
 		}
+
+    #pragma region Comparison Operators
+    std::strong_ordering operator<=>(const RestrictedFloat& that) const
+    {
+		//To-Do:Add code here
+			
+    }
+
+    bool operator==(const int& that) const
+    {
+		//To-Do:Add code here
+    }
+	
+    bool operator==(const RestrictedFloat& that) const
+    {
+		//To-Do:Add code here
+    }
+
+    #pragma endregion Comparison Operators
 
 	};
 
@@ -1553,7 +1358,10 @@ public:
 #endif
         if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
-		//Add Trailing Digit comparison code here later
+		//Trailing Digit comparison
+        if (auto TrailingCmp = TrailingDigits <=> that.TrailingDigits; TrailingCmp != 0)
+            return TrailingCmp;
+			
     }
 
     bool operator==(const int& that) const
@@ -1562,6 +1370,8 @@ public:
             return false;
         if (DecimalHalf!=0)
             return false;
+		if(TrailingDigits.IsNotZero())
+			return false;
         return true;
     }
 
@@ -1570,6 +1380,8 @@ public:
         if (IntValue!=that.IntValue)
             return false;
         if (DecimalHalf!=that.IntValue)
+            return false;
+        if (TrailingDigits!=that.TrailingDigits)
             return false;
     }
     #pragma endregion Comparison Operators
@@ -1607,6 +1419,10 @@ public:
 		#else
 		#endif
 	#endif
+		}
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void RestrictedFloatDivByOp(const RestrictedFloat& rValue)
+		{
 		}
 #endif
 	#pragma endregion Division Operations
@@ -1657,6 +1473,10 @@ public:
 		#endif
 	#endif
 		}
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void RestrictedFloatMultByOp(const RestrictedFloat& rValue)
+		{
+		}
 #endif
 	#pragma endregion Multiplication Operations
 
@@ -1697,6 +1517,10 @@ public:
 		#else
 		#endif
 	#endif
+		}
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void RestrictedFloatAddByOp(const RestrictedFloat& rValue)
+		{
 		}
 #endif
 	#pragma endregion Addition Operations
@@ -1739,6 +1563,10 @@ public:
 		#endif
 	#endif
 		}
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void RestrictedFloatSubtractByOp(const RestrictedFloat& rValue)
+		{
+		}
 #endif
 	#pragma endregion Subtraction Operations
 	
@@ -1773,6 +1601,10 @@ public:
 		#else
 		#endif
 	#endif
+		}
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void RestrictedFloatModByOp(const RestrictedFloat& rValue)
+		{
 		}
 #endif
 	#pragma endregion Modulus Operations
