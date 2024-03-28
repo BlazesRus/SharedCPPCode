@@ -1503,7 +1503,7 @@ public:
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
-    std::strong_ordering operator<=>(const MediumDec& that) const
+    std::strong_ordering operator<=>(const MixedDec& that) const
     {
 #if	defined(MixedDec_EnableAlternativeRepresentations)
 		MixedDec lValue = this;
@@ -1565,7 +1565,7 @@ public:
         return true;
     }
 
-    bool operator==(const MediumDec& that) const
+    bool operator==(const MixedDec& that) const
     {
         if (IntValue!=that.IntValue)
             return false;
