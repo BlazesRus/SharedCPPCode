@@ -852,41 +852,6 @@ public:
                 PartialIntMultOp(Value);
         }
 
-        //IntMultOp without negative check
-        template<IntegerType IntType=int>
-        static MediumDec& UnsignedIntMultOp(IntType& Value)
-        {
-            if (self == Zero||Value==1)
-                return;
-            if (Value == 0)
-            {
-                SetAsZero(); return;
-            }
-            IntMultOpPt2(Value);
-        }
-
-        /// <summary>
-        /// Multiplication Operation Between MediumDec and Integer Value
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<IntegerType IntType=int>
-        static MediumDec& IntMultOp(IntType& Value)
-        {
-            if (Value < 0)
-            {
-                Value *= -1;
-                SwapNegativeStatus();
-            }
-            if (self == Zero||Value==1)
-                return;
-            if (Value == 0)
-            {
-                SetAsZero(); return;
-            }
-            IntMultOpPt2(Value);
-        }
-
         static MediumDec& MultOp(int& Value) { return IntMultOp(Value); }
 
         /// <summary>
