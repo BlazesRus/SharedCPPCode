@@ -59,6 +59,22 @@ namespace BlazesRusCode
 	};
 #endif
 
+#if defined(AltNum_EnableMirroredIntV2)
+	struct MirroredIntV2 {
+	#pragma options align=bit_packed
+	//If value is one then is negative
+	unsigned int IsNegative:1;
+	//Stores non-signed part of value
+	unsigned int Value:31;
+	#pragma options align=reset
+		MirroredIntV2(unsigned int value=0, unsigned int isNegative=0)
+		{
+			Value = value;
+			IsNegative = isNegative;
+		}
+	};
+#endif
+
     class MediumDecBase;
 
 /*---Accuracy Tests(with MediumDecBase based settings):
@@ -117,7 +133,11 @@ namespace BlazesRusCode
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        signed int IntValue;
+#if defined(AltNum_UseIntForDecimalHalf)
+        MirroredIntV2 IntHalf;
+#else
+        signed int IntHalf;
+#endif
 
         signed int GetIntHalf()
         {
@@ -732,7 +752,35 @@ public:
     #pragma endregion E Conversion
 	
     #pragma region Other RepType Conversion
-	//Not used for this variant
+    //Functions only used in variants of MediumDec
+
+        virtual void ConvertToNormType(const RepType& repType){}
+
+		//Returns value as normal type representation
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType ConvertAsNormType()
+        {
+            VariantType Res = *this;
+            Res.ConvertToNormType();
+            return Res;
+        }
+
+        //Converts value to normal type representation
+        virtual void ConvertToNormTypeV2()
+        {
+            RepType repType = GetRepType();
+            ConvertToNormType(repType);
+        }
+
+		//Returns value as normal type representation
+        template<MediumDecVariant VariantType=MediumDecBase>
+        virtual VariantType ConvertAsNormTypeV2()
+        {
+            VariantType Res = *this;
+            Res.ConvertToNormTypeV2();
+            return Res;
+        }
+
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators

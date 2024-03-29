@@ -37,7 +37,17 @@ AltNum_EnableAlternativeModulusResult
 */
 /*
   Using
-  constexpr auto Function = MediumDecBase::Function;
+  const auto& new_fn_name = old_fn_name;
+  
+  or
+  
+  constexpr auto Function = MediumDecBase::Function<templateTypename>;
+  
+  or
+  
+  template<typename T>
+constexpr auto alias_to_old = old_function<T>;
+  
   to reference functions from base class
 */
 namespace BlazesRusCode
@@ -723,6 +733,17 @@ public:
     #pragma endregion E Conversion
 
     #pragma region Other RepType Conversion
+
+        constexpr auto ConvertToNormType = MediumDecBase::ConvertToNormType;
+
+		//Returns value as normal type representation
+        constexpr auto ConvertAsNormType = MediumDecBase::ConvertAsNormType<MediumDec>;
+
+        //Converts value to normal type representation
+        constexpr auto ConvertToNormTypeV2 = MediumDecBase::ConvertToNormTypeV2;
+
+		//Returns value as normal type representation
+        constexpr auto ConvertAsNormTypeV2 = MediumDecBase::ConvertAsNormTypeV2<MediumDec>;
 
     #pragma endregion Other RepType Conversion
 
