@@ -34,6 +34,10 @@
 	#include "..\MediumDec\MediumDec.hpp"
 #endif
 
+#if defined()
+#include "..\AltFloat.hpp"
+#endif
+
 namespace BlazesRusCode
 {
 
@@ -1330,7 +1334,7 @@ public:
     #pragma region Comparison Operators
     std::strong_ordering operator<=>(const MixedDec& that) const
     {
-#if	defined(MixedDec_EnableAlternativeRepresentations)
+	#if	defined(MixedDec_EnableAlternativeRepresentations)
 		MixedDec lValue = this;
 		MixedDec rValue = that;
 		//Convert to normal representation before comparing
@@ -1338,50 +1342,73 @@ public:
 		
         int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
         int rVal = rValue.IntValue==NegativeZero?0:rValue.IntValue;
-#else
+	#else
         int lVal = IntValue==NegativeZero?0:IntValue;
         int rVal = that.IntValue==NegativeZero?0:that.IntValue;
-#endif
+	#endif
         if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
             return IntHalfCmp;
         //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-#if	defined(MixedDec_EnableAlternativeRepresentations)
+	#if	defined(MixedDec_EnableAlternativeRepresentations)
         lVal = IntValue==NegativeZero?0-lValue.DecimalHalf:lValue.DecimalHalf;
         rVal = IntValue==NegativeZero?0-rValue.DecimalHalf:rValue.DecimalHalf;
-#else
+	#else
         lVal = IntValue==NegativeZero?0-DecimalHalf:DecimalHalf;
         rVal = IntValue==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
-#endif
+	#endif
         if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
-		//Add Trailing Digit comparison code here later
+	//--Trailing Digit comparison
+	//Flip digits when negative to properly compare
+	#if defined(MixedDec_EnableRestrictedFloat)
+		RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
+		RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
+	#elif defined(MixedDec_EnableAltFloat)
+		AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
+		AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
+	#else
+		float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
+		float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+	#endif
+        if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
+            return TrailingCmp;
     }
 
     std::strong_ordering operator<=>(const int& that) const
     {
-#if	defined(MixedDec_EnableAlternativeRepresentations)
+	#if	defined(MixedDec_EnableAlternativeRepresentations)
 		MixedDec lValue = this;
-		
+		//
 		
         int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
-#else	
+	#else	
         int lVal = IntValue==NegativeZero?0:IntValue;
-#endif
+	#endif
         int rVal = that;
         if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
             return IntHalfCmp;
         //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-#if	defined(MixedDec_EnableAlternativeRepresentations)
+	#if	defined(MixedDec_EnableAlternativeRepresentations)
         lVal = lValue.DecimalHalf>0?1:0;
-#else
+	#else
         lVal = DecimalHalf>0?1:0;
-#endif
+	#endif
         if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
-		//Trailing Digit comparison
-        if (auto TrailingCmp = TrailingDigits <=> that.TrailingDigits; TrailingCmp != 0)
+	//--Trailing Digit comparison
+	//Flip digits when negative to properly compare
+	#if defined(MixedDec_EnableRestrictedFloat)
+		RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
+		RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
+	#elif defined(MixedDec_EnableAltFloat)
+		AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
+		AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
+	#else
+		float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
+		float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+	#endif
+        if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
             return TrailingCmp;
-			
     }
 
     bool operator==(const int& that) const

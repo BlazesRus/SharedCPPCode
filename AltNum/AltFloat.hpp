@@ -53,11 +53,11 @@ namespace BlazesRusCode
     #else
 	//Represents floating range between 0 and (1+(8388607/8388608))*2^127      (Approximately 340 282 346 638 528 859 811 704 183 484 516 925 440)
     #endif
-	// Floating formula representation is SignifNum>=0?"(1+(SignifNum/DenomMax))*2^Exponent":"(1+(-SignifNum/DenomMax))*2^Exponent";
+	// Floating formula representation is SignifNum>=0?"(1+(SignifNum/DenomMax))*2^Exp":"(1+(-SignifNum/DenomMax))*2^Exp";
 	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*2^127"
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
-	// When Exponent<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exponent))"
-	// Floating formula representation when Exponent is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exponent"
+	// When Exp<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exp))"
+	// Floating formula representation when Exp is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exp"
     /// (4-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API AltFloat
@@ -65,11 +65,11 @@ namespace BlazesRusCode
 	protected:
 		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
 		#if defined(AltFloat_ExtendedRange)
-		static signed int DenomMaxExponent = 31;
+		static signed int DenomMaxExp = 31;
 		#else
-		static signed int DenomMaxExponent = 23;
+		static signed int DenomMaxExp = 23;
 		#endif
-		//Largest Exponent side calculation(2^127):170141183460469231731687303715884105728
+		//Largest Exp side calculation(2^127):170141183460469231731687303715884105728
 
 		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 		//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
@@ -83,7 +83,7 @@ namespace BlazesRusCode
 		#endif
 		#pragma options align=reset
 			//If specialStatus==1, then is negative number
-			//If specialStatus==1 and signifNum, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
+			//If specialStatus==1 and signifNum, then is "-(1+SignifNum/DenomMax)" range with -zero Exp field
 			SignifBitfield(unsigned int signifNum=0, unsigned char specialStatus=0)
 			{
 				switch(specialStatus)
@@ -115,12 +115,12 @@ namespace BlazesRusCode
 			}
 		}SignifNum;
 
-        //Refers to Exponent inside "2^Exponent + (2^Exponent)*SignifNum/DenomMax" formula
-		//If Exponent==-128 and SignifNum==0, in which case the value is at zero
+        //Refers to Exp inside "2^Exp + (2^Exp)*SignifNum/DenomMax" formula
+		//If Exp==-128 and SignifNum==0, in which case the value is at zero
 		#if defined(AltFloat_DontUseBitfieldInSignif)
-		//If Exponent==-128 and SignifNum>0, then is "-(1+SignifNum/DenomMax)" range with -zero exponent field
+		//If Exp==-128 and SignifNum>0, then is "-(1+SignifNum/DenomMax)" range with -zero Exp field
 		#endif
-		signed char Exponent;
+		signed char Exp;
 
 			#if defined(AltFloat_ExtendedRange)
 		//Equal to 2^31
@@ -136,17 +136,17 @@ namespace BlazesRusCode
 		static SignifBitfield NegAlmostApproachingTop = -8388607;
 			#endif
 
-		//Exponent value that zero is defined at
+		//Exp value that zero is defined at
 		static signed char ZeroRep = -128;
 
     public:
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(SignifBitfield signifNum=0, signed char exponent=ZeroRep)
+        AltFloat(SignifBitfield signifNum=0, signed char Exp=ZeroRep)
         {
             SignifNum = signifNum;
-            Exponent = exponent;
+            Exp = Exp;
         }
 
         AltFloat(const AltFloat&) = default;
@@ -156,13 +156,13 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return SignifNum==0&&Exponent==ZeroRep;
+            return SignifNum==0&&Exp==ZeroRep;
 		}
 
         //Detect if at exactly one
 		bool IsOne()
 		{
-            return SignifNum==0&&Exponent==0;
+            return SignifNum==0&&Exp==0;
 		}
 
         /// <summary>
@@ -172,27 +172,27 @@ namespace BlazesRusCode
         void SetVal(AltFloat Value)
         {
             SignifNum = Value.SignifNum;
-            Exponent = Value.Exponent;
+            Exp = Value.Exp;
         }
 
         void SetAsZero()
         {
-			//If AltFloat_TreatZeroAsZeroExponent or AltFloat_UseLeadingZeroInSignificant toggled, treats SignifNum 0 with Exponent 0 as zero. 
-			//Otherwise, treat Exponent -128 as for special values and zero so that formula for exact value is exact to formula except if Exponent is -128
+			//If AltFloat_TreatZeroAsZeroExp or AltFloat_UseLeadingZeroInSignificant toggled, treats SignifNum 0 with Exp 0 as zero. 
+			//Otherwise, treat Exp -128 as for special values and zero so that formula for exact value is exact to formula except if Exp is -128
             SignifNum = 0;
-            Exponent = ZeroRep;
+            Exp = ZeroRep;
         }
 
         void SetAsOne()
         {
             SignifNum = 0;
-            Exponent = 0;
+            Exp = 0;
         }
 
         void SetAsNegativeOne()
         {
             SignifNum = SignifNumBitfield(0,1);
-            Exponent = 0;
+            Exp = 0;
         }
 
     #pragma region Const Representation values
@@ -212,7 +212,7 @@ namespace BlazesRusCode
     #else
 			SignifNum.Numerator = 2147483647;
     #endif
-			Exponent = 127;
+			Exp = 127;
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace BlazesRusCode
     #else
 			SignifNum.Numerator = 2147483647;
     #endif
-			Exponent = 127;
+			Exp = 127;
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace BlazesRusCode
         void SetAsSmallestNonZero()
         {
             SignifNum = 0;
-			Exponent = -127;
+			Exp = -127;
         }
 
     #pragma region ApproachingZero Setters
@@ -382,19 +382,19 @@ public:
             this->ReadString(Value);
         }
 
-		//Outputs string in "2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+		//Outputs string in "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format 
 		std::string ToFormulaFormat()
 		{
 			if(IsZero())
 				return "0";
 			else if(IsOne())
 				return "1";
-			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
-			string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exponent;
+			signed int ExpMultiplier = Exp - DenomMaxExp;
+			string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exp;
 			outputStr += " + ";
 			outputStr += (std::string)SignifNum.Numerator;
 			outputStr += " * ";
-			outputStr += "2^"+(std::string)ExponentMultiplier;
+			outputStr += "2^"+(std::string)ExpMultiplier;
 			return outputStr;
 		}
 
@@ -485,7 +485,7 @@ public:
 				numerator *= RemainingVal;
 				numerator /= denom;
 				SignifNum = SignifBitfield(numerator,0)
-				Exponent = highestPower;
+				Exp = highestPower;
             }
         }
 
@@ -522,21 +522,21 @@ public:
 				if(IsNegative)
 				{
 
-					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero exponent field
+					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero Exp field
 					{
 						SignifNum = SignifBitfield(numerator,1)
-						Exponent = 0;
+						Exp = 0;
 					}
 					else
 					{
 						SignifNum = SignifBitfield(numerator,1)
-						Exponent = highestPower;
+						Exp = highestPower;
 					}
 				}
 				else
 				{
 					SignifNum = SignifBitfield(numerator,0)
-					Exponent = highestPower;
+					Exp = highestPower;
 				}
             }
         }
@@ -580,21 +580,21 @@ public:
 				//return Value.IsNegative()?-numerator.GetIntegerHalf():numerator.GetIntegerHalf();
 				if(Value.IsNegative())
 				{
-					if(Exponent==0)//Negative 1 Exponent
+					if(Exp==0)//Negative 1 Exp
 					{
 						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),2);
-						Exponent==0;
+						Exp==0;
 					}
 					else
 					{
 						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),1);
-						Exponent = highestPower;
+						Exp = highestPower;
 					}
 				}
 				else
 				{
 					SignifNum = SignifBitfield(numerator.GetIntegerHalf(),0);
-					Exponent = highestPower;
+					Exp = highestPower;
 				}
             }
     #endif
@@ -678,8 +678,8 @@ public:
                 return 0;
             else if(IsOne()))
                 return 1;
-			//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
-			signed int ExponentMultiplier = Exponent - DenomMaxExponent;
+			//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format 
+			signed int ExpMultiplier = Exp - DenomMaxExp;
 			if(SignifNum<0)
 			{
 			}
@@ -698,9 +698,9 @@ public:
             if(SignifNum<0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>31)//Overflow Error
+				if(Exp>31)//Overflow Error
 					return -2147483648;//Return Error
-				else if(Exponent==32)//Max value it can hold is 4294967296
+				else if(Exp==32)//Max value it can hold is 4294967296
 				{
 					if(SignifNum==0)
 						return -2147483648;
@@ -708,17 +708,17 @@ public:
 						return -2147483648;//Return Error
 				}
 				#else
-					if(Exponent>=31)//Minimum value it can hold is -2147483648
+					if(Exp>=31)//Minimum value it can hold is -2147483648
 						return -2147483648;
 				#endif
             }
             else
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>=31)//Overflow Error
+				if(Exp>=31)//Overflow Error
 					return 2147483647;//Return Error
 			#else
-				if(Exponent>=31)//Max value it can hold is 2147483647
+				if(Exp>=31)//Max value it can hold is 2147483647
 					return 2147483647;
 			#endif
 			}
@@ -742,9 +742,9 @@ public:
 			else
 			{
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>32)//Overflow Error
+				if(Exp>32)//Overflow Error
 					return 4294967296;//Return Error
-				else if(Exponent==32)//Max value it can hold is 4294967296
+				else if(Exp==32)//Max value it can hold is 4294967296
 				{
 					if(SignifNum==0)
 						return 4294967296;
@@ -752,7 +752,7 @@ public:
 						return 4294967296;//Return Error
 				}
 			#else
-				if(Exponent>=32)
+				if(Exp>=32)
 					return 4294967296;
 			#endif
 			}
@@ -768,9 +768,9 @@ public:
             if(SignifNum>0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>63)//Overflow Error
+				if(Exp>63)//Overflow Error
 					return -9223372036854775808;//Return Error
-				else if(Exponent==63)//Max value it can hold is 4294967296
+				else if(Exp==63)//Max value it can hold is 4294967296
 				{
 					if(SignifNum==0)
 						return -9223372036854775808;
@@ -778,16 +778,16 @@ public:
 						return -9223372036854775808;//Return Error
 				}
 				#else
-					if(Exponent>=63)//Minimum value it can hold is -2147483648
+					if(Exp>=63)//Minimum value it can hold is -2147483648
 						return -9223372036854775808;
 				#endif
             }
             else
             {
         #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exponent>=63)//Overflow Error
+            if(Exp>=63)//Overflow Error
                 return 9223372036854775807;//Return Error
-   //         else if(Exponent==62)
+   //         else if(Exp==62)
    //         {
 			//#if defined(AltFloat_ExtendedRange)
    //             if(SignifNum==2147483647)
@@ -799,7 +799,7 @@ public:
 			//#endif
    //         }
         #else
-            if(Exponent>=63)
+            if(Exp>=63)
                 return 9223372036854775807;
         #endif
             }           
@@ -823,9 +823,9 @@ public:
             else
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>64)//Overflow Error
+				if(Exp>64)//Overflow Error
 					return 18446744073709551616;//Return Error
-				else if(Exponent==64)
+				else if(Exp==64)
 				{
 					if(SignifNum==0)
 						return 18446744073709551616;
@@ -833,7 +833,7 @@ public:
 						return 18446744073709551616;//Return Error
 				}
 			#else
-				if(Exponent>=32)
+				if(Exp>=32)
 					return 18446744073709551616;
 			#endif
 			}
@@ -853,9 +853,9 @@ public:
             if(SignifNum<0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>=31)
+				if(Exp>=31)
 					return MediumDec::MinimumValue();//Return Error
-				else if(Exponent==30)
+				else if(Exp==30)
 				{
 					//Add Code here
 				}
@@ -863,9 +863,9 @@ public:
 				{
 				}
 			#else
-				if(Exponent>=31)//Minimum value it can store is -2147483647.999999999
+				if(Exp>=31)//Minimum value it can store is -2147483647.999999999
 					return MediumDec::MinimumValue();//Return Error
-				else if(Exponent==30)
+				else if(Exp==30)
 				{
 					//Add Code here
 				}
@@ -878,9 +878,9 @@ public:
             else
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exponent>=31)
+				if(Exp>=31)
 					return MediumDec::MaximumValue();//Return Error
-				else if(Exponent==30)
+				else if(Exp==30)
 				{
 					//Add Code here
 				}
@@ -888,9 +888,9 @@ public:
 				{
 				}
 			#else
-				if(Exponent>=31)//Maximum value it can store is 2147483647.999999999
+				if(Exp>=31)//Maximum value it can store is 2147483647.999999999
 					return MediumDec::MaximumValue();
-				else if(Exponent==30)//Maximum value it can store is 2147483647.999999999
+				else if(Exp==30)//Maximum value it can store is 2147483647.999999999
 				{
 					//Add Code here
 				}
@@ -914,26 +914,26 @@ public:
 
     std::strong_ordering operator<=>(const AltFloat& that) const
     {
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		
 		//Comparing if number is negative vs positive
         if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
 			return SignCmp;
-		//The Smaller Exponent is the closer to zero(-128 is exactly at zero)
-        if (auto ExponentCmp = Exponent <=> that.Exponent; ExponentCmp != 0)
-			return ExponentCmp;
+		//The Smaller Exp is the closer to zero(-128 is exactly at zero)
+        if (auto ExpCmp = Exp <=> that.Exp; ExpCmp != 0)
+			return ExpCmp;
         if (auto SignifFracCmp = SignifNum.Value <=> that.SignifNum.Value; SignifFracCmp != 0)
 			return SignifFracCmp;
     }
 	
     bool operator==(const AltFloat& that) const
     {
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
         if (IsNegative!=that.IsNegative)
             return false;
 		if (SignifNum!=that.SignifNum)
             return false;
-        if (Exponent!=that.Exponent)
+        if (Exp!=that.Exp)
             return false;
 		return true;
     }
@@ -960,7 +960,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -973,7 +973,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -987,7 +987,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1003,7 +1003,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1016,7 +1016,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1030,7 +1030,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1046,7 +1046,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1059,7 +1059,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1073,7 +1073,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1089,7 +1089,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1102,7 +1102,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1116,7 +1116,7 @@ public:
 	#if defined(AltFloat_UseRestrictedRange)
 	#elif defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1130,7 +1130,7 @@ public:
 		{
 	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1142,7 +1142,7 @@ public:
 		{
 	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
@@ -1155,7 +1155,7 @@ public:
 		{
 	#if defined(AltFloat_DontUseBitfieldInSignif)
 	#else
-		//"2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))"
+		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		#if defined(AltFloat_ExtendedRange)
 		#else
 		#endif
