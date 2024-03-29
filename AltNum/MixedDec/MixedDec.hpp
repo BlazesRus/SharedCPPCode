@@ -34,8 +34,8 @@
 	#include "..\MediumDec\MediumDec.hpp"
 #endif
 
-#if defined()
-#include "..\AltFloat.hpp"
+#if defined(MixedDec_EnableAltFloat)
+	#include "..\AltFloat.hpp"
 #endif
 
 namespace BlazesRusCode
@@ -264,7 +264,7 @@ public:
 	#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = 0;
 	#endif
-	#if !defined(MixedDec_UseAltFloat)
+	#if !defined(MixedDec_EnableAltFloat)
 			TrailingDigits = 0.0f;
 	#else//AltFloat range planned to be from 0.0 to (0.9..9) with no support for infinity
 		//AltFloat support range planned to be extended to 0.0 to 9..9.9..9 range during multiplication/division operations
@@ -313,18 +313,27 @@ public:
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(AltDec_UseMirroredInt)
-	#if defined(MixedDec_DontInitializeFromConstRef)
-        MixedDec(MirroredInt intVal, signed int decVal = 0
-	#else
-        MixedDec(const MirroredInt& intVal, const signed int& decVal = 0
-	#endif
+#if defined(MixedDec_DontInitializeFromConstRef) && defined(AltNum_EnableMirroredIntV2)
+		MixedDec(MirroredIntV2 intVal,
+#elif defined(AltNum_EnableMirroredIntV2)
+		MixedDec(const MirroredIntV2& intVal,
+#elif defined(MixedDec_DontInitializeFromConstRef)
+		MixedDec(signed int intVal,
 #else
-	#if defined(MixedDec_DontInitializeFromConstRef)
-        MixedDec(signed int intVal, signed int decVal = 0
-	#else
-        MixedDec(const int& intVal, signed int decVal = 0
-	#endif
+		MixedDec(const int& intVal,
+#endif
+#if defined(AltNum_UseIntForDecimalHalf)
+	    #if defined(MixedDec_DontInitializeFromConstRef)
+        , const signed int& decVal = 0
+	    #else
+        , signed int decVal = 0
+	    #endif
+#else
+	    #if defined(MixedDec_DontInitializeFromConstRef)
+		, const PartialInt& decVal = 0
+	    #else
+		, PartialInt decVal = 0
+	    #endif
 #endif
 #if defined(MixedDec_ExtraRepEnabled)
 	    #if defined(MixedDec_DontInitializeFromConstRef)
@@ -348,10 +357,12 @@ public:
         #endif
 	#endif
 #endif
-#if !defined(MixedDec_UseAltFloat)
-		, float trailingDigits = 0.0f)
-#else
+#if defined(MixedDec_EnableRestrictedFloat)
+		, RestrictedFloat trailingDigits = 0)
+#elif defined(MixedDec_EnableAltFloat)
 		, AltFloat trailingDigits = 0)
+#else
+		, float trailingDigits = 0.0f)
 #endif
         {
             IntValue.Value = intVal;
