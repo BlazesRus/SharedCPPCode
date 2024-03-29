@@ -64,7 +64,7 @@ protected:
     /// Alternative fixed point number representation designed for use with MixedDec
 	/// Represents floating range between 0 and just before 1
     /// Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
-    /// Each InvertedExp holds DenomMax number of fractionals between InvertedExp and next highest InvertedExp
+    /// Each Exp holds DenomMax number of fractionals between Exp and next highest Exp
     /// (4-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
 	public class RestrictedFloat
@@ -90,9 +90,10 @@ protected:
     #else
 		unsigned int SignifNum;// : 32;
     #endif
-	    //Refers to InvertedExp inside "1/2^InvertedExp + (1/2^InvertedExp)*SignifNum/DenomMax" formula
-		//Unless InvertedExp==256 and SignifNum==0, in which case the value is at zero
-		unsigned char InvertedExp;
+		//Inverted Exponent Section of Formula Representation
+	    //Refers to Exp inside "1/2^Exp + (1/2^Exp)*SignifNum/DenomMax" formula
+		//Unless Exp==256 and SignifNum==0, in which case the value is at zero
+		unsigned char Exp;
 		/#pragma options align=reset
 		
 		static unsigned char ZeroRep = 256;
@@ -104,7 +105,7 @@ protected:
         RestrictedFloat(unsigned short signifNum=0, unsigned char exponent=ZeroRep)
         {
             SignifNum = signifNum;
-            InvertedExp = exponent;
+            Exp = exponent;
         }
     #else
         /// <summary>
@@ -113,20 +114,20 @@ protected:
         RestrictedFloat(unsigned int signifNum=0, unsigned char exponent=ZeroRep)
         {
             SignifNum = signifNum;
-            InvertedExp = exponent;
+            Exp = exponent;
         }
     #endif
 	
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return SignifNum==0&&InvertedExp==256;
+            return SignifNum==0&&Exp==256;
 		}
 	
         //Detect if at exactly one
 		bool IsOne()
 		{
-            return SignifNum==0&&InvertedExp==OneRep;
+            return SignifNum==0&&Exp==OneRep;
 		}
 	
         void SetAsNegativeOne()
@@ -142,7 +143,7 @@ protected:
         void SetAsSmallestNonZero()
         {
             SignifNum = 0;
-            InvertedExp = 255;
+            Exp = 255;
         }
 		
     #pragma region ValueDefines
@@ -169,19 +170,19 @@ protected:
 	#pragma endregion ValueDefines
 public:
 
-		//Outputs string in "2^Exponent + SignifNum*(2^(Exponent - DenomMaxExponent))" format 
+		//Outputs string in "1/2^Exp + (1/2^Exp)*SignifNum/DenomMax" format 
 		std::string ToFormulaFormat()
 		{
 			if(IsZero())
 				return "0";
-			unsigned int InvertedExpMult = InvertedExp + DenomMaxExponent;
+			unsigned int ExpMult = Exp + DenomMaxExponent;
 			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExp;
+            outputStr += (std::string)Exp;
             outputStr += " + ";
             outputStr += (std::string)SignifNum;
             outputStr += " * ";
 			string outputStr = "1/2^"
-            outputStr += (std::string)InvertedExpMult;
+            outputStr += (std::string)ExpMult;
 		}
 
 		//Outputs string in digit display format 
@@ -196,20 +197,39 @@ public:
 		}
 
     #pragma region Comparison Operators
-    std::strong_ordering operator<=>(const RestrictedFloat& that) const
+    std::strong_ordering operator<=>(const AltFloat& that) const
     {
-		//To-Do:Add code here
-			
+		//"1/2^Exp + (1/2^Exp)*SignifNum/DenomMax"
+		
+		//The Largest Exponent is the closest to zero(256 is exactly at zero)
+		//Inverting comparison to make let spaceship operator compare in correct order
+		unsigned int lVal = Exp==ZeroRep?0:255-Exp;
+		unsigned int rVal = that.Exp==ZeroRep?0:255-that.Exp;
+        if (auto ExponentCmp = lVal <=> rVal; ExponentCmp != 0)
+			return ExponentCmp;
+        if (auto SignifFracCmp = SignifNum.Value <=> that.SignifNum.Value; SignifFracCmp != 0)
+			return SignifFracCmp;
+    }
+	
+    bool operator==(const AltFloat& that) const
+    {
+		if (SignifNum!=that.SignifNum)
+            return false;
+        if (Exponent!=that.Exponent)
+            return false;
+		return true;
+    }
+	
+    auto operator<=>(const int& that) const
+    {
+		rVal = (AltFloat)that;
+		return this <=> rValue;
     }
 
     bool operator==(const int& that) const
     {
-		//To-Do:Add code here
-    }
-	
-    bool operator==(const RestrictedFloat& that) const
-    {
-		//To-Do:Add code here
+		rVal = (AltFloat)that;
+		return this==rValue;
     }
 
     #pragma endregion Comparison Operators
