@@ -35,7 +35,11 @@
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
-
+/*
+  Using
+  constexpr auto Function = MediumDecBase::Function;
+  to reference functions from base class
+*/
 namespace BlazesRusCode
 {
 
@@ -55,7 +59,11 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDec(const int& intVal, const signed int& decVal = 0)
+#if defined(AltNum_UseIntForDecimalHalf)
+        MediumDec(const int& intVal = 0, const signed int& decVal = 0)
+#else
+        MediumDec(const int& intVal = 0, const PartialInt& decVal = 0)
+#endif
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -72,6 +80,15 @@ namespace BlazesRusCode
             return *this;
         } const
 
+        //Is at either zero or negative zero IntHalf of AltNum
+        constexpr auto IsAtZeroInt = MediumDecBase::IsAtZeroInt;
+
+        //alias function
+        constexpr auto IsNotAtZeroInt = MediumDecBase::IsNotAtZeroInt;
+
+        //Detect if at exactly zero
+        constexpr auto IsZero = MediumDecBase::IsZero;
+
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -81,6 +98,15 @@ namespace BlazesRusCode
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
         }
+
+        //SetAsZero C++14 alias function
+        constexpr auto SetAsZero = MediumDecBase::SetAsZero;
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        constexpr auto SwapNegativeStatus = MediumDecBase::SwapNegativeStatus;
+
 
     #pragma region Const Representation values
     //Variables for this section stored inside derivable base class
@@ -233,9 +259,28 @@ namespace BlazesRusCode
 			}
 		}
 
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        constexpr auto GetRepType = MediumDecBase::GetRepType;
+
     #pragma endregion RepType
 
 public:
+    #pragma region RangeLimits
+
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        constexpr auto SetAsMaximum = MediumDecBase::SetAsMaximum;
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        constexpr auto SetAsMinimum = MediumDecBase::SetAsMinimum;
+
+    #pragma endregion RangeLimits
+
 	#pragma region PiNum Setters
 	//Not used for this variant
 	#pragma endregion PiNum Setters
@@ -253,11 +298,11 @@ public:
 	#pragma endregion MixedFrac Setters
 		
 	#pragma region Infinity Setters
-	//Stored in Base Class
+	//Not used for this variant
 	#pragma endregion Infinity Setters
 	
 	#pragma region ApproachingZero Setters
-	//Stored in Base Class
+	//Not used for this variant
 	#pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters

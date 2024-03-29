@@ -185,7 +185,8 @@ namespace BlazesRusCode
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(MediumDecBase Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void SetVal(VariantType Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
@@ -354,6 +355,9 @@ namespace BlazesRusCode
 
     #pragma endregion RepType
 
+public:
+    #pragma region RangeLimits
+
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
@@ -370,28 +374,30 @@ namespace BlazesRusCode
             IntValue = -2147483647; DecimalHalf = 999999999;
         }
 	
+    #pragma endregion RangeLimits
+
 	#pragma region PiNum Setters
-	//Not used for this variant
+	//Not used for this variant(Used in MediumDecBaseV2 and others)
 	#pragma endregion PiNum Setters
 
 	#pragma region ENum Setters
-	//Not used for this variant
+	//Not used for this variant(Used in MediumDecBaseV2 and others)
 	#pragma endregion ENum Setters
 
 	#pragma region Fractional Setters
-	//Not used for this variant
+	//Not used for this variant(Used in AltDecBase and others)
 	#pragma endregion Fractional Setters
         
 	#pragma region MixedFrac Setters
-	//Not used for this variant
+	//Not used for this variant(Used in AltDecBase and others)
 	#pragma endregion MixedFrac Setters
 		
 	#pragma region Infinity Setters
-	//Not used for this variant
+	//Not used for this variant(Used in MediumDecBaseV2 and others)
 	#pragma endregion Infinity Setters
 	
 	#pragma region ApproachingZero Setters
-	//Not used for this variant
+	//Not used for this variant(Used in MediumDecBaseV2 and others)
 	#pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
@@ -409,7 +415,7 @@ namespace BlazesRusCode
 	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
-	//Stored inside Actual MediumDecBase class to prevent deriving statics
+	//Stored inside Actual MediumDec class to prevent deriving statics
     #pragma endregion ValueDefines
 
     #pragma region String Commands
