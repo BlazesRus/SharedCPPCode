@@ -38,6 +38,8 @@ AltNum_EnableAlternativeModulusResult
 
 //"Not used for this variant" comment used as placeholder
 // between unused regions to help with code compare between variants and keep structure similar
+//Use  template<MediumDecVariant VariantType=MediumDecBase>
+//to template functions for reuse with VariantTypes
 
 namespace BlazesRusCode
 {
@@ -84,15 +86,6 @@ namespace BlazesRusCode
 	}
 #endif
 	public:
-#if defined(AltNum_EnableAlternativeModulusResult)
-		class ModRes
-		{
-			//Division Result
-			MediumDecBaseVariant DivRes;
-			//Modulo Operation Result
-			MediumDecBaseVariant RemRes;
-		}
-#endif
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -118,14 +111,13 @@ namespace BlazesRusCode
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        static MirroredInt NegativeRep;
-        static signed int const NegativeRepVal = MirroredInt::NegativeRep;
+        static signed int const NegativeRep = -2147483648;
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        MirroredInt IntValue;
+        signed int IntValue;
 
         signed int GetIntHalf()
         {
@@ -140,16 +132,24 @@ namespace BlazesRusCode
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
+#if defined(AltNum_UseIntForDecimalHalf)
         signed int DecimalHalf;
+#else
+        PartialInt DecimalHalf;
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDecBase(int intVal, signed int decVal = 0)
+#if defined(AltNum_UseIntForDecimalHalf)
+        MediumDecBase(const int& intVal = 0, const signed int& decVal = 0)
+#else
+        MediumDecBase(const int& intVal = 0, const PartialInt& decVal = 0)
+#endif
         {
-            IntValue.Value = intVal;
+            IntValue = intVal;
             DecimalHalf = decVal;
         }
 
@@ -165,12 +165,12 @@ namespace BlazesRusCode
         } const
 
         //Is at either zero or negative zero IntHalf of AltNum
-        virtual bool IsAtZeroInt()
+        bool IsAtZeroInt()
         {
             return IntValue==0||IntValue==NegativeRep;
         }
 
-        virtual bool IsNotAtZeroInt()
+        bool IsNotAtZeroInt()
         {
             return IntValue != 0 && IntValue != NegativeRep;
         }
