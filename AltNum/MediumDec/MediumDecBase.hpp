@@ -835,11 +835,6 @@ public:
 		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
         void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
 
-		static void PartialDivOp(MediumDecBase& self, signed int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDecBase& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDecBase& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(MediumDecBase& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
-
 		MediumDecBase PartialDiv(signed int Value)
         { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
 		MediumDecBase PartialDiv(unsigned int Value)
@@ -849,10 +844,6 @@ public:
         MediumDecBase PartialDiv(unsigned long long Value)
         { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
 
-		static MediumDecBase PartialDiv(MediumDecBase& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDecBase PartialDiv(MediumDecBase& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDecBase PartialDiv(MediumDecBase& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static MediumDecBase PartialDiv(MediumDecBase& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
         template<typename IntType>

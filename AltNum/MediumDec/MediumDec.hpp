@@ -499,12 +499,6 @@ public:
         /// <returns>MediumDec</returns>
         static MediumDec ENum;
         
-#if defined(AltNum_EnableInfinityRep)
-        static MediumDec Infinity;
-        static MediumDec NegativeInfinity;
-        static MediumDec ApproachingZero;
-#endif
-        
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) Representation
         /// </summary>
@@ -778,6 +772,17 @@ public:
 
 	protected:
 	#pragma region Division Operations
+
+		static void PartialDivOp(MediumDecBase& self, signed int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(MediumDecBase& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(MediumDecBase& self, signed long long& Value) { self.PartialIntDivOp(Value); }
+        static void PartialDivOp(MediumDecBase& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+
+		static MediumDecBase PartialDiv(MediumDecBase& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
+		static MediumDecBase PartialDiv(MediumDecBase& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
+		static MediumDecBase PartialDiv(MediumDecBase& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
+        static MediumDecBase PartialDiv(MediumDecBase& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+
 
         /// <summary>
         /// Division Operation
