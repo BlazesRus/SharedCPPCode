@@ -69,11 +69,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(AltNum_UseIntForDecimalHalf)
-        MediumDec(const int& intVal = 0, const signed int& decVal = 0)
-#else
-        MediumDec(const int& intVal = 0, const PartialInt& decVal = 0)
-#endif
+        MediumDec(const IntHalfType& intVal = 0, const DecimalHalfType& decVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -109,7 +105,6 @@ namespace BlazesRusCode
             DecimalHalf = Value.DecimalHalf;
         }
 
-        //SetAsZero C++14 alias function
         constexpr auto SetAsZero = MediumDecBase::SetAsZero;
 
         /// <summary>

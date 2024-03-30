@@ -29,8 +29,6 @@
 
 #include "AltNumModChecker.hpp"
 
-#include "MirroredInt.hpp"
-
 /*
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
@@ -43,38 +41,6 @@ AltNum_EnableAlternativeModulusResult
 
 namespace BlazesRusCode
 {
-#if !defined(AltNum_UseIntForDecimalHalf)
-	struct PartialInt {
-	#pragma options align=bit_packed
-	//Stores Digits XXX XXX XXX
-	unsigned int Value:30;
-	//Can store up to 4 Flag states including normal state at 0
-	unsigned int Flags:2;
-	#pragma options align=reset
-		PartialInt(unsigned int value=0, unsigned int flags=0)
-		{
-			Value = value;
-			Flags = flags;
-		}
-	};
-#endif
-
-#if defined(AltNum_EnableMirroredIntV2)
-	struct MirroredIntV2 {
-	#pragma options align=bit_packed
-	//If value is one then is negative
-	unsigned int IsNegative:1;
-	//Stores non-signed part of value
-	unsigned int Value:31;
-	#pragma options align=reset
-		MirroredIntV2(unsigned int value=0, unsigned int isNegative=0)
-		{
-			Value = value;
-			IsNegative = isNegative;
-		}
-	};
-#endif
-
     class MediumDecBase;
 
 /*---Accuracy Tests(with MediumDecBase based settings):
@@ -127,47 +93,48 @@ namespace BlazesRusCode
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
+	#if defined(AltNum_EnableMirroredIntV2)
+        static MirroredIntV2 const NegativeRep = MirroredIntV2(0,1);
+	#else
         static signed int const NegativeRep = -2147483648;
+	#endif
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-#if defined(AltNum_UseIntForDecimalHalf)
-        MirroredIntV2 IntHalf;
-#else
-        signed int IntHalf;
-#endif
+        IntHalfType IntHalf;
 
+		//Return IntHalf as signed int
         signed int GetIntHalf()
         {
-            return IntValue.GetValue();
+	#if defined(AltNum_EnableMirroredIntV2)
+			return IntValue.IsNegative==1?((signed int)IntValue.Value)*-1:(signed int)IntValue.Value;
+	#else
+            return IntValue;
+	#endif
         }
 
         bool IsNegative()
         {
-            return IntValue.IsNegative();
+	#if defined(AltNum_EnableMirroredIntV2)
+            return IntValue.IsNegative==1;
+	#else
+			return IntValue<0;
+	#endif
         }
 
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
-#if defined(AltNum_UseIntForDecimalHalf)
-        signed int DecimalHalf;
-#else
-        PartialInt DecimalHalf;
-#endif
+        DecimalHalfType DecimalHalf;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(AltNum_UseIntForDecimalHalf)
-        MediumDecBase(const int& intVal = 0, const signed int& decVal = 0)
-#else
-        MediumDecBase(const int& intVal = 0, const PartialInt& decVal = 0)
-#endif
+        MediumDecBase(const IntHalfType& intVal = 0, const DecimalHalfType& decVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;

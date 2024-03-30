@@ -53,15 +53,15 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDecV2(const int& intVal, const signed int& decVal = 0)
+        MediumDecV2Base(const IntHalfType& intVal, const DecimalHalfType& decVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
         }
 
-        MediumDecV2(const MediumDecV2Base&) = default;
+        MediumDecV2Base(const MediumDecV2Base&) = default;
 
-        MediumDecV2& operator=(const MediumDecV2& rhs)
+        MediumDecV2Base& operator=(const MediumDecV2Base& rhs)
         {
             // Check for self-assignment
             if (this == &rhs)      // Same object?
@@ -70,28 +70,140 @@ namespace BlazesRusCode
             return *this;
         } const
 
+        //Is at either zero or negative zero IntHalf of AltNum
+        constexpr auto IsAtZeroInt = MediumDecBase::IsAtZeroInt;
+
+        //alias function
+        constexpr auto IsNotAtZeroInt = MediumDecBase::IsNotAtZeroInt;
+
+        //Detect if at exactly zero
+        constexpr auto IsZero = MediumDecBase::IsZero;
+
+/*
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void SetVal(VariantType Value)
+        {
+            IntValue = Value.IntValue;
+            DecimalHalf = Value.DecimalHalf;
+        }*/
+
+
+        constexpr auto SetAsZero = MediumDecBase::SetAsZero;
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        constexpr auto SwapNegativeStatus = MediumDecBase::SwapNegativeStatus;
+
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
 
     #pragma region RepType
-    //Most of these are defined inside MediumDecBase (except for static function)
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        virtual RepType const GetRepType()
+        {
+#if !defined(AltNum_UseIntForDecimalHalf)
+            if(DecimalHalf.Flag==0)
+			{
+                return RepType::NormalType;
+			}
+    #if defined(MediumDecV2_EnablePiRep)
+            else if(DecimalHalf.Flag==1)
+				return RepType::PiNum;
+    #endif
+    #if defined(MediumDecV2_EnableERep)
+            else if(DecimalHalf.Flag==2)
+				return RepType::ENum;
+    #endif
+	#if defined(MediumDecV2_EnableImaginaryNum)
+            else if(DecimalHalf.Flag==3)
+				return RepType::INum;
+	#endif
+	#if defined(MediumDecV2_EnableUndefinedButInRange)//Such as result of Cos of infinity
+           else if(DecimalHalf.Flag==3)
+		#if defined(MediumDecV2_EnableWithinMinMaxRange)
+				//If IntValue==NegativeRep, then left side range value equals negative infinity
+				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
+				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
+		#else
+				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
+                return RepType::UndefinedButInRange;
+		#endif
+	#endif
+	#if defined(MediumDecV2_EnableNaN)
+			else if(DecimalHalf==NaNRep)
+				return RepType::NaN;
+			else if(DecimalHalf==UndefinedRep)
+				return RepType::Undefined;
+	#endif
+            else
+				throw "Unknown or non-enabled representation type detected";
+#else//Using signed int
+	//Only supports NormalType, Infinity, and approaching value types
+#endif
+            return RepType::UnknownType;//Catch-All Value;
+        }
+
     #pragma endregion RepType
 
-    #pragma region PiNum Setters
+public:
+    #pragma region RangeLimits
 
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        constexpr auto SetAsMaximum = MediumDecBase::SetAsMaximum;
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        constexpr auto SetAsMinimum = MediumDecBase::SetAsMinimum;
+
+    #pragma endregion RangeLimits
+
+    #pragma region PiNum Setters
+    #if defined(MediumDecV2_EnablePiRep)
+        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        virtual void SetPiVal(const MediumDecBaseV2& Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+        }
+        
+        virtual void SetPiValFromInt(int Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
+        }
+    #endif
     #pragma endregion PiNum Setters
 
     #pragma region ENum Setters
-
+    #if defined(MediumDecV2_EnableERep)
+        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        virtual void SetEVal(const MediumDecBaseV2& Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+        }
+        
+        virtual void SetEValFromInt(int Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
+        }
+    #endif
     #pragma endregion ENum Setters
 
     #pragma region Fractional Setters
-
+	//Not used for this variant(Used in AltDecBase and others)
     #pragma endregion Fractional Setters
     
     #pragma region MixedFrac Setters
-
+	//Not used for this variant(Used in AltDecBase and others)
     #pragma endregion MixedFrac Setters
 
     #pragma region Infinity Setters
