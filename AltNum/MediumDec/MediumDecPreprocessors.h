@@ -11,4 +11,18 @@ AltNum_EnableAlternativeModulusResult
 AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf
 	(uses old behavior); Disabled for now(forcing usage of bitfield instead)
 AltNum_EnableMirroredIntV2 = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
+IntHalfType
 */
+#if defined(AltNum_EnableMirroredIntV2)
+	#include "MirroredIntV2.hpp"
+	#define IntHalfType MirroredIntV2
+#else
+	#define IntHalfType signed int
+#endif
+
+#if defined(AltNum_UseIntForDecimalHalf)
+	#define DecimalHalfType signed int
+#else
+	#include "PartialInt.hpp"
+	#define DecimalHalfType PartialInt
+#endif
