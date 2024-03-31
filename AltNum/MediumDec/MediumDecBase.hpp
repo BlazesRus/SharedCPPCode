@@ -33,6 +33,7 @@
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
+#include "MediumDecPreprocessors.h"
 
 //"Not used for this variant" comment used as placeholder
 // between unused regions to help with code compare between variants and keep structure similar
@@ -154,12 +155,20 @@ namespace BlazesRusCode
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
+	#if defined(AltNum_EnableMirroredIntV2)
+            return IntValue.Value==0;
+    #else
             return IntValue==0||IntValue==NegativeRep;
+    #endif
         }
 
         bool IsNotAtZeroInt()
         {
+	#if defined(AltNum_EnableMirroredIntV2)
+            return IntValue.Value!=0;
+    #else
             return IntValue != 0 && IntValue != NegativeRep;
+    #endif
         }
 
         //Detect if at exactly zero
@@ -190,6 +199,9 @@ namespace BlazesRusCode
         /// </summary>
         void SwapNegativeStatus()
         {
+	#if defined(AltNum_EnableMirroredIntV2)
+            IntValue.IsNegative ^= 1;
+    #else
             if (IntValue == NegativeRep)
             {
                 IntValue = 0;
@@ -202,6 +214,7 @@ namespace BlazesRusCode
             {
                 IntValue *= -1;
             }
+    #endif
         }
 
     #pragma region Const Representation values
@@ -213,7 +226,7 @@ namespace BlazesRusCode
         static const signed int UndefinedRep = 2147483646;
 	#endif
 
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         //When both IntValue and DecimalHalf equal -2147483648 it is Nil
         static signed int const NilRep = -2147483648;
     #endif
@@ -326,7 +339,7 @@ namespace BlazesRusCode
 			WithinMinMaxRange = 136,
 		//#endif
 	//#endif
-    //#if defined(AltNum_EnableNilRep)
+    //#if defined(AltNum_EnableNil)
             Nil,
     //#endif
             UnknownType
@@ -370,6 +383,10 @@ public:
 	#pragma region ENum Setters
 	//Not used for this variant(Used in MediumDecBaseV2 and others)
 	#pragma endregion ENum Setters
+
+    #pragma region INum Setters
+    //Not used for this variant(Used in MediumDecBaseV2 and others)
+    #pragma endregion INum Setters
 
 	#pragma region Fractional Setters
 	//Not used for this variant(Used in AltDecBase and others)
@@ -3270,7 +3287,7 @@ public:
     MediumDecBase MediumDecBase::FiveMillionth = FiveMillionthValue();
     MediumDecBase MediumDecBase::FiveBillionth = FiveBillionthValue();
     MediumDecBase MediumDecBase::OneGMillionth = OneHundredMillionthValue();
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
     MediumDecBase MediumDecBase::Nil = NilValue();
     #endif
 
@@ -3576,7 +3593,7 @@ public:
             break;
         #endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         case RepType::Nil:
             return "Nil";
     #endif
@@ -3800,7 +3817,7 @@ public:
             break;
         #endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         case RepType::Nil:
             return "Nil";
     #endif

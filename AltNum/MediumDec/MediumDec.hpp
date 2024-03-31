@@ -255,7 +255,7 @@ namespace BlazesRusCode
 					return "WithinMinMaxRange"; break;
 		#endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
 				case RepType::Nil:
 					return "Nil"; break;
     #endif
@@ -471,7 +471,7 @@ public:
             return MediumDec(0, 868588964);
         }
         
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         static MediumDec NilValue()
         {
             return MediumDec(NilRep, NilRep);
@@ -614,7 +614,7 @@ public:
         /// </summary>
         static MediumDec HalfLN10Mult;
 
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>

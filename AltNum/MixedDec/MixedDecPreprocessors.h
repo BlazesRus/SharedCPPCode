@@ -113,7 +113,7 @@ If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled
             #define MixedDec_EnableWithinMinMaxRange
         #endif
     #endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         #define MixedDec_EnableNilRep
     #endif
 #elif defined(MixedDec_DeriveFromFlaggedDec)

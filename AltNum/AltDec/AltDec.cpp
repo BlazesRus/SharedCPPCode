@@ -28,7 +28,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
     AltDec AltDec::FiveMillionth = AltDec::FiveMillionthValue();
     AltDec AltDec::FiveBillionth = AltDec::FiveBillionthValue();
     AltDec AltDec::OneGMillionth = AltDec::OneHundredMillionthValue();
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
     AltDec AltDec::Nil = AltDec::NilValue();
     #endif
 

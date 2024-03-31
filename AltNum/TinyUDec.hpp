@@ -357,7 +357,7 @@ namespace BlazesRusCode
             return TinyUDec(0, 868588964);
         }
         
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         static TinyUDec NilValue()
         {
             return TinyUDec(NilRep, NilRep);
@@ -506,7 +506,7 @@ public:
         /// </summary>
         static TinyUDec HalfLN10Mult;
 
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
@@ -4107,7 +4107,7 @@ public:
     TinyUDec TinyUDec::FiveMillionth = FiveMillionthValue();
     TinyUDec TinyUDec::FiveBillionth = FiveBillionthValue();
     TinyUDec TinyUDec::OneGMillionth = OneHundredMillionthValue();
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
     TinyUDec TinyUDec::Nil = NilValue();
     #endif
 
@@ -4413,7 +4413,7 @@ public:
             break;
         #endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         case RepType::Nil:
             return "Nil";
     #endif
@@ -4637,7 +4637,7 @@ public:
             break;
         #endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         case RepType::Nil:
             return "Nil";
     #endif

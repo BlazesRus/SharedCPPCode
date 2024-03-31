@@ -28,7 +28,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
     AltDecBase AltDecBase::FiveMillionth = AltDecBase::FiveMillionthValue();
     AltDecBase AltDecBase::FiveBillionth = AltDecBase::FiveBillionthValue();
     AltDecBase AltDecBase::OneGMillionth = AltDecBase::OneHundredMillionthValue();
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
     AltDecBase AltDecBase::Nil = AltDecBase::NilValue();
     #endif
 
@@ -309,7 +309,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 break;
             #endif
         #endif
-        #if defined(AltNum_EnableNilRep)
+        #if defined(AltNum_EnableNil)
             case RepType::Nil:
                 return "Nil"; break;
         #endif
@@ -573,7 +573,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 			#endif
 		#endif
-		#if defined(AltNum_EnableNilRep)
+		#if defined(AltNum_EnableNil)
 			case RepType::Nil:
 				return "Nil"; break;
 		#endif

@@ -14,14 +14,10 @@ AltNum_EnableFractionals =
       (Enables PiFractional, EFractional, and IFractional depending on other preprocessor flags)
 
 //--Infinity based preprocessors--
-AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
-      When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
 AltNum_EnableApproachingValues
+	Depreciated Defined Values:
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
-AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
-AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
-AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
 AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
 	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
@@ -60,6 +56,7 @@ AltNum_DisablePiRep =
       are set by preprocessor settings of project
 
 AltNum_EnablePiRep =
+	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If AltNum_UseAltDecBasedRepresentations enabled, then
       Pi*(+- 2147483647.999999999) Representation enabled
         (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*Pi))
@@ -82,7 +79,8 @@ AltNum_EnableMixedFractional =
       then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
       (Not Fully Implemented)
 
-      AltNum_EnableERep =
+AltNum_EnableERep =
+	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If AltNum_UseAltDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
     (When DecimalHalf is between -1000000001 and -2000000000 (when DecimalHalf is -2000000000 is Equal to IntValue*e))
@@ -94,6 +92,7 @@ AltNum_EnableMixedFractional =
         (Not Fully Implemented)
 
 AltNum_EnableImaginaryNum =
+	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If DecimalHalf is positive and ExtraRep is -2147483647, then
       represents +- 2147483647.999999999i
       If DecimalHalf is positive and ExtraRep is between AlternativeFractionalLowerBound and 0, then
@@ -150,7 +149,7 @@ AltNum_EnableMixedIFractional
 Auto toggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
 Auto toggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
 
-AltNum_EnableNilRep = Enables Nil representation(detection not in code right now)
+AltNum_EnableNil = Enables Nil representation(detection not in code right now)
 
 
 AltNum_EnableUndefinedButInRange = Enable representation of unknown number between -Value and +Value for Cos of infinity etc

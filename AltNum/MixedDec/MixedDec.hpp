@@ -1076,7 +1076,7 @@ public:
             return MixedDec(0, 868588964);
         }
         
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         static MixedDec NilValue()
         {
             return MixedDec(NilRep, NilRep);
@@ -1225,7 +1225,7 @@ public:
         /// </summary>
         static MixedDec HalfLN10Mult;
 
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>

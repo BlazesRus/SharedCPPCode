@@ -262,7 +262,7 @@ namespace BlazesRusCode
         //Is NaN when DecimalHalf==2147483646
         static const signed int UndefinedRep = 2147483646;
     #endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         //When both IntValue and DecimalHalf equal -2147483648 it is Nil
         static signed int const NilRep = -2147483648;
     #endif
@@ -454,7 +454,7 @@ namespace BlazesRusCode
 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange = 130,//(Enum Bits:8, 2)
 #endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
             Nil = 131,
     #endif
             UnknownType = 132
@@ -582,7 +582,7 @@ namespace BlazesRusCode
 					return "WithinMinMaxRange"; break;
 		#endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
 				case RepType::Nil:
 					return "Nil"; break;
     #endif
@@ -1273,7 +1273,7 @@ namespace BlazesRusCode
             return FlaggedDec(0, 868588964);
         }
         
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         static FlaggedDec NilValue()
         {
             return FlaggedDec(NilRep, NilRep);
@@ -1422,7 +1422,7 @@ public:
         /// </summary>
         static FlaggedDec HalfLN10Mult;
 
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         /// <summary>
         /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
         /// </summary>
@@ -2905,7 +2905,7 @@ public:
                 break;
 		}
 #endif
-#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> that; IntHalfCmp != 0)
             return IntHalfCmp;
         return (std::strong_ordering)LValue.DecimalHalf <=> 0;
@@ -3020,7 +3020,7 @@ public:
                 return std::partial_ordering::unordered;
         }
 #endif
-#if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+#if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
             return IntHalfCmp;
         std::strong_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf;
@@ -3169,7 +3169,7 @@ public:
             default:
 #endif
                 RValue.ConvertToNormType(RRep);
-#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
                 break;
 		}
 #endif
