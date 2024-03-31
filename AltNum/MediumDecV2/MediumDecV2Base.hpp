@@ -198,6 +198,21 @@ public:
     #endif
     #pragma endregion ENum Setters
 
+    #pragma region INum Setters
+    #if defined(MediumDecV2_EnableIRep)
+        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        virtual void SetIVal(const MediumDecBaseV2& Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+        }
+        
+        virtual void SetIValFromInt(int Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
+        }
+    #endif
+    #pragma endregion INum Setters
+
     #pragma region Fractional Setters
 	//Not used for this variant(Used in AltDecBase and others)
     #pragma endregion Fractional Setters
@@ -207,15 +222,62 @@ public:
     #pragma endregion MixedFrac Setters
 
     #pragma region Infinity Setters
+    //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
+    // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
+    #if defined(AltNum_EnableInfinityRep)
+        void SetAsInfinity()
+        {
+	#if defined(AltNum_EnableMirroredIntV2)
+            IntValue.IsNegative = 0; DecimalHalf = InfinityRep;
+    #else
+            IntValue = 1; DecimalHalf = InfinityRep;
+    #endif
+        }
 
+        void SetAsNegativeInfinity()
+        {
+	#if defined(AltNum_EnableMirroredIntV2)
+            IntValue.IsNegative = 1; DecimalHalf = InfinityRep;
+    #else
+            IntValue = -1; DecimalHalf = InfinityRep;
+    #endif
+        }
+	#endif
     #pragma endregion Infinity Setters
 
     #pragma region ApproachingZero Setters
+	#if defined(AltNum_EnableApproachingValues)
 
+		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
+        //Approaching Towards values from right to left side(IntValue.000...1)
+        void SetAsApproachingBottom(int value=0)
+        {
+            IntValue = value; DecimalHalf = ApproachingBottomRep;
+        }
+
+		#if !defined(AltNum_DisableApproachingTop)
+		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
+        void SetAsApproachingTop(int value)
+        {
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+        }
+        #endif
+    #endif
     #pragma endregion ApproachingZero Setters
 
     #pragma region NaN Setters
+	#if defined(AltNum_EnableNaN)
+        void SetAsNaN()
+        {
+            IntValue = 0; DecimalHalf = NaNRep;
+        }
 
+        void SetAsUndefined()
+        {
+            IntValue = 0; DecimalHalf = UndefinedRep;
+        }
+	#endif
     #pragma endregion NaN Setters
 
     #pragma region ValueDefines

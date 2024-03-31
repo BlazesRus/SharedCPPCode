@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -42,3 +42,7 @@ MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDec
 	#define MediumDecV2_EnableIRep
 #endif
 
+#if defined(MediumDecV2_EnableDefaultSettings)
+	#define MediumDecV2_EnablePiRep
+	#define MediumDecV2_EnableERep
+#endif
