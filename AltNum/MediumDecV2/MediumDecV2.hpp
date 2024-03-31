@@ -218,7 +218,7 @@ namespace BlazesRusCode
 					return "WithinMinMaxRange"; break;
 		#endif
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
 				case RepType::Nil:
 					return "Nil"; break;
     #endif

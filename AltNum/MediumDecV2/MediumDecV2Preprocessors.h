@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -25,6 +25,8 @@ AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based v
 
 MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 
+AltNum_EnableApproachingValues
+
 */
 
 #if defined(AltNum_EnablePiRep)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnablePiRep)
@@ -37,12 +39,24 @@ MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDec
 	#define MediumDecV2_EnableERep
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnableUndefinedButInRange)&&!defined(MediumDecV2_EnableIRep)
-	//Only Enable E if Partial Int is used(Is a E representation when DecimalHalf.Flag==2)
+#if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnableWithinMinMaxRange)&&!defined(MediumDecV2_EnableIRep)
+	//Don't enable if MediumDecV2_EnableWithinMinMaxRange is toggled (because uses flag 3)
 	#define MediumDecV2_EnableIRep
 #endif
 
-#if defined(MediumDecV2_EnableDefaultSettings)
+#if defined(MediumDecV2_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
 	#define MediumDecV2_EnablePiRep
 	#define MediumDecV2_EnableERep
+#endif
+
+#if defined(MediumDecV2_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingPi)
+	#define MediumDecV2_EnableApproachingPi
+#endif
+
+#if defined(MediumDecV2_EnableERep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingE)
+	#define MediumDecV2_EnableApproachingE
+#endif
+
+#if defined(MediumDecV2_EnableIRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingI)
+	#define MediumDecV2_EnableApproachingI
 #endif

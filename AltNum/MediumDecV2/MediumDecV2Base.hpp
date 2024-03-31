@@ -100,7 +100,62 @@ namespace BlazesRusCode
         constexpr auto SwapNegativeStatus = MediumDecBase::SwapNegativeStatus;
 
     #pragma region Const Representation values
-
+    protected:
+	#if defined(AltNum_EnableInfinityRep)
+        //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int InfinityRep = -2147483648;
+		#else
+		static const unsigned int InfinityRep = 1073741824;
+		#endif
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int ApproachingBottomRep = -2147483647;
+		#else
+        static const unsigned int ApproachingBottomRep = 1073741823;
+		#endif
+        //When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)
+		#if defined(AltNum_UseIntForDecimalHalf)
+		static const signed int ApproachingTopRep = -2147483646;
+		#else
+		static const unsigned int ApproachingTopRep = 1073741822;
+		#endif
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)
+		//When DecimalHalf is at this value, than value is undefined but within real number range
+		//Such as result of Cos of infinity
+		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int UndefinedInRangeRep = -2147483642;
+		#else
+        static const unsigned int UndefinedInRangeRep = 1073741821;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf is at this value
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int NaNRep = 2147483647;
+		#else
+        static const signed int NaNRep = 1073741820;
+		#endif
+        //Is Undefined when DecimalHalf is at this value
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int UndefinedRep = 2147483646;
+		#else
+        static const signed int UndefinedRep = 1073741819;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNil)
+        //Is defined at empty value when DecimalHalf is at this value
+		#if defined(AltNum_UseIntForDecimalHalf)
+        static const signed int NilRep = 2147483645;
+		#else
+        static const signed int NilRep = 1073741818;
+		#endif
+	#endif
+    public:
     #pragma endregion Const Representation values
 
     #pragma region RepType
@@ -125,24 +180,26 @@ namespace BlazesRusCode
 	#if defined(MediumDecV2_EnableImaginaryNum)
             else if(DecimalHalf.Flag==3)
 				return RepType::INum;
-	#endif
-	#if defined(MediumDecV2_EnableUndefinedButInRange)//Such as result of Cos of infinity
-           else if(DecimalHalf.Flag==3)
-		#if defined(MediumDecV2_EnableWithinMinMaxRange)
+	#elif defined(MediumDecV2_EnableWithinMinMaxRange)
+            else if(DecimalHalf.Flag==3)
 				//If IntValue==NegativeRep, then left side range value equals negative infinity
 				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
 				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
-		#else
+    #endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
 				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
                 return RepType::UndefinedButInRange;
-		#endif
 	#endif
-	#if defined(MediumDecV2_EnableNaN)
+	#if defined(AltNum_EnableNaN)
 			else if(DecimalHalf==NaNRep)
 				return RepType::NaN;
 			else if(DecimalHalf==UndefinedRep)
 				return RepType::Undefined;
 	#endif
+	#if defined(AltNum_EnableNil)
+			else if(DecimalHalf==NilRep)
+				return RepType::Nil;
+    #endif
             else
 				throw "Unknown or non-enabled representation type detected";
 #else//Using signed int

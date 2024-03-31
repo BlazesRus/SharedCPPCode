@@ -28,7 +28,7 @@ using RepType = BlazesRusCode::MediumDecBase::RepType;
     MediumDecV2 MediumDecV2::FiveMillionth = MediumDecV2::FiveMillionthValue();
     MediumDecV2 MediumDecV2::FiveBillionth = MediumDecV2::FiveBillionthValue();
     MediumDecV2 MediumDecV2::OneGMillionth = MediumDecV2::OneHundredMillionthValue();
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
     MediumDecV2 MediumDecV2::Nil = MediumDecV2::NilValue();
     #endif
 

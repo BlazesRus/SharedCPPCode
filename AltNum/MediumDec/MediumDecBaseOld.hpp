@@ -282,7 +282,7 @@ public:
         //Is NaN when DecimalHalf==2147483646
         static const signed int UndefinedRep = 2147483646;
 	#endif
-    #if defined(AltNum_EnableNilRep)
+    #if defined(AltNum_EnableNil)
         //When both IntValue and DecimalHalf equal -2147483648 it is Nil
         static signed int const NilRep = -2147483648;
     #endif
@@ -1069,7 +1069,7 @@ public:
 
     auto operator<=>(const MediumDecBase& that) const
     {
-    #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNilRep)
+    #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::weak_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
             return IntHalfCmp;
         if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)

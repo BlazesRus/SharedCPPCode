@@ -340,9 +340,9 @@ namespace BlazesRusCode
 		//#endif
 	//#endif
     //#if defined(AltNum_EnableNil)
-            Nil,
+            Nil=256,
     //#endif
-            UnknownType
+            UnknownType=257
         };
 
         /// <summary>
