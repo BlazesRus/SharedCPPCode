@@ -320,6 +320,30 @@ public:
             IntValue = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
+		
+		#if defined(MediumDecV2_EnableApproachingPi)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
+        void SetAsApproachingTopPi(int value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
+        }
+		#endif
+		
+		#if defined(MediumDecV2_EnableApproachingE)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
+        void SetAsApproachingTopE(int value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+        }
+		#endif
+		
+		#if defined(MediumDecV2_EnableApproachingI)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
+        void SetAsApproachingTopE(int value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+        }
+		#endif
     #endif
     #pragma endregion ApproachingZero Setters
 
