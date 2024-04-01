@@ -402,45 +402,51 @@ public:
 
     #pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetPiVal(const MediumDecBaseV2& Value)
+        template<MediumDecVariant VariantType=AltDecBase>
+        virtual void SetPiVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            ExtraRep = 0;
         }
         
         virtual void SetPiValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
+            ExtraRep = 0;
         }
     #endif
     #pragma endregion PiNum Setters
 
     #pragma region ENum Setters
     #if defined(AltNum_EnableERep)
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetEVal(const MediumDecBaseV2& Value)
+        template<MediumDecVariant VariantType=AltDecBase>
+        virtual void SetEVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            ExtraRep = 0;
         }
         
         virtual void SetEValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
+            ExtraRep = 0;
         }
     #endif
     #pragma endregion ENum Setters
 
     #pragma region INum Setters
     #if defined(AltNum_EnableIRep)
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetIVal(const MediumDecBaseV2& Value)
+        template<MediumDecVariant VariantType=AltDecBase>
+        virtual void SetIVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            ExtraRep = 0;
         }
         
         virtual void SetIValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
+            ExtraRep = 0;
         }
     #endif
     #pragma endregion INum Setters
@@ -464,6 +470,7 @@ public:
     #else
             IntValue = 1; DecimalHalf = InfinityRep;
     #endif
+            ExtraRep = 0;
         }
 
         void SetAsNegativeInfinity()
@@ -473,6 +480,7 @@ public:
     #else
             IntValue = -1; DecimalHalf = InfinityRep;
     #endif
+            ExtraRep = 0;
         }
 	#endif
     #pragma endregion Infinity Setters
@@ -485,40 +493,88 @@ public:
         void SetAsApproachingBottom(int value=0)
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
-             ExtraRep = 0;
+            ExtraRep = 0;
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-        void SetAsApproachingTop(int value)
+        void SetAsApproachingTop(int value=0)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
-             ExtraRep = 0;
+            ExtraRep = 0;
         }
         #endif
 		
 		#if defined(AltNum_EnableApproachingPi)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
-        void SetAsApproachingTopPi(int value)
+        void SetAsApproachingTopPi(int value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
-             ExtraRep = 0;
+            ExtraRep = 0;
         }
 		#endif
 		
 		#if defined(AltNum_EnableApproachingE)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
-        void SetAsApproachingTopE(int value)
+        void SetAsApproachingTopE(int value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
-             ExtraRep = 0;
+            ExtraRep = 0;
         }
 		#endif
 		
 		#if defined(AltNum_EnableApproachingI)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
-        void SetAsApproachingTopI(int value)
+        void SetAsApproachingTopI(int value=0)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+            ExtraRep = 0;
+        }
+		#endif
+    #endif
+    //Separating into separate methods since second parameter not same as previous virtual function
+    #if defined(AltNum_EnableApproachingDivided)
+
+		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
+        //Approaching Towards values from right to left side(IntValue.000...1)
+        void SetAsApproachingBottomDiv(int value, int divisor)
+        {
+            IntValue = value; DecimalHalf = ApproachingBottomRep;
+             ExtraRep = divisor;
+        }
+
+		#if !defined(AltNum_DisableApproachingTop)
+		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
+        void SetAsApproachingTopDiv(int value, int divisor)
+        {
+            IntValue = value; DecimalHalf = ApproachingTopRep;
+             ExtraRep = divisor;
+        }
+        #endif
+		
+		#if defined(AltNum_EnableApproachingPi)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
+        void SetAsApproachingTopPiDiv(int value, int divisor)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
+             ExtraRep = divisor;
+        }
+		#endif
+		
+		#if defined(AltNum_EnableApproachingE)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
+        void SetAsApproachingTopEDiv(int value, int divisor)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+             ExtraRep = divisor;
+        }
+		#endif
+		
+		#if defined(AltNum_EnableApproachingI)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
+        void SetAsApproachingTopIDiv(int value)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
              ExtraRep = 0;

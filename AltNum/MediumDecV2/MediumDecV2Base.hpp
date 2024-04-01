@@ -218,7 +218,7 @@ public:
     #pragma region PiNum Setters
     #if defined(MediumDecV2_EnablePiRep)
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetPiVal(const MediumDecBaseV2& Value)
+        virtual void SetPiVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
         }
@@ -233,7 +233,7 @@ public:
     #pragma region ENum Setters
     #if defined(MediumDecV2_EnableERep)
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetEVal(const MediumDecBaseV2& Value)
+        virtual void SetEVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
         }
@@ -248,7 +248,7 @@ public:
     #pragma region INum Setters
     #if defined(MediumDecV2_EnableIRep)
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetIVal(const MediumDecBaseV2& Value)
+        virtual void SetIVal(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
         }
