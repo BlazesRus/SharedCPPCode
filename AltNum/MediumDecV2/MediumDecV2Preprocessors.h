@@ -29,6 +29,26 @@ AltNum_EnableApproachingValues
 
 */
 
+//If Pi rep is neither disabled or enabled, default to enabling Pi representation
+#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
+    #define AltNum_EnablePiRep
+#endif
+
+#if defined(MediumDecV2_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
+	#define MediumDecV2_EnablePiRep
+	#define MediumDecV2_EnableERep
+#endif
+
+//Force enable PiRep in derived AltDec if manually toggled for MediumDecV2
+#if defined(MediumDecV2_EnablePiRep) &&!defined(AltNum_EnablePiRep)
+    #define AltNum_EnablePiRep
+#endif
+
+//Force enable ERep in derived AltDec if manually toggled for MediumDecV2
+#if defined(MediumDecV2_EnableERep) &&!defined(AltNum_EnableERep)
+    #define AltNum_EnableERep
+#endif
+
 #if defined(AltNum_EnablePiRep)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnablePiRep)
 	//Only Enable Pi if Partial Int is used(Is a Pi representation when DecimalHalf.Flag==1)
 	#define MediumDecV2_EnablePiRep
@@ -42,11 +62,6 @@ AltNum_EnableApproachingValues
 #if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnableWithinMinMaxRange)&&!defined(MediumDecV2_EnableIRep)
 	//Don't enable if MediumDecV2_EnableWithinMinMaxRange is toggled (because uses flag 3)
 	#define MediumDecV2_EnableIRep
-#endif
-
-#if defined(MediumDecV2_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
-	#define MediumDecV2_EnablePiRep
-	#define MediumDecV2_EnableERep
 #endif
 
 #if defined(MediumDecV2_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingPi)

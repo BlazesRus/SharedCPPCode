@@ -182,15 +182,19 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
     #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)
+#if define(AltNum_EnableIRep)
+	#define AltNum_EnableImaginaryNum
+#endif
+
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 	#define AltNum_EnableDecimaledPiFractionals
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
 	#define AltNum_EnableDecimaledEFractionals
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableIRep)
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)
 	#define AltNum_EnableDecimaledIFractionals
 #endif
 
@@ -206,6 +210,22 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
     #define AltNum_EnableDecimaledAlternativeFractionals
 #endif
 
+#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableMixedPiFractional)
+	#define AltNum_EnableMixedPiFractional
+#endif
+
+#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableMixedEFractional)
+	#define AltNum_EnableMixedEFractional
+#endif
+
+#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableMixedIFractional)
+	#define AltNum_EnableMixedIFractional
+#endif
+
+#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
+    #define AltNum_EnableAlternativeMixedFrac
+#endif
+
 /*
 
 #if defined(AltNum_UseDeveloperExtraDefaults)
@@ -214,11 +234,6 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
     #define AltNum_EnableMixedPiFractional
     #define AltNum_EnableERep
     //#define AltNum_EnableApproachingDivided
-#endif
-
-//If Pi rep is neither disabled or enabled, default to enabling Pi representation
-#if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
 #endif
 
 #if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
