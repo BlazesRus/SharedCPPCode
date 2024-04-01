@@ -7,11 +7,11 @@
 //Preprocessor options
 /*
 AltNum_EnableFractionals =
-      Enables fractional representations in attempt to preserve more accuracy during operations
-      (Enables NumByDiv and other variants of Fractionals if AltNum_EnableAlternativeRepFractionals is enabled at same time)
-      AltNum_EnableAlternativeRepFractionals =
-      Enables integer based fractionals as long as Decimaled version isn't active
-      (Enables PiFractional, EFractional, and IFractional depending on other preprocessor flags)
+	Enables fractional representations in attempt to preserve more accuracy during operations
+	(Enables NumByDiv and other variants of Fractionals if AltNum_EnableAlternativeRepFractionals is enabled at same time)
+AltNum_EnableDecimaledAlternativeFractionals =
+	Automatically toggled if Pi, e, or i features enabled and AltNum_EnableFractionals enabled
+	(Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled)
 
 //--Infinity based preprocessors--
 AltNum_EnableApproachingValues
@@ -69,15 +69,10 @@ AltNum_EnablePiRep =
 
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
-If AltNum_EnableFractionals not enabled, store value as IntValue.DecimalHalf + ExtraRePi
-Otherwise requires AltNum_EnableBasicComplexNumber and ExtraRep value as ?, and stores value as IntValue + DecimalHalfi
-(Might be better to just store as formula class feature or as another number class holding 2 AltDec or other AltNum values)
-      (Requires AltNum_EnableImaginaryNum, Not Implemented)
-
-AltNum_EnableMixedFractional =
-      If DecimalHalf is negative and ExtraRep is Positive,
-      then AltDec represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
-      (Not Fully Implemented)
+	  (Requires ExtraRep.IsNegative not to be used by other values
+If ExtraRep.IsNegative == 1, then represents value as IntValue.DecimalHalf + (ExtraRep.Value i)
+If AltNum_EnableFractionals is disabled and ExtraRep.IsNegative == 0, then represents value as IntValue + (DecimalHalf.(ExtraRep.Value) i)
+(Requires AltNum_EnableImaginaryNum, Not Implemented)
 
 AltNum_EnableERep =
 	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
@@ -110,25 +105,21 @@ AltNum_EnableAutoToggleOfPreferredSettings =
 AltNum_DisableSwitchBasedConversion =
 
 AltNum_EnableAltDecBasedSetValues =
-      
-AltNum_EnableDecimaledAlternativeFractionals = 
-   Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled
-   Not to be confused with AltNum_EnableAlternativeRepFractionals(which only enabled Integer based alternative rep fractionals)
+   
 
----Only one of the next set of 5 switches can be enabled at once:
-AltNum_EnableDecimaledPiFractionals = Enables fractionals for Pi with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledEFractionals = Enables fractionals for e with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
-AltNum_EnableDecimaledIFractionals = Enables fractionals for i with non-integer numbers(not Implemented yet) when ExtraRep is between 0 and AlternativeFractionalLowerBound
+---Only these switches can be enabled at once(when ExtraRep is Negative):
+AltNum_EnablePowerOfRepresentation =
+      Represents IntValue.DecimalHalf^(ExtraRep.Value)
+      (Not Implemented)
+AltNum_EnableMixedFractional =
+      Represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf.Value)/ExtraRep.Value
+      (Not Fully Implemented)
 
+----===============================================================================================================
 AltNum_EnablePiPowers =
       If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
       Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
       (Not Fully Implemented)
-AltNum_EnableNormalPowers =
-      If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf^(ExtraRep*-1)
-      Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals or AltNum_EnablePiPowers
-      (Not Implemented)
-----===============================================================================================================
 
 AltNum_OutputTruncatedTrailingDigits =
     Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
@@ -142,10 +133,6 @@ AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
 AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
 
-Only one of 3 alternative mixed fraction representations can be enabled at a time(use FlaggedDec variant if need all at once):
-AltNum_EnableMixedPiFractional
-AltNum_EnableMixedEFractional
-AltNum_EnableMixedIFractional
 Auto toggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
 Auto toggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
 
@@ -160,10 +147,10 @@ AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
 AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
 AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 
-AltNum_EnablePiFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnablePiRep enabled without AltNum_EnableDecimaledPiFractionals toggled
-AltNum_EnableEFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableERep enabled without AltNum_EnableDecimaledEFractionals toggled
-AltNum_EnableIFractional = Auto toggled if AltNum_EnableAlternativeRepFractionals and AltNum_EnableImaginaryNum enabled without AltNum_EnableDecimaledIFractionals toggled
-AltNum_UsingAltFractional = Auto toggled if any of the above 3 are toggled
+AltNum_EnablePiFractional = Depreciated
+AltNum_EnableEFractional = Depreciated
+AltNum_EnableIFractional = Depreciated
+AltNum_UsingAltFractional = Auto toggled if any of the above 3 are toggled(Depreciated)
 
 AltDec_UseMirroredInt
 AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
@@ -189,11 +176,37 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 #if defined(AltNum_EnableAutoToggleOfPreferedSettings)
     #define AltNum_EnablePiRep
     #define AltNum_EnableInfinityRep
-	#define AltNum_EnableAlternativeRepFractionals
+	#define AltNum_EnableFractionals
     #define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
     #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
 #endif
+
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)
+	#define AltNum_EnableDecimaledPiFractionals
+#endif
+
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)
+	#define AltNum_EnableDecimaledEFractionals
+#endif
+
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableIRep)
+	#define AltNum_EnableDecimaledIFractionals
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledEFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledIFractionals)
+    #define AltNum_EnableDecimaledAlternativeFractionals
+#endif
+
+/*
 
 #if defined(AltNum_UseDeveloperExtraDefaults)
     #define AltNum_EnableImaginaryNum
@@ -345,7 +358,7 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 //Require variables in base to allow functions to be in base class
 #if !defined(AltNum_DisableCommonVariablesInBase)&&defined(AltNum_StoreCommonFunctionsInBase)
     #undef AltNum_StoreCommonFunctionsInBase
-#endif
+#endif*/
 
 #pragma endregion PreprocessorToggles
 

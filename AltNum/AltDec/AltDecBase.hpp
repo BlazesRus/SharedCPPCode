@@ -452,11 +452,15 @@ public:
     #pragma endregion INum Setters
 
     #pragma region Fractional Setters
-	//Not used for this variant(Used in AltDecBase and others)
+
     #pragma endregion Fractional Setters
     
     #pragma region MixedFrac Setters
-	//Not used for this variant(Used in AltDecBase and others)
+    #if defined(AltNum_EnableMixedFractional)
+
+
+
+    #endif
     #pragma endregion MixedFrac Setters
 
     #pragma region Infinity Setters
@@ -577,7 +581,7 @@ public:
         void SetAsApproachingTopIDiv(int value)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
-             ExtraRep = 0;
+             ExtraRep = divisor;
         }
 		#endif
     #endif
