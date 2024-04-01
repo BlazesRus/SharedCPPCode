@@ -313,9 +313,9 @@ public:
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(MixedDec_DontInitializeFromConstRef) && defined(AltNum_EnableMirroredIntV2)
+#if defined(MixedDec_DontInitializeFromConstRef) && defined(AltNum_EnableMirroredSection)
 		MixedDec(MirroredIntV2 intVal,
-#elif defined(AltNum_EnableMirroredIntV2)
+#elif defined(AltNum_EnableMirroredSection)
 		MixedDec(const MirroredIntV2& intVal,
 #elif defined(MixedDec_DontInitializeFromConstRef)
 		MixedDec(signed int intVal,

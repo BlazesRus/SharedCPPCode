@@ -27,7 +27,11 @@
 	#include <boost/multiprecision/cpp_int.hpp>
 #endif
 
-#include "AltNumModChecker.hpp"
+#include <type_traits>
+#include <cstddef>
+#include <concepts>//C++20 feature
+#include <compare>//used for C++20 feature of spaceship operator
+#include "..\AltNumModChecker.hpp"
 
 /*
 AltNum_PreventModulusOverride
@@ -94,7 +98,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
         static MirroredIntV2 const NegativeRep = MirroredIntV2(0,1);
 	#else
         static signed int const NegativeRep = -2147483648;
@@ -109,7 +113,7 @@ namespace BlazesRusCode
 		//Return IntHalf as signed int
         signed int GetIntHalf()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
 			return IntValue.IsNegative==1?((signed int)IntValue.Value)*-1:(signed int)IntValue.Value;
 	#else
             return IntValue;
@@ -118,7 +122,7 @@ namespace BlazesRusCode
 
         bool IsNegative()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             return IntValue.IsNegative==1;
 	#else
 			return IntValue<0;
@@ -155,7 +159,7 @@ namespace BlazesRusCode
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             return IntValue.Value==0;
     #else
             return IntValue==0||IntValue==NegativeRep;
@@ -164,7 +168,7 @@ namespace BlazesRusCode
 
         bool IsNotAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             return IntValue.Value!=0;
     #else
             return IntValue != 0 && IntValue != NegativeRep;
@@ -199,7 +203,7 @@ namespace BlazesRusCode
         /// </summary>
         void SwapNegativeStatus()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             IntValue.IsNegative ^= 1;
     #else
             if (IntValue == NegativeRep)
@@ -219,17 +223,6 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
-	#if defined(AltNum_EnableNaN)
-        //Is NaN when DecimalHalf==2147483647
-        static const signed int NaNRep = 2147483647;
-        //Is NaN when DecimalHalf==2147483646
-        static const signed int UndefinedRep = 2147483646;
-	#endif
-
-    #if defined(AltNum_EnableNil)
-        //When both IntValue and DecimalHalf equal -2147483648 it is Nil
-        static signed int const NilRep = -2147483648;
-    #endif
 
     #pragma endregion Const Representation values
 

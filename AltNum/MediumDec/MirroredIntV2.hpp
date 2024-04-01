@@ -20,7 +20,6 @@
 
 namespace BlazesRusCode
 {
-#if defined(AltNum_EnableMirroredIntV2)
 	struct MirroredIntV2 {
 	#pragma options align=bit_packed
 	//If value is one then is negative
@@ -34,5 +33,4 @@ namespace BlazesRusCode
 			IsNegative = isNegative;
 		}
 	};
-#endif
 }

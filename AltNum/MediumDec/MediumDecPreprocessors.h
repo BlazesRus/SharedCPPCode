@@ -10,10 +10,10 @@ AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf
 	(uses old behavior); Disabled for now(forcing usage of bitfield instead)
-AltNum_EnableMirroredIntV2 = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
+AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
 IntHalfType
 */
-#if defined(AltNum_EnableMirroredIntV2)
+#if defined(AltNum_EnableMirroredSection)
 	#include "MirroredIntV2.hpp"
 	#define IntHalfType MirroredIntV2
 #else

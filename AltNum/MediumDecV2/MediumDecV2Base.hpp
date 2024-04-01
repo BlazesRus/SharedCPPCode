@@ -18,23 +18,7 @@
 #include "..\DLLAPI.h"
 #endif
 
-#include <string>
-#include <cmath>
-#include "..\OtherFunctions\VariableConversionFunctions.h"
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#if defined(AltNum_UseOldDivisionCode)
-	#include <boost/multiprecision/cpp_int.hpp>
-#endif
-
-#include "AltNumModChecker.hpp"
-
 #include "..\MediumDec\MediumDecBase.hpp"
-
-/*
-AltNum_PreventModulusOverride
-AltNum_EnableAlternativeModulusResult
-*/
 
 namespace BlazesRusCode
 {
@@ -60,6 +44,12 @@ namespace BlazesRusCode
         }
 
         MediumDecV2Base(const MediumDecV2Base&) = default;
+
+        MediumDecV2Base& operator=(const int& rhs)
+        {
+            IntValue = rhs; DecimalHalf = 0;
+            return *this;
+        } const
 
         MediumDecV2Base& operator=(const MediumDecV2Base& rhs)
         {
@@ -128,7 +118,7 @@ namespace BlazesRusCode
 		//Such as result of Cos of infinity
 		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
 		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int UndefinedInRangeRep = -2147483642;
+        static const signed int UndefinedInRangeRep = -2147483645;
 		#else
         static const unsigned int UndefinedInRangeRep = 1073741821;
 		#endif
@@ -284,7 +274,7 @@ public:
     #if defined(AltNum_EnableInfinityRep)
         void SetAsInfinity()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             IntValue.IsNegative = 0; DecimalHalf = InfinityRep;
     #else
             IntValue = 1; DecimalHalf = InfinityRep;
@@ -293,7 +283,7 @@ public:
 
         void SetAsNegativeInfinity()
         {
-	#if defined(AltNum_EnableMirroredIntV2)
+	#if defined(AltNum_EnableMirroredSection)
             IntValue.IsNegative = 1; DecimalHalf = InfinityRep;
     #else
             IntValue = -1; DecimalHalf = InfinityRep;
@@ -389,6 +379,38 @@ public:
 
     #pragma endregion Comparison Operators
 
+    #pragma region NormalRep Integer Division Operations
+
+    #pragma endregion NormalRep Integer Division Operations
+
+    #pragma region NormalRep Integer Multiplication Operations
+
+    #pragma endregion NormalRep Integer Multiplication Operations
+
+    #pragma region NormalRep Integer Addition Operations
+
+	#pragma endregion NormalRep Integer Addition Operations
+
+    #pragma region NormalRep Integer Subtraction Operations
+
+    #pragma endregion NormalRep Integer Subtraction Operations
+
+    #pragma region NormalRep Integer Bitwise Operations
+
+    #pragma endregion NormalRep Integer Bitwise Operations
+
+    #pragma region Mixed Fraction Operations
+
+    #pragma endregion Mixed Fraction Operations
+
+    #pragma region NormalRep AltNum Division Operations
+
+    #pragma endregion NormalRep AltNum Division Operations
+
+    #pragma region NormalRep AltNum Multiplication Operations
+
+    #pragma endregion NormalRep AltNum Multiplication Operations
+
 	#pragma region NormalRep AltNum Addition Operations
 
 	#pragma endregion NormalRep AltNum Addition Operations
@@ -416,14 +438,4 @@ public:
     #pragma region String Function Source
 
     #pragma endregion String Function Source
-
-#if defined(AltNum_EnableAlternativeModulusResult)
-    /// <summary>
-    /// (MediumDecBase Version)Performs remainder operation then saves division result
-    /// C = A - B * (A / B)
-    /// </summary>
-    class DLL_API AltModChecker : public AltNumModChecker<MediumDecBase>
-    {
-    };
-#endif
 }
