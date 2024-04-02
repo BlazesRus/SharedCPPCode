@@ -704,11 +704,72 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
-	
+	#if defined(AltNum_EnablePiRep)
+
+        constexpr auto ConvertPiToNum = MediumDecV2Base::ConvertPiToNum;
+    
+        void ConvertPiPowerToNum();
+
+        template<MediumDecVariant VariantType=AltDecBase>
+        VariantType PiPowerNum(int powerExponent)
+        {
+	        ExtraRep = 0;
+	        MediumDecV2Base PiSide = PiNum;
+	        PiSide.IntPowOp(powerExponent);
+	        return PiSide;
+        }
+
+        void ConvertPiPowerToPiRep();
+
+        virtual void ConvertToPiRep(RepType repType)
+        {
+            switch (repType)
+            {
+                case RepType::PiNum:
+                    return;
+                    break;
+    #if defined(AltNum_EnablePiPowers)
+                case RepType::PiPower:
+                    ConvertPiPowerToPiRep();
+                    break;
+    #endif
+    #if defined(AltNum_EnableAlternativeRepFractionals)
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+                case RepType::PiNumByDiv://  (Value/(ExtraRep.Value))*Pi Representation
+                {
+                    BasicUIntDivOp(ExtraRep.Value);
+                }
+        #else
+        #endif
+                break;
+    #endif
+    #if defined(AltNum_EnableMixedPiFractional)
+                case RepType::MixedPi:
+                    return;//Add Conversion Code from MixedPi later
+    #endif
+                default:
+                    break;
+            }
+            ExtraRep = PiRep;
+        }
+
+        template<MediumDecVariant VariantType=AltDecBase>
+        VariantType ConvertAsPiRep(RepType repType)
+        {
+            VariantType convertedVal = *this;
+            convertedVal.ConvertToPiRep();
+            return convertedVal;
+        }
+
+    #endif
     #pragma endregion Pi Conversion
 
     #pragma region E Conversion
-	
+	#if defined(AltNum_EnablePiRep)
+
+        constexpr auto ConvertPiToNum = MediumDecV2Base::ConvertPiToNum;
+    
+    #endif
     #pragma endregion E Conversion
 
     #pragma region Other RepType Conversion

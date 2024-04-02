@@ -5,6 +5,7 @@ using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
 //3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
 inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 {
+	#if defined(AltNum_UseIntForDecimalHalf)
 	ExtraRep = 0;
 	// Can only convert to up 683565275.1688666254437963172038917047964296646843381624484789109135725652864987887127902610635528943x PiRepresentation
 	//Can Represent up ? before hitting Maximum MediumDecV2Base value on reconversion when AltNum_UseLowerPrecisionPi is enabled
@@ -17,11 +18,13 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 		throw "Conversion of Pi multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
 		IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
 	}
+		#if !defined(AltNum_EnableMirroredSection)
 	else if (IntValue <= -683565275 && DecimalHalf >= 168866626)//Exceeding Storage limit of NormalRep
 	{
 		throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
 		IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
 	}
+		#endif
 	//Maximum result value              = 2147483647.999999999
 	//Pi * 2147483647              =   6,746,518,849.1194168257096980859855
 	//Int32 Max=
@@ -114,24 +117,41 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 		else
 			IntValue = (int)IntHalf;
 	}
-}
+	#else
+	if (IntValue >= 683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
+	{
+		throw "Conversion of Pi multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
+		IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+	}
+		#if !defined(AltNum_EnableMirroredSection)
+	else if (IntValue <= -683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
+	{
+		throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
+		IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+	}
+		#endif
 
-	#if defined(AltNum_EnableDecimaledPiFractionals)
-inline void BlazesRusCode::MediumDecV2Base::ConvertPiByDivToNumByDiv()
-{
 	__int64 SRep;
 	__int64 divRes;
 	if (DecimalHalf == 0)
 	{
+		DecimalHalf.Flags = 0;
+		#if !defined(AltNum_EnableMirroredSection)
 		bool IsNegative = IntValue < 0;
 		if (IsNegative)
 			IntValue *= -1;
+		#endif
 		SRep = 3141592654;
+		#if !defined(AltNum_EnableMirroredSection)
 		SRep *= IntValue;
+		#else
+		SRep *= IntValue.Value;
+		#endif
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
-		DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
+		DecimalHalf = (SRep - DecimalOverflowX * divRes);
+		#if !defined(AltNum_EnableMirroredSection)
 		if (divRes == 0 && IsNegative)
 		{
 			if (DecimalHalf == 0)
@@ -143,6 +163,9 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiByDivToNumByDiv()
 			IntValue = (int)-divRes;
 		else
 			IntValue = (int)divRes;
+		#else
+		IntValue = divRes;
+		#endif
 	}
 	else if (IntValue == 0)
 	{
@@ -187,141 +210,7 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiByDivToNumByDiv()
 		else
 			IntValue = (int)IntHalf;
 	}
-	ExtraRep = -ExtraRep;
-}
-
-inline void BlazesRusCode::MediumDecV2Base::ConvertFromPiByDivToNorm()
-{
-	BasicIntDivOp(-ExtraRep);
-	ExtraRep = 0;
-	__int64 SRep;
-	__int64 divRes;
-	if (DecimalHalf == 0)
-	{
-		bool IsNegative = IntValue < 0;
-		if (IsNegative)
-			IntValue *= -1;
-		SRep = 3141592654;
-		SRep *= GetIntHalf();
-		divRes = SRep / DecimalOverflowX;
-		DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-		if (divRes == 0 && IsNegative)
-		{
-			if (DecimalHalf == 0)
-				IntValue = 0;
-			else
-				IntValue = NegativeRep;
-		}
-		else if (IsNegative)
-			IntValue = (int)-divRes;
-		else
-			IntValue = (int)divRes;
-	}
-	else if (IntValue == 0)
-	{
-		SRep = 3141592654;
-		SRep *= DecimalHalf;
-		divRes = SRep / 1000000000000000000;
-		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
-	}
-	else if (IntValue == NegativeRep)
-	{
-		SRep = 3141592654;
-		SRep *= DecimalHalf;
-		divRes = SRep / 1000000000000000000;
-		DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
-		if (divRes == 0)
-			IntValue = NegativeRep;
-		else
-			IntValue = (int)-divRes;
-	}
-	else
-	{
-		bool IsNegative = IntValue < 0;
-		if (IsNegative)
-			IntValue *= -1;
-		SRep = DecimalOverflowX * IntValue + DecimalHalf;
-		SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
-		//X.Y *.V
-		__int64 Temp03 = (__int64)141592654ll * IntValue;//Temp03 holds __int64 version of X *.V
-		__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
-		Temp04 /= MediumDecV2Base::DecimalOverflow;
-		//Temp04 holds __int64 version of .Y * .V
-		__int64 IntegerRep = SRep + Temp03 + Temp04;
-		__int64 IntHalf = IntegerRep / MediumDecV2Base::DecimalOverflow;
-		IntegerRep -= IntHalf * (__int64)MediumDecV2Base::DecimalOverflow;
-		DecimalHalf = (signed int)IntegerRep;
-		if (IntHalf == 0 && IsNegative)
-		{
-			IntValue = NegativeRep;
-		}
-		else if (IsNegative)
-			IntValue = (int)-IntHalf;
-		else
-			IntValue = (int)IntHalf;
-	}
-}
-	#elif defined(AltNum_EnablePiFractional)
-inline void BlazesRusCode::MediumDecV2Base::ConvertFromPiFractionalToNorm()
-{
-	int divisor = DecimalHalf;
-	DecimalHalf = 0;
-	ExtraRep = 0;
-	bool IsNegative = IntValue<0;
-	if(IsNegative)
-		IntValue *= -1;
-	__int64 SRep = 3141592654ll;
-	SRep *= IntValue;
-	__int64 divRes = SRep / DecimalOverflowX;
-	DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
-	if(divRes==0&&IsNegative)
-	{
-		if(DecimalHalf==0)
-			IntValue = 0;
-		else
-			IntValue = NegativeRep;
-	}
-	else if(IsNegative)
-		IntValue = (int)-divRes;
-	else
-		IntValue = (int)divRes;
-	BasicIntDivOp(divisor);
-}
 	#endif
-
-inline void BlazesRusCode::MediumDecV2Base::ConvertPiPowerToNum()
-{
-	int powerExponent = -ExtraRep;
-	ExtraRep = 0;
-	MediumDecV2Base PiSide = PiNum;
-	PiSide.IntPowOp(powerExponent);
-	BasicMultOp(PiSide);
-}
-
-inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PiPowerNum(int powerExponent)
-{
-	ExtraRep = 0;
-	MediumDecV2Base PiSide = PiNum;
-	PiSide.IntPowOp(powerExponent);
-	return PiSide;
-}
-
-inline void BlazesRusCode::MediumDecV2Base::ConvertPiPowerToPiRep()
-{
-	int powerExponent = -ExtraRep;
-	if (powerExponent == 0)
-		ExtraRep = 0;//Pi^0 = 1
-	else
-	{
-		ExtraRep = PiRep;
-		if (powerExponent != 1)
-		{
-			MediumDecV2Base PiSide = PiNum;
-			powerExponent -= 1;
-			PiSide.IntPowOp(powerExponent);
-			BasicMultOp(PiSide);
-		}
-	}
 }
 
 #endif

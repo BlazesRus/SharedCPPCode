@@ -364,11 +364,19 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
-	
+    #if defined(AltNum_EnablePiRep)
+    
+    virtual void ConvertPiToNum()
+
+    #endif
     #pragma endregion Pi Conversion
 
     #pragma region E Conversion
-	
+    #if defined(AltNum_EnableERep)
+    
+    virtual void ConvertEToNum()
+
+    #endif
     #pragma endregion E Conversion
 
     #pragma region Other RepType Conversion
