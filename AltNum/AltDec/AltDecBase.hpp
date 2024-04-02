@@ -452,7 +452,61 @@ public:
     #pragma endregion INum Setters
 
     #pragma region Fractional Setters
+    #if defined(AltNum_EnableFractionals)
+        //Set value for NumByDiv
+        void SetFractionalVal(int intHalf, int decHalf, int divisor)
+        {
+            IntValue = intHalf; DecimalHalf = decHalf;
+            ExtraRep = divisor;
+        }
+        
+        //Set value for NumByDiv
+        void SetFractionalVal(AltDecBase Value, int divisor)
+        {
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            ExtraRep = divisor;
+        }
 
+        #if defined(AltNum_EnableMediumDecBasedSetValues)
+        void SetFractionalVal(MediumDec Value, int divisor)
+        {
+            IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+            ExtraRep = divisor;
+        }
+        #endif
+        
+        //Set value for NumByDiv
+        void SetFractionalVal(int Value, int divisor)
+        {
+            IntValue = Value; DecimalHalf = 0;
+            ExtraRep = divisor;
+        }
+    #endif
+        
+    #if defined(AltNum_EnableDecimaledPiFractionals)
+        //Set value for PiNumByDiv
+        void SetDecimaledPiFractional(int intHalf, int decHalf, int divisor)
+        {
+            IntValue = intHalf; DecimalHalf = PartialInt(decHalf,1);
+            ExtraRep = divisor;
+        }
+	#endif
+    #if defined(AltNum_EnableDecimaledEFractionals)
+        //Set value for ENumByDiv
+        void SetDecimaledEFractional(int intHalf, int decHalf, int divisor)
+        {
+            IntValue = Value; DecimalHalf = PartialInt(decHalf,2);
+            ExtraRep = divisor;
+        }
+	#endif
+    #if defined(AltNum_EnableDecimaledIFractionals)
+        //Set value for INumByDiv
+        void SetDecimaledIFractional(int intHalf, int decHalf, int divisor)
+        {
+            IntValue = Value; DecimalHalf = PartialInt(decHalf,3);
+            ExtraRep = divisor;
+        }
+    #endif
     #pragma endregion Fractional Setters
     
     #pragma region MixedFrac Setters
