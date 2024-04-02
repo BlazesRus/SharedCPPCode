@@ -481,40 +481,76 @@ public:
             IntValue = Value; DecimalHalf = 0;
             ExtraRep = divisor;
         }
-    #endif
-        
-    #if defined(AltNum_EnableDecimaledPiFractionals)
+
+        #if defined(AltNum_EnablePiRep)
         //Set value for PiNumByDiv
         void SetDecimaledPiFractional(int intHalf, int decHalf, int divisor)
         {
             IntValue = intHalf; DecimalHalf = PartialInt(decHalf,1);
             ExtraRep = divisor;
         }
-	#endif
-    #if defined(AltNum_EnableDecimaledEFractionals)
+	    #endif
+
+        #if defined(AltNum_EnableERep)
         //Set value for ENumByDiv
         void SetDecimaledEFractional(int intHalf, int decHalf, int divisor)
         {
             IntValue = Value; DecimalHalf = PartialInt(decHalf,2);
             ExtraRep = divisor;
         }
-	#endif
-    #if defined(AltNum_EnableDecimaledIFractionals)
+	    #endif
+
+        #if defined(AltNum_EnableImaginaryNum)
         //Set value for INumByDiv
         void SetDecimaledIFractional(int intHalf, int decHalf, int divisor)
         {
             IntValue = Value; DecimalHalf = PartialInt(decHalf,3);
             ExtraRep = divisor;
         }
+        #endif
+
     #endif
+
     #pragma endregion Fractional Setters
     
     #pragma region MixedFrac Setters
     #if defined(AltNum_EnableMixedFractional)
 
-
-
-    #endif
+        void SetMixedFractionalVal(IntHalfType WholeNum, unsigned int Numerator, unsigned int Denom)
+        {
+            IntValue = WholeNum;
+            DecimalHalf = Numerator;
+            ExtraRep = MirroredIntV2(Denom);
+        }
+		
+		#if defined(AltNum_EnablePiRep)
+        void SetMixedPiFractionalVal(IntHalfType WholeNum, unsigned int Numerator, unsigned int Denom)
+        {
+            IntValue = WholeNum;
+            DecimalHalf = PartialInt(Numerator,1);
+            ExtraRep = MirroredIntV2(Denom);
+        }
+		#endif
+		
+		#if defined(AltNum_EnableERep)
+        void SetMixedEFractionalVal(IntHalfType WholeNum, unsigned int Numerator, unsigned int Denom)
+        {
+            IntValue = WholeNum;
+            DecimalHalf = PartialInt(Numerator,2);
+            ExtraRep = MirroredIntV2(Denom);
+        }
+		#endif
+		
+		#if defined(AltNum_EnableImaginaryNum)
+        void SetMixedIFractionalVal(IntHalfType WholeNum, unsigned int Numerator, unsigned int Denom)
+        {
+            IntValue = WholeNum;
+            DecimalHalf = PartialInt(Numerator,3);
+            ExtraRep = MirroredIntV2(Denom);
+        }
+		#endif
+		
+	#endif
     #pragma endregion MixedFrac Setters
 
     #pragma region Infinity Setters

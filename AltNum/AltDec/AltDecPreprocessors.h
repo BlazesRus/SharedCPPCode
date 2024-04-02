@@ -147,22 +147,10 @@ AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
 AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
 AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 
-AltNum_EnablePiFractional = Depreciated
-AltNum_EnableEFractional = Depreciated
-AltNum_EnableIFractional = Depreciated
-AltNum_UsingAltFractional = Auto toggled if any of the above 3 are toggled(Depreciated)
-
-AltDec_UseMirroredInt
 AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
 AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bit checks instead of case statements(Not Implemented yet)
 
 AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
-
-AltNum_StoreCommonFunctionsInBase
-AltNum_DisableCommonVariablesInBase = Use to disable usage of the base class and to disable defining common AltNum variables in base class
-AltNum_StoreIntSectionFunctionsInBase
-AltNum_StoreBasicFunctionsInBase
-AltNum_StoreConstVariablesInBase
 
 AltNum_UsePositiveInfinityRep
 AltNum_AllowOverflowRep = Allow representation of numbers greator than 2147483647.999999999 and smaller than -2147483647.999999999
@@ -210,21 +198,26 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
     #define AltNum_EnableDecimaledAlternativeFractionals
 #endif
 
-#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableMixedPiFractional)
-	#define AltNum_EnableMixedPiFractional
+//Disable Mixed Fractionals for now if PartialInt are not being used
+#if defined(AltNum_EnableMixedFractional)&&defined(AltNum_UseIntForDecimalHalf)
+	#undef AltNum_EnableMixedFractional
 #endif
 
-#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableMixedEFractional)
-	#define AltNum_EnableMixedEFractional
-#endif
+//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableMixedPiFractional)
+//	#define AltNum_EnableMixedPiFractional
+//#endif
+//
+//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableMixedEFractional)
+//	#define AltNum_EnableMixedEFractional
+//#endif
+//
+//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableMixedIFractional)
+//	#define AltNum_EnableMixedIFractional
+//#endif
 
-#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableMixedIFractional)
-	#define AltNum_EnableMixedIFractional
-#endif
-
-#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
-    #define AltNum_EnableAlternativeMixedFrac
-#endif
+//#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
+//    #define AltNum_EnableAlternativeMixedFrac
+//#endif
 
 /*
 
