@@ -126,8 +126,6 @@ AltNum_EnablePiPowers =
       Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
 	If AltNum_UseIntForDecimalHalf is not enabled, then this is autotoggled if AltNum_EnablePowerOfRepresentation is toggled
       (Not Fully Implemented)
-	  
-
 
 AltNum_OutputTruncatedTrailingDigits =
     Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
@@ -226,6 +224,19 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 //#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
 //    #define AltNum_EnableAlternativeMixedFrac
 //#endif
+
+//Require AltNum_UseIntForDecimalHalf to be disabled for power of representation flag to work on E
+#if defined(AltNum_EnablePowerOfRepresentation)&&defined(AltNum_UseIntForDecimalHalf)
+	#undef AltNum_EnablePowerOfRepresentation
+#endif
+
+#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
+	#define AltNum_EnablePiPowers
+#endif
+
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableEPowers)
+	#define AltNum_EnableEPowers
+#endif
 
 /*
 
