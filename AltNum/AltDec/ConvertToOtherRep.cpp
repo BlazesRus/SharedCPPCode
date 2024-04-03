@@ -102,6 +102,7 @@ inline void ConvertPiByDivToNumByDiv()
 	}
 	ExtraRep.Flag = 0;
 }
+    #endif
 
 //Convert from PiByDiv to NormalType representation
 void ConvertPiByDivToNorm()

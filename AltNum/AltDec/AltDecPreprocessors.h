@@ -9,9 +9,12 @@
 AltNum_EnableFractionals =
 	Enables fractional representations in attempt to preserve more accuracy during operations
 	(Enables NumByDiv and other variants of Fractionals if AltNum_EnableAlternativeRepFractionals is enabled at same time)
+	Can't be used at same time as AltNum_EnableNegativePowerRep
 AltNum_EnableDecimaledAlternativeFractionals =
 	Automatically toggled if Pi, e, or i features enabled and AltNum_EnableFractionals enabled
 	(Automatically enabled if AltNum_EnableDecimaledPiFractionals, AltNum_EnableDecimaledEFractionals, or AltNum_EnableDecimaledEFractionals enabled)
+AltNum_EnableNegativePowerRep = 
+	Allows negative powers when AltNum_EnablePowerOfRepresentation is enabled
 
 //--Infinity based preprocessors--
 AltNum_EnableApproachingValues
@@ -110,6 +113,7 @@ AltNum_EnableAltDecBasedSetValues =
 ---Only these switches can be enabled at once(when ExtraRep is Negative):
 AltNum_EnablePowerOfRepresentation =
       Represents IntValue.DecimalHalf^(ExtraRep.Value)
+	  If AltNum_EnableNegativePowerRep is enabled, then ExtraRep is Negative is used for negative powers instead
       (Not Implemented)
 AltNum_EnableMixedFractional =
       Represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf.Value)/ExtraRep.Value
@@ -117,9 +121,13 @@ AltNum_EnableMixedFractional =
 
 ----===============================================================================================================
 AltNum_EnablePiPowers =
-      If ExtraRep value is between -1 and -2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep*-1)
+	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
+      If ExtraRep value is between 1 and 2147483640, then represents IntValue.DecimalHalf * Pi^(ExtraRep.Value)
       Can't be enabled at same time as AltNum_EnableDecimaledAlternativeFractionals
+	If AltNum_UseIntForDecimalHalf is not enabled, then this is autotoggled if AltNum_EnablePowerOfRepresentation is toggled
       (Not Fully Implemented)
+	  
+
 
 AltNum_OutputTruncatedTrailingDigits =
     Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
