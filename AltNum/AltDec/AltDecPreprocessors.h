@@ -139,7 +139,7 @@ AltNum_UseOldRemOpCode
 
 AltNum_EnableBoostFractionalReduction
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
-AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .5..1 etc
+AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .50..1 etc
 
 Auto toggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
 Auto toggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
@@ -164,7 +164,7 @@ AltNum_UsePositiveInfinityRep
 AltNum_AllowOverflowRep = Allow representation of numbers greator than 2147483647.999999999 and smaller than -2147483647.999999999
 	If AltNum_EnableFractionals is disabled, represents numbers 2147483647.999999999 x 10^ExtraRep with the smallest digits truncated for each value above normal limit
 	If AltNum_EnableFractionals is enabled and negative ExtraRep values are not used for any representation, represents numbers 2147483647.999999999 x 10^-ExtraRep with similar above truncation
-	(Not Implimented)
+	(Not Implimented--Depreciated)
 */
 
 #pragma region PreprocessorToggles
