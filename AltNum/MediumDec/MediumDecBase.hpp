@@ -231,8 +231,14 @@ namespace BlazesRusCode
         /// <summary>
         /// Enum representing value type stored
         /// </summary>
-        enum class RepType: int
+        enum class RepType:
+    #if !defined(AltNum_MinimizeRepTypeEnum)
+        unsigned int
+    #else
+        unsigned char
+    #endif
         {
+            //Sign = IntValue.IsNegative?-1:1;
             NormalType = 0,
 	//#if defined(AltNum_EnableFractionals)
             NumByDiv = 8,
@@ -269,74 +275,128 @@ namespace BlazesRusCode
             IFractional = 11,//  IntValue/DecimalHalf*i Representation
 			//#endif
 		//#endif
-		//#ifdef AltNum_EnableComplexNumbers
-            ComplexIRep = 255,
-		//#endif
 	//#endif
 	//#if defined(AltNum_EnableMixedFractional)
-            MixedFrac = 32,//IntValue +- (-DecimalHalf)/ExtraRep
-            //#if defined(AltNum_EnableMixedPiFractional)
-            MixedPi = 33,//IntValue +- (-DecimalHalf/-ExtraRep)
+            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+            MixedFrac = 32,
+        //#if defined(AltNum_EnableMixedPiFractional)
+            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+            MixedPi = 33,
 		//#elif defined(AltNum_EnableMixedEFractional)
-            MixedE = 34,//IntValue +- (-DecimalHalf/-ExtraRep)
+            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+            MixedE = 34,
 		//#elif defined(AltNum_EnableMixedIFractional)
-            MixedI = 36,//IntValue +- (-DecimalHalf/-ExtraRep)
+            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+            MixedI = 36,
 		//#endif
 	//#endif
 
 	//#if defined(AltNum_EnableInfinityRep)
-			PositiveInfinity = 192,//If Positive Infinity, then convert number into MaximumValue instead when need as real number
-			NegativeInfinity = 112,//If Negative Infinity, then convert number into MinimumValue instead when need as real number
+            //(Enum Bits:7,6)
+            //If Positive Infinity, then convert number into MaximumValue instead when need as real number
+			PositiveInfinity = 96,
+            //(Enum Bits:7,6,4)
+            //If Negative Infinity, then convert number into MinimumValue instead when need as real number
+			NegativeInfinity = 112,
 	//#endif
 	//#if defined(AltNum_EnableApproachingValues)
+            //(Enum Bits:7)
             ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 		//#if !defined(AltNum_DisableApproachingTop)
-            ApproachingTop = 72,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+
+            //(Enum Bits:7,4)
+            //(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            ApproachingTop = 72,
 		//#endif
 		//#if defined(AltNum_EnableApproachingDivided)
-			ApproachingMidLeft = 80,//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
+
+            //(Enum Bits:7,5)
+            //DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
+			ApproachingMidLeft = 80,
 			//#if !defined(AltNum_DisableApproachingTop)
-            ApproachingMidRight = 96,//DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
+            
+            //(Enum Bits:7,4,5)
+            //DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
+            ApproachingMidRight = 88,
 			//#endif
 		//#endif
 	//#endif
-    //#if defined(AltNum_EnableNaN)
-            Undefined = 128,
-            NaN = 129,
-    //#endif
 	//#if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi = 65,//equal to IntValue.9..9 Pi
+
+            //(Enum Bits:7,1)
+            //equal to IntValue.9..9 Pi
+            ApproachingTopPi = 65,
 	//#endif
 	//#if defined(AltNum_EnableApproachingE)
-            ApproachingTopE = 66,//equal to IntValue.9..9 e
+
+            //(Enum Bits:7,2)
+            //equal to IntValue.9..9 e
+            ApproachingTopE = 66,
 	//#endif
 	//#if defined(AltNum_EnableImaginaryInfinity)
-            PositiveImaginaryInfinity = 196,
-			NegativeImaginaryInfinity = 228,
+
+            //(Enum Bits:7,6,3)
+            PositiveImaginaryInfinity = 100,
+            //(Enum Bits:7,6,3,4)
+			NegativeImaginaryInfinity = 108,
 	//#endif
 	//#if defined(AltNum_EnableApproachingI)
-            ApproachingImaginaryBottom = 196,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+
+            //(Enum Bits:7,3)
+            //(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+            ApproachingImaginaryBottom = 68,
 		//#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryTop = 228,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+
+            //(Enum Bits:7,3,4)
+            //(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+            ApproachingImaginaryTop = 76,
 		//#endif
 		//#if defined(AltNum_EnableApproachingDivided)
-			ApproachingImaginaryMidLeft = 84,//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
+
+            //(Enum Bits:7,3,5)
+            //DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
+			ApproachingImaginaryMidLeft = 84,
 			//#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryMidRight = 100,//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
+
+            //(Enum Bits:7,3,5,4)
+            //DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
+            ApproachingImaginaryMidRight = 92,
 			//#endif
 		//#endif
     //#endif
-	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+    //#if defined(AltNum_EnableNaN)
+            //(Enum Bits:8)
+            Undefined = 128,
+            //(Enum Bits:8, 1)
+            NaN = 129,
+    //#endif
+	//#if defined(AltNum_EnableUndefinedButInRange)
+
+            //(Enum Bits:8, 2)
+            //Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
             UndefinedButInRange = 130,
-		//#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-			WithinMinMaxRange = 136,
+		//#if defined(AltNum_EnableWithinMinMaxRange)
+
+            //(Enum Bits:8,6)
+            //Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+			WithinMinMaxRange = 160,
 		//#endif
 	//#endif
+	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+            UndefinedButInRange = 130,//(Enum Bits:8, 2)
+	//#endif
     //#if defined(AltNum_EnableNil)
-            Nil=256,
+            //(Enum Bits:8, 1, 2)
+            Nil = 131,
     //#endif
-            UnknownType=257
-        };
+		//#ifdef AltNum_EnableComplexNumbers
+
+            //Enum Bits subject to change for Complec Number later(Not completely used yet)
+            ComplexIRep = 255,
+		//#endif
+            //(Enum Bits:8, 1, 2, 3)
+            UnknownType = 135
+		}
 
         /// <summary>
         /// Returns representation type data that is stored in value

@@ -67,7 +67,7 @@ namespace BlazesRusCode
 	///  uses 9 bytes of variable storage in class per instance)
     /// (13 bytes worth of Variable Storage inside class for each instance if ExtraRep variable used)
 	/// </summary>
-    class DLL_API FlaggedDec: public virtual MediumDecBase
+    class DLL_API FlaggedDec: public virtual MediumDecV2Base
     {
     public:
 		//BitFlag 01 = PiRep, 02 = ERep, 03 = IRep, 04 = Fractional Rep, 05 = Power of, 06 = Mixed Fractional
@@ -331,15 +331,19 @@ namespace BlazesRusCode
 #endif
 
 #if defined(FlaggedNum_UseFlagForInfinitesimalRep)
-//(Enum Bits:7)=64;Flag 5=16;Flag 6=32;
-		static const unsigned char PositiveInfinityRep = 192;//(Enum Bits:7,8)
-		static const unsigned char NegativeInfinityRep = 112;//(Enum Bits:7,6,5)
+//Flag 7(Is Infinity Or Infinisimal;Approaching from botton side if not infinity type)=64;
+//Flag 6(Is Infinity Type)=32;
+//Flag 5(Approaching but divided by ExtraRep)=16;
+//Flag 4(Negative if infinity type or Approaching From Top side)=8;
+//Flag 3(Imaginary)=4; Flag 2(e)=2; Flag 1(Pi)=1
+		static const unsigned char PositiveInfinityRep = 96;//(Enum Bits:7,6)
+		static const unsigned char NegativeInfinityRep = 112;//(Enum Bits:7,6,4)
 
 		static const unsigned char ApproachingBottom = 64;//(Enum Bits:7)
 		static const unsigned char ApproachingTop = 72;//(Enum Bits:7,4)
 
 		static const unsigned char ApproachingMidLeftRep = 80;//(Enum Bits:7,5)
-		static const unsigned char ApproachingMidRightRep = 96;//(Enum Bits:7,6)
+		static const unsigned char ApproachingMidRightRep = 88;//(Enum Bits:7,4,5)
 
     #if defined(AltNum_EnableApproachingPi)
 		static const unsigned char ApproachingTopPiRep = 65;//(Enum Bits:7,1)
@@ -348,13 +352,13 @@ namespace BlazesRusCode
 		static const unsigned char ApproachingTopERep = 66;//(Enum Bits:7,2)
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
-		static const unsigned char PositiveImaginaryInfinityRep = 196;//(Enum Bits:7,3,8)
-		static const unsigned char NegativeImaginaryInfinityRep = 228;//(Enum Bits:7,3,8,6)
+		static const unsigned char PositiveImaginaryInfinityRep = 100;//(Enum Bits:7,6,3)
+		static const unsigned char NegativeImaginaryInfinityRep = 108;//(Enum Bits:7,6,3,4)
 
 		static const unsigned char ApproachingImaginaryBottom = 68;//(Enum Bits:7,3)
-		static const unsigned char ApproachingImaginaryBottom = 76;//(Enum Bits:7,3,4)
+		static const unsigned char ApproachingImaginaryTop = 76;//(Enum Bits:7,3,4)
 		static const unsigned char ApproachingImaginaryMidLeftRep = 84;//(Enum Bits:7,3,5)
-		static const unsigned char ApproachingImaginaryMidLeftRep = 100;//(Enum Bits:7,3,6)
+		static const unsigned char ApproachingImaginaryMidLeftRep = 92;//(Enum Bits:7,3,5,4)
     #endif
 #endif
 		
@@ -372,93 +376,6 @@ namespace BlazesRusCode
 #endif
 
         #pragma endregion Const Representation values
-        /// <summary>
-        /// Enum representing value type stored
-        /// </summary>
-        enum class RepType: int
-        {
-            NormalType = 0,
-            NumByDiv = 8,//with flag 04 active
-#if defined(AltNum_EnablePiRep)
-            PiNum = 1,//with flag 01 active
-	#if defined(FlaggedNum_EnablePowers)
-            PiPower = 17,//with flag 05, and 01 active
-	#endif
-	#if defined(FlaggedNum_EnablePiFractions)
-			PiNumByDiv = 9,//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
-	#endif
-#endif
-#if defined(AltNum_EnableERep)
-            ENum = 2,//with flag 02 active
-	#if defined(FlaggedNum_EnablePowers)
-            EPower = 18,//with flag 05, and 02 active
-	#endif
-	#if defined(FlaggedNum_EnableEFractions)
-            ENumByDiv = 10,//(Value/ExtraRep)*e Representation with flag 04 and 02 active
-	#endif
-#endif
-#if defined(AltNum_EnableImaginaryNum)
-            INum = 4,//with flag 03 active
-	#if defined(FlaggedNum_EnableIFractions)
-            INumByDiv = 11,//(Value/ExtraRep)*i Representation with flag 04 and 03 active
-	#endif
-#endif
-#if defined(FlaggedNum_EnableMixedFractional)
-			MixedFrac = 32,//IntValue +- DecimalHalf/ExtraRep with flag 06 active 
-			MixedPi = 33,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 01 active
-			MixedE = 34,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 02 active
-			MixedI = 36,//IntValue +- DecimalHalf/ExtraRep) with flag 06, and 03 active
-#endif
-
-#if defined(AltNum_EnableInfinityRep)
-			PositiveInfinity = 192,//IntValue == 1 and DecimalHalf==InfinityRep
-			NegativeInfinity = 112,//IntValue == -1 and DecimalHalf==InfinityRep
-#endif
-	#if defined(AltNum_EnableApproachingValues)
-            ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)  (Enum Bits:7,5)
-		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingTop = 72,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9) (Enum Bits:7,6)
-		#endif
-		#if defined(AltNum_EnableApproachingDivided)
-			ApproachingMidLeft = 80,//(Enum Bits:7,5,8)
-			#if !defined(AltNum_DisableApproachingTop)
-            ApproachingMidRight = 96,//(Enum Bits:7,6,8)
-			#endif
-		#endif
-	#endif
-    #if defined(AltNum_EnableNaN)
-            Undefined = 128,//(Enum Bits:8)
-            NaN = 129,//(Enum Bits:8, 1)
-    #endif
-#if defined(AltNum_EnableApproachingPi)
-            ApproachingTopPi = 65,//equal to IntValue.9..9 Pi (Enum Bits:7,1,5)
-#endif
-#if defined(AltNum_EnableApproachingE)
-            ApproachingTopE = 66,//equal to IntValue.9..9 e (Enum Bits:7,2, 5)
-#endif
-#if defined(AltNum_EnableImaginaryInfinity)
-            PositiveImaginaryInfinity = 196,//IntValue == 1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3)
-			NegativeImaginaryInfinity = 228,//IntValue == -1 and DecimalHalf==InfinityRep and flag 03 active (Enum Bits:7,3,4)
-	#if defined(AltNum_EnableApproachingI)
-            ApproachingImaginaryBottom = 68,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-		#if !defined(AltNum_DisableApproachingTop)
-            ApproachingImaginaryTop = 76,//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-		#endif
-	#if defined(AltNum_EnableApproachingDivided)
-            ApproachingImaginaryMidRight = 84,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-		#if !defined(AltNum_DisableApproachingTop)
-			ApproachingImaginaryMidLeft = 100,//(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive, IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
-		#endif
-	#endif
-#endif
-#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-            UndefinedButInRange = 130,//(Enum Bits:8, 2)
-#endif
-    #if defined(AltNum_EnableNil)
-            Nil = 131,
-    #endif
-            UnknownType = 132
-        };
 
 		static std::string RepTypeAsString(RepType& repType)
 		{

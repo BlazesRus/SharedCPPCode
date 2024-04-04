@@ -30,6 +30,53 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecV2Base : public virtual MediumDecBase
     {
+    protected:
+	struct RepTypeFlags {
+	#pragma options align=bit_packed
+	//BitFlag 01(1) = PiRep
+	unsigned int PiRep:1;
+	//BitFlag 02(2) = ERep
+	unsigned int ERep:1;
+	//BitFlag 03(4) = IRep
+	unsigned int IRep:1;
+    //BitFlag 04(8) = Fractional Rep
+	unsigned int Fractional:1;
+	//BitFlag 05 (16) = Power of flag
+	unsigned int ToPowerOf:1;
+	//BitFlag 06 (= Mixed Fraction flag
+	unsigned int MixedFrac:1;
+    /*
+		BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
+		//Flag 7(Is Infinity Or Infinisimal;Approaching from botton side if not infinity type)=64;
+		//Flag 6(Is Infinity Type)=32;
+		//Flag 5(Approaching but divided by ExtraRep)=16;
+		//Flag 4(Negative if infinity type or Approaching From Top side)=8;
+		//Flag 3(Imaginary)=4; Flag 2(e)=2; Flag 1(Pi)=1
+    */
+    unsigned int InfType:1;
+    //Bitflag 08= Undefined/NaN/Nil
+    unsigned int UndefinedBit:1;
+	#pragma options align=reset
+        //Extract flags from integer
+		RepTypeFlags(unsigned int Flags)
+		{
+            //Bitflag 7(64) and bitflag 8(128) take priority over the other flag detection
+            //if(Flags==0)
+            //{
+                PiRep = 0;
+                ERep = 0;
+                IRep = 0;
+                Fractional = 0;
+                ToPowerOf = 0;
+                MixedFrac = 0;
+                InfType = 0;
+                UndefinedBit = 0;
+            //}
+            //else
+            //{
+            //}
+		}
+	};
     public:
 
         /// <summary>
