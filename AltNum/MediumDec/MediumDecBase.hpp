@@ -74,23 +74,51 @@ protected:
 	}
 #endif
     #if !defined(AltNum_MinimizeRepTypeEnum)
-        static signed int bit01 = 1;
-        static signed int bit02 = 2;
-        static signed int bit03 = 4;
-        static signed int bit04 = 8;
-        static signed int bit05 = 16;
-        static signed int bit06 = 32;
-        static signed int bit07 = 64;
-        static signed int bit08 = 128;
+		//BitFlag 01(1) = PiRep
+		unsigned int PiFlag = 1;
+		//BitFlag 02(2) = ERep
+		unsigned int EFlag = 2;
+		//BitFlag 03(4) = IRep
+		unsigned int IFlag = 4;
+		//BitFlag 04(8) = Fractional Rep
+		//If BitFlag#7 is set,
+		//then Negative if infinity type or Approaching From Top side; 
+		unsigned int FractionalFlag = 8;
+		//BitFlag 05 (16) = Power of flag
+		//If BitFlag#7 is set,
+		//then Approaching but divided by ExtraRep
+		unsigned int ToPowerOfFlag = 16;
+		//BitFlag 06 (= Mixed Fraction flag
+		//If BitFlag#7 is set,
+		//then Is Infinity Type
+		unsigned int MixedFracFlag = 32;
+		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
+		unsigned int InfTypeFlag = 64;
+		//Bitflag 08= Undefined/NaN/Nil
+		unsigned int UndefinedBit = 128;
     #else
-        static signed short bit01 = 1;
-        static signed short bit02 = 2;
-        static signed short bit03 = 4;
-        static signed short bit04 = 8;
-        static signed short bit05 = 16;
-        static signed short bit06 = 32;
-        static signed short bit07 = 64;
-        static signed short bit08 = 128;
+		//BitFlag 01(1) = PiRep
+		unsigned short PiFlag = 1;
+		//BitFlag 02(2) = ERep
+		unsigned short EFlag = 2;
+		//BitFlag 03(4) = IRep
+		unsigned short IFlag = 4;
+		//BitFlag 04(8) = Fractional Rep
+		//If BitFlag#7 is set,
+		//then Negative if infinity type or Approaching From Top side; 
+		unsigned short FractionalFlag = 8;
+		//BitFlag 05 (16) = Power of flag
+		//If BitFlag#7 is set,
+		//then Approaching but divided by ExtraRep
+		unsigned short ToPowerOfFlag = 16;
+		//BitFlag 06 (= Mixed Fraction flag
+		//If BitFlag#7 is set,
+		//then Is Infinity Type
+		unsigned short MixedFracFlag = 32;
+		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
+		unsigned short InfTypeFlag = 64;
+		//Bitflag 08= Undefined/NaN/Nil
+		unsigned short UndefinedBit = 128;
     #endif
 	public:
         /// <summary>

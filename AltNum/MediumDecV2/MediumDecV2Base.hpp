@@ -40,19 +40,18 @@ namespace BlazesRusCode
 	//BitFlag 03(4) = IRep
 	unsigned int IRep:1;
     //BitFlag 04(8) = Fractional Rep
+    //If BitFlag#7 is set,
+    //then Negative if infinity type or Approaching From Top side; 
 	unsigned int Fractional:1;
 	//BitFlag 05 (16) = Power of flag
+    //If BitFlag#7 is set,
+    //then Approaching but divided by ExtraRep
 	unsigned int ToPowerOf:1;
 	//BitFlag 06 (= Mixed Fraction flag
+    //If BitFlag#7 is set,
+    //then Is Infinity Type
 	unsigned int MixedFrac:1;
-    /*
-		BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
-		//Flag 7(Is Infinity Or Infinisimal;Approaching from botton side if not infinity type)=64;
-		//Flag 6(Is Infinity Type)=32;
-		//Flag 5(Approaching but divided by ExtraRep)=16;
-		//Flag 4(Negative if infinity type or Approaching From Top side)=8;
-		//Flag 3(Imaginary)=4; Flag 2(e)=2; Flag 1(Pi)=1
-    */
+    //BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
     unsigned int InfType:1;
     //Bitflag 08= Undefined/NaN/Nil
     unsigned int UndefinedBit:1;
@@ -585,15 +584,46 @@ public:
 
     std::strong_ordering operator<=>(const MediumDecV2Base& that) const
     {
-		int lVal; int rVal;
-		//Pi and E only enabled if imbedded flags are enabled
-#if !defined(AltNum_UseIntForDecimalHalf)
-		if(DecimalHalf.Flags==that.DecimalHalf.Flags)
+        RepType LRep = GetRepType();
+        RepType RRep = that.GetRepType();
+    #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
+        if(LRep^UndefinedBit||RRep^UndefinedBit)
+        {
+            throw "Can't compare undefined/nil representations";
+        }
+        else
+    #endif
+    #if defined(AltNum_EnableInfinityRep)||defined(AltNum_EnableApproachingValues)
+		if(LRep^InfTypeFlag)//Comparing Infinity/Approaching type
+        {
+            //To-Do add code here
+        }
+        else if(RRep^InfTypeFlag)
+        {
+            //To-Do add code here
+        }
+    #endif
+        else if(LRep==RRep)
 		{
-#endif
 			return BasicComparison(that);
-#if !defined(AltNum_UseIntForDecimalHalf)
 		}
+	/*#if !defined(AltNum_UseIntForDecimalHalf)
+        else if(DecimalHalf.Flags==that.DecimalFlag.Flags)
+        {
+            if(DecimalFlag.Flags==1)//Pi comparisons
+            {
+                //To-Do add code here
+            }
+            else if(DecimalFlags==2//E comparisons
+            {
+                //To-Do add code here
+            }
+            else//I comparisons
+            {
+                //To-Do add code here
+            }
+        }
+    #endif*/
 		else
 		{
 			MediumDecV2Base lSide = *this;
@@ -601,7 +631,6 @@ public:
 			lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 			return lSide.BasicComparison(that);
 		}
-#endif
     }
 
     std::strong_ordering operator<=>(const int& that) const
