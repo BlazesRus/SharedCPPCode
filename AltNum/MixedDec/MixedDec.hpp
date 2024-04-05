@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -200,8 +200,24 @@ public:
 			return "";//placeholder
 		}
 
+    #pragma region Other RepType Conversion
+
+        /// <summary>
+        /// RestrictedFloat to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toInt() { return IsOne()?1:0; }
+		
+        /// <summary>
+        /// RestrictedFloat to bool explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toBool() { return IsOne()?true:false; }
+
+    #pragma endregion Other RepType Conversion
+
     #pragma region Comparison Operators
-    std::strong_ordering operator<=>(const AltFloat& that) const
+    std::strong_ordering operator<=>(const RestrictedFloat& that) const
     {
 		//"1/2^Exp + (1/2^Exp)*SignifNum/DenomMax"
 		
@@ -215,7 +231,7 @@ public:
 			return SignifFracCmp;
     }
 	
-    bool operator==(const AltFloat& that) const
+    bool operator==(const RestrictedFloat& that) const
     {
 		if (SignifNum!=that.SignifNum)
             return false;
@@ -226,14 +242,14 @@ public:
 	
     auto operator<=>(const int& that) const
     {
-		rVal = (AltFloat)that;
-		return this <=> rValue;
+		int lVal = toInt();
+		return lVal <=> that;
     }
 
     bool operator==(const int& that) const
     {
-		rVal = (AltFloat)that;
-		return this==rValue;
+		int lVal = toInt();
+		return lVal == that;
     }
 
     #pragma endregion Comparison Operators
