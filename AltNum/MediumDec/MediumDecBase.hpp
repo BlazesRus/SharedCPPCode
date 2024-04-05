@@ -66,12 +66,32 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecBase
     {
+protected:
 #if !defined(AltNum_DisableDefaultStringFormatOption)
 	enum class DefaultStringFormatEnum : int
 	{
 	
 	}
 #endif
+    #if !defined(AltNum_MinimizeRepTypeEnum)
+        static signed int bit01 = 1;
+        static signed int bit02 = 2;
+        static signed int bit03 = 4;
+        static signed int bit04 = 8;
+        static signed int bit05 = 16;
+        static signed int bit06 = 32;
+        static signed int bit07 = 64;
+        static signed int bit08 = 128;
+    #else
+        static signed short bit01 = 1;
+        static signed short bit02 = 2;
+        static signed short bit03 = 4;
+        static signed short bit04 = 8;
+        static signed short bit05 = 16;
+        static signed short bit06 = 32;
+        static signed short bit07 = 64;
+        static signed short bit08 = 128;
+    #endif
 	public:
         /// <summary>
         /// The decimal overflow
@@ -235,7 +255,7 @@ namespace BlazesRusCode
     #if !defined(AltNum_MinimizeRepTypeEnum)
         unsigned int
     #else
-        unsigned char
+        unsigned short
     #endif
         {
             //Sign = IntValue.IsNegative?-1:1;
