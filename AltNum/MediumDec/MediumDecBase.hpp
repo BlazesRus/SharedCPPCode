@@ -480,14 +480,18 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void ReadString(std::string Value);
+        virtual void ReadString(std::string Value);
 
         /// <summary>
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        MediumDecBase GetValueFromString(std::string Value);
+        template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType GetValueFromString(std::string Value)
+        {
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class from string literal
@@ -516,18 +520,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecBase(std::string Value)
         {
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            this->ReadString(Value);
         }
 
 #pragma endregion String Commands
@@ -709,23 +702,31 @@ public:
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-        //Adding more exact conversion from floating point to MediumDecBase variant later
+protected://Adding more exact conversion from floating point to MediumDecBase variant later
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual float toFloat()
+        void float toFloatV1()
         {
             float Value;
-            if (IsNegative())
+            if (IntValue < 0)
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
+    #else
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = (float)IntValue;
+    #else
                 Value = (float)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
@@ -735,17 +736,25 @@ public:
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDouble()
+        void double toDoubleV1()
         {
             double Value;
-            if (IsNegative())
+            if (IntValue < 0)
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue;
+    #else
                 Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = (double)IntValue;
+    #else
                 Value = (double)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
@@ -755,20 +764,56 @@ public:
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual ldouble toDecimal()
+        void ldouble toDecimalV1()
         {
             ldouble Value;
-            if (IsNegative())
+            if (IntValue < 0)
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue;
+    #else
                 Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
+    #if !defined(MediumDecV2Base_UseMirroredInt)
+                Value = (ldouble)IntValue;
+    #else
                 Value = (ldouble)IntValue.GetValue();
+    #endif
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
+        }
+
+public:
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual float toFloat()
+        {
+            return toFloatV1;
+        }
+
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual double toDouble()
+        {
+            return toDoubleV1();
+        }
+
+        /// <summary>
+        /// MediumDec Variant to long double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual double toDecimal()
+        {
+            return toDecimalV1;
         }
 		
         /// <summary>
@@ -778,6 +823,37 @@ public:
         virtual int toInt() { return IntValue.GetValue(); }
 
         virtual bool toBool() { return IntValue.IsZero() ? false : true; }
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float() { return toFloatV1(); }
+		
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double() { return toDoubleV1(); }
+		
+        /// <summary>
+        /// MediumDec Variant to decimal explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator ldouble() { return toDecimalV1(); }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to bool explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator bool() { return toBool(); }
+
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
@@ -793,14 +869,19 @@ public:
 
         virtual void ConvertToNormType(const RepType& repType){}
 
+protected:
 		//Returns value as normal type representation
         template<MediumDecVariant VariantType=MediumDecBase>
-        virtual VariantType ConvertAsNormType()
+        virtual VariantType ConvertAsNormTypeV1(const RepType& repType)
         {
             VariantType Res = *this;
-            Res.ConvertToNormType();
+            Res.ConvertToNormType(repType);
             return Res;
         }
+		
+public:
+		//Returns value as normal type representation
+        constexpr auto ConvertAsNormType = MediumDecBase::ConvertAsNormTypeV1<MediumDecBase>;
 
         //Converts value to normal type representation
         virtual void ConvertToNormTypeV2()
@@ -809,59 +890,108 @@ public:
             ConvertToNormType(repType);
         }
 
+protected:
 		//Returns value as normal type representation
         template<MediumDecVariant VariantType=MediumDecBase>
-        virtual VariantType ConvertAsNormTypeV2()
+        virtual VariantType AutoConvertAsNormType()
         {
             VariantType Res = *this;
             Res.ConvertToNormTypeV2();
             return Res;
         }
+public:
+		//Returns value as normal type representation
+        constexpr auto ConvertAsNormTypeV2 = MediumDecBase::AutoConvertAsNormType<MediumDecBase>;
 
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
-    std::strong_ordering operator<=>(const MediumDecBase& that) const
-    {
-        int lVal = IntValue==NegativeZero?0:IntValue;
-        int rVal = that.IntValue==NegativeZero?0:that.IntValue;
-        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-            return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-        lVal = IntValue==NegativeZero?0-DecimalHalf:DecimalHalf;
-        rVal = IntValue==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
-        if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-    }
+protected:
+		//Compare only as if in NormalType representation mode
+		template<MediumDecVariant VariantType=MediumDecBase>
+		std::strong_ordering BasicComparisonV1(const VariantType& that) const
+		{
+	#if defined(AltNum_EnableMirroredSection)
+			//Comparing if number is negative vs positive
+			if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+				return SignCmp;
+			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
+				return IntHalfCmp;
+			int lVal; int rVal;
+	#else
+			int lVal = IntValue==NegativeZero?0:IntValue;
+			int rVal = that.IntValue==NegativeZero?0:that.IntValue;
+	#endif
+			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+	#if defined(AltNum_UseIntForDecimalHalf)
+			lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
+			rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
+	#else
+			lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+	#endif
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+	
+		//Compare only as if in NormalType representation mode
+        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecBase>;
+		
+		//Compare only as if in NormalType representation mode
+		std::strong_ordering BasicIntComparison(const int& that) const
+		{
+	#if defined(AltNum_EnableMirroredSection)
+			//Comparing if number is negative vs positive
+			if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+				return SignCmp;
+			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
+				return IntHalfCmp;
+			int lVal;
+	#else
+			int lVal = IntValue==NegativeZero?0:IntValue;
+	#endif
+			if (auto IntHalfCmp = lVal <=> that; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+	#if defined(AltNum_UseIntForDecimalHalf)
+			lVal = DecimalHalf>0?1:0;
+	#else
+			lVal = DecimalHalf.Value>0?1:0;
+	#endif
+			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+	
+public:
 
-    std::strong_ordering operator<=>(const int& that) const
-    {
-        int lVal = IntValue==NegativeZero?0:IntValue;
-        int rVal = that;
-        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-            return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-        lVal = DecimalHalf>0?1:0;
-        if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-    }
+		std::strong_ordering operator<=>(const MediumDecBase& that) const
+		{
+			return BasicComparison(that);
+		}
 
-    bool operator==(const int& that) const
-    {
-        if (IntValue!=that)
-            return false;
-        if (DecimalHalf!=0)
-            return false;
-        return true;
-    }
+		std::strong_ordering operator<=>(const int& that) const
+		{
+			return BasicIntComparison(that);
+		}
 
-    bool operator==(const MediumDecBase& that) const
-    {
-        if (IntValue!=that.IntValue)
-            return false;
-        if (DecimalHalf!=that.IntValue)
-            return false;
-    }
+		bool operator==(const int& that) const
+		{
+			if (IntValue!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator==(const MediumDecBase& that) const
+		{
+			if (IntValue!=that.IntValue)
+				return false;
+			if (DecimalHalf!=that.IntValue)
+				return false;
+		}
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations

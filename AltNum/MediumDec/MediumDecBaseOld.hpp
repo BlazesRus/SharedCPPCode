@@ -1226,9 +1226,7 @@ protected:
 				IntValue = (int)IntHalfRes;
 				DecimalHalf = DecimalRes;
 			}
-        #if defined(AltNum_OutputTruncatedTrailingDigits)
             return TruncatedDigits;//Return any truncated digits lost in division operation
-        #endif
         }
 
         template<IntegerType IntType=int>

@@ -80,6 +80,11 @@ namespace BlazesRusCode
     public:
 
         /// <summary>
+        /// long double (Extended precision double)
+        /// </summary>
+        using ldouble = long double;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
@@ -403,10 +408,151 @@ public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
-	
+        /// <summary>
+        /// Reads the string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        constexpr auto ReadString = MediumDecBase::ReadString;
+
+        /// <summary>
+        /// Gets the value from string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        MediumDecV2Base(const char* strVal)
+        {
+            std::string Value = strVal;
+            if (Value == "Pi")
+            {
+                this->SetVal(Pi);
+            }
+            else if (Value == "E")
+            {
+                this->SetVal(E);
+            }
+            else
+            {
+                this->ReadString(Value);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(std::string Value)
+        {
+            /*if (Value == "Pi")
+            {
+                this->SetVal(Pi);
+            }
+            else if (Value == "E")
+            {
+                this->SetVal(E);
+            }
+            else
+            {*/
+                this->ReadString(Value);
+            /*}*/
+        }
+
     #pragma endregion String Commands
 
     #pragma region ConvertToOtherTypes
+public:
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual float toFloat()
+        {
+            MediumDecV2Base self = *this;
+            self.ConvertToNormTypeV2();
+            return self.toFloatV1();
+        }
+
+private:
+        constexpr auto toDoubleV1 = MediumDecBase::toDouble;
+public:
+
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual double toDouble()
+        {
+            MediumDecV2Base self = *this;
+            self.ConvertToNormTypeV2();
+            return self.toDoubleV1();
+        }
+
+private:
+        constexpr auto toDecimalV1 = MediumDecBase::toDecimal;
+public:
+
+        /// <summary>
+        /// MediumDec Variant to long double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual ldouble toDecimal()
+        {
+            MediumDecV2Base self = *this;
+            self.ConvertToNormTypeV2();
+            return self.toDecimalV1();
+        }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        virtual int toInt() {
+            MediumDecV2Base self = *this;
+            self.ConvertToNormTypeV2();
+            return IntValue.GetValue();
+        }
+
+        virtual bool toBool() {
+            MediumDecV2Base self = *this;
+            self.ConvertToNormTypeV2();
+            return IntValue.IsZero() ? false : true;
+        }
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float() { return toFloat(); }
+		
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double() { return toDouble(); }
+		
+        /// <summary>
+        /// MediumDec Variant to decimal explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator ldouble() { return toDecimal(); }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to bool explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
 
@@ -431,7 +577,69 @@ public:
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
+protected:
+		//Compare only as if in NormalType representation mode
+        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecV2Base>;
 
+public:
+
+    std::strong_ordering operator<=>(const MediumDecV2Base& that) const
+    {
+		int lVal; int rVal;
+		//Pi and E only enabled if imbedded flags are enabled
+#if !defined(AltNum_UseIntForDecimalHalf)
+		if(DecimalHalf.Flags==that.DecimalHalf.Flags)
+		{
+#endif
+			return BasicComparison(that);
+#if !defined(AltNum_UseIntForDecimalHalf)
+		}
+		else
+		{
+			MediumDecV2Base lSide = *this;
+			MediumDecV2Base rSide = that;
+			lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+			return lSide.BasicComparison(that);
+		}
+#endif
+    }
+
+    std::strong_ordering operator<=>(const int& that) const
+    {
+		int lVal; int rVal;
+		//Pi and E only enabled if imbedded flags are enabled
+#if !defined(AltNum_UseIntForDecimalHalf)
+		if(DecimalHalf.Flags==0)
+		{
+#endif
+			return BasicIntComparison(that);
+#if !defined(AltNum_UseIntForDecimalHalf)
+		}
+		else
+		{
+			MediumDecV2Base lSide = *this;
+			lSide.ConvertToNormTypeV2();
+			return lSide.BasicIntComparison(that);
+		}
+#endif
+    }
+
+    bool operator==(const int& that) const
+    {
+        if (IntValue!=that)
+            return false;
+        if (DecimalHalf!=0)
+            return false;
+        return true;
+    }
+
+    bool operator==(const MediumDecV2Base& that) const
+    {
+        if (IntValue!=that.IntValue)
+            return false;
+        if (DecimalHalf!=that.IntValue)
+            return false;
+    }
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
