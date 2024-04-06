@@ -989,9 +989,37 @@ protected:
 			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
+		
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+		template<MediumDecVariant VariantType=MediumDecBase>
+		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
+		{
+			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
+				return IntHalfCmp;
+
+			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+	#if defined(AltNum_UseIntForDecimalHalf)
+			int lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
+			int rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
+	#else
+			int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+	#endif
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+#endif
 	
 		//Compare only as if in NormalType representation mode
         constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecBase>;
+		
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecBase>;
+#endif
 		
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const
@@ -1017,6 +1045,23 @@ protected:
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
+		
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+		std::strong_ordering BasicIntComparisonV2(const int& that) const
+		{
+			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+	#if defined(AltNum_UseIntForDecimalHalf)
+			int lVal = DecimalHalf>0?1:0;
+	#else
+			int lVal = DecimalHalf.Value>0?1:0;
+	#endif
+			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+#endif
 	
 public:
 

@@ -221,16 +221,6 @@ namespace BlazesRusCode
 	#if defined(MediumDecV2_EnableImaginaryNum)
             else if(DecimalHalf.Flag==3)
 				return RepType::INum;
-	#elif defined(MediumDecV2_EnableWithinMinMaxRange)
-            else if(DecimalHalf.Flag==3)
-				//If IntValue==NegativeRep, then left side range value equals negative infinity
-				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
-				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
-    #endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-                return RepType::UndefinedButInRange;
-	#endif
 	#if defined(AltNum_EnableNaN)
 			else if(DecimalHalf==NaNRep)
 				return RepType::NaN;
@@ -241,6 +231,17 @@ namespace BlazesRusCode
 			else if(DecimalHalf==NilRep)
 				return RepType::Nil;
     #endif
+	#if defined(MediumDecV2_EnableWithinMinMaxRange)
+            else if(DecimalHalf.Flag==3)
+				//If IntValue==NegativeRep, then left side range value equals negative infinity
+				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
+				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
+    #endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+			else
+				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
+                return RepType::UndefinedButInRange;
+	#endif
             else
 				throw "Unknown or non-enabled representation type detected";
 #else//Using signed int
@@ -580,17 +581,39 @@ protected:
 		//Compare only as if in NormalType representation mode
         constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecV2Base>;
 
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
+#endif
+
 public:
 
     std::strong_ordering operator<=>(const MediumDecV2Base& that) const
     {
+	#if defined(MediumDecV2_EnableWithinMinMaxRange)
+		if(DecimalHalf.Flag==3) {
+			if(that.DecimalHalf.Flag==3) {
+				//To-do compare within min-max range code here
+			}
+			else {
+				//To-do compare within min-max range code here
+			}
+		}
+		else if(that.DecimalHalf.Flag==3) {
+			//To-do compare within min-max range code here
+		}
+	#endif
+	#if defined(AltNum_EnableMirroredSection)
+		//Comparing if number is negative vs positive
+		if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+			return SignCmp;
+	#endif
+	
         RepType LRep = GetRepType();
         RepType RRep = that.GetRepType();
     #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
         if(LRep^UndefinedBit||RRep^UndefinedBit)
-        {
             throw "Can't compare undefined/nil representations";
-        }
         else
     #endif
     #if defined(AltNum_EnableInfinityRep)||defined(AltNum_EnableApproachingValues)
@@ -618,9 +641,11 @@ public:
         }
     #endif
         else if(LRep==RRep)
-		{
+	#if defined(AltNum_EnableMirroredSection)
+			return BasicComparisonV2(that);
+	#else
 			return BasicComparison(that);
-		}
+	#endif
 	/*#if !defined(AltNum_UseIntForDecimalHalf)
         else if(DecimalHalf.Flags==that.DecimalFlag.Flags)
         {
@@ -643,7 +668,11 @@ public:
 			MediumDecV2Base lSide = *this;
 			MediumDecV2Base rSide = that;
 			lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
-			return lSide.BasicComparison(that);
+	#if defined(AltNum_EnableMirroredSection)
+			return lSide.BasicComparisonV2(rSide);
+	#else
+			return rSide.BasicComparison(rSide);
+	#endif
 		}
     }
 
