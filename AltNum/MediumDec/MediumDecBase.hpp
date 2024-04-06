@@ -81,17 +81,23 @@ protected:
 		//BitFlag 03(4) = IRep
 		unsigned int IFlag = 4;
 		//BitFlag 04(8) = Fractional Rep
-		//If BitFlag#7 is set,
-		//then Negative if infinity type or Approaching From Top side; 
 		unsigned int FractionalFlag = 8;
+		//If BitFlag#7 is set and BitFlag#6 isn't set,
+		//then Approaching From Top side; 
+		unsigned int ApproachFromRFlag = 8;
+		//If BitFlag#7 is set and BitFlag#6 is set,
+		//then Negative if infinity type 
+		unsigned int NegInfinityFlag = 8;
 		//BitFlag 05 (16) = Power of flag
+		unsigned int ToPowerOfFlag = 16;
 		//If BitFlag#7 is set,
 		//then Approaching but divided by ExtraRep
-		unsigned int ToPowerOfFlag = 16;
-		//BitFlag 06 (= Mixed Fraction flag
+		unsigned int DividedByFlag = 16;
+		//BitFlag 06 (32)= Mixed Fraction flag
+		unsigned int MixedFracFlag = 32;
 		//If BitFlag#7 is set,
 		//then Is Infinity Type
-		unsigned int MixedFracFlag = 32;
+		unsigned int InfinityFlag = 32;
 		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
 		unsigned int InfTypeFlag = 64;
 		//Bitflag 08= Undefined/NaN/Nil

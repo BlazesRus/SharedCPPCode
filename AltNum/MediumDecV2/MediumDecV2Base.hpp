@@ -596,11 +596,25 @@ public:
     #if defined(AltNum_EnableInfinityRep)||defined(AltNum_EnableApproachingValues)
 		if(LRep^InfTypeFlag)//Comparing Infinity/Approaching type
         {
-            //To-Do add code here
+			if(LRep^InfinityFlag)//Infinity type
+			{
+				//To-Do add code here
+			}
+			else
+			{
+				//To-Do add code here
+			}
         }
         else if(RRep^InfTypeFlag)
         {
-            //To-Do add code here
+			if(RRep^InfinityFlag)//Infinity type
+			{
+				//To-Do add code here
+			}
+			else
+			{
+				//To-Do add code here
+			}
         }
     #endif
         else if(LRep==RRep)
