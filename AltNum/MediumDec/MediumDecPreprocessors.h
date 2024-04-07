@@ -14,7 +14,7 @@ AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of us
 IntHalfType
 */
 #if defined(AltNum_EnableMirroredSection)
-	#include "MirroredIntV2.hpp"
+	#include "..\MirroredIntV2.hpp"
 	#define IntHalfType MirroredIntV2
 #else
 	#define IntHalfType signed int
@@ -23,6 +23,6 @@ IntHalfType
 #if defined(AltNum_UseIntForDecimalHalf)
 	#define DecimalHalfType signed int
 #else
-	#include "PartialInt.hpp"
+	#include "..\PartialInt.hpp"
 	#define DecimalHalfType PartialInt
 #endif

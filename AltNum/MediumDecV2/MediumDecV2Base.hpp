@@ -327,7 +327,7 @@ public:
         void SetAsInfinity()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsNegative = 0; DecimalHalf = InfinityRep;
+            IntValue.IsPositive = 1; DecimalHalf = InfinityRep;
     #else
             IntValue = 1; DecimalHalf = InfinityRep;
     #endif
@@ -336,7 +336,7 @@ public:
         void SetAsNegativeInfinity()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsNegative = 1; DecimalHalf = InfinityRep;
+            IntValue.IsPositive = 0; DecimalHalf = InfinityRep;
     #else
             IntValue = -1; DecimalHalf = InfinityRep;
     #endif
@@ -605,7 +605,7 @@ public:
 	#endif
 	#if defined(AltNum_EnableMirroredSection)
 		//Comparing if number is negative vs positive
-		if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+		if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 			return SignCmp;
 	#endif
 	

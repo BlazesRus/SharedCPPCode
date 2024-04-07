@@ -168,7 +168,7 @@ protected:
         signed int GetIntHalf()
         {
 	#if defined(AltNum_EnableMirroredSection)
-			return IntValue.IsNegative==1?((signed int)IntValue.Value)*-1:(signed int)IntValue.Value;
+			return IntValue.IsNegative()?((signed int)IntValue.Value)*-1:(signed int)IntValue.Value;
 	#else
             return IntValue;
 	#endif
@@ -177,7 +177,7 @@ protected:
         bool IsNegative()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            return IntValue.IsNegative==1;
+            return IntValue.IsNegative();
 	#else
 			return IntValue<0;
 	#endif
@@ -258,7 +258,7 @@ protected:
         void SwapNegativeStatus()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsNegative ^= 1;
+            IntValue.IsPositive ^= 1;
     #else
             if (IntValue == NegativeRep)
             {
@@ -292,7 +292,7 @@ protected:
         unsigned short
     #endif
         {
-            //Sign = IntValue.IsNegative?-1:1;
+            //Sign = IntValue.IsNegative()?-1:1;
             NormalType = 0,
 	//#if defined(AltNum_EnableFractionals)
             NumByDiv = 8,
@@ -470,7 +470,8 @@ public:
         /// </summary>
         virtual void SetAsMaximum()
         {
-            IntValue = 2147483647; DecimalHalf = 999999999;
+            IntValue = 2147483647;
+			DecimalHalf = 999999999;
         }
 
         /// <summary>
@@ -478,7 +479,12 @@ public:
         /// </summary>
         virtual void SetAsMinimum()
         {
-            IntValue = -2147483647; DecimalHalf = 999999999;
+		#if defined(AltNum_EnableMirroredSection)
+			IntValue = MirroredInt(2147483647,0);
+		#else
+            IntValue = -2147483647;
+		#endif
+			DecimalHalf = 999999999;
         }
 	
     #pragma endregion RangeLimits
@@ -605,6 +611,8 @@ public:
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
+		//To-Do: Add more exact conversion from floating point format to MediumDec variant
+	
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -617,7 +625,11 @@ public:
             if (Value >= 2147483648.0f)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+		#if defined(AltNum_EnableMirroredSection)
+					IntValue = MirroredInt(2147483647,0);
+		#else
+					IntValue = -2147483647;
+		#endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -646,7 +658,11 @@ public:
             if (Value >= 2147483648.0)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+		#if defined(AltNum_EnableMirroredSection)
+					IntValue = MirroredInt(2147483647,0);
+		#else
+					IntValue = -2147483647;
+		#endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -675,7 +691,11 @@ public:
             if (Value >= 2147483648.0L)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+		#if defined(AltNum_EnableMirroredSection)
+					IntValue = MirroredInt(2147483647,0);
+		#else
+					IntValue = -2147483647;
+		#endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -765,21 +785,21 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
         void float toFloatV1()
         {
             float Value;
-            if (IntValue < 0)
+            if (IntValue.IsNegative())
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_EnableMirroredSection)
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
     #else
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
+                Value = (float)-IntValue;
     #endif
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_EnableMirroredSection)
                 Value = (float)IntValue;
     #else
-                Value = (float)IntValue.GetValue();
+                Value = (float)IntValue.Value;
     #endif
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
@@ -795,19 +815,19 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
             double Value;
             if (IntValue < 0)
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue;
+    #if !defined(AltNum_EnableMirroredSection)
+                Value = IntValue == NegativeRep ? 0.0f : (double)IntValue;
     #else
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
+                Value = (double)-IntValue;
     #endif
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_EnableMirroredSection)
                 Value = (double)IntValue;
     #else
-                Value = (double)IntValue.GetValue();
+                Value = (double)IntValue.Value;
     #endif
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
@@ -823,19 +843,19 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
             ldouble Value;
             if (IntValue < 0)
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue;
+    #if !defined(AltNum_EnableMirroredSection)
+                Value = IntValue == NegativeRep ? 0.0L : (float)IntValue;
     #else
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
+                Value = (ldouble)-IntValue;
     #endif
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_EnableMirroredSection)
                 Value = (ldouble)IntValue;
     #else
-                Value = (ldouble)IntValue.GetValue();
+                Value = (ldouble)IntValue.Value;
     #endif
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
@@ -967,7 +987,7 @@ protected:
 		{
 	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
 			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
 				return IntHalfCmp;
@@ -1026,7 +1046,7 @@ protected:
 		{
 	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
+			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
 			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
