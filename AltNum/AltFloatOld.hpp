@@ -28,7 +28,7 @@
 #endif
 
 #include "IntegerConcept.hpp"
-#include "MediumDec\MediumDec.hpp"
+#include "..\MediumDec\MediumDec.hpp"
 /*
 AltFloat_ExtendedRange = Extends SignifNum range to 2147483647
 AltFloat_EnableApproachingZero = Not Implimented yet
@@ -71,20 +71,55 @@ namespace BlazesRusCode
 		#endif
 		//Largest Exp side calculation(2^127):170141183460469231731687303715884105728
 
+		//If AltFloat_ExtendedRange is enabled, Numerator can fill to max of int 32 with denominator of 2147483648.
 		//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
+		struct SignifBitfield {
 		#pragma options align=bit_packed
-        unsigned int IsPositive:1;
-		//Numerator Value
-		//If AltFloat_ExtendedRange is enabled, Value can fill to max of int 32 with denominator of 2147483648.
+        unsigned int IsNegative:1;
 		#if defined(AltFloat_ExtendedRange)
-        unsigned int SignifNum : 31;
+        unsigned int Numerator : 31;
 		#else
-		unsigned int SignifNum : 23;
+		unsigned int Numerator : 23;
 		#endif
 		#pragma options align=reset
+			//If specialStatus==1, then is negative number
+			//If specialStatus==1 and signifNum, then is "-(1+SignifNum/DenomMax)" range with -zero Exp field
+			SignifBitfield(unsigned int signifNum=0, unsigned char specialStatus=0)
+			{
+				switch(specialStatus)
+				{
+					case 1:
+						IsNegative = 1;
+						Numerator = signifNum;
+						break;
+					case 0:
+						IsNegative = 0;
+						Numerator = signifNum;
+						break;
+				}
+			}
+			
+			//Separate constructor for translating from signed number
+			SignifBitfield(signed int signifNum=0)
+			{
+				if(signifNum<0)
+				{
+					IsNegative = 1;
+					Numerator = -signifNum;
+				}
+				else
+				{
+					IsNegative = 0;
+					Numerator = signifNum;
+				}
+			}
+		}SignifNum;
 
         //Refers to Exp inside "2^Exp + (2^Exp)*SignifNum/DenomMax" formula
 		//If Exp==-128 and SignifNum==0, in which case the value is at zero
+		#if defined(AltFloat_DontUseBitfieldInSignif)
+		//If Exp==-128 and SignifNum>0, then is "-(1+SignifNum/DenomMax)" range with -zero Exp field
+		#endif
 		signed char Exp;
 
 			#if defined(AltFloat_ExtendedRange)
@@ -108,34 +143,15 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(unsigned int signifNum=0, signed char exp=ZeroRep, unsigned int isPositive=1)
+        AltFloat(SignifBitfield signifNum=0, signed char Exp=ZeroRep)
         {
             SignifNum = signifNum;
-            Exp = exp;
-			IsPositive = isPositive;
+            Exp = Exp;
         }
 
         AltFloat(const AltFloat&) = default;
 
         AltFloat& operator=(const AltFloat&) = default;
-
-		bool IsNegative()
-		{
-			return IsPositive==0;
-		}
-
-		bool IsPositive()
-		{
-			return IsPositive==1;
-		}
-	
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-			IsPositive ~= 1;
-        }
 
         //Detect if at exactly zero
 		bool IsZero()
@@ -146,7 +162,7 @@ namespace BlazesRusCode
         //Detect if at exactly one
 		bool IsOne()
 		{
-            return SignifNum==0&&Exp==0&&IsPositive==1;
+            return SignifNum==0&&Exp==0;
 		}
 
         /// <summary>
@@ -157,7 +173,6 @@ namespace BlazesRusCode
         {
             SignifNum = Value.SignifNum;
             Exp = Value.Exp;
-			IsPositive = Value.IsPositive;
         }
 
         void SetAsZero()
@@ -166,21 +181,18 @@ namespace BlazesRusCode
 			//Otherwise, treat Exp -128 as for special values and zero so that formula for exact value is exact to formula except if Exp is -128
             SignifNum = 0;
             Exp = ZeroRep;
-			IsPositive = 1;
         }
 
         void SetAsOne()
         {
             SignifNum = 0;
             Exp = 0;
-			IsPositive = 1;
         }
 
         void SetAsNegativeOne()
         {
-            SignifNum = 0;
+            SignifNum = SignifNumBitfield(0,1);
             Exp = 0;
-			IsPositive = 0;
         }
 
     #pragma region Const Representation values
@@ -194,14 +206,13 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-			IsPositive;
+			SignifNum.IsNegative = 0;
     #if !defined(AltFloat_ExtendedRange)
-            SignifNum = 8388607;
+            SignifNum.Numerator = 8388607;
     #else
-			SignifNum = 2147483647;
+			SignifNum.Numerator = 2147483647;
     #endif
 			Exp = 127;
-			IsPositive = 0;
         }
 
         /// <summary>
@@ -211,35 +222,23 @@ namespace BlazesRusCode
         {
 			SignifNum.IsNegative = 1;
     #if !defined(AltFloat_ExtendedRange)
-            SignifNum = 8388607;
+            SignifNum.Numerator = 8388607;
     #else
-			SignifNum = 2147483647;
+			SignifNum.Numerator = 2147483647;
     #endif
 			Exp = 127;
-			IsPositive = 0;
         }
 
-    #pragma region ApproachingZero Setters
-
         /// <summary>
-        /// Sets value as smallest real number that is approaching zero
+        /// Sets value as smallest non-zero whole number that is not approaching zero
         /// </summary>
         void SetAsSmallestNonZero()
         {
             SignifNum = 0;
 			Exp = -127;
-			IsPositive = 1;
         }
-		
-        /// <summary>
-        /// Sets value as smallest real number that is approaching zero
-		/// without setting to positive number
-        /// </summary>
-        void SetAsApproachingWithoutFlip()
-        {
-            SignifNum = 0;
-			Exp = -127;
-        }
+
+    #pragma region ApproachingZero Setters
 
     #pragma endregion ApproachingZero Setters
 
@@ -393,7 +392,7 @@ public:
 			signed int ExpMultiplier = Exp - DenomMaxExp;
 			string outputStr = SignifNum.IsNegative==1?"-2^":"2^"+(std::string)Exp;
 			outputStr += " + ";
-			outputStr += (std::string)SignifNum;
+			outputStr += (std::string)SignifNum.Numerator;
 			outputStr += " * ";
 			outputStr += "2^"+(std::string)ExpMultiplier;
 			return outputStr;
@@ -482,10 +481,10 @@ public:
 				}
 				unsigned _int64 denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
-				unsigned _int64 Value = DenomMax;
-				Value *= RemainingVal;
-				Value /= denom;
-				SignifNum = SignifBitfield(Value,0)
+				unsigned _int64 numerator = DenomMax;
+				numerator *= RemainingVal;
+				numerator /= denom;
+				SignifNum = SignifBitfield(numerator,0)
 				Exp = highestPower;
             }
         }
@@ -517,26 +516,26 @@ public:
 				}
 				unsigned _int64 denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
-				unsigned _int64 Value = DenomMax;
-				Value *= RemainingVal;
-				Value /= denom;
+				unsigned _int64 numerator = DenomMax;
+				numerator *= RemainingVal;
+				numerator /= denom;
 				if(IsNegative)
 				{
 
 					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero Exp field
 					{
-						SignifNum = SignifBitfield(Value,1)
+						SignifNum = SignifBitfield(numerator,1)
 						Exp = 0;
 					}
 					else
 					{
-						SignifNum = SignifBitfield(Value,1)
+						SignifNum = SignifBitfield(numerator,1)
 						Exp = highestPower;
 					}
 				}
 				else
 				{
-					SignifNum = SignifBitfield(Value,0)
+					SignifNum = SignifBitfield(numerator,0)
 					Exp = highestPower;
 				}
             }
@@ -570,31 +569,31 @@ public:
 				unsigned int denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
 				#if defined(AltFloat_ExtendedRange)
-				VariantType Value = VariantType.Maximum();//Can't fit 2147483648 in exactly inside MediumDec 
-				Value /= denom;
-				Value *= VariantType(RemainingVal, Value.GetDecimalHalf());
+				VariantType numerator = VariantType.Maximum();//Can't fit 2147483648 in exactly inside MediumDec 
+				numerator /= denom;
+				numerator *= VariantType(RemainingVal, Value.GetDecimalHalf());
 				#else
-				VariantType Value = VariantType(DenomMax);
-				Value *= VariantType(RemainingVal, Value.GetDecimalHalf());
-				Value /= denom;
+				VariantType numerator = VariantType(DenomMax);
+				numerator *= VariantType(RemainingVal, Value.GetDecimalHalf());
+				numerator /= denom;
 				#endif
-				//return Value.IsNegative()?-Value.GetIntegerHalf():Value.GetIntegerHalf();
+				//return Value.IsNegative()?-numerator.GetIntegerHalf():numerator.GetIntegerHalf();
 				if(Value.IsNegative())
 				{
 					if(Exp==0)//Negative 1 Exp
 					{
-						SignifNum = SignifBitfield(Value.GetIntegerHalf(),2);
+						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),2);
 						Exp==0;
 					}
 					else
 					{
-						SignifNum = SignifBitfield(Value.GetIntegerHalf(),1);
+						SignifNum = SignifBitfield(numerator.GetIntegerHalf(),1);
 						Exp = highestPower;
 					}
 				}
 				else
 				{
-					SignifNum = SignifBitfield(Value.GetIntegerHalf(),0);
+					SignifNum = SignifBitfield(numerator.GetIntegerHalf(),0);
 					Exp = highestPower;
 				}
             }
@@ -696,7 +695,7 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator signed int()
         {
-            if(IsNegative())
+            if(SignifNum<0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exp>31)//Overflow Error
@@ -732,7 +731,7 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int()
         {
-            if(IsNegative())
+            if(SignifNum<0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				return 0;//Return Error
@@ -766,7 +765,7 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator signed long long()
         {
-            if(IsNegative())
+            if(SignifNum>0)
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exp>63)//Overflow Error
@@ -813,7 +812,7 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned long long()
         {
-            if(IsNegative())
+            if(SignifNum>0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				return 0;//Return Error;
@@ -851,7 +850,7 @@ public:
                 return 0;
             else if(IsOne())
                 return 1;
-            if(IsNegative())
+            if(SignifNum<0)
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exp>=31)
@@ -918,19 +917,19 @@ public:
 		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		
 		//Comparing if number is negative vs positive
-        if (auto SignCmp = IsPositive <=> that.IsPositive; SignCmp != 0)
+        if (auto SignCmp = SignifNum.IsNegative <=> that.SignifNum.IsNegative; SignCmp != 0)
 			return SignCmp;
 		//The Smaller Exp is the closer to zero(-128 is exactly at zero)
         if (auto ExpCmp = Exp <=> that.Exp; ExpCmp != 0)
 			return ExpCmp;
-        if (auto SignifFracCmp = SignifNum <=> that.SignifNum; SignifFracCmp != 0)
+        if (auto SignifFracCmp = SignifNum.Value <=> that.SignifNum.Value; SignifFracCmp != 0)
 			return SignifFracCmp;
     }
 	
     bool operator==(const AltFloat& that) const
     {
 		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
-        if (IsPositive!=that.IsPositive)
+        if (IsNegative!=that.IsNegative)
             return false;
 		if (SignifNum!=that.SignifNum)
             return false;
