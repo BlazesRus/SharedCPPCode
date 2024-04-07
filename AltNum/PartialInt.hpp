@@ -33,6 +33,17 @@ namespace BlazesRusCode
 			Value = value;
 			Flags = flags;
 		}
+		std::strong_ordering operator<=>(const PartialInt& that) const
+		{
+			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
+				return ValueCmp;
+		}
+		bool operator==(const unsigned int& that) const
+		{
+			if (Value!=that)
+				return false;
+			return true;
+		}
 	};
 #endif
 }
