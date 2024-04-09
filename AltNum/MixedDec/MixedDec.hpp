@@ -24,8 +24,6 @@
 
 #ifdef MixedDec_DeriveFromAltDec
 	#include "..\AltDec\AltDecBase.hpp"
-#elif MixedDec_DeriveFromFlaggedDec
-	#include "..\FlaggedDec\FlaggedDecBase.hpp"
 #elif MixedDec_DeriveFromMediumDecV2
 	#include "..\MediumDecV2\MediumDecV2Base.hpp"
 	#include "..\MediumDecV2\MediumDecV2.hpp"
@@ -48,8 +46,6 @@ namespace BlazesRusCode
 	class DLL_API MixedDec:
 #ifdef MixedDec_DeriveFromAltDec
     public virtual AltDecBase
-#elif MixedDec_DeriveFromFlaggedDec
-    public virtual FlaggedDecBase
 #elif MixedDec_DeriveFromMediumDecV2
     public virtual MediumDecV2Base
 #else
@@ -292,8 +288,37 @@ public:
 
         bool IsWholeNumber()
         {
-#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
-
+#if defined(MixedDec_DeriveFromAltDec)
+	#if defined(AltNum_UseIntForDecimalHalf)
+		//Add code here
+	#else
+			if(ExtraRep>0)
+			{
+				//Convert to NormatType and then check
+				//Add code here
+			}
+		#if defined(AltNum_EnableIRep)
+			else if((DecimalHalf.Flags==3||DecimalHalf.Flags==0)&&DecimalHalf.Value<DecimalOverflow&& TrailingDigits==0.0f)
+		#else
+			else if(DecimalHalf.Flags==0&&DecimalHalf.Value<DecimalOverflow&& TrailingDigits==0.0f)
+		#endif
+	#endif
+				return DecimalHalf==0;
+			else
+				return false;
+#elif defined(MixedDec_DeriveFromMediumDecV2)
+	#if defined(AltNum_UseIntForDecimalHalf)
+		//Add code here
+	#else
+		#if defined(MediumDecV2_EnableIRep)
+			if((DecimalHalf.Flags==3||DecimalHalf.Flags==0)&&DecimalHalf.Value<DecimalOverflow&&TrailingDigits==0.0f)
+		#else
+			if(DecimalHalf.Flags==0&&DecimalHalf.Value<DecimalOverflow&& TrailingDigits==0.0f)
+		#endif
+	#endif
+				return DecimalHalf==0;
+			else
+				return false;
 #else
             return DecimalHalf==0 && TrailingDigits==0.0f;
 #endif
@@ -301,8 +326,10 @@ public:
 
         bool IsAtOrBelowTwo()
         {
-#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
-
+#if defined(MixedDec_DeriveFromAltDec)
+			//Add code here
+#else if defined(MixedDec_DeriveFromMediumDecV2)
+			//Add code here
 #else
             if(IntValue<=1)
                 return true;
@@ -313,8 +340,10 @@ public:
 
         bool IsAtOrBelowOne()
         {
-#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
-
+#if defined(MixedDec_DeriveFromAltDec)
+			//Add code here
+#else if defined(MixedDec_DeriveFromMediumDecV2)
+			//Add code here
 #else
             if(IntValue<=0)
                 return true;
@@ -358,21 +387,6 @@ public:
         , const int& extraVal = 0
 	    #endif
 #endif
-#if defined(MixedDec_DeriveFromFlaggedDec)
-	#if defined(MixedDec_DontInitializeFromConstRef)
-        #if !defined(FlaggedNum_UseBitset)
-        unsigned char flagsActive=0
-        #else
-        std::bitset<6> flagsActive = {})
-        #endif
-	#else
-        #if !defined(FlaggedNum_UseBitset)
-        const unsigned char& flagsActive=0
-        #else
-        const std::bitset<6>& flagsActive = {})
-        #endif
-	#endif
-#endif
 #if defined(MixedDec_EnableRestrictedFloat)
 		, RestrictedFloat trailingDigits = 0)
 #elif defined(MixedDec_EnableAltFloat)
@@ -385,9 +399,6 @@ public:
             DecimalHalf = decVal;
 #if defined(MixedDec_ExtraRepEnabled)
 			ExtraRep = extraVal;
-#endif
-#if defined(MixedDec_DeriveFromFlaggedDec)
-			FlagsActive = flagsActive;
 #endif
 			TrailingDigits = trailingDigits;
         }
@@ -407,9 +418,6 @@ public:
             DecimalHalf = Value.DecimalHalf;
 #if defined(MixedDec_ExtraRepEnabled)
 			ExtraRep = extraVal;
-#endif
-#if defined(MixedDec_DeriveFromFlaggedDec)
-			FlagsActive = flagsActive;
 #endif
 			TrailingDigits = trailingDigits;
         }
@@ -723,181 +731,6 @@ public:
             else
                 throw "Unknown or non-enabled representation type detected";
             return RepType::UnknownType;//Catch-All Value;
-#elif defined(MixedDec_DeriveFromFlaggedDec)
-    #if defined(MixedDec_EnableInfinityRep)
-            if(DecimalHalf==InfinityRep)
-            {
-	    #if defined(MixedDec_EnableImaginaryInfinity)
-		    #if !defined(MixedDec_UseBitset)
-                if (FlagsActive == INumRep)
-		    #else
-				if(FlagsActive.test(3))
-		    #endif
-				    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
-				else
-	    #endif
-					return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
-            }
-			else
-    #endif
-    #if defined(MixedDec_EnableApproachingValues)
-            if (DecimalHalf == ApproachingBottomRep)
-            {
-				if(ExtraRep==0)
-					return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-				else
-	    #if defined(MixedDec_EnableApproachingDivided)//if(ExtraRep>1)
-					return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-	    #else
-                    throw "EnableApproachingDivided feature not enabled";
-	    #endif	
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-	    #if defined(MixedDec_EnableApproachingPi)
-		    #if !defined(MixedDec_UseBitset)
-                else if (FlagsActive == PiNumRep)
-		    #else
-				else if(FlagsActive.test(1))
-		    #endif
-                    return RepType::ApproachingTopPi;
-	    #endif
-	    #if defined(MixedDec_EnableApproachingE)
-		    #if !defined(MixedDec_UseBitset)
-                else if (FlagsActive == ENumRep)
-		    #else
-				else if(FlagsActive.test(2))
-		    #endif
-                    return RepType::ApproachingTopE;
-	    #endif
-                else
-	    #if defined(MixedDec_EnableApproachingDivided)
-					return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-	    #else
-                    throw "EnableApproachingDivided feature not enabled";
-	    #endif            
-            }
-	    #if defined(MixedDec_EnableImaginaryInfinity)//ApproachingImaginaryValRep
-            else if (DecimalHalf == ApproachingImaginaryBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-		    #if defined(MixedDec_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-		    #else
-                    throw "EnableApproachingDivided feature not enabled";
-		    #endif            
-            }
-            else if (DecimalHalf == ApproachingImaginaryTopRep)
-            {
-				if(ExtraRep==0)
-				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-				else
-	        #if defined(MixedDec_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-	        #else
-                    throw "EnableApproachingDivided feature not enabled";
-            #endif            
-            }
-        #endif
-    #endif
-    #if defined(MixedDec_EnableUndefinedButInRange)//Such as result of Cos of infinity
-			else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;
-    #endif
-			else
-			{
-    #if !defined(MixedDec_UseBitset)
-				switch(FlagsActive)
-				{
-					case 0://NormalType and NaN
-	    #if defined(MixedDec_EnableNaN)
-					if(DecimalHalf==NaNRep)
-						return RepType::NaN;
-					else if(DecimalHalf==UndefinedRep)
-						return RepType::Undefined;
-					else
-	    #endif
-						return RepType::NormalType;
-						break;
-	    #if defined(MixedDec_EnableFractionals)
-					case NumByDivRep:
-						return RepType::NumByDiv;
-						break;
-	    #endif
-	    #if defined(MixedDec_EnablePowers)
-					case NumByPowerRep:
-						return RepType::NumByPower;
-						break;
-	    #endif
-	    #if defined(MixedDec_EnableMixedFractional)
-					case MixedFracRep:
-						return RepType::MixedFrac;
-						break;
-	    #endif
-	    #ifdef MixedDec_EnablePiRep
-					case PiNumRep:
-						return RepType::PiNum;
-						break;
-		    #if defined(MixedDec_EnableFractionals)
-					case PiNumByDivRep:
-						return RepType::PiNumByDiv;
-						break;
-		    #endif
-		    #if defined(MixedDec_EnablePowers)
-					case PiNumByPowerRep:
-						return RepType::PiNumByPower;
-						break;
-		    #endif
-		    #if defined(MixedDec_EnableMixedFractional)
-					case MixedFracPiRep:
-						return RepType::MixedPi;
-						break;
-		    #endif
-	    #endif
-	    #ifdef MixedDec_EnableENum
-					case ENumRep:
-						return RepType::ENum;
-						break;
-		    #if defined(MixedDec_EnableFractionals)
-					case ENumByDivRep:
-						return RepType::ENumByDiv;
-						break;
-		    #endif
-		    #if defined(MixedDec_EnablePowers)
-					case ENumByPowerRep:
-						return RepType::ENumByPower;
-						break;
-		    #endif
-		    #if defined(MixedDec_EnableMixedFractional)
-					case MixedFracERep:
-						return RepType::MixedE;
-						break;
-		    #endif
-	    #endif
-	    #ifdef MixedDec_EnableImaginaryNum
-					case INumRep:
-						return RepType::INum;
-						break;
-		    #if defined(MixedDec_EnableFractionals)
-					case INumByDivRep:
-						return RepType::INumByDiv;
-						break;
-		    #endif
-		    #if defined(MixedDec_EnableMixedFractional)
-					case MixedFracIRep:
-						return RepType::MixedI;
-						break;
-		    #endif
-	    #endif
-				}
-    #else
-
-    #endif
-			}
 #else
     return RepType::NormalType;//Includes values with trailing digits as well(for now at least)
 #endif
