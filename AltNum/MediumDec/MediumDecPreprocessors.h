@@ -26,3 +26,9 @@ AltNum_DefineInfinityAsSignedReps = Have Separate RepTypes stored for negative v
 	#include "..\PartialInt.hpp"
 	#define DecimalHalfType PartialInt
 #endif
+
+#if defined(AltNum_MinimizeRepTypeEnum)
+	#define RepTypeUnderlayer unsigned short
+#else
+	#define RepTypeUnderlayer unsigned int
+#endif

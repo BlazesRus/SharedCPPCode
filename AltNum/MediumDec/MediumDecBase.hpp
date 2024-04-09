@@ -73,59 +73,31 @@ protected:
 	
 	}
 #endif
-    #if !defined(AltNum_MinimizeRepTypeEnum)
 		//BitFlag 01(1) = PiRep
-		unsigned int PiFlag = 1;
+		RepTypeUnderlayer PiFlag = 1;
 		//BitFlag 02(2) = ERep
-		unsigned int EFlag = 2;
+		RepTypeUnderlayer EFlag = 2;
 		//BitFlag 03(4) = IRep
-		unsigned int IFlag = 4;
+		RepTypeUnderlayer IFlag = 4;
 		//BitFlag 04(8) = Fractional Rep
-		unsigned int FractionalFlag = 8;
+		RepTypeUnderlayer FractionalFlag = 8;
 		//If BitFlag#7 is set and BitFlag#6 isn't set,
 		//then Approaching From Top side; 
-		unsigned int ApproachFromRFlag = 8;
-		//If BitFlag#7 is set and BitFlag#6 is set,
-		//then Negative if infinity type 
-		unsigned int NegInfinityFlag = 8;
+		RepTypeUnderlayer ApproachFromRFlag = 8;
 		//BitFlag 05 (16) = Power of flag
-		unsigned int ToPowerOfFlag = 16;
+		RepTypeUnderlayer ToPowerOfFlag = 16;
 		//If BitFlag#7 is set,
 		//then Approaching but divided by ExtraRep
-		unsigned int DividedByFlag = 16;
+		RepTypeUnderlayer DividedByFlag = 16;
 		//BitFlag 06 (32)= Mixed Fraction flag
-		unsigned int MixedFracFlag = 32;
-		//If BitFlag#7 is set,
+		RepTypeUnderlayer MixedFracFlag = 32;
+		//If BitFlag#7 is set and BitFlag#06 is set,
 		//then Is Infinity Type
-		unsigned int InfinityFlag = 32;
+		RepTypeUnderlayer InfinityFlag = 32;
 		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
-		unsigned int InfTypeFlag = 64;
+		RepTypeUnderlayer InfTypeFlag = 64;
 		//Bitflag 08= Undefined/NaN/Nil
-		unsigned int UndefinedBit = 128;
-    #else
-		//BitFlag 01(1) = PiRep
-		unsigned short PiFlag = 1;
-		//BitFlag 02(2) = ERep
-		unsigned short EFlag = 2;
-		//BitFlag 03(4) = IRep
-		unsigned short IFlag = 4;
-		//BitFlag 04(8) = Fractional Rep
-		//If BitFlag#7 is set,
-		//then Negative if infinity type or Approaching From Top side; 
-		unsigned short FractionalFlag = 8;
-		//BitFlag 05 (16) = Power of flag
-		//If BitFlag#7 is set,
-		//then Approaching but divided by ExtraRep
-		unsigned short ToPowerOfFlag = 16;
-		//BitFlag 06 (= Mixed Fraction flag
-		//If BitFlag#7 is set,
-		//then Is Infinity Type
-		unsigned short MixedFracFlag = 32;
-		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
-		unsigned short InfTypeFlag = 64;
-		//Bitflag 08= Undefined/NaN/Nil
-		unsigned short UndefinedBit = 128;
-    #endif
+		RepTypeUnderlayer UndefinedBit = 128;
 	public:
         /// <summary>
         /// The decimal overflow
@@ -285,12 +257,7 @@ protected:
         /// <summary>
         /// Enum representing value type stored
         /// </summary>
-        enum class RepType:
-    #if !defined(AltNum_MinimizeRepTypeEnum)
-        unsigned int
-    #else
-        unsigned short
-    #endif
+        enum class RepType: RepTypeUnderlayer
         {
             //Sign = IntValue.IsNegative()?-1:1;
             NormalType = 0,
@@ -346,19 +313,18 @@ protected:
 	//#endif
 
 	//#if defined(AltNum_EnableInfinityRep)
-		#if defined(AltNum_DefineInfinityAsSignedReps)
+		/*#if defined(AltNum_DefineInfinityAsSignedReps)
             //(Enum Bits:7,6)
             //If Positive Infinity, then convert number into MaximumValue instead when need as real number
 			PositiveInfinity = 96,
             //(Enum Bits:7,6,4)
             //If Negative Infinity, then convert number into MinimumValue instead when need as real number
 			NegativeInfinity = 112,
-		#else
+		*///#endif
             //(Enum Bits:7,6)
             //If Positive Infinity, then convert number into MaximumValue instead when need as real number
             //If Negative Infinity, then convert number into MinimumValue instead when need as real number
 			Infinity = 96,
-		#endif
 	//#endif
 	//#if defined(AltNum_EnableApproachingValues)
             //(Enum Bits:7)
@@ -383,7 +349,6 @@ protected:
 		//#endif
 	//#endif
 	//#if defined(AltNum_EnableApproachingPi)
-
             //(Enum Bits:7,1)
             //equal to IntValue.9..9 Pi
             ApproachingTopPi = 65,
@@ -395,18 +360,10 @@ protected:
             ApproachingTopE = 66,
 	//#endif
 	//#if defined(AltNum_EnableImaginaryInfinity)
-		#if defined(AltNum_DefineInfinityAsSignedReps)
-            //(Enum Bits:7,6,3)
-            PositiveImaginaryInfinity = 100,
-            //(Enum Bits:7,6,3,4)
-			NegativeImaginaryInfinity = 108,
-		#else
             //(Enum Bits:7,6,3)
             ImaginaryInfinity = 100,
-		#endif
 	//#endif
 	//#if defined(AltNum_EnableApproachingI)
-
             //(Enum Bits:7,3)
             //(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
             ApproachingImaginaryBottom = 68,
