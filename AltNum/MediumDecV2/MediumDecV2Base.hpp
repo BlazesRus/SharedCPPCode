@@ -587,7 +587,7 @@ protected:
 #endif
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
-		template<MediumDecVariant VariantType=MediumDecBase>
+		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering CompareWithV1(const VariantType& that) const
 		{
 	#if defined(MediumDecV2_EnableWithinMinMaxRange)
@@ -648,6 +648,7 @@ protected:
 		}
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering CompareWithIntV1(const int& that) const
 		{
 			int lVal; int rVal;
