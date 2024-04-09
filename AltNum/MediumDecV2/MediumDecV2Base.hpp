@@ -586,132 +586,121 @@ protected:
         constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
 #endif
 
-public:
-
-    std::strong_ordering operator<=>(const MediumDecV2Base& that) const
-    {
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=MediumDecBase>
+		std::strong_ordering CompareWithV1(const VariantType& that) const
+		{
 	#if defined(MediumDecV2_EnableWithinMinMaxRange)
-		if(DecimalHalf.Flag==3) {
-			if(that.DecimalHalf.Flag==3) {
+			if(DecimalHalf.Flag==3) {
+				if(that.DecimalHalf.Flag==3) {
+					//To-do compare within min-max range code here
+				}
+				else {
+					//To-do compare within min-max range code here
+				}
+			}
+			else if(that.DecimalHalf.Flag==3) {
 				//To-do compare within min-max range code here
 			}
-			else {
-				//To-do compare within min-max range code here
-			}
-		}
-		else if(that.DecimalHalf.Flag==3) {
-			//To-do compare within min-max range code here
-		}
 	#endif
 	#if defined(AltNum_EnableMirroredSection)
-		//Comparing if number is negative vs positive
-		if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
-			return SignCmp;
+			//Comparing if number is negative vs positive
+			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
+				return SignCmp;
 	#endif
 	
-        RepType LRep = GetRepType();
-        RepType RRep = that.GetRepType();
+			RepType LRep = GetRepType();
+			RepType RRep = that.GetRepType();
     #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
-        if(LRep^UndefinedBit||RRep^UndefinedBit)
-            throw "Can't compare undefined/nil representations";
-        else
+			if(LRep^UndefinedBit||RRep^UndefinedBit)
+				throw "Can't compare undefined/nil representations";
+			else
     #endif
-    #if defined(AltNum_EnableInfinityRep)||defined(AltNum_EnableApproachingValues)
-		if(LRep^InfTypeFlag)//Comparing Infinity/Approaching type
-        {
-			if(LRep^InfinityFlag)//Infinity type
 			{
-				//To-Do add code here
+				switch(LRep)
+				{
+		#if defined(AltNum_EnableInfinityRep)
+		#endif
+		#if defined(AltNum_EnableApproachingValues)
+		
+		#endif
+					default:
+					{
+						if(LRep==RRep)
+		#if defined(AltNum_EnableMirroredSection)
+							return BasicComparisonV2(that);
+		#else
+							return BasicComparison(that);
+		#endif
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(AltNum_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+					}
+				}
+			}
+		}
+
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		std::strong_ordering CompareWithIntV1(const int& that) const
+		{
+			int lVal; int rVal;
+			//Pi and E only enabled if imbedded flags are enabled
+	#if !defined(AltNum_UseIntForDecimalHalf)
+			if(DecimalHalf.Flags==0)
+			{
+	#endif
+				return BasicIntComparison(that);
+	#if !defined(AltNum_UseIntForDecimalHalf)
 			}
 			else
 			{
-				//To-Do add code here
+				MediumDecV2Base lSide = *this;
+				lSide.ConvertToNormTypeV2();
+				return lSide.BasicIntComparison(that);
 			}
-        }
-        else if(RRep^InfTypeFlag)
-        {
-			if(RRep^InfinityFlag)//Infinity type
-			{
-				//To-Do add code here
-			}
-			else
-			{
-				//To-Do add code here
-			}
-        }
-    #endif
-        else if(LRep==RRep)
-	#if defined(AltNum_EnableMirroredSection)
-			return BasicComparisonV2(that);
-	#else
-			return BasicComparison(that);
-	#endif
-	/*#if !defined(AltNum_UseIntForDecimalHalf)
-        else if(DecimalHalf.Flags==that.DecimalFlag.Flags)
-        {
-            if(DecimalFlag.Flags==1)//Pi comparisons
-            {
-                //To-Do add code here
-            }
-            else if(DecimalFlags==2//E comparisons
-            {
-                //To-Do add code here
-            }
-            else//I comparisons
-            {
-                //To-Do add code here
-            }
-        }
-    #endif*/
-		else
-		{
-			MediumDecV2Base lSide = *this;
-			MediumDecV2Base rSide = that;
-			lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
-	#if defined(AltNum_EnableMirroredSection)
-			return lSide.BasicComparisonV2(rSide);
-	#else
-			return rSide.BasicComparison(rSide);
 	#endif
 		}
-    }
 
-    std::strong_ordering operator<=>(const int& that) const
-    {
-		int lVal; int rVal;
-		//Pi and E only enabled if imbedded flags are enabled
-#if !defined(AltNum_UseIntForDecimalHalf)
-		if(DecimalHalf.Flags==0)
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWith = MediumDecBase::CompareWithV1<MediumDecV2Base>;
+
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MediumDecV2Base>;
+
+public:
+		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
 		{
-#endif
-			return BasicIntComparison(that);
-#if !defined(AltNum_UseIntForDecimalHalf)
+			return CompareWith(that);
 		}
-		else
+
+		std::strong_ordering operator<=>(const int& that) const
 		{
-			MediumDecV2Base lSide = *this;
-			lSide.ConvertToNormTypeV2();
-			return lSide.BasicIntComparison(that);
+			return CompareWithInt(that);
 		}
-#endif
-    }
 
-    bool operator==(const int& that) const
-    {
-        if (IntValue!=that)
-            return false;
-        if (DecimalHalf!=0)
-            return false;
-        return true;
-    }
+		bool operator==(const int& that) const
+		{
+			if (IntValue!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
 
-    bool operator==(const MediumDecV2Base& that) const
-    {
-        if (IntValue!=that.IntValue)
-            return false;
-        if (DecimalHalf!=that.IntValue)
-            return false;
-    }
+		bool operator==(const MediumDecV2Base& that) const
+		{
+			if (IntValue!=that.IntValue)
+				return false;
+			if (DecimalHalf!=that.IntValue)
+				return false;
+		}
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
