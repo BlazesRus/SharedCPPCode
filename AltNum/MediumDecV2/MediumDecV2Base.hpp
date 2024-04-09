@@ -586,11 +586,35 @@ protected:
         constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
 #endif
 
+    #if defined(AltNum_DefineInfinityAsSignedReps)
 		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
 		{
-			//Add comparison code here later
+	    #if defined(AltNum_EnableMirroredSection)
+			if(IntValue.IsPositive())
+				if(RRep==RepType:Infinity&&that.IntValue.IsPositive())
+					return 1<=>1;
+				else
+					return 1<=>0;
+			else
+				if(RRep==RepType:Infinity&&that.IntValue.IsNegative())
+					return 1<=>1;
+				else
+					return 0<=>1;
+		#else
+			if(IntValue==1)
+				if(RRep==RepType:Infinity&&that.IntValue==1)
+					return 1<=>1;
+				else
+					return 1<=>0;
+			else
+				if(RRep==RepType:Infinity&&that.IntValue==-1)
+					return 1<=>1;
+				else
+					return 0<=>1;
+		#endif
 		}
+	#endif
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
 		template<MediumDecVariant VariantType=MediumDecV2Base>
@@ -644,13 +668,27 @@ protected:
 			{
 	#if defined(AltNum_EnableInfinityRep)
         #if defined(AltNum_DefineInfinityAsSignedReps)
-                RepType:PositiveInfinity:
-                RepType:NegativeInfinity:
+                case RepType:PositiveInfinity:
+					{
+						if(RRep==RepType:PositiveInfinity)
+							return 1<=>1;
+						else
+							return 1<=>0;
+					}
+					break;
+                case RepType:NegativeInfinity:
+					{
+						if(RRep==RepType:NegativeInfinity)
+							return 1<=>1;
+						else
+							return 0<=>1;
+					}
+					break;
         #else
-                RepType:Infinity:
-        #endif
+                case RepType:Infinity:
                     LSideInfinityComparison(that, RRep);
                     break;
+        #endif
 
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
