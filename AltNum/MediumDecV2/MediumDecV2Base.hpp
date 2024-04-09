@@ -586,6 +586,12 @@ protected:
         constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
 #endif
 
+		template<MediumDecVariant VariantType=MediumDecV2Base>
+		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
+		{
+			//Add comparison code here later
+		}
+
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
 		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering CompareWithV1(const VariantType& that) const
@@ -615,9 +621,37 @@ protected:
 			if(LRep^UndefinedBit||RRep^UndefinedBit)
 				throw "Can't compare undefined/nil representations";
     #endif
+    //AltNum_UseIntForDecimalHalf is required to not be set for
+    //imaginary numbers to be supported by MediumDecV2
+    #if defined(AltNum_EnableImaginaryNum)
+            if (LValue.DecimalHalf.Flags == 3)
+            {
+                if(RValue.Flags!=3)
+                    throw "Can't compare imaginary number with real number";
+                else
+                {
+	    #if defined(AltNum_EnableMirroredSection)
+			    	return BasicComparisonV2(rSide);
+	    #else
+					return BasicComparison(rSide);
+	    #endif
+                }
+            }
+            else if(RValue.Flags==3)
+                throw "Can't compare imaginary number with real number";
+    #endif
 			switch(LRep)
 			{
 	#if defined(AltNum_EnableInfinityRep)
+        #if defined(AltNum_DefineInfinityAsSignedReps)
+                RepType:PositiveInfinity:
+                RepType:NegativeInfinity:
+        #else
+                RepType:Infinity:
+        #endif
+                    LSideInfinityComparison(that, RRep);
+                    break;
+
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 	
@@ -630,7 +664,17 @@ protected:
 	#else
 						return BasicComparison(that);
 	#endif
-					else
+        #if defined(AltNum_DefineInfinityAsSignedReps)
+					else if(RRep==PositiveInfinity)
+                        return 0<=>1;//Positive Infinity is greater than real number representations
+                    else if(RRep==NegativeInfinity)
+        #else           return 1<=>0;
+					else if(RRep==RepType:Infinity)
+                    {
+                        //Add Infinity Comparison code here later
+                    }
+        #endif
+                    else
 					{
 						MediumDecV2Base lSide = *this;
 						MediumDecV2Base rSide = that;
@@ -640,6 +684,7 @@ protected:
 	#else
 						return rSide.BasicComparison(rSide);
 	#endif
+					}
 				}
 			}
 		}
