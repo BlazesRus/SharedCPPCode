@@ -156,50 +156,68 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        virtual RepType const GetRepType()
+        virtual RepType GetRepType()
         {
-#if !defined(AltNum_UseIntForDecimalHalf)
-            if(DecimalHalf.Flag==0)
-			{
-                return RepType::NormalType;
-			}
-    #if defined(MediumDecV2_EnablePiRep)
-            else if(DecimalHalf.Flag==1)
-				return RepType::PiNum;
-    #endif
-    #if defined(MediumDecV2_EnableERep)
-            else if(DecimalHalf.Flag==2)
-				return RepType::ENum;
-    #endif
-	#if defined(MediumDecV2_EnableImaginaryNum)
-            else if(DecimalHalf.Flag==3)
-				return RepType::INum;
-	#if defined(AltNum_EnableNaN)
-			else if(DecimalHalf==NaNRep)
+		#if defined(MediumDecV2_EnableInfinityRep)
+            #if defined(MediumDecV2_UseIntForDecimalHalf)
+            //Add code here later
+            #else
+            //Add code here later
+            #endif
+		#endif
+		#if defined(MediumDecV2_EnableApproachingValues)
+            if (DecimalHalf == ApproachingBottomRep)
+                return RepType::ApproachingBottom;
+            else if (DecimalHalf == ApproachingTopRep)
+                    return RepType::ApproachingTop;
+	    #endif
+		#if defined(AltNum_EnableNaN)
+			if(DecimalHalf==NaNRep)
 				return RepType::NaN;
 			else if(DecimalHalf==UndefinedRep)
 				return RepType::Undefined;
-	#endif
-	#if defined(AltNum_EnableNil)
-			else if(DecimalHalf==NilRep)
+		#endif
+		#if defined(AltNum_EnableNil)
+			if(DecimalHalf==NilRep)
 				return RepType::Nil;
-    #endif
-	#if defined(MediumDecV2_EnableWithinMinMaxRange)
-            else if(DecimalHalf.Flag==3)
-				//If IntValue==NegativeRep, then left side range value equals negative infinity
-				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
-				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
-    #endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-			else
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+			if(DecimalHalf==UndefinedInRangeRep)
 				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
                 return RepType::UndefinedButInRange;
-	#endif
-            else
-				throw "Unknown or non-enabled representation type detected";
-#else//Using signed int
-	//Only supports NormalType, Infinity, and approaching value types
-#endif
+		#endif
+		#if !defined(MediumDecV2_UseIntForDecimalHalf)
+            if(DecimalHalf.Flag==0)
+		#endif
+                return RepType::NormalType;
+		#if defined(MediumDecV2_EnablePiRep)
+            else if(DecimalHalf.Flag==1)
+            #if defined(AltNum_EnableApproachingPi)
+            #endif
+				return RepType::PiNum;
+		#endif
+		#if defined(MediumDecV2_EnableERep)
+            else if(DecimalHalf.Flag==2)
+            #if defined(AltNum_EnableApproachingE)
+            #endif
+				return RepType::ENum;
+		#endif
+		#if defined(MediumDecV2_EnableImaginaryNum)
+            else if(DecimalHalf.Flag==3)
+            #if defined(MediumDecV2_EnableImaginaryInfinity)
+            #endif
+            #if defined(AltNum_EnableApproachingI)
+            #endif
+				return RepType::INum;
+		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
+            else if(DecimalHalf.Flag==3)
+				//If IntValue==???, then left side range value equals negative infinity
+				//If DecimalHalf.Value==???, then right side range value equals positive infinity
+				//IntValue represents left side minimum
+				//For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
+				return RepType::WithinMinMaxRange;
+		#endif
+			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }
 

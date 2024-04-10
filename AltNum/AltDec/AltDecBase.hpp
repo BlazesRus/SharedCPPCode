@@ -224,7 +224,7 @@ namespace BlazesRusCode
                     return RepType::WithinMinMaxRange;
                 else
             #endif
-                    return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
+                    return RepType::Infinity;
             }
             else
         #endif

@@ -556,9 +556,100 @@ public:
 			}
 		}
 
-        RepType GetRepType()
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+        virtual RepType GetRepType()
         {
-			//Add Code Here Later
+		#if defined(MixedDec_EnableInfinityRep)
+            #if defined(MixedDec_UseIntForDecimalHalf)
+            //Add code here later
+            #else
+            //Add code here later
+            #endif
+		#endif
+		#if defined(MixedDec_EnableApproachingValues)
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+            #if defined(MixedDec_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeft;
+                else
+            #endif
+                    return RepType::ApproachingBottom;
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+            #if defined(MixedDec_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeft;
+                else
+            #endif
+                    return RepType::ApproachingTop;
+            }
+	    #endif
+		#if defined(AltNum_EnableNaN)
+			if(DecimalHalf==NaNRep)
+				return RepType::NaN;
+			else if(DecimalHalf==UndefinedRep)
+				return RepType::Undefined;
+		#endif
+		#if defined(AltNum_EnableNil)
+			if(DecimalHalf==NilRep)
+				return RepType::Nil;
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+			if(DecimalHalf==UndefinedInRangeRep)
+				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
+                return RepType::UndefinedButInRange;
+		#endif
+
+		#if !defined(MixedDec_UseIntForDecimalHalf)
+            if(DecimalHalf.Flag==0)
+		#endif
+                return RepType::NormalType;
+		#if defined(MixedDec_EnablePiRep)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+            if(DecimalHalf.Flag==1)
+                #if defined(AltNum_EnableApproachingPi)
+                #endif
+				return RepType::PiNum;
+            #endif
+		#endif
+		#if defined(MixedDec_EnableERep)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+            if(DecimalHalf.Flag==2)
+                #if defined(AltNum_EnableApproachingE)
+                #endif
+				return RepType::ENum;
+		#endif
+		#if defined(MixedDec_EnableImaginaryNum)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+            if(DecimalHalf.Flag==3)
+                #if defined(AltNum_EnableImaginaryInfinity)
+                #endif
+                #if defined(AltNum_EnableApproachingI)
+                #endif
+				return RepType::INum;
+            #endif
+        #endif
+		#if defined(MixedDec_EnableWithinMinMaxRange)
+            #if defined(MixedDec_DeriveFromMediumDecV2)
+            if(DecimalHalf.Flag==3)
+				return RepType::WithinMinMaxRange;
+            #else//If deriving from AltDec, use ExtraRep to detect if unknown in Min-Max range
+            if (ExtraRep == WithinMinMaxRangeRep)
+                return RepType::WithinMinMaxRange;
+            #endif
+		#endif
+			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
+            return RepType::UnknownType;//Catch-All Value;
         }
 
     #pragma endregion RepType

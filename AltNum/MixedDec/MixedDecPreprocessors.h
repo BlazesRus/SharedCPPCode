@@ -16,26 +16,11 @@ MixedDec_DeriveFromAltDec =
 MixedDec_DeriveFromMediumDecV2 =
 	Deriving MixedDec from MediumDecV2
 	(includes flags for Pi, E, and i within same bytes that store DecimalHalf)
-MixedDec_DeriveFromFlaggedDec =
-	Deriving MixedDec from FlaggedDec 
-	(includes flags field and optionally ExtraRep field field if needed)
-MixedDec_DerivedFromExtendFlagDec = 
-	Auto toggled if MixedDec_DeriveFromFlaggedDec and FlaggedNum_ExtraRepIsActive is true
-MixedDec_UsingExtendedRepresentations =
-	Autotoggled if MixedDec_DeriveFromAltDec or MixedDec_DeriveFromFlaggedDec enabled
 
 MixedDec_EnableAltFloat = Use custom floating point class that acts similar to float in how digits are stored to store trailing digits
 MixedDec_EnableRestrictedFloat = Uses builtin class RestrictedFloat to store trailing digits (representing only fractional range between 0 and 1 of trailing digits)
 If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled then trailing digits are stored inside float
 */
-
-#if defined(MixedDec_DeriveFromAltDec)||(defined(MixedDec_DeriveFromFlaggedDec)&&defined(FlaggedNum_ExtraRepIsActive))
-	#define MixedDec_ExtraRepEnabled
-#endif
-
-#if defined(MixedDec_DeriveFromAltDec)||defined(MixedDec_DeriveFromFlaggedDec)
-	#define MixedDec_UsingExtendedRepresentations
-#endif
 
 #if defined(MixedDec_DeriveFromAltDec)
 	#if defined(AltNum_EnableFractionals)
@@ -116,67 +101,8 @@ If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled
     #if defined(AltNum_EnableNil)
         #define MixedDec_EnableNilRep
     #endif
-#elif defined(MixedDec_DeriveFromFlaggedDec)
-	#define MixedDec_EnableFractionals
-	#if defined(FlaggedNum_EnablePowers)
-        #define MixedDec_EnablePowers//with flag 05, and other flag active
-	#endif
-	#if defined(FlaggedNum_EnablePiRep)
-        #define MixedDec_EnablePiRep//with flag 01 active
-		#if defined(FlaggedNum_EnablePiFractions)
-            #define MixedDec_EnablePiFractions//  (Value/ExtraRep)*Pi Representation with flag 04 and 01 active
-		#endif
-	#endif
-	#if defined(FlaggedNum_EnableERep)
-        #define MixedDec_EnableERep//with flag 02 active
-		#if defined(FlaggedNum_EnableEFractions)
-            #define MixedDec_EnableEFractions//(Value/ExtraRep)*e Representation with flag 04 and 02 active
-		#endif
-	#endif
-	#if defined(FlaggedNum_EnableImaginaryNum)
-            #define MixedDec_EnableImaginaryNum//with flag 03 active
-		#if defined(FlaggedNum_EnableIFractions)
-            #define MixedDec_EnableIFractions//(Value/ExtraRep)*i Representation with flag 04 and 03 active
-		#endif
-	#endif
-	#if defined(FlaggedNum_EnableMixedFractional)
-        #define MixedDec_EnableMixedFractional
-	#endif
-	#if defined(FlaggedNum_EnableInfinityRep)
-        #define MixedDec_EnableInfinityRep
-	#endif
-	#if defined(FlaggedNum_EnableApproachingValues)
-		#define MixedDec_EnableApproachingValues
-	#endif
-	#if defined(FlaggedNum_DisableApproachingTop)
-		#define MixedDec_DisableApproachingTop
-	#endif
-	#if defined(FlaggedNum_EnableApproachingDivided)
-		#define MixedDec_EnableApproachingDivided
-	#endif
-	#if defined(FlaggedNum_EnableNaN)
-		#define MixedDec_EnableNaN
-	#endif
-	#if defined(FlaggedNum_EnableApproachingPi)
-        #define MixedDec_EnableApproachingPi//equal to IntValue.9..9 Pi (Enum Bits:7,1,5)
-	#endif
-	#if defined(FlaggedNum_EnableApproachingE)
-        #define MixedDec_EnableApproachingE//equal to IntValue.9..9 e (Enum Bits:7,2, 5)
-	#endif
-	#if defined(FlaggedNum_EnableImaginaryInfinity)
-        #define MixedDec_EnableImaginaryInfinity
-		#if defined(FlaggedNum_EnableApproachingI)
-            #define MixedDec_EnableApproachingI
-		#endif
-	#endif
-	#if defined(FlaggedNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-		#define MixedDec_EnableUndefinedButInRange
-	#endif
-	#if defined(FlaggedNum_EnableNilRep)
-		#define MixedDec_EnableNilRep
-	#endif
 #endif
 
-#if	defined(MixedDec_DeriveFromAltDec) || defined(MixedDec_DeriveFromFlaggedDec) || defined(MixedDec_DeriveFromMediumDecV2)
+#if	defined(MixedDec_DeriveFromAltDec) || defined(MixedDec_DeriveFromMediumDecV2)
 	#define MixedDec_EnableAlternativeRepresentations
 #endif
