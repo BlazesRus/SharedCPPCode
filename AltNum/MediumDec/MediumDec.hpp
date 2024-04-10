@@ -192,10 +192,8 @@ namespace BlazesRusCode
 	#endif
 
 	#if defined(AltNum_EnableInfinityRep)
-				case RepType::PositiveInfinity://If Positive Infinity: then convert number into MaximumValue instead when need as real number
-					return "PositiveInfinity"; break;
-				case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
-					return "NegativeInfinity"; break;
+				case RepType::Infinity:
+					return "Infinity"; break;
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
@@ -226,10 +224,8 @@ namespace BlazesRusCode
 					return "ApproachingTopE"; break;
 	#endif
 	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-					return "PositiveImaginaryInfinity"; break;
-				case RepType::NegativeImaginaryInfinity:
-					return "NegativeImaginaryInfinity"; break;
+				case RepType::ImaginaryInfinity:
+					return "ImaginaryInfinity"; break;
 	#endif
 	#if defined(AltNum_EnableApproachingI)
 				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i

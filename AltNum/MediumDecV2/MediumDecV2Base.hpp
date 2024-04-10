@@ -620,29 +620,9 @@ protected:
 			switch(LRep)
 			{
 	#if defined(AltNum_EnableInfinityRep)
-        #if defined(AltNum_DefineInfinityAsSignedReps)
-                case RepType:PositiveInfinity:
-					{
-						if(RRep==RepType:PositiveInfinity)
-							return 1<=>1;
-						else
-							return 1<=>0;
-					}
-					break;
-                case RepType:NegativeInfinity:
-					{
-						if(RRep==RepType:NegativeInfinity)
-							return 1<=>1;
-						else
-							return 0<=>1;
-					}
-					break;
-        #else
                 case RepType:Infinity:
                     LSideInfinityComparison(that, RRep);
                     break;
-        #endif
-
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
 	
@@ -655,16 +635,13 @@ protected:
 	#else
 						return BasicComparison(that);
 	#endif
-        #if defined(AltNum_DefineInfinityAsSignedReps)
-					else if(RRep==PositiveInfinity)
-                        return 0<=>1;//Positive Infinity is greater than real number representations
-                    else if(RRep==NegativeInfinity)
-        #else           return 1<=>0;
 					else if(RRep==RepType:Infinity)
                     {
-                        //Add Infinity Comparison code here later
+                        if(that.IntValue==1)
+							return 0<=>1;//Positive Infinity is greater than real number representations
+						else
+							return 1<=>0;
                     }
-        #endif
                     else
 					{
 						MediumDecV2Base lSide = *this;
@@ -804,18 +781,9 @@ public:
         switch (repType)
         {
 	#if defined(AltNum_EnableInfinityRep)
-		#if defined(AltNum_DefineInfinityAsSignedReps)
-        case RepType::PositiveInfinity:
-            return "∞";
-            break;
-        case RepType::NegativeInfinity:
-            return "-∞";
-            break;
-		#else
         case RepType::Infinity:
             return IsNegative()?"-∞":"∞";
             break;
-		#endif
 	    #if defined(AltNum_EnableApproachingValues)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
@@ -926,25 +894,18 @@ public:
             break;
 	#endif
     #if defined(AltNum_EnableImaginaryInfinity)
-		#if defined(AltNum_DefineInfinityAsSignedReps)
-        case RepType::PositiveImaginaryInfinity:
-            return "∞";
+        case RepType::ImaginaryInfinity:
+            return IsNegative()?"-∞i":"∞i";
             break;
-        case RepType::NegativeImaginaryInfinity:
-            return "-∞";
-            break;
-		#else
-        case RepType::Infinity:
-            return IsNegative()?"-∞":"∞";
-            break;
-		#endif
-	    #if defined(AltNum_EnableApproachingValues)
+	#endif
+	
+	#if defined(MediumDecV2_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToStringOp()+"i";
 			#else
-            return (std::string)IntValue + ".0..1i";
+            return (std::string)IntValue + ".0..01i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
@@ -955,15 +916,14 @@ public:
             return (std::string)IntValue + ".9..9i";
 			#endif
             break;
-		    #if defined(AltNum_EnableApproachingDivided)
+		/*#if defined(AltNum_EnableApproachingDivided)
 		//ToDo:work on unreal string version for the various approaching values
         case RepType::ApproachingImaginaryMidRight:
         case RepType::ApproachingImaginaryMidLeft:
             ConvertToNormType(repType);
 			return BasicToStringOp()+"i";
 			break;
-        #endif
-            #endif
+        #endif*/
     #endif
 	/*
     #if defined(AltNum_EnableMixedFractional)

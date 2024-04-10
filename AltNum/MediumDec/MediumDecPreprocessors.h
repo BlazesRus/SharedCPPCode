@@ -11,7 +11,6 @@ AltNum_EnableAlternativeModulusResult
 AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf
 	(uses old behavior); Disabled for now(forcing usage of bitfield instead)
 AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
-AltNum_DefineInfinityAsSignedReps = Have Separate RepTypes stored for negative vs positive infinity(old behavior)
 */
 #if defined(AltNum_EnableMirroredSection)
 	#include "..\MirroredIntV2.hpp"

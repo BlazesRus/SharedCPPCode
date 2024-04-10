@@ -488,10 +488,8 @@ public:
 	#endif
 
 	#if defined(MixedDec_EnableInfinityRep)
-				case RepType::PositiveInfinity://If Positive Infinity: then convert number into MaximumValue instead when need as real number
+				case RepType::Infinity:
 					return "PositiveInfinity"; break;
-				case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
-					return "NegativeInfinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
@@ -522,10 +520,8 @@ public:
 					return "ApproachingTopE"; break;
 	#endif
 	#if defined(MixedDec_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-					return "PositiveImaginaryInfinity"; break;
-				case RepType::NegativeImaginaryInfinity:
-					return "NegativeImaginaryInfinity"; break;
+				case RepType::ImaginaryInfinity:
+					return "ImaginaryInfinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingI)
 				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
@@ -562,178 +558,7 @@ public:
 
         RepType GetRepType()
         {
-#if defined(MixedDec_DeriveFromAltDec)
-        #if defined(MixedDec_EnableInfinityRep)
-            if(DecimalHalf==InfinityRep)
-            {
-            #if defined(MixedDec_EnableImaginaryInfinity)
-                if (ExtraRep == IRep)
-                    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
-                else
-            #endif
-            #if defined(MixedDec_EnableUndefinedButInRange)
-                if (ExtraRep == UndefinedInRangeRep)
-                    return RepType::UndefinedButInRange;
-                else
-            #endif
-            #if defined(WithinMinMaxRangeRep)
-                if (ExtraRep == WithinMinMaxRangeRep)
-                    return RepType::WithinMinMaxRange;
-                else
-            #endif
-                    return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
-            }
-            else
-        #endif
-        #if defined(MixedDec_EnableApproachingValues)//old value = ApproachingValRep
-            if (DecimalHalf == ApproachingBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-            #if defined(MixedDec_EnableApproachingDivided)//if(ExtraRep>1)
-                    return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-            #else
-                    throw "EnableApproachingDivided feature not enabled";
-            #endif
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-            #if defined(MixedDec_EnableApproachingPi)
-                else if (ExtraRep == PiRep)
-                    return RepType::ApproachingTopPi;
-            #endif
-            #if defined(MixedDec_EnableApproachingE)
-                else if (ExtraRep == ERep)
-                    return RepType::ApproachingTopE;
-            #endif
-                else
-            #if defined(MixedDec_EnableApproachingDivided)
-                    return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-            #else
-                    throw "EnableApproachingDivided feature not enabled";
-            #endif
-            }
-            #if defined(MixedDec_EnableImaginaryInfinity)//ApproachingImaginaryValRep
-            else if (DecimalHalf == ApproachingImaginaryBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-                #if defined(MixedDec_EnableApproachingDivided)
-                    return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-                #else
-                    throw "EnableApproachingDivided feature not enabled";
-                #endif
-            }
-            else if (DecimalHalf == ApproachingImaginaryTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-                else
-                #if defined(MixedDec_EnableApproachingDivided)
-                    return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-                #else
-                    throw "EnableApproachingDivided feature not enabled";
-                #endif
-            }
-            #endif
-        #endif
-            if(ExtraRep==0)
-            {
-    #if defined(MixedDec_EnableNaN)
-                if(DecimalHalf==NaNRep)
-                    return RepType::NaN;
-                else if(DecimalHalf==UndefinedRep)
-                    return RepType::Undefined;
-    #endif
-                return RepType::NormalType;
-            }
-            else if(IntValue==0&&DecimalHalf==0)
-            {
-                return RepType::NormalType;
-            }
-    #ifdef MixedDec_EnablePiRep
-            else if(ExtraRep==PiRep)
-                return RepType::PiNum;
-        #if defined(MixedDec_EnablePiFractional)
-            else if(ExtraRep==PiByDivisorRep)
-                return RepType::PiFractional;
-        #endif
-    #endif
-            else if(ExtraRep>0)
-            {
-    #if defined(MixedDec_EnableMixedFractional)
-                if(DecimalHalf<0)
-                    return RepType::MixedFrac;
-    #endif
-    #if defined(MixedDec_EnableFractionals)
-                return RepType::NumByDiv;
-    #endif
-                throw "Non-enabled representation detected";
-            }
-    #if defined(MixedDec_EnableERep)
-            else if(ExtraRep==ERep)
-            {
-                return RepType::ENum;
-            }
-        #if defined(MixedDec_EnableEFractional)
-            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-                return RepType::EFractional;
-        #endif
-    #endif
-
-    #if defined(MixedDec_EnableImaginaryNum)
-            else if(ExtraRep==IRep)
-            {
-                return RepType::INum;
-            }
-        #if defined(MixedDec_EnableIFractional)
-            else if(ExtraRep==IByDivisorRep)
-                    return RepType::IFractional;
-        #endif
-    #endif
-    #if defined(MixedDec_EnableUndefinedButInRange)//Such as result of Cos of infinity
-           else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-        #if defined(MixedDec_EnableWithinMinMaxRange)
-            //If IntValue==NegativeRep, then left side range value equals negative infinity
-            //If DecimalHalf==InfinityRep, then right side range value equals positive infinity
-           else if(ExtraRep==WithinMinMaxRangeRep)
-                return RepType::WithinMinMaxRange;
-        #endif
-    #endif
-            else if(ExtraRep<0)
-    #if defined(MixedDec_EnableAlternativeMixedFrac)
-                if(DecimalHalf<0)
-        #if defined(MixedDec_EnableMixedPiFractional)
-                    return RepType::MixedPi;
-        #elif defined(MixedDec_EnableMixedEFractional)
-                    return RepType::MixedE;
-        #elif defined(MixedDec_EnableMixedIFractional)
-                    return RepType::MixedI;
-        #else
-                    throw "Non-enabled Alternative Mixed Fraction representation type detected";
-        #endif
-                else
-    #endif
-    #if defined(MixedDec_EnableDecimaledPiFractionals)
-                    return RepType::PiNumByDiv;
-    #elif defined(MixedDec_EnableDecimaledEFractionals)
-                    return RepType::ENumByDiv;
-    #elif defined(MixedDec_EnableDecimaledIFractionals)
-                    return RepType::INumByDiv;
-    #else
-                    throw "Non-enabled Negative ExtraRep representation type detected";
-    #endif
-            else
-                throw "Unknown or non-enabled representation type detected";
-            return RepType::UnknownType;//Catch-All Value;
-#else
-    return RepType::NormalType;//Includes values with trailing digits as well(for now at least)
-#endif
+			//Add Code Here Later
         }
 
     #pragma endregion RepType
