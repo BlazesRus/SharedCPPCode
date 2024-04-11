@@ -164,7 +164,7 @@ namespace BlazesRusCode
         /// </summary>
         virtual RepType GetRepType()
         {
-#if !defined(MediumDecV2_UseIntForDecimalHalf)
+#if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
             {
 #endif
@@ -208,13 +208,15 @@ namespace BlazesRusCode
                     }
                     break;
         #elif defined(MediumDecV2_EnableWithinMinMaxRange)
-				//If IntValue==???, then left side range value equals negative infinity
-				//If DecimalHalf.Value==???, then right side range value equals positive infinity
-				//IntValue represents left side minimum
-				//For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
-				return RepType::WithinMinMaxRange;
+                case 3:
+				    //If IntValue==???, then left side range value equals negative infinity
+				    //If DecimalHalf.Value==???, then right side range value equals positive infinity
+				    //IntValue represents left side minimum
+				    //For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
+				    return RepType::WithinMinMaxRange;
+                    break;
         #endif
-#if !defined(MediumDecV2_UseIntForDecimalHalf)
+#if !defined(AltNum_UseIntForDecimalHalf)
                 default:
                     {
 #endif
@@ -244,8 +246,8 @@ namespace BlazesRusCode
                             //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
                             return RepType::UndefinedButInRange;
 		#endif
-#if !defined(MediumDecV2_UseIntForDecimalHalf)
                         return RepType::NormalType;
+#if !defined(AltNum_UseIntForDecimalHalf)
                     }
                     break;
             }
