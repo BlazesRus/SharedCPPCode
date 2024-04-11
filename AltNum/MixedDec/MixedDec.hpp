@@ -473,23 +473,23 @@ public:
 	#endif
 
 	#if defined(MixedDec_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+				case RepType::MixedFrac://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedFrac"; break;
 		#if defined(MixedDec_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedPi://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedPi"; break;
 		#elif defined(MixedDec_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedE://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedE"; break;
 		#elif defined(MixedDec_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedI://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedI"; break;
 		#endif
 	#endif
 
 	#if defined(MixedDec_EnableInfinityRep)
 				case RepType::Infinity:
-					return "PositiveInfinity"; break;
+					return "Infinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingValues)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
@@ -514,10 +514,22 @@ public:
 	#if defined(MixedDec_EnableApproachingPi)
 				case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
 					return "ApproachingTopPi"; break;
+		#if defined(MixedDec_EnableApproachingAlternativeDiv)
+				case RepType::ApproachingMidLeftPi:
+					return "ApproachingMidLeftPi"; break;
+				case RepType::ApproachingMidRightPi:
+					return "ApproachingMidRightPi"; break;
+		#endif
 	#endif
 	#if defined(MixedDec_EnableApproachingE)
 				case RepType::ApproachingTopE://equal to IntValue.9..9 e
 					return "ApproachingTopE"; break;
+		#if defined(MixedDec_EnableApproachingAlternativeDiv)
+				case RepType::ApproachingMidLeftE:
+					return "ApproachingMidLeftE"; break;
+				case RepType::ApproachingMidRightE:
+					return "ApproachingMidRightE"; break;
+		#endif
 	#endif
 	#if defined(MixedDec_EnableImaginaryInfinity)
 				case RepType::ImaginaryInfinity:
@@ -561,93 +573,219 @@ public:
         /// </summary>
         virtual RepType GetRepType()
         {
-		#if defined(MixedDec_EnableInfinityRep)
-            #if defined(MixedDec_UseIntForDecimalHalf)
-            //Add code here later
-            #else
-            //Add code here later
-            #endif
-		#endif
-		#if defined(MixedDec_EnableApproachingValues)
-            if (DecimalHalf == ApproachingBottomRep)
+#if !defined(AltNum_UseIntForDecimalHalf)
+            switch(DecimalHalf.Flag)
             {
-            #if defined(MixedDec_EnableApproachingDivided)
-                if(ExtraRep!=0)
-                    return RepType::ApproachingMidLeft;
-                else
-            #endif
-                    return RepType::ApproachingBottom;
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-            #if defined(MixedDec_EnableApproachingDivided)
-                if(ExtraRep!=0)
-                    return RepType::ApproachingMidLeft;
-                else
-            #endif
-                    return RepType::ApproachingTop;
-            }
-	    #endif
-		#if defined(AltNum_EnableNaN)
-			if(DecimalHalf==NaNRep)
-				return RepType::NaN;
-			else if(DecimalHalf==UndefinedRep)
-				return RepType::Undefined;
-		#endif
-		#if defined(AltNum_EnableNil)
-			if(DecimalHalf==NilRep)
-				return RepType::Nil;
-		#endif
-		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-			if(DecimalHalf==UndefinedInRangeRep)
-				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-                return RepType::UndefinedButInRange;
-		#endif
-
-		#if !defined(MixedDec_UseIntForDecimalHalf)
-            if(DecimalHalf.Flag==0)
-		#endif
-                return RepType::NormalType;
+#endif
 		#if defined(MixedDec_EnablePiRep)
             #if defined(AltNum_UseIntForDecimalHalf)
                 //Add code here later
             #else
-            if(DecimalHalf.Flag==1)
-                #if defined(AltNum_EnableApproachingPi)
+                case 1:
+                    {
+                #if defined(MixedDec_EnableApproachingPi)
+                        if (DecimalHalf == ApproachingTopRep)
+                    #if defined(MixedDec_EnableApproachingAlternativeDiv)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeftPi;
+                            else
+                    #endif
+                                return RepType::ApproachingTopPi;
                 #endif
-				return RepType::PiNum;
+                #if defined(MixedDec_EnableApproachingAlternativeDiv)
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                    #if defined(MixedDec_EnableApproachingAlternativeDiv)
+                             return RepType::ApproachingMidRightPi;
+                    #endif
+                #endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::PiPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(MixedDec_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedPi;
+                            else
+                    #endif
+                                return RepType::PiNumByDiv;
+                #endif
+                        return RepType::PiNum;
+                    }
+                    break;
             #endif
-		#endif
+        #endif
 		#if defined(MixedDec_EnableERep)
             #if defined(AltNum_UseIntForDecimalHalf)
                 //Add code here later
             #else
-            if(DecimalHalf.Flag==2)
-                #if defined(AltNum_EnableApproachingE)
+                case 2:
+                    {
+                #if defined(MixedDec_EnableApproachingE)
+                        if (DecimalHalf == ApproachingTopRep)
+                    #if defined(MixedDec_EnableApproachingAlternativeDiv)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeftE;
+                            else
+                    #endif
+                                return RepType::ApproachingTopE;
+                    #if defined(MixedDec_EnableApproachingAlternativeDiv)
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                             return RepType::ApproachingMidRightE;
+                    #endif
                 #endif
-				return RepType::ENum;
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::EPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(MixedDec_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedE;
+                            else
+                    #endif
+                                return RepType::ENumByDiv;
+                #endif
+                        return RepType::ENum;
+                    }
+                    
+                    break;
+            #endif
 		#endif
-		#if defined(MixedDec_EnableImaginaryNum)
+        #if defined(MixedDec_EnableImaginaryNum)
             #if defined(AltNum_UseIntForDecimalHalf)
                 //Add code here later
             #else
-            if(DecimalHalf.Flag==3)
-                #if defined(AltNum_EnableImaginaryInfinity)
+                case 3:
+                    {
+                #if defined(MixedDec_EnableImaginaryInfinity)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::ImaginaryInfinity;
                 #endif
-                #if defined(AltNum_EnableApproachingI)
+                #if defined(MixedDec_EnableApproachingI)
+                        if (DecimalHalf == ApproachingBottomRep)
+                        {
+                    #if defined(MixedDec_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingImaginaryMidLeft;
+                            else
+                    #endif
+                            return RepType::ApproachingImaginaryBottom;
+                        }
+                        else if (DecimalHalf == ApproachingTopRep)
+                        {
+                    #if defined(MixedDec_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingImaginaryMidRight;
+                            else
+                    #endif
+                            return RepType::ApproachingImaginaryTop;
+                        }
                 #endif
-				return RepType::INum;
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::EPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(MixedDec_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedI;
+                            else
+                    #endif
+                                return RepType::INumByDiv;
+                #endif
+                        return RepType::INum;
+                #endif
+                    }
+                    break;
             #endif
         #endif
-		#if defined(MixedDec_EnableWithinMinMaxRange)
-            #if defined(MixedDec_DeriveFromMediumDecV2)
-            if(DecimalHalf.Flag==3)
-				return RepType::WithinMinMaxRange;
-            #else//If deriving from AltDec, use ExtraRep to detect if unknown in Min-Max range
-            if (ExtraRep == WithinMinMaxRangeRep)
-                return RepType::WithinMinMaxRange;
-            #endif
+#if !defined(AltNum_UseIntForDecimalHalf)
+                default:
+                    {
+#endif
+		#if defined(MixedDec_EnableInfinityRep)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::Infinity;
 		#endif
+		#if defined(MixedDec_EnableApproachingValues)
+                        if (DecimalHalf == ApproachingBottomRep)
+                        {
+            #if defined(MixedDec_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeft;
+                            else
+            #endif
+                                return RepType::ApproachingBottom;
+                        }
+                        else if (DecimalHalf == ApproachingTopRep)
+                        {
+            #if defined(MixedDec_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidRight;
+                            else
+            #endif
+                            return RepType::ApproachingTop;
+                        }
+	    #endif
+		#if defined(AltNum_EnableNaN)
+			            if(DecimalHalf==NaNRep)
+				            return RepType::NaN;
+			            else if(DecimalHalf==UndefinedRep)
+				            return RepType::Undefined;
+		#endif
+        #if defined(AltNum_EnableNil)
+			            if(DecimalHalf==NilRep)
+				            return RepType::Nil;
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            #if defined(MixedDec_EnableWithinMinMaxRange)
+                        if (ExtraRep == WithinMinMaxRangeRep)
+                            return RepType::WithinMinMaxRange;
+            #endif
+			            if(DecimalHalf==UndefinedInRangeRep)
+				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+                            //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
+                            return RepType::UndefinedButInRange;
+		#endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::ToPowerOf;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(MixedDec_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedFrac;
+                            else
+                    #endif
+                                return RepType::NumByDiv;
+                #endif
+                        return RepType::NormalType;
+#if !defined(AltNum_UseIntForDecimalHalf)
+                    }
+                    break;
+            }
+#endif
 			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }

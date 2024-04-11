@@ -203,8 +203,8 @@ namespace BlazesRusCode
                             return RepType::ApproachingImaginaryTop;
                         else if (DecimalHalf == ApproachingTopRep)
                             return RepType::ApproachingImaginaryBottom;
-                        return RepType::INum;
             #endif
+                        return RepType::INum;
                     }
                     break;
         #elif defined(MediumDecV2_EnableWithinMinMaxRange)

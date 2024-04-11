@@ -264,37 +264,64 @@ protected:
 	//#if defined(AltNum_EnableFractionals)
             NumByDiv = 8,
 	//#endif
+	//#if defined(AltNum_EnablePowerOfRepresentation)
+            ToPowerOf = 16,
+	//#endif
 	//#if defined(AltNum_EnablePiRep)
             PiNum = 1,
-		//#if defined(AltNum_EnablePiPowers)
+		//#if defined(AltNum_EnablePowerOfRepresentation)
             PiPower = 17,
 		//#endif
-		//#if defined(AltNum_EnableAlternativeRepFractionals)
-			//#if defined(AltNum_EnableDecimaledPiFractionals)
+		//#if defined(AltNum_EnableDecimaledPiFractionals)
             PiNumByDiv = 9,//  (Value/(ExtraRep*-1))*Pi Representation
 			//#else
             PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
 			//#endif
 		//#endif
+		//#if defined(AltNum_EnableApproachingPi)
+            //(Enum Bits:7,1)
+            //equal to IntValue.9..9 Pi
+            ApproachingTopPi = 65,
+		//#endif
+		//#if defined(MixedDec_EnableApproachingAlternativeDiv)
+		
+            //(Enum Bits:7,5,1)
+			ApproachingMidLeftPi = 81,
+			//#if !defined(AltNum_DisableApproachingTop)
+            
+            //(Enum Bits:7,4,5,1)
+            ApproachingMidRightPi = 89,
+			//#endif
+		//#endif
 	//#endif
 	//#if defined(AltNum_EnableERep)
             ENum = 2,
-		//#if defined(AltNum_EnableAlternativeRepFractionals)
-			//#if defined(AltNum_EnableDecimaledEFractionals)
+		//#if defined(AltNum_EnablePowerOfRepresentation)
+            EPower = 18,
+		//#endif
+		//#if defined(AltNum_EnableDecimaledEFractionals)
             ENumByDiv = 10,//(Value/(ExtraRep*-1))*e Representation
-			//#else
-            EFractional = 10,//  IntValue/DecimalHalf*e Representation
+		//#endif
+		//#if defined(AltNum_EnableApproachingE)
+            //(Enum Bits:7,2)
+            //equal to IntValue.9..9 e
+            ApproachingTopE = 66,
+		//#endif
+		//#if defined(MixedDec_EnableApproachingAlternativeDiv)
+		
+            //(Enum Bits:7,5,2)
+			ApproachingMidLeftE = 82,
+			//#if !defined(AltNum_DisableApproachingTop)
+            
+            //(Enum Bits:7,4,5,2)
+            ApproachingMidRightE = 90,
 			//#endif
 		//#endif
 	//#endif
 	//#if defined(AltNum_EnableImaginaryNum)
             INum = 4,
-		//#if defined(AltNum_EnableAlternativeRepFractionals)
-			//#if defined(AltNum_EnableDecimaledIFractionals)
+		//#if defined(AltNum_EnableDecimaledIFractionals)
             INumByDiv = 11,//(Value/(ExtraRep*-1))*i Representation
-			//#else
-            IFractional = 11,//  IntValue/DecimalHalf*i Representation
-			//#endif
 		//#endif
 	//#endif
 	//#if defined(AltNum_EnableMixedFractional)
@@ -303,10 +330,12 @@ protected:
         //#if defined(AltNum_EnableMixedPiFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedPi = 33,
-		//#elif defined(AltNum_EnableMixedEFractional)
+		//#endif
+		//#if defined(AltNum_EnableMixedEFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedE = 34,
-		//#elif defined(AltNum_EnableMixedIFractional)
+		//#endif
+		//#if defined(AltNum_EnableMixedIFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedI = 36,
 		//#endif
@@ -328,7 +357,7 @@ protected:
             ApproachingTop = 72,
 		//#endif
 		//#if defined(AltNum_EnableApproachingDivided)
-
+		
             //(Enum Bits:7,5)
             //DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
 			ApproachingMidLeft = 80,
@@ -339,17 +368,6 @@ protected:
             ApproachingMidRight = 88,
 			//#endif
 		//#endif
-	//#endif
-	//#if defined(AltNum_EnableApproachingPi)
-            //(Enum Bits:7,1)
-            //equal to IntValue.9..9 Pi
-            ApproachingTopPi = 65,
-	//#endif
-	//#if defined(AltNum_EnableApproachingE)
-
-            //(Enum Bits:7,2)
-            //equal to IntValue.9..9 e
-            ApproachingTopE = 66,
 	//#endif
 	//#if defined(AltNum_EnableImaginaryInfinity)
             //(Enum Bits:7,6,3)
