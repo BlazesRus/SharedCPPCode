@@ -153,70 +153,103 @@ namespace BlazesRusCode
     #pragma endregion Const Representation values
 
     #pragma region RepType
+
+        /// <summary>
+        /// Enum representing value type stored
+        /// </summary>
+        using RepType = MediumDecBase::RepType;
+
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
         virtual RepType GetRepType()
         {
-		#if defined(MediumDecV2_EnableInfinityRep)
-            #if defined(MediumDecV2_UseIntForDecimalHalf)
-            //Add code here later
-            #else
-            //Add code here later
-            #endif
-		#endif
-		#if defined(MediumDecV2_EnableApproachingValues)
-            if (DecimalHalf == ApproachingBottomRep)
-                return RepType::ApproachingBottom;
-            else if (DecimalHalf == ApproachingTopRep)
-                    return RepType::ApproachingTop;
-	    #endif
-		#if defined(AltNum_EnableNaN)
-			if(DecimalHalf==NaNRep)
-				return RepType::NaN;
-			else if(DecimalHalf==UndefinedRep)
-				return RepType::Undefined;
-		#endif
-		#if defined(AltNum_EnableNil)
-			if(DecimalHalf==NilRep)
-				return RepType::Nil;
-		#endif
-		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-			if(DecimalHalf==UndefinedInRangeRep)
-				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-                return RepType::UndefinedButInRange;
-		#endif
-		#if !defined(MediumDecV2_UseIntForDecimalHalf)
-            if(DecimalHalf.Flag==0)
-		#endif
-                return RepType::NormalType;
+#if !defined(MediumDecV2_UseIntForDecimalHalf)
+            switch(DecimalHalf.Flag)
+            {
+#endif
 		#if defined(MediumDecV2_EnablePiRep)
-            else if(DecimalHalf.Flag==1)
-            #if defined(AltNum_EnableApproachingPi)
+                case 1:
+                    {
+            #if defined(MediumDecV2_EnableApproachingPi)
+                        if (DecimalHalf == ApproachingTopRep)
+                            return RepType::ApproachingTopPi;
             #endif
-				return RepType::PiNum;
-		#endif
+                        return RepType::PiNum;
+                    }
+                    break;
+        #endif
 		#if defined(MediumDecV2_EnableERep)
-            else if(DecimalHalf.Flag==2)
-            #if defined(AltNum_EnableApproachingE)
+                case 2:
+                    {
+            #if defined(MediumDecV2_EnableApproachingE)
+                        if (DecimalHalf == ApproachingTopRep)
+                            return RepType::ApproachingTopE;
             #endif
-				return RepType::ENum;
+                        return RepType::ENum;
+                    }
+                    
+                    break;
 		#endif
-		#if defined(MediumDecV2_EnableImaginaryNum)
-            else if(DecimalHalf.Flag==3)
+        #if defined(MediumDecV2_EnableImaginaryNum)
+                case 3:
+                    {
             #if defined(MediumDecV2_EnableImaginaryInfinity)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::ImaginaryInfinity;
             #endif
-            #if defined(AltNum_EnableApproachingI)
+            #if defined(MediumDecV2_EnableApproachingI)
+                        if (DecimalHalf == ApproachingTopRep)
+                            return RepType::ApproachingImaginaryTop;
+                        else if (DecimalHalf == ApproachingTopRep)
+                            return RepType::ApproachingImaginaryBottom;
+                        return RepType::INum;
             #endif
-				return RepType::INum;
-		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
-            else if(DecimalHalf.Flag==3)
+                    }
+                    break;
+        #elif defined(MediumDecV2_EnableWithinMinMaxRange)
 				//If IntValue==???, then left side range value equals negative infinity
 				//If DecimalHalf.Value==???, then right side range value equals positive infinity
 				//IntValue represents left side minimum
 				//For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
 				return RepType::WithinMinMaxRange;
+        #endif
+#if !defined(MediumDecV2_UseIntForDecimalHalf)
+                default:
+                    {
+#endif
+		#if defined(MediumDecV2_EnableInfinityRep)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::Infinity;
 		#endif
+		#if defined(MediumDecV2_EnableApproachingValues)
+                        if (DecimalHalf == ApproachingBottomRep)
+                            return RepType::ApproachingBottom;
+                        else if (DecimalHalf == ApproachingTopRep)
+                            return RepType::ApproachingTop;
+	    #endif
+		#if defined(AltNum_EnableNaN)
+			            if(DecimalHalf==NaNRep)
+				            return RepType::NaN;
+			            else if(DecimalHalf==UndefinedRep)
+				            return RepType::Undefined;
+		#endif
+        #if defined(AltNum_EnableNil)
+			            if(DecimalHalf==NilRep)
+				            return RepType::Nil;
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+			            if(DecimalHalf==UndefinedInRangeRep)
+				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+                            //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
+                            return RepType::UndefinedButInRange;
+		#endif
+#if !defined(MediumDecV2_UseIntForDecimalHalf)
+                        return RepType::NormalType;
+                    }
+                    break;
+            }
+#endif
 			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }

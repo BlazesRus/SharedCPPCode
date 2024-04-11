@@ -75,3 +75,7 @@ AltNum_EnableApproachingValues
 #if defined(MediumDecV2_EnableIRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingI)
 	#define MediumDecV2_EnableApproachingI
 #endif
+
+#if defined(MediumDecV2_EnableIRep)&&defined(AltNum_EnableImaginaryInfinity)&&!defined(MediumDecV2_EnableImaginaryInfinity)
+	#define MediumDecV2_EnableImaginaryInfinity
+#endif
