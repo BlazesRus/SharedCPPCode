@@ -668,47 +668,50 @@ public:
             #else
                 case 3:
                     {
-                #if defined(MixedDec_EnableImaginaryInfinity)
+                #if defined(MixedDec_DeriveFromMediumDecV2)&&defined(MediumDecV2_EnableWithinMinMaxRange)
+				    return RepType::WithinMinMaxRange;
+                #else
+                    #if defined(MixedDec_EnableImaginaryInfinity)
                         if(DecimalHalf == InfinityRep)
                             return RepType::ImaginaryInfinity;
-                #endif
-                #if defined(MixedDec_EnableApproachingI)
+                    #endif
+                    #if defined(MixedDec_EnableApproachingI)
                         if (DecimalHalf == ApproachingBottomRep)
                         {
-                    #if defined(MixedDec_EnableApproachingDivided)
+                        #if defined(MixedDec_EnableApproachingDivided)
                             if(ExtraRep!=0)
                                 return RepType::ApproachingImaginaryMidLeft;
                             else
-                    #endif
+                        #endif
                             return RepType::ApproachingImaginaryBottom;
                         }
                         else if (DecimalHalf == ApproachingTopRep)
                         {
-                    #if defined(MixedDec_EnableApproachingDivided)
+                        #if defined(MixedDec_EnableApproachingDivided)
                             if(ExtraRep!=0)
                                 return RepType::ApproachingImaginaryMidRight;
                             else
-                    #endif
+                        #endif
                             return RepType::ApproachingImaginaryTop;
                         }
-                #endif
-                #if defined(AltNum_EnablePowerOfRepresentation)
-                    #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
-                    #else
-                        if(ExtraRep.IsNegative())
                     #endif
-                            return RepType::EPower;
-                #endif
-                #if defined(AltNum_EnableFractionals)
+                    #if defined(AltNum_EnablePowerOfRepresentation)
+                        #if defined(AltNum_EnableNegativePowerRep)
                         if(ExtraRep!=0)
-                    #if defined(MixedDec_EnableMixedFractional)
+                        #else
+                        if(ExtraRep.IsNegative())
+                        #endif
+                            return RepType::EPower;
+                    #endif
+                    #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                        #if defined(MixedDec_EnableMixedFractional)
                             if(ExtraRep.IsNegative())
                                 return RepType::MixedI;
                             else
-                    #endif
+                        #endif
                                 return RepType::INumByDiv;
-                #endif
+                    #endif
                         return RepType::INum;
                 #endif
                     }
@@ -754,7 +757,7 @@ public:
 				            return RepType::Nil;
 		#endif
 		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-            #if defined(MixedDec_EnableWithinMinMaxRange)
+            #if defined(MixedDec_EnableWithinMinMaxRange)&&defined(MixedDec_DeriveFromAltDec)
                         if (ExtraRep == WithinMinMaxRangeRep)
                             return RepType::WithinMinMaxRange;
             #endif

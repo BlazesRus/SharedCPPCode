@@ -162,218 +162,218 @@ namespace BlazesRusCode
         virtual RepType GetRepType()
         {
 #if !defined(AltNum_UseIntForDecimalHalf)
-            if(DecimalHalf.Flag==0)
-			{
-                return RepType::NormalType;
-			}
-    #if defined(AltNum_EnablePiRep)
-            else if(DecimalHalf.Flag==1)
+            switch(DecimalHalf.Flag)
             {
-				return RepType::PiNum;
-            }
-    #endif
-    #if defined(AltNum_EnableERep)
-            else if(DecimalHalf.Flag==2)
-            {
-				return RepType::ENum;
-            }
-    #endif
-	#if defined(AltNum_EnableImaginaryNum)
-            else if(DecimalHalf.Flag==3)
-            {
-				return RepType::INum;
-            }
-	#elif defined(AltNum_EnableWithinMinMaxRange)
-            else if(DecimalHalf.Flag==3)
-				//If IntValue==NegativeRep, then left side range value equals negative infinity
-				//If DecimalHalf.Value==InfinityRep, then right side range value equals positive infinity
-				return IntHalf==0&&DecimalHalf.Value==0? RepType::UndefinedButInRange: RepType::WithinMinMaxRange;
-    #endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-				//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-                return RepType::UndefinedButInRange;
-	#endif
-	#if defined(AltNum_EnableNaN)
-			else if(DecimalHalf==NaNRep)
-				return RepType::NaN;
-			else if(DecimalHalf==UndefinedRep)
-				return RepType::Undefined;
-	#endif
-	#if defined(AltNum_EnableNil)
-			else if(DecimalHalf==NilRep)
-				return RepType::Nil;
-    #endif
-            else
-				throw "Unknown or non-enabled representation type detected";
-#else
-        #if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf==InfinityRep)
-            {
-            #if defined(AltNum_EnableImaginaryInfinity)
-                if (ExtraRep == IRep)
-                    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
-                else
-            #endif
-            #if defined(AltNum_EnableUndefinedButInRange)
-                if (ExtraRep == UndefinedInRangeRep)
-                    return RepType::UndefinedButInRange;
-                else
-            #endif
-            #if defined(WithinMinMaxRangeRep)
-                if (ExtraRep == WithinMinMaxRangeRep)
-                    return RepType::WithinMinMaxRange;
-                else
-            #endif
-                    return RepType::Infinity;
-            }
-            else
-        #endif
-        #if defined(AltNum_EnableApproachingValues)//old value = ApproachingValRep
-            if (DecimalHalf == ApproachingBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-            #if defined(AltNum_EnableApproachingDivided)//if(ExtraRep>1)
-                    return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-            #else
-                    throw "EnableApproachingDivided feature not enabled";
-            #endif
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-            #if defined(AltNum_EnableApproachingPi)
-                else if (ExtraRep == PiRep)
-                    return RepType::ApproachingTopPi;
-            #endif
-            #if defined(AltNum_EnableApproachingE)
-                else if (ExtraRep == ERep)
-                    return RepType::ApproachingTopE;
-            #endif
-                else
-            #if defined(AltNum_EnableApproachingDivided)
-                    return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-            #else
-                    throw "EnableApproachingDivided feature not enabled";
-            #endif
-            }
-            #if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
-            else if (DecimalHalf == ApproachingImaginaryBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-                #if defined(AltNum_EnableApproachingDivided)
-                    return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-                #else
-                    throw "EnableApproachingDivided feature not enabled";
-                #endif
-            }
-            else if (DecimalHalf == ApproachingImaginaryTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-                else
-                #if defined(AltNum_EnableApproachingDivided)
-                    return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-                #else
-                    throw "EnableApproachingDivided feature not enabled";
-                #endif
-            }
-            #endif
-        #endif
-            if(ExtraRep==0)
-            {
-    #if defined(AltNum_EnableNaN)
-                if(DecimalHalf==NaNRep)
-                    return RepType::NaN;
-                else if(DecimalHalf==UndefinedRep)
-                    return RepType::Undefined;
-    #endif
-                return RepType::NormalType;
-            }
-            else if(IntValue==0&&DecimalHalf==0)
-            {
-                return RepType::NormalType;
-            }
-    #ifdef AltNum_EnablePiRep
-            else if(ExtraRep==PiRep)
-                return RepType::PiNum;
-        #if defined(AltNum_EnablePiFractional)
-            else if(ExtraRep==PiByDivisorRep)
-                return RepType::PiFractional;
-        #endif
-    #endif
-            else if(ExtraRep>0)
-            {
-    #if defined(AltNum_EnableMixedFractional)
-                if(DecimalHalf<0)
-                    return RepType::MixedFrac;
-    #endif
-    #if defined(AltNum_EnableFractionals)
-                return RepType::NumByDiv;
-    #endif
-                throw "Non-enabled representation detected";
-            }
-    #if defined(AltNum_EnableERep)
-            else if(ExtraRep==ERep)
-            {
-                return RepType::ENum;
-            }
-        #if defined(AltNum_EnableEFractional)
-            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-                return RepType::EFractional;
-        #endif
-    #endif
-
-    #if defined(AltNum_EnableImaginaryNum)
-            else if(ExtraRep==IRep)
-            {
-                return RepType::INum;
-            }
-        #if defined(AltNum_EnableIFractional)
-            else if(ExtraRep==IByDivisorRep)
-                    return RepType::IFractional;
-        #endif
-    #endif
-    #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-           else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-        #if defined(AltNum_EnableWithinMinMaxRange)
-            //If IntValue==NegativeRep, then left side range value equals negative infinity
-            //If DecimalHalf==InfinityRep, then right side range value equals positive infinity
-           else if(ExtraRep==WithinMinMaxRangeRep)
-                return RepType::WithinMinMaxRange;
-        #endif
-    #endif
-            else if(ExtraRep<0)
-    #if defined(AltNum_EnableAlternativeMixedFrac)
-                if(DecimalHalf<0)
-        #if defined(AltNum_EnableMixedPiFractional)
-                    return RepType::MixedPi;
-        #elif defined(AltNum_EnableMixedEFractional)
-                    return RepType::MixedE;
-        #elif defined(AltNum_EnableMixedIFractional)
-                    return RepType::MixedI;
-        #else
-                    throw "Non-enabled Alternative Mixed Fraction representation type detected";
-        #endif
-                else
-    #endif
-    #if defined(AltNum_EnableDecimaledPiFractionals)
-                    return RepType::PiNumByDiv;
-    #elif defined(AltNum_EnableDecimaledEFractionals)
-                    return RepType::ENumByDiv;
-    #elif defined(AltNum_EnableDecimaledIFractionals)
-                    return RepType::INumByDiv;
-    #else
-                    throw "Non-enabled Negative ExtraRep representation type detected";
-    #endif
-            else
-                throw "Unknown or non-enabled representation type detected";
 #endif
+		#if defined(AltNum_EnablePiRep)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+                case 1:
+                    {
+                #if defined(AltNum_EnableApproachingPi)
+                        if (DecimalHalf == ApproachingTopRep)
+                    #if defined(AltNum_EnableApproachingAlternativeDiv)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeftPi;
+                            else
+                    #endif
+                                return RepType::ApproachingTopPi;
+                #endif
+                #if defined(AltNum_EnableApproachingAlternativeDiv)
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                    #if defined(AltNum_EnableApproachingAlternativeDiv)
+                             return RepType::ApproachingMidRightPi;
+                    #endif
+                #endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::PiPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(AltNum_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedPi;
+                            else
+                    #endif
+                                return RepType::PiNumByDiv;
+                #endif
+                        return RepType::PiNum;
+                    }
+                    break;
+            #endif
+        #endif
+		#if defined(AltNum_EnableERep)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+                case 2:
+                    {
+                #if defined(AltNum_EnableApproachingE)
+                        if (DecimalHalf == ApproachingTopRep)
+                    #if defined(AltNum_EnableApproachingAlternativeDiv)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeftE;
+                            else
+                    #endif
+                                return RepType::ApproachingTopE;
+                    #if defined(AltNum_EnableApproachingAlternativeDiv)
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                             return RepType::ApproachingMidRightE;
+                    #endif
+                #endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::EPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(AltNum_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedE;
+                            else
+                    #endif
+                                return RepType::ENumByDiv;
+                #endif
+                        return RepType::ENum;
+                    }
+                    
+                    break;
+            #endif
+		#endif
+        #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_UseIntForDecimalHalf)
+                //Add code here later
+            #else
+                case 3:
+                    {
+                #if defined(AltNum_EnableImaginaryInfinity)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::ImaginaryInfinity;
+                #endif
+                #if defined(AltNum_EnableApproachingI)
+                        if (DecimalHalf == ApproachingBottomRep)
+                        {
+                    #if defined(AltNum_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingImaginaryMidLeft;
+                            else
+                    #endif
+                            return RepType::ApproachingImaginaryBottom;
+                        }
+                        else if (DecimalHalf == ApproachingTopRep)
+                        {
+                    #if defined(AltNum_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingImaginaryMidRight;
+                            else
+                    #endif
+                            return RepType::ApproachingImaginaryTop;
+                        }
+                #endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::EPower;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(AltNum_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedI;
+                            else
+                    #endif
+                                return RepType::INumByDiv;
+                #endif
+                        return RepType::INum;
+                    }
+                    break;
+            #endif
+        #endif
+#if !defined(AltNum_UseIntForDecimalHalf)
+                default:
+                    {
+#endif
+		#if defined(AltNum_EnableInfinityRep)
+                        if(DecimalHalf == InfinityRep)
+                            return RepType::Infinity;
+		#endif
+		#if defined(AltNum_EnableApproachingValues)
+                        if (DecimalHalf == ApproachingBottomRep)
+                        {
+            #if defined(AltNum_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidLeft;
+                            else
+            #endif
+                                return RepType::ApproachingBottom;
+                        }
+                        else if (DecimalHalf == ApproachingTopRep)
+                        {
+            #if defined(AltNum_EnableApproachingDivided)
+                            if(ExtraRep!=0)
+                                return RepType::ApproachingMidRight;
+                            else
+            #endif
+                            return RepType::ApproachingTop;
+                        }
+	    #endif
+		#if defined(AltNum_EnableNaN)
+			            if(DecimalHalf==NaNRep)
+				            return RepType::NaN;
+			            else if(DecimalHalf==UndefinedRep)
+				            return RepType::Undefined;
+		#endif
+        #if defined(AltNum_EnableNil)
+			            if(DecimalHalf==NilRep)
+				            return RepType::Nil;
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            #if defined(AltNum_EnableWithinMinMaxRange)
+                        if (ExtraRep == WithinMinMaxRangeRep)
+                            return RepType::WithinMinMaxRange;
+            #endif
+			            if(DecimalHalf==UndefinedInRangeRep)
+				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+                            //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
+                            return RepType::UndefinedButInRange;
+		#endif
+                #if defined(AltNum_EnablePowerOfRepresentation)
+                    #if defined(AltNum_EnableNegativePowerRep)
+                        if(ExtraRep!=0)
+                    #else
+                        if(ExtraRep.IsNegative())
+                    #endif
+                            return RepType::ToPowerOf;
+                #endif
+                #if defined(AltNum_EnableFractionals)
+                        if(ExtraRep!=0)
+                    #if defined(AltNum_EnableMixedFractional)
+                            if(ExtraRep.IsNegative())
+                                return RepType::MixedFrac;
+                            else
+                    #endif
+                                return RepType::NumByDiv;
+                #endif
+                        return RepType::NormalType;
+#if !defined(AltNum_UseIntForDecimalHalf)
+                    }
+                    break;
+            }
+#endif
+			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }
 
