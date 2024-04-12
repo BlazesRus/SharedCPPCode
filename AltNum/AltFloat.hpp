@@ -485,8 +485,9 @@ public:
 				unsigned _int64 Value = DenomMax;
 				Value *= RemainingVal;
 				Value /= denom;
-				SignifNum = SignifBitfield(Value,0)
+				SignifNum = Value;
 				Exp = highestPower;
+                IsPositive = 1;
             }
         }
 
@@ -500,8 +501,8 @@ public:
                 SetAsNegativeOne();
             else
             {
-                bool IsNegative = Value<0;
-                unsigned int RemainingVal = IsNegative?-Value:Value;
+                bool IsPositive = Value>=0;
+                unsigned int RemainingVal = IsPositive?Value:-Value;
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -520,25 +521,9 @@ public:
 				unsigned _int64 Value = DenomMax;
 				Value *= RemainingVal;
 				Value /= denom;
-				if(IsNegative)
-				{
-
-					if(highestPower==0)//At "-(1+SignifNum/DenomMax)" range with -zero Exp field
-					{
-						SignifNum = SignifBitfield(Value,1)
-						Exp = 0;
-					}
-					else
-					{
-						SignifNum = SignifBitfield(Value,1)
-						Exp = highestPower;
-					}
-				}
-				else
-				{
-					SignifNum = SignifBitfield(Value,0)
-					Exp = highestPower;
-				}
+				SignifNum = Value;
+				Exp = highestPower;
+                IsPositive = IsPositive?1:0;
             }
         }
 		
@@ -579,24 +564,9 @@ public:
 				Value /= denom;
 				#endif
 				//return Value.IsNegative()?-Value.GetIntegerHalf():Value.GetIntegerHalf();
-				if(Value.IsNegative())
-				{
-					if(Exp==0)//Negative 1 Exp
-					{
-						SignifNum = SignifBitfield(Value.GetIntegerHalf(),2);
-						Exp==0;
-					}
-					else
-					{
-						SignifNum = SignifBitfield(Value.GetIntegerHalf(),1);
-						Exp = highestPower;
-					}
-				}
-				else
-				{
-					SignifNum = SignifBitfield(Value.GetIntegerHalf(),0);
-					Exp = highestPower;
-				}
+				SignifNum = Value.GetIntegerHalf();
+				Exp = highestPower;
+                IsPositive = Value.IsNegative()?0:1;
             }
     #endif
 		}
