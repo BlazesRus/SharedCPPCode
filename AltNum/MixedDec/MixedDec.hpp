@@ -271,6 +271,24 @@ public:
             return DecimalHalf==0&&IntValue==0&&TrailingDigits==0;
 		}
 
+        void SetTrailingDigitAsZero()
+        {
+	#if defined(MixedDec_StoreTrailingInFloat)
+			TrailingDigits = 0.0f;
+	#else
+			TrailingDigits = 0;
+	#endif
+        }
+
+        bool IsTrailingDigitZero()
+        {
+	#if defined(MixedDec_StoreTrailingInFloat)
+            return TrailingDigits==0.0f;
+    #else
+            return TrailingDigits==0;
+    #endif
+        }
+
         void SetAsZero()
         {
             IntValue = 0;
@@ -278,13 +296,7 @@ public:
 	#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = 0;
 	#endif
-	#if !defined(MixedDec_EnableAltFloat)
-			TrailingDigits = 0.0f;
-	#else//AltFloat range planned to be from 0.0 to (0.9..9) with no support for infinity
-		//AltFloat support range planned to be extended to 0.0 to 9..9.9..9 range during multiplication/division operations
-		//AltFloat support range planned to be extended to 1.9..9 range during addition/subtraction operation
-			TrailingDigits = 0;
-	#endif
+            SetTrailingDigitAsZero();
         }
 #pragma endregion Check_if_Zero
 
@@ -300,9 +312,11 @@ public:
 				//Add code here
 			}
 		#if defined(AltNum_EnableIRep)
-			else if((DecimalHalf.Flags==3||DecimalHalf.Flags==0)&&DecimalHalf.Value<DecimalOverflow&& TrailingDigits==0.0f)
+			else if((DecimalHalf.Flags==3||DecimalHalf.Flags==0)
+            &&DecimalHalf.Value<DecimalOverflow && IsTrailingDigitZero())
 		#else
-			else if(DecimalHalf.Flags==0&&DecimalHalf.Value<DecimalOverflow&& TrailingDigits==0.0f)
+			else if(DecimalHalf.Flags==0&&DecimalHalf.Value<DecimalOverflow
+            &&IsTrailingDigitZero())
 		#endif
 	#endif
 				return DecimalHalf==0;
@@ -858,7 +872,20 @@ public:
 public:
 
     #pragma region PiNum Setters
-
+    #if defined(MixedDec_EnablePiRep)
+        template<MediumDecVariant VariantType=MixedDec>
+        virtual void SetPiVal(const VariantType& Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            ExtraRep = 0;
+        }
+        
+        virtual void SetPiValFromInt(int Value)
+        {
+            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
+            ExtraRep = 0;
+        }
+    #endif
     #pragma endregion PiNum Setters
 
     #pragma region ENum Setters
