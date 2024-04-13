@@ -19,6 +19,7 @@
 #endif
 
 #include "..\MediumDec\MediumDecBase.hpp"
+#include "..\MediumDec\MediumDec.hpp"
 
 namespace BlazesRusCode
 {

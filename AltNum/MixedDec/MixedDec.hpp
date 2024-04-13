@@ -26,11 +26,13 @@
 	#include "..\AltDec\AltDecBase.hpp"
 #elif MixedDec_DeriveFromMediumDecV2
 	#include "..\MediumDecV2\MediumDecV2Base.hpp"
-	#include "..\MediumDecV2\MediumDecV2.hpp"
 #else
 	#include "..\MediumDec\MediumDecBase.hpp"
-	#include "..\MediumDec\MediumDec.hpp"
 #endif
+
+#include "..\MediumDec\MediumDec.hpp"
+#include "..\MediumDecV2\MediumDecV2.hpp"
+#include "..\AltDec\AltDec.hpp"
 
 #if defined(MixedDec_EnableAltFloat)
 	#include "..\AltFloat.hpp"

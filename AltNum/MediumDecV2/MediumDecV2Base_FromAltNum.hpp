@@ -18,17 +18,6 @@
 #include "..\DLLAPI.h"
 #endif
 
-#include <string>
-#include <cmath>
-#include "..\OtherFunctions\VariableConversionFunctions.h"
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#if defined(AltNum_UseOldDivisionCode)
-	#include <boost/multiprecision/cpp_int.hpp>
-#endif
-
-#include "AltNumModChecker.hpp"
-
 #include "..\MediumDec\MediumDecBase.hpp"
 
 namespace BlazesRusCode
@@ -62,7 +51,7 @@ protected:
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-#if !defined(MediumDecV2Base_UseMirroredInt)
+#if !defined(AltNum_UseMirroredInt)
         static signed int const NegativeRep = -2147483648;
 #else
         static MirroredInt NegativeRep;
@@ -73,7 +62,7 @@ protected:
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-#if !defined(MediumDecV2Base_UseMirroredInt)
+#if !defined(AltNum_UseMirroredInt)
         signed int IntValue;
 #else
         MirroredInt IntValue;
@@ -81,7 +70,7 @@ protected:
 
         bool IsNegative()
         {
-#if !defined(MediumDecV2Base_UseMirroredInt)
+#if !defined(AltNum_UseMirroredInt)
             return IntValue<0;
 #else
             return IntValue.IsNegative();
@@ -118,7 +107,7 @@ protected:
 
         signed int GetIntHalf()
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             return IntValue.GetValue();
 #else
             if(IntValue == NegativeRep)
@@ -131,7 +120,7 @@ protected:
         //Return IntValue part as Absolute value
         signed int IntHalfAsAbs()
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             return IntValue.GetAbsValue();
 #else
             if (IsAtZeroInt())
@@ -145,7 +134,7 @@ protected:
 
         std::string IntHalfAsString()
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             return (std::string) IntValue;
 #else
             if (IntValue == NegativeRep)
@@ -154,7 +143,7 @@ protected:
 #endif
         }
 
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.(Default constructor)
         /// </summary>
@@ -176,13 +165,9 @@ protected:
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-#if !defined(MediumDecV2Base_UseMirroredInt)
-        MediumDecV2Base(const int& intVal=0, const signed int& decVal = 0, const signed int& extraVal = 0)
-#else
-        MediumDecV2Base(const int& intVal, const signed int& decVal = 0, const signed int& extraVal = 0)
-#endif
+        MediumDecV2Base(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const DecimalHalfType& decVal = 0)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)&&defined(BlazesMirroredInt_UseLegacyValueBehavior)
+#if defined(AltNum_UseMirroredInt)&&defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue.Value = intVal;
 #else
             IntValue = intVal;
@@ -1576,7 +1561,7 @@ public:
         template<typename IntType=int>
         void IntHalfDivision(IntType RValue)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value /= RValue;
@@ -1622,7 +1607,7 @@ public:
         template<typename IntType=int>
         void IntHalfMultiplication(IntType RValue)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
@@ -1669,7 +1654,7 @@ public:
         template<typename IntType=int>
         void UIntHalfMultiplication(IntType RValue)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
         #if defined(BlazesMirroredInt_UseLegacyIntOperations)
             IntValue.Value *= RValue;
@@ -1705,7 +1690,7 @@ public:
         template<typename IntType>
         void IntHalfAdditionOp(const IntType& RValue)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue += RValue;
     #elif defined(BlazesMirroredInt_UsePseudoBitSet)
@@ -1783,7 +1768,7 @@ public:
         template<typename IntType>
         void IntHalfSubtractionOp(const IntType& RValue)
         {
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
     #if defined(BlazesMirroredInt_UseLegacyValueBehavior)
             IntValue -= RValue;
     #endif
@@ -1884,7 +1869,7 @@ public:
         template<typename MediumDecV2BaseVariant = MediumDecV2Base>
 		bool IntHalfLessThan(MediumDecV2BaseVariant RValue)
 		{
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             if(IntValue<RValue)
                 return true;
             else
@@ -1923,7 +1908,7 @@ public:
         template<typename MediumDecV2BaseVariant = MediumDecV2Base>
 		bool IntHalfLessThanOrEqual(MediumDecV2BaseVariant RValue)
 		{
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             if(IntValue<=RValue)
                 return true;
             else
@@ -1968,7 +1953,7 @@ public:
         template<typename MediumDecV2BaseVariant = MediumDecV2Base>
 		bool IntHalfGreaterThan(MediumDecV2BaseVariant RValue)
 		{
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             if(IntValue>RValue)
                 return true;
             else
@@ -2018,7 +2003,7 @@ public:
         template<typename MediumDecV2BaseVariant = MediumDecV2Base>
 		bool IntHalfGreaterThanOrEqual(MediumDecV2BaseVariant RValue)
 		{
-#if defined(MediumDecV2Base_UseMirroredInt)
+#if defined(AltNum_UseMirroredInt)
             if(IntValue>=RValue)
                 return true;
             else
@@ -2073,7 +2058,7 @@ public:
             float Value;
             if (IntValue < 0)
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
     #else
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
@@ -2082,7 +2067,7 @@ public:
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = (float)IntValue;
     #else
                 Value = (float)IntValue.GetValue();
@@ -2101,7 +2086,7 @@ public:
             double Value;
             if (IntValue < 0)
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0 : (double)IntValue;
     #else
                 Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
@@ -2110,7 +2095,7 @@ public:
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = (double)IntValue;
     #else
                 Value = (double)IntValue.GetValue();
@@ -2129,7 +2114,7 @@ public:
             ldouble Value;
             if (IntValue < 0)
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue;
     #else
                 Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
@@ -2138,7 +2123,7 @@ public:
             }
             else
             {
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
                 Value = (ldouble)IntValue;
     #else
                 Value = (ldouble)IntValue.GetValue();
@@ -2568,7 +2553,7 @@ public:
                 }
 #endif
             }
-    #if !defined(MediumDecV2Base_UseMirroredInt)
+    #if !defined(AltNum_UseMirroredInt)
             return (LValue.IntValue == RValue.IntValue && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
     #else
             return (LValue.IntValue.Value == RValue.IntValue.Value && LValue.DecimalHalf == RValue.DecimalHalf && LValue.ExtraRep == RValue.ExtraRep);
