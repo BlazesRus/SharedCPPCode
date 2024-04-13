@@ -358,54 +358,111 @@ public:
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-#if defined(MixedDec_DontInitializeFromConstRef) && defined(AltNum_EnableMirroredSection)
-		MixedDec(MirroredIntV2 intVal,
-#elif defined(AltNum_EnableMirroredSection)
-		MixedDec(const MirroredIntV2& intVal,
-#elif defined(MixedDec_DontInitializeFromConstRef)
-		MixedDec(signed int intVal,
-#else
-		MixedDec(const int& intVal,
-#endif
-#if defined(AltNum_UseIntForDecimalHalf)
-	    #if defined(MixedDec_DontInitializeFromConstRef)
-        , const signed int& decVal = 0
-	    #else
-        , signed int decVal = 0
-	    #endif
-#else
-	    #if defined(MixedDec_DontInitializeFromConstRef)
-		, const PartialInt& decVal = 0
-	    #else
-		, PartialInt decVal = 0
-	    #endif
-#endif
-#if defined(MixedDec_ExtraRepEnabled)
-	    #if defined(MixedDec_DontInitializeFromConstRef)
-        , signed int extraVal = 0
-	    #else
-        , const int& extraVal = 0
-	    #endif
-#endif
+        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0,
 #if defined(MixedDec_EnableRestrictedFloat)
-		, RestrictedFloat trailingDigits = 0)
+		RestrictedFloat trailingDigits = 0)
 #elif defined(MixedDec_EnableAltFloat)
-		, AltFloat trailingDigits = 0)
+		AltFloat trailingDigits = 0)
 #else
-		, float trailingDigits = 0.0f)
+		float trailingDigits = 0.0f)
 #endif
         {
-            IntValue.Value = intVal;
+			IntValue = intVal;
             DecimalHalf = decVal;
-#if defined(MixedDec_ExtraRepEnabled)
+#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = extraVal;
 #endif
 			TrailingDigits = trailingDigits;
         }
 
         MixedDec(const MixedDec&) = default;
+		
+        MixedDec& operator=(const int& rhs)
+        {
+	#if defined(AltNum_EnableMirroredSection)
+			if(rhs<0)
+			{
+				IntValue.Value = -rhs;
+				IntValue.IsPositive = 0;
+			}
+			else
+	#endif
+				IntValue = rhs;
+			DecimalHalf = 0;
+	#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = 0;
+	#endif
+	#if defined(MixedDec_StoreTrailingInFloat)
+			TrailingDigits = 0.0f;
+	#else
+			TrailingDigits = 0;
+	#endif
+            return *this;
+        } const
 
-        MixedDec& operator=(const MediumDec&) = default;
+        MixedDec& operator=(const MediumDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+	#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = 0;
+	#endif
+	#if defined(MixedDec_StoreTrailingInFloat)
+			TrailingDigits = 0.0f;
+	#else
+			TrailingDigits = 0;
+	#endif
+            return *this;
+        } const
+		
+        MixedDec& operator=(const MediumDecV2& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+		#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = 0;
+		#endif
+	#if defined(MixedDec_StoreTrailingInFloat)
+			TrailingDigits = 0.0f;
+	#else
+			TrailingDigits = 0;
+	#endif
+            return *this;
+        } const
+
+        MixedDec& operator=(const AltDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+		#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = rhs.ExtraRep;
+		#endif
+	#if defined(MixedDec_StoreTrailingInFloat)
+			TrailingDigits = 0.0f;
+	#else
+			TrailingDigits = 0;
+	#endif
+            return *this;
+        } const
+        MixedDec& operator=(const MixedDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+		#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = rhs.ExtraRep;
+		#endif
+			TrailingDigits = rhs.TrailingDigits;
+            return *this;
+        } const
+		
 #pragma endregion class_constructors
 
         /// <summary>
@@ -416,7 +473,7 @@ public:
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
-#if defined(MixedDec_ExtraRepEnabled)
+#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = extraVal;
 #endif
 			TrailingDigits = trailingDigits;

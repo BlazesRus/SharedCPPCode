@@ -19,6 +19,7 @@ MixedDec_DeriveFromMediumDecV2 =
 
 MixedDec_EnableAltFloat = Use custom floating point class that acts similar to float in how digits are stored to store trailing digits
 MixedDec_EnableRestrictedFloat = Uses builtin class RestrictedFloat to store trailing digits (representing only fractional range between 0 and 1 of trailing digits)
+MixedDec_StoreTrailingInFloat = Automatically enabled if neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled
 If neither MixedDec_EnableAltFloat or MixedDec_EnableRestrictedFloat are enabled then trailing digits are stored inside float
 MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
 */
@@ -106,4 +107,8 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
 
 #if	defined(MixedDec_DeriveFromAltDec) || defined(MixedDec_DeriveFromMediumDecV2)
 	#define MixedDec_EnableAlternativeRepresentations
+#endif
+
+#if !defined(MixedDec_EnableAltFloat)&&!defined(MixedDec_EnableRestrictedFloat)
+	#define MixedDec_StoreTrailingInFloat
 #endif
