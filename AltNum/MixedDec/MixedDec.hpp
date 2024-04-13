@@ -452,6 +452,7 @@ public:
 	#endif
             return *this;
         } const
+
         MixedDec& operator=(const MixedDec& rhs)
         {
             // Check for self-assignment

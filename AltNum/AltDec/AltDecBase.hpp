@@ -15,35 +15,21 @@
 #endif
 #endif
 #else
-#include "..\DLLAPI.h"
-#endif
-
-#ifdef AltNum_EnableMediumDecBasedSetValues
-    #include "..\MediumDec\MediumDec.hpp"
+#include "..\..\DLLAPI.h"
 #endif
 
 #include "..\MediumDecV2\MediumDecV2Base.hpp"
+#include "..\MediumDecV2\MediumDecV2.hpp"
 #include "AltDecPreprocessors.h"
-#include "MirroredIntV2.hpp"
 
 namespace BlazesRusCode
 {
     class AltDecBase;
 
-/*---Accuracy Tests(with AltDecBase based settings):
- * 100% accuracy for all integer value multiplication operations.
- * 100% accuracy for addition/subtraction operations
- * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
-   (values get lost if get too small) (100% accuracy except for some truncated digits lost)
- * Other operations like Ln and Sqrt contained with decent level of accuracy
-   (still loses a little accuracy because of truncation etc)
- * Operations and functions will mess up if IntValue overflows/underflows
-*/
-
     /// <summary>
     /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
     /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
-    /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
+    /// plus support for fractal operations, and optionally other representations like Pi,e, and imaginary numbers.
     /// (12 bytes worth of Variable Storage inside class for each instance)
     /// </summary>
     class DLL_API AltDecBase: public virtual MediumDecBaseV2
@@ -84,6 +70,26 @@ namespace BlazesRusCode
 	#endif
 				IntValue = rhs;
 			DecimalHalf = 0;
+            ExtraRep = 0;
+            return *this;
+        } const
+
+        AltDecBase& operator=(const MediumDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            ExtraRep = 0;
+            return *this;
+        } const
+
+        AltDecBase& operator=(const MediumDecV2& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
             ExtraRep = 0;
             return *this;
         } const

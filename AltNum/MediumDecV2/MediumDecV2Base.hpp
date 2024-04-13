@@ -15,7 +15,7 @@
 #endif
 #endif
 #else
-#include "..\DLLAPI.h"
+#include "..\..\DLLAPI.h"
 #endif
 
 #include "..\MediumDec\MediumDecBase.hpp"
