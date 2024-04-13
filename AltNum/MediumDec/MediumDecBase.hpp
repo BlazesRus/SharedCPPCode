@@ -173,6 +173,21 @@ protected:
 
         MediumDecBase(const MediumDecBase&) = default;
 
+        MediumDecBase& operator=(const int& rhs)
+        {
+	#if defined(AltNum_EnableMirroredSection)
+			if(rhs<0)
+			{
+				IntValue.Value = -rhs;
+				IntValue.IsPositive = 0;
+			}
+			else
+	#endif
+				IntValue = rhs;
+			DecimalHalf = 0;
+            return *this;
+        } const
+
         MediumDecBase& operator=(const MediumDecBase& rhs)
         {
             // Check for self-assignment

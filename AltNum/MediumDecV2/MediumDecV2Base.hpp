@@ -51,7 +51,25 @@ namespace BlazesRusCode
 
         MediumDecV2Base& operator=(const int& rhs)
         {
-            IntValue = rhs; DecimalHalf = 0;
+	#if defined(AltNum_EnableMirroredSection)
+			if(rhs<0)
+			{
+				IntValue.Value = -rhs;
+				IntValue.IsPositive = 0;
+			}
+			else
+	#endif
+				IntValue = rhs;
+			DecimalHalf = 0;
+            return *this;
+        } const
+
+        MediumDecV2Base& operator=(const MediumDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
             return *this;
         } const
 

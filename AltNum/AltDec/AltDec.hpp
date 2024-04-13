@@ -51,7 +51,7 @@ namespace BlazesRusCode
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDec(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const signed int& extraVal = 0)
+        AltDec(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const MirroredIntV2& extraVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;

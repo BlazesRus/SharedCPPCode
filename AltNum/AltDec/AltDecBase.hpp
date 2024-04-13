@@ -74,7 +74,16 @@ namespace BlazesRusCode
 
         AltDecBase& operator=(const int& rhs)
         {
-            IntValue = rhs; DecimalHalf = 0;
+	#if defined(AltNum_EnableMirroredSection)
+			if(rhs<0)
+			{
+				IntValue.Value = -rhs;
+				IntValue.IsPositive = 0;
+			}
+			else
+	#endif
+				IntValue = rhs;
+			DecimalHalf = 0;
             ExtraRep = 0;
             return *this;
         } const
