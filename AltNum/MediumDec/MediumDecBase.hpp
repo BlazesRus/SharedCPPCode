@@ -125,7 +125,7 @@ protected:
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
 	#if defined(AltNum_EnableMirroredSection)
-        static MirroredIntV2 const NegativeRep;
+        static MirroredInt const NegativeRep;
 	#else
         static signed int const NegativeRep = -2147483648;
 	#endif
@@ -3559,7 +3559,7 @@ public:
     };
 
 #if defined(AltNum_EnableMirroredSection)
-	MirroredInt MediumDecBase::NegativeRep = MirroredIntV2(0,1);
+	MirroredInt MediumDecBase::NegativeRep = MirroredInt(0,1);
 #endif
     #pragma region ValueDefine Source
 

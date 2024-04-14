@@ -41,7 +41,7 @@ namespace BlazesRusCode
         /// If ExtraRep is Negative and DecimalHalf.Value<AlternativeFractionalLowerBound, then AltDecBase represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
         /// If ExtraRep is zero and DecimalHalf.Value<999999999, then AltDecBase represents +- 2147483647.999999999
         /// </summary>
-        MirroredIntV2 ExtraRep;
+        MirroredInt ExtraRep;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
@@ -49,7 +49,7 @@ namespace BlazesRusCode
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const MirroredIntV2& extraVal = 0)
+        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const MirroredInt& extraVal = 0)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -420,14 +420,27 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         virtual void SetPiVal(const VariantType& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            IntValue = Value.IntValue;
+            #if defined(AltNum_UseIntForDecimalHalf)
+            #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
             ExtraRep = 0;
+            #endif
         }
         
-        virtual void SetPiValFromInt(int Value)
+        virtual void SetPiValFromInt(const int& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
+        #if defined(AltNum_EnableMirroredSection)
+            if(Value<0)
+                IntValue = MirroredInt(-Value,0);
+            else
+        #endif
+                IntValue = Value;
+            #if defined(AltNum_UseIntForDecimalHalf)
+            #else
+            DecimalHalf = PartialInt(0,1);
             ExtraRep = 0;
+            #endif
         }
     #endif
     #pragma endregion PiNum Setters
@@ -437,14 +450,27 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         virtual void SetEVal(const VariantType& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            IntValue = Value.IntValue;
+            #if defined(AltNum_UseIntForDecimalHalf)
+            #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
             ExtraRep = 0;
+            #endif
         }
         
-        virtual void SetEValFromInt(int Value)
+        virtual void SetEValFromInt(const int& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
+        #if defined(AltNum_EnableMirroredSection)
+            if(Value<0)
+                IntValue = MirroredInt(-Value,0);
+            else
+        #endif
+                IntValue = Value;
+            #if defined(AltNum_UseIntForDecimalHalf)
+            #else
+            DecimalHalf = PartialInt(0,2);
             ExtraRep = 0;
+            #endif
         }
     #endif
     #pragma endregion ENum Setters
@@ -460,8 +486,17 @@ public:
         
         virtual void SetIValFromInt(int Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
+        #if defined(AltNum_EnableMirroredSection)
+            if(Value<0)
+                IntValue = MirroredInt(-Value,0);
+            else
+        #endif
+                IntValue = Value;
+            #if defined(AltNum_UseIntForDecimalHalf)
+            #else
+            DecimalHalf = PartialInt(0,3);
             ExtraRep = 0;
+            #endif
         }
     #endif
     #pragma endregion INum Setters
@@ -535,7 +570,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = Numerator;
-            ExtraRep = MirroredIntV2(Denom);
+            ExtraRep = MirroredInt(Denom);
         }
 		
 		#if defined(AltNum_EnablePiRep)
@@ -543,7 +578,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,1);
-            ExtraRep = MirroredIntV2(Denom);
+            ExtraRep = MirroredInt(Denom);
         }
 		#endif
 		
@@ -552,7 +587,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,2);
-            ExtraRep = MirroredIntV2(Denom);
+            ExtraRep = MirroredInt(Denom);
         }
 		#endif
 		
@@ -561,7 +596,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,3);
-            ExtraRep = MirroredIntV2(Denom);
+            ExtraRep = MirroredInt(Denom);
         }
 		#endif
 		

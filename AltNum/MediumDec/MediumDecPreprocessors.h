@@ -13,8 +13,8 @@ AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield 
 AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
 */
 #if defined(AltNum_EnableMirroredSection)
-	#include "..\MirroredIntV2.hpp"
-	#define IntHalfType MirroredIntV2
+	#include "..\MirroredInt.hpp"
+	#define IntHalfType MirroredInt
 #else
 	#define IntHalfType signed int
 #endif
