@@ -417,11 +417,7 @@ public:
 	#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = 0;
 	#endif
-	#if defined(MixedDec_StoreTrailingInFloat)
-			TrailingDigits = 0.0f;
-	#else
-			TrailingDigits = 0;
-	#endif
+            SetTrailingDigitAsZero();
             return *this;
         } const
 
@@ -431,14 +427,10 @@ public:
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
-	#if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
-	#endif
-	#if defined(MixedDec_StoreTrailingInFloat)
-			TrailingDigits = 0.0f;
-	#else
-			TrailingDigits = 0;
-	#endif
+		#if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = rhs.ExtraRep;
+		#endif
+            SetTrailingDigitAsZero();
             return *this;
         } const
 		
@@ -449,13 +441,9 @@ public:
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
 		#if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = rhs.ExtraRep;
 		#endif
-	#if defined(MixedDec_StoreTrailingInFloat)
-			TrailingDigits = 0.0f;
-	#else
-			TrailingDigits = 0;
-	#endif
+            SetTrailingDigitAsZero();
             return *this;
         } const
 
@@ -468,11 +456,7 @@ public:
 		#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = rhs.ExtraRep;
 		#endif
-	#if defined(MixedDec_StoreTrailingInFloat)
-			TrailingDigits = 0.0f;
-	#else
-			TrailingDigits = 0;
-	#endif
+            SetTrailingDigitAsZero();
             return *this;
         } const
 
@@ -500,7 +484,7 @@ public:
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
 #if defined(MixedDec_DeriveFromAltDec)
-			ExtraRep = extraVal;
+			ExtraRep = Value.extraVal;
 #endif
 			TrailingDigits = trailingDigits;
         }
@@ -882,17 +866,69 @@ public:
 
     #pragma region PiNum Setters
     #if defined(MixedDec_EnablePiRep)
-        template<MediumDecVariant VariantType=MixedDec>
-        virtual void SetPiVal(const VariantType& Value)
+        virtual void SetPiVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
-            #if defined(AltNum_UseIntForDecimalHalf)
-            #else
-            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            DecimalHalf = Value.DecimalHalf;
+            #if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = 0;
             #endif
+        #endif
+            SetTrailingDigitAsZero();
+        }
+
+        virtual void SetPiVal(const MediumDecV2& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = PiRep;
+            #endif
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = 0;
+            #endif
+        #endif
+            SetTrailingDigitAsZero();
+        }
+
+        virtual void SetPiVal(const AltDec& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = PiRep;
+            #endif
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = Value.ExtraRep;
+            #endif
+        #endif
+            SetTrailingDigitAsZero();
         }
         
+        template<MediumDecVariant VariantType=AltDecBase>
+        void SetPiValV0(const VariantType& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = PiRep;
+            #endif
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = Value.ExtraRep;
+            #endif
+        #endif
+            SetTrailingDigitAsZero();
+        }
+
         virtual void SetPiValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
@@ -901,11 +937,14 @@ public:
             else
         #endif
                 IntValue = Value;
-            #if defined(AltNum_UseIntForDecimalHalf)
-            #else
+        #if defined(AltNum_UseIntForDecimalHalf)
+        #else
             DecimalHalf = PartialInt(0,1);
+            #if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = 0;
             #endif
+        #endif
+            SetTrailingDigitAsZero();
         }
     #endif
     #pragma endregion PiNum Setters

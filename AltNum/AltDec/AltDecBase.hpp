@@ -417,17 +417,49 @@ public:
 
     #pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
-        template<MediumDecVariant VariantType=AltDecBase>
-        virtual void SetPiVal(const VariantType& Value)
+        virtual void SetPiVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
-            #if defined(AltNum_UseIntForDecimalHalf)
-            #else
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = PiRep;
+        #else
             DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
-            ExtraRep = 0;
-            #endif
+            ExtraRep = Value.ExtraRep;
+        #endif
         }
-        
+
+        virtual void SetPiVal(const MediumDecV2& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = PiRep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            ExtraRep = Value.ExtraRep;
+        #endif
+        }
+
+protected:
+        template<MediumDecVariant VariantType=AltDecBase>
+        void SetPiValV0(const VariantType& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = PiRep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = Value.ExtraRep;
+            #endif
+        #endif
+        }
+
+public:
+        constexpr auto SetPiVal = SetPiValV0<AltDecBase>;
+
         virtual void SetPiValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
@@ -437,6 +469,8 @@ public:
         #endif
                 IntValue = Value;
             #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = PiRep;
             #else
             DecimalHalf = PartialInt(0,1);
             ExtraRep = 0;
@@ -447,17 +481,49 @@ public:
 
     #pragma region ENum Setters
     #if defined(AltNum_EnableERep)
-        template<MediumDecVariant VariantType=AltDecBase>
-        virtual void SetEVal(const VariantType& Value)
+        virtual void SetEVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
-            #if defined(AltNum_UseIntForDecimalHalf)
-            #else
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = ERep;
+        #else
             DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
-            ExtraRep = 0;
-            #endif
+            ExtraRep = Value.ExtraRep;
+        #endif
         }
-        
+
+        virtual void SetEVal(const MediumDecV2& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = ERep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            ExtraRep = Value.ExtraRep;
+        #endif
+        }
+
+protected:
+        template<MediumDecVariant VariantType=AltDecBase>
+        void SetEValV0(const VariantType& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = ERep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = Value.ExtraRep;
+            #endif
+        #endif
+        }
+
+public:
+        constexpr auto SetEVal = SetEValV0<AltDecBase>;
+
         virtual void SetEValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
@@ -467,6 +533,8 @@ public:
         #endif
                 IntValue = Value;
             #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = ERep;
             #else
             DecimalHalf = PartialInt(0,2);
             ExtraRep = 0;
@@ -477,22 +545,60 @@ public:
 
     #pragma region INum Setters
     #if defined(AltNum_EnableIRep)
-        template<MediumDecVariant VariantType=AltDecBase>
-        virtual void SetIVal(const VariantType& Value)
+        virtual void SetIVal(const MediumDec& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
-            ExtraRep = 0;
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = IRep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            ExtraRep = Value.ExtraRep;
+        #endif
         }
-        
-        virtual void SetIValFromInt(int Value)
+
+        virtual void SetIVal(const MediumDecV2& Value)
         {
-        #if defined(AltNum_EnableMirroredSection)
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = IRep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            ExtraRep = Value.ExtraRep;
+        #endif
+        }
+
+protected:
+        template<MediumDecVariant VariantType=AltDecBase>
+        void SetIValV0(const VariantType& Value)
+        {
+            IntValue = Value.IntValue;
+        #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = IRep;
+        #else
+            DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            #if defined(MixedDec_DeriveFromAltDec)
+            ExtraRep = Value.ExtraRep;
+            #endif
+        #endif
+        }
+
+public:
+        constexpr auto SetIVal = SetIValV0<AltDecBase>;
+
+        virtual void SetIValFromInt(const int& Value)
+        {
+        #if defined(AltNum_InableMirroredSection)
             if(Value<0)
                 IntValue = MirroredInt(-Value,0);
             else
         #endif
                 IntValue = Value;
             #if defined(AltNum_UseIntForDecimalHalf)
+            DecimalHalf = Value.DecimalHalf;
+            ExtraRep = IRep;
             #else
             DecimalHalf = PartialInt(0,3);
             ExtraRep = 0;
