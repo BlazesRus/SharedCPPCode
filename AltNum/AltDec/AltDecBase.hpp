@@ -957,7 +957,215 @@ public:
     #pragma endregion NormalRep Integer Bitwise Operations
 
     #pragma region Mixed Fraction Operations
+    #if defined(AltNum_EnableMixedFractional)
+		//Assumes NormalRep + Normal MixedFraction operation
+		void BasicMixedFracAddOp(AltDec& rValue)
+		{
+			if(DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
+			{
+				if(IntValue<0)
+				{
+					if(rValue.IntValue==NegativeRep)
+					{
+						DecimalHalf = rValue.DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+					else if(rValue.IntValue<0)
+					{
+						IntValue += rValue.IntValue;
+						DecimalHalf = rValue.DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+					else//(rValue.IntValue>0)
+					{
+						if(rValue.IntValue>-IntValue)//check for flipping of sign
+						{
+							IntValue += rValue.IntValue - 1;
+							DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+						}
+						else
+						{
+							IntValue += rValue.IntValue;
+							DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+						}
+						ExtraRep = rValue.ExtraRep;
+					}
+				}
+				else//(IntValue>0)
+				{
+					if(rValue.IntValue==NegativeRep)
+					{
+						DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+					else if(rValue.IntValue<0)
+					{
+						IntValue += rValue.IntValue;
+						if(-rValue.IntValue>IntValue)//check for flipping of sign
+						{
+							IntValue += rValue.IntValue;
+							if(IntValue==-1)
+								IntValue = NegativeRep;
+							else
+								++IntValue;
+						}
+						DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+					else//(rValue.IntValue>0)
+					{
+						IntValue += rValue.IntValue;
+						DecimalHalf = rValue.DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+				}     
+			}
+			else
+			{
+				AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
+				BasicIntMultOp(rValue.ExtraRep);
+                BasicAddOp(RightSideNum);//self += RightSideNum;
+				if(DecimalHalf==0)
+				{
+					if(IntValue!=0)//Set as Zero if both are zero
+					{
+						DecimalHalf = -DecimalHalf;
+						ExtraRep = rValue.ExtraRep;
+					}
+				}
+				else
+				{
+					if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+						DecimalHalf = -DecimalHalf;
+					ExtraRep = rValue.ExtraRep;
+				}
+			}
+		}
+		
+    #if defined(AltNum_UseIntForDecimalHalf)
+		virtual void BasicMixedAltFracAddOp(AltDec& rValue)
+    #else
+		virtual void BasicMixedAltFracAddOp(AltDec& rValue, const AltDec& altNum)
+    #endif
+		{
+			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
+		#if defined(AltNum_UseIntForDecimalHalf)
+            #if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		    #else
+			RightSideNum *= ENum;
+		    #endif
+        #else
+			RightSideNum *= altNum;
+        #endif
+            BasicIntMultOp(-rValue.ExtraRep);
+            BasicAddOp(RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+					DecimalHalf = -DecimalHalf;
+					ExtraRep = -rValue.ExtraRep;
+				}
+			}
+			else
+			{
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+					DecimalHalf = -DecimalHalf;
+				ExtraRep = -rValue.ExtraRep;
+			}
+		}
+		
+		//Assumes NormalRep - Normal MixedFraction operation
+		virtual void BasicMixedFracSubOp(AltDec& rValue)
+		{
+		#if defined(AltNum_UseIntForDecimalHalf)
+			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
+		#else
 
+        #endif
+        	BasicMultOp(rValue.ExtraRep);
+			BasicSubOp(RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+            #if defined(AltNum_UseIntForDecimalHalf)
+					DecimalHalf = -DecimalHalf;
+					ExtraRep.Value = rValue.ExtraRep.Value;
+            #else
+					ExtraRep.Value = rValue.ExtraRep.Value;
+            #endif
+                    ExtraRep.IsPositive = 0;
+				}
+			}
+			else
+			{
+            #if defined(AltNum_UseIntForDecimalHalf)
+                #if defined(AltNum_EnableMirroredSection)
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                #else
+                if(IntValue.Value!=0)
+                #endif
+					DecimalHalf = -DecimalHalf;
+                ExtraRep = rValue.ExtraRep;
+            #else
+
+            #endif
+			}
+		}
+	
+    #if defined(AltNum_UseIntForDecimalHalf)
+		virtual void BasicMixedAltFracSubOp(AltDec& rValue)
+    #else
+		virtual void BasicMixedAltFracSubOp(AltDec& rValue, const AltDec& altNum)
+    #endif
+		{
+		#if defined(AltNum_UseIntForDecimalHalf)
+			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
+        #else
+
+        #endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+            #if defined(AltNum_EnableMixedPiFractional)
+			RightSideNum *= PiNum;
+		    #else
+			RightSideNum *= ENum;
+		    #endif
+        #else
+			RightSideNum *= altNum;
+        #endif
+			BasicMultOp(rValue.ExtraRep.Value);
+			BasicSubOp(RightSideNum);
+			if(DecimalHalf==0)
+			{
+				if(IntValue!=0)//Set as Zero if both are zero
+				{
+            #if defined(AltNum_UseIntForDecimalHalf)
+					DecimalHalf = -DecimalHalf;
+					ExtraRep.Value = rValue.ExtraRep.Value;
+            #else
+					ExtraRep.Value = rValue.ExtraRep.Value;
+            #endif
+                    ExtraRep.IsPositive = 0;
+				}
+			}
+			else
+			{
+            #if defined(AltNum_UseIntForDecimalHalf)
+                #if defined(AltNum_EnableMirroredSection)
+				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                #else
+                if(IntValue.Value!=0)
+                #endif
+					DecimalHalf = -DecimalHalf;
+                ExtraRep.IsPositive = 0;
+            #else
+            #endif
+			}
+		}
+    #endif
+#endif
     #pragma endregion Mixed Fraction Operations
 
     #pragma region NormalRep AltNum Division Operations
