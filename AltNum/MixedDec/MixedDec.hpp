@@ -289,6 +289,15 @@ public:
     #endif
         }
 
+        bool IsTrailingDigitNotZero()
+        {
+	#if defined(MixedDec_StoreTrailingInFloat)
+            return TrailingDigits!=0.0f;
+    #else
+            return TrailingDigits!=0;
+    #endif
+        }
+
         void SetAsZero()
         {
             IntValue = 0;
