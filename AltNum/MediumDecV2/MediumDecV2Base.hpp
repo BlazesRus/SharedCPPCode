@@ -677,6 +677,13 @@ protected:
             {
                 if(RValue.Flags!=3)
                     throw "Can't compare imaginary number with real number";
+				else if(RRep==RepType:ImaginaryInfinity)
+                {
+					if(that.IntValue==1)
+						return 0<=>1;//Positive Infinity is greater than real number representations
+					else
+						return 1<=>0;
+                }
                 else
                 {
 	    #if defined(AltNum_EnableMirroredSection)

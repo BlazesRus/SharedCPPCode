@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -934,21 +934,349 @@ public:
 
     #pragma region Comparison Operators
 
+protected:
+		//Compare only as if in NormalType representation mode
+        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecV2Base>;
+
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
+#endif
+
+    #if defined(AltNum_DefineInfinityAsSignedReps)
+        constexpr auto LSideInfinityComparison = MediumDecV2Base::LSideInfinityComparison<AltDecBase>;
+	#endif
+
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=AltDecBase>
+		std::strong_ordering CompareWithV1(const VariantType& that) const
+		{
+	#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep) {
+				if(ExtraRep==WithinMinMaxRangeRep) {
+					//To-do compare within min-max range code here
+				}
+				else {
+					//To-do compare within min-max range code here
+				}
+			}
+			else if(ExtraRep==WithinMinMaxRangeRep) {
+				//To-do compare within min-max range code here
+			}
+	#endif
+	#if defined(AltNum_EnableMirroredSection)
+			//Comparing if number is negative vs positive
+			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
+				return SignCmp;
+	#endif
+	
+			RepType LRep = GetRepType();
+			RepType RRep = that.GetRepType();
+    #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
+			if(LRep^UndefinedBit||RRep^UndefinedBit)
+				throw "Can't compare undefined/nil representations";
+    #endif
+	#if defined(AltNum_UseIntForDecimalHalf)
+		//To-Do add code here
+	#else
+		#if defined(AltNum_EnableImaginaryNum)
+            if (DecimalHalf.Flags == 3)
+            {
+                if(that.DecimalHalf.Flags!=3)
+                    throw "Can't compare imaginary number with real number";
+				else if(RRep==RepType:ImaginaryInfinity)
+                {
+					if(that.IntValue==1)
+						return 0<=>1;//Positive Infinity is greater than real number representations
+					else
+						return 1<=>0;
+                }
+                else
+                {
+					VariantType LValue = this;
+					VariantType RValue = that;
+			#if defined(AltNum_EnablePowerOfRepresentation)
+				#if defined(AltNum_EnableNegativePowerRep)
+					int LComp = (int)LValue.ExtraRep;
+					int RComp = (int)RValue.ExtraRep;
+					if(LComp!=0)//Left side is to power of ExtraRep.Value
+					{
+						if(RComp!=0)//Right side is to power of ExtraRep.Value
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(RComp!=0)//Right side is to power of ExtraRep.Value
+					{
+						//Add code here
+					}
+				#else
+					if(ExtraRep.IsPositive==0)//Left side is to power of ExtraRep.Value
+					{
+						if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+					{
+						//Add code here
+					}
+				#endif
+			#elif defined(AltNum_EnableMixedFractional)
+					if(ExtraRep.IsPositive==0)//Left side is a mixed Fraction
+					{
+						if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+					{
+						//Add code here
+					}
+			#endif
+					else if(ExtraRep.Value!=0)//Left side is a divisor
+					{
+						if(that.ExtraRep.Value!=0)//Right side is a divisor
+						{
+							//Add code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.Value!=0)//Right side is a divisor
+					{
+						//Add code here
+					}
+			#if defined(AltNum_EnableMirroredSection)
+			    	return BasicComparisonV2(rSide);
+			#else
+					return BasicComparison(rSide);
+			#endif
+                }
+            }
+            else if(RValue.Flags==3)
+                throw "Can't compare imaginary number with real number";
+		#endif
+	#endif
+			switch(LRep)
+			{
+	#if defined(AltNum_EnableInfinityRep)
+                case RepType:Infinity:
+                    LSideInfinityComparison(that, RRep);
+                    break;
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+	
+	#endif
+	#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepType:ToPowerOf:
+				case RepType:PiPower:
+				case RepType:EPower:
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
+						else if(that.Flags==3)
+							throw "Can't compare imaginary number with real number";
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(AltNum_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepType:ToPowerOf:
+				case RepType:PiPower:
+				case RepType:EPower:
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
+						else if(that.Flags==3)
+							throw "Can't compare imaginary number with real number";
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(AltNum_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+				default:
+				{
+					if(LRep==RRep)
+	#if defined(AltNum_EnableMirroredSection)
+						return BasicComparisonV2(that);
+	#else
+						return BasicComparison(that);
+	#endif
+					else if(RRep==RepType:Infinity)
+                    {
+                        if(that.IntValue==1)
+							return 0<=>1;//Positive Infinity is greater than real number representations
+						else
+							return 1<=>0;
+                    }
+                    else
+					{
+						MediumDecV2Base lSide = *this;
+						MediumDecV2Base rSide = that;
+						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+	#if defined(AltNum_EnableMirroredSection)
+						return lSide.BasicComparisonV2(rSide);
+	#else
+						return rSide.BasicComparison(rSide);
+	#endif
+					}
+				}
+			}
+		}
+
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=MediumDecV2Base>
+		std::strong_ordering CompareWithIntV1(const int& that) const
+		{
+			int lVal; int rVal;
+			//Pi and E only enabled if imbedded flags are enabled
+	#if !defined(AltNum_UseIntForDecimalHalf)
+			if(DecimalHalf.Flags==0)
+			{
+	#endif
+				return BasicIntComparison(that);
+	#if !defined(AltNum_UseIntForDecimalHalf)
+			}
+			else
+			{
+				MediumDecV2Base lSide = *this;
+				lSide.ConvertToNormTypeV2();
+				return lSide.BasicIntComparison(that);
+			}
+	#endif
+		}
+
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWith = MediumDecBase::CompareWithV1<MediumDecV2Base>;
+
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MediumDecV2Base>;
+
+public:
+		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
+		{
+			return CompareWith(that);
+		}
+
+		std::strong_ordering operator<=>(const int& that) const
+		{
+			return CompareWithInt(that);
+		}
+
+		bool operator==(const int& that) const
+		{
+			if (IntValue!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator==(const MediumDecV2Base& that) const
+		{
+			if (IntValue!=that.IntValue)
+				return false;
+			if (DecimalHalf!=that.IntValue)
+				return false;
+		}
+
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
+
+        /// <summary>
+        /// Basic Division Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOp<AltDecBase>;
 
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 
+        /// <summary>
+        /// Basic Multiplication Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<AltDecBase>;
+
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
 
+        /// <summary>
+        /// Basic Addition Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntAddOp = MediumDecBase::BasicIntAddOp<AltDecBase>;
+
 	#pragma endregion NormalRep Integer Addition Operations
 
     #pragma region NormalRep Integer Subtraction Operations
+
+        /// <summary>
+        /// Basic Subtraction Operation between AltDec and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntSubOp = MediumDecBase::BasicIntSubOp<AltDecBase>;
 
     #pragma endregion NormalRep Integer Subtraction Operations
 
@@ -956,7 +1284,7 @@ public:
 
     #pragma endregion NormalRep Integer Bitwise Operations
 
-    #pragma region Mixed Fraction Operations
+    #pragma region Mixed Fraction Operations//To-Do:Need to update this code
     #if defined(AltNum_EnableMixedFractional)
 		//Assumes NormalRep + Normal MixedFraction operation
 		void BasicMixedFracAddOp(AltDec& rValue)
