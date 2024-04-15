@@ -346,22 +346,22 @@ protected:
             IFractional = 11,//  IntValue/DecimalHalf*i Representation
 		#endif
 	//#endif
-	//#if defined(AltNum_EnableMixedFractional)
+	#if defined(AltNum_EnableMixedFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedFrac = 32,
-        //#if defined(AltNum_EnableMixedPiFractional)
+        #if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedPiFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedPi = 33,
-		//#endif
-		//#if defined(AltNum_EnableMixedEFractional)
+		#endif
+		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedEFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedE = 34,
-		//#endif
-		//#if defined(AltNum_EnableMixedIFractional)
+		#endif
+		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedIFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
             MixedI = 36,
-		//#endif
-	//#endif
+		#endif
+	#endif
 
 	//#if defined(AltNum_EnableInfinityRep)
             //(Enum Bits:7,6)
