@@ -427,7 +427,7 @@ protected:
 	//#if defined(AltNum_EnableUndefinedButInRange)
 
             //(Enum Bits:8, 2)
-            //Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+            //Such as result of Cos of infinity(value format part uses for +- range, DecimalHalf==UndefinedInRangeRep)
             UndefinedButInRange = 130,
 		//#if defined(AltNum_EnableWithinMinMaxRange)
 
@@ -435,9 +435,6 @@ protected:
             //Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
 			WithinMinMaxRange = 160,
 		//#endif
-	//#endif
-	//#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
-            UndefinedButInRange = 130,//(Enum Bits:8, 2)
 	//#endif
     //#if defined(AltNum_EnableNil)
             //(Enum Bits:8, 1, 2)

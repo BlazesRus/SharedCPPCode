@@ -41,11 +41,6 @@ AltNum_EnableNaN =
 
 AltNum_EnableHigherPrecisionPiConversion =
       (Not Implemented)
-
-AltNum_UseAltDecBasedRepresentations =
-      Forces to calculate certain representations like AltDec does 
-      (preference for storing non-normal representations within value of negative DecimalHalf)
-      (Not Implemented)
       
 AltNum_EnableOverflowPreventionCode =
       Use to enable code to check for overflows on addition/subtraction/multiplication operations (return an exception if overflow)

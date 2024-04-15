@@ -1209,7 +1209,7 @@ protected:
 		}
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
-		template<MediumDecVariant VariantType=MediumDecV2Base>
+		template<MediumDecVariant VariantType=AltDecBase>
 		std::strong_ordering CompareWithIntV1(const int& that) const
 		{
 			int lVal; int rVal;
@@ -1269,9 +1269,75 @@ public:
 
 		bool operator==(const MediumDecV2Base& that) const
 		{
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			//ToDo:Add comparison code for comparing unknown number within range
+		#endif
+			AltDec LValue = this;
+			AltDec RValue = that;
+			LValue.ConvertDownToMediumDecV2Equiv();
 			if (IntValue!=that.IntValue)
 				return false;
 			if (DecimalHalf!=that.IntValue)
+				return false;
+		}
+		
+		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
+		virtual void ConvertDownToMediumDecV2Equiv()
+		{
+	#if defined(AltNum_UseIntForDecimalHalf)
+			//To-Do:Add code to convert down to base PiNum,ENum,INum, and NormalType
+	#else
+		#if defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsNegative())
+			{
+				//To-Do add code here to convert from mixed fraction
+				return;
+			}
+		#elif defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnableNegativePowerRep)
+			if(ExtraRep!=0)
+			#else
+			if(ExtraRep.IsNegative())
+			#endif
+			{
+				if(DecimalHalf.Flag==1)//Convert down to PiNum
+					ConvertPiPowerToPiRep();
+				else if(DecimalHalf.Flag==2)//Convert down to ENum
+					ConvertEPowerToERep();
+				return;
+			}
+		#endif
+		#if defined(AltNum_EnableFractionals)
+			if(ExtraRep.Value!=0)
+			{
+				BasicIntDivOp(ExtraRep.Value);
+				ExtraRep.Value = 0;
+				return;
+			}
+		#endif
+			ConvertToNormTypeV2();
+	#endif
+		}
+		
+		bool operator==(const AltDec& that) const
+		{
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==UndefinedInRangeMinMaxRep)
+			{
+				//ToDo:Add comparison code for comparing unknown number within range
+			}
+			else if(that.ExtraRep==UndefinedInRangeMinMaxRep)
+			{
+				//ToDo:Add comparison code for comparing unknown number within range
+			}
+		#endif
+			AltDec LValue = this;
+			AltDec RValue = that;
+			LValue.ConvertDownToMediumDecV2Equiv();
+			RValue.ConvertDownToMediumDecV2Equiv();
+			if (LValue.IntValue!=RValue.IntValue)
+				return false;
+			if (LValue.DecimalHalf!=RValue.IntValue)
 				return false;
 		}
 
