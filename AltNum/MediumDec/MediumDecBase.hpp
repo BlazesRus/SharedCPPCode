@@ -287,11 +287,12 @@ protected:
 		//#if defined(AltNum_EnablePowerOfRepresentation)
             PiPower = 17,
 		//#endif
-		//#if defined(AltNum_EnableDecimaledPiFractionals)
-            PiNumByDiv = 9,//  (Value/(ExtraRep*-1))*Pi Representation
-			//#else
+		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableDecimaledPiFractionals)
+            PiNumByDiv = 9,//  (Value/(ExtraRep.Value))*Pi Representation
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledPiFractionals)
             PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
-			//#endif
+		#endif
 		//#endif
 		//#if defined(AltNum_EnableApproachingPi)
             //(Enum Bits:7,1)
@@ -314,9 +315,12 @@ protected:
 		//#if defined(AltNum_EnablePowerOfRepresentation)
             EPower = 18,
 		//#endif
-		//#if defined(AltNum_EnableDecimaledEFractionals)
-            ENumByDiv = 10,//(Value/(ExtraRep*-1))*e Representation
-		//#endif
+		#if !defined(AltNum_UseIntForDecimalHalf)||!defined(AltNum_EnableDecimaledEFractionals)
+            ENumByDiv = 10,//(Value/(ExtraRep.Value))*e Representation
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledEFractionals)
+            EFractional = 9,//  IntValue/DecimalHalf*Pi Representation
+		#endif
 		//#if defined(AltNum_EnableApproachingE)
             //(Enum Bits:7,2)
             //equal to IntValue.9..9 e
@@ -335,9 +339,12 @@ protected:
 	//#endif
 	//#if defined(AltNum_EnableImaginaryNum)
             INum = 4,
-		//#if defined(AltNum_EnableDecimaledIFractionals)
-            INumByDiv = 11,//(Value/(ExtraRep*-1))*i Representation
-		//#endif
+		#if !defined(AltNum_UseIntForDecimalHalf)||!defined(AltNum_EnableDecimaledIFractionals)
+            INumByDiv = 11,//(Value/(ExtraRep.Value))*i Representation
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledIFractionals)
+            IFractional = 11,//  IntValue/DecimalHalf*i Representation
+		#endif
 	//#endif
 	//#if defined(AltNum_EnableMixedFractional)
             //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
@@ -3755,7 +3762,7 @@ public:
             return BasicToFullStringOp()+"Ï€";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+        case RepType::PiNumByDiv://  (Value/(ExtraRep.Value))*Pi Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"Ï€";
             break;
@@ -3771,7 +3778,7 @@ public:
             return BasicToFullStringOp()+"e";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+        case RepType::ENumByDiv://  (Value/(ExtraRep.Value))*e Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
@@ -3788,7 +3795,7 @@ public:
             return BasicToFullStringOp()+"i";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+        case RepType::INumByDiv://  (Value/(ExtraRep.Value))*i Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
