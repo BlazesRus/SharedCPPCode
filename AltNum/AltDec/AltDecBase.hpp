@@ -154,11 +154,13 @@ namespace BlazesRusCode
     #else
         static const unsigned int AlternativeFractionalLowerBound = 1073741816;
     #endif
-        //Upper limit for Mixed Fractions and Fractionals; infinite approaching type representations at and after this DecimalHalf value
+        //Maximum divisor for Fractionals and mixed Fractions
    #if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int InfinityBasedLowerBound = 2147483643;
+        static const signed int FractionalDivisorLimit = 2147483642;
+		//Infinisimals and infinity representations start here
+		static const signed int FractionalDivisorOverflow = 2147483643;
    #else
-        static const unsigned int InfinityBasedLowerBound = 1073741816;
+        static const unsigned int FractionalDivisorLimit = 1073741815;
    #endif
 	//Fractional Division Maximum at this ExtraRep.Value
     #if defined(AltNum_EnableWithinMinMaxRange)
@@ -1070,8 +1072,8 @@ protected:
 			#endif
                 }
             }
-            else if(RValue.Flags==3)
-                throw "Can't compare imaginary number with real number";
+			else if(that.Flags==3)
+				throw "Can't compare imaginary number with real number";
 		#endif
 	#endif
 			switch(LRep)
@@ -1084,10 +1086,20 @@ protected:
 	#if defined(AltNum_EnableApproachingValues)
 	
 	#endif
-	#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType:ToPowerOf:
-				case RepType:PiPower:
-				case RepType:EPower:
+	#if defined(AltNum_EnableFractionals)
+				case RepType:NumByDiv:
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+				case RepType:PiNumByDiv:
+		#endif
+		#if defined(AltNum_EnableDecimaledEFractionals)
+				case RepType:ENumByDiv:
+		#endif
+		#if defined(AltNum_EnablePiFractional)
+				case RepType:PiFractional:
+		#endif
+		#if defined(AltNum_EnableEFractional)
+				case RepType:EFractional:
+		#endif
 					{
 						if(RRep==RepType:Infinity)
 						{
@@ -1096,8 +1108,6 @@ protected:
 							else
 								return 1<=>0;
 						}
-						else if(that.Flags==3)
-							throw "Can't compare imaginary number with real number";
 						else
 						{
 							MediumDecV2Base lSide = *this;
@@ -1124,8 +1134,36 @@ protected:
 							else
 								return 1<=>0;
 						}
-						else if(that.Flags==3)
-							throw "Can't compare imaginary number with real number";
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(AltNum_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+	#if defined(AltNum_EnableMixedFractional)
+				case RepType:MixedFrac:
+		#if defined(AltNum_EnableMixedPiFractional)
+				case RepType:MixedPi:
+		#endif
+		#if defined(AltNum_EnableMixedEFractional)
+				case RepType:MixedE:
+		#endif
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
 						else
 						{
 							MediumDecV2Base lSide = *this;
@@ -1178,11 +1216,22 @@ protected:
 			//Pi and E only enabled if imbedded flags are enabled
 	#if !defined(AltNum_UseIntForDecimalHalf)
 			if(DecimalHalf.Flags==0)
-			{
+	#else
+			if(ExtraRep==0)
 	#endif
+			{
 				return BasicIntComparison(that);
-	#if !defined(AltNum_UseIntForDecimalHalf)
 			}
+	#if defined(AltNum_EnableImaginaryNum
+		#if !defined(AltNum_UseIntForDecimalHalf)
+			else if(DecimalHalf.Flags==3)
+		#elif defined(AltNum_EnableDecimaledIFractionals)//Check if within I Fractional Representation or INum representation to check if valid
+			else if((ExtraRep<0&&ExtraRep>FractionalDivisorOverflow)||ExtraRep==IRep)
+		#else
+			else if(ExtraRep==IRep)
+		#endif
+				throw "Can't compare imaginary number with real number";
+	#endif
 			else
 			{
 				MediumDecV2Base lSide = *this;
