@@ -1266,20 +1266,6 @@ public:
 				return false;
 			return true;
 		}
-
-		bool operator==(const MediumDecV2Base& that) const
-		{
-		#if defined(AltNum_EnableWithinMinMaxRange)
-			//ToDo:Add comparison code for comparing unknown number within range
-		#endif
-			AltDec LValue = this;
-			AltDec RValue = that;
-			LValue.ConvertDownToMediumDecV2Equiv();
-			if (IntValue!=that.IntValue)
-				return false;
-			if (DecimalHalf!=that.IntValue)
-				return false;
-		}
 		
 		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
 		virtual void ConvertDownToMediumDecV2Equiv()
@@ -1319,22 +1305,67 @@ public:
 	#endif
 		}
 		
+		bool operator==(const MediumDecV2& that) const
+		{
+		#if defined(AltNum_EnableUndefinedButInRange)
+			if(DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+            #if defined(AltNum_EnableWithinMinMaxRange)
+                //ToDo:Add comparison code for comparing unknown number within range
+            #endif
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+			AltDec LValue = this;
+			LValue.ConvertToNormTypeV2();
+			MediumDecV2 RValue = that;
+			RValue.ConvertToNormTypeV2();
+		#else
+			AltDec LValue = this;
+			MediumDecV2 RValue = that;
+			if(DecimalHalf.Flags!=0&&DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+				LValue.ConvertDownToMediumDecV2Equiv();
+			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
+				throw "Can't compare imaginary number with real number";
+			else
+				return false;
+		#endif
+			if (LValue.IntValue!=RValue.IntValue)
+				return false;
+			if (LValue.DecimalHalf!=RValue.IntValue)
+				return false;
+		}
+		
 		bool operator==(const AltDec& that) const
 		{
-		#if defined(AltNum_EnableWithinMinMaxRange)
-			if(ExtraRep==UndefinedInRangeMinMaxRep)
-			{
-				//ToDo:Add comparison code for comparing unknown number within range
-			}
-			else if(that.ExtraRep==UndefinedInRangeMinMaxRep)
-			{
-				//ToDo:Add comparison code for comparing unknown number within range
-			}
+		#if defined(AltNum_EnableUndefinedButInRange)
+			if(DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+            #if defined(AltNum_EnableWithinMinMaxRange)
+                //ToDo:Add comparison code for comparing unknown number within range
+            #endif
 		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+			AltDec LValue = this;
+			LValue.ConvertToNormTypeV2();
+			AltDec RValue = that;
+			RValue.ConvertToNormTypeV2();
+		#else
 			AltDec LValue = this;
 			AltDec RValue = that;
-			LValue.ConvertDownToMediumDecV2Equiv();
-			RValue.ConvertDownToMediumDecV2Equiv();
+			if(DecimalHalf.Flags!=0&&DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+            {
+				LValue.ConvertDownToMediumDecV2Equiv();
+                RValue.ConvertDownToMediumDecV2Equiv();
+            }
+			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
+				throw "Can't compare imaginary number with real number";
+			else
+				return false;
+		#endif
 			if (LValue.IntValue!=RValue.IntValue)
 				return false;
 			if (LValue.DecimalHalf!=RValue.IntValue)

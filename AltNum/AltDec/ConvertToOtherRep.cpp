@@ -289,7 +289,7 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 void ConvertEByDivToNorm()
 {
 	BasicIntDivOp(ExtraRep.Value);
-    ConvertPiByDivToNumByDiv();
+    ConvertEByDivToNumByDiv();
 }
     #endif
 
