@@ -1305,6 +1305,34 @@ public:
 	#endif
 		}
 		
+		bool operator==(const MediumDec& that) const
+		{
+		#if defined(AltNum_EnableUndefinedButInRange)
+			if(DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+            #if defined(AltNum_EnableWithinMinMaxRange)
+                //ToDo:Add comparison code for comparing unknown number within range
+            #endif
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+			AltDec LValue = this;
+			LValue.ConvertToNormTypeV2();
+			MediumDec RValue = that;
+			RValue.ConvertToNormTypeV2();
+		#else
+			AltDec LValue = this;
+			MediumDec RValue = that;
+			if(DecimalHalf.Flags!=0)
+				return false;
+		#endif
+			if (LValue.IntValue!=RValue.IntValue)
+				return false;
+			if (LValue.DecimalHalf!=RValue.IntValue)
+				return false;
+		}
+		
 		bool operator==(const MediumDecV2& that) const
 		{
 		#if defined(AltNum_EnableUndefinedButInRange)
@@ -1324,11 +1352,11 @@ public:
 		#else
 			AltDec LValue = this;
 			MediumDecV2 RValue = that;
-			if(DecimalHalf.Flags!=0&&DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+			if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
 				LValue.ConvertDownToMediumDecV2Equiv();
 			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
 				throw "Can't compare imaginary number with real number";
-			else
+			else if(DecimalHalf.Flags!=0)
 				return false;
 		#endif
 			if (LValue.IntValue!=RValue.IntValue)
@@ -1356,7 +1384,7 @@ public:
 		#else
 			AltDec LValue = this;
 			AltDec RValue = that;
-			if(DecimalHalf.Flags!=0&&DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+			if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
             {
 				LValue.ConvertDownToMediumDecV2Equiv();
                 RValue.ConvertDownToMediumDecV2Equiv();
