@@ -1491,12 +1491,94 @@ public:
 
 public:
     #pragma region ConvertFromOtherTypes
+		
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetFloatVal(const float& Value)
+        {
+		//#if !defined(AltNum_UseLegacyFloatingConversion)
+			//To-Do:Add more exact extraction
+		//#else
+			#if defined(MixedDec_DeriveFromAltDec)
+			AltDec::SetBoolVal(Value);
+			#else
+			MediumDec::SetFloatVal(Value);
+			#endif
+			SetTrailingDigitsAsZero();
+		//#endif	
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetDoubleVal(const double& Value)
+        {
+		//#if !defined(AltNum_UseLegacyFloatingConversion)
+			//To-Do:Add more exact extraction
+		//#else
+			#if defined(MixedDec_DeriveFromAltDec)
+			AltDec::SetBoolVal(Value);
+			#else
+			MediumDec::SetDoubleVal(Value);
+			#endif
+			SetTrailingDigitsAsZero();
+		//#endif
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetDecimalVal(const ldouble& Value)
+        {
+		//#if !defined(AltNum_UseLegacyFloatingConversion)
+			//To-Do:Add more exact extraction
+		//#else
+			#if defined(MixedDec_DeriveFromAltDec)
+			AltDec::SetBoolVal(Value);
+			#else
+			MediumDec::SetDecimalVal(Value);
+			#endif
+			SetTrailingDigitsAsZero();
+		//#endif
+        }
+
+        /// <summary>
+        /// Sets the value(false equals zero; otherwise is true).
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetBoolVal(const bool& Value)
+        {
+			#if defined(MixedDec_DeriveFromAltDec)
+			AltDec::SetBoolVal(Value);
+			#else
+			MediumDec::SetBoolVal(Value);
+			#endif
+			SetTrailingDigitsAsZero();
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetIntVal(const int& Value)
+        {
+			#if defined(MixedDec_DeriveFromAltDec)
+			AltDec::SetBoolVal(Value);
+			#else
+			MediumDec::SetIntVal(Value);
+			#endif
+			SetTrailingDigitsAsZero();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MixedDec(float Value)
+        MixedDec(const float& Value)
         {
             this->SetFloatVal(Value);
         }
@@ -1505,7 +1587,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MixedDec(double Value)
+        MixedDec(const double& Value)
         {
             this->SetDoubleVal(Value);
         }
@@ -1514,7 +1596,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MixedDec(ldouble Value)
+        MixedDec(const ldouble& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -1523,13 +1605,13 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MixedDec(bool Value)
+        MixedDec(const bool& Value)
         {
             this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableMediumDecBasedSetValues)
-        MixedDec(MediumDec Value)
+        MixedDec(const MediumDec& Value)
         {
             this->SetVal(Value);
         }

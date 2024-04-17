@@ -495,7 +495,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(float Value)
+        MediumDecV2Base(const float& Value)
         {
             this->SetFloatVal(Value);
         }
@@ -504,7 +504,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(double Value)
+        MediumDecV2Base(const double& Value)
         {
             this->SetDoubleVal(Value);
         }
@@ -513,7 +513,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(ldouble Value)
+        MediumDecV2Base(const ldouble& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -522,13 +522,13 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(bool Value)
+        MediumDecV2Base(const bool& Value)
         {
             this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableMediumDecV2BaseBasedSetValues)
-        MediumDecV2Base(MediumDecV2Base Value)
+        MediumDecV2Base(const MediumDecV2Base& Value)
         {
             this->SetVal(Value);
         }

@@ -863,7 +863,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(float Value)
+        virtual void SetFloatVal(const float& Value)
         {
 			MediumDec::SetFloatVal(Value);
 			ExtraRep = 0;
@@ -873,7 +873,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(double Value)
+        virtual void SetDoubleVal(const double& Value)
         {
 			MediumDec::SetDoubleVal(Value);
 			ExtraRep = 0;
@@ -883,7 +883,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(ldouble Value)
+        virtual void SetDecimalVal(const ldouble& Value)
         {
 			MediumDec::SetDecimalVal(Value);
 			ExtraRep = 0;
@@ -893,7 +893,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual SetBoolVal(const bool& Value)
+        virtual void SetBoolVal(const bool& Value)
         {
 			MediumDec::SetBoolVal(Value);
 			ExtraRep = 0;
@@ -913,7 +913,7 @@ public:
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(float Value)
+        AltDecBase(const float& Value)
         {
             this->SetFloatVal(Value);
         }
@@ -922,7 +922,7 @@ public:
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(double Value)
+        AltDecBase(const double& Value)
         {
             this->SetDoubleVal(Value);
         }
@@ -931,7 +931,7 @@ public:
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(ldouble Value)
+        AltDecBase(const ldouble& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -940,13 +940,13 @@ public:
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(bool Value)
+        AltDecBase(const bool& Value)
         {
             this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableAltDecBaseBasedSetValues)
-        AltDecBase(AltDecBase Value)
+        AltDecBase(const AltDecBase& Value)
         {
             this->SetVal(Value);
         }

@@ -614,11 +614,12 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(float Value)
+        virtual void SetFloatVal(const float& Value)
         {
 	#if defined(AltNum_UseLegacyFloatingConversion)
+			float lValue = Value;
             bool IsNegative = Value < 0.0f;
-            if (IsNegative) { Value *= -1.0f; }
+            if (IsNegative) { lValue *= -1.0f; }
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0f)
             {
@@ -635,7 +636,7 @@ public:
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (float)WholeValue;
+                lValue -= (float)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
@@ -651,11 +652,12 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(double Value)
+        virtual void SetDoubleVal(const double& Value)
         {
 	#if defined(AltNum_UseLegacyFloatingConversion)
+			double lValue = Value;
             bool IsNegative = Value < 0.0;
-            if (IsNegative) { Value *= -1.0; }
+            if (IsNegative) { lValue *= -1.0; }
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0)
             {
@@ -672,7 +674,7 @@ public:
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (double)WholeValue;
+                lValue -= (double)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
@@ -688,13 +690,14 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(ldouble Value)
+        virtual void SetDecimalVal(const ldouble& Value)
         {
 	#if defined(AltNum_UseLegacyFloatingConversion)
+			ldouble lValue = Value;
             bool IsNegative = Value < 0.0L;
-            if (IsNegative) { Value *= -1.0L; }
+            if (IsNegative) { lValue *= -1.0L; }
             //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0L)
+            if (lValue >= 2147483648.0L)
             {
                 if (IsNegative)
 		    #if defined(AltNum_EnableMirroredSection)
@@ -708,9 +711,9 @@ public:
             }
             else
             {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (ldouble)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
+                signed __int64 WholeValue = (signed __int64)std::floor(lValue);
+                lValue -= (ldouble)WholeValue;
+                DecimalHalf = (signed int)lValue * 10000000000;
                 if(DecimalHalf!=0)
                     IntValue = IsNegative ? -WholeValue: WholeValue;
                 else
@@ -725,7 +728,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual SetBoolVal(bool Value)
+        virtual void SetBoolVal(const bool& Value)
         {
             IntValue = Value==false ? 0 : 1;
             DecimalHalf = 0;
@@ -735,7 +738,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetIntVal(int Value)
+        virtual void SetIntVal(const int& Value)
         {
 	#if defined(AltNum_EnableMirroredSection)
 			if(Value<0)
@@ -754,7 +757,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecBase(float Value)
+        MediumDecBase(const float& Value)
         {
             this->SetFloatVal(Value);
         }
@@ -763,7 +766,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecBase(double Value)
+        MediumDecBase(const double& Value)
         {
             this->SetDoubleVal(Value);
         }
@@ -772,7 +775,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecBase(ldouble Value)
+        MediumDecBase(const ldouble& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -781,13 +784,13 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecBase(bool Value)
+        MediumDecBase(const bool& Value)
         {
             this->SetBoolVal(Value);
         }
 
 #if defined(AltNum_EnableMediumDecBaseBasedSetValues)
-        MediumDecBase(MediumDecBase Value)
+        MediumDecBase(const MediumDecBase& Value)
         {
             this->SetVal(Value);
         }
