@@ -860,6 +860,56 @@ public:
     #pragma region ConvertFromOtherTypes
 		
         /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetFloatVal(float Value)
+        {
+			MediumDec::SetFloatVal(Value);
+			ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetDoubleVal(double Value)
+        {
+			MediumDec::SetDoubleVal(Value);
+			ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetDecimalVal(ldouble Value)
+        {
+			MediumDec::SetDecimalVal(Value);
+			ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets the value(false equals zero; otherwise is true).
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual SetBoolVal(const bool& Value)
+        {
+			MediumDec::SetBoolVal(Value);
+			ExtraRep = 0;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        virtual void SetIntVal(const int& Value)
+        {
+			MediumDec::SetIntVal(Value);
+			ExtraRep = 0;
+        }
+		
+        /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
