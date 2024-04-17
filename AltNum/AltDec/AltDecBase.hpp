@@ -857,7 +857,84 @@ public:
 	
     #pragma endregion String Commands
 
+    #pragma region ConvertFromOtherTypes
+		
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltDecBase(float Value)
+        {
+            this->SetFloatVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltDecBase(double Value)
+        {
+            this->SetDoubleVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltDecBase(ldouble Value)
+        {
+            this->SetDecimalVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltDecBase(bool Value)
+        {
+            this->SetBoolVal(Value);
+        }
+
+#if defined(AltNum_EnableAltDecBaseBasedSetValues)
+        AltDecBase(AltDecBase Value)
+        {
+            this->SetVal(Value);
+        }
+#endif
+
+    #pragma endregion ConvertFromOtherTypes
+
     #pragma region ConvertToOtherTypes
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float() { return toFloat(); }
+		
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double() { return toDouble(); }
+		
+        /// <summary>
+        /// MediumDec Variant to decimal explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator ldouble() { return toDecimal(); }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to bool explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
 
@@ -866,6 +943,7 @@ public:
 
         constexpr auto ConvertPiToNum = MediumDecV2Base::ConvertPiToNum;
     
+        #if defined(AltNum_EnablePowerOfRepresentation)
         void ConvertPiPowerToNum();
 
         template<MediumDecVariant VariantType=AltDecBase>
@@ -891,24 +969,22 @@ public:
                     ConvertPiPowerToPiRep();
                     break;
     #endif
-    #if defined(AltNum_EnableAlternativeRepFractionals)
-        #if defined(AltNum_EnableDecimaledPiFractionals)
+    #if defined(AltNum_EnableDecimaledPiFractionals)
                 case RepType::PiNumByDiv://  (Value/(ExtraRep.Value))*Pi Representation
-                {
-                    BasicUIntDivOp(ExtraRep.Value);
-                }
+                    {
+                        BasicUIntDivOp(ExtraRep.Value);
+        #if defined(AltNum_UseIntForDecimalHalf)
+                        ExtraRep = PiRep;
         #else
+                        ExtraRep.Value = 0;
         #endif
-                break;
-    #endif
-    #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi:
-                    return;//Add Conversion Code from MixedPi later
+                    }
+                    break;
+
     #endif
                 default:
                     break;
             }
-            ExtraRep = PiRep;
         }
 
         template<MediumDecVariant VariantType=AltDecBase>
@@ -918,15 +994,69 @@ public:
             convertedVal.ConvertToPiRep();
             return convertedVal;
         }
+        #endif
 
     #endif
     #pragma endregion Pi Conversion
 
     #pragma region E Conversion
-	#if defined(AltNum_EnablePiRep)
+	#if defined(AltNum_EnableERep)
 
-        constexpr auto ConvertPiToNum = MediumDecV2Base::ConvertPiToNum;
+        constexpr auto ConvertEToNum = MediumDecV2Base::ConvertEToNum;
     
+        #if defined(AltNum_EnablePowerOfRepresentation)
+        void ConvertEPowerToNum();
+
+        template<MediumDecVariant VariantType=AltDecBase>
+        VariantType EPowerNum(int powerExponent)
+        {
+	        ExtraRep = 0;
+	        MediumDecV2Base ESide = ENum;
+	        ESide.IntPowOp(powerExponent);
+	        return ESide;
+        }
+
+        void ConvertEPowerToERep();
+
+        virtual void ConvertToERep(RepType repType)
+        {
+            switch (repType)
+            {
+                case RepType::ENum:
+                    return;
+                    break;
+    #if defined(AltNum_EnableEPowers)
+                case RepType::EPower:
+                    ConvertEPowerToERep();
+                    break;
+    #endif
+    #if defined(AltNum_EnableDecimaledEFractionals)
+                case RepType::ENumByDiv://  (Value/(ExtraRep.Value))*E Representation
+                    {
+                        BasicUIntDivOp(ExtraRep.Value);
+        #if defined(AltNum_UseIntForDecimalHalf)
+                        ExtraRep = ERep;
+        #else
+                        ExtraRep.Value = 0;
+        #endif
+                    }
+                    break;
+
+    #endif
+                default:
+                    break;
+            }
+        }
+
+        template<MediumDecVariant VariantType=AltDecBase>
+        VariantType ConvertAsERep(RepType repType)
+        {
+            VariantType convertedVal = *this;
+            convertedVal.ConvertToERep();
+            return convertedVal;
+        }
+        #endif
+
     #endif
     #pragma endregion E Conversion
 
@@ -1458,7 +1588,8 @@ public:
 
     #pragma endregion NormalRep Integer Bitwise Operations
 
-    #pragma region Mixed Fraction Operations//To-Do:Need to update this code
+    #pragma region Mixed Fraction Operations
+    //To-Do:Need to update this code
     #if defined(AltNum_EnableMixedFractional)
 		//Assumes NormalRep + Normal MixedFraction operation
 		void BasicMixedFracAddOp(AltDec& rValue)

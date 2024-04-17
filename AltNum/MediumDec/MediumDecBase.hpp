@@ -616,17 +616,18 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetFloatVal(float Value)
         {
+	#if defined(AltNum_UseLegacyFloatingConversion)
             bool IsNegative = Value < 0.0f;
             if (IsNegative) { Value *= -1.0f; }
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0f)
             {
                 if (IsNegative)
-		#if defined(AltNum_EnableMirroredSection)
+		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		#else
+		    #else
 					IntValue = -2147483647;
-		#endif
+		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -641,6 +642,9 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
+	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
         }
 
         /// <summary>
@@ -649,17 +653,18 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetDoubleVal(double Value)
         {
+	#if defined(AltNum_UseLegacyFloatingConversion)
             bool IsNegative = Value < 0.0;
             if (IsNegative) { Value *= -1.0; }
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0)
             {
                 if (IsNegative)
-		#if defined(AltNum_EnableMirroredSection)
+		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		#else
+		    #else
 					IntValue = -2147483647;
-		#endif
+		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -674,6 +679,9 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
+	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
         }
 
         /// <summary>
@@ -682,17 +690,18 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetDecimalVal(ldouble Value)
         {
+	#if defined(AltNum_UseLegacyFloatingConversion)
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { Value *= -1.0L; }
             //Cap value if too big on initialize (preventing overflow on conversion)
             if (Value >= 2147483648.0L)
             {
                 if (IsNegative)
-		#if defined(AltNum_EnableMirroredSection)
+		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		#else
+		    #else
 					IntValue = -2147483647;
-		#endif
+		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -707,6 +716,9 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
+	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
         }
 
         /// <summary>
@@ -725,7 +737,17 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetIntVal(int Value)
         {
-            IntValue = Value; DecimalHalf = 0;
+	#if defined(AltNum_EnableMirroredSection)
+			if(Value<0)
+			{
+				IntValue.IsPositive = 0;
+				IntValue.Value = -Value;
+			}
+			else
+	#else
+				IntValue = Value;
+	#endif
+			DecimalHalf = 0;
         }
 
         /// <summary>
@@ -781,26 +803,38 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
         /// <returns>The result of the operator.</returns>
         void float toFloatV1()
         {
+	#if defined(AltNum_UseLegacyFloatingConversion)
             float Value;
             if (IntValue.IsNegative())
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
-    #else
+        #else
                 Value = (float)-IntValue;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = (float)IntValue;
-    #else
+        #else
                 Value = (float)IntValue.Value;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
+	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntValue.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0f;//Placeholder
+	#endif
         }
 
         /// <summary>
@@ -809,26 +843,38 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
         /// <returns>The result of the operator.</returns>
         void double toDoubleV1()
         {
-            double Value;
+	#if defined(AltNum_UseLegacyFloatingConversion)
+		    double Value;
             if (IntValue < 0)
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = IntValue == NegativeRep ? 0.0f : (double)IntValue;
-    #else
+        #else
                 Value = (double)-IntValue;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = (double)IntValue;
-    #else
+        #else
                 Value = (double)IntValue.Value;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
+	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntValue.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0;//Placeholder
+	#endif
         }
 
         /// <summary>
@@ -837,26 +883,38 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
         /// <returns>The result of the operator.</returns>
         void ldouble toDecimalV1()
         {
+	#if defined(AltNum_UseLegacyFloatingConversion)
             ldouble Value;
             if (IntValue < 0)
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = IntValue == NegativeRep ? 0.0L : (float)IntValue;
-    #else
+        #else
                 Value = (ldouble)-IntValue;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-    #if !defined(AltNum_EnableMirroredSection)
+        #if !defined(AltNum_EnableMirroredSection)
                 Value = (ldouble)IntValue;
-    #else
+        #else
                 Value = (ldouble)IntValue.Value;
-    #endif
+        #endif
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
+	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntValue.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0L;//Placeholder
+	#endif
         }
 
 public:

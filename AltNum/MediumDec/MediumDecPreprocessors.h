@@ -11,6 +11,9 @@ AltNum_EnableAlternativeModulusResult
 AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf
 	(uses old behavior); Disabled for now(forcing usage of bitfield instead)
 AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
+AltNum_UseLegacyFloatingConversion = 
+		Use old method to convert from floating point number into MediumDec variant
+		If not set, than convert number into equivalant "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format to get more exact conversion
 */
 
 #if defined(AltNum_EnableAutoToggleOfPreferedSettings)
@@ -29,10 +32,16 @@ AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of us
 	#define IntHalfType MirroredInt
 #else
 	#define IntHalfType signed int
+	#if !defined(AltNum_UseLegacyFloatingConversion)
+		#define AltNum_UseLegacyFloatingConversion
+	#endif
 #endif
 
 #if defined(AltNum_UseIntForDecimalHalf)
 	#define DecimalHalfType signed int
+	#if !defined(AltNum_UseLegacyFloatingConversion)
+		#define AltNum_UseLegacyFloatingConversion
+	#endif
 #else
 	#include "..\PartialInt.hpp"
 	#define DecimalHalfType PartialInt

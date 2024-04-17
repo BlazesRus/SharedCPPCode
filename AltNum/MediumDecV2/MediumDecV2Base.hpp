@@ -489,6 +489,53 @@ public:
 
     #pragma endregion String Commands
 
+    #pragma region ConvertFromOtherTypes
+		
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(float Value)
+        {
+            this->SetFloatVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(double Value)
+        {
+            this->SetDoubleVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(ldouble Value)
+        {
+            this->SetDecimalVal(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(bool Value)
+        {
+            this->SetBoolVal(Value);
+        }
+
+#if defined(AltNum_EnableMediumDecV2BaseBasedSetValues)
+        MediumDecV2Base(MediumDecV2Base Value)
+        {
+            this->SetVal(Value);
+        }
+#endif
+
+    #pragma endregion ConvertFromOtherTypes
+
     #pragma region ConvertToOtherTypes
 public:
 
@@ -584,7 +631,7 @@ public:
     #pragma region Pi Conversion
     #if defined(AltNum_EnablePiRep)
     
-    virtual void ConvertPiToNum()
+    virtual void ConvertPiToNum();
 
     #endif
     #pragma endregion Pi Conversion
@@ -592,7 +639,7 @@ public:
     #pragma region E Conversion
     #if defined(AltNum_EnableERep)
     
-    virtual void ConvertEToNum()
+    virtual void ConvertEToNum();
 
     #endif
     #pragma endregion E Conversion
