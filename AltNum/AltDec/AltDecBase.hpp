@@ -865,8 +865,12 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetFloatVal(const float& Value)
         {
+		#if defined(AltNum_EnableMixedFractional)
+			//Can be converted at 100% precision from float after extracting "2^Exp + SignifNum*(2^(Exp - 23))" format information from bits of float
+		#else
 			MediumDec::SetFloatVal(Value);
 			ExtraRep = 0;
+		#endif
         }
 
         /// <summary>
