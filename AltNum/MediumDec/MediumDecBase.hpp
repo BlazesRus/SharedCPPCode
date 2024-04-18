@@ -3968,13 +3968,176 @@ public:
     }
     #pragma endregion String Function Source
 
-#if defined(AltNum_EnableAlternativeModulusResult)
+    #pragma region String Function Source
     /// <summary>
-    /// (MediumDecBase Version)Performs remainder operation then saves division result
-    /// C = A - B * (A / B)
+    /// Reads the string.
     /// </summary>
-    class DLL_API AltModChecker : public AltNumModChecker<MediumDecBase>
+    /// <param name="Value">The value.</param>
+    inline void MediumDec::ReadString(std::string Value)
     {
-    };
-#endif
+        IntValue = 0; DecimalHalf = 0;
+	#if !defined(AltNum_EnableMirroredSection)
+        bool IsNegative = false;
+	#endif
+        int PlaceNumber;
+        std::string WholeNumberBuffer = "";
+        std::string DecimalBuffer = "";
+
+        bool ReadingDecimal = false;
+        int TempInt;
+        int TempInt02;
+        for (char const& StringChar : Value)
+        {
+            if (VariableConversionFunctions::IsDigit(StringChar))
+            {
+                if (ReadingDecimal) { DecimalBuffer += StringChar; }
+                else { WholeNumberBuffer += StringChar; }
+            }
+            else if (StringChar == '-')
+            {
+	#if !defined(AltNum_EnableMirroredSection)
+                IsNegative = true;
+	#else
+				IntValue.IsPositive = 0;
+	#endif
+            }
+            else if (StringChar == '.')
+            {
+                ReadingDecimal = true;
+            }
+            else if(StringChar!=' ')
+                break;//Stop Extracting after encounter non-number character such as i
+        }
+        PlaceNumber = WholeNumberBuffer.length() - 1;
+        for (char const& StringChar : WholeNumberBuffer)
+        {
+            TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+            TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+            if (StringChar != '0')
+            {
+                IntValue += TempInt02;
+            }
+            PlaceNumber--;
+        }
+        PlaceNumber = 8;
+        for (char const& StringChar : DecimalBuffer)
+        {
+            //Limit stored decimal numbers to the amount it can store
+            if (PlaceNumber > -1)
+            {
+                TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+                TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+                if (StringChar != '0')
+                {
+                    DecimalHalf += TempInt02;
+                }
+                PlaceNumber--;
+            }
+        }
+	#if !defined(AltNum_EnableMirroredSection)
+        if (IsNegative)
+        {
+            if (IntValue == 0) { IntValue = NegativeRep; }
+            else { IntValue *= -1; }
+        }
+	#endif
+    }
+
+    /// <summary>
+    /// Gets the value from string.
+    /// </summary>
+    /// <param name="Value">The value.</param>
+    /// <returns>MediumDec</returns>
+    inline MediumDec MediumDec::GetValueFromString(std::string Value)
+    {
+        MediumDec NewSelf = Zero;
+        NewSelf.ReadString(Value);
+        return NewSelf;
+    }
+
+    std::string MediumDec::ToString()
+    {
+        std::string Value = "";
+        int CurrentSection = IntValue;
+        unsigned __int8 CurrentDigit;
+        std::string DecBuffer = "";
+        if (IntValue < 0)
+        {
+            Value += "-";
+            if (IntValue == NegativeRep) { CurrentSection = 0; }
+            else { CurrentSection *= -1; }
+        }
+        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
+        {
+            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+        }
+        if (DecimalHalf != 0)
+        {
+            Value += ".";
+            CurrentSection = DecimalHalf;
+            for (__int8 Index = 8; Index >= 0; --Index)
+            {
+                CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+                CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+                if (CurrentDigit != 0)
+                {
+                    if(!DecBuffer.empty())
+                    {
+                        Value += DecBuffer;
+                        DecBuffer.clear();
+                    }
+                    Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+                }
+                else
+                {
+                    DecBuffer += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+                }
+            }
+        }
+        return Value;
+    }
+
+    std::string MediumDec::ToFullString()
+    {
+        std::string Value = "";
+        int CurrentSection = IntValue;
+        unsigned __int8 CurrentDigit;
+        if (IntValue < 0)
+        {
+            Value += "-";
+            if (IntValue == NegativeRep) { CurrentSection = 0; }
+            else { CurrentSection *= -1; }
+        }
+        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
+        {
+            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+        }
+        if (DecimalHalf != 0)
+        {
+            Value += ".";
+            bool HasDigitsUsed = false;
+            CurrentSection = DecimalHalf;
+            for (__int8 Index = 8; Index >= 0; --Index)
+            {
+                if (CurrentSection > 0)
+                {
+                    CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+                    CurrentSection -= (CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+                    Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+                }
+                else
+                    Value += "0";
+            }
+        }
+        else
+        {
+            Value += ".000000000";
+        }
+        return Value;
+    }
+    #pragma endregion String Function Source
 }

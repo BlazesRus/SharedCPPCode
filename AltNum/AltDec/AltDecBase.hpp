@@ -855,6 +855,73 @@ public:
 
     #pragma region String Commands
 	
+        /// <summary>
+        /// Reads the string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        constexpr auto ReadString = MediumDecBase::ReadString;
+
+        /// <summary>
+        /// Gets the value from string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        AltDecBase(const char* strVal)
+        {
+            std::string Value = strVal;
+            if (Value == "Pi")
+            {
+                this->SetVal(Pi);
+            }
+            else if (Value == "E")
+            {
+                this->SetVal(E);
+            }
+            else
+            {
+                this->ReadString(Value);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AltDecBase"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        AltDecBase(std::string Value)
+        {
+            this->ReadString(Value);
+        #if defined(AltNum_EnablePiRep)
+            if(str.find("Pi") != std::string::npos)
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 1;
+            #else
+                ExtraRep = PiRep;
+            #endif
+        #endif
+        #if defined(AltNum_EnableERep)
+            if(Value.last()=='e')
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 2;
+            #else
+                ExtraRep = ERep;
+            #endif
+        #endif
+        #if defined(AltNum_EnableImaginaryNum)
+            if(Value.last()=='i')
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 3;
+            #else
+                ExtraRep = IRep;
+            #endif
+        #endif
+        }
+
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes

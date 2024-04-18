@@ -473,18 +473,19 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecV2Base(std::string Value)
         {
-            /*if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {*/
-                this->ReadString(Value);
-            /*}*/
+            this->ReadString(Value);
+        #if defined(AltNum_EnablePiRep)
+            if(str.find("Pi") != std::string::npos)
+                DecimalHalf.Flags = 1;
+        #endif
+        #if defined(AltNum_EnableERep)
+            if(Value.last()=='e')
+                DecimalHalf.Flags = 2;
+        #endif
+        #if defined(AltNum_EnableImaginaryNum)
+            if(Value.last()=='i')
+                DecimalHalf.Flags = 3;
+        #endif
         }
 
     #pragma endregion String Commands
