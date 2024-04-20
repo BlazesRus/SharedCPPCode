@@ -127,6 +127,33 @@ namespace BlazesRusCode
 
     protected:
         #pragma region Const Representation values
+	#if defined(AltNum_UseIntForDecimalHalf)
+		#if defined(AltNum_EnablePiRep)
+		//When ExtraRep is this, then represents Value*Pi
+        static const signed int PiRep = -2147483648;
+			#if defined(AltNum_EnableAlternativeRepFractionals)
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
+        static const signed int PiByDivisorRep = -2147483645;
+			#endif
+		#endif
+		#if defined(AltNum_EnableERep)
+		//When ExtraRep is this, then represents Value*e
+        static const signed int ERep = -2147483646;
+			#if defined(AltNum_EnableAlternativeRepFractionals)
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
+        static const signed int EByDivisorRep = -2147483643;
+			#endif
+		#endif
+		#if defined(AltNum_EnableImaginaryNum)
+		//When ExtraRep is this, then represents Value*i 
+        static const signed int IRep = -2147483647;
+			#if defined(AltNum_EnableAlternativeRepFractionals)
+        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
+        static const signed int IByDivisorRep = -2147483644;
+			#endif
+		#endif
+	#endif
+		
 	#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)/ExtraRep.Value
 		#if defined(AltNum_UseIntForDecimalHalf)

@@ -114,6 +114,19 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
+	#if defined(AltNum_EnablePiRep) && defined(AltNum_UseIntForDecimalHalf)
+        //Pi*Value representation(when DecimalHalf.Flag==1)
+        static const unsigned int PiRep = 1;
+	#endif
+	#if defined(AltNum_EnableERep) && defined(AltNum_UseIntForDecimalHalf)
+        //e*Value representation(DecimalHalf.Flag==2)
+        static const unsigned int ERep = 2;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum) && defined(AltNum_UseIntForDecimalHalf)
+        //e*Value representation(DecimalHalf.Flag==3)
+        static const unsigned int IRep = 3;
+	#endif
+	
 	#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
 		#if defined(AltNum_UseIntForDecimalHalf)
