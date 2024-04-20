@@ -1071,7 +1071,7 @@ public:
         VariantType PiPowerNum(int powerExponent)
         {
 	        ExtraRep = 0;
-	        MediumDecV2Base PiSide = PiNum;
+	        auto PiSide = PiNum;
 	        PiSide.IntPowOp(powerExponent);
 	        return PiSide;
         }
@@ -1132,7 +1132,7 @@ public:
         VariantType EPowerNum(int powerExponent)
         {
 	        ExtraRep = 0;
-	        MediumDecV2Base ESide = ENum;
+	        auto ESide = ENum;
 	        ESide.IntPowOp(powerExponent);
 	        return ESide;
         }

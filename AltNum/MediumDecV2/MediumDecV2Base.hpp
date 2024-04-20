@@ -546,7 +546,7 @@ public:
         /// <returns>The result of the operator.</returns>
         virtual float toFloat()
         {
-            MediumDecV2Base self = *this;
+            auto self = *this;
             self.ConvertToNormTypeV2();
             return self.toFloatV1();
         }
@@ -561,7 +561,7 @@ public:
         /// <returns>The result of the operator.</returns>
         virtual double toDouble()
         {
-            MediumDecV2Base self = *this;
+            auto self = *this;
             self.ConvertToNormTypeV2();
             return self.toDoubleV1();
         }
