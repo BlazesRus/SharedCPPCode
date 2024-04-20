@@ -882,18 +882,50 @@ public:
 
     #pragma region String Commands
 	
+protected:
+
+        virtual void InitialyzeAltRepFromString(const std::string& Value)
+        {
+        #if defined(AltNum_EnablePiRep)
+            if(str.find("Pi") != std::string::npos)
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 1;
+            #else
+                ExtraRep = PiRep;
+            #endif
+        #endif
+        #if defined(AltNum_EnableERep)
+            if(Value.last()=='e')
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 2;
+            #else
+                ExtraRep = ERep;
+            #endif
+        #endif
+        #if defined(AltNum_EnableImaginaryNum)
+            if(Value.last()=='i')
+            #if !defined(AltNum_UseIntForDecimalHalf)
+                DecimalHalf.Flags = 3;
+            #else
+                ExtraRep = IRep;
+            #endif
+        #endif
+        }
+
+public:
+
         /// <summary>
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        constexpr auto ReadString = MediumDecBase::ReadString;
+        constexpr auto ReadString = MediumDecV2Base::ReadString;
 
         /// <summary>
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
+        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<AltDecBase>;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class from string literal
@@ -902,25 +934,14 @@ public:
         AltDecBase(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            this->ReadString(Value);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(std::string Value)
+        AltDecBase(const std::string& Value)
         {
             this->ReadString(Value);
         #if defined(AltNum_EnablePiRep)
@@ -1213,6 +1234,43 @@ public:
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
+		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
+		virtual void ConvertDownToMediumDecV2Equiv()
+		{
+	#if defined(AltNum_UseIntForDecimalHalf)
+			//To-Do:Add code to convert down to base PiNum,ENum,INum, and NormalType
+	#else
+		#if defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsNegative())
+			{
+				//To-Do add code here to convert from mixed fraction
+				return;
+			}
+		#elif defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnableNegativePowerRep)
+			if(ExtraRep!=0)
+			#else
+			if(ExtraRep.IsNegative())
+			#endif
+			{
+				if(DecimalHalf.Flag==1)//Convert down to PiNum
+					ConvertPiPowerToPiRep();
+				else if(DecimalHalf.Flag==2)//Convert down to ENum
+					ConvertEPowerToERep();
+				return;
+			}
+		#endif
+		#if defined(AltNum_EnableFractionals)
+			if(ExtraRep.Value!=0)
+			{
+				BasicIntDivOp(ExtraRep.Value);
+				ExtraRep.Value = 0;
+				return;
+			}
+		#endif
+			ConvertToNormTypeV2();
+	#endif
+		}
 
 protected:
 		//Compare only as if in NormalType representation mode
@@ -1473,8 +1531,8 @@ protected:
                     }
                     else
 					{
-						MediumDecV2Base lSide = *this;
-						MediumDecV2Base rSide = that;
+						auto lSide = *this;
+						auto rSide = that;
 						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 	#if defined(AltNum_EnableMirroredSection)
 						return lSide.BasicComparisonV2(rSide);
@@ -1512,7 +1570,7 @@ protected:
 	#endif
 			else
 			{
-				MediumDecV2Base lSide = *this;
+				auto lSide = *this;
 				lSide.ConvertToNormTypeV2();
 				return lSide.BasicIntComparison(that);
 			}
@@ -1526,10 +1584,15 @@ protected:
         constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MediumDecV2Base>;
 
 public:
-		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
+		std::strong_ordering operator<=>(const AltDecBase& that) const
 		{
 			return CompareWith(that);
 		}
+
+	/*  
+		//Add comparisons to previous parent classes with more limited ranges based on supported values
+
+    */
 
 		std::strong_ordering operator<=>(const int& that) const
 		{
@@ -1543,44 +1606,6 @@ public:
 			if (DecimalHalf!=0)
 				return false;
 			return true;
-		}
-		
-		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
-		virtual void ConvertDownToMediumDecV2Equiv()
-		{
-	#if defined(AltNum_UseIntForDecimalHalf)
-			//To-Do:Add code to convert down to base PiNum,ENum,INum, and NormalType
-	#else
-		#if defined(AltNum_EnableMixedFractional)
-			if(ExtraRep.IsNegative())
-			{
-				//To-Do add code here to convert from mixed fraction
-				return;
-			}
-		#elif defined(AltNum_EnablePowerOfRepresentation)
-			#if defined(AltNum_EnableNegativePowerRep)
-			if(ExtraRep!=0)
-			#else
-			if(ExtraRep.IsNegative())
-			#endif
-			{
-				if(DecimalHalf.Flag==1)//Convert down to PiNum
-					ConvertPiPowerToPiRep();
-				else if(DecimalHalf.Flag==2)//Convert down to ENum
-					ConvertEPowerToERep();
-				return;
-			}
-		#endif
-		#if defined(AltNum_EnableFractionals)
-			if(ExtraRep.Value!=0)
-			{
-				BasicIntDivOp(ExtraRep.Value);
-				ExtraRep.Value = 0;
-				return;
-			}
-		#endif
-			ConvertToNormTypeV2();
-	#endif
 		}
 		
 		bool operator==(const MediumDec& that) const

@@ -537,7 +537,7 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void ReadString(std::string Value);
+        virtual void ReadString(const std::string& Value);
 
         /// <summary>
         /// Gets the value from string.
@@ -575,7 +575,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecBase(std::string Value)
+        MediumDecBase(const std::string& Value)
         {
             this->ReadString(Value);
         }
@@ -3635,7 +3635,7 @@ public:
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void MediumDecBase::ReadString(std::string Value)
+    inline void MediumDecBase::ReadString(const std::string& Value)
     {
         IntValue = 0; DecimalHalf = 0;
         bool IsNegative = false;
@@ -3700,7 +3700,7 @@ public:
     /// </summary>
     /// <param name="Value">The value.</param>
     /// <returns>MediumDecBase</returns>
-    inline MediumDecBase MediumDecBase::GetValueFromString(std::string Value)
+    inline MediumDecBase MediumDecBase::GetValueFromString(const std::string& Value)
     {
         MediumDecBase NewSelf = Zero;
         NewSelf.ReadString(Value);
@@ -4048,7 +4048,7 @@ public:
     /// </summary>
     /// <param name="Value">The value.</param>
     /// <returns>MediumDec</returns>
-    inline MediumDec MediumDec::GetValueFromString(std::string Value)
+    inline MediumDec MediumDec::GetValueFromString(const std::string& Value)
     {
         MediumDec NewSelf = Zero;
         NewSelf.ReadString(Value);

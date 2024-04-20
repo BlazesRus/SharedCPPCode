@@ -1660,47 +1660,383 @@ public:
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
-    std::strong_ordering operator<=>(const MixedDec& that) const
-    {
-	#if	defined(MixedDec_EnableAlternativeRepresentations)
-		MixedDec lValue = this;
-		MixedDec rValue = that;
-		//Convert to normal representation before comparing
-		//To-Do:Use conversion function here(and use separate 3 way compare if AltNum with imaginary numbers to real numbers)
+protected:
+        //Updating BasicComparison to include the trailing digit added from this class
+
+		template<MediumDecVariant VariantType=MediumDecBase>
+		std::strong_ordering BasicComparisonV1(const VariantType& that) const
+		{
+			MediumDecBase::BasicComparisonV1(that);
+		//--Trailing Digit comparison
+		//Flip digits when negative to properly compare
+		#if defined(MixedDec_EnableRestrictedFloat)
+			RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
+			RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
+		#elif defined(MixedDec_EnableAltFloat)
+			AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
+			AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
+		#else
+			float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
+			float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+		#endif
+			if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
+				return TrailingCmp;
+		}
 		
-        int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
-        int rVal = rValue.IntValue==NegativeZero?0:rValue.IntValue;
-	#else
-        int lVal = IntValue==NegativeZero?0:IntValue;
-        int rVal = that.IntValue==NegativeZero?0:that.IntValue;
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+		template<MediumDecVariant VariantType=MediumDecBase>
+		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
+		{
+			MediumDecBase::BasicComparisonWithoutSignCheck(that);
+		//--Trailing Digit comparison
+		//Flip digits when negative to properly compare
+		#if defined(MixedDec_EnableRestrictedFloat)
+			RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
+			RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
+		#elif defined(MixedDec_EnableAltFloat)
+			AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
+			AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
+		#else
+			float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
+			float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+		#endif
+			if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
+				return TrailingCmp;
+		}
+		
+		//Compare only as if in NormalType representation mode
+        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MixedDec>;
+
+#if defined(AltNum_EnableMirroredSection)
+		//Compare only as if in NormalType representation mode ignoring sign(check before using)
+        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MixedDec>;
+#endif
+
+    #if defined(MixedDec_DefineInfinityAsSignedReps)
+        constexpr auto LSideInfinityComparison = MediumDecV2Base::LSideInfinityComparison<MixedDec>;
 	#endif
-        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-            return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if	defined(MixedDec_EnableAlternativeRepresentations)
-        lVal = IntValue==NegativeZero?0-lValue.DecimalHalf:lValue.DecimalHalf;
-        rVal = IntValue==NegativeZero?0-rValue.DecimalHalf:rValue.DecimalHalf;
-	#else
-        lVal = IntValue==NegativeZero?0-DecimalHalf:DecimalHalf;
-        rVal = IntValue==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
+
+		//Excluding templated override for this class because MixedDec has no partial version of class unlike previous parent classes
+
+		std::strong_ordering CompareWith(const MixedDec& that) const
+		{
+	#if defined(MixedDec_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep) {
+				if(ExtraRep==WithinMinMaxRangeRep) {
+					//To-do compare within min-max range code here
+				}
+				else {
+					//To-do compare within min-max range code here
+				}
+			}
+			else if(ExtraRep==WithinMinMaxRangeRep) {
+				//To-do compare within min-max range code here
+			}
 	#endif
-        if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-	//--Trailing Digit comparison
-	//Flip digits when negative to properly compare
-	#if defined(MixedDec_EnableRestrictedFloat)
-		RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
-		RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
-	#elif defined(MixedDec_EnableAltFloat)
-		AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
-		AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
-	#else
-		float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
-		float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+	#if defined(MixedDec_EnableMirroredSection)
+			//Comparing if number is negative vs positive
+			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
+				return SignCmp;
 	#endif
-        if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
-            return TrailingCmp;
-    }
+	
+			RepType LRep = GetRepType();
+			RepType RRep = that.GetRepType();
+    #if defined(MixedDec_EnableNaN)||defined(MixedDec_EnableNilRep)||defined(MixedDec_EnableUndefinedButInRange)
+			if(LRep^UndefinedBit||RRep^UndefinedBit)
+				throw "Can't compare undefined/nil representations";
+    #endif
+	#if defined(MixedDec_UseIntForDecimalHalf)
+		//To-Do add code here
+	#else
+		#if defined(MixedDec_EnableImaginaryNum)
+            if (DecimalHalf.Flags == 3)
+            {
+                if(that.DecimalHalf.Flags!=3)
+                    throw "Can't compare imaginary number with real number";
+				else if(RRep==RepType:ImaginaryInfinity)
+                {
+					if(that.IntValue==1)
+						return 0<=>1;//Positive Infinity is greater than real number representations
+					else
+						return 1<=>0;
+                }
+                else
+                {
+					VariantType LValue = this;
+					VariantType RValue = that;
+			#if defined(MixedDec_EnablePowerOfRepresentation)
+				#if defined(MixedDec_EnableNegativePowerRep)
+					int LComp = (int)LValue.ExtraRep;
+					int RComp = (int)RValue.ExtraRep;
+					if(LComp!=0)//Left side is to power of ExtraRep.Value
+					{
+						if(RComp!=0)//Right side is to power of ExtraRep.Value
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(RComp!=0)//Right side is to power of ExtraRep.Value
+					{
+						//Add code here
+					}
+				#else
+					if(ExtraRep.IsPositive==0)//Left side is to power of ExtraRep.Value
+					{
+						if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+					{
+						//Add code here
+					}
+				#endif
+			#elif defined(MixedDec_EnableMixedFractional)
+					if(ExtraRep.IsPositive==0)//Left side is a mixed Fraction
+					{
+						if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+						{
+							//Add Code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+					{
+						//Add code here
+					}
+			#endif
+					else if(ExtraRep.Value!=0)//Left side is a divisor
+					{
+						if(that.ExtraRep.Value!=0)//Right side is a divisor
+						{
+							//Add code here
+						}
+						else
+						{
+							//Add code here
+						}
+					}
+					else if(that.ExtraRep.Value!=0)//Right side is a divisor
+					{
+						//Add code here
+					}
+			#if defined(MixedDec_EnableMirroredSection)
+			    	return BasicComparisonV2(rSide);
+			#else
+					return BasicComparison(rSide);
+			#endif
+                }
+            }
+			else if(that.Flags==3)
+				throw "Can't compare imaginary number with real number";
+		#endif
+	#endif
+			switch(LRep)
+			{
+	#if defined(MixedDec_EnableInfinityRep)
+                case RepType:Infinity:
+                    LSideInfinityComparison(that, RRep);
+                    break;
+	#endif
+	#if defined(MixedDec_EnableApproachingValues)
+	
+	#endif
+	#if defined(MixedDec_EnableFractionals)
+				case RepType:NumByDiv:
+		#if defined(MixedDec_EnableDecimaledPiFractionals)
+				case RepType:PiNumByDiv:
+		#endif
+		#if defined(MixedDec_EnableDecimaledEFractionals)
+				case RepType:ENumByDiv:
+		#endif
+		#if defined(MixedDec_EnablePiFractional)
+				case RepType:PiFractional:
+		#endif
+		#if defined(MixedDec_EnableEFractional)
+				case RepType:EFractional:
+		#endif
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(MixedDec_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+	#if defined(MixedDec_EnablePowerOfRepresentation)
+				case RepType:ToPowerOf:
+				case RepType:PiPower:
+				case RepType:EPower:
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(MixedDec_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+	#if defined(MixedDec_EnableMixedFractional)
+				case RepType:MixedFrac:
+		#if defined(MixedDec_EnableMixedPiFractional)
+				case RepType:MixedPi:
+		#endif
+		#if defined(MixedDec_EnableMixedEFractional)
+				case RepType:MixedE:
+		#endif
+					{
+						if(RRep==RepType:Infinity)
+						{
+							if(that.IntValue==1)
+								return 0<=>1;//Positive Infinity is greater than real number representations
+							else
+								return 1<=>0;
+						}
+						else
+						{
+							MediumDecV2Base lSide = *this;
+							MediumDecV2Base rSide = that;
+							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+		#if defined(MixedDec_EnableMirroredSection)
+							return lSide.BasicComparisonV2(rSide);
+		#else
+							return rSide.BasicComparison(rSide);
+		#endif
+						}
+					}
+					break;
+	#endif
+				default:
+				{
+					if(LRep==RRep)
+	#if defined(MixedDec_EnableMirroredSection)
+						return BasicComparisonV2(that);
+	#else
+						return BasicComparison(that);
+	#endif
+					else if(RRep==RepType:Infinity)
+                    {
+                        if(that.IntValue==1)
+							return 0<=>1;//Positive Infinity is greater than real number representations
+						else
+							return 1<=>0;
+                    }
+                    else
+					{
+						MixedDec lSide = *this;
+						MixedDec rSide = that;
+						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+	#if defined(MixedDec_EnableMirroredSection)
+						return lSide.BasicComparisonV2(rSide);
+	#else
+						return rSide.BasicComparison(rSide);
+	#endif
+					}
+				}
+			}
+		}
+
+		std::strong_ordering CompareWithInt(const int& that) const
+		{
+			int lVal; int rVal;
+			//Pi and E only enabled if imbedded flags are enabled
+	#if !defined(MixedDec_UseIntForDecimalHalf)
+			if(DecimalHalf.Flags==0)
+	#else
+			if(ExtraRep==0)
+	#endif
+			{
+				return BasicIntComparison(that);
+			}
+	#if defined(MixedDec_EnableImaginaryNum
+		#if !defined(MixedDec_UseIntForDecimalHalf)
+			else if(DecimalHalf.Flags==3)
+		#elif defined(MixedDec_EnableDecimaledIFractionals)//Check if within I Fractional Representation or INum representation to check if valid
+			else if((ExtraRep<0&&ExtraRep>FractionalDivisorOverflow)||ExtraRep==IRep)
+		#else
+			else if(ExtraRep==IRep)
+		#endif
+				throw "Can't compare imaginary number with real number";
+	#endif
+			else
+			{
+				MixedDec lSide = *this;
+				lSide.ConvertToNormTypeV2();
+				return lSide.BasicIntComparison(that);
+			}
+	#endif
+		}
+
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWith = MediumDecBase::CompareWithV1<MixedDec>;
+
+		//Alias to prevent creating function more than once with template arguments
+        constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MixedDec>;
+
+public:
+		std::strong_ordering operator<=>(const MixedDec& that) const
+		{
+			return CompareWith(that);
+		}
+
+	/*  
+		//Add comparisons to previous parent classes with more limited ranges based on supported values
+
+		std::strong_ordering operator<=>(const MediumDec& that) const
+		{
+
+		}
+		
+		std::strong_ordering operator<=>(const MediumDecV2& that) const
+		{
+
+		}
+		
+		std::strong_ordering operator<=>(const AltDec& that) const
+		{
+
+		}
+
+    */
 
     std::strong_ordering operator<=>(const int& that) const
     {

@@ -446,11 +446,36 @@ public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
+
+protected:
+
+        virtual void InitialyzeAltRepFromString(const std::string& Value)
+        {
+        #if defined(MediumDecV2_EnablePiRep)
+            if(str.find("Pi") != std::string::npos)
+                DecimalHalf.Flags = 1;
+        #endif
+        #if defined(MediumDecV2_EnableERep)
+            if(Value.last()=='e')
+                DecimalHalf.Flags = 2;
+        #endif
+        #if defined(MediumDecV2_EnableImaginaryNum)
+            if(Value.last()=='i')
+                DecimalHalf.Flags = 3;
+        #endif
+        }
+
+public:
+
         /// <summary>
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        constexpr auto ReadString = MediumDecBase::ReadString;
+        virtual void ReadString(const std::string& Value)
+        {
+            MediumDecBase::ReadString(Value);
+            InitialyzeAltRepFromString(Value);
+        }
 
         /// <summary>
         /// Gets the value from string.
@@ -466,36 +491,25 @@ public:
         MediumDecV2Base(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            this->ReadString(Value);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(std::string Value)
+        MediumDecV2Base(const std::string& Value)
         {
             this->ReadString(Value);
-        #if defined(AltNum_EnablePiRep)
+        #if defined(MediumDecV2_EnablePiRep)
             if(str.find("Pi") != std::string::npos)
                 DecimalHalf.Flags = 1;
         #endif
-        #if defined(AltNum_EnableERep)
+        #if defined(MediumDecV2_EnableERep)
             if(Value.last()=='e')
                 DecimalHalf.Flags = 2;
         #endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(MediumDecV2_EnableImaginaryNum)
             if(Value.last()=='i')
                 DecimalHalf.Flags = 3;
         #endif
@@ -589,7 +603,7 @@ public:
         /// <returns>The result of the operator.</returns>
         virtual ldouble toDecimal()
         {
-            MediumDecV2Base self = *this;
+            auto self = *this;
             self.ConvertToNormTypeV2();
             return self.toDecimalV1();
         }
@@ -599,13 +613,13 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         virtual int toInt() {
-            MediumDecV2Base self = *this;
+            auto self = *this;
             self.ConvertToNormTypeV2();
             return IntValue.GetValue();
         }
 
         virtual bool toBool() {
-            MediumDecV2Base self = *this;
+            auto self = *this;
             self.ConvertToNormTypeV2();
             return IntValue.IsZero() ? false : true;
         }
@@ -784,8 +798,8 @@ protected:
                     }
                     else
 					{
-						MediumDecV2Base lSide = *this;
-						MediumDecV2Base rSide = that;
+						auto lSide = *this;
+						auto rSide = that;
 						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 	#if defined(AltNum_EnableMirroredSection)
 						return lSide.BasicComparisonV2(rSide);
@@ -830,6 +844,11 @@ public:
 		{
 			return CompareWith(that);
 		}
+
+	/*  
+		//Add comparisons to previous parent classes with more limited ranges based on supported values
+
+    */
 
 		std::strong_ordering operator<=>(const int& that) const
 		{
