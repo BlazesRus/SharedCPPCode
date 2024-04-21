@@ -58,7 +58,7 @@ namespace BlazesRusCode
     {
 protected:
 		//How many trailing digits to display when converted to string
-		static TrailingDigitsDisplayed = 9;
+		static TrailingDigitsDisplayed = 19;
 #pragma region DigitStorage
 	#if defined(MixedDec_EnableRestrictedFloat)
 	
