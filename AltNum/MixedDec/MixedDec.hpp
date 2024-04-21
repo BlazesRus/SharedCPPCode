@@ -37,10 +37,12 @@
 #if defined(MixedDec_EnableAltFloat)
 	#include "..\AltFloat.hpp"
 #endif
+//Int 128 needed to extract trailing digits lost from division and multiplication
+#include <boost/multiprecision/cpp_int.hpp>
 
 namespace BlazesRusCode
 {
-
+	using UInt128 = boost::multiprecision::uint128_t;
     class MixedDec;
 	
 	//Hybrid fixed point storage with trailing digits stored as float
@@ -491,7 +493,8 @@ public:
 		
     protected:
     #pragma region Const Representation values
-    //No new member variables for this section(reference parent values instead)
+	//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
+    static UInt128 const TruncMult = 10000000000000000000;
     #pragma endregion Const Representation values
 
     #pragma region RepType
@@ -2145,11 +2148,93 @@ public:
 
 	#pragma region Division Operations
 protected:
-        template<typename IntType=unsigned int>
-        constexpr auto TrailingUIntDivOp = MediumDecBase::TrailingUIntDivOp<IntType>;
+        //Version of PartialUIntDivOp that returns TruncatedDigits
+        template<IntegerType IntType=int>
+        unsigned _int64 TrailingUIntDivOp(const IntType& rValue)
+        {
+#if !defined(AltNum_EnableMirroredSection)
+            bool ResIsNegative = IntValue < 0;
+#endif
+            unsigned _int64 SelfRes;
+            unsigned _int64 Res;
+            unsigned _int64 IntHalfRes;
+            unsigned _int64 DecimalRes;
+            UInt128 TruncatedDigits; 
+#if !defined(AltNum_EnableMirroredSection)
+            if(DecimalHalf == 0)
+                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
+            else
+            {
+                if (ResIsNegative)
+                {
+                    if(IntValue==NegativeRep)
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = DecimalHalf;
+    #else
+                        SelfRes = DecimalHalf.Value;
+    #endif
+                    else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
+                }
+                else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
+            }
+#else
+    #if defined(AltNum_UseIntForDecimalHalf)
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
+    #else
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+    #endif
+#endif
+            Res = SelfRes / rValue;
+			TruncatedDigits = SelfRes*TruncMult;
+			TruncatedDigits /=  rValue;
+			TruncatedDigits -= Res * TruncMult;
+            IntHalfRes = SelfRes/DecimalOverflowX;
+            DecimalRes = SelfRes - DecimalOverflowX * IntHalfRes;
+#if !defined(AltNum_EnableMirroredSection)
+            if(ResIsNegative)
+            {
+                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                DecimalHalf = (int) DecimalRes;
+            }
+            else
+            {
+                IntValue = (int)IntHalfRes;
+                DecimalHalf = DecimalRes;
+            }
+#else
+		    IntValue.Value = (unsigned int)IntHalfRes;
+    #if defined(AltNum_UseIntForDecimalHalf)
+			DecimalHalf = DecimalRes;
+    #else
+			DecimalHalf.Value = DecimalRes;
+    #endif
+#endif
+            return (unsigned _int64) TruncatedDigits;//Return any truncated digits lost in division operation
+        }
 
         template<typename IntType=int>
-        constexpr auto TrailingIntDivOp = MediumDecBase::TrailingIntDivOp<IntType>;
+        unsigned _int64 TrailingIntDivOp(const IntType& Value)
+        {
+            if(Value<0)
+            {
+#if defined(AltNum_EnableMirroredSection)
+                SwapNegativeStatus();
+#endif
+                return TrailingUIntDivOp(-Value);
+            }
+            else
+                return TrailingUIntDivOp(Value);
+        }
 
 public:
         /// <summary>
@@ -2246,6 +2331,66 @@ public:
 	#pragma endregion Division Operations
 
 	#pragma region Multiplication Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto TrailingUIntMultOp = MediumDecBase::TrailingUIntDivOp<IntType>;
+
+        template<typename IntType=int>
+        constexpr auto TrailingIntMultOp = MediumDecBase::TrailingIntDivOp<IntType>;
+
+public:
+        /// <summary>
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MixedDec&</returns>
+        template<typename IntType=unsigned int>
+        void BasicUIntMultOp(IntType& Value)
+        {
+			if(Value==0)
+			{
+				SetValueAsZero();
+				return *this;
+			}
+            unsigned _int64 TruncatedDigits = TrailingUIntMultOp(Value);
+			if(TrailingDigits==0)
+			{
+				//To-Do:Initialize TruncatedDigits into Trailing Digits
+			}
+			else
+			{
+				//To-Do:Add TruncatedDigits into Trailing Digits
+			}
+            return *this;
+        }
+
+        /// <summary>
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MixedDec&</returns>
+        template<typename IntType=int>
+        void BasicIntMultOp(IntType& Value)
+        {
+			if(Value==0)
+			{
+				SetValueAsZero();
+				return *this;
+			}
+            unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
+			if(TrailingDigits==0)
+			{
+				//To-Do:Initialize TruncatedDigits into Trailing Digits
+			}
+			else
+			{
+				//To-Do:Add TruncatedDigits into Trailing Digits
+			}
+            return *this;
+        }
+	
         //Multiply by Integer Operation
         template<IntegerType IntType=int>
         void MultByIntOp(const IntType& rValue)
