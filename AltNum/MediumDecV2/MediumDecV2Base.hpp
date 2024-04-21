@@ -908,18 +908,90 @@ public:
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
+protected:
+        template<typename IntType=int>
+        constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
+
+
+        template<typename IntType=int>
+        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
+
+public:
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
+
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOp<IntType>;
 
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
+protected:
+        template<typename IntType=int>
+        constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
+
+
+        template<typename IntType=int>
+        constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
+
+public:
+        /// <summary>
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
+
+
+        /// <summary>
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOp<IntType>;
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
     #pragma region NormalRep Integer Addition Operations
 
+        /// <summary>
+        /// Basic Addition Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntAddOp = MediumDecBase::BasicIntAddOp<AltDecBase>;
+
 	#pragma endregion NormalRep Integer Addition Operations
 
     #pragma region NormalRep Integer Subtraction Operations
+
+        /// <summary>
+        /// Basic Subtraction Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntSubOp = MediumDecBase::BasicIntSubOp<AltDecBase>;
 
     #pragma endregion NormalRep Integer Subtraction Operations
 

@@ -1750,15 +1750,33 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
+protected:
+        template<typename IntType=int>
+        constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
 
+
+        template<typename IntType=int>
+        constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
+
+public:
         /// <summary>
-        /// Basic Multiplication Operation between AltDec and Integer value 
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
         template<typename IntType=int>
-        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<AltDecBase>;
+        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
+
+
+        /// <summary>
+        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>AltDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOp<IntType>;
 
     #pragma endregion NormalRep Integer Multiplication Operations
 

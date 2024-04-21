@@ -1173,53 +1173,176 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<typename IntType>
-        void PartialIntDivOp(IntType& Value)
-        {
-            if (DecimalHalf == 0)
+        template<IntegerType IntType=unsigned int>
+        virtual void PartialUIntDivOp(const IntType& rValue)
+        {//Avoid using with special status representations such as approaching zero or result will be incorrect
+#if !defined(AltNum_EnableMirroredSection)
+            bool ResIsNegative = IntValue < 0;
+#endif
+            unsigned _int64 SelfRes;
+            unsigned _int64 Res;
+            unsigned _int64 IntHalfRes;
+            unsigned _int64 DecimalRes;
+#if !defined(AltNum_EnableMirroredSection)
+            if(DecimalHalf == 0)
+                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
+            else
             {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                    IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * IntValue;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
+                if (ResIsNegative)
                 {
-                    __int64 OverflowVal = SRep / DecimalOverflow;
-                    SRep -= OverflowVal * DecimalOverflow;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
+                    if(IntValue==NegativeRep)
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = DecimalHalf;
+    #else
+                        SelfRes = DecimalHalf.Value;
+    #endif
+                    else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
                 }
                 else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
+            }
+#else
+    #if defined(AltNum_UseIntForDecimalHalf)
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
+    #else
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+    #endif
+#endif
+            Res = SelfRes / rValue;
+            IntHalfRes = Res/DecimalOverflowX;
+            DecimalRes = Res - DecimalOverflowX * IntHalfRes;
+#if !defined(AltNum_EnableMirroredSection)
+			if(ResIsNegative)
+			{
+				IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+				DecimalHalf = (int) DecimalRes;
+			}
+			else
+			{
+				IntValue = (int)IntHalfRes;
+				DecimalHalf = DecimalRes;
+			}
+#else
+		    IntValue.Value = (unsigned int)IntHalfRes;
+    #if defined(AltNum_UseIntForDecimalHalf)
+			DecimalHalf = DecimalRes;
+    #else
+			DecimalHalf.Value = DecimalRes;
+    #endif
+#endif
+        }
+
+        template<typename IntType=int>
+        void PartialIntDivOp(const IntType& Value)
+        {
+            if(Value<0)
+            {
+#if defined(AltNum_EnableMirroredSection)
+                SwapNegativeStatus();
+#endif
+                PartialUIntDivOp(-Value);
+            }
+            else
+                PartialUIntDivOp(Value);
+        }
+
+        //Version of PartialUIntDivOp that returns TruncatedDigits
+        template<IntegerType IntType=int>
+        virtual unsigned _int64 TrailingUIntDivOp(const IntType& rValue)
+        {
+#if !defined(AltNum_EnableMirroredSection)
+            bool ResIsNegative = IntValue < 0;
+#endif
+            unsigned _int64 SelfRes;
+            unsigned _int64 Res;
+            unsigned _int64 IntHalfRes;
+            unsigned _int64 DecimalRes;
+            unsigned _int64 TruncatedDigits; 
+#if !defined(AltNum_EnableMirroredSection)
+            if(DecimalHalf == 0)
+                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
+            else
+            {
+                if (ResIsNegative)
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-                    DecimalHalf = (signed int)SRep;
+                    if(IntValue==NegativeRep)
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = DecimalHalf;
+    #else
+                        SelfRes = DecimalHalf.Value;
+    #endif
+                    else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
                 }
+                else
+    #if defined(AltNum_UseIntForDecimalHalf)
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+    #else
+                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
+    #endif
+            }
+#else
+    #if defined(AltNum_UseIntForDecimalHalf)
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
+    #else
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+    #endif
+#endif
+            //One has SelfRes of 1000000000
+            //1000000000/2 = 500000000
+            Res = SelfRes / rValue;
+            TruncatedDigits = SelfRes - rValue * IntHalfRes;
+            IntHalfRes = SelfRes/DecimalOverflowX;
+            DecimalRes = SelfRes - DecimalOverflowX * IntHalfRes;
+#if !defined(AltNum_EnableMirroredSection)
+            if(ResIsNegative)
+            {
+                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                DecimalHalf = (int) DecimalRes;
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-                SRep /= Value;
-                if (SRep >= DecimalOverflowX)
-                {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
-                    SRep -= DecimalOverflowX * OverflowVal;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
-                    DecimalHalf = (signed int)SRep;
-                }
-                else
-                {
-                    IntValue = 0;
-                    DecimalHalf = (signed int)SRep;
-                }
+                IntValue = (int)IntHalfRes;
+                DecimalHalf = DecimalRes;
             }
+#else
+		    IntValue.Value = (unsigned int)IntHalfRes;
+    #if defined(AltNum_UseIntForDecimalHalf)
+			DecimalHalf = DecimalRes;
+    #else
+			DecimalHalf.Value = DecimalRes;
+    #endif
+#endif
+            return TruncatedDigits;//Return any truncated digits lost in division operation
         }
+
+        template<typename IntType=int>
+        virtual unsigned _int64 TrailingIntDivOp(const IntType& Value)
+        {
+            if(Value<0)
+            {
+#if defined(AltNum_EnableMirroredSection)
+                SwapNegativeStatus();
+#endif
+                return TrailingUIntDivOp(-Value);
+            }
+            else
+                return TrailingUIntDivOp(Value);
+        }
+
 public:
 
 		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
