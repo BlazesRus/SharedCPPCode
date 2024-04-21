@@ -2253,13 +2253,26 @@ public:
             else if (IsZero())
                 return;
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
-			if(TrailingDigits==0)
+			if(TruncatedDigits!=0)
 			{
-				//To-Do:Initialize TruncatedDigits into Trailing Digits
-			}
-			else
-			{
-				//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+				if(TrailingDigits==0.0f)
+		#else
+				if(TrailingDigits==0)
+		#endif
+				{
+					//To-Do:Initialize TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
+				else
+				{
+					//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
 			}
             return *this;
         }
@@ -2280,13 +2293,26 @@ public:
             else if (IsZero())
                 return;
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
-			if(TrailingDigits==0)
+			if(TruncatedDigits!=0)
 			{
-				//To-Do:Initialize TruncatedDigits into Trailing Digits
-			}
-			else
-			{
-				//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+				if(TrailingDigits==0.0f)
+		#else
+				if(TrailingDigits==0)
+		#endif
+				{
+					//To-Do:Initialize TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
+				else
+				{
+					//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
 			}
             return *this;
         }
@@ -2333,10 +2359,14 @@ public:
 	#pragma region Multiplication Operations
 protected:
         template<typename IntType=unsigned int>
-        constexpr auto TrailingUIntMultOp = MediumDecBase::TrailingUIntDivOp<IntType>;
-
-        template<typename IntType=int>
-        constexpr auto TrailingIntMultOp = MediumDecBase::TrailingIntDivOp<IntType>;
+        unsigned _int64 TrailingUIntMultOp(IntType& Value)
+        {
+		}
+		
+        template<typename IntType=unsigned int>
+        unsigned _int64 TrailingUIntMultOp(IntType& Value)
+        {
+		}
 
 public:
         /// <summary>
@@ -2350,17 +2380,30 @@ public:
         {
 			if(Value==0)
 			{
-				SetValueAsZero();
+				SetAsZero();
 				return *this;
 			}
             unsigned _int64 TruncatedDigits = TrailingUIntMultOp(Value);
-			if(TrailingDigits==0)
+			if(TruncatedDigits!=0)
 			{
-				//To-Do:Initialize TruncatedDigits into Trailing Digits
-			}
-			else
-			{
-				//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+				if(TrailingDigits==0.0f)
+		#else
+				if(TrailingDigits==0)
+		#endif
+				{
+					//To-Do:Initialize TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
+				else
+				{
+					//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
 			}
             return *this;
         }
@@ -2376,17 +2419,30 @@ public:
         {
 			if(Value==0)
 			{
-				SetValueAsZero();
+				SetAsZero();
 				return *this;
 			}
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
-			if(TrailingDigits==0)
+			if(TruncatedDigits!=0)
 			{
-				//To-Do:Initialize TruncatedDigits into Trailing Digits
-			}
-			else
-			{
-				//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+				if(TrailingDigits==0.0f)
+		#else
+				if(TrailingDigits==0)
+		#endif
+				{
+					//To-Do:Initialize TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
+				else
+				{
+					//To-Do:Add TruncatedDigits into Trailing Digits
+		#if defined(MixedDec_StoreTrailingInFloat)
+		#else
+		#endif
+				}
 			}
             return *this;
         }
