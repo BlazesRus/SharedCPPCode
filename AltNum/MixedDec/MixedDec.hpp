@@ -492,9 +492,10 @@ public:
         }
 		
     protected:
-    #pragma region Const Representation values
+	#pragma region Const Representation values
+	static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
 	//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
-    static UInt128 const TruncMult = 10000000000000000000;
+    static UInt128 const TruncMult = TruncMultAsInt;
     #pragma endregion Const Representation values
 
     #pragma region RepType
@@ -2255,6 +2256,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt);//Reduce the fraction as much as can to try to preserve precision
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2295,6 +2297,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt);//Reduce the fraction as much as can to try to preserve precision
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
