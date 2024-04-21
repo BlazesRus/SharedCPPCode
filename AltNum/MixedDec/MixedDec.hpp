@@ -2038,63 +2038,127 @@ public:
 
     */
 
-    std::strong_ordering operator<=>(const int& that) const
-    {
-	#if	defined(MixedDec_EnableAlternativeRepresentations)
-		MixedDec lValue = this;
-		//
-		
-        int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
-	#else	
-        int lVal = IntValue==NegativeZero?0:IntValue;
-	#endif
-        int rVal = that;
-        if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-            return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if	defined(MixedDec_EnableAlternativeRepresentations)
-        lVal = lValue.DecimalHalf>0?1:0;
-	#else
-        lVal = DecimalHalf>0?1:0;
-	#endif
-        if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-            return DecimalHalfCmp;
-	//--Trailing Digit comparison
-	//Flip digits when negative to properly compare
-	#if defined(MixedDec_EnableRestrictedFloat)
-		RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
-		RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
-	#elif defined(MixedDec_EnableAltFloat)
-		AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
-		AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
-	#else
-		float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
-		float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
-	#endif
-        if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
-            return TrailingCmp;
-    }
+		std::strong_ordering operator<=>(const int& that) const
+		{
+		#if	defined(MixedDec_EnableAlternativeRepresentations)
+			MixedDec lValue = this;
+			//
+			
+			int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
+		#else	
+			int lVal = IntValue==NegativeZero?0:IntValue;
+		#endif
+			int rVal = that;
+			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+		#if	defined(MixedDec_EnableAlternativeRepresentations)
+			lVal = lValue.DecimalHalf>0?1:0;
+		#else
+			lVal = DecimalHalf>0?1:0;
+		#endif
+			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		//--Trailing Digit comparison
+		//Flip digits when negative to properly compare
+		#if defined(MixedDec_EnableRestrictedFloat)
+			RestrictedFloat lTrailingVal = IsNegative()?RestrictedFloat::One-TrailingDigit;
+			RestrictedFloat rTrailingVal = that.IsNegative()?RestrictedFloat::One-that.TrailingDigit;
+		#elif defined(MixedDec_EnableAltFloat)
+			AltFloat lTrailingVal = IsNegative()?AltFloat::One-TrailingDigit;
+			AltFloat rTrailingVal = that.IsNegative()?AltFloat::One-that.TrailingDigit;
+		#else
+			float lTrailingVal = IsNegative()?1.0f-TrailingDigit;
+			float rTrailingVal = that.IsNegative()?1.0f-that.TrailingDigit;
+		#endif
+			if (auto TrailingCmp = lTrailingVal <=> rTrailingVal; TrailingCmp != 0)
+				return TrailingCmp;
+		}
 
-    bool operator==(const int& that) const
-    {
-        if (IntValue!=that)
-            return false;
-        if (DecimalHalf!=0)
-            return false;
-		if(TrailingDigits.IsNotZero())
-			return false;
-        return true;
-    }
+		bool operator==(const int& that) const
+		{
+			if (IntValue!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			if(TrailingDigits.IsNotZero())
+				return false;
+			return true;
+		}
 
-    bool operator==(const MixedDec& that) const
-    {
-        if (IntValue!=that.IntValue)
-            return false;
-        if (DecimalHalf!=that.IntValue)
-            return false;
-        if (TrailingDigits!=that.TrailingDigits)
-            return false;
-    }
+		bool operator==(const MediumDec& that) const
+		{
+		    if(TrailingDigits.IsNotZero())
+			    return false;
+		#if defined(AltNum_EnableUndefinedButInRange)
+			if(DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+            #if defined(MixedDec_EnableWithinMinMaxRange)
+                //ToDo:Add comparison code for comparing unknown number within range
+            #endif
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+			MixedDec LValue = this;
+			LValue.ConvertToNormTypeV2();
+			MediumDec RValue = that;
+			RValue.ConvertToNormTypeV2();
+		#else
+			MixedDec LValue = this;
+			MediumDec RValue = that;
+			if(DecimalHalf.Flags!=0)
+				return false;
+		#endif
+			if (LValue.IntValue!=RValue.IntValue)
+				return false;
+			if (LValue.DecimalHalf!=RValue.IntValue)
+				return false;
+		}
+
+		bool operator==(const MediumDecV2& that) const
+		{
+		    if(TrailingDigits.IsNotZero())
+			    return false;
+		#if defined(AltNum_EnableUndefinedButInRange)
+			if(DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+			    return false;
+            #if defined(AltNum_EnableWithinMinMaxRange)
+                //ToDo:Add comparison code for comparing unknown number within range
+            #endif
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+			MixedDec LValue = this;
+			LValue.ConvertToNormTypeV2();
+			MediumDecV2 RValue = that;
+			RValue.ConvertToNormTypeV2();
+		#else
+			MixedDec LValue = this;
+			MediumDecV2 RValue = that;
+			if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+				LValue.ConvertDownToMediumDecV2Equiv();
+			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
+				throw "Can't compare imaginary number with real number";
+			else if(DecimalHalf.Flags!=0)
+				return false;
+		#endif
+			if (LValue.IntValue!=RValue.IntValue)
+				return false;
+			if (LValue.DecimalHalf!=RValue.IntValue)
+				return false;
+		}
+
+		bool operator==(const MixedDec& that) const
+		{
+			if (IntValue!=that.IntValue)
+				return false;
+			if (DecimalHalf!=that.IntValue)
+				return false;
+			if (TrailingDigits!=that.TrailingDigits)
+				return false;
+		}
     #pragma endregion Comparison Operators
 
 	protected:

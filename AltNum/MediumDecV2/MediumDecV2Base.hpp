@@ -92,17 +92,15 @@ namespace BlazesRusCode
         //Detect if at exactly zero
         constexpr auto IsZero = MediumDecBase::IsZero;
 
-/*
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        template<MediumDecVariant VariantType=MediumDecBase>
-        void SetVal(VariantType Value)
+        void SetVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
-        }*/
+        } const
 
 
         constexpr auto SetAsZero = MediumDecBase::SetAsZero;
@@ -826,7 +824,7 @@ protected:
 			}
 			else
 			{
-				MediumDecV2Base lSide = *this;
+				auto lSide = *this;
 				lSide.ConvertToNormTypeV2();
 				return lSide.BasicIntComparison(that);
 			}
@@ -862,6 +860,14 @@ public:
 			if (DecimalHalf!=0)
 				return false;
 			return true;
+		}
+
+		bool operator==(const MediumDec& that) const
+		{
+			if (IntValue!=that.IntValue)
+				return false;
+			if (DecimalHalf!=that.IntValue)
+				return false;
 		}
 
 		bool operator==(const MediumDecV2Base& that) const

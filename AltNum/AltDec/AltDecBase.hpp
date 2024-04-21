@@ -153,7 +153,7 @@ namespace BlazesRusCode
 			#endif
 		#endif
 	#endif
-		
+
 	#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)/ExtraRep.Value
 		#if defined(AltNum_UseIntForDecimalHalf)
