@@ -1291,9 +1291,7 @@ protected:
             signed _int64 Res;
             signed _int64 IntHalfRes;
             signed _int64 DecimalRes;
-        #if defined(AltNum_OutputTruncatedTrailingDigits)
             signed _int64 TruncatedDigits; 
-        #endif
             if (DecimalHalf == 0)
             {
                 if (ResIsNegative)

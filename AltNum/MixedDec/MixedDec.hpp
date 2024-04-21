@@ -2143,8 +2143,69 @@ public:
 		}
     #pragma endregion Comparison Operators
 
-	protected:
 	#pragma region Division Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto TrailingUIntDivOp = MediumDecBase::TrailingUIntDivOp<IntType>;
+
+        template<typename IntType=int>
+        constexpr auto TrailingIntDivOp = MediumDecBase::TrailingIntDivOp<IntType>;
+
+public:
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MixedDec&</returns>
+        template<typename IntType=unsigned int>
+        void BasicUIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
+			if(TrailingDigits==0)
+			{
+				//To-Do:Initialize TruncatedDigits into Trailing Digits
+			}
+			else
+			{
+				//To-Do:Add TruncatedDigits into Trailing Digits
+			}
+            return *this;
+        }
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MixedDec&</returns>
+        template<typename IntType=int>
+        void BasicIntDivOp(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
+			if(TrailingDigits==0)
+			{
+				//To-Do:Initialize TruncatedDigits into Trailing Digits
+			}
+			else
+			{
+				//To-Do:Add TruncatedDigits into Trailing Digits
+			}
+            return *this;
+        }
+	
         template<IntegerType IntType=int>
         void DivByIntOp(const IntType& rValue)
 		{

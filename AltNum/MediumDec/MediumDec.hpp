@@ -782,19 +782,32 @@ public:
     }
     #pragma endregion Comparison Operators
 
-	protected:
 	#pragma region Division Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
-		static void PartialDivOp(MediumDecBase& self, signed int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDecBase& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(MediumDecBase& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(MediumDecBase& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+        template<typename IntType=int>
+        constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
 
-		static MediumDecBase PartialDiv(MediumDecBase& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDecBase PartialDiv(MediumDecBase& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
-		static MediumDecBase PartialDiv(MediumDecBase& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static MediumDecBase PartialDiv(MediumDecBase& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+public:
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOpV1<MediumDec, IntType>;
 
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOpV1<MediumDec, IntType>;
 
         /// <summary>
         /// Division Operation
@@ -806,7 +819,31 @@ public:
 	#pragma endregion Division Operations
 
 	#pragma region Multiplication Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
 
+        template<typename IntType=int>
+        constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
+public:
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOpV1<MediumDec, IntType>;
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=int>
+        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOpV1<MediumDec, IntType>;
+		
         /// <summary>
         /// Multiplication Operation
         /// </summary>

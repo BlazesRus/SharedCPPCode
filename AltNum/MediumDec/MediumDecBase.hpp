@@ -1343,26 +1343,23 @@ protected:
                 return TrailingUIntDivOp(Value);
         }
 
-public:
-
-		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
-        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
-
-		MediumDecBase PartialDiv(signed int Value)
-        { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
-		MediumDecBase PartialDiv(unsigned int Value)
-        { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
-		MediumDecBase PartialDiv(signed long long Value)
-        { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
-        MediumDecBase PartialDiv(unsigned long long Value)
-        { MediumDecBase self = *this; PartialIntDivOp(Value); return self; }
-
-
 protected:
-        template<typename IntType>
-        MediumDecBase& BasicIntDivOp(IntType& Value)
+        template<MediumDecVariant VariantType=MediumDecBase, typename IntType>
+        virtual VariantType& BasicUIntDivOpV1(IntType& Value)
+        {
+            if (Value == 0)
+            {
+                throw "Target value can not be divided by zero";
+            }
+            else if (IsZero())
+                return;
+            PartialIntDivOp(Value);
+            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            return *this;
+        }
+		
+        template<MediumDecVariant VariantType=MediumDecBase, typename IntType>
+        virtual VariantType& BasicIntDivOpV1(IntType& Value)
         {
             if (Value == 0)
             {
@@ -1379,21 +1376,10 @@ protected:
             if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
             return *this;
         }
-
-        template<typename IntType>
-        MediumDecBase& BasicUnsignedIntDivOp(IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-            return *this;
-        }
 public:
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<MediumDecBase, IntType>;
+		
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<MediumDecBase, IntType>;
 
 		virtual void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
 		virtual void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }

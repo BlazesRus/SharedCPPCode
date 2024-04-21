@@ -909,12 +909,11 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
+
         template<typename IntType=int>
         constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
-
-
-        template<typename IntType=int>
-        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
 public:
         /// <summary>
@@ -923,9 +922,8 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<typename IntType=unsigned int>
         constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
-
 
         /// <summary>
         /// Basic Division Operation between MediumDec Variant and Integer value 
@@ -943,7 +941,6 @@ protected:
         template<typename IntType=int>
         constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
 
-
         template<typename IntType=int>
         constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
 
@@ -953,17 +950,16 @@ public:
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecV2&</returns>
         template<typename IntType=int>
         constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
-
 
         /// <summary>
         /// Basic Multiplication Operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecV2&</returns>
         template<typename IntType=int>
         constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOp<IntType>;
 
@@ -976,7 +972,7 @@ public:
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
+        /// <returns>MediumDecV2&</returns>
         template<typename IntType=int>
         constexpr auto BasicIntAddOp = MediumDecBase::BasicIntAddOp<AltDecBase>;
 
