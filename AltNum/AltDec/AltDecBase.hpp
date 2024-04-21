@@ -472,7 +472,7 @@ public:
 
 protected:
         template<MediumDecVariant VariantType=AltDecBase>
-        void SetPiValV0(const VariantType& Value)
+        void SetPiValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -487,7 +487,7 @@ protected:
         }
 
 public:
-        constexpr auto SetPiVal = SetPiValV0<AltDecBase>;
+        constexpr auto SetPiVal = SetPiValV1<AltDecBase>;
 
         virtual void SetPiValFromInt(const int& Value)
         {
@@ -536,7 +536,7 @@ public:
 
 protected:
         template<MediumDecVariant VariantType=AltDecBase>
-        void SetEValV0(const VariantType& Value)
+        void SetEValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -551,7 +551,7 @@ protected:
         }
 
 public:
-        constexpr auto SetEVal = SetEValV0<AltDecBase>;
+        constexpr auto SetEVal = SetEValV1<AltDecBase>;
 
         virtual void SetEValFromInt(const int& Value)
         {
@@ -600,7 +600,7 @@ public:
 
 protected:
         template<MediumDecVariant VariantType=AltDecBase>
-        void SetIValV0(const VariantType& Value)
+        void SetIValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -934,7 +934,7 @@ public:
         AltDecBase(const char* strVal)
         {
             std::string Value = strVal;
-            this->ReadString(Value);
+            ReadString(Value);
         }
 
         /// <summary>
@@ -943,31 +943,7 @@ public:
         /// <param name="Value">The value.</param>
         AltDecBase(const std::string& Value)
         {
-            this->ReadString(Value);
-        #if defined(AltNum_EnablePiRep)
-            if(str.find("Pi") != std::string::npos)
-            #if !defined(AltNum_UseIntForDecimalHalf)
-                DecimalHalf.Flags = 1;
-            #else
-                ExtraRep = PiRep;
-            #endif
-        #endif
-        #if defined(AltNum_EnableERep)
-            if(Value.last()=='e')
-            #if !defined(AltNum_UseIntForDecimalHalf)
-                DecimalHalf.Flags = 2;
-            #else
-                ExtraRep = ERep;
-            #endif
-        #endif
-        #if defined(AltNum_EnableImaginaryNum)
-            if(Value.last()=='i')
-            #if !defined(AltNum_UseIntForDecimalHalf)
-                DecimalHalf.Flags = 3;
-            #else
-                ExtraRep = IRep;
-            #endif
-        #endif
+            ReadString(Value);
         }
 
     #pragma endregion String Commands
@@ -1229,8 +1205,63 @@ public:
     #endif
     #pragma endregion E Conversion
 
-    #pragma region Other RepType Conversion
+    #pragma region Imaginary Conversion
+    #if defined(AltNum_EnableImaginaryNum)
 
+
+    #endif
+    #pragma endregion region Imaginary Conversion
+
+    #pragma region Other RepType Conversion
+    #if defined(AltNum_EnableApproachingDivided)
+
+        virtual void ConvertIRepToINum(const RepType& repType)
+        {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
+            switch (repType)
+            {
+                case RepType::INum:
+                    break;
+
+            #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+                    {
+                #if defined(AltNum_UseIntForDecimalHalf)
+                        int Divisor = -ExtraRep;
+                        BasicUnsignedDivOp(Divisor);
+                        ExtraRep = IRep;
+                #else
+                        BasicUnsignedDivOp(ExtraRep.Value);
+                        ExtraRep = 0;
+                #endif
+                    }
+                    break;
+                //AltNum_EnableIFractional only used when AltNum_UseIntForDecimalHalf is enabled
+                #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                {
+                    int Divisor = DecimalHalf;
+                    DecimalHalf = 0;
+                    BasicIntDivOp(Divisor);
+                    ExtraRep = IRep;
+                    break;
+                }
+                #endif
+                #ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+                {
+                    throw "Conversion from complex number to real number not supported yet.";
+                    break;
+                }
+                #endif
+                //To-Do:Add other INum variant representation conversions
+                default:
+                    throw "Conversion not supported.";
+                    break;
+            }
+        } const
+
+
+    #endif
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators

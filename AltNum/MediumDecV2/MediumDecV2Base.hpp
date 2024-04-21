@@ -305,12 +305,15 @@ public:
 
     #pragma region PiNum Setters
     #if defined(MediumDecV2_EnablePiRep)
+protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetPiVal(const VariantType& Value)
+        virtual void SetPiValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
         }
-        
+public:
+        constexpr auto SetPiVal = SetPiValV1<MediumDecV2Base>;
+  
         virtual void SetPiValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
@@ -320,12 +323,15 @@ public:
 
     #pragma region ENum Setters
     #if defined(MediumDecV2_EnableERep)
+protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetEVal(const VariantType& Value)
+        virtual void SetEValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
         }
-        
+public:
+        constexpr auto SetEVal = SetEValV1<MediumDecV2Base>;
+		
         virtual void SetEValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
@@ -335,12 +341,15 @@ public:
 
     #pragma region INum Setters
     #if defined(MediumDecV2_EnableIRep)
+protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetIVal(const VariantType& Value)
+        virtual void SetIValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
         }
-        
+public:
+        constexpr auto SetIVal = SetEValV1<MediumDecV2Base>;
+		
         virtual void SetIValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
@@ -489,7 +498,7 @@ public:
         MediumDecV2Base(const char* strVal)
         {
             std::string Value = strVal;
-            this->ReadString(Value);
+            ReadString(Value);
         }
 
         /// <summary>
@@ -498,19 +507,7 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecV2Base(const std::string& Value)
         {
-            this->ReadString(Value);
-        #if defined(MediumDecV2_EnablePiRep)
-            if(str.find("Pi") != std::string::npos)
-                DecimalHalf.Flags = 1;
-        #endif
-        #if defined(MediumDecV2_EnableERep)
-            if(Value.last()=='e')
-                DecimalHalf.Flags = 2;
-        #endif
-        #if defined(MediumDecV2_EnableImaginaryNum)
-            if(Value.last()=='i')
-                DecimalHalf.Flags = 3;
-        #endif
+            ReadString(Value);
         }
 
     #pragma endregion String Commands
@@ -669,6 +666,37 @@ public:
 
     #endif
     #pragma endregion E Conversion
+
+    #pragma region Imaginary Conversion
+    #if defined(AltNum_EnableImaginaryNum)
+
+
+    #endif
+    #pragma endregion region Imaginary Conversion
+        virtual void ConvertIRepToINum(const RepType& repType)
+        {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
+            switch (repType)
+            {
+                case RepType::INum:
+                    break;
+                //To-Do:Add other INum variant representation conversions
+                default:
+                    throw "Conversion not supported.";
+                    break;
+            }
+        }
+
+protected:
+        template<MediumDecVariant VariantType=MediumDecBaseV2>
+		AltDecBase ConvertAsNormalIRepV1(const RepType& repType)
+        {
+            auto Res = *this;
+            Res.ConvertIRepToINum(repType);
+            return Res;
+        } const
+public:
+
+        constexpr auto ConvertAsNormalIRep = ConvertAsNormalIRepV1<MediumDecV2Base>;
 
     #pragma region Other RepType Conversion
 

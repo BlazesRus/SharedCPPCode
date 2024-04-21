@@ -1328,14 +1328,14 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void ReadString(std::string Value);
+        constexpr auto ReadString = MediumDecV2Base::ReadString;
 
         /// <summary>
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        MediumDecV2Base GetValueFromString(std::string Value);
+        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class from string literal
@@ -1344,39 +1344,18 @@ public:
         MediumDecV2Base(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            ReadString(Value);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDecV2Base(std::string Value)
+        MediumDecV2Base(const std::string& Value)
         {
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            ReadString(Value);
         }
+
 
 #pragma endregion String Commands
 
