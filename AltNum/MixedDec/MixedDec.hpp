@@ -1498,16 +1498,10 @@ public:
         /// <param name="Value">The value.</param>
         void SetFloatVal(const float& Value)
         {
-		//#if !defined(AltNum_UseLegacyFloatingConversion)
-			//To-Do:Add more exact extraction
-		//#else
+			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-			AltDec::SetBoolVal(Value);
-			#else
-			MediumDec::SetFloatVal(Value);
+				ExtraRep = 0;
 			#endif
-			SetTrailingDigitsAsZero();
-		//#endif	
         }
 
         /// <summary>
@@ -1516,16 +1510,10 @@ public:
         /// <param name="Value">The value.</param>
         void SetDoubleVal(const double& Value)
         {
-		//#if !defined(AltNum_UseLegacyFloatingConversion)
-			//To-Do:Add more exact extraction
-		//#else
+			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-			AltDec::SetBoolVal(Value);
-			#else
-			MediumDec::SetDoubleVal(Value);
+				ExtraRep = 0;
 			#endif
-			SetTrailingDigitsAsZero();
-		//#endif
         }
 
         /// <summary>
@@ -1534,16 +1522,10 @@ public:
         /// <param name="Value">The value.</param>
         void SetDecimalVal(const ldouble& Value)
         {
-		//#if !defined(AltNum_UseLegacyFloatingConversion)
-			//To-Do:Add more exact extraction
-		//#else
+			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-			AltDec::SetBoolVal(Value);
-			#else
-			MediumDec::SetDecimalVal(Value);
+				ExtraRep = 0;
 			#endif
-			SetTrailingDigitsAsZero();
-		//#endif
         }
 
         /// <summary>
