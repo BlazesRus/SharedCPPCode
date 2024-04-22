@@ -155,6 +155,33 @@ protected:
             Exp = 255;
         }
 		
+		
+    #pragma region Const Representation values
+    protected:
+		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
+		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
+		static UInt128 const TruncMult = TruncMultAsInt;
+		static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;
+		static unsigned _int64 const SubExp2Range = 2500000000000000000;//SubExp1Range/2;
+		static unsigned _int64 const SubExp3Range = 1250000000000000000;//SubExp2Range/2;
+		static unsigned _int64 const SubExp4Range = 625000000000000000;//SubExp3Range/2;
+		static unsigned _int64 const SubExp5Range = 312500000000000000;//SubExp4Range/2;
+		//static unsigned _int64 const SubExp6Range = 156250000000000000;//SubExp5Range/2;
+		//static unsigned _int64 const SubExp7Range = 78125000000000000;//SubExp6Range/2;
+		//static unsigned _int64 const SubExp8Range = 39062500000000000;//SubExp7Range/2;
+		//static unsigned _int64 const SubExp9Range = 19531250000000000;//SubExp8Range/2;
+		//static unsigned _int64 const SubExp10Range = 9765625000000000;//SubExp9Range/2;
+		//static unsigned _int64 const SubExp11Range = 4882812500000000;//SubExp10Range/2;
+		//static unsigned _int64 const SubExp12Range = 2441406250000000;//SubExp11Range/2;
+		//static unsigned _int64 const SubExp13Range = 1220703125000000;//SubExp12Range/2;
+		//static unsigned _int64 const SubExp14Range = 610351562500000;//SubExp13Range/2;
+		//static unsigned _int64 const SubExp15Range = 305175781250000;//SubExp14Range/2;
+		//static unsigned _int64 const SubExp16Range = 152587890625000;//SubExp15Range/2;
+		//static unsigned _int64 const SubExp17Range = 76293945312500;//SubExp16Range/2;
+		//static unsigned _int64 const SubExp18Range = 38146972656250;//SubExp17Range/2;
+		//static unsigned _int64 const SubExp19Range = 19073486328125;//SubExp18Range/2;
+    #pragma endregion Const Representation values
+		
     #pragma region ValueDefines
 protected:
         static AltFloat ZeroValue()
@@ -306,8 +333,10 @@ public:
 			else
 			{
 				//Automatically cyclying through the exponent ranges
-				RangeLimit = SubExp5Range;
-				for(unsigned int Exp = 5;TruncatedDigits>RangeLimit;++Exp)
+				AltDec TruncatedDigitsAsAltDec = TruncatedDigits;
+				AltDec RangeLimit = SubExp5Range;
+				std::strong_ordering RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
+				for(unsigned int Exp = 5;RangeComparison>RangeLimit;++Exp)
 				{
 					if(TruncatedDigits==RangeLimit)
 					{
@@ -321,7 +350,8 @@ public:
 						SignifNum = FindSignifNumFromRem(TruncatedDigits, RangeLimit);
 						return;
 					}
-					RangeLimit /= 2;
+					RangeLimit.DivideByTwo();
+					RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
 				}
 			}
 		}
@@ -570,25 +600,6 @@ public:
 	static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
 	//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
     static UInt128 const TruncMult = TruncMultAsInt;
-	static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;
-	static unsigned _int64 const SubExp2Range = 2500000000000000000;//SubExp1Range/2;
-	static unsigned _int64 const SubExp3Range = 1250000000000000000;//SubExp2Range/2;
-	static unsigned _int64 const SubExp4Range = 625000000000000000;//SubExp3Range/2;
-	static unsigned _int64 const SubExp5Range = 312500000000000000;//SubExp4Range/2;
-	static unsigned _int64 const SubExp6Range = 156250000000000000;//SubExp5Range/2;
-	static unsigned _int64 const SubExp7Range = 78125000000000000;//SubExp6Range/2;
-	static unsigned _int64 const SubExp8Range = 39062500000000000;//SubExp7Range/2;
-	static unsigned _int64 const SubExp9Range = 19531250000000000;//SubExp8Range/2;
-	static unsigned _int64 const SubExp10Range = 9765625000000000;//SubExp9Range/2;
-	static unsigned _int64 const SubExp11Range = 4882812500000000;//SubExp10Range/2;
-	static unsigned _int64 const SubExp12Range = 2441406250000000;//SubExp11Range/2;
-	static unsigned _int64 const SubExp13Range = 1220703125000000;//SubExp12Range/2;
-	static unsigned _int64 const SubExp14Range = 610351562500000;//SubExp13Range/2;
-	static unsigned _int64 const SubExp15Range = 305175781250000;//SubExp14Range/2;
-	static unsigned _int64 const SubExp16Range = 152587890625000;//SubExp15Range/2;
-	static unsigned _int64 const SubExp17Range = 76293945312500;//SubExp16Range/2;
-	static unsigned _int64 const SubExp18Range = 38146972656250;//SubExp17Range/2;
-	static unsigned _int64 const SubExp19Range = 19073486328125;//SubExp18Range/2;
     #pragma endregion Const Representation values
 
     #pragma region RepType

@@ -4,20 +4,6 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-#ifndef DLL_API
-#ifdef UsingBlazesSharedCodeDLL
-#define DLL_API __declspec(dllimport)
-#elif defined(BLAZESSharedCode_LIBRARY)
-#define DLL_API __declspec(dllexport)
-#else
-#define DLL_API
-#endif
-#endif
-#else
-#include "..\..\DLLAPI.h"
-#endif
-
 #include "..\MediumDecV2\MediumDecV2Base.hpp"
 #include "..\MediumDecV2\MediumDecV2.hpp"
 #include "AltDecPreprocessors.h"
@@ -34,7 +20,9 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API AltDecBase: public virtual MediumDecBaseV2
     {
-    public:
+protected:
+        #pragma region DigitStorage
+
         /// <summary>
         /// (Used exclusively for alternative represents of numbers including imaginary numbers and for fractionals)
         /// If ExtraRep>0 and DecimalHalf.Value<AlternativeFractionalLowerBound(and ExtraRep.Value<=FractionalMaximum), then ExtraRep acts as denominator
@@ -43,6 +31,10 @@ namespace BlazesRusCode
         /// </summary>
         MirroredInt ExtraRep;
 
+        #pragma region DigitStorage
+
+public:
+        #pragma region class_constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
@@ -103,6 +95,8 @@ namespace BlazesRusCode
             ExtraRep = rhs.ExtraRep;
             return *this;
         } const
+
+        #pragma endregion class_constructors
 
         /// <summary>
         /// Sets the value.
@@ -946,9 +940,9 @@ public:
             ReadString(Value);
         }
 
-    #pragma endregion String Commands
+        #pragma endregion String Commands
 
-    #pragma region ConvertFromOtherTypes
+        #pragma region ConvertFromOtherTypes
 		
         /// <summary>
         /// Sets the value.
@@ -1315,7 +1309,49 @@ protected:
     #if defined(AltNum_DefineInfinityAsSignedReps)
         constexpr auto LSideInfinityComparison = MediumDecV2Base::LSideInfinityComparison<AltDecBase>;
 	#endif
+	
+public:
+		//Unsigned Templated version of Spaceship operator without certain feature support
+		//Designed for use when dividing by 2 constantly to simplify the comparison(Acts as simplified spaceship operator)
+		std::strong_ordering UnsignedSimpleCompareWith(const auto that) const
+		{
+	#if defined(AltNum_UseIntForDecimalHalf)
+		//To-Do add code here
+	#else
+		#if defined(AltNum_EnableFractionals)
+			if(ExtraRep!=0)//RepType:NumByDiv Assumed
+			{
+				auto lSide = *this;
+				lSide.BasicIntDivOp(ExtraRep.Value);
+				auto rSide = that;
+				if(that.ExtraRep!=0)
+					rSide.BasicIntDivOp(that.ExtraRep.Value);
+#if defined(AltNum_EnableMirroredSection)
+				return BasicComparisonV2(rSide);
+#else
+				return BasicComparison(rSide);
+#endif
+			}
+			else if(that.ExtraRep!=0)//RepType:NumByDiv Assumed
+			{
+				auto rSide = that;
+				rSide.BasicIntDivOp(that.ExtraRep.Value);
+#if defined(AltNum_EnableMirroredSection)
+				return BasicComparisonV2(rSide);
+#else
+				return BasicComparison(rSide);
+#endif
+			}
+			else//Otherwise, assume NormalType
+		#endif
+	#if defined(AltNum_EnableMirroredSection)
+				return BasicComparisonV2(rSide);
+	#else
+				return BasicComparison(rSide);
+	#endif
+		}
 
+protected:
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
 		template<MediumDecVariant VariantType=AltDecBase>
 		std::strong_ordering CompareWithV1(const VariantType& that) const
@@ -1338,7 +1374,6 @@ protected:
 			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
 	#endif
-	
 			RepType LRep = GetRepType();
 			RepType RRep = that.GetRepType();
     #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
@@ -1573,6 +1608,7 @@ protected:
 					}
 				}
 			}
+
 		}
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code

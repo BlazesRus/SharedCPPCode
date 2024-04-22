@@ -26,6 +26,7 @@
 
 #include "IntegerConcept.hpp"
 #include "MediumDec\MediumDec.hpp"
+#include "AltDec\AltDec.hpp"//Used to keep all digits while dividing my two
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
 /*
@@ -63,14 +64,8 @@ namespace BlazesRusCode
     class DLL_API AltFloat
     {
 	protected:
-		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
-		#if defined(AltFloat_ExtendedRange)
-		static signed int DenomMaxExp = 31;
-		#else
-		static signed int DenomMaxExp = 23;
-		#endif
-		//Largest Exp side calculation(2^127):170141183460469231731687303715884105728
-
+		#pragma region DigitStorage
+		
 		//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
 		#pragma options align=bit_packed
         unsigned int IsPositive:1;
@@ -82,24 +77,12 @@ namespace BlazesRusCode
 		unsigned int SignifNum : 23;
 		#endif
 		#pragma options align=reset
-
+		
         //Refers to Exp inside "2^Exp + (2^Exp)*SignifNum/DenomMax" formula
 		//If Exp==-128 and SignifNum==0, in which case the value is at zero
 		signed char Exp;
-
-			#if defined(AltFloat_ExtendedRange)
-		//Equal to 2^31
-		static unsigned long long DenomMax = 2147483648;
-		//Equal to (2^31) - 1
-		static SignifBitfield AlmostApproachingTop = 2147483647;
-		static SignifBitfield NegAlmostApproachingTop = -2147483647;
-			#else
-		//Equal to 2^23
-		static unsigned int DenomMax = 8388608;
-		//Equal to (2^23) - 1
-		static SignifBitfield AlmostApproachingTop = 8388607;
-		static SignifBitfield NegAlmostApproachingTop = -8388607;
-			#endif
+		
+		#pragma endregion DigitStorage
 
 		//Exp value that zero is defined at
 		static signed char ZeroRep = -128;
@@ -185,7 +168,51 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
-
+		//Keeping DenomMax as a power of 2 to make easier to calculate into Int equalant etc
+		#if defined(AltFloat_ExtendedRange)
+		static signed int DenomMaxExp = 31;
+		#else
+		static signed int DenomMaxExp = 23;
+		#endif
+		//Largest Exp side calculation(2^127):170141183460469231731687303715884105728
+	
+		#if defined(AltFloat_ExtendedRange)
+		//Equal to 2^31
+		static unsigned long long DenomMax = 2147483648;
+		//Equal to (2^31) - 1
+		static SignifBitfield AlmostApproachingTop = 2147483647;
+		static SignifBitfield NegAlmostApproachingTop = -2147483647;
+		#else
+		//Equal to 2^23
+		static unsigned int DenomMax = 8388608;
+		//Equal to (2^23) - 1
+		static SignifBitfield AlmostApproachingTop = 8388607;
+		static SignifBitfield NegAlmostApproachingTop = -8388607;
+		#endif
+	
+		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
+		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
+		static UInt128 const TruncMult = TruncMultAsInt;
+		static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;
+		static unsigned _int64 const SubExp2Range = 2500000000000000000;//SubExp1Range/2;
+		static unsigned _int64 const SubExp3Range = 1250000000000000000;//SubExp2Range/2;
+		static unsigned _int64 const SubExp4Range = 625000000000000000;//SubExp3Range/2;
+		static unsigned _int64 const SubExp5Range = 312500000000000000;//SubExp4Range/2;
+		//static unsigned _int64 const SubExp6Range = 156250000000000000;//SubExp5Range/2;
+		//static unsigned _int64 const SubExp7Range = 78125000000000000;//SubExp6Range/2;
+		//static unsigned _int64 const SubExp8Range = 39062500000000000;//SubExp7Range/2;
+		//static unsigned _int64 const SubExp9Range = 19531250000000000;//SubExp8Range/2;
+		//static unsigned _int64 const SubExp10Range = 9765625000000000;//SubExp9Range/2;
+		//static unsigned _int64 const SubExp11Range = 4882812500000000;//SubExp10Range/2;
+		//static unsigned _int64 const SubExp12Range = 2441406250000000;//SubExp11Range/2;
+		//static unsigned _int64 const SubExp13Range = 1220703125000000;//SubExp12Range/2;
+		//static unsigned _int64 const SubExp14Range = 610351562500000;//SubExp13Range/2;
+		//static unsigned _int64 const SubExp15Range = 305175781250000;//SubExp14Range/2;
+		//static unsigned _int64 const SubExp16Range = 152587890625000;//SubExp15Range/2;
+		//static unsigned _int64 const SubExp17Range = 76293945312500;//SubExp16Range/2;
+		//static unsigned _int64 const SubExp18Range = 38146972656250;//SubExp17Range/2;
+		//static unsigned _int64 const SubExp19Range = 19073486328125;//SubExp18Range/2;
+		//After SubExp19Range the value becomes non-whole number
     #pragma endregion Const Representation values
 	public:
 	
@@ -970,8 +997,10 @@ public:
 			else
 			{
 				//Automatically cyclying through the exponent ranges
-				RangeLimit = SubExp5Range;
-				for(unsigned int Exp = 5;TruncatedDigits>RangeLimit;++Exp)
+				AltDec TruncatedDigitsAsAltDec = TruncatedDigits;
+				AltDec RangeLimit = SubExp5Range;
+				std::strong_ordering RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
+				for(unsigned int Exp = 5;RangeComparison>RangeLimit;++Exp)
 				{
 					if(TruncatedDigits==RangeLimit)
 					{
@@ -985,7 +1014,8 @@ public:
 						SignifNum = FindSignifNumFromRem(TruncatedDigits, RangeLimit);
 						return;
 					}
-					RangeLimit /= 2;
+					RangeLimit.DivideByTwo();
+					RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
 				}
 			}
 		}

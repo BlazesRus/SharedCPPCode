@@ -14,6 +14,8 @@ AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of us
 AltNum_UseLegacyFloatingConversion = 
 		Use old method to convert from floating point number into MediumDec variant
 		If not set, than convert number into equivalant "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format to get more exact conversion
+AltNum_UseBuiltinVirtualTable =
+		Store a built-in virtual stable structure and use it to access virtual functions
 */
 
 #if defined(AltNum_EnableAutoToggleOfPreferedSettings)

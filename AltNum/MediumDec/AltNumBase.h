@@ -19,7 +19,9 @@
 #endif
 
 //Main headers
-#include "..\VirtualTableBase.h"
+#if defined(AltNum_UseBuiltinVirtualTable)
+	#include "..\VirtualTableBase.h"
+#endif
 
 #pragma region PreprocessorToggles
 
