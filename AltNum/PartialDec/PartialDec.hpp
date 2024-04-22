@@ -4,7 +4,27 @@
 // ***********************************************************************
 #pragma once
 
-#include "..\MediumDec\AltNumBase.hpp"
+#include "AltNumBase.h"//Virtual Structure for the class to make sure can override virtually
+
+#include <string>
+#include <cmath>
+#include "..\OtherFunctions\VariableConversionFunctions.h"
+
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
+
+#include <type_traits>
+#include <cstddef>
+#include <concepts>//C++20 feature
+#include <compare>//used for C++20 feature of spaceship operator
+#include "..\IntegerConcept.hpp"
+#include "..\MediumDecVariantConcept.hpp"
+
+/*
+AltNum_PreventModulusOverride
+AltNum_EnableAlternativeModulusResult
+*/
+#include "MediumDecPreprocessors.h"
+#include "RepType.h"
 
 namespace BlazesRusCode
 {
@@ -57,31 +77,28 @@ namespace BlazesRusCode
         /// </summary>
         unsigned int DecimalHalf;
 
+        //Divisor of Fractional
+        unsigned int ExtraRep;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        PartialDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0)
+        PartialDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0, const unsigned int& extraRep = 0,)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
+            ExtraRep = extraRep;
         }
 
         PartialDec(const PartialDec&) = default;
 
-        PartialDec& operator=(const int& rhs)
+        PartialDec& operator=(const unsigned int& rhs)
         {
-	#if defined(AltNum_EnableMirroredSection)
-			if(rhs<0)
-			{
-				IntValue.Value = -rhs;
-				IntValue.IsPositive = 0;
-			}
-			else
-	#endif
-				IntValue = rhs;
+			IntValue = rhs;
 			DecimalHalf = 0;
+            ExtraRep = 0;
             return *this;
         } const
 
@@ -91,6 +108,7 @@ namespace BlazesRusCode
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            ExtraRep = rhs.ExtraRep;
             return *this;
         } const
 
@@ -123,11 +141,11 @@ namespace BlazesRusCode
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        template<MediumDecVariant VariantType=PartialDec>
-        void SetVal(VariantType Value)
+        void SetVal(const PartialInt& Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
+            ExtraRep = Value.ExtraRep;
         }
 
         void SetAsZero()
@@ -139,25 +157,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        void SwapNegativeStatus()
-        {
-	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsPositive ^= 1;
-    #else
-            if (IntValue == NegativeRep)
-            {
-                IntValue = 0;
-            }
-            else if (IntValue == 0)
-            {
-                IntValue = NegativeRep;
-            }
-            else
-            {
-                IntValue *= -1;
-            }
-    #endif
-        }
+        void SwapNegativeStatus(){}
 
     #pragma region Const Representation values
     protected:
@@ -165,186 +165,6 @@ namespace BlazesRusCode
     #pragma endregion Const Representation values
 
     #pragma region RepType
-
-        /// <summary>
-        /// Enum representing value type stored
-        /// </summary>
-        enum class RepType: RepTypeUnderlayer
-        {
-            //Sign = IntValue.IsNegative()?-1:1;
-            NormalType = 0,
-	//#if defined(AltNum_EnableFractionals)
-            NumByDiv = 8,
-	//#endif
-	//#if defined(AltNum_EnablePowerOfRepresentation)
-            ToPowerOf = 16,
-	//#endif
-	//#if defined(AltNum_EnablePiRep)
-            PiNum = 1,
-		//#if defined(AltNum_EnablePowerOfRepresentation)
-            PiPower = 17,
-		//#endif
-		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableDecimaledPiFractionals)
-            PiNumByDiv = 9,//  (Value/(ExtraRep.Value))*Pi Representation
-		#endif
-		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledPiFractionals)
-            PiFractional = 9,//  IntValue/DecimalHalf*Pi Representation
-		#endif
-		//#endif
-		//#if defined(AltNum_EnableApproachingPi)
-            //(Enum Bits:7,1)
-            //equal to IntValue.9..9 Pi
-            ApproachingTopPi = 65,
-		//#endif
-		//#if defined(MixedDec_EnableApproachingAlternativeDiv)
-		
-            //(Enum Bits:7,5,1)
-			ApproachingMidLeftPi = 81,
-			//#if !defined(AltNum_DisableApproachingTop)
-            
-            //(Enum Bits:7,4,5,1)
-            ApproachingMidRightPi = 89,
-			//#endif
-		//#endif
-	//#endif
-	//#if defined(AltNum_EnableERep)
-            ENum = 2,
-		//#if defined(AltNum_EnablePowerOfRepresentation)
-            EPower = 18,
-		//#endif
-		#if !defined(AltNum_UseIntForDecimalHalf)||!defined(AltNum_EnableDecimaledEFractionals)
-            ENumByDiv = 10,//(Value/(ExtraRep.Value))*e Representation
-		#endif
-		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledEFractionals)
-            EFractional = 9,//  IntValue/DecimalHalf*Pi Representation
-		#endif
-		//#if defined(AltNum_EnableApproachingE)
-            //(Enum Bits:7,2)
-            //equal to IntValue.9..9 e
-            ApproachingTopE = 66,
-		//#endif
-		//#if defined(MixedDec_EnableApproachingAlternativeDiv)
-		
-            //(Enum Bits:7,5,2)
-			ApproachingMidLeftE = 82,
-			//#if !defined(AltNum_DisableApproachingTop)
-            
-            //(Enum Bits:7,4,5,2)
-            ApproachingMidRightE = 90,
-			//#endif
-		//#endif
-	//#endif
-	//#if defined(AltNum_EnableImaginaryNum)
-            INum = 4,
-		#if !defined(AltNum_UseIntForDecimalHalf)||!defined(AltNum_EnableDecimaledIFractionals)
-            INumByDiv = 11,//(Value/(ExtraRep.Value))*i Representation
-		#endif
-		#if defined(AltNum_UseIntForDecimalHalf)&&!defined(AltNum_EnableDecimaledIFractionals)
-            IFractional = 11,//  IntValue/DecimalHalf*i Representation
-		#endif
-	//#endif
-	#if defined(AltNum_EnableMixedFractional)
-            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-            MixedFrac = 32,
-        #if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedPiFractional)
-            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-            MixedPi = 33,
-		#endif
-		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedEFractional)
-            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-            MixedE = 34,
-		#endif
-		#if !defined(AltNum_UseIntForDecimalHalf)||defined(AltNum_EnableMixedIFractional)
-            //Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-            MixedI = 36,
-		#endif
-	#endif
-
-	//#if defined(AltNum_EnableInfinityRep)
-            //(Enum Bits:7,6)
-            //If Positive Infinity, then convert number into MaximumValue instead when need as real number
-            //If Negative Infinity, then convert number into MinimumValue instead when need as real number
-			Infinity = 96,
-	//#endif
-	//#if defined(AltNum_EnableApproachingValues)
-            //(Enum Bits:7)
-            ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-		//#if !defined(AltNum_DisableApproachingTop)
-
-            //(Enum Bits:7,4)
-            //(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-            ApproachingTop = 72,
-		//#endif
-		//#if defined(AltNum_EnableApproachingDivided)
-		
-            //(Enum Bits:7,5)
-            //DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
-			ApproachingMidLeft = 80,
-			//#if !defined(AltNum_DisableApproachingTop)
-            
-            //(Enum Bits:7,4,5)
-            //DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
-            ApproachingMidRight = 88,
-			//#endif
-		//#endif
-	//#endif
-	//#if defined(AltNum_EnableImaginaryInfinity)
-            //(Enum Bits:7,6,3)
-            ImaginaryInfinity = 100,
-	//#endif
-	//#if defined(AltNum_EnableApproachingI)
-            //(Enum Bits:7,3)
-            //(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-            ApproachingImaginaryBottom = 68,
-		//#if !defined(AltNum_DisableApproachingTop)
-
-            //(Enum Bits:7,3,4)
-            //(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-            ApproachingImaginaryTop = 76,
-		//#endif
-		//#if defined(AltNum_EnableApproachingDivided)
-
-            //(Enum Bits:7,3,5)
-            //DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
-			ApproachingImaginaryMidLeft = 84,
-			//#if !defined(AltNum_DisableApproachingTop)
-
-            //(Enum Bits:7,3,5,4)
-            //DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
-            ApproachingImaginaryMidRight = 92,
-			//#endif
-		//#endif
-    //#endif
-    //#if defined(AltNum_EnableNaN)
-            //(Enum Bits:8)
-            Undefined = 128,
-            //(Enum Bits:8, 1)
-            NaN = 129,
-    //#endif
-	//#if defined(AltNum_EnableUndefinedButInRange)
-
-            //(Enum Bits:8, 2)
-            //Such as result of Cos of infinity(value format part uses for +- range, DecimalHalf==UndefinedInRangeRep)
-            UndefinedButInRange = 130,
-		//#if defined(AltNum_EnableWithinMinMaxRange)
-
-            //(Enum Bits:8,6)
-            //Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-			WithinMinMaxRange = 160,
-		//#endif
-	//#endif
-    //#if defined(AltNum_EnableNil)
-            //(Enum Bits:8, 1, 2)
-            Nil = 131,
-    //#endif
-		//#ifdef AltNum_EnableComplexNumbers
-
-            //Enum Bits subject to change for Complec Number later(Not completely used yet)
-            ComplexIRep = 255,
-		//#endif
-            //(Enum Bits:8, 1, 2, 3)
-            UnknownType = 135
-		}
 
 /*
         /// <summary>
@@ -414,21 +234,11 @@ public:
 	#pragma endregion ApproachingZero Setters
 
 	#pragma region NaN Setters
-	#if defined(AltNum_EnableNaN)
-        void SetAsNaN()
-        {
-            IntValue = 0; DecimalHalf = NaNRep;
-        }
-
-        void SetAsUndefined()
-        {
-            IntValue = 0; DecimalHalf = UndefinedRep;
-        }
-	#endif
+    //Not supported by this variant
 	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
-	//Stored inside Actual MediumDec class to prevent deriving statics
+
     #pragma endregion ValueDefines
 
     #pragma region String Commands
@@ -505,15 +315,14 @@ public:
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
-		//To-Do: Add more exact conversion from floating point format to MediumDec variant
+		//Using just Legaacy floating conversion for now since not important for this variant
 	
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(const float& Value)
+        void SetFloatVal(const float& Value)
         {
-	#if defined(AltNum_UseLegacyFloatingConversion)
 			float lValue = Value;
             bool IsNegative = Value < 0.0f;
             if (IsNegative) { lValue *= -1.0f; }
@@ -540,18 +349,14 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(const double& Value)
+        void SetDoubleVal(const double& Value)
         {
-	#if defined(AltNum_UseLegacyFloatingConversion)
 			double lValue = Value;
             bool IsNegative = Value < 0.0;
             if (IsNegative) { lValue *= -1.0; }
@@ -578,18 +383,14 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const ldouble& Value)
         {
-	#if defined(AltNum_UseLegacyFloatingConversion)
 			ldouble lValue = Value;
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { lValue *= -1.0L; }
@@ -616,16 +417,13 @@ public:
                 else
                     IntValue = IsNegative ? NegativeRep : 0;
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
         }
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetBoolVal(const bool& Value)
+        void SetBoolVal(const bool& Value)
         {
             IntValue = Value==false ? 0 : 1;
             DecimalHalf = 0;
@@ -635,7 +433,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetIntVal(const int& Value)
+        void SetIntVal(const int& Value)
         {
 	#if defined(AltNum_EnableMirroredSection)
 			if(Value<0)
@@ -686,172 +484,70 @@ public:
             this->SetBoolVal(Value);
         }
 
-#if defined(AltNum_EnablePartialDecBasedSetValues)
         PartialDec(const PartialDec& Value)
         {
             this->SetVal(Value);
         }
-#endif
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-protected://Adding more exact conversion from floating point to PartialDec variant later
-
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void float toFloatV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            float Value;
-            if (IntValue.IsNegative())
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
-        #else
-                Value = (float)-IntValue;
-        #endif
-                if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-            }
-            else
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (float)IntValue;
-        #else
-                Value = (float)IntValue.Value;
-        #endif
-                if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-            }
-            return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntValue.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0f;//Placeholder
-	#endif
-        }
-
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void double toDoubleV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-		    double Value;
-            if (IntValue < 0)
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0f : (double)IntValue;
-        #else
-                Value = (double)-IntValue;
-        #endif
-                if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-            }
-            else
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (double)IntValue;
-        #else
-                Value = (double)IntValue.Value;
-        #endif
-                if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-            }
-            return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntValue.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0;//Placeholder
-	#endif
-        }
-
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void ldouble toDecimalV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            ldouble Value;
-            if (IntValue < 0)
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0L : (float)IntValue;
-        #else
-                Value = (ldouble)-IntValue;
-        #endif
-                if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            else
-            {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (ldouble)IntValue;
-        #else
-                Value = (ldouble)IntValue.Value;
-        #endif
-                if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntValue.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0L;//Placeholder
-	#endif
-        }
-
 public:
         /// <summary>
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual float toFloat()
+        void float toFloat()
         {
-            return toFloatV1;
+            auto lValue = *this;
+            if(ExtraRep!=0)
+                lValue /= ExtraRep;
+		    float Value = lValue.IntValue;
+            if (DecimalHalf != 0) 
+               Value += ((float)lValue.DecimalHalf * 0.000000001f);
+            return Value;
         }
 
         /// <summary>
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDouble()
+        void double toDouble()
         {
-            return toDoubleV1();
+            auto lValue = *this;
+            if(ExtraRep!=0)
+                lValue /= ExtraRep;
+		    double Value = lValue.IntValue;
+            if (DecimalHalf != 0) 
+               Value += ((double)lValue.DecimalHalf * 0.000000001);
+            return Value;
         }
 
         /// <summary>
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDecimal()
+        void ldouble toDecimal()
         {
-            return toDecimalV1;
+            auto lValue = *this;
+            if(ExtraRep!=0)
+                lValue /= ExtraRep;
+		    ldouble Value = lValue.IntValue;
+            if (DecimalHalf != 0) 
+               Value += ((ldouble)lValue.DecimalHalf * 0.000000001L);
+            return Value;
         }
 		
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual int toInt() { return IntValue.GetValue(); }
+        int toInt() {
+            auto lValue = *this;
+            if(ExtraRep!=0)
+                lValue /= ExtraRep; 
+            return IntValue.GetValue(); }
 
-        virtual bool toBool() { return IntValue.IsZero() ? false : true; }
+        bool toBool() { return IntValue.IsZero() ? false : true; }
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
