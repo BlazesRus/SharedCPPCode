@@ -37,12 +37,17 @@
 #if defined(MixedDec_EnableAltFloat)
 	#include "..\AltFloat.hpp"
 #endif
+#if defined(MixedDec_EnableRestrictedFloat)
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
+#include <boost/rational.hpp>//For reducing fractional
+#endif
 
 namespace BlazesRusCode
 {
+#if defined(MixedDec_EnableRestrictedFloat)
 	using UInt128 = boost::multiprecision::uint128_t;
+#endif
     class MixedDec;
 	
 	//Hybrid fixed point storage with trailing digits stored as float
@@ -254,8 +259,77 @@ public:
 
     #pragma endregion Comparison Operators
 
-	};
+	#pragma region Trailing Digit Extraction
+	
+		unsigned int FindSignifNumFromRem(const _int64& TruncatedDigits, const unsigned _int64& RangeLimit)
+		{
+			//To-Do:Find SignifNum
+			boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
+			//Find which percentage more of RangeLimit that the exact fraction is
+		}
+		
+		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
+		{//Negative Exponent values for AltFloat and positive Exponent values for RestrictedFloat
+			IsPositive = 1;
+			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
+				Exponent.Value = 1;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp1Range){
+				Exponent.Value = 1;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp1Range);
+			}
+			else if(TruncatedDigits==SubExp2Range){//Exactly 0.25 Remainder
+				Exponent.Value = 2;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp2Range){
+				Exponent.Value = 2;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp2Range);
+			}
+			else if(TruncatedDigits==SubExp3Range){//Exactly 0.125 Remainder
+				Exponent.Value = 3;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp3Range){
+				Exponent.Value = 3;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp3Range);
+			}
+			else if(TruncatedDigits==SubExp4Range){
+				Exponent.Value = 4;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp4Range){
+				Exponent.Value = 4;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp4Range);
+			}
+			else
+			{
+				//Automatically cyclying through the exponent ranges
+				RangeLimit = SubExp5Range;
+				for(unsigned int Exp = 5;TruncatedDigits>RangeLimit;++Exp)
+				{
+					if(TruncatedDigits==RangeLimit)
+					{
+						Exponent.Value = Exp;
+						SignifNum = 0;
+						return;
+					}
+					else if(TruncatedDigits>RangeLimit)
+					{
+						Exponent.Value = Exp;
+						SignifNum = FindSignifNumFromRem(TruncatedDigits, RangeLimit);
+						return;
+					}
+					RangeLimit /= 2;
+				}
+			}
+		}
+	
+	#pragma endregion Trailing Digit Extraction
 
+	};
+	#if defined(MixedDec_EnableRestrictedFloat)
 		RestrictedFloat TrailingDigits;
 	#elif defined(MixedDec_EnableAltFloat)
 		AltFloat TrailingDigits;
@@ -496,6 +570,25 @@ public:
 	static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
 	//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
     static UInt128 const TruncMult = TruncMultAsInt;
+	static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;
+	static unsigned _int64 const SubExp2Range = 2500000000000000000;//SubExp1Range/2;
+	static unsigned _int64 const SubExp3Range = 1250000000000000000;//SubExp2Range/2;
+	static unsigned _int64 const SubExp4Range = 625000000000000000;//SubExp3Range/2;
+	static unsigned _int64 const SubExp5Range = 312500000000000000;//SubExp4Range/2;
+	static unsigned _int64 const SubExp6Range = 156250000000000000;//SubExp5Range/2;
+	static unsigned _int64 const SubExp7Range = 78125000000000000;//SubExp6Range/2;
+	static unsigned _int64 const SubExp8Range = 39062500000000000;//SubExp7Range/2;
+	static unsigned _int64 const SubExp9Range = 19531250000000000;//SubExp8Range/2;
+	static unsigned _int64 const SubExp10Range = 9765625000000000;//SubExp9Range/2;
+	static unsigned _int64 const SubExp11Range = 4882812500000000;//SubExp10Range/2;
+	static unsigned _int64 const SubExp12Range = 2441406250000000;//SubExp11Range/2;
+	static unsigned _int64 const SubExp13Range = 1220703125000000;//SubExp12Range/2;
+	static unsigned _int64 const SubExp14Range = 610351562500000;//SubExp13Range/2;
+	static unsigned _int64 const SubExp15Range = 305175781250000;//SubExp14Range/2;
+	static unsigned _int64 const SubExp16Range = 152587890625000;//SubExp15Range/2;
+	static unsigned _int64 const SubExp17Range = 76293945312500;//SubExp16Range/2;
+	static unsigned _int64 const SubExp18Range = 38146972656250;//SubExp17Range/2;
+	static unsigned _int64 const SubExp19Range = 19073486328125;//SubExp18Range/2;
     #pragma endregion Const Representation values
 
     #pragma region RepType
@@ -2147,6 +2240,13 @@ public:
 		}
     #pragma endregion Comparison Operators
 
+#if defined(MixedDec_StoreTrailingInFloat)
+	//Use remainder from multiplication or division to set trailing digits
+	void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
+	{
+		TrailingDigits.SetTrailingDigitFromRem(TruncatedDigits);
+	}
+#endif
 	#pragma region Division Operations
 protected:
         //Version of PartialUIntDivOp that returns TruncatedDigits
@@ -2256,7 +2356,6 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;//Reduce the fraction as much as can to try to preserve precision
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2267,6 +2366,7 @@ public:
 		#if defined(MixedDec_StoreTrailingInFloat)
 		#else
 					//find the exponent for floating point using Frac.denominator() (Exponent field will be negative)
+					SetTrailingDigitFromRem(
 		#endif
 				}
 				else

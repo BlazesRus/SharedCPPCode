@@ -23,12 +23,11 @@
 #include "..\OtherFunctions\VariableConversionFunctions.h"
 
 #include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#if defined(AltNum_UseOldDivisionCode)
-	#include <boost/multiprecision/cpp_int.hpp>
-#endif
 
 #include "IntegerConcept.hpp"
 #include "MediumDec\MediumDec.hpp"
+//Int 128 needed to extract trailing digits lost from division and multiplication
+#include <boost/multiprecision/cpp_int.hpp>
 /*
 AltFloat_ExtendedRange = Extends SignifNum range to 2147483647
 AltFloat_EnableApproachingZero = Not Implimented yet
@@ -45,6 +44,7 @@ namespace BlazesRusCode
 	//^ in comments refers to power of instead of XOR
 
     class AltFloat;
+	using UInt128 = boost::multiprecision::uint128_t;
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
@@ -922,6 +922,75 @@ public:
     }
 
     #pragma endregion Comparison Operators
+
+	#pragma region Trailing Digit Extraction
+	
+		unsigned int FindSignifNumFromRem(const _int64& TruncatedDigits, const unsigned _int64& RangeLimit)
+		{
+			//To-Do:Find SignifNum
+			boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
+			//Find which percentage more of RangeLimit that the exact fraction is
+		}
+		
+		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
+		{//Negative Exponent values for AltFloat and positive Exponent values for RestrictedFloat
+			IsPositive = 0;
+			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
+				Exponent.Value = 1;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp1Range){
+				Exponent.Value = 1;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp1Range);
+			}
+			else if(TruncatedDigits==SubExp2Range){//Exactly 0.25 Remainder
+				Exponent.Value = 2;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp2Range){
+				Exponent.Value = 2;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp2Range);
+			}
+			else if(TruncatedDigits==SubExp3Range){//Exactly 0.125 Remainder
+				Exponent.Value = 3;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp3Range){
+				Exponent.Value = 3;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp3Range);
+			}
+			else if(TruncatedDigits==SubExp4Range){
+				Exponent.Value = 4;
+				SignifNum = 0;
+			}
+			else if(TruncatedDigits>SubExp4Range){
+				Exponent.Value = 4;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp4Range);
+			}
+			else
+			{
+				//Automatically cyclying through the exponent ranges
+				RangeLimit = SubExp5Range;
+				for(unsigned int Exp = 5;TruncatedDigits>RangeLimit;++Exp)
+				{
+					if(TruncatedDigits==RangeLimit)
+					{
+						Exponent.Value = Exp;
+						SignifNum = 0;
+						return;
+					}
+					else if(TruncatedDigits>RangeLimit)
+					{
+						Exponent.Value = Exp;
+						SignifNum = FindSignifNumFromRem(TruncatedDigits, RangeLimit);
+						return;
+					}
+					RangeLimit /= 2;
+				}
+			}
+		}
+	
+	#pragma endregion Trailing Digit Extraction
 
 	protected:
 	#pragma region Division Operations
