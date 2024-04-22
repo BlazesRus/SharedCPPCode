@@ -140,14 +140,6 @@ public:
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep Integer Bitwise Operations
-
-	#pragma endregion NormalRep Integer Bitwise Operations
-
-	#pragma region Mixed Fraction Operations
-	//Used only in AltDec/MixedDec
-	#pragma endregion Mixed Fraction Operations
-
 	#pragma region NormalRep AltNum Division Operations
 
 	#pragma endregion NormalRep AltNum Division Operations
@@ -163,6 +155,10 @@ public:
 	#pragma region NormalRep AltNum Subtraction Operations
 
 	#pragma endregion NormalRep AltNum Subtraction Operations
+
+	#pragma region Mixed Fraction Operations
+	//Used only in AltDec/MixedDec
+	#pragma endregion Mixed Fraction Operations
 
 	#pragma region Other Division Operations
 
@@ -183,6 +179,10 @@ public:
 	#pragma region Modulus Operations
     //Modulus functions and overrides go here
 	#pragma endregion Modulus Operations
+
+	#pragma region Bitwise Operations
+    //Bitwise functions and overrides go here
+	#pragma endregion Bitwise Operations
 
     #pragma region Main Operator Overrides
     //Operator overrides for /*+- go here
