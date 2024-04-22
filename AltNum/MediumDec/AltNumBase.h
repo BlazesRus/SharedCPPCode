@@ -194,6 +194,10 @@ public:
 
 //Place Member version of Math based functions with post-fix:'Of' inside Base class
 //With static versions of the math functions only in the full versions of the MediumDec variant classes
+	#pragma region Math Etc Functions
+
+	#pragma endregion Math Etc Functions
+
 	#pragma region Pow and Sqrt Functions
 
 	#pragma endregion Pow and Sqrt Functions
@@ -202,9 +206,9 @@ public:
 
 	#pragma endregion Log Functions
 
-    #pragma region Math/Trigonomic Etc Functions
+    #pragma region Trigonomic Etc Functions
 
-    #pragma endregion Math/Trigonomic Etc Functions
+    #pragma endregion Trigonomic Etc Functions
 
 #endif
     };
