@@ -49,12 +49,6 @@ AltNum_UseBuiltinVirtualTable =
 	#define DecimalHalfType PartialInt
 #endif
 
-#if defined(AltNum_MinimizeRepTypeEnum)
-	#define RepTypeUnderlayer unsigned short
-#else
-	#define RepTypeUnderlayer unsigned int
-#endif
-
 #if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
     #undef AltNum_DisablePiRep
 #endif

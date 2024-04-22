@@ -4,7 +4,11 @@
 // ***********************************************************************
 #pragma once
 
-#include "MediumDecPreprocessors.h"
+#if defined(AltNum_MinimizeRepTypeEnum)
+	#define RepTypeUnderlayer unsigned short
+#else
+	#define RepTypeUnderlayer unsigned int
+#endif
 
 namespace BlazesRusCode
 {
