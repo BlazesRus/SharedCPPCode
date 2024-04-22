@@ -2256,7 +2256,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt);//Reduce the fraction as much as can to try to preserve precision
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;//Reduce the fraction as much as can to try to preserve precision
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2266,6 +2266,7 @@ public:
 					//To-Do:Initialize TruncatedDigits into Trailing Digits
 		#if defined(MixedDec_StoreTrailingInFloat)
 		#else
+					//find the exponent for floating point using Frac.denominator() (Exponent field will be negative)
 		#endif
 				}
 				else
@@ -2297,7 +2298,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt);//Reduce the fraction as much as can to try to preserve precision
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2389,6 +2390,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntMultOp(Value);
 			if(TruncatedDigits!=0)
 			{
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2428,6 +2430,7 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
+				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
