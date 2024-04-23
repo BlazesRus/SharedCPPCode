@@ -151,7 +151,7 @@ namespace BlazesRusCode
         }
         
         /// <summary>
-        /// Swaps the negative status.
+        /// Swaps the negative status.(Does nothing)
         /// </summary>
         void SwapNegativeStatus(){}
 
@@ -170,17 +170,282 @@ public:
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        virtual void SetAsMaximum()
+        void SetAsMaximum()
         {
             IntValue = 18446744073709551615;
 			DecimalHalf = 999999999;
 			ExtraRep = 0;
         }
 	
+        /// <summary>
+        /// Sets value to the lowest value that can be stored(zero)
+        /// </summary>
+        constexpr auto SetAsMinimum = SetAsZero;
+
     #pragma endregion RangeLimits
 
     #pragma region ValueDefines
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec PiValue()
+        {
+            return PartialDec(3, 141592654);
+        }
 
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static PartialDec HundredMilPiNumVal()
+        {
+            return PartialDec(314159265, 358979324);
+        }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static PartialDec TenMilPiNumVal()
+        {
+            return PartialDec(31415926, 535897932);
+        }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static PartialDec OneMilPiNumVal()
+        {
+            return PartialDec(3141592, 653589793);
+        }
+
+        //10xPi(Rounded to 9th decimal digit)
+        static PartialDec TenPiNumVal()
+        {
+            return PartialDec(31, 415926536);
+        }
+        
+        static PartialDec ENumValue()
+        {
+            return PartialDec(2, 718281828);
+        }
+
+        static PartialDec EValue()
+        {
+            return PartialDec(2, 718281828);
+        }
+        
+        static PartialDec ZeroValue()
+        {
+            return PartialDec();
+        }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec OneValue()
+        {
+            PartialDec NewSelf = PartialDec(1);
+            return NewSelf;
+        }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec TwoValue()
+        {
+            PartialDec NewSelf = PartialDec(2);
+            return NewSelf;
+        }
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec Point5Value()
+        {
+            PartialDec NewSelf = PartialDec(0, 500000000);
+            return NewSelf;
+        }
+
+        static PartialDec JustAboveZeroValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 1);
+            return NewSelf;
+        }
+
+        static PartialDec OneMillionthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 1000);
+            return NewSelf;
+        }
+
+        static PartialDec FiveThousandthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 5000000);
+            return NewSelf;
+        }
+
+        static PartialDec FiveMillionthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 5000);
+            return NewSelf;
+        }
+
+        static PartialDec TenMillionthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 100);
+            return NewSelf;
+        }
+
+        static PartialDec OneHundredMillionthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 10);
+            return NewSelf;
+        }
+
+        static PartialDec FiveBillionthValue()
+        {
+            PartialDec NewSelf = PartialDec(0, 5);
+            return NewSelf;
+        }
+
+        static PartialDec LN10Value()
+        {
+            return PartialDec(2, 302585093);
+        }
+
+        static PartialDec LN10MultValue()
+        {
+            return PartialDec(0, 434294482);
+        }
+
+        static PartialDec HalfLN10MultValue()
+        {
+            return PartialDec(0, 868588964);
+        }
+
+        static PartialDec MaximumValue()
+        {
+            return PartialDec(2147483647, 999999999);
+        }
+public:
+        static PartialDec AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec PiNum;
+        
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec ENum;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec Pi;
+      
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec E;
+        
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec Zero;
+        
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec One;
+
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec JustAboveZero;
+
+        /// <summary>
+        /// Returns the value at .000000005
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec FiveBillionth;
+
+        /// <summary>
+        /// Returns the value at .000001000
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec OneMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.005"
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec FiveThousandth;
+
+        /// <summary>
+        /// Returns the value at .000000010
+        /// </summary>
+        /// <returns>PartialDec</returns>
+        static PartialDec OneGMillionth;
+
+        //0e-7
+        static PartialDec TenMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.000005"
+        /// </summary>
+        static PartialDec FiveMillionth;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
+        /// </summary>
+        static PartialDec Minimum;
+        
+        /// <summary>
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
+        /// </summary>
+        static PartialDec Maximum;
+        
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        static PartialDec LN10;
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static PartialDec LN10Mult;
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static PartialDec HalfLN10Mult;
     #pragma endregion ValueDefines
 
     #pragma region String Commands

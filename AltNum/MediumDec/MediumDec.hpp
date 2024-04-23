@@ -382,7 +382,11 @@ public:
         /// <returns>MediumDec</returns>
         static MediumDec NegativeOneValue()
         {
+#if !defined(AltNum_EnableMirroredSection)
             MediumDec NewSelf = MediumDec(-1);
+#else
+            MediumDec NewSelf = MediumDec(MirroredInt(1,0));
+#endif
             return NewSelf;
         }
 
@@ -462,7 +466,11 @@ public:
 
         static MediumDec MinimumValue()
         {
-            return MediumDec(2147483647, 999999999);
+#if !defined(AltNum_EnableMirroredSection)
+            return MediumDec(-2147483647, 999999999);
+#else
+            return MediumDec(MirroredInt(2147483647,0), 999999999);
+#endif
         }
 
         static MediumDec MaximumValue()

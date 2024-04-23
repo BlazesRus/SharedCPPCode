@@ -294,6 +294,7 @@ protected:
 
     #pragma endregion RepType
 
+public:
     #pragma region RangeLimits
 
         /// <summary>
