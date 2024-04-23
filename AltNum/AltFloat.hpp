@@ -190,7 +190,7 @@ namespace BlazesRusCode
 		static SignifBitfield NegAlmostApproachingTop = -8388607;
 		#endif
 	
-		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;
+		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;//10 000 000 000 000 000 000
 		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
 		static UInt128 const TruncMult = TruncMultAsInt;
 		static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;

@@ -1537,7 +1537,7 @@ public:
 
     #pragma region MirroredIntBased Operations
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void IntHalfDivision(IntType RValue)
         {
 #if defined(AltNum_UseMirroredInt)
@@ -1580,10 +1580,10 @@ public:
         }
 
         //this is reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void IntHalfDivisionOp(IntType& RValue) { IntHalfDivision(RValue); }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void IntHalfMultiplication(IntType RValue)
         {
 #if defined(AltNum_UseMirroredInt)
@@ -1630,7 +1630,7 @@ public:
 #endif
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void UIntHalfMultiplication(IntType RValue)
         {
 #if defined(AltNum_UseMirroredInt)
@@ -1662,11 +1662,11 @@ public:
         }
 
         //this is reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void IntHalfMultiplicationOp(IntType& RValue) { IntHalfMultiplication(RValue); }
 
         //Replace usage of IntValue += RValue; with IntHalfAddition(RValue); or IntHalfAdditionOp(RValue);
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void IntHalfAdditionOp(const IntType& RValue)
         {
 #if defined(AltNum_UseMirroredInt)
@@ -1744,7 +1744,7 @@ public:
 
         //Replace usage of IntValue -= RValue; with IntHalfSubtraction(RValue);
         //this is copy by value and pointer version
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void IntHalfSubtractionOp(const IntType& RValue)
         {
 #if defined(AltNum_UseMirroredInt)
@@ -1821,10 +1821,10 @@ public:
         }
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfEqualToOp(IntType& RValue) { return IntValue == RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfEqualTo(IntType RValue) { return IntValue == RValue; }
 
 		bool IntPartNotEqualTo(MediumDecV2Base& RValue)
@@ -1833,10 +1833,10 @@ public:
         }
 
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfNotEqualToOp(IntType& RValue) { return IntValue != RValue; }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfNotEqualTo(IntType RValue) { return IntValue != RValue; }
 
         /// <summary>
@@ -1869,7 +1869,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfLessThanOp(IntType& RValue) { return IntHalfLessThan(RValue); }
 
 		static bool IntPartLessThan(MediumDecV2Base LValue, MediumDecV2Base RValue) 
@@ -1908,7 +1908,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfLessThanOrEqualOp(IntType& RValue) { return IntHalfLessThanOrEqual(RValue); }
 
         /// <summary>
@@ -1958,7 +1958,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfGreaterThanOp(IntType& RValue) { return IntHalfGreaterThan(RValue); }
 
         /// <summary>
@@ -2010,7 +2010,7 @@ public:
 		}
 		
         //Reference version
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool IntHalfGreaterThanOrEqualOp(IntType& RValue) { return IntHalfGreaterThanOrEqual(RValue); }
 
         /// <summary>
@@ -3328,7 +3328,7 @@ public:
     #pragma region NormalRep Integer Division Operations
 protected:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         virtual bool PartialIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -3397,7 +3397,7 @@ protected:
                 return false;
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         bool PartialUIntDivOp(const IntType& rValue)
         {
             bool ResIsNegative = IntValue < 0;
@@ -3459,7 +3459,7 @@ protected:
 
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& BasicUIntDivOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -3477,7 +3477,7 @@ public:
             return *this;
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void BasicIntDivOp(const IntType& rValue)
         {
             if (Value == 0)
@@ -3510,7 +3510,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicDivideByUIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
         /// <summary>
@@ -3519,7 +3519,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicDivideByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
         /// <summary>
@@ -3527,7 +3527,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicDivideByUInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
         
         /// <summary>
@@ -3535,7 +3535,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicDivideByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
     #pragma endregion NormalRep Integer Division Operations
@@ -3549,7 +3549,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void PartialIntMultOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -3594,7 +3594,7 @@ protected:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void PartialIntMultOpV2(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -3632,7 +3632,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -3648,7 +3648,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void BasicUIntMultOp(const IntType& rValue)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -3684,7 +3684,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicMultipleByUIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
 
         /// <summary>
@@ -3693,7 +3693,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicMultipleByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
@@ -3702,7 +3702,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicMultipleByUInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
         
         /// <summary>
@@ -3711,7 +3711,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicMultipleByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
@@ -3725,7 +3725,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void NRepSkippingIntAddOp(const IntType& rValue)
         {
             if (RValue == 0)
@@ -3746,7 +3746,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& BasicIntAddOp(const IntType& rValue)
         {
             if(DecimalHalf==0)
@@ -3768,7 +3768,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicAddByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
 
         /// <summary>
@@ -3776,7 +3776,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicAddByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntAddOp(rValue); }
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -3789,7 +3789,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>void</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void NRepSkippingIntSubOp(const IntType& rValue)
         {
             if (RValue == 0)
@@ -3810,7 +3810,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicIntSubOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)
@@ -3832,7 +3832,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicSubtractByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
         /// <summary>
@@ -3840,7 +3840,7 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		static MediumDecV2Base BasicSubtractByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntSubOp(rValue); }
 
     #pragma endregion NormalRep Integer Subtraction Operations
@@ -4862,21 +4862,21 @@ public:
 	
     #pragma region Other Division Operations
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntDivOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntDivOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void CatchAllIntDivisionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
@@ -5237,7 +5237,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& UIntDivOp(const IntType& rValue)
         {
             if (rValue == 1)
@@ -5531,21 +5531,21 @@ public:
     #pragma region Other Multiplication Operations
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllIntMultiplication(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntMultOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllUIntMultiplication(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntMultOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void CatchAllIntMultiplicationV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
@@ -5558,7 +5558,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& IntMultOp(IntType rValue)
         {
             if (IsZero()||rValue==1)
@@ -5958,7 +5958,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& UIntMultOp(const IntType& rValue)
         {
             if (IsZero()||rValue==1)
@@ -6320,14 +6320,14 @@ public:
     #pragma region Other Addition Operations
 public:
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllIntAddition(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntAddOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void CatchAllIntAdditionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
@@ -6341,7 +6341,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& IntAddOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -6405,14 +6405,14 @@ public:
 
     #pragma region Other Subtraction Operations
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
 		void CatchAllIntSubtraction(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntSubOp(rValue);
 		}
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void CatchAllIntSubtractionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
@@ -6426,7 +6426,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base& IntSubOp(const IntType& rValue)
         {
             if (rValue == 0)
@@ -9542,7 +9542,7 @@ public:
         //Designed for use with normal, decimaled fractionals if both have same ExtraRep field, PiNum, and ENum  representation types
         //Will not work with non-decimaled format fractionals or mixed fractions
         //Modifies left side value with result
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicIntRemOp(IntType rValue)
         {
             if (DecimalHalf == 0)
@@ -9583,7 +9583,7 @@ public:
         static MediumDecV2Base UInt64BasicModulus(MediumDecV2Base self, unsigned long long RValue) { return self.BasicIntRemOp(RValue); }
 
         //Performs modulus operation based on "C = A - B * (A / B)" formula
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base IntRemOp(const IntType& rValue)
         {
             MediumDecV2Base divRes = DivideByInt(rValue);
@@ -9716,7 +9716,7 @@ public:
 
 
         #if defined(AltNum_EnableAlternativeModulusResult)//Return AltNumModChecker<MediumDecV2Base> Result with both Remainder and division result
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         static AltNumModChecker<MediumDecV2Base> IntModulusOp(IntType RValue)
         {
             AltNumModChecker<MediumDecV2Base> Res;
@@ -9760,7 +9760,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         friend MediumDecV2Base operator^(MediumDecV2Base self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
@@ -9787,7 +9787,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         friend MediumDecV2Base operator|(MediumDecV2Base self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
@@ -10166,7 +10166,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicIntPowOp(const IntType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
@@ -10225,7 +10225,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicUIntPowOp(const IntType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
@@ -10255,17 +10255,17 @@ public:
             return *this;
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicIntPow(const IntType& expValue) { MediumDecV2Base self = *this; return self.BasicIntPowOp(expValue); }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base BasicUIntPow(const IntType& expValue) { MediumDecV2Base self = *this; return self.BasicUIntPowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base IntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
@@ -10288,7 +10288,7 @@ public:
                 return BasicIntPowOp(expValue);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base UIntPowOp(const IntType& expValue)
         {
             if (DecimalHalf == InfinityRep)
@@ -10309,10 +10309,10 @@ public:
                 return BasicUIntPowOp(expValue);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base IntPow(const IntType& expValue) { MediumDecV2Base self = *this; return self.IntPowOp(expValue); }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         MediumDecV2Base UnsignedIntPow(const IntType& expValue) { MediumDecV2Base self = *this; return self.UIntPowOp(expValue); }
 public:
         /// <summary>

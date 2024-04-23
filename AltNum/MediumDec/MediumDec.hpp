@@ -4,20 +4,6 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-#ifndef DLL_API
-#ifdef UsingBlazesSharedCodeDLL
-#define DLL_API __declspec(dllimport)
-#elif defined(BLAZESSharedCode_LIBRARY)
-#define DLL_API __declspec(dllexport)
-#else
-#define DLL_API
-#endif
-#endif
-#else
-#include "..\DLLAPI.h"
-#endif
-
 #include <string>
 #include <cmath>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
@@ -787,7 +773,7 @@ protected:
         template<typename IntType=unsigned int>
         constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
 
 public:
@@ -806,7 +792,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOpV1<MediumDec, IntType>;
 
         /// <summary>
@@ -823,7 +809,7 @@ protected:
         template<typename IntType=unsigned int>
         constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
 public:
         /// <summary>
@@ -841,7 +827,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOpV1<MediumDec, IntType>;
 		
         /// <summary>

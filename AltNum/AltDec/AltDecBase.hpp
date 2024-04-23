@@ -1778,7 +1778,7 @@ protected:
         template<typename IntType=unsigned int>
         constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
 
 public:
@@ -1811,17 +1811,17 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOp<IntType>;
 
     #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
 
 public:
@@ -1831,7 +1831,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
 
         /// <summary>
@@ -1840,7 +1840,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOp<IntType>;
 
     #pragma endregion NormalRep Integer Multiplication Operations
@@ -1853,7 +1853,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntAddOp = MediumDecBase::BasicIntAddOp<AltDecBase>;
 
 	#pragma endregion NormalRep Integer Addition Operations
@@ -1866,7 +1866,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         constexpr auto BasicIntSubOp = MediumDecBase::BasicIntSubOp<AltDecBase>;
 
     #pragma endregion NormalRep Integer Subtraction Operations

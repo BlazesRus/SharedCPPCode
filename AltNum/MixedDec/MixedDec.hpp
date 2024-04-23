@@ -2333,7 +2333,7 @@ protected:
             return (unsigned _int64) TruncatedDigits;//Return any truncated digits lost in division operation
         }
 
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         unsigned _int64 TrailingIntDivOp(const IntType& Value)
         {
             if(Value<0)
@@ -2396,7 +2396,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MixedDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void BasicIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -2529,7 +2529,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MixedDec&</returns>
-        template<typename IntType=int>
+        template<IntegerType IntType=signed int>
         void BasicIntMultOp(IntType& Value)
         {
 			if(Value==0)

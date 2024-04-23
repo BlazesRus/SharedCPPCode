@@ -4,7 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#include "AltNumBase.h"//Virtual Structure for the class to make sure can override virtually
+#include "AltNumBase.h"
 
 #include <string>
 #include <cmath>
@@ -18,6 +18,7 @@
 #include <compare>//used for C++20 feature of spaceship operator
 #include "..\IntegerConcept.hpp"
 #include "..\MediumDecVariantConcept.hpp"
+#include <boost/multiprecision/cpp_int.hpp>//Need to use the int 128 in order to fit all inside during multiplication
 
 /*
 AltNum_PreventModulusOverride
@@ -28,25 +29,27 @@ AltNum_EnableAlternativeModulusResult
 
 namespace BlazesRusCode
 {
-
+	using UInt128 = boost::multiprecision::uint128_t;
     class PartialDec;
 
     /// <summary>
     /// Reduced version of AltDec that only adds feature of Fractionals to MediumDec
 	/// and removes support for negative numbers
 	/// </summary>
-    class DLL_API PartialDec : AltNumBase
+    class DLL_API PartialDec
     {
-	public:
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
+	private:
+        static unsigned _int64 const UInt64Max = 18446744073709551615;
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
+        static unsigned int const DecimalOverflow = 1000000000;
+		
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static UInt128 const DecimalOverflowX = 1000000000;
 		
 	public:
 
@@ -59,10 +62,10 @@ namespace BlazesRusCode
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        unsigned int IntHalf;
+        unsigned _int64 IntHalf;
 
 		//Return IntHalf as signed int
-        unsigned int GetIntHalf()
+        unsigned _int64 GetIntHalf()
         {
 			return IntHalf;
         }
@@ -85,7 +88,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        PartialDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0, const unsigned int& extraRep = 0,)
+        PartialDec(const unsigned _int64& intVal = 0, const unsigned _int64& decVal = 0, const unsigned int& extraRep = 0,)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -94,7 +97,7 @@ namespace BlazesRusCode
 
         PartialDec(const PartialDec&) = default;
 
-        PartialDec& operator=(const unsigned int& rhs)
+        PartialDec& operator=(const unsigned _int64& rhs)
         {
 			IntValue = rhs;
 			DecimalHalf = 0;
@@ -115,23 +118,15 @@ namespace BlazesRusCode
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredSection)
-            return IntValue.Value==0;
-    #else
-            return IntValue==0||IntValue==NegativeRep;
-    #endif
+            return IntValue==0;
         }
 
         bool IsNotAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredSection)
-            return IntValue.Value!=0;
-    #else
-            return IntValue != 0 && IntValue != NegativeRep;
-    #endif
+            return IntValue!=0;
         }
 
-        //Detect if at exactly zero(only overridden with MixedDec)
+        //Detect if at exactly zero
 		bool IsZero()
 		{
             return DecimalHalf==0&&IntValue==0;
@@ -151,7 +146,7 @@ namespace BlazesRusCode
         void SetAsZero()
         {
             IntValue = 0;
-            DecimalHalf = 0;
+            DecimalHalf = 0; ExtraRep = 0;
         }
         
         /// <summary>
@@ -166,16 +161,6 @@ namespace BlazesRusCode
 
     #pragma region RepType
 
-/*
-        /// <summary>
-        /// Returns representation type data that is stored in value
-        /// </summary>
-        virtual RepType const GetRepType()
-        {
-            return RepType::UnknownType;//Virtual code replaced inside main class(Not actually used inside MediumDec class)
-        }
-*/
-
     #pragma endregion RepType
 
 public:
@@ -186,56 +171,12 @@ public:
         /// </summary>
         virtual void SetAsMaximum()
         {
-            IntValue = 2147483647;
+            IntValue = 18446744073709551615;
 			DecimalHalf = 999999999;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        virtual void SetAsMinimum()
-        {
-		#if defined(AltNum_EnableMirroredSection)
-			IntValue = MirroredInt(2147483647,0);
-		#else
-            IntValue = -2147483647;
-		#endif
-			DecimalHalf = 999999999;
+			ExtraRep = 0;
         }
 	
     #pragma endregion RangeLimits
-
-	#pragma region PiNum Setters
-	//Not used for this variant(Used in PartialDecV2 and others)
-	#pragma endregion PiNum Setters
-
-	#pragma region ENum Setters
-	//Not used for this variant(Used in PartialDecV2 and others)
-	#pragma endregion ENum Setters
-
-    #pragma region INum Setters
-    //Not used for this variant(Used in PartialDecV2 and others)
-    #pragma endregion INum Setters
-
-	#pragma region Fractional Setters
-	//Not used for this variant(Used in AltDecBase and others)
-	#pragma endregion Fractional Setters
-        
-	#pragma region MixedFrac Setters
-	//Not used for this variant(Used in AltDecBase and others)
-	#pragma endregion MixedFrac Setters
-		
-	#pragma region Infinity Setters
-	//Not used for this variant(Used in PartialDecV2 and others)
-	#pragma endregion Infinity Setters
-	
-	#pragma region ApproachingZero Setters
-	//Not used for this variant(Used in PartialDecV2 and others)
-	#pragma endregion ApproachingZero Setters
-
-	#pragma region NaN Setters
-    //Not supported by this variant
-	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
 
@@ -266,18 +207,6 @@ public:
         PartialDec(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
         }
 
         /// <summary>
@@ -323,24 +252,14 @@ public:
         /// <param name="Value">The value.</param>
         void SetFloatVal(const float& Value)
         {
-			float lValue = Value;
-            bool IsNegative = Value < 0.0f;
-            if (IsNegative) { lValue *= -1.0f; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0f)
-            {
-                if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
-					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
-                else
-                    IntValue = 2147483647;
+            if (Value < 0.0f) { SetAsZero(); }
+			else if (Value >= 18446744073709551616f){//Cap value if too big on initialize (preventing overflow on conversion)
+                IntValue = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
+				float lValue = Value;
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (float)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
@@ -357,24 +276,14 @@ public:
         /// <param name="Value">The value.</param>
         void SetDoubleVal(const double& Value)
         {
-			double lValue = Value;
-            bool IsNegative = Value < 0.0;
-            if (IsNegative) { lValue *= -1.0; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
-            {
-                if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
-					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
-                else
-                    IntValue = 2147483647;
+            if (Value < 0.0) { SetAsZero(); }
+			else if (Value >= 18446744073709551616){//Cap value if too big on initialize (preventing overflow on conversion)
+                IntValue = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
+				auto lValue = Value;
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (double)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
@@ -391,24 +300,14 @@ public:
         /// <param name="Value">The value.</param>
         void SetDecimalVal(const ldouble& Value)
         {
-			ldouble lValue = Value;
-            bool IsNegative = Value < 0.0L;
-            if (IsNegative) { lValue *= -1.0L; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (lValue >= 2147483648.0L)
-            {
-                if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
-					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
-                else
-                    IntValue = 2147483647;
+            if (Value < 0.0L) { SetAsZero(); }
+			else if (Value >= 18446744073709551616L){//Cap value if too big on initialize (preventing overflow on conversion)
+                IntValue = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
+				auto lValue = Value;
                 signed __int64 WholeValue = (signed __int64)std::floor(lValue);
                 lValue -= (ldouble)WholeValue;
                 DecimalHalf = (signed int)lValue * 10000000000;
@@ -541,11 +440,11 @@ public:
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toInt() {
+        unsigned _int64 toInt() {
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep; 
-            return IntValue.GetValue(); }
+            return lValue.IntValue; }
 
         bool toBool() { return IntValue.IsZero() ? false : true; }
 
@@ -580,17 +479,6 @@ public:
         explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
-
-    #pragma region Pi Conversion
-	//Not used for this variant
-    #pragma endregion Pi Conversion
-
-    #pragma region E Conversion
-	//Not used for this variant
-    #pragma endregion E Conversion
-	
-    #pragma region Other RepType Conversion
-    #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
 protected:
@@ -671,20 +559,20 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<IntegerType IntType=unsigned int>
+        template<IntegerType IntType=unsigned _int64>
         void PartialUIntDivOp(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
-            unsigned _int64 SelfRes;
-            unsigned _int64 Res;
-            unsigned _int64 IntHalfRes;
-            unsigned _int64 DecimalRes;
+            UInt128 SelfRes;
+            UInt128 Res;
+            UInt128 IntHalfRes;
+            UInt128 DecimalRes;
             
             SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue: DecimalOverflowX * IntValue + DecimalHalf;
             Res = SelfRes / rValue;
             
             IntHalfRes = Res/DecimalOverflowX;
-            DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-		    IntValue = (unsigned int)IntHalfRes;
+            DecimalRes = (unsigned _int64)(Res - DecimalOverflowX * IntHalfRes);
+		    IntValue = (unsigned _int64)IntHalfRes;
 			DecimalHalf = DecimalRes;
         }
 
@@ -717,20 +605,20 @@ public:
 
         }
 
-		void BasicIntDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
         void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
     #pragma endregion NormalRep Integer Division Operations
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-        template<typename IntType=int>
+        template<IntegerType IntType=unsigned _int64>
         void PartialUIntMultOp(const IntType& Value)
         {
 			//Update this code
 		}
 		
-        template<typename IntType=int>
+        template<IntegerType IntType=unsigned _int64>
         void PartialIntMultOp(const IntType& Value)
         {
             if(Value<0)
@@ -745,7 +633,7 @@ protected:
         }
 		
 protected:
-        template<MediumDecVariant VariantType=PartialDec, typename IntType>
+        template<MediumDecVariant VariantType=PartialDec, IntegerType IntType=unsigned _int64>
         VariantType& BasicUIntMultOpV1(const IntType& Value)
         {
             if (Value == 0)
@@ -759,7 +647,7 @@ protected:
             return *this;
         }
 		
-        template<MediumDecVariant VariantType=PartialDec, typename IntType>
+        template<MediumDecVariant VariantType=PartialDec, IntegerType IntType=unsigned _int64>
         VariantType& BasicIntMultOpV1(const IntType& Value)
         {
             if (Value == 0)
@@ -774,7 +662,7 @@ protected:
         }
 public:
 /*
-        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<PartialDec, const unsigned int&>;
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<PartialDec, const unsigned _int64&>;
 		
         constexpr auto BasicIntMultOp = BasicIntMultOpV1<PartialDec, const signed int&>;
 
@@ -790,7 +678,7 @@ protected:
 	
 public:
 /*
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<PartialDec, const unsigned int&>;
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<PartialDec, const unsigned _int64&>;
 		
         constexpr auto BasicIntAddOp = BasicIntAddOpV1<PartialDec, const signed int&>;
 
@@ -805,7 +693,7 @@ protected:
 	
 public:
 /*
-        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<PartialDec, const unsigned int&>;
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<PartialDec, const unsigned _int64&>;
 		
         constexpr auto BasicIntSubOp = BasicIntSubOpV1<PartialDec, const signed int&>;
 
@@ -832,7 +720,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        template<MediumDecVariant VariantType=PartialDec, typename IntType>
+        template<MediumDecVariant VariantType=PartialDec, IntegerType IntType=unsigned _int64>
         VariantType& BasicUnsignedMultOpV1(const PartialDec& rValue)
 		{//To-Do:Update this code more towards current default format
             if (DecimalHalf == 0)
@@ -847,31 +735,20 @@ protected:
                 }
                 else
                 {
-                    __int64 rRep = rValue.IntValue == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
-                    bool ResIsNegative = IntValue<0;
-                    if(ResIsNegative)
-                    {
-                        ResIsNegative = false;
-                        rRep *= IntHalfAsAbs();
-                    }
-                    else
-                    {
-                        ResIsNegative = true;
-                        rRep *= IntValue;
-                    }
+                    UInt128 rRep = rValue.IntValue == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
                     if (rRep >= DecimalOverflowX)
                     {
-                        __int64 OverflowVal = rRep / DecimalOverflowX;
+                        UInt128 OverflowVal = rRep / DecimalOverflowX;
                         rRep -= OverflowVal * DecimalOverflowX;
-                        IntValue = (signed int)ResIsNegative ? OverflowVal * -1 : OverflowVal;
+                        IntValue = (signed int)OverflowVal;
                         DecimalHalf = (signed int)rRep;
                         return *this;
                     }
                     else
                     {
                         DecimalHalf = (signed int)rRep;
-                        if(DecimalHalf==0)
 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
+                        if(DecimalHalf==0)
                             DecimalHalf = 1;
 #endif
                         IntValue = ResIsNegative ? NegativeRep : 0;
@@ -1126,7 +1003,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>PartialDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=unsigned _int64>
         friend PartialDec& operator+=(PartialDec& self, int Value) { return IntAddOp(self, Value); }
 
         //friend PartialDec operator+=(PartialDec* self, int Value) { return IntAddOp(**self, Value); }
@@ -1161,7 +1038,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>PartialDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=unsigned _int64>
         friend PartialDec& operator*=(PartialDec& self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
@@ -1194,7 +1071,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>PartialDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=unsigned _int64>
         friend PartialDec& operator+=(PartialDec& self, signed long long Value) { return IntAddOp(self, Value); }
 
         /// <summary>
@@ -1227,7 +1104,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>PartialDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=unsigned _int64>
         friend PartialDec operator*=(PartialDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
@@ -1293,16 +1170,16 @@ public:
         friend PartialDec operator*=(PartialDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
         friend PartialDec operator/=(PartialDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); } 
 
-        friend PartialDec operator+(PartialDec self, unsigned int Value) { return IntAddOp(self, Value); }
-        friend PartialDec operator-(PartialDec self, unsigned int Value) { return IntSubOp(self, Value); }
-        friend PartialDec operator*(PartialDec self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
-        friend PartialDec operator/(PartialDec self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        friend PartialDec operator+(PartialDec self, unsigned _int64 Value) { return IntAddOp(self, Value); }
+        friend PartialDec operator-(PartialDec self, unsigned _int64 Value) { return IntSubOp(self, Value); }
+        friend PartialDec operator*(PartialDec self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend PartialDec operator/(PartialDec self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
         
 
-        friend PartialDec operator+=(PartialDec& self, unsigned int Value) { return IntAddOp(self, Value); }
-        friend PartialDec operator-=(PartialDec& self, unsigned int Value) { return IntSubOp(self, Value); }
-        friend PartialDec operator*=(PartialDec& self, unsigned int Value) { return self.UnsignedIntMultOp(Value); }
-        friend PartialDec operator/=(PartialDec& self, unsigned int Value) { return UnsignedDivOp(self, Value); }
+        friend PartialDec operator+=(PartialDec& self, unsigned _int64 Value) { return IntAddOp(self, Value); }
+        friend PartialDec operator-=(PartialDec& self, unsigned _int64 Value) { return IntSubOp(self, Value); }
+        friend PartialDec operator*=(PartialDec& self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend PartialDec operator/=(PartialDec& self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
         
         friend PartialDec operator+(PartialDec self, unsigned __int64 Value) { return IntAddOp(self, Value); }
         friend PartialDec operator-(PartialDec self, unsigned __int64 Value) { return IntSubOp(self, Value); }
@@ -1430,11 +1307,7 @@ public:
              *      - approximation of e^x in PartialDec precision
              */
              // Check that x is a valid input.
-#if !defined(AltNum_EnableMirroredSection)
-            assert(-709 < IntValue && IntValue < 709);
-#else
-            assert(IntValue.Value < 709);
-#endif
+            assert(IntValue < 709);
             // When x = 0 we already know e^x = 1.
             if (IsZero()) {
                 return One;
@@ -1483,10 +1356,6 @@ public:
             return x[0];
         }
 	#pragma endregion Log Functions
-
-    #pragma region Trigonomic Etc Functions
-	//Not Supported at moment
-    #pragma endregion Trigonomic Etc Functions
     };
 
     #pragma region ValueDefine Source

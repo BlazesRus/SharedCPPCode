@@ -963,7 +963,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static bool RightSideIntEqualTo(TinyUDec& LValue, IntType& RValue)
         {
             return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
@@ -975,7 +975,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool RightSideIntNotEqualTo(TinyUDec& LValue, IntType& RValue)
         {
             if (LValue.IntValue == RValue)
@@ -990,7 +990,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-		template<typename IntType>
+		template<IntegerType IntType=signed int>
         static bool RightSideIntLessThan(TinyUDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf == 0)
@@ -1016,7 +1016,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool RightSideIntLessThanOrEqual(TinyUDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf == 0)
@@ -1042,7 +1042,7 @@ public:
         /// <param name="LValue">The LValue.</param>
         /// <param name="RValue">The RValue.</param>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool RightSideIntGreaterThan(TinyUDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf == 0)
@@ -1068,7 +1068,7 @@ public:
         /// <param name="LValue">LeftSide TinyUDec RValue</param>
         /// <param name="RValue">RightSide integer RValue</param>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool RightSideIntGreaterThanOrEqual(TinyUDec& LValue, IntType& RValue)
         {
             if (LValue.DecimalHalf == 0)
@@ -1092,48 +1092,48 @@ public:
         /// Equal to operation between Integer Type and <see cref="TinyUDec"/> 
         /// </summary>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool LeftSideIntEqualTo(IntType& LValue, TinyUDec& RValue) { return RightSideIntEqualTo(RValue, LValue); }
 	
         /// <summary>
         /// Not equal to operation between Integer Type and <see cref="TinyUDec"/> 
         /// </summary>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool LeftSideIntNotEqualTo(IntType& LValue, TinyUDec& RValue) { return RightSideIntNotEqualTo(RValue, LValue); }
 		
         /// <summary>
         /// Less than operation between Integer Type and <see cref="TinyUDec"/> 
         /// </summary>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool LeftSideIntLessThan(IntType& LValue, TinyUDec& RValue) { return RightSideIntGreaterThan(RValue, LValue); }
 		
         /// <summary>
         /// Less than or equal operation between Integer Type and <see cref="TinyUDec"/> 
         /// </summary>
         /// <returns>bool</returns>
-	    template<typename IntType>
+	    template<IntegerType IntType=signed int>
         static bool LeftSideIntLessThanOrEqual(IntType& LValue, TinyUDec& RValue) { return RightSideIntGreaterThanOrEqual(RValue, LValue); }
 		
         /// <summary>
         /// Greater than operation between Integer Type and <see cref="TinyUDec"/> 
         /// </summary>
         /// <returns>bool</returns>
-		template<typename IntType>
+		template<IntegerType IntType=signed int>
         static bool LeftSideIntGreaterThan(IntType& LValue, TinyUDec& RValue) { return RightSideIntLessThan(RValue, LValue); }
 		
         /// <summary>
         /// Greater than or equal to operation between <see cref="TinyUDec"/> and Integer Type.
         /// </summary>
         /// <returns>bool</returns>
-		template<typename IntType>
+		template<IntegerType IntType=signed int>
         static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, TinyUDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void PartialIntDivOp(IntType& Value)
         {
             if (DecimalHalf == 0)
@@ -1207,7 +1207,7 @@ public:
         static TinyUDec PartialDiv(TinyUDec& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         TinyUDec& BasicIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -1226,7 +1226,7 @@ protected:
             return *this;
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         TinyUDec& BasicUnsignedIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -1266,7 +1266,7 @@ public:
         static TinyUDec BasicDiv(TinyUDec& self, unsigned long long Value) { TinyUDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
 //protected:
-//        template<typename IntType>
+//        template<IntegerType IntType=signed int>
 //        void BasicIntDivOpV2(IntType& Value)
 //        {
 //            if (IsZero())
@@ -1280,7 +1280,7 @@ public:
 //            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
 //        }
 //
-//        template<typename IntType>
+//        template<IntegerType IntType=signed int>
 //        void BasicUnsignedIntDivOpV2(IntType& Value)
 //        {
 //            if (IsZero())
@@ -1429,7 +1429,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntDivOp(IntType& Value)
         {
             if (Value < 0)
@@ -1658,7 +1658,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntDivOp(TinyUDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
 		/// <summary>
@@ -1884,7 +1884,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void PartialIntMultOp(IntType& Value)
         {
             if (DecimalHalf == 0)
@@ -1921,7 +1921,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void BasicIntMultOp(IntType& Value)
         {
             if (Value < 0)
@@ -1942,7 +1942,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         void BasicIntMultOpV2(IntType& Value)
         {
             if (IntValue == 0 && DecimalHalf == 0)
@@ -1953,7 +1953,7 @@ public:
                 PartialIntMultOp(Value);
         }
 
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntMultOpPt2(IntType& Value)
         {
             LRep = this->GetRepType();
@@ -2082,7 +2082,7 @@ public:
         }
 
         //IntMultOp without negative check
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& UnsignedIntMultOp(IntType& Value)
         {
             if (self == Zero||Value==1)
@@ -2099,7 +2099,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntMultOp(IntType& Value)
         {
             if (Value < 0)
@@ -2124,7 +2124,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntMultOp(TinyUDec& self, IntType& Value) { return self.IntMultOp(Value); }
 
         static TinyUDec& MultOp(TinyUDec& self, int& Value) { return self.IntMultOp(Value); }
@@ -2135,7 +2135,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& UnsignedMultOp(TinyUDec& self, IntType& Value)
         {
             if (self == Zero) {}
@@ -2228,7 +2228,7 @@ protected:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>TinyUDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntAddOp(IntType& value)
         {
             if (value == 0)
@@ -2282,7 +2282,7 @@ protected:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>TinyUDec&</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntAddOp(TinyUDec& self, IntType& value)
         {
             return self.IntAddOp(value);
@@ -2354,7 +2354,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntSubOp(IntType& value)
         {
             if (value == 0)
@@ -2408,7 +2408,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         static TinyUDec& IntSubOp(TinyUDec& self, IntType& value)
         {
             return self.IntSubOp(value);
@@ -2507,7 +2507,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec& operator+=(TinyUDec& self, int Value) { return IntAddOp(self, Value); }
 
         //friend TinyUDec operator+=(TinyUDec* self, int Value) { return IntAddOp(**self, Value); }
@@ -2544,7 +2544,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec& operator*=(TinyUDec& self, int Value) { return IntMultOp(self, Value); }
 
         ///// <summary>
@@ -2587,7 +2587,7 @@ public:
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
         ///// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec& operator+=(TinyUDec& self, signed long long Value) { return IntAddOp(self, Value); }
 
         /// <summary>
@@ -2620,7 +2620,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec operator*=(TinyUDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
@@ -2820,7 +2820,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec operator^(TinyUDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
@@ -2847,7 +2847,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        template<typename IntType>
+        template<IntegerType IntType=signed int>
         friend TinyUDec operator|(TinyUDec self, IntType Value)
         {
             if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }

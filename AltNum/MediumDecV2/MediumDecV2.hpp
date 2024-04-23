@@ -52,8 +52,8 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecV2 : public virtual MediumDecV2Base
     {
-    public:
-
+public:
+	#pragma region class_constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
@@ -76,6 +76,9 @@ namespace BlazesRusCode
             return *this;
         } const
 
+	#pragma endregion class_constructors
+
+protected:
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
@@ -401,6 +404,7 @@ namespace BlazesRusCode
 
     #pragma endregion RepType
 
+public:
     #pragma region PiNum Setters
 
     #pragma endregion PiNum Setters
@@ -408,6 +412,10 @@ namespace BlazesRusCode
     #pragma region ENum Setters
 
     #pragma endregion ENum Setters
+
+	#pragma region INum Setters
+
+	#pragma endregion INum Setters
 
     #pragma region Fractional Setters
 
@@ -437,6 +445,10 @@ namespace BlazesRusCode
 	
     #pragma endregion String Commands
 
+	#pragma region ConvertFromOtherTypes
+
+	#pragma endregion ConvertFromOtherTypes
+
     #pragma region ConvertToOtherTypes
 
     #pragma endregion ConvertToOtherTypes
@@ -452,6 +464,38 @@ namespace BlazesRusCode
     #pragma region Other RepType Conversion
 
     #pragma endregion Other RepType Conversion
+
+	#pragma region NormalRep Integer Division Operations
+
+	#pragma endregion NormalRep Integer Division Operations
+
+	#pragma region NormalRep Integer Multiplication Operations
+
+	#pragma endregion NormalRep Integer Multiplication Operations
+
+	#pragma region NormalRep Integer Addition Operations
+
+	#pragma endregion NormalRep Integer Addition Operations
+
+	#pragma region NormalRep Integer Subtraction Operations
+
+	#pragma endregion NormalRep Integer Subtraction Operations
+
+	#pragma region NormalRep Integer Bitwise Operations
+
+	#pragma endregion NormalRep Integer Bitwise Operations
+
+	#pragma region Mixed Fraction Operations
+
+	#pragma endregion Mixed Fraction Operations
+
+	#pragma region NormalRep AltNum Division Operations
+
+	#pragma endregion NormalRep AltNum Division Operations
+
+	#pragma region NormalRep AltNum Multiplication Operations
+
+	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region NormalRep AltNum Addition Operations
 
@@ -476,7 +520,23 @@ namespace BlazesRusCode
     #pragma region Other Subtraction Operations
 
     #pragma endregion Other Subtraction Operations
-    }
+
+	#pragma region Modulus Operations
+    //Modulus functions and overrides go here
+	#pragma endregion Modulus Operations
+
+    #pragma region Main Operator Overrides
+    //Operator overrides for /*+- go here
+    #pragma endregion Main Operator Overrides
+
+    #pragma region Other Operators
+    //Operators such as prefix operator go here
+    #pragma region Other Operators
+
+    #pragma region Math/Trigonomic Etc Functions
+
+    #pragma endregion Math/Trigonomic Etc Functions
+    };
     #pragma region String Function Source
 
     #pragma endregion String Function Source
