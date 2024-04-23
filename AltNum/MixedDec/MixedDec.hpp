@@ -38,9 +38,10 @@
 	#include "..\AltFloat.hpp"
 #endif
 #if defined(MixedDec_EnableRestrictedFloat)
-//Int 128 needed to extract trailing digits lost from division and multiplication
-#include <boost/multiprecision/cpp_int.hpp>
-#include <boost/rational.hpp>//For reducing fractional
+	//Int 128 needed to extract trailing digits lost from division and multiplication
+	#include <boost/multiprecision/cpp_int.hpp>
+	#include <boost/rational.hpp>//For reducing fractional
+	#include "..\PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
 #endif
 
 namespace BlazesRusCode
@@ -288,7 +289,7 @@ public:
 
 	#pragma region Trailing Digit Extraction
 	
-		unsigned int FindSignifNumFromRem(const _int64& TruncatedDigits, const unsigned _int64& RangeLimit)
+		unsigned int FindSignifNumFromRem(const _int64& TruncatedDigits, const PartialDec& RangeLimit)
 		{
 			//To-Do:Find SignifNum
 			boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
@@ -333,10 +334,9 @@ public:
 			else
 			{
 				//Automatically cyclying through the exponent ranges
-				AltDec TruncatedDigitsAsAltDec = TruncatedDigits;
-				AltDec RangeLimit = SubExp5Range;
-				std::strong_ordering RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
-				for(unsigned int Exp = 5;RangeComparison>RangeLimit;++Exp)
+				PartialDec TruncatedDigitsAsAltDec = TruncatedDigits;
+				PartialDec RangeLimit = SubExp5Range;
+				for(unsigned int Exp = 5;TruncatedDigits>RangeLimit;++Exp)
 				{
 					if(TruncatedDigits==RangeLimit)
 					{
@@ -351,7 +351,6 @@ public:
 						return;
 					}
 					RangeLimit.DivideByTwo();
-					RangeComparison = TruncatedDigitsAsAltDec.UnsignedSimpleCompareWith(RangeLimit);
 				}
 			}
 		}

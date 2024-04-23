@@ -590,166 +590,65 @@ public:
     #pragma endregion E Conversion
 	
     #pragma region Other RepType Conversion
-    //Functions only used in variants of MediumDec
-
-/*      //To-Do: Test cost of making virtual vs alternative means of making sure uses updated code after derivation    
-
-        virtual void ConvertToNormType(const RepType& repType){}
-
-protected:
-		//Returns value as normal type representation
-        template<MediumDecVariant VariantType=PartialDec>
-        VariantType ConvertAsNormTypeV1(const RepType& repType)
-        {
-            VariantType Res = *this;
-            Res.ConvertToNormType(repType);
-            return Res;
-        }
-*/
-		
-public:
-/*
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormType = PartialDec::ConvertAsNormTypeV1<PartialDec>;
-
-        //Converts value to normal type representation
-        void ConvertToNormTypeV2()
-        {
-            RepType repType = GetRepType();
-            ConvertToNormType(repType);
-        }
-*/
-
-protected:
-		//Returns value as normal type representation
-        template<MediumDecVariant VariantType=PartialDec>
-        VariantType AutoConvertAsNormType()
-        {
-            VariantType Res = *this;
-            Res.ConvertToNormTypeV2();
-            return Res;
-        }
-public:
-/*
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormTypeV2 = PartialDec::AutoConvertAsNormType<PartialDec>;
-*/
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
 protected:
-		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=PartialDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-	#if defined(AltNum_EnableMirroredSection)
-			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
-				return SignCmp;
-			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
-				return IntHalfCmp;
-			int lVal; int rVal;
-	#else
-			int lVal = IntValue==NegativeZero?0:IntValue;
-			int rVal = that.IntValue==NegativeZero?0:that.IntValue;
-	#endif
-			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
-			rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
-	#else
-			lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-	#endif
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-#if defined(AltNum_EnableMirroredSection)
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-		template<MediumDecVariant VariantType=PartialDec>
-		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
-				return IntHalfCmp;
-
-			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			int lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
-			int rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
-	#else
-			int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-	#endif
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-#endif
-	
-		//Compare only as if in NormalType representation mode
-        constexpr auto BasicComparison = PartialDec::BasicComparisonV1<PartialDec>;
-		
-#if defined(AltNum_EnableMirroredSection)
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-        constexpr auto BasicComparisonV2 = PartialDec::BasicComparisonWithoutSignCheck<PartialDec>;
-#endif
 		
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const
 		{
-	#if defined(AltNum_EnableMirroredSection)
-			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
-				return SignCmp;
 			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
-			int lVal;
-	#else
-			int lVal = IntValue==NegativeZero?0:IntValue;
-	#endif
-			if (auto IntHalfCmp = lVal <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			lVal = DecimalHalf>0?1:0;
-	#else
-			lVal = DecimalHalf.Value>0?1:0;
-	#endif
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+			if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
-		
-#if defined(AltNum_EnableMirroredSection)
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-		std::strong_ordering BasicIntComparisonV2(const int& that) const
+
+		//Compare only as if in NormalType representation mode
+		std::strong_ordering BasicComparison(const PartialDec& that) const
 		{
-			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
+			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
 				return IntHalfCmp;
-			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			int lVal = DecimalHalf>0?1:0;
-	#else
-			int lVal = DecimalHalf.Value>0?1:0;
-	#endif
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+			if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
-#endif
 	
 public:
 
 		std::strong_ordering operator<=>(const PartialDec& that) const
 		{
-			return BasicComparison(that);
+            if(ExtraRep!=0)
+            {
+                PartialDec lValue = *this;
+                lValue.BasicIntDivOp(ExtraRep);
+                if(that.ExtraRep!=0){
+                    PartialDec rValue = that;
+                    rValue.BasicIntDivOp(that.ExtraRep);
+			        return lValue.BasicComparison(rValue);
+                }
+                else
+			        return lValue.BasicComparison(that);
+            }
+            else if(that.ExtraRep!=0)
+            {
+                PartialDec rValue = that;
+                rValue.BasicIntDivOp(that.ExtraRep);
+                return BasicComparison(rValue);
+            }
+            else
+                return BasicComparison(that);
 		}
 
 		std::strong_ordering operator<=>(const int& that) const
 		{
-			return BasicIntComparison(that);
+            if(ExtraRep!=0)
+            {
+                PartialDec lValue = *this;
+                lValue.BasicIntDivOp(ExtraRep);
+			    return lValue.BasicIntComparison(that);
+            }
+            else
+			    return BasicIntComparison(that);
 		}
 
 		bool operator==(const int& that) const
