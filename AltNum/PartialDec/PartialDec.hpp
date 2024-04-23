@@ -674,88 +674,22 @@ protected:
         template<IntegerType IntType=unsigned int>
         void PartialUIntDivOp(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
-#if !defined(AltNum_EnableMirroredSection)
-            bool ResIsNegative = IntValue < 0;
-#endif
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
             unsigned _int64 IntHalfRes;
             unsigned _int64 DecimalRes;
-#if !defined(AltNum_EnableMirroredSection)
-            if(DecimalHalf == 0)
-                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
-            else
-            {
-                if (ResIsNegative)
-                {
-                    if(IntValue==NegativeRep)
-    #if defined(AltNum_UseIntForDecimalHalf)
-                        SelfRes = DecimalHalf;
-    #else
-                        SelfRes = DecimalHalf.Value;
-    #endif
-                    else
-    #if defined(AltNum_UseIntForDecimalHalf)
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
-    #else
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
-    #endif
-                }
-                else
-    #if defined(AltNum_UseIntForDecimalHalf)
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
-    #else
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
-    #endif
-            }
-#else
-    #if defined(AltNum_UseIntForDecimalHalf)
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
-    #else
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
-    #endif
-#endif
+            
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue: DecimalOverflowX * IntValue + DecimalHalf;
             Res = SelfRes / rValue;
+            
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-#if !defined(AltNum_EnableMirroredSection)
-			if(ResIsNegative)
-			{
-				IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
-				DecimalHalf = (int) DecimalRes;
-			}
-			else
-			{
-				IntValue = (int)IntHalfRes;
-				DecimalHalf = DecimalRes;
-			}
-#else
-		    IntValue.Value = (unsigned int)IntHalfRes;
-    #if defined(AltNum_UseIntForDecimalHalf)
+		    IntValue = (unsigned int)IntHalfRes;
 			DecimalHalf = DecimalRes;
-    #else
-			DecimalHalf.Value = DecimalRes;
-    #endif
-#endif
-        }
-
-        template<typename IntType=int>
-        void PartialIntDivOp(const IntType& Value)
-        {
-            if(Value<0)
-            {
-#if defined(AltNum_EnableMirroredSection)
-                SwapNegativeStatus();
-#endif
-                PartialUIntDivOp(-Value);
-            }
-            else
-                PartialUIntDivOp(Value);
         }
 
 protected:
-        template<MediumDecVariant VariantType=PartialDec, typename IntType>
-        VariantType& BasicUIntDivOpV1(IntType& Value)
+        PartialDec& BasicUIntDivOp(IntType& Value)
         {
             if (Value == 0)
             {
@@ -768,30 +702,24 @@ protected:
             return *this;
         }
 		
-        template<MediumDecVariant VariantType=PartialDec, typename IntType>
-        VariantType& BasicIntDivOpV1(IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
-            return *this;
-        }
 public:
-/*
-        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<PartialDec, IntType>;
-		
-        constexpr auto BasicIntDivOp = BasicIntDivOpV1<PartialDec, IntType>;
+        void DivideByTwo()
+        {
+            if(ExtraRep==0)
+                ExtraRep = 2;
+            else if(ExtraRep<=2147483648)
+                ExtraRep *= 2;
+            else
+            {
+                rValue.BasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
+            }
 
-		virtual void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		virtual void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		virtual void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        virtual void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
-*/
+        }
+
+		void BasicIntDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
+        void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+
     #pragma endregion NormalRep Integer Division Operations
 		
     #pragma region NormalRep Integer Multiplication Operations

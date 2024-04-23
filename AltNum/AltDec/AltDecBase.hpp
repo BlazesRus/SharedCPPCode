@@ -1782,6 +1782,20 @@ protected:
         constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
 
 public:
+        void DivideByTwo()
+        {
+			//To-Do:Adjust code for including power of and mixed fractions
+            if(ExtraRep==0)
+                ExtraRep = 2;
+            else if(ExtraRep<=2147483648)
+                ExtraRep *= 2;
+            else
+            {
+                BasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
+            }
+        }
+
         /// <summary>
         /// Basic Division Operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
