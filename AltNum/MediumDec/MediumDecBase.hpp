@@ -1132,30 +1132,36 @@ protected:
             if (DecimalHalf == 0)
                 IntValue *= rValue;
             else
-            {
-		#if defined(AltNum_EnableMirroredSection)
-			#if defined(AltNum_UseIntForDecimalHalf)
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
-			#else
-                __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
-			#endif
-		#else
+			{
+		#if !defined(AltNum_EnableMirroredSection)
+                bool SelfIsNegative = IntValue < 0;
+                if (SelfIsNegative)
+                {
+                    if (IntValue == NegativeRep) { IntValue = 0; }
+                    else { IntValue *= -1; }
+                }
 			#if defined(AltNum_UseIntForDecimalHalf)
                 __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
 			#else
                 __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue + DecimalHalf.Value;
 			#endif
-		#endif
+        #else
+			#if defined(AltNum_UseIntForDecimalHalf)
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
+			#else
+                __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+			#endif
+        #endif
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
 		#if defined(AltNum_EnableMirroredSection)
-                    IntValue = (signed int)OverflowVal;
-		#else
+                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+        #else
                     IntValue.Value = (unsigned int)OverflowVal;
-		#endif
+        #endif
 		#if defined(AltNum_UseIntForDecimalHalf)
                     DecimalHalf = (signed int)SRep;
 		#else
