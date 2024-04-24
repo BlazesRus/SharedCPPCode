@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -846,14 +846,14 @@ public:
 */
 
 protected:
-		//Returns value as normal type representation
-        template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType AutoConvertAsNormType()
-        {
-            VariantType Res = *this;
-            Res.ConvertToNormTypeV2();
-            return Res;
-        }
+		////Returns value as normal type representation
+  //      template<MediumDecVariant VariantType=MediumDecBase>
+  //      VariantType AutoConvertAsNormType()
+  //      {
+  //          VariantType Res = *this;
+  //          Res.ConvertToNormTypeV2();
+  //          return Res;
+  //      }
 public:
 /*
 		//Returns value as normal type representation
@@ -1090,7 +1090,8 @@ protected:
             else if (IsZero())
                 return;
             PartialUIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (IntValue == 0 && DecimalHalf == 0)
+				DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
         }
 		
@@ -1104,28 +1105,17 @@ protected:
             else if (IsZero())
                 return;
             PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (IntValue == 0 && DecimalHalf == 0)
+				DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
         }
 public:
-        void DivideByTwo()
-        {
-            if(IntValue^1==1)//Check if number is odd
-                rValue.BasicIntDivOp(2);
-            else
-                IntValue /= 2;
-        }
 
-/*
-        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<MediumDecBase, IntType>;
-		
-        constexpr auto BasicIntDivOp = BasicIntDivOpV1<MediumDecBase, IntType>;
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned int&>;
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<MediumDecBase, const signed int&>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned long long&>;
+        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<MediumDecBase, const signed long long&>;
 
-		virtual void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
-		virtual void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		virtual void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        virtual void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
-*/
     #pragma endregion NormalRep Integer Division Operations
 		
     #pragma region NormalRep Integer Multiplication Operations
@@ -1179,15 +1169,11 @@ protected:
             return *this;
         }
 public:
-/*
-        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned int&>;
-		
-        constexpr auto BasicIntMultOp = BasicIntMultOpV1<MediumDecBase, const signed int&>;
 
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned int&>;
+        constexpr auto BasicIntMultOp = BasicIntMultOpV1<MediumDecBase, const signed int&>;
         constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned long long&>;
-		
         constexpr auto BasicInt64MultOp = BasicIntMultOpV1<MediumDecBase, const signed long long&>;
-*/
 		
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -1195,30 +1181,24 @@ public:
 protected:
 	
 public:
-/*
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int&>;
-		
-        constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int&>;
 
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int&>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int&>;
         constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned long long&>;
-		
         constexpr auto BasicInt64AddOp = BasicIntAddOpV1<MediumDecBase, const signed long long&>;
-*/
+		
 	#pragma endregion NormalRep Integer Addition Operations
 
 	#pragma region NormalRep Integer Subtraction Operations
 protected:
 	
 public:
-/*
-        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int&>;
-		
-        constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int&>;
 
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int&>;
+        constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int&>;
         constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned long long&>;
-		
         constexpr auto BasicInt64SubOp = BasicIntSubOpV1<MediumDecBase, const signed long long&>;
-*/
+
 	#pragma endregion NormalRep Integer Subtraction Operations
 
 	#pragma region NormalRep AltNum Division Operations
