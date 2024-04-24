@@ -1782,19 +1782,6 @@ protected:
         constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
 
 public:
-        void DivideByTwo()
-        {
-			//To-Do:Adjust code for including power of and mixed fractions
-            if(ExtraRep==0)
-                ExtraRep = 2;
-            else if(ExtraRep<=2147483648)
-                ExtraRep *= 2;
-            else
-            {
-                BasicIntDivOp(65536);//Divided by 2^16
-                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
-            }
-        }
 
         /// <summary>
         /// Basic Division Operation between MediumDec Variant and Integer value 
@@ -2106,9 +2093,35 @@ public:
 
     #pragma region Other Division Operations
 
+        void DivideByTwo()
+        {
+			//To-Do:Adjust code for including power of and mixed fractions
+            if(ExtraRep==0)
+                ExtraRep = 2;
+            else if(ExtraRep<=1073741823)
+                ExtraRep *= 2;
+	#if defined(AltNum_EnableMirroredSection)
+			else if(DecimalHalf==0&&IntValue.Value^1==0)//Check if even whole number
+				IntValue /= 2;
+	#endif
+            else
+            {
+                BasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
+            }
+        }
+
 	#pragma endregion Other Division Operations	
 
     #pragma region Other Multiplication Operations
+
+        void MultiplyByTwo()
+        {
+			if(ExtraRep^1==0)
+				ExtraRep /= 2;
+			else
+				BasicIntDivOp(2);
+        }
 
     #pragma endregion Other Multiplication Operations
 

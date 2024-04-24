@@ -719,16 +719,16 @@ public:
 
     #pragma region Other RepType Conversion
 
-        constexpr auto ConvertToNormType = MediumDecBase::ConvertToNormType;
-
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormType = MediumDecBase::ConvertAsNormType<MediumDec>;
-
-        //Converts value to normal type representation
-        constexpr auto ConvertToNormTypeV2 = MediumDecBase::ConvertToNormTypeV2;
-
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormTypeV2 = MediumDecBase::ConvertAsNormTypeV2<MediumDec>;
+//        constexpr auto ConvertToNormType = MediumDecBase::ConvertToNormType;
+//
+//		//Returns value as normal type representation
+//        constexpr auto ConvertAsNormType = MediumDecBase::ConvertAsNormType<MediumDec>;
+//
+//        //Converts value to normal type representation
+//        constexpr auto ConvertToNormTypeV2 = MediumDecBase::ConvertToNormTypeV2;
+//
+//		//Returns value as normal type representation
+//        constexpr auto ConvertAsNormTypeV2 = MediumDecBase::ConvertAsNormTypeV2<MediumDec>;
 
     #pragma endregion Other RepType Conversion
 

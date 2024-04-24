@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -93,7 +93,7 @@ protected:
 		RepTypeUnderlayer InfTypeFlag = 64;
 		//Bitflag 08= Undefined/NaN/Nil
 		RepTypeUnderlayer UndefinedBit = 128;
-	protected:
+
         /// <summary>
         /// The decimal overflow
         /// </summary>
@@ -1475,9 +1475,24 @@ public:
 
 	#pragma region Other Division Operations
 
+		//Simplified division by 2 operation(to reduce cost of dividing)
+        void DivideByTwo()
+        {
+            if(IntValue^1==1)//Check if number is odd
+                rValue.BasicIntDivOp(2);
+            else
+                IntValue /= 2;
+        }
+
 	#pragma endregion Other Division Operations	
 
 	#pragma region Other Multiplication Operations
+
+		//Simplified multiplication by 2 operation(to reduce cost of multiplication)
+        void MultipleByTwo()
+        {
+			//Add Code 
+        }
 
 	#pragma endregion Other Multiplication Operations
 
