@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -55,11 +55,11 @@ namespace BlazesRusCode
 	// (or optionally larger floating point models if preprocessor flag is set to toggle)
 	class DLL_API MixedDec:
 #ifdef MixedDec_DeriveFromAltDec
-    public virtual AltDecBase
+    public AltDecBase
 #elif MixedDec_DeriveFromMediumDecV2
-    public virtual MediumDecV2Base
+    public MediumDecV2Base
 #else
-    public virtual MediumDecBase
+    public MediumDecBase
 #endif
     {
 protected:
@@ -745,7 +745,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        virtual RepType GetRepType()
+        RepType GetRepType()
         {
 #if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
@@ -973,7 +973,7 @@ public:
 
     #pragma region PiNum Setters
     #if defined(MixedDec_EnablePiRep)
-        virtual void SetPiVal(const MediumDec& Value)
+        void SetPiVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -989,7 +989,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetPiVal(const MediumDecV2& Value)
+        void SetPiVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1006,7 +1006,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetPiVal(const AltDec& Value)
+        void SetPiVal(const AltDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1023,8 +1023,7 @@ public:
             SetTrailingDigitAsZero();
         }
         
-        template<MediumDecVariant VariantType=AltDecBase>
-        void SetPiValV0(const VariantType& Value)
+        void SetPiVal(const MixedDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1038,10 +1037,10 @@ public:
             ExtraRep = Value.ExtraRep;
             #endif
         #endif
-            SetTrailingDigitAsZero();
+            TrailingDigits = Value.TrailingDigits;
         }
 
-        virtual void SetPiValFromInt(const int& Value)
+        void SetPiValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
@@ -1063,7 +1062,7 @@ public:
 
     #pragma region ENum Setters
     #if defined(AltNum_EnableERep)
-        virtual void SetEVal(const MediumDec& Value)
+        void SetEVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1079,7 +1078,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetEVal(const MediumDecV2& Value)
+        void SetEVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1096,7 +1095,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetEVal(const AltDec& Value)
+        void SetEVal(const AltDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1113,8 +1112,7 @@ public:
             SetTrailingDigitAsZero();
         }
         
-        template<MediumDecVariant VariantType=AltDecBase>
-        void SetEValV0(const VariantType& Value)
+        void SetEVal(const MixedDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1128,10 +1126,10 @@ public:
             ExtraRep = Value.ExtraRep;
             #endif
         #endif
-            SetTrailingDigitAsZero();
+            TrailingDigits = Value.TrailingDigits;
         }
 
-        virtual void SetEValFromInt(const int& Value)
+        void SetEValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
@@ -1153,7 +1151,7 @@ public:
 
     #pragma region INum Setters
     #if defined(AltNum_EnableIRep)
-        virtual void SetIVal(const MediumDec& Value)
+        void SetIVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1169,7 +1167,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetIVal(const MediumDecV2& Value)
+        void SetIVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1186,7 +1184,7 @@ public:
             SetTrailingDigitAsZero();
         }
 
-        virtual void SetIVal(const AltDec& Value)
+        void SetIVal(const AltDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1203,8 +1201,7 @@ public:
             SetTrailingDigitAsZero();
         }
         
-        template<MediumDecVariant VariantType=AltDecBase>
-        void SetIValV0(const VariantType& Value)
+        void SetIVal(const MixedDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -1218,10 +1215,10 @@ public:
             ExtraRep = Value.ExtraRep;
             #endif
         #endif
-            SetTrailingDigitAsZero();
+            TrailingDigits = Value.TrailingDigits;
         }
 
-        virtual void SetIValFromInt(const int& Value)
+        void SetIValFromInt(const int& Value)
         {
         #if defined(AltNum_InableMirroredSection)
             if(Value<0)
@@ -1363,7 +1360,13 @@ public:
 
         static MixedDec JustAboveZeroValue()
         {
-            MixedDec NewSelf = MixedDec(0, 1);
+	#if defined(MixedDec_EnableRestrictedFloat)
+            MixedDec NewSelf = MixedDec(0, 0, RestrictedFloat::Epsilon);
+	#elif defined(MixedDec_EnableAltFloat)
+            MixedDec NewSelf = MixedDec(0, 0, AltFloat::Epsilon);
+	#else//https://en.wikipedia.org/wiki/Machine_epsilon
+            MixedDec NewSelf = MixedDec(0, 0, float.Epsilon);//float.Epsilon = Just before zero
+	#endif
             return NewSelf;
         }
 
@@ -2262,14 +2265,55 @@ public:
 		}
     #pragma endregion Comparison Operators
 
-#if defined(MixedDec_StoreTrailingInFloat)
 	//Use remainder from multiplication or division to set trailing digits
-	void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
+	void SetTrailingDigitsFromRem(const _int64& TruncatedDigits)
 	{
+	#if !defined(MixedDec_StoreTrailingInFloat)
 		TrailingDigits.SetTrailingDigitFromRem(TruncatedDigits);
+	#else
+		//Add code here later
+	#endif
 	}
-#endif
+	
+	//Returns remainder as alternative floating point equivalant
+	#if defined(MixedDec_EnableAltFloat)
+	AltFloat
+	#else
+	RestrictedFloat
+	#endif
+	TrailingDigitsFromRem(const _int64& TruncatedDigits)
+	{
+	#if defined(MixedDec_EnableAltFloat)
+		AltFloat trailingCalculation;
+	#elif defined(MixedDec_EnableAltFloat)
+		RestrictedFloat trailingCalculation;
+	#else
+		float trailingCalculation;
+	#endif
+	#if !defined(MixedDec_StoreTrailingInFloat)
+		trailingCalculation.SetTrailingDigitFromRem(TruncatedDigits);
+	#else
+		//find the exponent for floating point using Frac.denominator() (Exponent field will be negative)
+		
+		//Add code here later
+	#endif
+		return trailingCalculation;
+	}
+
 	#pragma region Division Operations
+#if defined(MixedDec_EnableAltFloat)
+        //Division by AltFloat Operation
+        void TrailingDigitsDivOp(const AltFloat& rValue)
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void TrailingDigitsDivOp(const RestrictedFloat& rValue)
+#else
+        void TrailingDigitsDivOp(const float& rValue)
+#endif
+		{
+			//Add code here
+		}
+	
+	
 protected:
         //Version of PartialUIntDivOp that returns TruncatedDigits
         template<IntegerType IntType=int>
@@ -2388,14 +2432,15 @@ public:
 		#if defined(MixedDec_StoreTrailingInFloat)
 		#else
 					//find the exponent for floating point using Frac.denominator() (Exponent field will be negative)
-					SetTrailingDigitFromRem(
+					SetTrailingDigitsFromRem(TruncatedDigits);
 		#endif
 				}
 				else
 				{
-					//To-Do:Add TruncatedDigits into Trailing Digits
 		#if defined(MixedDec_StoreTrailingInFloat)
+					//Add code here later
 		#else
+					TrailingDigitsDivOp(TrailingDigitsFromRem);
 		#endif
 				}
 			}
@@ -2417,28 +2462,17 @@ public:
             }
             else if (IsZero())
                 return;
-            unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
+            unsigned _int64 TruncatedDigits = TrailingIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
 				if(TrailingDigits==0)
 		#endif
-				{
-					//To-Do:Initialize TruncatedDigits into Trailing Digits
-		#if defined(MixedDec_StoreTrailingInFloat)
-		#else
-		#endif
-				}
+					SetTrailingDigitsFromRem(TruncatedDigits);
 				else
-				{
-					//To-Do:Add TruncatedDigits into Trailing Digits
-		#if defined(MixedDec_StoreTrailingInFloat)
-		#else
-		#endif
-				}
+					TrailingDigitsDivOp(TrailingDigitsFromRem);
 			}
             return *this;
         }
@@ -2535,25 +2569,14 @@ public:
             unsigned _int64 TruncatedDigits = TrailingUIntMultOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
 				if(TrailingDigits==0)
 		#endif
-				{
-					//To-Do:Initialize TruncatedDigits into Trailing Digits
-		#if defined(MixedDec_StoreTrailingInFloat)
-		#else
-		#endif
-				}
+					SetTrailingDigitsFromRem(TruncatedDigits);
 				else
-				{
-					//To-Do:Add TruncatedDigits into Trailing Digits
-		#if defined(MixedDec_StoreTrailingInFloat)
-		#else
-		#endif
-				}
+					TrailingDigitsDivOp(TrailingDigitsFromRem);
 			}
             return *this;
         }
@@ -2572,10 +2595,9 @@ public:
 				SetAsZero();
 				return *this;
 			}
-            unsigned _int64 TruncatedDigits = TrailingUIntDivOp(Value);
+            unsigned _int64 TruncatedDigits = TrailingIntDivOp(Value);
 			if(TruncatedDigits!=0)
 			{
-				boost::rational<unsigned _int64>(TruncatedDigits, TruncMultAsInt) Frac;
 		#if defined(MixedDec_StoreTrailingInFloat)
 				if(TrailingDigits==0.0f)
 		#else
@@ -2585,13 +2607,16 @@ public:
 					//To-Do:Initialize TruncatedDigits into Trailing Digits
 		#if defined(MixedDec_StoreTrailingInFloat)
 		#else
+					//find the exponent for floating point using Frac.denominator() (Exponent field will be negative)
+					SetTrailingDigitsFromRem(TruncatedDigits);
 		#endif
 				}
 				else
 				{
-					//To-Do:Add TruncatedDigits into Trailing Digits
 		#if defined(MixedDec_StoreTrailingInFloat)
+					//Add code here later
 		#else
+					TrailingDigitsDivOp(TrailingDigitsFromRem);
 		#endif
 				}
 			}
@@ -2631,26 +2656,26 @@ public:
 #endif
 		}
 		
-#if defined(MixedDec_EnableAltFloat)
-        //Multiply by AltFloat Operation
-        void AltFloatMultByOp(const AltFloat& rValue)
-		{
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-	#else
-		// lValue *(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
-		#if defined(AltFloat_ExtendedRange)
-		#else
-		#endif
-	#endif
-		}
-#elif defined(MixedDec_EnableRestrictedFloat)
-        void RestrictedFloatMultByOp(const RestrictedFloat& rValue)
-		{
-		}
-#endif
+		//Simplified multiplication by 2 operation(to reduce cost of multiplication)
+        void MultipleByTwo()
+        {
+			//Add Code 
+        }
+		
 	#pragma endregion Multiplication Operations
 
 	#pragma region Addition Operations
+#if defined(MixedDec_EnableAltFloat)
+        void TrailingDigitsAddOp(const AltFloat& rValue)
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void TrailingDigitsAddOp(const RestrictedFloat& rValue)
+#else
+        void TrailingDigitsAddOp(const float& rValue)
+#endif
+		{
+			//Add code here
+		}
+	
         //Addition by Integer Operation
         template<IntegerType IntType=int>
         void AddByIntOp(const IntType& rValue)
@@ -2676,23 +2701,6 @@ public:
 			//Add Code here later
 		}
 		
-#if defined(MixedDec_EnableAltFloat)
-        //Addition by AltFloat Operation
-        void AltFloatAddByOp(const AltFloat& rValue)
-		{
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-	#else
-		// lValue +(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
-		#if defined(AltFloat_ExtendedRange)
-		#else
-		#endif
-	#endif
-		}
-#elif defined(MixedDec_EnableRestrictedFloat)
-        void RestrictedFloatAddByOp(const RestrictedFloat& rValue)
-		{
-		}
-#endif
 	#pragma endregion Addition Operations
 	
 	#pragma region Subtraction Operations
@@ -2721,23 +2729,6 @@ public:
 			//Add Code here later
 		}
 		
-#if defined(MixedDec_EnableAltFloat)
-        //Subtraction by AltFloat Operation
-        void AltFloatSubtractByOp(const AltFloat& rValue)
-		{
-	#if defined(AltFloat_DontUseBitfieldInSignif)
-	#else
-		// lValue -(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
-		#if defined(AltFloat_ExtendedRange)
-		#else
-		#endif
-	#endif
-		}
-#elif defined(MixedDec_EnableRestrictedFloat)
-        void RestrictedFloatSubtractByOp(const RestrictedFloat& rValue)
-		{
-		}
-#endif
 	#pragma endregion Subtraction Operations
 	
 	#pragma region Modulus Operations
