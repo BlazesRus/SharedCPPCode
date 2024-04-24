@@ -1434,8 +1434,8 @@ public:
             return MixedDec(MinIntValue, 999999999, RestrictedFloat::JustBeforeOne);
 	#elif defined(MixedDec_EnableAltFloat)
             return MixedDec(MinIntValue, 999999999, AltFloat::JustBeforeOne);
-	#else//Add Value of ApproachingOne in float field later
-            return MixedDec(MinIntValue, 999999999);
+	#else
+            return MixedDec(MinIntValue, 999999999, 1.0f - float.Epsilon);
 	#endif
         }
 
@@ -1445,8 +1445,8 @@ public:
             return MixedDec(MaxIntValue, 999999999, RestrictedFloat::JustBeforeOne);
 	#elif defined(MixedDec_EnableAltFloat)
             return MixedDec(MaxIntValue, 999999999, AltFloat::JustBeforeOne);
-	#else//Add Value of ApproachingOne in float field later
-            return MixedDec(MaxIntValue, 999999999);
+	#else
+            return MixedDec(MaxIntValue, 999999999, 1.0f - float.Epsilon);
 	#endif
         }
 public:
