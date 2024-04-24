@@ -1120,11 +1120,63 @@ public:
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-        template<IntegerType IntType=signed int>
-        void PartialUIntMultOp(const IntType& Value)
+		/// <summary>
+        /// Partial Multiplication Operation Between MediumDecBase and unsigned Integer Value
+        /// (Modifies owner object) 
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        template<typename IntType=int>
+        void PartialUIntMultOp(const IntType& rValue)
         {
-			//Update this code
-		}
+            if (DecimalHalf == 0)
+                IntValue *= rValue;
+            else
+            {
+		#if defined(AltNum_EnableMirroredSection)
+			#if defined(AltNum_UseIntForDecimalHalf)
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
+			#else
+                __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+			#endif
+		#else
+			#if defined(AltNum_UseIntForDecimalHalf)
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+			#else
+                __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue + DecimalHalf.Value;
+			#endif
+		#endif
+                SRep *= rValue;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+		#if defined(AltNum_EnableMirroredSection)
+                    IntValue = (signed int)OverflowVal;
+		#else
+                    IntValue.Value = (unsigned int)OverflowVal;
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+                    DecimalHalf = (signed int)SRep;
+		#else
+                    DecimalHalf.Value = (unsigned int)SRep;
+		#endif
+                }
+                else
+                {
+		#if !defined(AltNum_EnableMirroredSection)
+                    IntValue = SelfIsNegative ? NegativeRep : 0;
+		#else
+					IntValue.Value = 0;
+		#endif
+		#if defined(AltNum_UseIntForDecimalHalf)
+                    DecimalHalf = (signed int)SRep;
+		#else
+                    DecimalHalf.Value = (unsigned int)SRep;
+		#endif
+                }
+            }
+        }
 		
         template<IntegerType IntType=signed int>
         void PartialIntMultOp(const IntType& Value)
