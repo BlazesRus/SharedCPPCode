@@ -466,16 +466,12 @@ public:
 
         static MediumDec MinimumValue()
         {
-#if !defined(AltNum_EnableMirroredSection)
-            return MediumDec(-2147483647, 999999999);
-#else
-            return MediumDec(MirroredInt(2147483647,0), 999999999);
-#endif
+            return MediumDec(MinIntValue, 999999999);
         }
 
         static MediumDec MaximumValue()
         {
-            return MediumDec(2147483647, 999999999);
+            return MediumDec(MaxIntValue, 999999999);
         }
 public:
         static MediumDec AlmostOne;

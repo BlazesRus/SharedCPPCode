@@ -425,7 +425,7 @@ public:
         /// </summary>
         virtual void SetAsMaximum()
         {
-            IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+            IntValue = MaxIntValue; DecimalHalf = 999999999; ExtraRep = 0;
         }
 
         /// <summary>
@@ -433,7 +433,7 @@ public:
         /// </summary>
         virtual void SetAsMinimum()
         {
-            IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+            IntValue = MinIntValue; DecimalHalf = 999999999; ExtraRep = 0;
         }
 
     #pragma endregion RangeLimits

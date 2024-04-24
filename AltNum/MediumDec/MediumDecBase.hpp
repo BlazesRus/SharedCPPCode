@@ -108,6 +108,20 @@ protected:
         /// The decimal overflow value * -1
         /// </summary>
 		static signed _int64 const NegDecimalOverflowX = -1000000000;
+		
+		//Maximum IntValue that can be stored inside IntValue field
+	#if defined(AltNum_EnableMirroredSection)
+        static MirroredInt const MaxIntValue;
+	#else
+        static signed int const MaxIntValue = 2147483647;
+	#endif
+	
+		//Minimum IntValue that can be stored inside IntValue field
+	#if defined(AltNum_EnableMirroredSection)
+        static MirroredInt const MinIntValue;
+	#else
+        static signed int const MinIntValue = -2147483647;
+	#endif
 	public:
 
         /// <summary>
@@ -275,22 +289,18 @@ public:
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        virtual void SetAsMaximum()
+        void SetAsMaximum()
         {
-            IntValue = 2147483647;
+            IntValue = MaxIntValue;
 			DecimalHalf = 999999999;
         }
 
         /// <summary>
         /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        virtual void SetAsMinimum()
+        void SetAsMinimum()
         {
-		#if defined(AltNum_EnableMirroredSection)
-			IntValue = MirroredInt(2147483647,0);
-		#else
-            IntValue = -2147483647;
-		#endif
+            IntValue = MinIntValue;
 			DecimalHalf = 999999999;
         }
 	
@@ -3211,7 +3221,11 @@ public:
     };
 
     #pragma region ValueDefine Source
-
+#if defined(AltNum_EnableMirroredSection)
+	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
+	MirroredInt MediumDec::MaxIntValue = MirroredInt::Maximum;
+	MirroredInt MediumDec::MinIntValue = MirroredInt::Minimum;
+#endif
     #pragma endregion ValueDefine Source
 
     #pragma region String Function Source

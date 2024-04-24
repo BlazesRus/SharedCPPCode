@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -1427,12 +1427,24 @@ public:
 
         static MixedDec MinimumValue()
         {
-            return MixedDec(2147483647, 999999999);
+	#if defined(MixedDec_EnableRestrictedFloat)
+            return MixedDec(MinIntValue, 999999999, RestrictedFloat::JustBeforeOne);
+	#elif defined(MixedDec_EnableAltFloat)
+            return MixedDec(MinIntValue, 999999999, AltFloat::JustBeforeOne);
+	#else//Add Value of ApproachingOne in float field later
+            return MixedDec(MinIntValue, 999999999);
+	#endif
         }
 
         static MixedDec MaximumValue()
         {
-            return MixedDec(2147483647, 999999999);
+	#if defined(MixedDec_EnableRestrictedFloat)
+            return MixedDec(MaxIntValue, 999999999, RestrictedFloat::JustBeforeOne);
+	#elif defined(MixedDec_EnableAltFloat)
+            return MixedDec(MaxIntValue, 999999999, AltFloat::JustBeforeOne);
+	#else//Add Value of ApproachingOne in float field later
+            return MixedDec(MaxIntValue, 999999999);
+	#endif
         }
 public:
         static MixedDec AlmostOne;
@@ -2450,36 +2462,59 @@ public:
 			//Add Code here later
 		}
 		
-#if defined(MixedDec_EnableAltFloat)
-        //Division by AltFloat Operation
-        void AltFloatDivByOp(const AltFloat& rValue)
-		{
-	#if defined(AltFloat_UseRestrictedRange)
-	#elif defined(AltFloat_DontUseBitfieldInSignif)
-	#else
-		// lValue /(2^rValue.Exponent + rValue.SignifNum.Value*(2^(rValue.Exponent - rValue.DenomMaxExponent)))*rValue.SignifNum.IsNegative?-1:1;
-		#if defined(AltFloat_ExtendedRange)
+        void DivideByTwo()
+        {
+		#if defined(MixedDec_DeriveFromAltDec)
+			//To-Do:Adjust code for including power of and mixed fractions
+            if(ExtraRep==0)
+                ExtraRep = 2;
+            else if(ExtraRep<=1073741823)
+                ExtraRep *= 2;
+			#if defined(AltNum_EnableMirroredSection)
+			else if(DecimalHalf==0&&IntValue.Value^1==0)//Check if even whole number
+				IntValue /= 2;
+			#endif
+            else
+            {
+                BasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
+            }
 		#else
+            if(IntValue^1==1)//Check if number is odd
+                rValue.BasicIntDivOp(2);
+            else
+                IntValue /= 2;
 		#endif
-	#endif
-		}
-#elif defined(MixedDec_EnableRestrictedFloat)
-        void RestrictedFloatDivByOp(const RestrictedFloat& rValue)
-		{
-		}
-#endif
+		//To-Do:Add more code here later(for TrailingDigit part)
+        }
+		
 	#pragma endregion Division Operations
 
 	#pragma region Multiplication Operations
+public:
+#if defined(MixedDec_EnableAltFloat)
+        //Multiplication by AltFloat Operation
+        void TrailingDigitsMultOp(const AltFloat& rValue)
+#elif defined(MixedDec_EnableRestrictedFloat)
+        void TrailingDigitsMultOp(const RestrictedFloat& rValue)
+#else
+        void TrailingDigitsMultOp(const float& rValue)
+#endif
+		{
+			//Add code here
+		}
+	
 protected:
         template<typename IntType=unsigned int>
         unsigned _int64 TrailingUIntMultOp(IntType& Value)
         {
+			//Add code here
 		}
 		
         template<typename IntType=unsigned int>
-        unsigned _int64 TrailingUIntMultOp(IntType& Value)
+        unsigned _int64 TrailingIntMultOp(IntType& Value)
         {
+			//Add code here
 		}
 
 public:
