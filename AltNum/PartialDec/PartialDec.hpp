@@ -529,10 +529,7 @@ public:
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (float)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = (unsigned int)WholeValue;
             }
         }
 
@@ -553,10 +550,7 @@ public:
                 UInt64 WholeValue = (UInt64)std::floor(Value);
                 lValue -= (double)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = (unsigned int)WholeValue;
             }
         }
 
@@ -577,10 +571,7 @@ public:
                 signed __int64 WholeValue = (UInt64)std::floor(lValue);
                 lValue -= (ldouble)WholeValue;
                 DecimalHalf = (unsigned int)lValue * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = (unsigned int)WholeValue;
             }
         }
 
@@ -869,11 +860,35 @@ public:
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-        template<IntegerType IntType=signed int>
-        void PartialUIntMultOp(const IntType& Value)
-        {
-			//Update this code
-		}
+        template<IntegerType IntType=unsigned int>
+        void PartialUIntMultOpV1(const IntType& Value)
+            if (DecimalHalf == 0)
+                IntValue *= rValue;
+            else
+			{
+                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
+                SRep *= rValue;
+                if (SRep >= DecimalOverflowX)
+                {
+                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    SRep -= OverflowVal * DecimalOverflowX;
+                    IntValue = (unsigned int)OverflowVal;
+                    DecimalHalf = (unsigned int)SRep;
+                }
+                else
+                {
+					IntValue = 0;
+                    DecimalHalf = (unsigned int)SRep;
+                }
+            }
+        }
+
+public:
+		
+        constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<const unsigned int>;
+        constexpr auto PartialIntMultOp = PartialUIntMultOpV1<const signed int>;
+        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const unsigned long long>;
+        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const signed long long>;
 		
 protected:
         template<MediumDecVariant VariantType=PartialDec, IntegerType IntType=signed int>
@@ -891,44 +906,36 @@ protected:
         }
 		
 public:
-        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<PartialDec, const unsigned _int64&>;
-		
-        constexpr auto BasicIntMultOp = BasicUIntMultOpV1<PartialDec, const signed int&>;
 
-        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<PartialDec, const unsigned long long&>;
-		
-        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<PartialDec, const signed long long&>;
-		
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<const unsigned int>;
+        constexpr auto BasicIntMultOp = BasicUIntMultOpV1<const signed int>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<const unsigned long long>;
+        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<const signed long long>;
+
     #pragma endregion NormalRep Integer Multiplication Operations
 
 	#pragma region NormalRep Integer Addition Operations
 protected:
 
 public:
-/*
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<PartialDec, const unsigned _int64&>;
-		
-        constexpr auto BasicIntAddOp = BasicIntAddOpV1<PartialDec, const signed int&>;
 
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<PartialDec, const unsigned long long&>;
-		
-        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<PartialDec, const signed long long&>;
-*/
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<const unsigned int>;
+        constexpr auto BasicIntAddOp = BasicUIntAddOpV1<const signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<const signed long long>;
+
 	#pragma endregion NormalRep Integer Addition Operations
 
 	#pragma region NormalRep Integer Subtraction Operations
 protected:
 	
 public:
-/*
-        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<PartialDec, const unsigned _int64&>;
-		
-        constexpr auto BasicIntSubOp = BasicIntSubOpV1<PartialDec, const signed int&>;
 
-        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<PartialDec, const unsigned long long&>;
-		
-        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<PartialDec, const signed long long&>;
-*/
+        constexpr auto BasicUIntAddOp = BasicUIntSubOpV1<const unsigned int>;
+        constexpr auto BasicIntAddOp = BasicUIntSubOpV1<const signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntSubOpV1<const unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicUIntSubOpV1<const signed long long>;
+
 	#pragma endregion NormalRep Integer Subtraction Operations
 
 	#pragma region NormalRep AltNum Division Operations
