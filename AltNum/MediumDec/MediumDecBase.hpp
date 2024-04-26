@@ -998,7 +998,7 @@ public:
     #pragma region NormalRep Integer Division Operations
 protected:
         template<IntegerType IntType=unsigned int>
-        void PartialUIntDivOp(const IntType& rValue)
+        void PartialUIntDivOpV1(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
 #if !defined(AltNum_EnableMirroredSection)
             bool ResIsNegative = IntValue < 0;
@@ -1066,7 +1066,7 @@ protected:
         }
 
         template<IntegerType IntType=signed int>
-        void PartialIntDivOp(const IntType& Value)
+        void PartialIntDivOpV1(const IntType& Value)
         {
             if(Value<0)
             {
@@ -1079,9 +1079,17 @@ protected:
                 PartialUIntDivOp(Value);
         }
 
+public:
+		
+        constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<const unsigned int>;
+        constexpr auto PartialIntDivOpV1 = PartialIntDivOpV1<const signed int>;
+        constexpr auto UnsignedPartialIntDivOpV1 = PartialUIntDivOpV1<const signed int>;
+        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<const unsigned long long>;
+        constexpr auto PartialInt64DivOpV1 = PartialIntDivOpV1<const signed long long>;
+
 protected:
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
-        VariantType& BasicUIntDivOpV1(IntType& Value)
+        VariantType& BasicUIntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
             {
@@ -1089,14 +1097,14 @@ protected:
             }
             else if (IsZero())
                 return;
-            PartialUIntDivOp(Value);
+            PartialUIntDivOpV1(Value);
             if (IntValue == 0 && DecimalHalf == 0)
 				DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
         }
 		
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
-        VariantType& BasicIntDivOpV1(IntType& Value)
+        VariantType& BasicIntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
             {
@@ -1104,30 +1112,31 @@ protected:
             }
             else if (IsZero())
                 return;
-            PartialIntDivOp(Value);
+            PartialIntDivOpV1(Value);
             if (IntValue == 0 && DecimalHalf == 0)
 				DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
         }
 public:
 
-        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned int&>;
-        constexpr auto BasicIntDivOp = BasicIntDivOpV1<MediumDecBase, const signed int&>;
-        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned long long&>;
-        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<MediumDecBase, const signed long long&>;
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned int>;
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<MediumDecBase, const signed int>;
+        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<MediumDecBase, const signed int>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<MediumDecBase, const unsigned long long>;
+        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<MediumDecBase, const signed long long>;
 
     #pragma endregion NormalRep Integer Division Operations
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
 		/// <summary>
-        /// Partial Multiplication Operation Between MediumDecBase and unsigned Integer Value
+        /// Partial version of BasicUIntMultOpV1 without zero checks
         /// (Modifies owner object) 
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
         template<typename IntType=int>
-        void PartialUIntMultOp(const IntType& rValue)
+        void PartialUIntMultOpV1(const IntType& rValue)
         {
             if (DecimalHalf == 0)
                 IntValue *= rValue;
@@ -1184,8 +1193,10 @@ protected:
             }
         }
 		
+		//Partial version of BasicIntMultOpV1 without zero checks
+		//Modifies owner object
         template<IntegerType IntType=signed int>
-        void PartialIntMultOp(const IntType& Value)
+        void PartialIntMultOpV1(const IntType& Value)
         {
             if(Value<0)
             {
@@ -1197,6 +1208,13 @@ protected:
             else
                 PartialUIntMultOp(Value);
         }
+public:
+		
+        constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<const unsigned int>;
+        constexpr auto PartialIntMultOp = PartialIntMultOpV1<const signed int>;
+        constexpr auto UnsignedPartialIntMultOp = PartialUIntMultOpV1<const signed int>;
+        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const unsigned long long>;
+        constexpr auto PartialInt64MultOp = PartialIntMultOpV1<const signed long long>;
 		
 protected:
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
@@ -1209,7 +1227,7 @@ protected:
             }
             else if (IsZero())
                 return *this;
-            PartialUIntMultOp(Value);
+            PartialUIntMultOpV1(Value);
             return *this;
         }
 		
@@ -1223,15 +1241,15 @@ protected:
             }
             else if (IsZero())
                 return *this;
-			PartialIntMultOp(Value);
+			PartialIntMultOpV1(Value);
             return *this;
         }
 public:
 
-        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned int&>;
-        constexpr auto BasicIntMultOp = BasicIntMultOpV1<MediumDecBase, const signed int&>;
-        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned long long&>;
-        constexpr auto BasicInt64MultOp = BasicIntMultOpV1<MediumDecBase, const signed long long&>;
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned int>;
+        constexpr auto BasicIntMultOp = BasicIntMultOpV1<MediumDecBase, const signed int>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<MediumDecBase, const unsigned long long>;
+        constexpr auto BasicInt64MultOp = BasicIntMultOpV1<MediumDecBase, const signed long long>;
 		
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -1240,10 +1258,11 @@ protected:
 	
 public:
 
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int&>;
-        constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int&>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned long long&>;
-        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<MediumDecBase, const signed long long&>;
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<MediumDecBase, const signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<MediumDecBase, const signed long long>;
 		
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -1252,10 +1271,11 @@ protected:
 	
 public:
 
-        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int&>;
-        constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int&>;
-        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned long long&>;
-        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<MediumDecBase, const signed long long&>;
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int>;
+        constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int>;
+        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<MediumDecBase, const signed int>;
+        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned long long>;
+        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<MediumDecBase, const signed long long>;
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
@@ -1276,7 +1296,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
+        template<IntegerType IntType=signed int>
         VariantType& BasicUnsignedMultOpV1(const MediumDecBase& rValue)
 		{//To-Do:Update this code more towards current default format
             if (DecimalHalf == 0)
@@ -1423,7 +1443,11 @@ protected:
                     {
                         __int64 OverflowVal = SRep / MediumDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDecBase::DecimalOverflowX;
+	#if !defined(AltNum_EnableMirroredSection)
                         IntValue = (signed int)OverflowVal;
+	#else
+                        IntValue.Value = (unsigned int)OverflowVal;
+	#endif
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -1436,7 +1460,11 @@ protected:
                                 DecimalHalf = 1;
                 #endif
                         }
+				#if !defined(AltNum_EnableMirroredSection)
                         IntValue = SelfIsNegative ? MediumDecBase::NegativeRep : 0;
+				#else
+                        IntValue.Value = 0;
+				#endif
                     }
 				    return *this;
                 }
@@ -1449,7 +1477,11 @@ protected:
                     {
                         __int64 OverflowVal = SRep / MediumDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDecBase::DecimalOverflowX;
+				#if !defined(AltNum_EnableMirroredSection)
                         IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+				#else
+                        IntValue.Value = (unsigned int)OverflowVal;
+				#endif
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -1462,7 +1494,11 @@ protected:
                                 DecimalHalf = 1;
                 #endif
                         }
+				#if !defined(AltNum_EnableMirroredSection)
                         IntValue = SelfIsNegative ? MediumDecBase::NegativeRep : 0;
+				#else
+                        IntValue.Value = 0;
+				#endif
                     }
                     return *this;
                 }
@@ -1493,10 +1529,9 @@ protected:
             return *this;
 		}
 public:
-/*
 
         constexpr auto BasicMultOp = BasicMultOpV1<MediumDecBase>;
-*/
+
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
     #pragma region NormalRep AltNum Addition Operations
