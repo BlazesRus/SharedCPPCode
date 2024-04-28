@@ -39,6 +39,12 @@ RestrictedFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
 RestrictedFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 */
 
+#if defined(RestrictedFloat_UseSmallerFractional)
+	#define RestrictedFloat_SignifType unsigned short
+#else
+	#define RestrictedFloat_SignifType unsigned int//Actual stored number is unsigned int:16 if RestrictedFloat_PackInSmallerBits toggled
+#endif
+
 namespace BlazesRusCode
 {
 	//Right side operations are assumed to be positive
@@ -93,11 +99,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
         /// </summary>
-    #if defined(RestrictedFloat_UseSmallerFractional)
-        RestrictedFloat(const unsigned short& signifNum=0, const unsigned char& exponent=ZeroRep)
-	#else
-        RestrictedFloat(const unsigned int& signifNum=0, const unsigned char& exponent=ZeroRep)
-	#endif
+        RestrictedFloat(const RestrictedFloat_SignifType& signifNum=0, const unsigned char& exponent=ZeroRep)
         {
             SignifNum = signifNum;
             Exp = exponent;

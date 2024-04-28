@@ -55,7 +55,7 @@ namespace BlazesRusCode
 	//Represents floating range between 0 and (1+(8388607/8388608))*2^127      (Approximately 340 282 346 638 528 859 811 704 183 484 516 925 440)
     #endif
 	// Floating formula representation is SignifNum>=0?"(1+(SignifNum/DenomMax))*2^Exp":"(1+(-SignifNum/DenomMax))*2^Exp";
-	// Floating range maximum at "(1+(AlmostApproachingOne/DenomMax))*2^127"
+	// Floating range maximum at "(1+(MaxSignif/DenomMax))*2^127"
 	// Which in scientific notation is equal to 3.40282 x 10^38 (same approximate range as float maximum)
 	// When Exp<0, floating formula can also be represented as: "(1+(SignifNum/DenomMax))*(1/(2^-Exp))"
 	// Floating formula representation when Exp is < 0 also equivalant to "(1+(AlmostApproachingOne/DenomMax))*2^Exp"
@@ -582,7 +582,7 @@ public:
 				unsigned int denom = ValAtHighestPos<<1;
 				RemainingVal -=  ValAtHighestPos;
 				#if defined(AltFloat_ExtendedRange)
-				VariantType Value = VariantType.Maximum();//Can't fit 2147483648 in exactly inside MediumDec 
+				VariantType Value = VariantType.Maximum;//Can't fit 2147483648 in exactly inside MediumDec 
 				Value /= denom;
 				Value *= VariantType(RemainingVal, Value.GetDecimalHalf());
 				#else
@@ -595,7 +595,6 @@ public:
 				Exp = highestPower;
                 IsPositive = Value.IsNegative()?0:1;
             }
-    #endif
 		}
 
         AltFloat(const unsigned int& Value)
@@ -697,29 +696,25 @@ public:
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exp>31)//Overflow Error
-					return -2147483648;//Return Error
+					throw "Value underflowed during conversion to unsigned int";
 				else if(Exp==32)//Max value it can hold is 4294967296
 				{
 					if(SignifNum==0)
 						return -2147483648;
 					else
-						return -2147483648;//Return Error
+						throw "Value underflowed during conversion to unsigned int";
 				}
 				#else
 					if(Exp>=31)//Minimum value it can hold is -2147483648
 						return -2147483648;
 				#endif
             }
-            else
-            {
-			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exp>=31)//Overflow Error
-					return 2147483647;//Return Error
-			#else
-				if(Exp>=31)//Max value it can hold is 2147483647
-					return 2147483647;
-			#endif
-			}
+            else if(Exp>=31)//Max value it can hold is 2147483647
+				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				throw "Value overflowed during conversion to unsigned int";
+				#else
+				return 2147483647;
+				#endif
             return toIntType();
         }
 
@@ -732,28 +727,25 @@ public:
             if(IsNegative())
             {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				return 0;//Return Error
+				throw "Value underflowed during conversion to unsigned int";
 			#else
 				return 0;
 			#endif
 			}
-			else
-			{
-			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exp>32)//Overflow Error
-					return 4294967296;//Return Error
-				else if(Exp==32)//Max value it can hold is 4294967296
-				{
-					if(SignifNum==0)
-						return 4294967296;
-					else
-						return 4294967296;//Return Error
-				}
+			#if !defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+			else if(Exp>=32)
+				return 4294967296;
 			#else
-				if(Exp>=32)
+			else if(Exp>32)//Overflow Error
+				throw "Value overflowed during conversion to unsigned int";
+			else if(Exp==32)//Max value it can hold is 4294967296
+			{
+				if(SignifNum==0)
 					return 4294967296;
-			#endif
+				else
+					throw "Value overflowed during conversion to unsigned int";
 			}
+			#endif
             return toIntType();
         }
 
@@ -767,40 +759,25 @@ public:
             {
 				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
 				if(Exp>63)//Overflow Error
-					return -9223372036854775808;//Return Error
+					throw "Value underflowed during conversion to signed int64";
 				else if(Exp==63)//Max value it can hold is 4294967296
 				{
 					if(SignifNum==0)
 						return -9223372036854775808;
 					else
-						return -9223372036854775808;//Return Error
+						throw "Value underflowed during conversion to signed int64";
 				}
 				#else
 					if(Exp>=63)//Minimum value it can hold is -2147483648
 						return -9223372036854775808;
 				#endif
             }
-            else
-            {
+            else if(Exp>=63)//Overflow Error
         #if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-            if(Exp>=63)//Overflow Error
-                return 9223372036854775807;//Return Error
-   //         else if(Exp==62)
-   //         {
-			//#if defined(AltFloat_ExtendedRange)
-   //             if(SignifNum==2147483647)
-			//		return 9223372036854775807;
-			//#else//4611686018427387903/4611686018427387904 * 8388608
-			//	//4611686018427387904 + /8388608 * 4611686018427387904
-   //             if(SignifNum==8388607)
-			//		return 9223372036854775807;
-			//#endif
-   //         }
+				throw "Value overflowed during conversion to signed int64";
         #else
-            if(Exp>=63)
                 return 9223372036854775807;
-        #endif
-            }           
+        #endif         
             return toIntType();
         }
 
@@ -811,30 +788,25 @@ public:
         explicit operator unsigned long long()
         {
             if(IsNegative())
-            {
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				return 0;//Return Error;
+				throw "Value underflowed during conversion to unsigned int64";
 			#else
 				return 0;
 			#endif
-            }
-            else
-            {
-			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exp>64)//Overflow Error
-					return 18446744073709551616;//Return Error
-				else if(Exp==64)
-				{
-					if(SignifNum==0)
-						return 18446744073709551616;
-					else
-						return 18446744073709551616;//Return Error
-				}
+			#if !defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+			else if(Exp>=32)
+				return 18446744073709551616;
 			#else
-				if(Exp>=32)
+            else if(Exp>64)//Overflow Error
+				throw "Value overflowed during conversion to unsigned int64";
+			else if(Exp==64)
+			{
+				if(SignifNum==0)
 					return 18446744073709551616;
-			#endif
+				else
+					throw "Value overflowed during conversion to unsigned int64";
 			}
+			#endif
             return toIntType();
         }
 
@@ -850,19 +822,12 @@ public:
                 return 1;
             if(IsNegative())
             {
-			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exp>=31)
-					return MediumDec::MinimumValue();//Return Error
-				else if(Exp==30)
-				{
-					//Add Code here
-				}
-				else
-				{
-				}
-			#else
 				if(Exp>=31)//Minimum value it can store is -2147483647.999999999
-					return MediumDec::MinimumValue();//Return Error
+					#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+					throw "Value underflowed during conversion to MediumDec Variant";
+					#else
+					return MediumDec::MinimumValue();
+					#endif
 				else if(Exp==30)
 				{
 					//Add Code here
@@ -871,36 +836,21 @@ public:
 				{
 					//Add Code here
 				}
-			#endif
             }
-            else
-            {
-			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
-				if(Exp>=31)
-					return MediumDec::MaximumValue();//Return Error
-				else if(Exp==30)
-				{
+            else if(Exp>=31)//Maximum value it can store is 2147483647.999999999
+				#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
+				throw "Value overflowed during conversion to MediumDec Variant";
+				#else
+				return MediumDec::MaximumValue();
+				#endif
+			else if(Exp==30)//Maximum value it can store is 2147483647.999999999
+			{
 					//Add Code here
-				}
-				else
-				{
-				}
-			#else
-				if(Exp>=31)//Maximum value it can store is 2147483647.999999999
-					return MediumDec::MaximumValue();
-				else if(Exp==30)//Maximum value it can store is 2147483647.999999999
-				{
-					//Add Code here
-				}
-				else
-				{
-					//Add Code here
-				}
-			#endif
 			}
-	#else
-	
-    #endif
+			else
+			{
+					//Add Code here
+			}
         }
 
 	//place AltFloat to MixedDec conversion in MixedDec class
