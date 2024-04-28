@@ -1304,6 +1304,7 @@ public:
 				if(rValue<0)
 				{
 					IntType invertedrValue = -rValue;
+					//-2.XX + 3.XX = 0.XX
 					if(invertedrValue>(IntType)IntValue.Value)//Flips to other side of flag
 					{
 						IntValue.IsPositive = 0;
@@ -1323,13 +1324,14 @@ public:
 					IntValue.Value -= -rValue;
 				else
 				{
+					//2.XX + -3.XX = -0.XX
 					IntValue invertedValue = -IntValue.Value;
 					if(invertedValue>=rValue)
 						IntValue -= -rValue;
 					else//Flips to other side of flag
 					{
 						IntValue.IsPositive = 1;
-						IntValue.Value = rValue - IntValue + 1;
+						IntValue.Value = rValue - IntValue - 1;
 						if(DecimalHalf!=0)//Invert the decimal section
 							DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
 					}
@@ -1371,7 +1373,7 @@ public:
 				else//Flips to other side of flag
 				{
 					IntValue.IsPositive = 1;
-					IntValue.Value = rValue - IntValue + 1;
+					IntValue.Value = rValue - IntValue - 1;
 					if(DecimalHalf!=0)//Invert the decimal section
 						DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
 				}
