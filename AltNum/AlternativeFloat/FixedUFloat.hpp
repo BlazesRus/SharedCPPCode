@@ -27,6 +27,13 @@
 #include "..\IntegerConcept.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 #include "..\PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
+#if defined(FixedUFloat_UseQuadRange)
+	#include "..\PartialDec\FloatingQuadRangeDec.hpp"
+	#define FixedUFloat_SignifType FloatingQuadRangeDec
+#else
+	#include "..\PartialDec\FloatingDuoRangeDec.hpp"
+	#define FixedUFloat_SignifType FloatingDuoRangeDec
+#endif
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
 /*
@@ -35,9 +42,10 @@ FixedUFloat_EnableApproachingZero = Not Implimented yet
 FixedUFloat_EnableInfinity = Not Implimented yet
 FixedUFloat_EnableBitwiseOperations = Not Implimented yet
 FixedUFloat_UseXorAsPowerOf = Not Implimented yet
-FixedUFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
+FixedUFloat_UseQuadRange
 FixedUFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 */
+
 
 namespace BlazesRusCode
 {
@@ -49,7 +57,11 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
-	// Floating formula representation is 4^Exp + 0-3.XXXXXXXXX*4^Exp;
+	#if defined(FixedUFloat_UseQuadRange)
+	/// Floating formula representation is 4^Exp + 0-3.XXXXXXXXX*4^Exp;
+	#else
+	/// Floating formula representation is 2^Exp + 0-1.XXXXXXXXX*2^Exp;
+	#endif
     /// (5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API FixedUFloat
@@ -57,8 +69,12 @@ namespace BlazesRusCode
 	protected:
 		#pragma region DigitStorage
 		
-		//2^Exp + 0-3.XXXXXXXXX*2^Exp part of formula
-		PartialInt SignifNum;
+	#if defined(FixedUFloat_UseQuadRange)
+		//SignifNum inside "4^Exp + SignifNum*4^Exp" representation
+	#else
+		//SignifNum inside "2^Exp + SignifNum*2^Exp" representation
+	#endif
+		FixedUFloat_SignifType SignifNum;
         //Refers to Exp inside formula
 		//If Exp==-128 and SignifNum==0, in which case the value is at zero
 		signed char Exp;
@@ -72,7 +88,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="FixedUFloat"/> class.
         /// </summary>
-        FixedUFloat(const PartialInt& signifNum=0, const signed char& exp=ZeroRep)
+        FixedUFloat(const FixedUFloat_SignifType& signifNum=0, const signed char& exp=ZeroRep)
         {
             SignifNum = signifNum;
             Exp = exp;
@@ -120,20 +136,19 @@ namespace BlazesRusCode
 
         void SetAsZero()
         {
-			//If FixedUFloat_TreatZeroAsZeroExp or FixedUFloat_UseLeadingZeroInSignificant toggled, treats SignifNum 0 with Exp 0 as zero. 
-			//Otherwise, treat Exp -128 as for special values and zero so that formula for exact value is exact to formula except if Exp is -128
             SignifNum = 0;
             Exp = ZeroRep;
-			IsPositive = 1;
         }
 
         void SetAsOne()
         {
-			//Add Code here
+            SignifNum = 0;
+            Exp = 0;
         }
 
     #pragma region Const Representation values
     protected:
+        static FixedUFloat_SignifType AlmostApproachingTop;
 	
 		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;//10 000 000 000 000 000 000
 		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
@@ -151,14 +166,6 @@ namespace BlazesRusCode
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
         void SetAsMaximum()
-        {
-			//Add Code here
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
         {
 			//Add Code here
         }
@@ -184,12 +191,20 @@ protected:
 		
         static FixedUFloat OneValue()
         {
+	#if defined(FixedUFloat_UseQuadRange)
 			//Add Code here
+	#else
+			//Add Code here
+	#endif
         }
 		
         static FixedUFloat TwoValue()
         {
+	#if defined(FixedUFloat_UseQuadRange)
 			//Add Code here
+	#else
+			//Add Code here
+	#endif
         }
 
         /// <summary>
@@ -198,22 +213,25 @@ protected:
         /// <returns>FixedUFloat</returns>
         static FixedUFloat Point5Value()
         {
+	#if defined(FixedUFloat_UseQuadRange)
 			//Add Code here
+	#else
+			//Add Code here
+	#endif
         }
 
         static FixedUFloat JustAboveZeroValue()
         {
+	#if defined(FixedUFloat_UseQuadRange)
 			//Add Code here
-        }
-
-        static FixedUFloat MinimumValue()
-        {
+	#else
 			//Add Code here
+	#endif
         }
 
         static FixedUFloat MaximumValue()
         {
-			//Add Code here
+            return AltFloat(AlmostApproachingTop, 127);
         }
 
 public:
@@ -896,6 +914,8 @@ public:
 
     #pragma region ValueDefine Source
 
+    FixedUFloat_SignifType FixedUFloat::AlmostApproachingTop = FixedUFloat_SignifType::Maximum();
+
     FixedUFloat FixedUFloat::Zero = ZeroValue();
     FixedUFloat FixedUFloat::One = OneValue();
 
@@ -904,7 +924,6 @@ public:
 
     FixedUFloat FixedUFloat::JustAboveZero = JustAboveZeroValue();
 
-    FixedUFloat FixedUFloat::Minimum = MinimumValue();
     FixedUFloat FixedUFloat::Maximum = MaximumValue();
 
     FixedUFloat FixedUFloat::PointFive = Point5Value();

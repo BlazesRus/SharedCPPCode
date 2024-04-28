@@ -30,13 +30,13 @@
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
 /*
-AltFloat_ExtendedRange = Extends SignifNum range to 2147483647
-AltFloat_EnableApproachingZero = Not Implimented yet
-AltFloat_EnableInfinity = Not Implimented yet
-AltFloat_EnableBitwiseOperations = Not Implimented yet
-AltFloat_UseXorAsPowerOf = Not Implimented yet
-AltFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
-AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
+RestrictedFloat_ExtendedRange = Extends SignifNum range to 2147483647
+RestrictedFloat_EnableApproachingZero = Not Implimented yet
+RestrictedFloat_EnableInfinity = Not Implimented yet
+RestrictedFloat_EnableBitwiseOperations = Not Implimented yet
+RestrictedFloat_UseXorAsPowerOf = Not Implimented yet
+RestrictedFloat_UseSmallerFractional = Restricts SignifNum range to 16 bits
+RestrictedFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 */
 
 namespace BlazesRusCode
@@ -50,14 +50,14 @@ namespace BlazesRusCode
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
 	/// Represents floating range between 0 and just before 1
-    /// Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
+    /// Stores Exponents in reverse order as RestrictedFloat_UseNormalFloatingRange toggle
     /// Each Exp holds DenomMax number of fractionals between Exp and next highest Exp
     /// (3-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
 	public class RestrictedFloat
 	{
 	public:
-        #if defined(AltFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
+        #if defined(RestrictedFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
 		//Equal to 2^16
 		static unsigned long long DenomMax = 65536;
 		//Equal to (2^31) - 1
@@ -70,7 +70,7 @@ namespace BlazesRusCode
 		static unsigned long long AlmostApproachingTop = 4294967295;
 		static unsigned int DenomMaxExponent = 32;
         #endif
-	#if defined(AltFloat_PackInSmallerBits)
+	#if defined(RestrictedFloat_PackInSmallerBits)
 		#pragma options align=bit_packed
 		unsigned int SignifNum: 16;
 	#elif defined(RestrictedFloat_UseSmallerFractional)
@@ -81,7 +81,7 @@ namespace BlazesRusCode
 		//Inverted Exponent Section of Formula Representation
 	    //Refers to Exp inside "1/2^Exp + (1/2^Exp)*SignifNum/DenomMax" formula
 		//Unless Exp==256 and SignifNum==0, in which case the value is at zero
-	#if defined(AltFloat_PackInSmallerBits)
+	#if defined(RestrictedFloat_PackInSmallerBits)
 		unsigned int Exp:8;
 		#pragma options align=reset
 	#else
@@ -114,13 +114,6 @@ namespace BlazesRusCode
 		{
             return SignifNum==0&&Exp==OneRep;
 		}
-	
-        void SetAsNegativeOne()
-        {
-            SignifNum.IsNegative = 1;
-            SignifNum.Numerator = 0;
-            Exponent = 0;
-        }
 		
         /// <summary>
         /// Sets value as smallest non-zero whole number that is not approaching zero
@@ -160,23 +153,23 @@ namespace BlazesRusCode
 		
     #pragma region ValueDefines
 protected:
-        static AltFloat ZeroValue()
+        static RestrictedFloat ZeroValue()
         {
-            return AltFloat();
+            return RestrictedFloat();
         }
 		
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>AltFloat</returns>
-        static AltFloat Point5Value()
+        /// <returns>RestrictedFloat</returns>
+        static RestrictedFloat Point5Value()
         {
-            return AltFloat(0, 1);
+            return RestrictedFloat(0, 1);
 		}
 		
-        static AltFloat JustAboveZeroValue()
+        static RestrictedFloat JustAboveZeroValue()
         {
-            return AltFloat(0, 255);
+            return RestrictedFloat(0, 255);
         }
 		
 	#pragma endregion ValueDefines
@@ -227,7 +220,7 @@ public:
     #pragma region Comparison Operators
     std::strong_ordering operator<=>(const RestrictedFloat& that) const
     {
-		//"1/2^Exp + (1/2^Exp)*SignifNum/DenomMax"
+		//"1/(2^Exp) + (1/(2^Exp))*SignifNum/DenomMax"
 		
 		//The Largest Exponent is the closest to zero(256 is exactly at zero)
 		//Inverting comparison to make let spaceship operator compare in correct order
@@ -272,7 +265,7 @@ public:
 		}
 		
 		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
-		{//Negative Exponent values for AltFloat and positive Exponent values for RestrictedFloat
+		{//Negative Exponent values for RestrictedFloat and positive Exponent values for RestrictedFloat
 			IsPositive = 1;
 			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
 				Exponent.Value = 1;
