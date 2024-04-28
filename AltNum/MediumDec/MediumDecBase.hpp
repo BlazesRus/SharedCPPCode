@@ -1382,11 +1382,11 @@ public:
             return *this;
         }
 
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int>;
-        constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int>;
-        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<MediumDecBase, const signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<MediumDecBase, const signed long long>;
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<const unsigned int>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<const signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<const signed long long>;
 		
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -1414,7 +1414,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDecBase and Integer value 
+        /// Basic Subtraction Operation between MediumDec variant and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1423,16 +1423,34 @@ public:
         template<IntegerType IntType=signed int>
         auto BasicIntSubOp(const IntType& rValue)
         {
-            if (DecimalHalf == 0)
     #if !defined(AltNum_EnableMirroredSection)
+            if (DecimalHalf == 0)
                 NRepSkippingIntSubOp(Value);
-    #else
+            else
             {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfSubtractionOp(rValue);
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+			}
+    #else
                 if(IntValue.IsNegative())
                 {
                     if(rValue<0)
                     {
-                        //Add code here
+						IntType invertedValue = -IntValue.Value;
+						IntType invertedrValue = -rValue;
+						//-2.XX - -3.XX = 0.XX
+						if(invertedrValue>invertedValue)//Flips to other side of flag
+						{
+							IntValue.IsPositive = 1;
+							IntValue.Value = invertedrValue - IntValue.Value - 1;
+							if(DecimalHalf!=0)//Invert the decimal section
+								DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+						}
+						else
+							IntValue += -rValue;
                     }
                     else
                         IntValue += -rValue;
@@ -1443,31 +1461,87 @@ public:
                         IntValue.Value -= rValue;
                     else
                     {
-                        //Add code here
+						//2.XX - 3.XX = -0.XX
+						if(rValue>IntValue.Value)//Flips to other side of flag
+						{
+							IntValue.IsPositive = 0;
+							IntValue.Value = rValue - IntValue.Value - 1;
+							if(DecimalHalf!=0)//Invert the decimal section
+								DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+						}
                     }
                 }
-            }
     #endif
+            return *this;
+        }
+		
+		/// <summary>
+        /// Basic Subtraction Operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicUIntSubOp(const IntType& rValue)
+        {
+    #if !defined(AltNum_EnableMirroredSection)
+            if (DecimalHalf == 0)
+                NRepSkippingIntSubOp(Value);
             else
             {
-    #if !defined(AltNum_EnableMirroredSection)
                 bool NegativeBeforeOperation = IntValue < 0;
                 IntHalfSubtractionOp(rValue);
                 //If flips to other side of negative, invert the decimals
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+			}
     #else
-                //Add code here
+                if(IntValue.IsNegative())
+                {
+                    if(rValue<0)
+                    {
+						IntType invertedValue = -IntValue.Value;
+						IntType invertedrValue = -rValue;
+						//-2.XX - -3.XX = 0.XX
+						if(invertedrValue>invertedValue)//Flips to other side of flag
+						{
+							IntValue.IsPositive = 1;
+							IntValue.Value = invertedrValue - IntValue.Value - 1;
+							if(DecimalHalf!=0)//Invert the decimal section
+								DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+						}
+						else
+							IntValue += -rValue;
+                    }
+                    else
+                        IntValue += -rValue;
+                }
+                else
+                {
+                    if(rValue<0)
+                        IntValue.Value -= rValue;
+                    else
+                    {
+						//2.XX - 3.XX = -0.XX
+						if(rValue>IntValue.Value)//Flips to other side of flag
+						{
+							IntValue.IsPositive = 0;
+							IntValue.Value = rValue - IntValue.Value - 1;
+							if(DecimalHalf!=0)//Invert the decimal section
+								DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+						}
+                    }
+                }
     #endif
-            }
             return *this;
         }
 
-        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int>;
-        constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int>;
-        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<MediumDecBase, const signed int>;
-        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned long long>;
-        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<MediumDecBase, const signed long long>;
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<const unsigned int>;
+        constexpr auto BasicIntSubOp = BasicIntSubOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<const signed int>;
+        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<const unsigned long long>;
+        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<const signed long long>;
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
