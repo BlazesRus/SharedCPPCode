@@ -1304,8 +1304,9 @@ public:
 				if(rValue<0)
 				{
 					IntType invertedrValue = -rValue;
-					if(invertedrValue>(IntType)IntValue.Value)//Flips to other side of negative
+					if(invertedrValue>(IntType)IntValue.Value)//Flips to other side of flag
 					{
+						IntValue.IsPositive = 0;
 						IntValue.Value = rValue - IntValue + 1;
 						if(DecimalHalf!=0)//Invert the decimal section
 							DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
@@ -1325,8 +1326,9 @@ public:
 					IntValue invertedValue = -IntValue.Value;
 					if(invertedValue>=rValue)
 						IntValue -= -rValue;
-					else//Flips to other side of negative
+					else//Flips to other side of flag
 					{
+						IntValue.IsPositive = 1;
 						IntValue.Value = rValue - IntValue + 1;
 						if(DecimalHalf!=0)//Invert the decimal section
 							DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
@@ -1336,7 +1338,7 @@ public:
     #endif
             return *this;
         }
-
+		
         /// <summary>
         /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
@@ -1366,8 +1368,9 @@ public:
 				IntValue invertedValue = -IntValue.Value;
 				if(invertedValue>=rValue)
 					IntValue -= -rValue;
-				else//Flips to other side of negative
+				else//Flips to other side of flag
 				{
+					IntValue.IsPositive = 1;
 					IntValue.Value = rValue - IntValue + 1;
 					if(DecimalHalf!=0)//Invert the decimal section
 						DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
