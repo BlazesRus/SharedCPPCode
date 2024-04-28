@@ -148,7 +148,7 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
-        static FixedUFloat_SignifType AlmostApproachingTop;
+        static FixedUFloat_SignifType MaxSignif;
 	
 		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;//10 000 000 000 000 000 000
 		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
@@ -231,7 +231,7 @@ protected:
 
         static FixedUFloat MaximumValue()
         {
-            return AltFloat(AlmostApproachingTop, 127);
+            return AltFloat(MaxSignif, 127);
         }
 
 public:
@@ -914,7 +914,7 @@ public:
 
     #pragma region ValueDefine Source
 
-    FixedUFloat_SignifType FixedUFloat::AlmostApproachingTop = FixedUFloat_SignifType::Maximum();
+    FixedUFloat_SignifType FixedUFloat::MaxSignif = FixedUFloat_SignifType::Maximum();
 
     FixedUFloat FixedUFloat::Zero = ZeroValue();
     FixedUFloat FixedUFloat::One = OneValue();

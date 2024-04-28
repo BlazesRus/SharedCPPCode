@@ -61,13 +61,13 @@ namespace BlazesRusCode
 		//Equal to 2^16
 		static unsigned long long DenomMax = 65536;
 		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 65535;
+		static unsigned long long MaxSignif = 65535;
 		static unsigned int DenomMaxExponent = 16;
         #else
 		//Equal to 2^32
 		static unsigned long long DenomMax = 4294967296;
 		//Equal to (2^31) - 1
-		static unsigned long long AlmostApproachingTop = 4294967295;
+		static unsigned long long MaxSignif = 4294967295;
 		static unsigned int DenomMaxExponent = 32;
         #endif
 	#if defined(RestrictedFloat_PackInSmallerBits)

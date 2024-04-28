@@ -180,14 +180,14 @@ namespace BlazesRusCode
 		//Equal to 2^31
 		static unsigned long long DenomMax = 2147483648;
 		//Equal to (2^31) - 1
-		static SignifBitfield AlmostApproachingTop = 2147483647;
-		static SignifBitfield NegAlmostApproachingTop = -2147483647;
+		static SignifBitfield MaxSignif = 2147483647;
+		static SignifBitfield NegMaxSignif = -2147483647;
 		#else
 		//Equal to 2^23
 		static unsigned int DenomMax = 8388608;
 		//Equal to (2^23) - 1
-		static SignifBitfield AlmostApproachingTop = 8388607;
-		static SignifBitfield NegAlmostApproachingTop = -8388607;
+		static SignifBitfield MaxSignif = 8388607;
+		static SignifBitfield NegMaxSignif = -8388607;
 		#endif
 	
 		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;//10 000 000 000 000 000 000
@@ -308,12 +308,12 @@ protected:
 
         static AltFloat MinimumValue()
         {
-            return AltFloat(NegAlmostApproachingTop, 127);
+            return AltFloat(NegMaxSignif, 127);
         }
 
         static AltFloat MaximumValue()
         {
-            return AltFloat(AlmostApproachingTop, 127);
+            return AltFloat(MaxSignif, 127);
         }
 
 public:
