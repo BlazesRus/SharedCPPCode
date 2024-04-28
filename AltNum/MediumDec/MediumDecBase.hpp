@@ -1325,7 +1325,7 @@ public:
 				else
 				{
 					//2.XX + -3.XX = -0.XX
-					IntValue invertedValue = -IntValue.Value;
+					IntType invertedValue = -IntValue.Value;
 					if(invertedValue>=rValue)
 						IntValue -= -rValue;
 					else//Flips to other side of flag
@@ -1367,7 +1367,7 @@ public:
 					IntValue += rValue;
 			else
 			{
-				IntValue invertedValue = -IntValue.Value;
+				IntType invertedValue = -IntValue.Value;
 				if(invertedValue>=rValue)
 					IntValue -= -rValue;
 				else//Flips to other side of flag
