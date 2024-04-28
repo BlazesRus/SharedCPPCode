@@ -24,9 +24,9 @@
 
 #include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
 
-#include "IntegerConcept.hpp"
-#include "MediumDec\MediumDec.hpp"
-#include "PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
+#include "..\IntegerConcept.hpp"
+#include "..\MediumDec\MediumDec.hpp"
+#include "..\PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
 /*
@@ -1429,7 +1429,7 @@ public:
 
 	#pragma endregion Math Etc Functions
 
-    }
+    };
 
     #pragma region ValueDefine Source
 
@@ -1451,4 +1451,5 @@ public:
     #pragma region String Function Source
 
     #pragma endregion String Function Source
+}
 	
