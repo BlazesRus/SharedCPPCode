@@ -919,6 +919,27 @@ protected:
 
 public:
 
+        /// <summary>
+        /// Basic Addition Operation between MediumDecBase and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=signed int>
+        auto& BasicIntAddOp(const IntType& rValue)
+        {
+            if (DecimalHalf == 0)
+            {
+                //Add code here
+            }
+            else
+            {
+                //Add code here
+            }
+            return *this;
+        }
+
         constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<const unsigned int>;
         constexpr auto BasicIntAddOp = BasicUIntAddOpV1<const signed int>;
         constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const unsigned long long>;
@@ -930,6 +951,27 @@ public:
 protected:
 	
 public:
+
+		/// <summary>
+        /// Basic Subtraction Operation between MediumDecBase and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicIntSubOp(const IntType& rValue)
+        {
+            if (DecimalHalf == 0)
+            {
+                //Add code here
+            }
+            else
+            {
+                //Add code here
+            }
+            return *this;
+        }
 
         constexpr auto BasicUIntAddOp = BasicUIntSubOpV1<const unsigned int>;
         constexpr auto BasicIntAddOp = BasicUIntSubOpV1<const signed int>;

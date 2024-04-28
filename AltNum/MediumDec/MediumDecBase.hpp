@@ -1256,8 +1256,75 @@ public:
 
 	#pragma region NormalRep Integer Addition Operations
 protected:
-	
+    #if !defined(AltNum_EnableMirroredSection)
+        /// <summary>
+        /// Addition Operation that skips negative zero(for when decimal half is empty)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>void</returns>
+        template<IntegerType IntType=signed int>
+        void NRepSkippingIntAddOp(const IntType& rValue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = (int)rValue;
+            else
+                IntHalfAdditionOp(rValue);
+            return;
+        }
+    #endif
 public:
+
+        /// <summary>
+        /// Basic Addition Operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=signed int>
+        MediumDecBase& BasicIntAddOp(const IntType& rValue)
+        {
+            if(DecimalHalf==0)
+        #if !defined(AltNum_EnableMirroredSection)
+                NRepSkippingIntAddOp(rValue);
+        #else
+            {
+                if(IntValue.IsPositive())
+                {
+                    if(rValue<0)
+                    {
+                        //Add code here
+                    }
+                    else
+                        IntValue += rValue;
+                }
+                else
+                {
+                    if(rValue<0)
+                        IntValue.Value -= -rValue;
+                    else
+                    {
+                        //Add code here
+                    }
+                }
+        #endif
+            else
+            {
+        #if !defined(AltNum_EnableMirroredSection)
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfAdditionOp(rValue);
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+        #else
+                //Add code here
+        #endif
+            }
+            return *this;
+        }
 
         constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<MediumDecBase, const unsigned int>;
         constexpr auto BasicIntAddOp = BasicIntAddOpV1<MediumDecBase, const signed int>;
@@ -1269,8 +1336,76 @@ public:
 
 	#pragma region NormalRep Integer Subtraction Operations
 protected:
-	
+    #if !defined(AltNum_EnableMirroredSection)
+        /// <summary>
+        /// Subtraction Operation that skips negative zero(for when decimal half is empty)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>void</returns>
+        template<IntegerType IntType=signed int>
+        void NRepSkippingIntSubOp(const IntType& rValue)
+        {
+            if (RValue == 0)
+                return;
+            if (IntValue == 0)
+                IntValue = -(int)rValue;
+            else
+                IntHalfSubtractionOp(rValue);
+            return;
+        }
+    #endif
 public:
+
+		/// <summary>
+        /// Basic Subtraction Operation between MediumDecBase and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=signed int>
+        auto BasicIntSubOp(const IntType& rValue)
+        {
+            if (DecimalHalf == 0)
+    #if !defined(AltNum_EnableMirroredSection)
+                NRepSkippingIntSubOp(Value);
+    #else
+            {
+                if(IntValue.IsNegative())
+                {
+                    if(rValue<0)
+                    {
+                        //Add code here
+                    }
+                    else
+                        IntValue += -rValue;
+                }
+                else
+                {
+                    if(rValue<0)
+                        IntValue.Value -= rValue;
+                    else
+                    {
+                        //Add code here
+                    }
+                }
+            }
+    #endif
+            else
+            {
+    #if !defined(AltNum_EnableMirroredSection)
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfSubtractionOp(rValue);
+                //If flips to other side of negative, invert the decimals
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+    #else
+                //Add code here
+    #endif
+            }
+            return *this;
+        }
 
         constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<MediumDecBase, const unsigned int>;
         constexpr auto BasicIntSubOp = BasicIntSubOpV1<MediumDecBase, const signed int>;
