@@ -13,7 +13,7 @@
 	#include <boost/multiprecision/cpp_int.hpp>
 #endif
 
-#include "AltNumModChecker.hpp"
+#include "AltNumModResult.hpp"
 
 #include "..\MediumDec\MediumDecBase.hpp"
 
@@ -49,7 +49,9 @@ namespace BlazesRusCode
     class DLL_API MediumDec : public virtual MediumDecBase
     {
     public:
-
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModChecker<MediumDec>{};
+		
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
@@ -867,9 +869,23 @@ public:
 	
 	#pragma region Modulus Operations
 
-        //MediumDec& RemOp(MediumDec& Value) { BasicRemOp(Value); return *this; }
+        /// <summary>
+        /// Modulus Operation(Returning inside
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        friend ModResult operator%(const MediumDec& LValue, const MediumDec& RValue)
+		{
+			return ModResult(LValue, RValue);
+		}
 
-        //MediumDec ModulusAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicRemOp(Value); return self; }
+        friend MediumDec& operator%=(MediumDec& LValue, const MediumDec& RValue)
+		{ 
+            MediumDec divRes = LValue / RValue;
+            LValue -= RValue * divRes;
+			return *this;
+		}
 
 	#pragma endregion Modulus Operations
 	
