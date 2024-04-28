@@ -21,17 +21,19 @@
 namespace BlazesRusCode
 {
 	struct MirroredInt {
-	#pragma options align=bit_packed
-	//If value is one then is negative
-	unsigned int IsPositive:1;
-	//Stores non-signed part of value
-	unsigned int Value:31;
-	#pragma options align=reset
+		#pragma options align=bit_packed
+		//If value is one then is negative
+		unsigned int IsPositive:1;
+		//Stores non-signed part of value
+		unsigned int Value:31;
+		#pragma options align=reset
+		
 		MirroredInt(const unsigned int& value=0, const unsigned int& isPositive=1)
 		{
 			Value = value;
 			isPositive = isPositive;
 		}
+		
 		MirroredInt(const unsigned int& value=0)
 		{
 			if(value<0)

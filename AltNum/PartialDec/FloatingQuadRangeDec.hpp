@@ -24,19 +24,42 @@ AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
 #include "MediumDecPreprocessors.h"
+#include "..\PartialInt.hpp"
 #include "RepType.h"
 
 namespace BlazesRusCode
 {
 	using UInt128 = boost::multiprecision::uint128_t;
 	using UInt64 = unsigned __int64;
-    class FloatingRangeDec;
+    class FloatingQuadRangeDec;
 
     /// <summary>
     /// Represents range of numbers from only 0 to 3.999999999
 	/// </summary>
-    class DLL_API FloatingRangeDec : PartialInt
+    class DLL_API FloatingQuadRangeDec
     {
+	public:
+	#pragma region DigitStorage
+		#pragma options align=bit_packed
+		//Stores whole number section(stores 0-3)
+		unsigned int IntValue:2;
+		
+		//Stores Digits XXX XXX XXX
+		unsigned int DecimalHalf:30;
+		#pragma options align=reset
+		
+		//Return IntHalf as unsigned int
+        unsigned unsigned int GetIntSection()
+        {
+			return IntValue;
+        }
+		
+		//Return DecHalf as unsigned int
+        unsigned unsigned int GetDecSection()
+        {
+			return DecimalHalf;
+        }
+	#pragma endregion DigitStorage
 	private:
         static unsigned _int64 const UInt64Max = 18446744073709551615;
 
@@ -75,19 +98,29 @@ namespace BlazesRusCode
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
-        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        FloatingRangeDec(const PartialInt& rValue)
+        /// <param name="decVal">The non-whole based half of the representation(and other special statuses)</param>
+        FloatingQuadRangeDec(const int& intVal, const int& decVal)
+        {
+			IntValue = intVal;
+			DecHalf = decVal;
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
+        /// </summary>
+        FloatingQuadRangeDec(const PartialInt& rValue)
         {
 			Value = rValue.Value;
 			Flags = rValue.Flags;
         }
 
-        FloatingRangeDec(const FloatingRangeDec&) = default;
+        FloatingQuadRangeDec(const FloatingQuadRangeDec&) = default;
 
-        FloatingRangeDec& operator=(const unsigned _int64& rhs)
+        FloatingQuadRangeDec& operator=(const unsigned _int64& rhs)
         {
 			IntValue = rhs;
 			DecimalHalf = 0;
@@ -95,7 +128,7 @@ namespace BlazesRusCode
             return *this;
         } const
 
-        FloatingRangeDec& operator=(const FloatingRangeDec& rhs)
+        FloatingQuadRangeDec& operator=(const FloatingQuadRangeDec& rhs)
         {
             // Check for self-assignment
             if (this == &rhs)      // Same object?
@@ -179,262 +212,262 @@ public:
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec PiValue()
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec PiValue()
         {
-            return FloatingRangeDec(3, 141592654);
+            return FloatingQuadRangeDec(3, 141592654);
         }
 
         //100,000,000xPi(Rounded to 9th decimal digit)
-        static FloatingRangeDec HundredMilPiNumVal()
+        static FloatingQuadRangeDec HundredMilPiNumVal()
         {
-            return FloatingRangeDec(314159265, 358979324);
+            return FloatingQuadRangeDec(314159265, 358979324);
         }
 
         //10,000,000xPi(Rounded to 9th decimal digit)
-        static FloatingRangeDec TenMilPiNumVal()
+        static FloatingQuadRangeDec TenMilPiNumVal()
         {
-            return FloatingRangeDec(31415926, 535897932);
+            return FloatingQuadRangeDec(31415926, 535897932);
         }
 
         //1,000,000xPi(Rounded to 9th decimal digit)
-        static FloatingRangeDec OneMilPiNumVal()
+        static FloatingQuadRangeDec OneMilPiNumVal()
         {
-            return FloatingRangeDec(3141592, 653589793);
+            return FloatingQuadRangeDec(3141592, 653589793);
         }
 
         //10xPi(Rounded to 9th decimal digit)
-        static FloatingRangeDec TenPiNumVal()
+        static FloatingQuadRangeDec TenPiNumVal()
         {
-            return FloatingRangeDec(31, 415926536);
+            return FloatingQuadRangeDec(31, 415926536);
         }
         
-        static FloatingRangeDec ENumValue()
+        static FloatingQuadRangeDec ENumValue()
         {
-            return FloatingRangeDec(2, 718281828);
+            return FloatingQuadRangeDec(2, 718281828);
         }
 
-        static FloatingRangeDec EValue()
+        static FloatingQuadRangeDec EValue()
         {
-            return FloatingRangeDec(2, 718281828);
+            return FloatingQuadRangeDec(2, 718281828);
         }
         
-        static FloatingRangeDec ZeroValue()
+        static FloatingQuadRangeDec ZeroValue()
         {
-            return FloatingRangeDec();
+            return FloatingQuadRangeDec();
         }
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec OneValue()
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec OneValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(1);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(1);
             return NewSelf;
         }
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec TwoValue()
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec TwoValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(2);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(2);
             return NewSelf;
         }
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec Point5Value()
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec Point5Value()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 500000000);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 500000000);
             return NewSelf;
         }
 
-        static FloatingRangeDec JustAboveZeroValue()
+        static FloatingQuadRangeDec JustAboveZeroValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 1);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 1);
             return NewSelf;
         }
 
-        static FloatingRangeDec OneMillionthValue()
+        static FloatingQuadRangeDec OneMillionthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 1000);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 1000);
             return NewSelf;
         }
 
-        static FloatingRangeDec FiveThousandthValue()
+        static FloatingQuadRangeDec FiveThousandthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 5000000);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 5000000);
             return NewSelf;
         }
 
-        static FloatingRangeDec FiveMillionthValue()
+        static FloatingQuadRangeDec FiveMillionthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 5000);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 5000);
             return NewSelf;
         }
 
-        static FloatingRangeDec TenMillionthValue()
+        static FloatingQuadRangeDec TenMillionthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 100);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 100);
             return NewSelf;
         }
 
-        static FloatingRangeDec OneHundredMillionthValue()
+        static FloatingQuadRangeDec OneHundredMillionthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 10);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 10);
             return NewSelf;
         }
 
-        static FloatingRangeDec FiveBillionthValue()
+        static FloatingQuadRangeDec FiveBillionthValue()
         {
-            FloatingRangeDec NewSelf = FloatingRangeDec(0, 5);
+            FloatingQuadRangeDec NewSelf = FloatingQuadRangeDec(0, 5);
             return NewSelf;
         }
 
-        static FloatingRangeDec LN10Value()
+        static FloatingQuadRangeDec LN10Value()
         {
-            return FloatingRangeDec(2, 302585093);
+            return FloatingQuadRangeDec(2, 302585093);
         }
 
-        static FloatingRangeDec LN10MultValue()
+        static FloatingQuadRangeDec LN10MultValue()
         {
-            return FloatingRangeDec(0, 434294482);
+            return FloatingQuadRangeDec(0, 434294482);
         }
 
-        static FloatingRangeDec HalfLN10MultValue()
+        static FloatingQuadRangeDec HalfLN10MultValue()
         {
-            return FloatingRangeDec(0, 868588964);
+            return FloatingQuadRangeDec(0, 868588964);
         }
 
-        static FloatingRangeDec MaximumValue()
+        static FloatingQuadRangeDec MaximumValue()
         {
-            return FloatingRangeDec(2147483647, 999999999);
+            return FloatingQuadRangeDec(2147483647, 999999999);
         }
 public:
-        static FloatingRangeDec AlmostOne;
+        static FloatingQuadRangeDec AlmostOne;
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec PiNum;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec PiNum;
         
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec ENum;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec ENum;
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) Representation
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec Pi;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec Pi;
       
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec E;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec E;
         
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec Zero;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec Zero;
         
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec One;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec Two;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec PointFive;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec JustAboveZero;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec FiveBillionth;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec OneMillionth;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec FiveThousandth;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        static FloatingRangeDec OneGMillionth;
+        /// <returns>FloatingQuadRangeDec</returns>
+        static FloatingQuadRangeDec OneGMillionth;
 
         //0e-7
-        static FloatingRangeDec TenMillionth;
+        static FloatingQuadRangeDec TenMillionth;
 
         /// <summary>
         /// Returns the value at "0.000005"
         /// </summary>
-        static FloatingRangeDec FiveMillionth;
+        static FloatingQuadRangeDec FiveMillionth;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State Value that can store
         /// (-2147483647.999999999)
         /// </summary>
-        static FloatingRangeDec Minimum;
+        static FloatingQuadRangeDec Minimum;
         
         /// <summary>
         /// Returns value of highest non-infinite/Special Decimal State Value that can store
         /// (2147483647.999999999)
         /// </summary>
-        static FloatingRangeDec Maximum;
+        static FloatingQuadRangeDec Maximum;
         
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        static FloatingRangeDec LN10;
+        static FloatingQuadRangeDec LN10;
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static FloatingRangeDec LN10Mult;
+        static FloatingQuadRangeDec LN10Mult;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static FloatingRangeDec HalfLN10Mult;
+        static FloatingQuadRangeDec HalfLN10Mult;
     #pragma endregion ValueDefines
 
     #pragma region String Commands
@@ -448,27 +481,27 @@ public:
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        template<MediumDecVariant VariantType=FloatingRangeDec>
+        /// <returns>FloatingQuadRangeDec</returns>
+        template<MediumDecVariant VariantType=FloatingQuadRangeDec>
         VariantType GetValueFromString(std::string Value)
         {
 
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class from string literal
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        FloatingRangeDec(const char* strVal)
+        FloatingQuadRangeDec(const char* strVal)
         {
             std::string Value = strVal;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingRangeDec(const std::string& Value)
+        FloatingQuadRangeDec(const std::string& Value)
         {
             this->ReadString(Value);
         }
@@ -585,42 +618,42 @@ public:
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingRangeDec(const float& Value)
+        FloatingQuadRangeDec(const float& Value)
         {
             this->SetFloatVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingRangeDec(const double& Value)
+        FloatingQuadRangeDec(const double& Value)
         {
             this->SetDoubleVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingRangeDec(const ldouble& Value)
+        FloatingQuadRangeDec(const ldouble& Value)
         {
             this->SetDecimalVal(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FloatingRangeDec"/> class.
+        /// Initializes a new instance of the <see cref="FloatingQuadRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingRangeDec(const bool& Value)
+        FloatingQuadRangeDec(const bool& Value)
         {
             this->SetBoolVal(Value);
         }
 
-        FloatingRangeDec(const FloatingRangeDec& Value)
+        FloatingQuadRangeDec(const FloatingQuadRangeDec& Value)
         {
             this->SetVal(Value);
         }
@@ -730,7 +763,7 @@ protected:
 		}
 
 		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicComparison(const FloatingRangeDec& that) const
+		std::strong_ordering BasicComparison(const FloatingQuadRangeDec& that) const
 		{
 			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
 				return IntHalfCmp;
@@ -740,14 +773,14 @@ protected:
 	
 public:
 
-		std::strong_ordering operator<=>(const FloatingRangeDec& that) const
+		std::strong_ordering operator<=>(const FloatingQuadRangeDec& that) const
 		{
             if(ExtraRep!=0)
             {
-                FloatingRangeDec lValue = *this;
+                FloatingQuadRangeDec lValue = *this;
                 lValue.BasicIntDivOp(ExtraRep);
                 if(that.ExtraRep!=0){
-                    FloatingRangeDec rValue = that;
+                    FloatingQuadRangeDec rValue = that;
                     rValue.BasicIntDivOp(that.ExtraRep);
 			        return lValue.BasicComparison(rValue);
                 }
@@ -756,7 +789,7 @@ public:
             }
             else if(that.ExtraRep!=0)
             {
-                FloatingRangeDec rValue = that;
+                FloatingQuadRangeDec rValue = that;
                 rValue.BasicIntDivOp(that.ExtraRep);
                 return BasicComparison(rValue);
             }
@@ -768,7 +801,7 @@ public:
 		{
             if(ExtraRep!=0)
             {
-                FloatingRangeDec lValue = *this;
+                FloatingQuadRangeDec lValue = *this;
                 lValue.BasicIntDivOp(ExtraRep);
 			    return lValue.BasicIntComparison(that);
             }
@@ -785,7 +818,7 @@ public:
 			return true;
 		}
 
-		bool operator==(const FloatingRangeDec& that) const
+		bool operator==(const FloatingQuadRangeDec& that) const
 		{
 			if (IntValue!=that.IntValue)
 				return false;
@@ -814,7 +847,7 @@ protected:
         }
 
 protected:
-        FloatingRangeDec& BasicUIntDivOp(IntType& Value)
+        FloatingQuadRangeDec& BasicUIntDivOp(IntType& Value)
         {
             if (Value == 0)
             {
@@ -880,7 +913,7 @@ public:
         constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const signed long long>;
 		
 protected:
-        template<MediumDecVariant VariantType=FloatingRangeDec, IntegerType IntType=signed int>
+        template<MediumDecVariant VariantType=FloatingQuadRangeDec, IntegerType IntType=signed int>
         VariantType& BasicUIntMultOpV1(const IntType& Value)
         {
             if (Value == 0)
@@ -909,7 +942,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between FloatingRangeDec and Integer value 
+        /// Basic Addition Operation between FloatingQuadRangeDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -935,7 +968,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between FloatingRangeDec and Integer value 
+        /// Basic Subtraction Operation between FloatingQuadRangeDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -960,7 +993,7 @@ protected:
 	
 public:
 /*
-        constexpr auto BasicDivOp = BasicDivOpV1<FloatingRangeDec>;
+        constexpr auto BasicDivOp = BasicDivOpV1<FloatingQuadRangeDec>;
 */
 	#pragma endregion NormalRep AltNum Division Operations
 
@@ -970,12 +1003,12 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned FloatingRangeDec
+        /// Basic Multiplication Operation that ignores special decimal status with unsigned FloatingQuadRangeDec
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        FloatingRangeDec& BasicMultOp(const FloatingRangeDec& rValue)
+        FloatingQuadRangeDec& BasicMultOp(const FloatingQuadRangeDec& rValue)
 		{
             if (DecimalHalf == 0)
             {
@@ -1014,7 +1047,7 @@ public:
             {
                 UInt128 SRep = DecimalHalf;
                 SRep *= rValue.DecimalHalf;
-                SRep /= FloatingRangeDec::DecimalOverflowX;
+                SRep /= FloatingQuadRangeDec::DecimalOverflowX;
                 if (rValue.IntValue == 0)
                 {
                     DecimalHalf = (unsigned int)SRep;
@@ -1027,10 +1060,10 @@ public:
                 else
                 {
                     SRep += DecimalHalf * rValue.IntValue;
-                    if (SRep >= FloatingRangeDec::DecimalOverflowX)
+                    if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
-                        UInt128 OverflowVal = SRep / FloatingRangeDec::DecimalOverflowX;
-                        SRep -= OverflowVal * FloatingRangeDec::DecimalOverflowX;
+                        UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
+                        SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
                         IntValue = (unsigned _int64) OverflowVal;
                         DecimalHalf = (unsigned int)SRep;
 						return *this;
@@ -1050,12 +1083,12 @@ public:
             {
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    UInt128 SRep = FloatingRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.IntValue;
-                    if (SRep >= FloatingRangeDec::DecimalOverflowX)
+                    if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
-                        UInt128 OverflowVal = SRep / FloatingRangeDec::DecimalOverflowX;
-                        SRep -= OverflowVal * FloatingRangeDec::DecimalOverflowX;
+                        UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
+                        SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
                         IntValue = (unsigned __int64)OverflowVal;
                         DecimalHalf = (unsigned int)SRep;
                     }
@@ -1069,19 +1102,19 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-                        IntValue = SelfIsNegative ? FloatingRangeDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
                     }
 				    return *this;
                 }
                 else if (rValue.IntValue == 0)
                 {
-                    UInt128 SRep = FloatingRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
-                    SRep /= FloatingRangeDec::DecimalOverflowX;
-                    if (SRep >= FloatingRangeDec::DecimalOverflowX)
+                    SRep /= FloatingQuadRangeDec::DecimalOverflowX;
+                    if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
-                        UInt128 OverflowVal = SRep / FloatingRangeDec::DecimalOverflowX;
-                        SRep -= OverflowVal * FloatingRangeDec::DecimalOverflowX;
+                        UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
+                        SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
                         IntValue = (UInt64)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (unsigned int)SRep;
                     }
@@ -1095,23 +1128,23 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-                        IntValue = SelfIsNegative ? FloatingRangeDec::NegativeRep : 0;
+                        IntValue = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
                     }
                     return *this;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    UInt128 SRep = IntValue == 0 ? DecimalHalf : FloatingRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    UInt128 SRep = IntValue == 0 ? DecimalHalf : FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
                     SRep *= rValue.IntValue;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
                     UInt128 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
                     UInt128 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
-                    Temp04 /= FloatingRangeDec::DecimalOverflow;
+                    Temp04 /= FloatingQuadRangeDec::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     UInt128 IntegerRep = SRep + Temp03 + Temp04;
-                    UInt128 IntHalf = IntegerRep / FloatingRangeDec::DecimalOverflow;
-                    IntegerRep -= FloatingRangeDec::DecimalOverflowX * IntHalf;
+                    UInt128 IntHalf = IntegerRep / FloatingQuadRangeDec::DecimalOverflow;
+                    IntegerRep -= FloatingQuadRangeDec::DecimalOverflowX * IntHalf;
                     IntValue = (UInt64)IntHalf;
                     DecimalHalf = (unsigned int)IntegerRep;
                 }
@@ -1133,7 +1166,7 @@ public:
         /// Basic Addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
-        void BasicAddOp(const FloatingRangeDec& Value)
+        void BasicAddOp(const FloatingQuadRangeDec& Value)
         {
             //Deal with Int section first
             IntValue += Value.IntValue;
@@ -1152,7 +1185,7 @@ protected:
 	
 public:
 /*
-        constexpr auto BasicSubOp = BasicSubOpV1<FloatingRangeDec>;
+        constexpr auto BasicSubOp = BasicSubOpV1<FloatingQuadRangeDec>;
 */
 	#pragma endregion NormalRep AltNum Subtraction Operations
 
@@ -1190,266 +1223,266 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator/(FloatingRangeDec self, FloatingRangeDec Value) { return DivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, FloatingQuadRangeDec Value) { return DivOp(self, Value); }
 
         /// <summary>
         /// /= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator/=(FloatingRangeDec& self, FloatingRangeDec Value) { return DivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator/=(FloatingQuadRangeDec& self, FloatingQuadRangeDec Value) { return DivOp(self, Value); }
 
         /// <summary>
         /// Multiplication Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator*(FloatingRangeDec self, FloatingRangeDec Value) { return MultOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, FloatingQuadRangeDec Value) { return MultOp(self, Value); }
 
         ///// <summary>
         ///// *= Operation
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator*=(FloatingRangeDec& self, FloatingRangeDec Value) { return MultOp(self, Value); }
+        ///// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator*=(FloatingQuadRangeDec& self, FloatingQuadRangeDec Value) { return MultOp(self, Value); }
 
         /// <summary>
         /// Addition Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator+(FloatingRangeDec self, FloatingRangeDec Value) { return AddOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, FloatingQuadRangeDec Value) { return AddOp(self, Value); }
 
         /// <summary>
         /// += Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator+=(FloatingRangeDec& self, FloatingRangeDec Value) { return AddOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator+=(FloatingQuadRangeDec& self, FloatingQuadRangeDec Value) { return AddOp(self, Value); }
 
         /// <summary>
         /// Subtraction Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator-(FloatingRangeDec self, FloatingRangeDec Value) { return SubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, FloatingQuadRangeDec Value) { return SubOp(self, Value); }
 
         /// <summary>
         /// -= Operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator-=(FloatingRangeDec& self, FloatingRangeDec Value) { return SubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator-=(FloatingQuadRangeDec& self, FloatingQuadRangeDec Value) { return SubOp(self, Value); }
 
         /// <summary>
-        /// Addition Operation Between FloatingRangeDec and Integer Value
+        /// Addition Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator+(FloatingRangeDec self, int Value) { return IntAddOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, int Value) { return IntAddOp(self, Value); }
 
         ///// <summary>
-        ///// += Operation Between FloatingRangeDec and Integer Value
+        ///// += Operation Between FloatingQuadRangeDec and Integer Value
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>FloatingRangeDec</returns>
+        ///// <returns>FloatingQuadRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingRangeDec& operator+=(FloatingRangeDec& self, int Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec& operator+=(FloatingQuadRangeDec& self, int Value) { return IntAddOp(self, Value); }
 
-        //friend FloatingRangeDec operator+=(FloatingRangeDec* self, int Value) { return IntAddOp(**self, Value); }
+        //friend FloatingQuadRangeDec operator+=(FloatingQuadRangeDec* self, int Value) { return IntAddOp(**self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between FloatingRangeDec and Integer Value
+        /// Subtraction Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator-(FloatingRangeDec self, int Value) { return IntSubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, int Value) { return IntSubOp(self, Value); }
 
         /// <summary>
-        /// -= Operation Between FloatingRangeDec and Integer Value
+        /// -= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator-=(FloatingRangeDec& self, int Value) { return IntSubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator-=(FloatingQuadRangeDec& self, int Value) { return IntSubOp(self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between FloatingRangeDec and Integer Value
+        /// Multiplication Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator*(FloatingRangeDec self, int Value) { return IntMultOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// *= Operation Between FloatingRangeDec and Integer Value
+        /// *= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
+        /// <returns>FloatingQuadRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingRangeDec& operator*=(FloatingRangeDec& self, int Value) { return IntMultOp(self, Value); }
+        friend FloatingQuadRangeDec& operator*=(FloatingQuadRangeDec& self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between FloatingRangeDec and Integer Value
+        /// Division Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator/(FloatingRangeDec self, int Value) { return IntDivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, int Value) { return IntDivOp(self, Value); }
 
         /// <summary>
-        /// /= Operation Between FloatingRangeDec and Integer Value
+        /// /= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator/=(FloatingRangeDec& self, int Value) { return IntDivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator/=(FloatingQuadRangeDec& self, int Value) { return IntDivOp(self, Value); }
 
         /// <summary>
-        /// Addition Operation Between FloatingRangeDec and Integer Value
+        /// Addition Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator+(FloatingRangeDec self, signed long long Value) { return IntAddOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, signed long long Value) { return IntAddOp(self, Value); }
 
         ///// <summary>
-        ///// += Operation Between FloatingRangeDec and Integer Value
+        ///// += Operation Between FloatingQuadRangeDec and Integer Value
         ///// </summary>
         ///// <param name="self">The self.</param>
         ///// <param name="Value">The value.</param>
-        ///// <returns>FloatingRangeDec</returns>
+        ///// <returns>FloatingQuadRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingRangeDec& operator+=(FloatingRangeDec& self, signed long long Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec& operator+=(FloatingQuadRangeDec& self, signed long long Value) { return IntAddOp(self, Value); }
 
         /// <summary>
-        /// Subtraction Operation Between FloatingRangeDec and Integer Value
+        /// Subtraction Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator-(FloatingRangeDec self, signed long long Value) { return IntSubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, signed long long Value) { return IntSubOp(self, Value); }
 
         /// <summary>
-        /// -= Operation Between FloatingRangeDec and Integer Value
+        /// -= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator-=(FloatingRangeDec& self, signed long long Value) { return IntSubOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator-=(FloatingQuadRangeDec& self, signed long long Value) { return IntSubOp(self, Value); }
 
         /// <summary>
-        /// Multiplication Operation Between FloatingRangeDec and Integer Value
+        /// Multiplication Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator*(FloatingRangeDec self, signed long long Value) { return IntMultOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// *= Operation Between FloatingRangeDec and Integer Value
+        /// *= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
+        /// <returns>FloatingQuadRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingRangeDec operator*=(FloatingRangeDec& self, signed long long Value) { return IntMultOp(self, Value); }
+        friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between FloatingRangeDec and Integer Value
+        /// Division Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator/(FloatingRangeDec self, signed long long Value) { return IntDivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, signed long long Value) { return IntDivOp(self, Value); }
 
         /// <summary>
-        /// /= Operation Between FloatingRangeDec and Integer Value
+        /// /= Operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec operator/=(FloatingRangeDec& self, signed long long Value) { return IntDivOp(self, Value); }
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec operator/=(FloatingQuadRangeDec& self, signed long long Value) { return IntDivOp(self, Value); }
     
-        friend FloatingRangeDec operator+(FloatingRangeDec self, float Value) { return self + (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, float Value) { return self - (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, float Value) { return self * (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, float Value) { return self / (FloatingRangeDec)Value; }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, float Value) { return self + (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, float Value) { return self - (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, float Value) { return self * (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, float Value) { return self / (FloatingQuadRangeDec)Value; }
 
-        friend FloatingRangeDec operator+(float Value, FloatingRangeDec self) { return (FloatingRangeDec)Value + self; }
-        friend FloatingRangeDec operator-(float Value, FloatingRangeDec self) { return (FloatingRangeDec)Value - self; }
-        friend FloatingRangeDec operator*(float Value, FloatingRangeDec self) { return (FloatingRangeDec)Value * self; }
-        friend FloatingRangeDec operator/(float Value, FloatingRangeDec self) { return (FloatingRangeDec)Value / self; }
+        friend FloatingQuadRangeDec operator+(float Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value + self; }
+        friend FloatingQuadRangeDec operator-(float Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value - self; }
+        friend FloatingQuadRangeDec operator*(float Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value * self; }
+        friend FloatingQuadRangeDec operator/(float Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value / self; }
 
-        friend FloatingRangeDec operator+(FloatingRangeDec self, double Value) { return self + (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, double Value) { return self - (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, double Value) { return self * (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, double Value) { return self / (FloatingRangeDec)Value; }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, double Value) { return self + (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, double Value) { return self - (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, double Value) { return self * (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, double Value) { return self / (FloatingQuadRangeDec)Value; }
 
-        friend FloatingRangeDec operator+(FloatingRangeDec self, ldouble Value) { return self + (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, ldouble Value) { return self - (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, ldouble Value) { return self * (FloatingRangeDec)Value; }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, ldouble Value) { return self / (FloatingRangeDec)Value; }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, ldouble Value) { return self + (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, ldouble Value) { return self - (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, ldouble Value) { return self * (FloatingQuadRangeDec)Value; }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, ldouble Value) { return self / (FloatingQuadRangeDec)Value; }
 
-        friend FloatingRangeDec operator+(ldouble Value, FloatingRangeDec self) { return (FloatingRangeDec)Value + self; }
-        friend FloatingRangeDec operator-(ldouble Value, FloatingRangeDec self) { return (FloatingRangeDec)Value - self; }
-        friend FloatingRangeDec operator*(ldouble Value, FloatingRangeDec self) { return (FloatingRangeDec)Value * self; }
-        friend FloatingRangeDec operator/(ldouble Value, FloatingRangeDec self) { return (FloatingRangeDec)Value / self; }
+        friend FloatingQuadRangeDec operator+(ldouble Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value + self; }
+        friend FloatingQuadRangeDec operator-(ldouble Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value - self; }
+        friend FloatingQuadRangeDec operator*(ldouble Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value * self; }
+        friend FloatingQuadRangeDec operator/(ldouble Value, FloatingQuadRangeDec self) { return (FloatingQuadRangeDec)Value / self; }
 
 
-        friend FloatingRangeDec operator+(FloatingRangeDec self, unsigned char Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, unsigned char Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, unsigned char Value) { return self.UnsignedIntDivOp(Value); }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, unsigned char Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, unsigned char Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, unsigned char Value) { return self.UnsignedIntDivOp(Value); }
 
-        friend FloatingRangeDec operator+=(FloatingRangeDec& self, unsigned char Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-=(FloatingRangeDec& self, unsigned char Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*=(FloatingRangeDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/=(FloatingRangeDec& self, unsigned char Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+=(FloatingQuadRangeDec& self, unsigned char Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-=(FloatingQuadRangeDec& self, unsigned char Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, unsigned char Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/=(FloatingQuadRangeDec& self, unsigned char Value) { return UnsignedDivOp(self, Value); }
         
 
-        friend FloatingRangeDec operator+(FloatingRangeDec self, unsigned short Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, unsigned short Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, unsigned short Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, unsigned short Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, unsigned short Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, unsigned short Value) { return UnsignedDivOp(self, Value); }
 
-        friend FloatingRangeDec operator+=(FloatingRangeDec& self, unsigned short Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-=(FloatingRangeDec& self, unsigned short Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*=(FloatingRangeDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/=(FloatingRangeDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); } 
+        friend FloatingQuadRangeDec operator+=(FloatingQuadRangeDec& self, unsigned short Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-=(FloatingQuadRangeDec& self, unsigned short Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, unsigned short Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/=(FloatingQuadRangeDec& self, unsigned short Value) { return UnsignedDivOp(self, Value); } 
 
-        friend FloatingRangeDec operator+(FloatingRangeDec self, unsigned _int64 Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, unsigned _int64 Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, unsigned _int64 Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, unsigned _int64 Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
         
 
-        friend FloatingRangeDec operator+=(FloatingRangeDec& self, unsigned _int64 Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-=(FloatingRangeDec& self, unsigned _int64 Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*=(FloatingRangeDec& self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/=(FloatingRangeDec& self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+=(FloatingQuadRangeDec& self, unsigned _int64 Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-=(FloatingQuadRangeDec& self, unsigned _int64 Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, unsigned _int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/=(FloatingQuadRangeDec& self, unsigned _int64 Value) { return UnsignedDivOp(self, Value); }
         
-        friend FloatingRangeDec operator+(FloatingRangeDec self, unsigned __int64 Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-(FloatingRangeDec self, unsigned __int64 Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*(FloatingRangeDec self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/(FloatingRangeDec self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+(FloatingQuadRangeDec self, unsigned __int64 Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-(FloatingQuadRangeDec self, unsigned __int64 Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*(FloatingQuadRangeDec self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/(FloatingQuadRangeDec self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
 
-        friend FloatingRangeDec operator+=(FloatingRangeDec& self, unsigned __int64 Value) { return IntAddOp(self, Value); }
-        friend FloatingRangeDec operator-=(FloatingRangeDec& self, unsigned __int64 Value) { return IntSubOp(self, Value); }
-        friend FloatingRangeDec operator*=(FloatingRangeDec& self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
-        friend FloatingRangeDec operator/=(FloatingRangeDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
+        friend FloatingQuadRangeDec operator+=(FloatingQuadRangeDec& self, unsigned __int64 Value) { return IntAddOp(self, Value); }
+        friend FloatingQuadRangeDec operator-=(FloatingQuadRangeDec& self, unsigned __int64 Value) { return IntSubOp(self, Value); }
+        friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, unsigned __int64 Value) { return self.UnsignedIntMultOp(Value); }
+        friend FloatingQuadRangeDec operator/=(FloatingQuadRangeDec& self, unsigned __int64 Value) { return UnsignedDivOp(self, Value); }
 
     #pragma endregion Main Operator Overrides
 
@@ -1458,27 +1491,27 @@ public:
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>FloatingRangeDec</returns>
-        friend FloatingRangeDec& operator-(FloatingRangeDec& self)
+        /// <returns>FloatingQuadRangeDec</returns>
+        friend FloatingQuadRangeDec& operator-(FloatingQuadRangeDec& self)
         {
             return self;//Negative numbers not supported
         }
 
         /// <summary>
-        /// ++FloatingRangeDec Operator
+        /// ++FloatingQuadRangeDec Operator
         /// </summary>
-        /// <returns>FloatingRangeDec &</returns>
-        FloatingRangeDec& operator ++()
+        /// <returns>FloatingQuadRangeDec &</returns>
+        FloatingQuadRangeDec& operator ++()
         {
             ++IntValue;
             return *this;
         }
 
         /// <summary>
-        /// ++FloatingRangeDec Operator
+        /// ++FloatingQuadRangeDec Operator
         /// </summary>
-        /// <returns>FloatingRangeDec &</returns>
-        FloatingRangeDec& operator --()
+        /// <returns>FloatingQuadRangeDec &</returns>
+        FloatingQuadRangeDec& operator --()
         {
 			if(IntValue==0)
 				throw "Can't reduce number into negative values";
@@ -1490,10 +1523,10 @@ public:
         /// <summary>
         /// MediumDec Variant++ Operator
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        FloatingRangeDec operator ++(int)
+        /// <returns>FloatingQuadRangeDec</returns>
+        FloatingQuadRangeDec operator ++(int)
         {
-            FloatingRangeDec tmp(*this);
+            FloatingQuadRangeDec tmp(*this);
             ++* this;
             return tmp;
         }
@@ -1501,10 +1534,10 @@ public:
         /// <summary>
         /// MediumDec Variant-- Operator
         /// </summary>
-        /// <returns>FloatingRangeDec</returns>
-        FloatingRangeDec operator --(int)
+        /// <returns>FloatingQuadRangeDec</returns>
+        FloatingQuadRangeDec operator --(int)
         {
-            FloatingRangeDec tmp(*this);
+            FloatingQuadRangeDec tmp(*this);
             --* this;
             return tmp;
         }
@@ -1512,8 +1545,8 @@ public:
         /// <summary>
         /// MediumDec Variant* Operator
         /// </summary>
-        /// <returns>FloatingRangeDec &</returns>
-        FloatingRangeDec& operator *()
+        /// <returns>FloatingQuadRangeDec &</returns>
+        FloatingQuadRangeDec& operator *()
         {
             return *this;
         }
@@ -1536,7 +1569,7 @@ public:
         /// Does not modifier owner object
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
-        /// <returns>FloatingRangeDec</returns>
+        /// <returns>FloatingQuadRangeDec</returns>
         auto ExpOf()
         {
             //x.ConvertToNormType();//Prevent losing imaginary number status
@@ -1564,7 +1597,7 @@ public:
              * Args:
              *      - x: power of e to evaluate
              * Returns:
-             *      - approximation of e^x in FloatingRangeDec precision
+             *      - approximation of e^x in FloatingQuadRangeDec precision
              */
              // Check that x is a valid input.
             assert(IntValue < 709);

@@ -22,12 +22,13 @@ namespace BlazesRusCode
 {
 #if !defined(AltNum_UseIntForDecimalHalf)
 	struct PartialInt {
-	#pragma options align=bit_packed
-	//Stores Digits XXX XXX XXX
-	unsigned int Value:30;
-	//Can store up to 4 Flag states including normal state at 0
-	unsigned int Flags:2;
-	#pragma options align=reset
+		#pragma options align=bit_packed
+		//Stores Digits XXX XXX XXX
+		unsigned int Value:30;
+		//Can store up to 4 Flag states including normal state at 0
+		unsigned int Flags:2;
+		#pragma options align=reset
+		
 		PartialInt(unsigned int value=0, unsigned int flags=0)
 		{
 			Value = value;
