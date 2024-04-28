@@ -27,6 +27,10 @@
 #include "..\IntegerConcept.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 #include "..\PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
+
+#if defined(FixedUFloat_UseQuadPowers)
+	#define FixedUFloat_UseQuadRange
+#endif
 #if defined(FixedUFloat_UseQuadRange)
 	#include "..\PartialDec\FloatingQuadRangeDec.hpp"
 	#define FixedUFloat_SignifType FloatingQuadRangeDec
@@ -37,11 +41,11 @@
 //Int 128 needed to extract trailing digits lost from division and multiplication
 #include <boost/multiprecision/cpp_int.hpp>
 /*
-FixedUFloat_ExtendedRange = Extends SignifNum range to 2147483647
 FixedUFloat_EnableApproachingZero = Not Implimented yet
 FixedUFloat_EnableInfinity = Not Implimented yet
 FixedUFloat_EnableBitwiseOperations = Not Implimented yet
 FixedUFloat_UseXorAsPowerOf = Not Implimented yet
+FixedUFloat_UseQuadPowers
 FixedUFloat_UseQuadRange
 FixedUFloat_GiveErrorInsteadOfMaxingOnOverflowConversion
 */
@@ -57,8 +61,10 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with MixedDec
-	#if defined(FixedUFloat_UseQuadRange)
+	#if defined(FixedUFloat_UseQuadPowers)
 	/// Floating formula representation is 4^Exp + 0-3.XXXXXXXXX*4^Exp;
+	#elif defined(FixedUFloat_UseQuadRange)
+	/// Floating formula representation is 2^Exp + 0-3.XXXXXXXXX*2^Exp*0.5;
 	#else
 	/// Floating formula representation is 2^Exp + 0-1.XXXXXXXXX*2^Exp;
 	#endif
@@ -69,8 +75,10 @@ namespace BlazesRusCode
 	protected:
 		#pragma region DigitStorage
 		
-	#if defined(FixedUFloat_UseQuadRange)
+	#if defined(FixedUFloat_UseQuadPowers)
 		//SignifNum inside "4^Exp + SignifNum*4^Exp" representation
+	#elif defined(FixedUFloat_UseQuadRange)
+		//SignifNum inside "2^Exp + 0.5*SignifNum*2^Exp" representation
 	#else
 		//SignifNum inside "2^Exp + SignifNum*2^Exp" representation
 	#endif
@@ -149,15 +157,22 @@ namespace BlazesRusCode
     #pragma region Const Representation values
     protected:
         static FixedUFloat_SignifType MaxSignif;
-	
 		static unsigned _int64 const TruncMultAsInt = 10000000000000000000;//10 000 000 000 000 000 000
 		//Size of this value determines how much of the truncated digits to save (19 digits of truncated digits stored by default)
 		static UInt128 const TruncMult = TruncMultAsInt;
+	#if defined(FixedUFloat_UseQuadPowers)
+		static unsigned _int64 const SubExp1Range = 2500000000000000000;
+		static unsigned _int64 const SubExp2Range = 625000000000000000;
+		static unsigned _int64 const SubExp3Range = 156250000000000000;
+		static unsigned _int64 const SubExp4Range = 39062500000000000;
+		static unsigned _int64 const SubExp5Range = 9765625000000000;
+	#else
 		static unsigned _int64 const SubExp1Range = 5000000000000000000;//TruncMultAsInt/2;
 		static unsigned _int64 const SubExp2Range = 2500000000000000000;//SubExp1Range/2;
 		static unsigned _int64 const SubExp3Range = 1250000000000000000;//SubExp2Range/2;
 		static unsigned _int64 const SubExp4Range = 625000000000000000;//SubExp3Range/2;
 		static unsigned _int64 const SubExp5Range = 312500000000000000;//SubExp4Range/2;
+	#endif
 		//After SubExp19Range the value becomes non-whole number
     #pragma endregion Const Representation values
 	public:
@@ -562,37 +577,37 @@ public:
 		
 		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
 		{//Negative Exponent values for FixedUFloat and positive Exponent values for RestrictedFloat
-			IsPositive = 0;
 			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
 				Exponent.Value = 1;
-
+				SignifNum = 0;
 			}
 			else if(TruncatedDigits>SubExp1Range){
 				Exponent.Value = 1;
-
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp1Range);
 			}
 			else if(TruncatedDigits==SubExp2Range){//Exactly 0.25 Remainder
 				Exponent.Value = 2;
-
+				SignifNum = 0;
 			}
 			else if(TruncatedDigits>SubExp2Range){
 				Exponent.Value = 2;
-
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp2Range);
 			}
 			else if(TruncatedDigits==SubExp3Range){//Exactly 0.125 Remainder
 				Exponent.Value = 3;
-
+				SignifNum = 0;
 			}
 			else if(TruncatedDigits>SubExp3Range){
-
+				Exponent.Value = 3;
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp3Range);
 			}
 			else if(TruncatedDigits==SubExp4Range){
 				Exponent.Value = 4;
-
+				SignifNum = 0;
 			}
 			else if(TruncatedDigits>SubExp4Range){
 				Exponent.Value = 4;
-
+				SignifNum = FindSignifNumFromRem(TruncatedDigits, SubExp4Range);
 			}
 			else
 			{
@@ -604,16 +619,20 @@ public:
 					if(TruncatedDigits==RangeLimit)
 					{
 						Exponent.Value = Exp;
-
+						SignifNum = 0;
 						return;
 					}
 					else if(TruncatedDigits>RangeLimit)
 					{
 						Exponent.Value = Exp;
-
+						SignifNum = FindSignifNumFromRem(TruncatedDigits, RangeLimit);
 						return;
 					}
+					#if defined(FixedUFloat_UseQuadPowers)
+					RangeLimit.DivideByFour();
+					#else
 					RangeLimit.DivideByTwo();
+					#endif
 				}
 			}
 		}
