@@ -1285,44 +1285,95 @@ public:
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
-        MediumDecBase& BasicIntAddOp(const IntType& rValue)
+        auto& BasicIntAddOp(const IntType& rValue)
         {
+    #if !defined(AltNum_EnableMirroredSection)
             if(DecimalHalf==0)
-        #if !defined(AltNum_EnableMirroredSection)
                 NRepSkippingIntAddOp(rValue);
-        #else
-            {
-                if(IntValue.IsPositive())
-                {
-                    if(rValue<0)
-                    {
-                        //Add code here
-                    }
-                    else
-                        IntValue += rValue;
-                }
-                else
-                {
-                    if(rValue<0)
-                        IntValue.Value -= -rValue;
-                    else
-                    {
-                        //Add code here
-                    }
-                }
-        #endif
             else
             {
-        #if !defined(AltNum_EnableMirroredSection)
                 bool NegativeBeforeOperation = IntValue < 0;
                 IntHalfAdditionOp(rValue);
-                //If flips to other side of negative, invert the decimals
+                //If flips to other side of negative, invert the decimal section
                 if(NegativeBeforeOperation^(IntValue<0))
                     DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
-        #else
-                //Add code here
-        #endif
-            }
+			}
+    #else
+			if(IntValue.IsPositive())
+			{
+				if(rValue<0)
+				{
+					IntType invertedrValue = -rValue;
+					if(invertedrValue>(IntType)IntValue.Value)//Flips to other side of negative
+					{
+						IntValue.Value = rValue - IntValue + 1;
+						if(DecimalHalf!=0)//Invert the decimal section
+							DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+					}
+					else
+						IntValue += rValue;
+				}
+				else
+					IntValue += rValue;
+			}
+			else
+			{
+				if(rValue<0)
+					IntValue.Value -= -rValue;
+				else
+				{
+					IntValue invertedValue = -IntValue.Value;
+					if(invertedValue>=rValue)
+						IntValue -= -rValue;
+					else//Flips to other side of negative
+					{
+						IntValue.Value = rValue - IntValue + 1;
+						if(DecimalHalf!=0)//Invert the decimal section
+							DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+					}
+				}
+			}
+    #endif
+            return *this;
+        }
+
+        /// <summary>
+        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntAddOp(const IntType& rValue)
+        {
+    #if !defined(AltNum_EnableMirroredSection)
+            if(DecimalHalf==0)
+                NRepSkippingIntAddOp(rValue);
+            else
+            {
+                bool NegativeBeforeOperation = IntValue < 0;
+                IntHalfAdditionOp(rValue);
+                //If flips to other side of negative, invert the decimal section
+                if(NegativeBeforeOperation^(IntValue<0))
+                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+			}
+    #else
+			if(IntValue.IsPositive())
+					IntValue += rValue;
+			else
+			{
+				IntValue invertedValue = -IntValue.Value;
+				if(invertedValue>=rValue)
+					IntValue -= -rValue;
+				else//Flips to other side of negative
+				{
+					IntValue.Value = rValue - IntValue + 1;
+					if(DecimalHalf!=0)//Invert the decimal section
+						DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
+				}
+			}
+    #endif
             return *this;
         }
 

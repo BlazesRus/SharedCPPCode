@@ -927,7 +927,7 @@ public:
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
-        auto& BasicIntAddOp(const IntType& rValue)
+        auto& BasicUIntAddOp(const IntType& rValue)
         {
             IntValue += rValue;
             return *this;
@@ -953,7 +953,7 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicIntSubOp(const IntType& rValue)
+        auto BasicUIntSubOp(const IntType& rValue)
         {
             IntValue -= rValue;
             return *this;
