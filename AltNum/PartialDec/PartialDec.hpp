@@ -920,23 +920,16 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between MediumDecBase and Integer value 
+        /// Basic Addition Operation between PartialDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDecBase&</returns>
-        template<IntegerType IntType=signed int>
+        template<IntegerType IntType=unsigned int>
         auto& BasicIntAddOp(const IntType& rValue)
         {
-            if (DecimalHalf == 0)
-            {
-                //Add code here
-            }
-            else
-            {
-                //Add code here
-            }
+            IntValue += rValue;
             return *this;
         }
 
@@ -953,7 +946,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDecBase and Integer value 
+        /// Basic Subtraction Operation between PartialDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -962,14 +955,7 @@ public:
         template<IntegerType IntType=unsigned int>
         auto BasicIntSubOp(const IntType& rValue)
         {
-            if (DecimalHalf == 0)
-            {
-                //Add code here
-            }
-            else
-            {
-                //Add code here
-            }
+            IntValue -= rValue;
             return *this;
         }
 
