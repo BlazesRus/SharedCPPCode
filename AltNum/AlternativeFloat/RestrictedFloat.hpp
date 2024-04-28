@@ -52,7 +52,7 @@ namespace BlazesRusCode
 	/// Represents floating range between 0 and just before 1
     /// Stores Exponents in reverse order as AltFloat_UseNormalFloatingRange toggle
     /// Each Exp holds DenomMax number of fractionals between Exp and next highest Exp
-    /// (4-5 bytes worth of Variable Storage inside class for each instance)
+    /// (3-5 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
 	public class RestrictedFloat
 	{
@@ -70,9 +70,10 @@ namespace BlazesRusCode
 		static unsigned long long AlmostApproachingTop = 4294967295;
 		static unsigned int DenomMaxExponent = 32;
         #endif
-		
-		//#pragma options align=bit_packed
-    #if defined(RestrictedFloat_UseSmallerFractional)
+	#if defined(AltFloat_PackInSmallerBits)
+		#pragma options align=bit_packed
+		unsigned int SignifNum: 16;
+	#elif defined(RestrictedFloat_UseSmallerFractional)
 		unsigned short SignifNum;// : 16;
     #else
 		unsigned int SignifNum;// : 32;
@@ -80,30 +81,27 @@ namespace BlazesRusCode
 		//Inverted Exponent Section of Formula Representation
 	    //Refers to Exp inside "1/2^Exp + (1/2^Exp)*SignifNum/DenomMax" formula
 		//Unless Exp==256 and SignifNum==0, in which case the value is at zero
+	#if defined(AltFloat_PackInSmallerBits)
+		unsigned int Exp:8;
+		#pragma options align=reset
+	#else
 		unsigned char Exp;
-		/#pragma options align=reset
+	#endif
 		
 		static unsigned char ZeroRep = 256;
 		
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
+        /// </summary>
     #if defined(RestrictedFloat_UseSmallerFractional)
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
-        /// </summary>
-        RestrictedFloat(unsigned short signifNum=0, unsigned char exponent=ZeroRep)
+        RestrictedFloat(const unsigned short& signifNum=0, const unsigned char& exponent=ZeroRep)
+	#else
+        RestrictedFloat(const unsigned int& signifNum=0, const unsigned char& exponent=ZeroRep)
+	#endif
         {
             SignifNum = signifNum;
             Exp = exponent;
         }
-    #else
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RestrictedFloat"/> class.
-        /// </summary>
-        RestrictedFloat(unsigned int signifNum=0, unsigned char exponent=ZeroRep)
-        {
-            SignifNum = signifNum;
-            Exp = exponent;
-        }
-    #endif
 	
         //Detect if at exactly zero
 		bool IsZero()

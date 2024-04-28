@@ -91,7 +91,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(unsigned int signifNum=0, signed char exp=ZeroRep, unsigned int isPositive=1)
+        AltFloat(const unsigned int& signifNum=0, const signed char& exp=ZeroRep, const unsigned int& isPositive=1)
         {
             SignifNum = signifNum;
             Exp = exp;
