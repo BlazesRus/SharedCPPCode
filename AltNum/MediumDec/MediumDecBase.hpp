@@ -1955,7 +1955,10 @@ public:
 		//Simplified division by 4 operation(to reduce cost of multiplication)
         void DivideByFour()
         {
-            if(DecimalHalf==0&&IntValue&2==0)//Check if number can be perfectly divided by 4
+            //Checking if divisible by 4 based on
+            //https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
+            //checking if divible by 8 equals (((n >> 3) << 3) == n)
+            if(DecimalHalf==0&&(((n >> 2) << 2) == n))//Check if number can be perfectly divided by 4
                 IntValue /= 4;
             else
                 rValue.UnsignedBasicIntDivOp(4);

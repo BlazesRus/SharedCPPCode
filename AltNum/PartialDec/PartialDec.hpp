@@ -1264,7 +1264,7 @@ public:
 		//Simplified multiplication by 4 operation(to reduce cost of multiplication)
         void MultipleByFour()
         {
-			if(ExtraRep&2==0)
+			if(((ExtraRep >> 2) << 2) == ExtraRep))
                 ExtraRep /= 4;
             else
                 rValue.UnsignedBasicIntMultOp(4);
