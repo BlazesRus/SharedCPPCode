@@ -743,7 +743,7 @@ public:
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual float toFloat()
+        float toFloat()
         {
             return toFloatV1;
         }
@@ -752,7 +752,7 @@ public:
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDouble()
+        double toDouble()
         {
             return toDoubleV1();
         }
@@ -761,7 +761,7 @@ public:
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDecimal()
+        double toDecimal()
         {
             return toDecimalV1;
         }
@@ -770,9 +770,9 @@ public:
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual int toInt() { return IntValue; }
+        int toInt() { return IntValue; }
 
-        virtual bool toBool() { return IntValue.IsZero() ? false : true; }
+        bool toBool() { return IntValue.IsZero() ? false : true; }
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
@@ -1862,7 +1862,6 @@ public:
 	#pragma endregion Other Subtraction Operations
 
 	#pragma region Modulus Operations
-protected:
 protected:
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
         VariantType& BasicUIntModOpV1(const IntType& Value)
