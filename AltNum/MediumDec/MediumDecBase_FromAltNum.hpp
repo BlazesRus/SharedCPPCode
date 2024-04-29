@@ -2162,7 +2162,7 @@ public:
 
         void DivideByTwo()
         {
-            if(IntValue^1==1)//Check if number is odd
+            if(IntValue&1==1)//Check if number is odd
                 rValue.BasicIntDivOp(2);
             else
                 IntValue /= 2;

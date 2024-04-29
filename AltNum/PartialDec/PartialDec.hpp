@@ -839,19 +839,6 @@ protected:
         }
 		
 public:
-        void DivideByTwo()
-        {
-            if(ExtraRep==0)
-                ExtraRep = 2;
-            else if(ExtraRep<=2147483648)
-                ExtraRep *= 2;
-            else
-            {
-                rValue.BasicIntDivOp(65536);//Divided by 2^16
-                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
-            }
-
-        }
 
 		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
         void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
@@ -885,14 +872,14 @@ protected:
 
 public:
 		
-        constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<const unsigned int>;
-        constexpr auto PartialIntMultOp = PartialUIntMultOpV1<const signed int>;
-        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const unsigned long long>;
-        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const signed long long>;
+        constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<unsigned int>;
+        constexpr auto PartialIntMultOp = PartialUIntMultOpV1<signed int>;
+        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<unsigned long long>;
+        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<signed long long>;
 		
 protected:
-        template<MediumDecVariant VariantType=PartialDec, IntegerType IntType=signed int>
-        VariantType& BasicUIntMultOpV1(const IntType& Value)
+        template<IntegerType IntType=signed int>
+        auto& BasicUIntMultOpV1(const IntType& Value)
         {
             if (Value == 0)
             {
@@ -904,13 +891,33 @@ protected:
             PartialUIntMultOp(Value);
             return *this;
         }
+
+		/// <summary>
+        /// Basic Multiplication Operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>PartialDec&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicUIntMultV1(const IntType& rValue)
+        {
+        {
+            auto self = *this;
+            return self.BasicUIntMultOpV1(rValue);
+        }
 		
 public:
 
-        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<const unsigned int>;
-        constexpr auto BasicIntMultOp = BasicUIntMultOpV1<const signed int>;
-        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<const unsigned long long>;
-        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<const signed long long>;
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<unsigned int>;
+        constexpr auto BasicIntMultOp = BasicUIntMultOpV1<signed int>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
+        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
+
+        constexpr auto BasicUIntMult = BasicUIntMultV1<unsigned int>;
+        constexpr auto BasicIntMult = BasicUIntMultV1<signed int>;
+        constexpr auto BasicUInt64Mult = BasicUIntMultV1<unsigned long long>;
+        constexpr auto BasicInt64Mult = BasicUIntMultV1<signed long long>;
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -925,7 +932,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOp(const IntType& rValue)
         {
@@ -933,10 +940,29 @@ public:
             return *this;
         }
 
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<const unsigned int>;
-        constexpr auto BasicIntAddOp = BasicUIntAddOpV1<const signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<const signed long long>;
+        /// <summary>
+        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>PartialDec&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicUIntAddV1(const IntType& rValue)
+        {
+            auto self = *this;
+            return self.BasicUIntAddOpV1(rValue);
+        }
+
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto BasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<signed long long>;
+
+        constexpr auto BasicUIntAdd = BasicUIntAddV1<unsigned int>;
+        constexpr auto BasicIntAdd = BasicUIntAddV1<signed int>;
+        constexpr auto BasicUInt64Add = BasicUIntAddV1<unsigned long long>;
+        constexpr auto BasicInt64Add = BasicUIntAddV1<signed long long>;
 
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -959,10 +985,30 @@ public:
             return *this;
         }
 
-        constexpr auto BasicUIntAddOp = BasicUIntSubOpV1<const unsigned int>;
-        constexpr auto BasicIntAddOp = BasicUIntSubOpV1<const signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntSubOpV1<const unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicUIntSubOpV1<const signed long long>;
+		/// <summary>
+        /// Basic Subtraction Operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicUIntSubV1(const IntType& rValue)
+        {
+        {
+            auto self = *this;
+            return self.BasicUIntSubOpV1(rValue);
+        }
+
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<unsigned int>;
+        constexpr auto BasicIntSubOp = BasicUIntSubOpV1<signed int>;
+        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<unsigned long long>;
+        constexpr auto BasicInt64SubOp = BasicUIntSubOpV1<signed long long>;
+
+        constexpr auto BasicUIntSub = BasicUIntSubOpV1<unsigned int>;
+        constexpr auto BasicIntSub = BasicUIntSubOpV1<signed int>;
+        constexpr auto BasicUInt64Sub = BasicUIntSubOpV1<unsigned long long>;
+        constexpr auto BasicInt64Sub = BasicUIntSubOpV1<signed long long>;
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
@@ -1173,9 +1219,56 @@ public:
 
 	#pragma region Other Division Operations
 
+		//Simplified division by 2 operation(to reduce cost of multiplication)
+        void DivideByTwo()
+        {
+            if(ExtraRep==0)
+                ExtraRep = 2;
+            else if(ExtraRep<=2147483648)
+                ExtraRep *= 2;
+            else
+            {
+                rValue.UnsignedBasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
+            }
+        }
+
+		//Simplified division by 4 operation(to reduce cost of multiplication)
+        void DivideByFour()
+        {
+            if(ExtraRep==0)
+                ExtraRep = 4;
+            else if(ExtraRep<=1073741824)
+                ExtraRep *= 4;
+            else
+            {
+                rValue.UnsignedBasicIntDivOp(65536);//Divided by 2^16
+                ExtraRep /= 16384;//Divided by 2^16, and then multiplied by 2
+            }
+            
+        }
+
 	#pragma endregion Other Division Operations	
 
 	#pragma region Other Multiplication Operations
+
+		//Simplified multiplication by 2 operation(to reduce cost of multiplication)
+        void MultipleByTwo()
+        {
+            if(ExtraRep&1==1)//Check if number is odd
+                rValue.UnsignedBasicIntMultOp(2);
+            else
+                ExtraRep /= 2;
+        }
+
+		//Simplified multiplication by 4 operation(to reduce cost of multiplication)
+        void MultipleByFour()
+        {
+			if(ExtraRep&2==0)
+                ExtraRep /= 4;
+            else
+                rValue.UnsignedBasicIntMultOp(4);
+        }
 
 	#pragma endregion Other Multiplication Operations
 
