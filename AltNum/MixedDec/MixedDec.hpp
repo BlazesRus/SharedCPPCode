@@ -2219,7 +2219,7 @@ public:
                 ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
             }
 		#else
-            if(IntValue^1==1)//Check if number is odd
+            if(IntValue&1==1)//Check if number is odd
                 rValue.BasicIntDivOp(2);
             else
                 IntValue /= 2;
