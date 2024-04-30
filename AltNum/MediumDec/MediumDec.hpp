@@ -49,9 +49,12 @@ namespace BlazesRusCode
     class DLL_API MediumDec : public virtual MediumDecBase
     {
     public:
+
 		//Performs remainder/Mod operation then saves division result
 		class DLL_API ModResult : public AltNumModChecker<MediumDec>{};
 		
+	#pragma region class_constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
@@ -248,11 +251,12 @@ namespace BlazesRusCode
 			}
 		}
 
+/*
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
         constexpr auto GetRepType = MediumDecBase::GetRepType;
-
+*/
     #pragma endregion RepType
 
 public:
@@ -708,26 +712,13 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Pi Conversion
-	
     #pragma endregion Pi Conversion
 
     #pragma region E Conversion
-	
     #pragma endregion E Conversion
 
     #pragma region Other RepType Conversion
-
-//        constexpr auto ConvertToNormType = MediumDecBase::ConvertToNormType;
-//
-//		//Returns value as normal type representation
-//        constexpr auto ConvertAsNormType = MediumDecBase::ConvertAsNormType<MediumDec>;
-//
-//        //Converts value to normal type representation
-//        constexpr auto ConvertToNormTypeV2 = MediumDecBase::ConvertToNormTypeV2;
-//
-//		//Returns value as normal type representation
-//        constexpr auto ConvertAsNormTypeV2 = MediumDecBase::ConvertAsNormTypeV2<MediumDec>;
-
+    //Not using in MediumDec
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators

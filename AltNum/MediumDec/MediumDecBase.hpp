@@ -25,7 +25,7 @@ AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
 #include "MediumDecPreprocessors.h"
-#include "RepType.h"
+#include "..\RepType.h"
 
 //"Not used for this variant" comment used as placeholder
 // between unused regions to help with code compare between variants and keep structure similar
@@ -59,9 +59,15 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDecBase : public virtual AltNumBase
+    class DLL_API MediumDecBase
     {
 protected:
+#if defined(AltNum_UseBuiltinVirtualTable)
+		template <typename T>
+		void** GetVTable(T* obj) {
+			return *((void***)obj);
+		}
+#endif
 #if !defined(AltNum_DisableDefaultStringFormatOption)
 		enum class DefaultStringFormatEnum : int
 		{

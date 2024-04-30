@@ -20,6 +20,9 @@
 
 #include "..\MediumDec\MediumDecBase.hpp"
 #include "..\MediumDec\MediumDec.hpp"
+#if defined(AltNum_UseBuiltinVirtualTable)
+	#include "..\VirtualTableBase.hpp"
+#endif
 
 namespace BlazesRusCode
 {
@@ -31,6 +34,14 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecV2Base : public virtual MediumDecBase
     {
+	#if defined(AltNum_UseBuiltinVirtualTable)
+	protected:
+		struct VirtualTable {
+			RepTypeFn* VirtualTable_GetRepType;
+			//String_RepTypeFn* VirtualTable_RepTypeAsString;
+		};
+		VirtualTable* VTable;
+	#endif
 	public:
         /// <summary>
         /// long double (Extended precision double)
@@ -46,6 +57,9 @@ namespace BlazesRusCode
         {
             IntValue = intVal;
             DecimalHalf = decVal;
+	#if defined(AltNum_UseBuiltinVirtualTable)
+			VTable = new VirtualTable;
+	#endif
         }
 
         MediumDecV2Base(const MediumDecV2Base&) = default;
@@ -185,14 +199,13 @@ namespace BlazesRusCode
     #pragma region RepType
 
         /// <summary>
-        /// Enum representing value type stored
-        /// </summary>
-        using RepType = MediumDecBase::RepType;
-
-        /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        virtual RepType GetRepType()
+#if defined(AltNum_UseBuiltinVirtualTable)
+        virtual RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
+#else
+        RepType GetRepType()
+#endif
         {
 #if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
@@ -285,6 +298,22 @@ namespace BlazesRusCode
 			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }
+
+#if defined(AltNum_UseBuiltinVirtualTable)
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling virtual function)
+        /// </summary>
+        RepType GetRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
+		}
+		
+		/*
+		static std::string RepTypeAsString(const RepType& repType)
+		{
+			GetVTable(VTable)->VirtualTable_RepTypeAsString(VTable, repType);
+		}*/
+#endif
 
     #pragma endregion RepType
 
@@ -456,7 +485,7 @@ public:
 
 protected:
 
-        virtual void InitialyzeAltRepFromString(const std::string& Value)
+        void InitialyzeAltRepFromString(const std::string& Value)
         {
         #if defined(MediumDecV2_EnablePiRep)
             if(str.find("Pi") != std::string::npos)
@@ -478,7 +507,7 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void ReadString(const std::string& Value)
+        void ReadString(const std::string& Value)
         {
             MediumDecBase::ReadString(Value);
             InitialyzeAltRepFromString(Value);
@@ -1026,6 +1055,53 @@ public:
                 IntValue /= 2;
         }
 
+        void DivideByFour()
+        {
+		}
+
+protected:
+/*
+        /// <summary>
+        /// Division operation between MediumDec and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<IntType>;
+*/
+public:
+/*
+        constexpr auto UIntDivOpV1 = MediumDecV2Base::UIntDivOpV1<unsigned int>;
+        constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<signed int>;
+        constexpr auto UnsignedBasicIntDivOp = MediumDecV2Base::UIntDivOpV1<signed int>;
+        constexpr auto UInt64DivOp = MediumDecV2Base::UIntDivOpV1<unsigned long long>;
+        constexpr auto Int64DivOp = MediumDecV2Base::IntDivOpV1<signed long long>;
+	
+        constexpr auto DivideByUInt = MediumDecV2Base::UIntDivV1<unsigned int>;
+        constexpr auto DivideByInt = MediumDecV2Base::IntDivV1<signed int>;
+        constexpr auto UnsignedDivideByInt = MediumDecV2Base::UIntDivV1<signed int>;
+        constexpr auto DivideByUInt64 = MediumDecV2Base::UIntDivV1<unsigned long long>;
+        constexpr auto DivideByInt64 = MediumDecV2Base::IntDivV1<signed long long>;
+        constexpr auto UnsignedDivideByInt64 = MediumDecV2Base::UIntDivV1<signed long long>;
+
+        /// <summary>
+        /// Division Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivOp = MediumDecV2Base::DivOp;
+
+        /// <summary>
+        /// Division Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideBy = MediumDecV2Base::DivideBy;
+*/
+
 	#pragma endregion Other Division Operations	
 
 	#pragma region Other Multiplication Operations
@@ -1035,6 +1111,54 @@ public:
         {
 			//Add Code 
         }
+		
+        void MultipleByFour()
+        {
+			//Add Code 
+        }
+
+protected:
+/*
+        /// <summary>
+        /// Multiplication operation between MediumDec and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<IntType>;
+*/
+
+public:
+/*
+        constexpr auto UIntMultOpV1 = MediumDecV2Base::UIntMultOpV1<unsigned int>;
+        constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<signed int>;
+        constexpr auto UnsignedMediumDecV2Base::IntMultOp = MediumDecV2Base::UIntMultOpV1<signed int>;
+        constexpr auto UInt64MultOp = MediumDecV2Base::UIntMultOpV1<unsigned long long>;
+        constexpr auto Int64MultOp = MediumDecV2Base::IntMultOpV1<signed long long>;
+	
+        constexpr auto MultipleByUInt = MediumDecV2Base::UIntMultV1<unsigned int>;
+        constexpr auto MultipleByInt = MediumDecV2Base::IntMultV1<signed int>;
+        constexpr auto UnsignedMultipleByInt = MediumDecV2Base::UIntMultV1<signed int>;
+        constexpr auto MultipleByUInt64 = MediumDecV2Base::UIntMultV1<unsigned long long>;
+        constexpr auto MultipleByInt64 = MediumDecV2Base::IntMultV1<signed long long>;
+        constexpr auto UnsignedMultipleByInt64 = MediumDecV2Base::UIntMultV1<signed long long>;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultOp = MediumDecV2Base::MultOp;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultipleBy = MediumDecV2Base::MultipleBy;*/
 
 	#pragma endregion Other Multiplication Operations
 

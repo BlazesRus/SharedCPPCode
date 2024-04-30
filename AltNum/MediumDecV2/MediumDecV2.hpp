@@ -53,6 +53,10 @@ namespace BlazesRusCode
     class DLL_API MediumDecV2 : public virtual MediumDecV2Base
     {
 public:
+
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModChecker<MediumDec>{};
+
 	#pragma region class_constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
@@ -84,323 +88,11 @@ protected:
     #pragma endregion Const Representation values
 
     #pragma region RepType
-		
-		static std::string RepTypeAsString(RepType& repType)
-		{
-			switch(repType)
-			{
-				case RepType::NormalType:
-					return "NormalType"; break;
-	#if defined(AltNum_EnableFractionals)
-				case RepType::NumByDiv:
-					return "NumByDiv"; break;
-	#endif
-	#if defined(AltNum_EnablePiRep)
-				case RepType::PiNum:
-					return "PiNum"; break;
-		#if defined(AltNum_EnablePiPowers)
-				case RepType::PiPower:
-					return "PiPower"; break;
-		#endif
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-					return "PiNumByDiv"; break;
-			#else
-				case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-					return "PiFractional"; break;
-			#endif
-		#endif
-	#endif
-	#if defined(AltNum_EnableERep)
-				case RepType::ENum:
-					return "ENum"; break;
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
-					return "ENumByDiv"; break;
-			#else
-				case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-					return "EFractional"; break;
-			#endif
-		#endif
-	#endif
-	#if defined(AltNum_EnableImaginaryNum)
-				case RepType::INum:
-                    return "INum"; break;
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
-				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-					return "INumByDiv"; break;
-			#else
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-					return "IFractional"; break;
-			#endif
-		#endif
-		#ifdef AltNum_EnableComplexNumbers
-				case RepType::ComplexIRep:
-					return "ComplexIRep"; break;
-		#endif
-	#endif
-	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-					return "MixedFrac"; break;
-		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-					return "MixedPi"; break;
-		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-					return "MixedE"; break;
-		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-					return "MixedI"; break;
-		#endif
-	#endif
-
-	#if defined(AltNum_EnableInfinityRep)
-				case RepType::Infinity:
-					return "Infinity"; break;
-	#endif
-	#if defined(AltNum_EnableApproachingValues)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-                    return "ApproachingBottom"; break;
-		#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-                    return "ApproachingTop"; break;
-		#endif
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeft:
-					return "ApproachingMidLeft"; break;
-				case RepType::ApproachingMidRight:
-					return "ApproachingMidRight"; break;
-		#endif
-	#endif
-    #if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
-					return "Undefined"; break;
-				case RepType::NaN:
-					return "NaN"; break;
-    #endif
-	#if defined(AltNum_EnableApproachingPi)
-				case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
-					return "ApproachingTopPi"; break;
-	#endif
-	#if defined(AltNum_EnableApproachingE)
-				case RepType::ApproachingTopE://equal to IntValue.9..9 e
-					return "ApproachingTopE"; break;
-	#endif
-	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:
-					return "ImaginaryInfinity"; break;
-	#endif
-	#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-					return "ApproachingImaginaryBottom"; break;
-		#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-					return "ApproachingImaginaryTop"; break;
-		#endif
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidLeft:
-					return "ApproachingImaginaryMidLeft"; break;
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidRight:
-					return "ApproachingImaginaryMidRight"; break;
-			#endif
-		#endif
-    #endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
-				case RepType::UndefinedButInRange:
-					return "UndefinedButInRange"; break;
-		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-				case RepType::WithinMinMaxRange:
-					return "WithinMinMaxRange"; break;
-		#endif
-	#endif
-    #if defined(AltNum_EnableNil)
-				case RepType::Nil:
-					return "Nil"; break;
-    #endif
-				default:
-					return "Unknown";
-			}
-		}
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        RepType const GetRepType()
-        {
-		#if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf==InfinityRep)
-            {
-			#if defined(AltNum_EnableImaginaryInfinity)
-                if (ExtraRep == IRep)
-				    return IntValue==1?RepType::PositiveImaginaryInfinity:RepType::NegativeImaginaryInfinity;
-				else
-			#endif
-			#if defined(AltNum_EnableUndefinedButInRange)
-                if (ExtraRep == UndefinedInRangeRep)
-				    return RepType::UndefinedButInRange;
-				else
-			#endif
-			#if defined(WithinMinMaxRangeRep)
-                if (ExtraRep == WithinMinMaxRangeRep)
-				    return RepType::WithinMinMaxRange;
-				else
-			#endif
-					return IntValue==1?RepType::PositiveInfinity:RepType::NegativeInfinity;
-            }
-			else
-		#endif
-		#if defined(AltNum_EnableApproachingValues)//old value = ApproachingValRep
-            if (DecimalHalf == ApproachingBottomRep)
-            {
-				if(ExtraRep==0)
-					return RepType::ApproachingBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-				else
-			#if defined(AltNum_EnableApproachingDivided)//if(ExtraRep>1)
-					return RepType::ApproachingMidLeft;//ExtraRep value of 2 results in 0.49999...9
-			#else
-                    throw "EnableApproachingDivided feature not enabled";
-			#endif	
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-			#if defined(AltNum_EnableApproachingPi)
-                else if (ExtraRep == PiRep)
-                    return RepType::ApproachingTopPi;
-			#endif
-			#if defined(AltNum_EnableApproachingE)
-                else if (ExtraRep == ERep)
-                    return RepType::ApproachingTopE;
-			#endif
-                else
-			#if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingMidRight;//ExtraRep value of 2 results in 0.500...1
-			#else
-                    throw "EnableApproachingDivided feature not enabled";
-			#endif            
-            }
-		    #if defined(AltNum_EnableImaginaryInfinity)//ApproachingImaginaryValRep
-            else if (DecimalHalf == ApproachingImaginaryBottomRep)
-            {
-                if(ExtraRep==0)
-                    return RepType::ApproachingImaginaryBottom;//Approaching from right to IntValue;(IntValue of 0 results in 0.00...1)
-                else
-			    #if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidLeft;//ExtraRep value of 2 results in 0.49999...9
-			    #else
-                    throw "EnableApproachingDivided feature not enabled";
-			    #endif            
-            }
-            else if (DecimalHalf == ApproachingImaginaryTopRep)
-            {
-				if(ExtraRep==0)
-				    return RepType::ApproachingImaginaryTop;//Approaching from left to (IntValue-1);(IntValue of 0 results in 0.99...9)
-				else
-			    #if defined(AltNum_EnableApproachingDivided)
-					return RepType::ApproachingImaginaryMidRight;//ExtraRep value of 2 results in 0.500...1
-			    #else
-                    throw "EnableApproachingDivided feature not enabled";
-			    #endif            
-            }
-		    #endif
-	    #endif
-            if(ExtraRep==0)
-			{
-	#if defined(AltNum_EnableNaN)
-				if(DecimalHalf==NaNRep)
-					return RepType::NaN;
-				else if(DecimalHalf==UndefinedRep)
-					return RepType::Undefined;
-	#endif
-                return RepType::NormalType;
-			}
-			else if(IntValue==0&&DecimalHalf==0)
-			{
-				ExtraRep = 0;
-				return RepType::NormalType;
-			}
-	#ifdef AltNum_EnablePiRep
-            else if(ExtraRep==PiRep)
-                return RepType::PiNum;
-		#if defined(AltNum_EnablePiFractional)
-            else if(ExtraRep==PiByDivisorRep)
-				return RepType::PiFractional;
-		#endif
-	#endif
-            else if(ExtraRep>0)
-			{
-	#if defined(AltNum_EnableMixedFractional)
-				if(DecimalHalf<0)
-					return RepType::MixedFrac;
-    #endif
-	#if defined(AltNum_EnableFractionals)
-                return RepType::NumByDiv;
-    #endif
-				throw "Non-enabled representation detected";
-			}
-    #if defined(AltNum_EnableERep)
-            else if(ExtraRep==ERep)
-			{
-				return RepType::ENum;
-			}
-		#if defined(AltNum_EnableEFractional)
-            else if(ExtraRep==EByDivisorRep)//(IntValue/DecimalHalf)*e
-				return RepType::EFractional;
-		#endif
-    #endif
-
-	#if defined(AltNum_EnableImaginaryNum)
-            else if(ExtraRep==IRep)
-			{
-				return RepType::INum;
-			}
-		#if defined(AltNum_EnableIFractional)
-            else if(ExtraRep==IByDivisorRep)
-					return RepType::IFractional;
-		#endif
-	#endif
-	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-           else if(ExtraRep==UndefinedButInRange)
-                return RepType::UndefinedButInRange;//If DecimalHalf equals InfinityRep, than equals undefined value with range between negative infinity and positive infinity (negative range values indicates inverted range--any but the range of values)
-		#if defined(AltNum_EnableWithinMinMaxRange)
-			//If IntValue==NegativeRep, then left side range value equals negative infinity
-			//If DecimalHalf==InfinityRep, then right side range value equals positive infinity
-           else if(ExtraRep==WithinMinMaxRangeRep)
-                return RepType::WithinMinMaxRange;
-		#endif
-	#endif
-            else if(ExtraRep<0)
-	#if defined(AltNum_EnableAlternativeMixedFrac)
-				if(DecimalHalf<0)
-		#if defined(AltNum_EnableMixedPiFractional)
-					return RepType::MixedPi;
-		#elif defined(AltNum_EnableMixedEFractional)
-					return RepType::MixedE;
-		#elif defined(AltNum_EnableMixedIFractional)
-					return RepType::MixedI;
-        #else
-					throw "Non-enabled Alternative Mixed Fraction representation type detected";
-		#endif
-				else
-	#endif
-	#if defined(AltNum_EnableDecimaledPiFractionals)
-					return RepType::PiNumByDiv;
-	#elif defined(AltNum_EnableDecimaledEFractionals)
-					return RepType::ENumByDiv;
-	#elif defined(AltNum_EnableDecimaledIFractionals)
-					return RepType::INumByDiv;
-	#else
-					throw "Non-enabled Negative ExtraRep representation type detected";
-	#endif
-            else
-				throw "Unknown or non-enabled representation type detected";
-            return RepType::UnknownType;//Catch-All Value;
-        }
+        constexpr auto GetRepType = MediumDecV2Base::GetRepType;
 
     #pragma endregion RepType
 
@@ -446,7 +138,16 @@ public:
     #pragma endregion String Commands
 
 	#pragma region ConvertFromOtherTypes
-
+//        constexpr auto ConvertToNormType = MediumDecV2Base::ConvertToNormType;
+//
+//		//Returns value as normal type representation
+//        constexpr auto ConvertAsNormType = MediumDecV2Base::ConvertAsNormType;
+//
+//        //Converts value to normal type representation
+//        constexpr auto ConvertToNormTypeV2 = MediumDecV2Base::ConvertToNormTypeV2;
+//
+//		//Returns value as normal type representation
+//        constexpr auto ConvertAsNormTypeV2 = MediumDecV2Base::ConvertAsNormTypeV2;
 	#pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
@@ -507,22 +208,393 @@ public:
 
     #pragma region Other Division Operations
 
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntDivOpV1 = MediumDecBase::PartialUIntDivOpV1<IntType>;
+
+        template<IntegerType IntType=signed int>
+        constexpr auto PartialIntDivOpV1 = MediumDecBase::PartialIntDivOpV1<IntType>;
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<MediumDec, IntType>;
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=signed int>
+        constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<MediumDec, IntType>;
+		
+public:
+
+        constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<unsigned int>;
+        constexpr auto PartialIntDivOpV1 = PartialIntDivOpV1<signed int>;
+        constexpr auto UnsignedPartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
+        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<unsigned long long>;
+        constexpr auto PartialInt64DivOpV1 = PartialIntDivOpV1<signed long long>;
+
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
+        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed long long>;
+		
+        /// <summary>
+        /// Simplified division by 2 operation(to reduce cost of operations)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideByTwo = MediumDecBase::DivideByTwo;
+
+        /// <summary>
+        /// Simplified division by 4 operation(to reduce cost of operations)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideByFour = MediumDecBase::DivideByFour;
+		
+protected:
+        /// <summary>
+        /// Division operation between MediumDec and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntDivOpV1 = MediumDecV2Base::UIntDivOpV1<unsigned int>;
+        constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<signed int>;
+        constexpr auto UnsignedBasicIntDivOp = MediumDecV2Base::UIntDivOpV1<signed int>;
+        constexpr auto UInt64DivOp = MediumDecV2Base::UIntDivOpV1<unsigned long long>;
+        constexpr auto Int64DivOp = MediumDecV2Base::IntDivOpV1<signed long long>;
+	
+        constexpr auto DivideByUInt = MediumDecV2Base::UIntDivV1<unsigned int>;
+        constexpr auto DivideByInt = MediumDecV2Base::IntDivV1<signed int>;
+        constexpr auto UnsignedDivideByInt = MediumDecV2Base::UIntDivV1<signed int>;
+        constexpr auto DivideByUInt64 = MediumDecV2Base::UIntDivV1<unsigned long long>;
+        constexpr auto DivideByInt64 = MediumDecV2Base::IntDivV1<signed long long>;
+        constexpr auto UnsignedDivideByInt64 = MediumDecV2Base::UIntDivV1<signed long long>;
+
+        /// <summary>
+        /// Division Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivOp = MediumDecV2Base::DivOp;
+
+        /// <summary>
+        /// Division Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideBy = MediumDecV2Base::DivideBy;
+
 	#pragma endregion Other Division Operations	
 
-    #pragma region Other Multiplication Operations
+	#pragma region Multiplication Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntMultOpV1 = MediumDecBase::PartialUIntMultOpV1<IntType>;
 
-    #pragma endregion Other Multiplication Operations
+        template<IntegerType IntType=signed int>
+        constexpr auto PartialIntMultOpV1 = MediumDecBase::PartialIntMultOpV1<IntType>;
 
-    #pragma region Other Addition Operations
+        /// <summary>
+        /// Basic multiplication Operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntMultOpV1 = MediumDecBase::BasicUIntMultOpV1<MediumDec, IntType>;
 
-    #pragma endregion Other Addition Operations
+        /// <summary>
+        /// Basic multiplication Operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=signed int>
+        constexpr auto BasicIntMultOpV1 = MediumDecBase::BasicIntMultOpV1<MediumDec, IntType>;
+		
+public:
 
-    #pragma region Other Subtraction Operations
+        constexpr auto PartialUIntMultOpV1 = PartialUIntMultOpV1<unsigned int>;
+        constexpr auto PartialIntMultOpV1 = PartialIntMultOpV1<signed int>;
+        constexpr auto UnsignedPartialIntMultOpV1 = PartialUIntMultOpV1<signed int>;
+        constexpr auto PartialUInt64MultOpV1 = PartialUIntMultOpV1<unsigned long long>;
+        constexpr auto PartialInt64MultOpV1 = PartialIntMultOpV1<signed long long>;
 
-    #pragma endregion Other Subtraction Operations
+        constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<unsigned int>;
+        constexpr auto BasicIntMultOp = BasicIntMultOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntMultOp = BasicUIntMultOpV1<signed int>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
+        constexpr auto BasicInt64MultOp = BasicIntMultOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
+		
+        /// <summary>
+        /// Simplified multiplication by 2 operation(to reduce cost of operations)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultipleByTwo = MediumDecV2Base::MultipleByTwo;
 
+        /// <summary>
+        /// Simplified multiplication by 4 operation(to reduce cost of operations)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultipleByFour = MediumDecV2Base::MultipleByFour;
+
+protected:
+        /// <summary>
+        /// Multiplication operation between MediumDec and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntMultOpV1 = MediumDecV2Base::UIntMultOpV1<unsigned int>;
+        constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<signed int>;
+        constexpr auto UnsignedMediumDecV2Base::IntMultOp = MediumDecV2Base::UIntMultOpV1<signed int>;
+        constexpr auto UInt64MultOp = MediumDecV2Base::UIntMultOpV1<unsigned long long>;
+        constexpr auto Int64MultOp = MediumDecV2Base::IntMultOpV1<signed long long>;
+	
+        constexpr auto MultipleByUInt = MediumDecV2Base::UIntMultV1<unsigned int>;
+        constexpr auto MultipleByInt = MediumDecV2Base::IntMultV1<signed int>;
+        constexpr auto UnsignedMultipleByInt = MediumDecV2Base::UIntMultV1<signed int>;
+        constexpr auto MultipleByUInt64 = MediumDecV2Base::UIntMultV1<unsigned long long>;
+        constexpr auto MultipleByInt64 = MediumDecV2Base::IntMultV1<signed long long>;
+        constexpr auto UnsignedMultipleByInt64 = MediumDecV2Base::UIntMultV1<signed long long>;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultOp = MediumDecV2Base::MultOp;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultipleBy = MediumDecV2Base::MultipleBy;
+
+	#pragma endregion Multiplication Operations
+
+	#pragma region Addition Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntAddOpV1 = MediumDecBase::PartialUIntAddOpV1<IntType>;
+
+        template<IntegerType IntType=signed int>
+        constexpr auto PartialIntAddOpV1 = MediumDecBase::PartialIntAddOpV1<IntType>;
+
+        /// <summary>
+        /// Basic addition operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntAddOpV1 = MediumDecBase::BasicUIntAddOpV1<MediumDec, IntType>;
+
+        /// <summary>
+        /// Basic multiplication operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=signed int>
+        constexpr auto BasicIntAddOpV1 = MediumDecBase::BasicIntAddOpV1<MediumDec, IntType>;
+		
+public:
+
+        constexpr auto PartialUIntAddOpV1 = PartialUIntAddOpV1<unsigned int>;
+        constexpr auto PartialIntAddOpV1 = PartialIntAddOpV1<signed int>;
+        constexpr auto UnsignedPartialIntAddOpV1 = PartialUIntAddOpV1<signed int>;
+        constexpr auto PartialUInt64AddOpV1 = PartialUIntAddOpV1<unsigned long long>;
+        constexpr auto PartialInt64AddOpV1 = PartialIntAddOpV1<signed long long>;
+
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64AddOp = BasicUIntAddOpV1<signed long long>;
+		
+protected:
+        /// <summary>
+        /// Addition operation Between MediumDec and Integer value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntAddOpV1 = MediumDecV2Base::IntAddOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntAddOpV1 = MediumDecV2Base::UIntAddOpV1<unsigned int>;
+        constexpr auto IntAddOpV1 = MediumDecV2Base::IntAddOpV1<signed int>;
+        constexpr auto UnsignedMediumDecV2Base::IntAddOp = MediumDecV2Base::UIntAddOpV1<signed int>;
+        constexpr auto UInt64AddOp = MediumDecV2Base::UIntAddOpV1<unsigned long long>;
+        constexpr auto Int64AddOp = MediumDecV2Base::IntAddOpV1<signed long long>;
+	
+        constexpr auto AddByUInt = MediumDecV2Base::UIntAddV1<unsigned int>;
+        constexpr auto AddByInt = MediumDecV2Base::IntAddV1<signed int>;
+        constexpr auto UnsignedAddByInt = MediumDecV2Base::UIntAddV1<signed int>;
+        constexpr auto AddByUInt64 = MediumDecV2Base::UIntAddV1<unsigned long long>;
+        constexpr auto AddByInt64 = MediumDecV2Base::IntAddV1<signed long long>;
+        constexpr auto UnsignedAddByInt64 = MediumDecV2Base::UIntAddV1<signed long long>;
+
+        /// <summary>
+        /// Addition operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto AddOp = MediumDecV2Base::AddOp;
+
+        /// <summary>
+        /// Addition operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto AddBy = MediumDecV2Base::AddBy;
+
+	#pragma endregion Addition Operations
+	
+	#pragma region Subtraction Operations
+protected:
+        template<typename IntType=unsigned int>
+        constexpr auto PartialUIntSubOpV1 = MediumDecBase::PartialUIntSubOpV1<IntType>;
+
+        template<IntegerType IntType=signed int>
+        constexpr auto PartialIntSubOpV1 = MediumDecBase::PartialIntSubOpV1<IntType>;
+
+        /// <summary>
+        /// Basic subtraction operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<typename IntType=unsigned int>
+        constexpr auto BasicUIntSubOpV1 = MediumDecBase::BasicUIntSubOpV1<MediumDec, IntType>;
+
+        /// <summary>
+        /// Basic subtraction operation between MediumDec and Integer value. 
+        /// that ignores special representation status
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=signed int>
+        constexpr auto BasicIntSubOpV1 = MediumDecBase::BasicIntSubOpV1<MediumDec, IntType>;
+		
+public:
+
+        constexpr auto PartialUIntSubOpV1 = PartialUIntSubOpV1<unsigned int>;
+        constexpr auto PartialIntSubOpV1 = PartialIntSubOpV1<signed int>;
+        constexpr auto UnsignedPartialIntSubOpV1 = PartialUIntSubOpV1<signed int>;
+        constexpr auto PartialUInt64SubOpV1 = PartialUIntSubOpV1<unsigned long long>;
+        constexpr auto PartialInt64SubOpV1 = PartialIntSubOpV1<signed long long>;
+
+        constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<unsigned int>;
+        constexpr auto BasicIntSubOp = BasicIntSubOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<signed int>;
+        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<unsigned long long>;
+        constexpr auto BasicInt64SubOp = BasicIntSubOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64SubOp = BasicUIntSubOpV1<signed long long>;
+		
+protected:
+        /// <summary>
+        /// Subtraction operation between MediumDec and Integer value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntSubOpV1 = MediumDecV2Base::IntSubOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntSubOpV1 = MediumDecV2Base::UIntSubOpV1<unsigned int>;
+        constexpr auto IntSubOpV1 = MediumDecV2Base::IntSubOpV1<signed int>;
+        constexpr auto UnsignedMediumDecV2Base::IntSubOp = MediumDecV2Base::UIntSubOpV1<signed int>;
+        constexpr auto UInt64SubOp = MediumDecV2Base::UIntSubOpV1<unsigned long long>;
+        constexpr auto Int64SubOp = MediumDecV2Base::IntSubOpV1<signed long long>;
+	
+        constexpr auto SubByUInt = MediumDecV2Base::UIntSubV1<unsigned int>;
+        constexpr auto SubByInt = MediumDecV2Base::IntSubV1<signed int>;
+        constexpr auto UnsignedSubByInt = MediumDecV2Base::UIntSubV1<signed int>;
+        constexpr auto SubByUInt64 = MediumDecV2Base::UIntSubV1<unsigned long long>;
+        constexpr auto SubByInt64 = MediumDecV2Base::IntSubV1<signed long long>;
+        constexpr auto UnsignedSubByInt64 = MediumDecV2Base::UIntSubV1<signed long long>;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto SubOp = MediumDecV2Base::SubOp;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto SubBy = MediumDecV2Base::SubBy;
+
+	#pragma endregion Subtraction Operations
+	
 	#pragma region Modulus Operations
-    //Modulus functions and overrides go here
+
+        /// <summary>
+        /// Modulus Operation(Returning inside
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        friend ModResult operator%(const MediumDecV2& LValue, const MediumDecV2& RValue)
+		{
+			return ModResult(LValue, RValue);
+		}
+
+        friend MediumDec& operator%=(MediumDecV2& LValue, const MediumDecV2& RValue)
+		{ 
+            MediumDec divRes = LValue / RValue;
+            LValue -= RValue * divRes;
+			return *this;
+		}
+
 	#pragma endregion Modulus Operations
 
     #pragma region Main Operator Overrides

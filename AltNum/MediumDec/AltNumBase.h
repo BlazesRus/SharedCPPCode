@@ -33,8 +33,7 @@ namespace BlazesRusCode
 
 	//Base class for AltDec and MediumDec to help initial structure of classes
     virtual class DLL_API AltNumBase
-    {	
-	
+    {
 #if !defined(AltNum_AvoidVirtualBase)
 protected:
 	#pragma region DigitStorage
