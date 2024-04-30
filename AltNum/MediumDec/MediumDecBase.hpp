@@ -2013,22 +2013,148 @@ public:
 		//Simplified multiplication by 2 operation(to reduce cost of multiplication)
         void MultipleByTwo()
         {
-	        rValue.UnsignedBasicIntMultOp(2);
+	        UnsignedBasicIntMultOp(2);
         }
 
 		//Simplified multiplication by 4 operation(to reduce cost of multiplication)
         void MultipleByFour()
         {
-	        rValue.UnsignedBasicIntMultOp(4);
+	        UnsignedBasicIntMultOp(4);
         }
+		
+//Replace with actual functions inside MediumDecV2 and other derived variants
+protected:
+        /// <summary>
+        /// Multiplication operation between MediumDec and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntMultOpV1 = BasicIntMultOpV1<IntType>;
 
+public:
+
+        constexpr auto UIntMultOpV1 = BasicUIntMultOpV1<unsigned int>;
+        constexpr auto IntMultOpV1 = BasicIntMultOpV1<signed int>;
+        constexpr auto UnsignedBasicIntMultOp = BasicUIntMultOpV1<signed int>;
+        constexpr auto UInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
+        constexpr auto Int64MultOp = BasicIntMultOpV1<signed long long>;
+	
+        constexpr auto MultipleByUInt = BasicUIntMultV1<unsigned int>;
+        constexpr auto MultipleByInt = BasicIntMultV1<signed int>;
+        constexpr auto UnsignedMultipleByInt = BasicUIntMultV1<signed int>;
+        constexpr auto MultipleByUInt64 = BasicUIntMultV1<unsigned long long>;
+        constexpr auto MultipleByInt64 = BasicIntMultV1<signed long long>;
+        constexpr auto UnsignedMultipleByInt64 = BasicUIntMultV1<signed long long>;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultOp = MediumDecBase::BasicMultOp;
+
+        /// <summary>
+        /// Multiplication Operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto MultipleBy = MediumDecBase::BasicMult;
+		
 	#pragma endregion Other Multiplication Operations
 
 	#pragma region Other Addition Operations
 
+//Replace with actual functions inside MediumDecV2 and other derived variants
+protected:
+        /// <summary>
+        /// Addition operation Between MediumDec and Integer value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntAddOpV1 = BasicIntAddOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntAddOpV1 = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto IntAddOpV1 = BasicIntAddOpV1<signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto UInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto Int64AddOp = BasicIntAddOpV1<signed long long>;
+	
+        constexpr auto AddByUInt = BasicUIntAddV1<unsigned int>;
+        constexpr auto AddByInt = BasicIntAddV1<signed int>;
+        constexpr auto UnsignedAddByInt = BasicUIntAddV1<signed int>;
+        constexpr auto AddByUInt64 = BasicUIntAddV1<unsigned long long>;
+        constexpr auto AddByInt64 = BasicIntAddV1<signed long long>;
+        constexpr auto UnsignedAddByInt64 = BasicUIntAddV1<signed long long>;
+
+        /// <summary>
+        /// Addition operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto AddOp = MediumDecBase::BasicAddOp;
+
+        /// <summary>
+        /// Addition operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto AddBy = MediumDecBase::BasicAdd;
+
 	#pragma endregion Other Addition Operations
 
 	#pragma region Other Subtraction Operations
+
+//Replace with actual functions inside MediumDecV2 and other derived variants
+protected:
+        /// <summary>
+        /// Subtraction operation between MediumDec and Integer value
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntSubOpV1 = BasicIntSubOpV1<IntType>;
+
+public:
+
+        constexpr auto UIntSubOpV1 = BasicUIntSubOpV1<unsigned int>;
+        constexpr auto IntSubOpV1 = BasicIntSubOpV1<signed int>;
+        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<signed int>;
+        constexpr auto UInt64SubOp = BasicUIntSubOpV1<unsigned long long>;
+        constexpr auto Int64SubOp = BasicIntSubOpV1<signed long long>;
+	
+        constexpr auto SubByUInt = BasicUIntSubV1<unsigned int>;
+        constexpr auto SubByInt = BasicIntSubV1<signed int>;
+        constexpr auto UnsignedSubByInt = BasicUIntSubV1<signed int>;
+        constexpr auto SubByUInt64 = BasicUIntSubV1<unsigned long long>;
+        constexpr auto SubByInt64 = BasicIntSubV1<signed long long>;
+        constexpr auto UnsignedSubByInt64 = BasicUIntSubV1<signed long long>;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto SubOp = MediumDecBase::BasicSubOp;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec values.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto SubBy = MediumDecBase::BasicSub;
 
 	#pragma endregion Other Subtraction Operations
 
