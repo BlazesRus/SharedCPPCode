@@ -1391,7 +1391,7 @@ public:
         /// </summary>
         TinyUDec& DivOp(TinyUDec& Value) { BasicDivOp(Value); return *this; }
 
-        TinyUDec DivideAsCopy(TinyUDec Value) { TinyUDec self = *this; self.BasicDivOp(Value); return self; }
+        TinyUDec DivideBy(TinyUDec Value) { TinyUDec self = *this; self.BasicDivOp(Value); return self; }
 
         /// <summary>
         /// Multiplication Operation

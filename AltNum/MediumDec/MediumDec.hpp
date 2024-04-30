@@ -777,12 +777,11 @@ public:
 	#pragma region Division Operations
 protected:
         template<typename IntType=unsigned int>
-        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
+        constexpr auto PartialUIntDivOpV1 = MediumDecBase::PartialUIntDivOpV1<IntType>;
 
         template<IntegerType IntType=signed int>
-        constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
+        constexpr auto PartialIntDivOpV1 = MediumDecBase::PartialIntDivOpV1<IntType>;
 
-public:
         /// <summary>
         /// Basic Division Operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
@@ -790,7 +789,7 @@ public:
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
         template<typename IntType=unsigned int>
-        constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOpV1<MediumDec, IntType>;
+        constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<MediumDec, IntType>;
 
         /// <summary>
         /// Basic Division Operation between MediumDec Variant and Integer value 
@@ -799,14 +798,80 @@ public:
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
-        constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOpV1<MediumDec, IntType>;
+        constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<MediumDec, IntType>;
+		
+public:
+
+        constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<unsigned int>;
+        constexpr auto PartialIntDivOpV1 = PartialIntDivOpV1<signed int>;
+        constexpr auto UnsignedPartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
+        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<unsigned long long>;
+        constexpr auto PartialInt64DivOpV1 = PartialIntDivOpV1<signed long long>;
+
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<const signed int>;
+        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
+        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed long long>;
+		
+        /// <summary>
+        /// Simplified division by 2 operation(to reduce cost of operations)
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideByTwo = MediumDecBase::DivideByTwo;
 
         /// <summary>
-        /// Division Operation
+        /// Simplified division by 4 operation(to reduce cost of operations)
+        /// (Modifies owner object)
         /// </summary>
-        MediumDec& DivOp(MediumDec& Value) { BasicDivOp(Value); return *this; }
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideByFour = MediumDecBase::DivideByFour;
+	
+//Replace with actual functions inside MediumDecV2 and other derived variants	
+protected:
+        /// <summary>
+        /// Division Operation Between MediumDecBase and Integer rValue.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<typename IntType = int>
+        constexpr auto IntDivOpV1 = BasicIntDivOpV1<IntType>;
 
-        MediumDec DivideAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicDivOp(Value); return self; }
+public:
+
+        constexpr auto UIntDivOpV1 = BasicUIntDivOpV1<unsigned int>;
+        constexpr auto IntDivOpV1 = BasicIntDivOpV1<signed int>;
+        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
+        constexpr auto UInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
+        constexpr auto Int64DivOp = BasicIntDivOpV1<signed long long>;
+	
+        constexpr auto DivideByUInt = BasicUIntDivV1<unsigned int>;
+        constexpr auto DivideByInt = BasicIntDivV1<signed int>;
+        constexpr auto UnsignedDivideByInt = BasicUIntDivV1<signed int>;
+        constexpr auto DivideByUInt64 = BasicUIntDivV1<unsigned long long>;
+        constexpr auto DivideByInt64 = BasicIntDivV1<signed long long>;
+        constexpr auto UnsignedDivideByInt64 = BasicUIntDivV1<signed long long>;
+
+        /// <summary>
+        /// Division Operation Between MediumDec Variant and MediumDec Variant rValue.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivOp = MediumDecBase::BasicDivOp;
+
+        /// <summary>
+        /// Division Operation Between MediumDec Variant and MediumDec Variant rValue.
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideBy = MediumDecBase::BasicDiv;
 
 	#pragma endregion Division Operations
 

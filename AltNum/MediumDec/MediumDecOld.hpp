@@ -819,7 +819,7 @@ public:
         /// </summary>
         MediumDec& DivOp(MediumDec& Value) { BasicDivOp(Value); return *this; }
 
-        MediumDec DivideAsCopy(MediumDec Value) { MediumDec self = *this; self.BasicDivOp(Value); return self; }
+        MediumDec DivideBy(MediumDec Value) { MediumDec self = *this; self.BasicDivOp(Value); return self; }
 
         /// <summary>
         /// Multiplication Operation
