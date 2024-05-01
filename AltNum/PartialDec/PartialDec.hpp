@@ -54,6 +54,9 @@ namespace BlazesRusCode
 		
 	public:
 
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModChecker<PartialDec>{};
+		
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
@@ -116,6 +119,8 @@ namespace BlazesRusCode
             return *this;
         } const
 
+	#pragma region Check_if_Zero
+
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
@@ -133,6 +138,13 @@ namespace BlazesRusCode
             return DecimalHalf==0&&IntValue==0;
 		}
 
+        void SetAsZero()
+        {
+            IntValue = 0;
+            DecimalHalf = 0; ExtraRep = 0;
+        }
+
+	#pragma endregion Check_if_Zero
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -142,12 +154,6 @@ namespace BlazesRusCode
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
             ExtraRep = Value.ExtraRep;
-        }
-
-        void SetAsZero()
-        {
-            IntValue = 0;
-            DecimalHalf = 0; ExtraRep = 0;
         }
         
         /// <summary>

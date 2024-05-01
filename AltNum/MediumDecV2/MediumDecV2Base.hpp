@@ -938,7 +938,7 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
         template<IntegerType IntType=signed int>
@@ -951,7 +951,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>AltDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
 
         /// <summary>
@@ -1067,7 +1067,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<IntType>;
 */
 public:
@@ -1125,7 +1125,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<IntType>;
 */
 

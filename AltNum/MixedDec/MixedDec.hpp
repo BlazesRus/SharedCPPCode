@@ -2115,7 +2115,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MixedDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         void BasicUIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -2244,13 +2244,13 @@ public:
 		}
 	
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         unsigned _int64 TrailingUIntMultOp(IntType& Value)
         {
 			//Add code here
 		}
 		
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         unsigned _int64 TrailingIntMultOp(IntType& Value)
         {
 			//Add code here
@@ -2263,7 +2263,7 @@ public:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MixedDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         void BasicUIntMultOp(IntType& Value)
         {
 			if(Value==0)

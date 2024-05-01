@@ -1502,7 +1502,7 @@ public:/*
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecBase BasicMultiplyByInt(const IntType& rValue) { AltDec self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
@@ -1510,7 +1510,7 @@ public:/*
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecBase BasicMultiplyByUInt(const IntType& rValue) { AltDec self = *this; self.BasicUIntMultOp(rValue); return self; }
 */
 
@@ -1591,7 +1591,7 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDec&</returns>
-        template<typename ReturnType=MediumDecBase, typename IntType=int>
+        template<typename ReturnType=MediumDecBase, IntegerType IntType=int>
         ReturnType BasicIntSubBaseOp(const IntType& rValue)
         {
             if (DecimalHalf == 0)

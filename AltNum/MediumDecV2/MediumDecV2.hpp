@@ -55,7 +55,7 @@ namespace BlazesRusCode
 public:
 
 		//Performs remainder/Mod operation then saves division result
-		class DLL_API ModResult : public AltNumModChecker<MediumDec>{};
+		class DLL_API ModResult : public AltNumModChecker<MediumDecV2>{};
 
 	#pragma region class_constructors
         /// <summary>
@@ -82,12 +82,54 @@ public:
 
 	#pragma endregion class_constructors
 
+	#pragma region Check_if_Zero
+
+        //Is at either zero or negative zero IntHalf of AltNum
+        constexpr auto IsAtZeroInt = MediumDecBase::IsAtZeroInt;
+
+        //alias function
+        constexpr auto IsNotAtZeroInt = MediumDecBase::IsNotAtZeroInt;
+
+        //Detect if at exactly zero
+        constexpr auto IsZero = MediumDecBase::IsZero;
+
+        constexpr auto SetAsZero = MediumDecBase::SetAsZero;
+
+	#pragma endregion Check_if_Zero
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetVal(MediumDecV2 Value)
+        {
+            IntValue = Value.IntValue;
+            DecimalHalf = Value.DecimalHalf;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetVal(MediumDec Value)
+        {
+            IntValue = Value.IntValue;
+            DecimalHalf = Value.DecimalHalf;
+        }
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        constexpr auto SwapNegativeStatus = MediumDecBase::SwapNegativeStatus;
+
 protected:
     #pragma region Const Representation values
 
     #pragma endregion Const Representation values
 
     #pragma region RepType
+
+        constexpr auto RepTypeAsString = MediumDecV2Base::RepTypeAsString;
 
         /// <summary>
         /// Returns representation type data that is stored in value
@@ -209,7 +251,7 @@ public:
     #pragma region Other Division Operations
 
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntDivOpV1 = MediumDecBase::PartialUIntDivOpV1<IntType>;
 
         template<IntegerType IntType=signed int>
@@ -221,7 +263,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<MediumDec, IntType>;
 
         /// <summary>
@@ -271,7 +313,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntDivOpV1 = MediumDecV2Base::IntDivOpV1<IntType>;
 
 public:
@@ -309,7 +351,7 @@ public:
 
 	#pragma region Multiplication Operations
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntMultOpV1 = MediumDecBase::PartialUIntMultOpV1<IntType>;
 
         template<IntegerType IntType=signed int>
@@ -321,7 +363,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntMultOpV1 = MediumDecBase::BasicUIntMultOpV1<MediumDec, IntType>;
 
         /// <summary>
@@ -371,7 +413,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntMultOpV1 = MediumDecV2Base::IntMultOpV1<IntType>;
 
 public:
@@ -409,7 +451,7 @@ public:
 
 	#pragma region Addition Operations
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntAddOpV1 = MediumDecBase::PartialUIntAddOpV1<IntType>;
 
         template<IntegerType IntType=signed int>
@@ -421,7 +463,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntAddOpV1 = MediumDecBase::BasicUIntAddOpV1<MediumDec, IntType>;
 
         /// <summary>
@@ -455,7 +497,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntAddOpV1 = MediumDecV2Base::IntAddOpV1<IntType>;
 
 public:
@@ -493,7 +535,7 @@ public:
 	
 	#pragma region Subtraction Operations
 protected:
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntSubOpV1 = MediumDecBase::PartialUIntSubOpV1<IntType>;
 
         template<IntegerType IntType=signed int>
@@ -505,7 +547,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDec&</returns>
-        template<typename IntType=unsigned int>
+        template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntSubOpV1 = MediumDecBase::BasicUIntSubOpV1<MediumDec, IntType>;
 
         /// <summary>
@@ -539,7 +581,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         constexpr auto IntSubOpV1 = MediumDecV2Base::IntSubOpV1<IntType>;
 
 public:

@@ -3664,7 +3664,7 @@ public:
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base BasicIntMult(const IntType& rValue) { MediumDecV2Base self = *this; self.BasicIntMultOp(rValue); return self; }
 
         /// <summary>
@@ -3672,7 +3672,7 @@ public:
         /// (Avoids modifying owner object by copying lValue)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         void BasicUIntMult(const IntType& rValue) { MediumDecV2Base self = *this; self.BasicUIntMultOp(rValue); return self; }
 
 		void BasicInt32MultOp(signed int& rValue) { BasicIntMultOp(rValue); }
@@ -3685,7 +3685,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=signed int>
-		static MediumDecV2Base BasicMultipleByUIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+		static MediumDecV2Base BasicMultiplyByUIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDecV2Base and unsigned Integer Value that ignores special representation status
@@ -3694,7 +3694,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=signed int>
-		static MediumDecV2Base BasicMultipleByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+		static MediumDecV2Base BasicMultiplyByIntOp(MediumDecV2Base& lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
         /// <summary>
         /// Multiplication Operation Between MediumDecV2Base and Integer Value that ignores special representation status
@@ -3703,7 +3703,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=signed int>
-		static MediumDecV2Base BasicMultipleByUInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
+		static MediumDecV2Base BasicMultiplyByUInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicUIntMultOp(rValue); }
         
         /// <summary>
         /// Multiplication Operation Between MediumDecV2Base and unsigned Integer Value that ignores special representation status
@@ -3712,7 +3712,7 @@ public:
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=signed int>
-		static MediumDecV2Base BasicMultipleByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
+		static MediumDecV2Base BasicMultiplyByInt(MediumDecV2Base lValue, const IntType& rValue) { return lValue.BasicIntMultOp(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -4889,7 +4889,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecV2Base&</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base& IntDivOp(const IntType& rValue)
         {
             if (rValue == 1)
@@ -5517,13 +5517,13 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         static MediumDecV2Base& IntDivision(MediumDecV2Base self, const IntType& rValue) { return self.IntDivOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base DivideByInt(const MediumDecV2Base& rValue) { MediumDecV2Base self = *this; return self.IntDivOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base DivideByUInt(const IntType& rValue) { MediumDecV2Base self = *this; return self.UIntDivOp(rValue); }
 
     #pragma endregion Other Division Operations
@@ -6296,7 +6296,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         static MediumDecV2Base& IntMultiplication(MediumDecV2Base self, const IntType& rValue) { return self.IntMultOp(rValue); }
 
         /// <summary>
@@ -6305,14 +6305,14 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         static MediumDecV2Base& UIntMultiplication(MediumDecV2Base self, const IntType& rValue) { return self.UIntMultOp(rValue); }
 
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base MultiplyByInt(const MediumDecV2Base& rValue) { MediumDecV2Base self = *this; return self.IntMultOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base MultipleByUInt(const IntType& rValue) { MediumDecV2Base self = *this; return self.UIntMultOp(rValue); }
 
     #pragma endregion Other Multiplication Operations
@@ -6395,10 +6395,10 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         static MediumDecV2Base& IntAddition(MediumDecV2Base self, const IntType& rValue) { return self.IntAddOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base AdditionByInt(const MediumDecV2Base& rValue) { MediumDecV2Base self = *this; return self.IntAddOp(rValue); }
 
     #pragma endregion Other Addition Operations
@@ -6480,10 +6480,10 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
         /// <returns>MediumDecV2Base</returns>
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         static MediumDecV2Base& IntSubtraction(MediumDecV2Base self, const IntType& rValue) { return self.IntSubOp(rValue); }
 
-        template<typename IntType = int>
+        template<IntegerType IntType= int>
         MediumDecV2Base SubtractionByInt(const MediumDecV2Base& rValue) { MediumDecV2Base self = *this; return self.IntSubOp(rValue); }
 
     #pragma endregion Other Subtraction Operations
