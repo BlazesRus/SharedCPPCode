@@ -1707,7 +1707,6 @@ protected:
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubV1(const IntType& rValue)
         {
-        {
             auto self = *this;
             return self.BasicUIntSubOpV1(rValue);
         }
@@ -1721,7 +1720,6 @@ protected:
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicIntSubV1(const IntType& rValue)
-        {
         {
             auto self = *this;
             return self.BasicIntSubOpV1(rValue);
@@ -1831,31 +1829,60 @@ protected:
         }
 public:
 
-/*
 		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDecBase
+        /// Basic unsigned division Operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        constexpr auto BasicUnsignedDivOp = MediumDecBase::BasicUnsignedDivOp;
+        auto& BasicUnsignedDivOp(const auto& rValue)
+		{
+			//Add code here
+            return *this;
+		}
 
 		/// <summary>
-        /// Basic division operation that ignores special decimal status with unsigned MediumDecBase
+        /// Basic division operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        constexpr auto BasicDivOp = MediumDecBase::BasicDivOp;
-    
+        void BasicDivOp(const auto& Value)
+        {
+            if(Value<0)
+            {
+#if defined(AltNum_EnableMirroredSection)
+                SwapNegativeStatus();
+#endif
+                BasicUnsignedMultOp(-Value);
+            }
+            else
+                BasicUnsignedMultOp(Value);
+        }
+
 		/// <summary>
-        /// Basic division operation that ignores special decimal status with unsigned MediumDecBase
+        /// Basic unsigned division operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        constexpr auto BasicDivision = MediumDecBase::BasicDivision;
-*/
+        auto BasicUnsignedDivision(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicUnsignedDivOp(rValue);
+        }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicDivision(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicDivOp(rValue);
+        }
 
 	#pragma endregion NormalRep AltNum Division Operations
 
@@ -2098,7 +2125,7 @@ public:
             return *this;
 		}
 
-        void BasicMultOp(const IntType& Value)
+        void BasicMultOp(const auto& Value)
         {
             if(Value<0)
             {
@@ -2110,6 +2137,46 @@ public:
             else
                 BasicUnsignedMultOp(Value);
         }
+
+		/// <summary>
+        /// Basic unsigned multiplication operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicUnsignedMultiplication(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicUnsignedDivOp(rValue);
+        }
+
+		/// <summary>
+        /// Basic multiplication operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicMultiplication(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicMultOp(rValue);
+        }
+
+/*
+		/// <summary>
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDecBase
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        constexpr auto BasicMultiplication = MediumDecBase::BasicMultiplication;
+		
+		/// <summary>
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDecBase
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        constexpr auto BasicUnsignedMultiplication = MediumDecBase::BasicUnsignedMultiplication;
+*/
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
