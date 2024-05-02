@@ -742,7 +742,7 @@ public:
 
         constexpr auto UIntDivOpV1 = BasicUIntDivOpV1<unsigned int>;
         constexpr auto IntDivOpV1 = BasicIntDivOpV1<signed int>;
-        constexpr auto UnsignedBasicIntDivOp = UnsignedBasicIntMultOp<signed int>;
+        constexpr auto UnsignedBasicIntDivOp = UnsignedBasicIntDivOp<signed int>;
         constexpr auto UInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
         constexpr auto Int64DivOp = BasicIntDivOpV1<signed long long>;
 	
@@ -1470,7 +1470,7 @@ public:
 
         constexpr auto UIntSubOpV1 = BasicUIntSubOpV1<unsigned int>;
         constexpr auto IntSubOpV1 = BasicIntSubOpV1<signed int>;
-        constexpr auto UnsignedBasicIntSubOp = UnsignedBasicIntMultOp<signed int>;
+        constexpr auto UnsignedBasicIntSubOp = UnsignedBasicIntSubOp<signed int>;
         constexpr auto UInt64SubOp = BasicUIntSubOpV1<unsigned long long>;
         constexpr auto Int64SubOp = BasicIntSubOpV1<signed long long>;
 	
