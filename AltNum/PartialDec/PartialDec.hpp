@@ -830,7 +830,7 @@ protected:
 			DecimalHalf = DecimalRes;
         }
 
-protected:
+        template<IntegerType IntType=unsigned _int64>
         PartialDec& BasicUIntDivOp(IntType& Value)
         {
             if (Value == 0)
@@ -844,10 +844,59 @@ protected:
             return *this;
         }
 		
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto BasicDivideByUIntV1(const IntType& rValue)
+        {
+            auto self = *this;
+            return self.BasicUIntDivOpV1(rValue);
+        }
+
+        /// <summary>
+        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue">The value.</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=signed int>
+        auto BasicDivideByIntV1(const IntType& rValue)
+        {
+            auto self = *this;
+            return self.BasicIntDivOpV1(rValue);
+        }
+		
 public:
 
-		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
-        void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+        constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
+        constexpr auto BasicIntDivOp = BasicIntDivOpV1<signed int>;
+        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
+        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed int>;
+
+        constexpr auto BasicUInt8DivOp = BasicUIntDivOpV1<unsigned char>;
+        constexpr auto BasicInt8DivOp = BasicIntDivOpV1<signed char>;
+        constexpr auto BasicUInt16DivOp = BasicUIntDivOpV1<unsigned short>;
+        constexpr auto BasicInt16DivOp = BasicIntDivOpV1<signed short>;
+
+        constexpr auto BasicDivideByUInt = BasicDivideByUIntV1<unsigned int>;
+        constexpr auto BasicDivideByInt = BasicDivideByIntV1<signed int>;
+        constexpr auto UnsignedBasicDivideByInt = BasicDivideByUIntV1<signed int>;
+        constexpr auto BasicDivideByUInt64 = BasicDivideByUIntV1<unsigned long long>;
+        constexpr auto BasicDivideByInt64 = BasicDivideByIntV1<signed long long>;
+        constexpr auto UnsignedBasicDivideByInt64 = BasicDivideByUIntV1<signed int>;
+
+        constexpr auto BasicDivideByUInt8 = BasicDivideByUIntV1<unsigned char>;
+        constexpr auto BasicDivideByInt8 = BasicDivideByIntV1<signed char>;
+        constexpr auto BasicDivideByUInt16 = BasicDivideByUIntV1<unsigned short>;
+        constexpr auto BasicDivideByInt16 = BasicDivideByIntV1<signed short>;
 
     #pragma endregion NormalRep Integer Division Operations
 		

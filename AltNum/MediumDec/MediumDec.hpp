@@ -1745,6 +1745,64 @@ public:
 
 	#pragma endregion Modulus Operations
 	
+    #pragma region Bitwise Functions
+    #if defined(AltNum_EnableBitwiseOverride)
+        /// <summary>
+        /// Bitwise XOR Operation between MediumDec and Integer value.
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value.</param>
+        /// <returns>MediumDec</returns>
+        template<IntegerType IntType=int>
+        friend MediumDec operator^(MediumDec self, IntType Value)
+        {
+            if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
+            else
+            {
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValIsNegative = Value < 0;
+                if (SelfIsNegative && self.IntValue == NegativeRep)
+                {
+                    self.IntValue = (0 & Value) * -1;
+                    self.DecimalHalf ^= Value;
+                }
+                else
+                {
+                    self.IntValue ^= Value; self.DecimalHalf ^= Value;
+                }
+            }
+            return self;
+        }
+
+        /// <summary>
+        /// Bitwise Or Operation between MediumDec and Integer value.
+        /// </summary>
+        /// <param name="self">The left side value</param>
+        /// <param name="Value">The right side value.</param>
+        /// <returns>MediumDec</returns>
+        template<IntegerType IntType=int>
+        friend MediumDec operator|(MediumDec self, IntType Value)
+        {
+            if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
+            else
+            {
+                bool SelfIsNegative = self.IntValue < 0;
+                bool ValIsNegative = Value < 0;
+                if (SelfIsNegative && self.IntValue == NegativeRep)
+                {
+                    self.IntValue = (0 & Value) * -1;
+                    self.DecimalHalf |= Value;
+                }
+                else
+                {
+                    self.IntValue |= Value; self.DecimalHalf |= Value;
+                }
+            }
+            return self;
+        }
+    #endif
+    #pragma endregion Bitwise Functions
+	
     #pragma region Floating Operator Overrides
     
         friend MediumDec operator+(const MediumDec& self, const float& Value) { return self + (MediumDec)Value; }
