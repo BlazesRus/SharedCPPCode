@@ -635,6 +635,7 @@ public:
 	#pragma region Division Operations
 
 protected:
+
         template<IntegerType IntType=unsigned int>
         constexpr auto PartialUIntDivOpV1 = MediumDecBase::PartialUIntDivOpV1<IntType>;
 
@@ -645,7 +646,7 @@ protected:
         /// Basic Division operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<IntType>;
@@ -654,7 +655,7 @@ protected:
         /// Basic Division operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<IntType>;
@@ -664,7 +665,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicDivideByUIntV1 = MediumDecBase::BasicDivideByIntV1<IntType>;
@@ -674,7 +675,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicDivideByIntV1 = MediumDecBase::BasicDivideByIntV1<IntType>;
@@ -917,7 +918,7 @@ protected:
         /// Basic multiplication operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntMultOpV1 = MediumDecBase::BasicUIntMultOpV1<IntType>;
@@ -926,7 +927,7 @@ protected:
         /// Basic multiplication operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicIntMultOpV1 = MediumDecBase::BasicIntMultOpV1<IntType>;
@@ -936,7 +937,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicMultiplyByUIntV1 = MediumDecBase::BasicMultiplyByUIntV1<IntType>;
@@ -946,7 +947,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicMultiplyByIntV1 = MediumDecBase::BasicMultiplyByIntV1<IntType>;
@@ -1204,7 +1205,7 @@ protected:
         /// Basic addition operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntAddOpV1 = MediumDecBase::BasicUIntAddOpV1<IntType>;
@@ -1213,7 +1214,7 @@ protected:
         /// Basic addition operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicIntAddOpV1 = MediumDecBase::BasicIntAddOpV1<IntType>;
@@ -1223,7 +1224,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicAddByUIntV1 = MediumDecBase::BasicAddByUIntV1<IntType>;
@@ -1233,7 +1234,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicAddByIntV1 = MediumDecBase::BasicAddByIntV1<IntType>;
@@ -1463,7 +1464,7 @@ protected:
         /// Basic Subtraction operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicUIntSubOpV1 = MediumDec::BasicUIntSubOpV1<IntType>;
@@ -1472,7 +1473,7 @@ protected:
         /// Basic Subtraction operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicIntSubOpV1 = MediumDec::BasicIntSubOpV1<IntType>;
@@ -1482,7 +1483,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         constexpr auto BasicSubtractByUIntV1 = MediumDec::BasicSubtractByIntV1<IntType>;
@@ -1492,7 +1493,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         constexpr auto BasicSubtractByIntV1 = MediumDec::BasicSubtractByIntV1<IntType>;

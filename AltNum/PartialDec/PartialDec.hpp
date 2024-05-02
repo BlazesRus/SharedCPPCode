@@ -698,7 +698,8 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep; 
-            return lValue.IntValue; }
+            return lValue.IntValue;
+        }
 
         bool toBool() { return IntValue.IsZero() ? false : true; }
 
@@ -813,6 +814,7 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
+
         template<IntegerType IntType=unsigned _int64>
         void PartialUIntDivOp(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
@@ -830,8 +832,25 @@ protected:
 			DecimalHalf = DecimalRes;
         }
 
-        template<IntegerType IntType=unsigned _int64>
-        PartialDec& BasicUIntDivOp(IntType& Value)
+public:
+		
+        constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<unsigned int>;
+        constexpr auto PartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
+        constexpr auto UnsignedPartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
+        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<unsigned long long>;
+        constexpr auto PartialInt64DivOpV1 = PartialUIntDivOpV1<signed long long>;
+
+protected:
+
+        /// <summary>
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
             {
@@ -839,64 +858,51 @@ protected:
             }
             else if (IsZero())
                 return;
-            PartialUIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            PartialUIntDivOpV1(Value);
+            if (IntValue == 0 && DecimalHalf == 0)
+				DecimalHalf = 1;//Prevent Dividing into nothing
             return *this;
         }
-		
+
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicDivideByUIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicUIntDivOpV1(rValue);
         }
-
-        /// <summary>
-        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
-        /// that ignores special representation status
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecBase&</returns>
-        template<IntegerType IntType=signed int>
-        auto BasicDivideByIntV1(const IntType& rValue)
-        {
-            auto self = *this;
-            return self.BasicIntDivOpV1(rValue);
-        }
 		
 public:
 
         constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
-        constexpr auto BasicIntDivOp = BasicIntDivOpV1<signed int>;
+        constexpr auto BasicIntDivOp = BasicUIntDivOpV1<signed int>;
         constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
         constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
-        constexpr auto BasicInt64DivOp = BasicIntDivOpV1<signed long long>;
+        constexpr auto BasicInt64DivOp = BasicUIntDivOpV1<signed long long>;
         constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed int>;
 
         constexpr auto BasicUInt8DivOp = BasicUIntDivOpV1<unsigned char>;
-        constexpr auto BasicInt8DivOp = BasicIntDivOpV1<signed char>;
+        constexpr auto BasicInt8DivOp = BasicUIntDivOpV1<signed char>;
         constexpr auto BasicUInt16DivOp = BasicUIntDivOpV1<unsigned short>;
-        constexpr auto BasicInt16DivOp = BasicIntDivOpV1<signed short>;
+        constexpr auto BasicInt16DivOp = BasicUIntDivOpV1<signed short>;
 
         constexpr auto BasicDivideByUInt = BasicDivideByUIntV1<unsigned int>;
-        constexpr auto BasicDivideByInt = BasicDivideByIntV1<signed int>;
+        constexpr auto BasicDivideByInt = BasicDivideByUIntV1<signed int>;
         constexpr auto UnsignedBasicDivideByInt = BasicDivideByUIntV1<signed int>;
         constexpr auto BasicDivideByUInt64 = BasicDivideByUIntV1<unsigned long long>;
-        constexpr auto BasicDivideByInt64 = BasicDivideByIntV1<signed long long>;
+        constexpr auto BasicDivideByInt64 = BasicDivideByUIntV1<signed long long>;
         constexpr auto UnsignedBasicDivideByInt64 = BasicDivideByUIntV1<signed int>;
 
         constexpr auto BasicDivideByUInt8 = BasicDivideByUIntV1<unsigned char>;
-        constexpr auto BasicDivideByInt8 = BasicDivideByIntV1<signed char>;
+        constexpr auto BasicDivideByInt8 = BasicDivideByUIntV1<signed char>;
         constexpr auto BasicDivideByUInt16 = BasicDivideByUIntV1<unsigned short>;
-        constexpr auto BasicDivideByInt16 = BasicDivideByIntV1<signed short>;
+        constexpr auto BasicDivideByInt16 = BasicDivideByUIntV1<signed short>;
 
     #pragma endregion NormalRep Integer Division Operations
 		
@@ -952,7 +958,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntMultV1(const IntType& rValue)
@@ -986,7 +992,7 @@ public:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOp(const IntType& rValue)
@@ -1000,7 +1006,7 @@ public:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntAddV1(const IntType& rValue)
@@ -1031,7 +1037,7 @@ public:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubOp(const IntType& rValue)
@@ -1045,7 +1051,7 @@ public:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubV1(const IntType& rValue)

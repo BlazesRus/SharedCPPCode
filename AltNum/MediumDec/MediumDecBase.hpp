@@ -1003,6 +1003,7 @@ public:
 
     #pragma region NormalRep Integer Division Operations
 protected:
+
         template<IntegerType IntType=unsigned int>
         void PartialUIntDivOpV1(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
@@ -1094,7 +1095,15 @@ public:
         constexpr auto PartialInt64DivOpV1 = PartialIntDivOpV1<signed long long>;
 
 protected:
-        template<IntegerType IntType=signed int>
+
+        /// <summary>
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType=unsigned int>
         auto& BasicUIntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
@@ -1129,7 +1138,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicDivideByUIntV1(const IntType& rValue)
@@ -1139,11 +1148,11 @@ protected:
         }
 
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicDivideByIntV1(const IntType& rValue)
@@ -1159,6 +1168,12 @@ public:
         constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
         constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
         constexpr auto BasicInt64DivOp = BasicIntDivOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed int>;
+
+        constexpr auto BasicUInt8DivOp = BasicUIntDivOpV1<unsigned char>;
+        constexpr auto BasicInt8DivOp = BasicIntDivOpV1<signed char>;
+        constexpr auto BasicUInt16DivOp = BasicUIntDivOpV1<unsigned short>;
+        constexpr auto BasicInt16DivOp = BasicIntDivOpV1<signed short>;
 
         constexpr auto BasicDivideByUInt = BasicDivideByUIntV1<unsigned int>;
         constexpr auto BasicDivideByInt = BasicDivideByIntV1<signed int>;
@@ -1297,7 +1312,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicMultiplyByUIntV1(const IntType& rValue)
@@ -1312,7 +1327,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicMultiplyByIntV1(const IntType& rValue)
@@ -1350,7 +1365,7 @@ protected:
         /// Addition Operation that skips negative zero(for when decimal half is empty)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>void</returns>
         template<IntegerType IntType=signed int>
         void NRepSkippingIntAddOp(const IntType& rValue)
@@ -1370,7 +1385,7 @@ protected:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto& BasicIntAddOpV1(const IntType& rValue)
@@ -1434,7 +1449,7 @@ protected:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOpV1(const IntType& rValue)
@@ -1475,7 +1490,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicAddByUIntV1(const IntType& rValue)
@@ -1489,7 +1504,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
-        /// <param name="rValue">The value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicAddByIntV1(const IntType& rValue)
@@ -1503,7 +1518,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicAddByUIntV1(const IntType& rValue)
@@ -1518,7 +1533,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicAddByIntV1(const IntType& rValue)
@@ -1558,7 +1573,7 @@ protected:
         /// Subtraction Operation that skips negative zero(for when decimal half is empty)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>void</returns>
         template<IntegerType IntType=signed int>
         void NRepSkippingIntSubOp(const IntType& rValue)
@@ -1578,7 +1593,7 @@ protected:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicIntSubOp(const IntType& rValue)
@@ -1640,7 +1655,7 @@ protected:
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubOp(const IntType& rValue)
@@ -1702,7 +1717,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubV1(const IntType& rValue)
@@ -1716,7 +1731,7 @@ protected:
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue">The right side value.</param>
+        /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=signed int>
         auto BasicIntSubV1(const IntType& rValue)
