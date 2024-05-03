@@ -836,7 +836,6 @@ public:
 		
         constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<unsigned int>;
         constexpr auto PartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
-        constexpr auto UnsignedPartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
         constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<unsigned long long>;
         constexpr auto PartialInt64DivOpV1 = PartialUIntDivOpV1<signed long long>;
 
@@ -882,10 +881,8 @@ public:
 
         constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
         constexpr auto BasicIntDivOp = BasicUIntDivOpV1<signed int>;
-        constexpr auto UnsignedBasicIntDivOp = BasicUIntDivOpV1<signed int>;
         constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
         constexpr auto BasicInt64DivOp = BasicUIntDivOpV1<signed long long>;
-        constexpr auto UnsignedBasicInt64DivOp = BasicUIntDivOpV1<signed int>;
 
         constexpr auto BasicUInt8DivOp = BasicUIntDivOpV1<unsigned char>;
         constexpr auto BasicInt8DivOp = BasicUIntDivOpV1<signed char>;
@@ -894,10 +891,8 @@ public:
 
         constexpr auto BasicDivideByUInt = BasicDivideByUIntV1<unsigned int>;
         constexpr auto BasicDivideByInt = BasicDivideByUIntV1<signed int>;
-        constexpr auto UnsignedBasicDivideByInt = BasicDivideByUIntV1<signed int>;
         constexpr auto BasicDivideByUInt64 = BasicDivideByUIntV1<unsigned long long>;
         constexpr auto BasicDivideByInt64 = BasicDivideByUIntV1<signed long long>;
-        constexpr auto UnsignedBasicDivideByInt64 = BasicDivideByUIntV1<signed int>;
 
         constexpr auto BasicDivideByUInt8 = BasicDivideByUIntV1<unsigned char>;
         constexpr auto BasicDivideByInt8 = BasicDivideByUIntV1<signed char>;
@@ -961,7 +956,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicUIntMultV1(const IntType& rValue)
+        auto BasicMultiplyByUIntV1(const IntType& rValue)
         {
         {
             auto self = *this;
@@ -972,13 +967,25 @@ public:
 
         constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<unsigned int>;
         constexpr auto BasicIntMultOp = BasicUIntMultOpV1<signed int>;
+        constexpr auto UnsignedBasicIntMultOp = BasicUIntMultOpV1<signed int>;
         constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
         constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
 
-        constexpr auto BasicUIntMult = BasicUIntMultV1<unsigned int>;
-        constexpr auto BasicIntMult = BasicUIntMultV1<signed int>;
-        constexpr auto BasicUInt64Mult = BasicUIntMultV1<unsigned long long>;
-        constexpr auto BasicInt64Mult = BasicUIntMultV1<signed long long>;
+        constexpr auto BasicUInt8MultOp = BasicUIntMultOpV1<unsigned char>;
+        constexpr auto BasicInt8MultOp = BasicUIntMultOpV1<signed char>;
+        constexpr auto BasicUInt16MultOp = BasicUIntMultOpV1<unsigned short>;
+        constexpr auto BasicInt16MultOp = BasicUIntMultOpV1<signed short>;
+
+        constexpr auto BasicMultiplyByUInt = BasicMultiplyByUIntV1<unsigned int>;
+        constexpr auto BasicMultiplyByInt = BasicMultiplyByUIntV1<signed int>;
+        constexpr auto BasicMultiplyByUInt64 = BasicMultiplyByUIntV1<unsigned long long>;
+        constexpr auto BasicMultiplyByInt64 = BasicMultiplyByUIntV1<signed long long>;
+
+        constexpr auto BasicMultiplyByUInt8 = BasicMultiplyByUIntV1<unsigned char>;
+        constexpr auto BasicMultiplyByInt8 = BasicMultiplyByUIntV1<signed char>;
+        constexpr auto BasicMultiplyByUInt16 = BasicMultiplyByUIntV1<unsigned short>;
+        constexpr auto BasicMultiplyByInt16 = BasicMultiplyByUIntV1<signed short>;
+	
 
     #pragma endregion NormalRep Integer Multiplication Operations
 

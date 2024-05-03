@@ -1345,6 +1345,11 @@ public:
         constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
         constexpr auto BasicInt64MultOp = BasicIntMultOpV1<signed long long>;
 
+        constexpr auto BasicUInt8MultOp = BasicUIntMultOpV1<unsigned char>;
+        constexpr auto BasicInt8MultOp = BasicIntMultOpV1<signed char>;
+        constexpr auto BasicUInt16MultOp = BasicUIntMultOpV1<unsigned short>;
+        constexpr auto BasicInt16MultOp = BasicIntMultOpV1<signed short>;
+
         constexpr auto BasicMultiplyByUInt = BasicMultiplyByUIntV1<unsigned int>;
         constexpr auto BasicMultiplyByInt = BasicMultiplyByIntV1<signed int>;
         constexpr auto UnsignedBasicMultiplyByInt = BasicMultiplyByUIntV1<signed int>;
