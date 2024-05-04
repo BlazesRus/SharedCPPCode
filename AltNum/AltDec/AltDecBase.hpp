@@ -1772,7 +1772,7 @@ public:
 
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 
 protected:
         template<IntegerType IntType=unsigned int>
@@ -1784,7 +1784,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1793,7 +1793,7 @@ public:
         constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
 
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1801,7 +1801,7 @@ public:
         template<IntegerType IntType=signed int>
         constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOp<IntType>;
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -1813,7 +1813,7 @@ protected:
 
 public:
         /// <summary>
-        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1822,7 +1822,7 @@ public:
         constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
 
         /// <summary>
-        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1835,7 +1835,7 @@ public:
     #pragma region NormalRep Integer Addition Operations
 
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and Integer value 
+        /// Basic addition operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1848,7 +1848,7 @@ public:
     #pragma region NormalRep Integer Subtraction Operations
 
         /// <summary>
-        /// Basic Subtraction Operation between AltDec and Integer value 
+        /// Basic subtraction operation between AltDec and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -2075,9 +2075,9 @@ public:
 #endif
     #pragma endregion Mixed Fraction Operations
 
-    #pragma region NormalRep AltNum Division Operations
+    #pragma region NormalRep AltNum division operations
 
-    #pragma endregion NormalRep AltNum Division Operations
+    #pragma endregion NormalRep AltNum division operations
 
     #pragma region NormalRep AltNum Multiplication Operations
 
@@ -2091,7 +2091,7 @@ public:
 
 	#pragma endregion NormalRep AltNum Subtraction Operations
 
-    #pragma region Other Division Operations
+    #pragma region Other division operations
 
         void DivideByTwo()
         {
@@ -2111,7 +2111,7 @@ public:
             }
         }
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
     #pragma region Other Multiplication Operations
 

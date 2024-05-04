@@ -632,7 +632,7 @@ public:
     }
     #pragma endregion Comparison Operators
 
-	#pragma region Division Operations
+	#pragma region division operations
 
 protected:
 
@@ -643,7 +643,7 @@ protected:
         constexpr auto PartialIntDivOpV1 = MediumDecBase::PartialIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDec and Integer value. 
+        /// Basic division operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The right side value</param>
@@ -652,7 +652,7 @@ protected:
         constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDec and Integer value. 
+        /// Basic division operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The right side value</param>
@@ -661,7 +661,7 @@ protected:
         constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDec Variant and unsigned Integer value 
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -671,7 +671,7 @@ protected:
         constexpr auto BasicDivideByUIntV1 = MediumDecBase::BasicDivideByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDec Variant and unsigned Integer value 
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -903,7 +903,7 @@ public:
         friend MediumDec& operator/=(MediumDec& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
         friend MediumDec& operator/=(MediumDec& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }
 
-	#pragma endregion Division Operations
+	#pragma endregion division operations
 
 	#pragma region Multiplication Operations
 
@@ -1195,11 +1195,6 @@ public:
 	#pragma region Addition Operations
 
 protected:
-        template<IntegerType IntType=unsigned int>
-        constexpr auto PartialUIntAddOpV1 = MediumDecBase::PartialUIntAddOpV1<IntType>;
-
-        template<IntegerType IntType=signed int>
-        constexpr auto PartialIntAddOpV1 = MediumDecBase::PartialIntAddOpV1<IntType>;
 
         /// <summary>
         /// Basic addition operation between MediumDec and Integer value. 
@@ -1240,12 +1235,6 @@ protected:
         constexpr auto BasicAddByIntV1 = MediumDecBase::BasicAddByIntV1<IntType>;
     	
 public:
-
-        constexpr auto PartialUIntAddOpV1 = PartialUIntAddOpV1<unsigned int>;
-        constexpr auto PartialIntAddOpV1 = PartialIntAddOpV1<signed int>;
-        constexpr auto UnsignedPartialIntAddOpV1 = PartialUIntAddOpV1<signed int>;
-        constexpr auto PartialUInt64AddOpV1 = PartialUIntAddOpV1<unsigned long long>;
-        constexpr auto PartialInt64AddOpV1 = PartialIntAddOpV1<signed long long>;
 
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByIntV1<signed int>;
@@ -1454,14 +1443,9 @@ public:
 	#pragma region Subtraction Operations
 
 protected:
-        template<IntegerType IntType=unsigned int>
-        constexpr auto PartialUIntSubOpV1 = MediumDec::PartialUIntSubOpV1<IntType>;
-
-        template<IntegerType IntType=signed int>
-        constexpr auto PartialIntSubOpV1 = MediumDec::PartialIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec and Integer value. 
+        /// Basic subtraction operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The right side value</param>
@@ -1470,7 +1454,7 @@ protected:
         constexpr auto BasicUIntSubOpV1 = MediumDec::BasicUIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec and Integer value. 
+        /// Basic subtraction operation between MediumDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The right side value</param>
@@ -1479,7 +1463,7 @@ protected:
         constexpr auto BasicIntSubOpV1 = MediumDec::BasicIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1489,7 +1473,7 @@ protected:
         constexpr auto BasicSubtractByUIntV1 = MediumDec::BasicSubtractByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1749,7 +1733,7 @@ public:
     #pragma region Bitwise Functions
     #if defined(AltNum_EnableBitwiseOverride)
         /// <summary>
-        /// Bitwise XOR Operation between MediumDec and Integer value.
+        /// Bitwise XOR operation between MediumDec and Integer value.
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
@@ -1776,7 +1760,7 @@ public:
         }
 
         /// <summary>
-        /// Bitwise Or Operation between MediumDec and Integer value.
+        /// Bitwise Or operation between MediumDec and Integer value.
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>

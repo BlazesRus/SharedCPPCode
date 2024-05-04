@@ -212,7 +212,7 @@ public:
 
 	#pragma endregion Mixed Fraction Operations
 
-	#pragma region Division Operations
+	#pragma region division operations
 
 protected:
         template<IntegerType IntType=unsigned int>
@@ -222,7 +222,7 @@ protected:
         constexpr auto PartialIntDivOpV1 = MediumDecBase::PartialIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDecV2 and Integer value. 
+        /// Basic division operation between MediumDecV2 and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -231,7 +231,7 @@ protected:
         constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDecV2 and Integer value. 
+        /// Basic division operation between MediumDecV2 and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -240,7 +240,7 @@ protected:
         constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDecV2 Variant and unsigned Integer value 
+        /// Basic division operation between MediumDecV2 Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -250,7 +250,7 @@ protected:
         constexpr auto BasicDivideByUIntV1 = MediumDecBase::BasicDivideByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between MediumDecV2 Variant and unsigned Integer value 
+        /// Basic division operation between MediumDecV2 Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -497,7 +497,7 @@ public:
         friend MediumDecV2& operator/=(MediumDecV2& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
         friend MediumDecV2& operator/=(MediumDecV2& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }
 
-	#pragma endregion Division Operations
+	#pragma endregion division operations
 
 	#pragma region Multiplication Operations
 
@@ -1053,7 +1053,7 @@ protected:
         constexpr auto PartialIntSubOpV1 = MediumDecV2Base::PartialIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDecV2 and Integer value. 
+        /// Basic subtraction operation between MediumDecV2 and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1062,7 +1062,7 @@ protected:
         constexpr auto BasicUIntSubOpV1 = MediumDecV2Base::BasicUIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDecV2 and Integer value. 
+        /// Basic subtraction operation between MediumDecV2 and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1071,7 +1071,7 @@ protected:
         constexpr auto BasicIntSubOpV1 = MediumDecV2Base::BasicIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDecV2 Variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDecV2 Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1081,7 +1081,7 @@ protected:
         constexpr auto BasicSubtractByUIntV1 = MediumDecV2Base::BasicSubtractByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDecV2 Variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDecV2 Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>

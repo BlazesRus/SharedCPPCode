@@ -1131,7 +1131,7 @@ public:
         static bool LeftSideIntGreaterThanOrEqual(IntType& LValue, TinyUDec& RValue) { return RightSideIntLessThanOrEqual(RValue, LValue); }
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
         template<IntegerType IntType=signed int>
         void PartialIntDivOp(IntType& Value)
@@ -1314,7 +1314,7 @@ public:
 //		static TinyUDec BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
 //        static TinyUDec BasicDivV2(unsigned long long Value) { TinyUDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 	
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
@@ -1387,7 +1387,7 @@ public:
         //bool RepToRepDivOp(RepType& LRep, RepType& RRep, TinyUDec& self, TinyUDec& Value);
 
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         TinyUDec& DivOp(TinyUDec& Value) { BasicDivOp(Value); return *this; }
 
@@ -1424,7 +1424,7 @@ public:
 	
     #pragma region Other Integer Operations
         /// <summary>
-        /// Division Operation Between TinyUDec and Integer Value
+        /// Division operation Between TinyUDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1653,7 +1653,7 @@ public:
         }
 
         /// <summary>
-        /// Division Operation Between TinyUDec and Integer Value
+        /// Division operation Between TinyUDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1662,7 +1662,7 @@ public:
         static TinyUDec& IntDivOp(TinyUDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
 		/// <summary>
-        /// Basic Multiplication Operation(main code block)
+        /// Basic multiplication operation(main code block)
         /// </summary>
         /// <param name="Value">The value.</param>
 		bool BasicMultOpPt2(TinyUDec& Value)
@@ -1810,7 +1810,7 @@ public:
 		}
 		
 		/// <summary>
-        /// Basic Multiplication Operation(before ensuring doesn't multiply into nothing)
+        /// Basic multiplication operation(before ensuring doesn't multiply into nothing)
         /// </summary>
         /// <param name="Value">The value.</param>
 		bool BasicMultOpPt1(TinyUDec& Value)
@@ -1826,7 +1826,7 @@ public:
         }
 
 		/// <summary>
-        /// Basic Multiplication Operation(without checking for special representation variations or zero)
+        /// Basic multiplication operation(without checking for special representation variations or zero)
 		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
         /// <param name="Value">The value.</param>
@@ -2171,11 +2171,11 @@ public:
         }
 
         void RepToRepMultOp(RepType& LRep, RepType& RRep, TinyUDec& self, TinyUDec& Value);
-    #pragma endregion Multiplication/Division Operations
+    #pragma endregion Multiplication/division operations
 
 #pragma region Addition/Subtraction Operations
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicAddOp(TinyUDec& Value)
@@ -2301,7 +2301,7 @@ public:
         //void RepToRepAddOp(RepType& LRep, RepType& RRep, TinyUDec& self, TinyUDec& Value);
 
 		/// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicSubOp(TinyUDec& Value)
@@ -2430,7 +2430,7 @@ public:
 
     #pragma region Main Operator Overrides
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2556,7 +2556,7 @@ public:
         //friend TinyUDec operator*=(TinyUDec* self, int Value) { return IntMultOp(**self, Value); }
 
         /// <summary>
-        /// Division Operation Between TinyUDec and Integer Value
+        /// Division operation Between TinyUDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -2624,7 +2624,7 @@ public:
         friend TinyUDec operator*=(TinyUDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between TinyUDec and Integer Value
+        /// Division operation Between TinyUDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

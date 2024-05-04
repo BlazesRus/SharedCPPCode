@@ -827,7 +827,7 @@ public:
 		}
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
         template<IntegerType IntType=unsigned _int64>
         void PartialUIntDivOp(const IntType& rValue)
@@ -878,7 +878,7 @@ public:
 		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
         void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -942,7 +942,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between FloatingQuadRangeDec and Integer value 
+        /// Basic addition operation between FloatingQuadRangeDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -968,7 +968,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between FloatingQuadRangeDec and Integer value 
+        /// Basic subtraction operation between FloatingQuadRangeDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -988,14 +988,14 @@ public:
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 protected:
 	
 public:
 /*
         constexpr auto BasicDivOp = BasicDivOpV1<FloatingQuadRangeDec>;
 */
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 protected:
@@ -1003,7 +1003,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned FloatingQuadRangeDec
+        /// Basic multiplication operation that ignores special decimal status with unsigned FloatingQuadRangeDec
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1163,7 +1163,7 @@ protected:
 	
 public:
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicAddOp(const FloatingQuadRangeDec& Value)
@@ -1193,9 +1193,9 @@ public:
 	//Used only in AltDec/MixedDec
 	#pragma endregion Mixed Fraction Operations
 
-	#pragma region Other Division Operations
+	#pragma region Other division operations
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
 	#pragma region Other Multiplication Operations
 
@@ -1219,7 +1219,7 @@ public:
 
     #pragma region Main Operator Overrides
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1335,7 +1335,7 @@ public:
         friend FloatingQuadRangeDec& operator*=(FloatingQuadRangeDec& self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between FloatingQuadRangeDec and Integer Value
+        /// Division operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1401,7 +1401,7 @@ public:
         friend FloatingQuadRangeDec operator*=(FloatingQuadRangeDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between FloatingQuadRangeDec and Integer Value
+        /// Division operation Between FloatingQuadRangeDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

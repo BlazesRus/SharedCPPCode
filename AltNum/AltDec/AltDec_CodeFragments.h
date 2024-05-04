@@ -889,7 +889,7 @@
     */
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
 
@@ -1077,7 +1077,7 @@ public:
         void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and unsigned Integer Value that ignores special representation status
+        /// Division operation Between AltDecBase and unsigned Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
         /// </summary>
         /// <param name="lValue">The left side value.</param>
@@ -1086,7 +1086,7 @@ public:
         static AltDecBase BasicDivideByUIntOp(AltDecBase& lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and unsigned Integer Value that ignores special representation status
+        /// Division operation Between AltDecBase and unsigned Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
         /// </summary>
         /// <param name="lValue">The left side value.</param>
@@ -1095,7 +1095,7 @@ public:
         static AltDecBase BasicDivideByIntOp(AltDecBase& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and Integer Value that ignores special representation status
+        /// Division operation Between AltDecBase and Integer Value that ignores special representation status
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
@@ -1103,14 +1103,14 @@ public:
         static AltDecBase BasicDivideByUInt(AltDecBase lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and unsigned Integer Value that ignores special representation status
+        /// Division operation Between AltDecBase and unsigned Integer Value that ignores special representation status
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=int>
         static AltDecBase BasicDivideByInt(AltDecBase lValue, const IntType& rValue) { return lValue.BasicIntDivOp(rValue); }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 
     #pragma region NormalRep Integer Multiplication Operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
@@ -1303,7 +1303,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between AltDecBase and Integer value 
+        /// Basic addition operation between AltDecBase and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1375,7 +1375,7 @@ protected:
 #endif
 public:
         /// <summary>
-        /// Basic Subtraction Operation between AltDecBase and Integer value 
+        /// Basic subtraction operation between AltDecBase and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1712,11 +1712,11 @@ public:
 #endif
     #pragma endregion Mixed Fraction Operations
 
-    #pragma region NormalRep AltNum Division Operations
+    #pragma region NormalRep AltNum division operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
 protected:
         /// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1799,7 +1799,7 @@ protected:
         }
 #else
         /// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1810,7 +1810,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1823,7 +1823,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -1835,7 +1835,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -1868,13 +1868,13 @@ public:
             return self;
         }
 
-    #pragma endregion NormalRep AltNum Division Operations
+    #pragma endregion NormalRep AltNum division operations
 
     #pragma region NormalRep AltNum Multiplication Operations
 public:
 #if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status
+        /// Basic multiplication operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2142,7 +2142,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDecBase
+        /// Basic multiplication operation that ignores special decimal status with unsigned AltDecBase
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2384,7 +2384,7 @@ public:
         }
 #else
         /// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDecBase
+        /// Basic multiplication operation that ignores special decimal status with unsigned AltDecBase
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2400,7 +2400,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDecBase
+        /// Basic multiplication operation that ignores special decimal status with unsigned AltDecBase
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2435,7 +2435,7 @@ public:
     #pragma region NormalRep AltNum Addition Operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2484,7 +2484,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2515,14 +2515,14 @@ public:
         }
 #else
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
         void BasicAddOp(const AltDecBase& rValue) { BasicAddBaseOp(rValue); }
 
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2534,7 +2534,7 @@ public:
     #pragma region NormalRep AltNum Subtraction Operations
 #if !defined(AltNum_StoreBasicFunctionsInBase)
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2584,7 +2584,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2616,14 +2616,14 @@ public:
         }
 #else
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
         void BasicSubOp(const AltDecBase& rValue) { BasicSubBaseOp(rValue); }
 
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2631,7 +2631,7 @@ public:
 #endif
     #pragma endregion NormalRep AltNum Subtraction Operations
 
-    #pragma region Other Division Operations
+    #pragma region Other division operations
 
         template<IntegerType IntType=int>
         void CatchAllIntDivision(const IntType& rValue, RepType LRep)
@@ -2656,7 +2656,7 @@ public:
 
 protected:
         /// <summary>
-        /// Division Operation Between AltDecBase and Integer rValue.
+        /// Division operation Between AltDecBase and Integer rValue.
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -3004,7 +3004,7 @@ protected:
         }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and unsigned Integer rValue.
+        /// Division operation Between AltDecBase and unsigned Integer rValue.
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -3290,7 +3290,7 @@ protected:
         AltDecBase DivideByUInt(const IntType& rValue) { AltDecBase self = *this; return self.UIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between AltDecBase and Integer rValue.
+        /// Division operation Between AltDecBase and Integer rValue.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
@@ -3305,7 +3305,7 @@ public:
 
         AltDecBase DivideByInt32V2(const int& rValue) { AltDecBase self = *this; return self.UIntDivOp(rValue); }
 
-    #pragma endregion Other Division Operations
+    #pragma endregion Other division operations
 
     #pragma region Other Multiplication Operations
 public:
@@ -5882,7 +5882,7 @@ protected:
         }
 
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>AltDecBase&</returns>
@@ -6319,7 +6319,7 @@ protected:
         AltDecBase DivideBy(const AltDecBase& rValue) { AltDecBase self = *this; self.DivOp(rValue); return self; }
 
         /// <summary>
-        /// Division Operation with only positive right side values
+        /// Division operation with only positive right side values
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>AltDecBase&</returns>
@@ -11119,7 +11119,7 @@ public:
         //ToDo:Add left side integer operator overrides later
 
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDecBase</returns>
@@ -11134,7 +11134,7 @@ public:
         friend AltDecBase operator/(AltDecBase self, const unsigned __int64& rValue) { return self.UIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation with Integer right side value
+        /// Division operation with Integer right side value
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDecBase</returns>
@@ -11148,21 +11148,21 @@ public:
         friend AltDecBase& operator/=(AltDecBase& self, const unsigned __int8& rValue) { return self.UIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation with Integer right side value
+        /// Division operation with Integer right side value
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDecBase</returns>
         friend AltDecBase& operator/=(AltDecBase* self, const AltDecBase& rValue) { return self->DivOp(rValue); }
 
         /// <summary>
-        /// Division Operation with Integer right side value
+        /// Division operation with Integer right side value
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDecBase</returns>
         friend AltDecBase& operator/=(AltDecBase& self, const AltDecBase& rValue) { return self.DivOp(rValue); }
 
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>AltDecBase</returns>
@@ -11530,7 +11530,7 @@ public:
         AltDecBase Rem(const AltDecBase& rValue) { AltDecBase self = *this; return self.RemOp(rValue); }
 
         /// <summary>
-        /// Modulus Operation (Division operation that returns the remainder result)
+        /// Modulus Operation (division operation that returns the remainder result)
         /// </summary>
         /// <param name="self">The leftside value.</param>
         /// <param name="Value">The rightside value.</param>

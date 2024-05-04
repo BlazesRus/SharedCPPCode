@@ -971,7 +971,7 @@ public:
 	#pragma endregion Trailing Digit Extraction
 
 	protected:
-	#pragma region Division Operations
+	#pragma region division operations
         template<IntegerType IntType=int>
         void DivByIntOp(const IntType& rValue)
 		{
@@ -1011,7 +1011,7 @@ public:
 		#endif
 	#endif
 		}
-	#pragma endregion Division Operations
+	#pragma endregion division operations
 
 	#pragma region Multiplication Operations
         //Multiply by Integer Operation
@@ -1184,7 +1184,7 @@ public:
 	public:
     #pragma region Main Operator Overrides
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

@@ -1100,7 +1100,7 @@ public:
     }
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
         template<IntegerType IntType=int>
         virtual void PartialIntDivOp(const IntType& rValue)
@@ -1377,7 +1377,7 @@ public:
             return *this;
         }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -1539,7 +1539,7 @@ protected:
 public:
 /*
         /// <summary>
-        /// Basic Addition Operation between AltDec and Integer value 
+        /// Basic addition operation between AltDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1585,7 +1585,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between AltDec and Integer value 
+        /// Basic subtraction operation between AltDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1617,10 +1617,10 @@ public:
 
     #pragma endregion Mixed Fraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 protected:
 		/// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1707,7 +1707,7 @@ protected:
 
 public:/*
 		/// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -1720,7 +1720,7 @@ public:/*
         }
 
 		/// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -1732,11 +1732,11 @@ public:/*
             return *this;
         }*/
 #endif
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status
+        /// Basic multiplication operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2005,7 +2005,7 @@ public:/*
 		}
 
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned AltDec
+        /// Basic multiplication operation that ignores special decimal status with unsigned AltDec
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2251,7 +2251,7 @@ public:/*
 
 	#pragma region NormalRep AltNum Addition Operations
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2301,7 +2301,7 @@ public:/*
         }
 
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2336,7 +2336,7 @@ public:/*
 
 	#pragma region NormalRep AltNum Subtraction Operations
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2387,7 +2387,7 @@ public:/*
         }
 
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -2420,9 +2420,9 @@ public:/*
         }
 	#pragma endregion NormalRep AltNum Subtraction Operations
 
-    #pragma region Other Division Operations
+    #pragma region Other division operations
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
     #pragma region Other Multiplication Operations
 

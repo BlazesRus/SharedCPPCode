@@ -2005,7 +2005,7 @@ public:
 		return trailingCalculation;
 	}
 
-	#pragma region Division Operations
+	#pragma region division operations
 #if defined(MixedDec_EnableAltFloat)
         //Division by AltFloat Operation
         void TrailingDigitsDivOp(const AltFloat& rValue)
@@ -2110,7 +2110,7 @@ protected:
 
 public:
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -2153,7 +2153,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -2227,7 +2227,7 @@ public:
 		//To-Do:Add more code here later(for TrailingDigit part)
         }
 		
-	#pragma endregion Division Operations
+	#pragma endregion division operations
 
 	#pragma region Multiplication Operations
 public:
@@ -2258,7 +2258,7 @@ protected:
 
 public:
         /// <summary>
-        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -2287,7 +2287,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Multiplication Operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -2479,7 +2479,7 @@ public:
     #pragma region Main Operator Overrides
 	
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

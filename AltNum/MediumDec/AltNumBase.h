@@ -125,9 +125,9 @@ public:
 
 	#pragma endregion Other RepType Conversion
 
-	#pragma region NormalRep Integer Division Operations
+	#pragma region NormalRep Integer division operations
 
-	#pragma endregion NormalRep Integer Division Operations
+	#pragma endregion NormalRep Integer division operations
 
 	#pragma region NormalRep Integer Multiplication Operations
 
@@ -141,9 +141,9 @@ public:
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 
@@ -161,9 +161,9 @@ public:
 	//Used only in AltDec/MixedDec
 	#pragma endregion Mixed Fraction Operations
 
-	#pragma region Other Division Operations
+	#pragma region Other division operations
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
 	#pragma region Other Multiplication Operations
 

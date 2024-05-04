@@ -698,7 +698,7 @@ public:
 
     #pragma endregion Mixed Fraction Operations
 
-	#pragma region Division Operations
+	#pragma region division operations
 
 protected:
         template<IntegerType IntType=unsigned int>
@@ -708,7 +708,7 @@ protected:
         constexpr auto PartialIntDivOpV1 = MediumDecBase::PartialIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between AltDec and Integer value. 
+        /// Basic division operation between AltDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -717,7 +717,7 @@ protected:
         constexpr auto BasicUIntDivOpV1 = MediumDecBase::BasicUIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between AltDec and Integer value. 
+        /// Basic division operation between AltDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -726,7 +726,7 @@ protected:
         constexpr auto BasicIntDivOpV1 = MediumDecBase::BasicIntDivOpV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between AltDec Variant and unsigned Integer value 
+        /// Basic division operation between AltDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -736,7 +736,7 @@ protected:
         constexpr auto BasicDivideByUIntV1 = MediumDecBase::BasicDivideByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Division operation between AltDec Variant and unsigned Integer value 
+        /// Basic division operation between AltDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -983,7 +983,7 @@ public:
         friend AltDec& operator/=(AltDec& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
         friend AltDec& operator/=(AltDec& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }
 
-	#pragma endregion Division Operations
+	#pragma endregion division operations
 
 	#pragma region Multiplication Operations
 
@@ -1539,7 +1539,7 @@ protected:
         constexpr auto PartialIntSubOpV1 = AltDecBase::PartialIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between AltDec and Integer value. 
+        /// Basic subtraction operation between AltDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1548,7 +1548,7 @@ protected:
         constexpr auto BasicUIntSubOpV1 = AltDecBase::BasicUIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between AltDec and Integer value. 
+        /// Basic subtraction operation between AltDec and Integer value. 
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1557,7 +1557,7 @@ protected:
         constexpr auto BasicIntSubOpV1 = AltDecBase::BasicIntSubOpV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between AltDec Variant and unsigned Integer value 
+        /// Basic subtraction operation between AltDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1567,7 +1567,7 @@ protected:
         constexpr auto BasicSubtractByUIntV1 = AltDecBase::BasicSubtractByIntV1<IntType>;
 
         /// <summary>
-        /// Basic Subtraction operation between AltDec Variant and unsigned Integer value 
+        /// Basic subtraction operation between AltDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>

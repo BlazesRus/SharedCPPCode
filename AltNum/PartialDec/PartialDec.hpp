@@ -812,7 +812,7 @@ public:
 		}
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
 
         template<IntegerType IntType=unsigned _int64>
@@ -899,7 +899,7 @@ public:
         constexpr auto BasicDivideByUInt16 = BasicDivideByUIntV1<unsigned short>;
         constexpr auto BasicDivideByInt16 = BasicDivideByUIntV1<signed short>;
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -949,7 +949,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Multiplication Operation between MediumDec variant and unsigned Integer value 
+        /// Basic multiplication operation between MediumDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -967,7 +967,6 @@ public:
 
         constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<unsigned int>;
         constexpr auto BasicIntMultOp = BasicUIntMultOpV1<signed int>;
-        constexpr auto UnsignedBasicIntMultOp = BasicUIntMultOpV1<signed int>;
         constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
         constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
 
@@ -995,7 +994,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between PartialDec and Integer value 
+        /// Basic addition operation between PartialDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1009,28 +1008,28 @@ public:
         }
 
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicUIntAddV1(const IntType& rValue)
+        auto BasicAddByUIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicUIntAddOpV1(rValue);
         }
 
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
-        constexpr auto BasicIntAddOp = BasicUIntAddOpV1<signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<signed long long>;
+        constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
+        constexpr auto BasicAddByInt = BasicAddByUIntV1<signed int>;
+        constexpr auto BasicAddByUInt64 = BasicAddByUIntV1<unsigned long long>;
+        constexpr auto BasicAddByInt64 = BasicAddByUIntV1<signed long long>;
 
-        constexpr auto BasicUIntAdd = BasicUIntAddV1<unsigned int>;
-        constexpr auto BasicIntAdd = BasicUIntAddV1<signed int>;
-        constexpr auto BasicUInt64Add = BasicUIntAddV1<unsigned long long>;
-        constexpr auto BasicInt64Add = BasicUIntAddV1<signed long long>;
+        constexpr auto BasicAddByUInt8 = BasicAddByUIntV1<unsigned char>;
+        constexpr auto BasicAddByInt8 = BasicAddByUIntV1<signed char>;
+        constexpr auto BasicAddByUInt16 = BasicAddByUIntV1<unsigned short>;
+        constexpr auto BasicAddByInt16 = BasicAddByUIntV1<signed short>;
 
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -1040,7 +1039,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between PartialDec and Integer value 
+        /// Basic subtraction operation between PartialDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1054,14 +1053,14 @@ public:
         }
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDec variant and unsigned Integer value 
+        /// Basic subtraction operation between PartialDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicUIntSubV1(const IntType& rValue)
+        auto BasicSubtractByUIntV1(const IntType& rValue)
         {
         {
             auto self = *this;
@@ -1080,14 +1079,14 @@ public:
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 protected:
 	
 public:
 /*
         constexpr auto BasicDivOp = BasicDivOpV1<PartialDec>;
 */
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 protected:
@@ -1095,7 +1094,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned PartialDec
+        /// Basic multiplication operation that ignores special decimal status with unsigned PartialDec
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1255,7 +1254,7 @@ protected:
 	
 public:
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicAddOp(const PartialDec& Value)
@@ -1285,7 +1284,7 @@ public:
 	//Used only in AltDec/MixedDec
 	#pragma endregion Mixed Fraction Operations
 
-	#pragma region Other Division Operations
+	#pragma region Other division operations
 
 		//Simplified division by 2 operation(to reduce cost of multiplication)
         void DivideByTwo()
@@ -1316,7 +1315,7 @@ public:
             
         }
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
 	#pragma region Other Multiplication Operations
 
@@ -1358,7 +1357,7 @@ public:
 
     #pragma region Main Operator Overrides
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1474,7 +1473,7 @@ public:
         friend PartialDec& operator*=(PartialDec& self, int Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between PartialDec and Integer Value
+        /// Division operation Between PartialDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1540,7 +1539,7 @@ public:
         friend PartialDec operator*=(PartialDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between PartialDec and Integer Value
+        /// Division operation Between PartialDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

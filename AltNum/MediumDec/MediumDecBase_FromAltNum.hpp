@@ -1984,7 +1984,7 @@ public:
 
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
 
         template<IntegerType IntType=signed int>
@@ -2172,7 +2172,7 @@ public:
 		void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
+        /// division operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
         /// </summary>
         /// <param name="lValue">The left side value.</param>
@@ -2181,7 +2181,7 @@ public:
 		static MediumDecBase BasicDivideByUIntOp(MediumDecBase& lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
+        /// division operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
         /// (Modifies lValue during operation) 
         /// </summary>
         /// <param name="lValue">The left side value.</param>
@@ -2190,7 +2190,7 @@ public:
 		static MediumDecBase BasicDivideByIntOp(MediumDecBase& lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and Integer Value that ignores special representation status
+        /// division operation Between MediumDecBase and Integer Value that ignores special representation status
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
@@ -2198,14 +2198,14 @@ public:
 		static MediumDecBase BasicDivideByUInt(MediumDecBase lValue, const IntType& rValue) { return lValue.BasicUIntDivOp(rValue); }
         
         /// <summary>
-        /// Division Operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
+        /// division operation Between MediumDecBase and unsigned Integer Value that ignores special representation status
         /// </summary>
         /// <param name="lValue">The left side value.</param>
         /// <param name="rValue">The right side value.</param>
         template<IntegerType IntType=signed int>
 		static MediumDecBase BasicDivideByInt(MediumDecBase lValue, const IntType& rValue) { return lValue.BasicIntDivOp(Value); }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 
     #pragma region NormalRep Integer Multiplication Operations
 
@@ -2407,7 +2407,7 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Addition Operation between MediumDecBase and Integer value 
+        /// Basic addition operation between MediumDecBase and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -2471,7 +2471,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDecBase and Integer value 
+        /// Basic subtraction operation between MediumDecBase and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -2690,10 +2690,10 @@ public:
 #endif
     #pragma endregion Mixed Fraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 protected:
 		/// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2778,7 +2778,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -2790,7 +2790,7 @@ public:
         }
 
 		/// <summary>
-        /// Basic Division Operation(without checking for special representation variations or zero)
+        /// Basic division operation(without checking for special representation variations or zero)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
@@ -2823,13 +2823,13 @@ public:
             return self;
         }
 
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
         
 	#pragma region NormalRep AltNum Multiplication Operations
 public:
 		
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status
+        /// Basic multiplication operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -3097,7 +3097,7 @@ public:
 		}
 
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned MediumDecBase
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDecBase
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -3360,7 +3360,7 @@ public:
 	#pragma region NormalRep AltNum Addition Operations
 
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -3409,7 +3409,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Addition Operation
+        /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -3444,7 +3444,7 @@ public:
 	#pragma region NormalRep AltNum Subtraction Operations
 
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -3494,7 +3494,7 @@ public:
         }
 
         /// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
@@ -3527,7 +3527,7 @@ public:
 
 	#pragma endregion NormalRep AltNum Subtraction Operations
 	
-    #pragma region Other Division Operations
+    #pragma region Other division operations
 
         template<IntegerType IntType=signed int>
 		void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
@@ -3551,7 +3551,7 @@ public:
         }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and Integer rValue.
+        /// division operation Between MediumDecBase and Integer rValue.
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -3899,7 +3899,7 @@ public:
         }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and unsigned Integer rValue.
+        /// division operation Between MediumDecBase and unsigned Integer rValue.
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -4179,7 +4179,7 @@ public:
         }
 		
         /// <summary>
-        /// Division Operation Between MediumDecBase and Integer rValue.
+        /// division operation Between MediumDecBase and Integer rValue.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="rValue.">The rValue</param>
@@ -4193,7 +4193,7 @@ public:
         template<IntegerType IntType= int>
         MediumDecBase DivideByUInt(const IntType& rValue) { MediumDecBase self = *this; return self.UIntDivOp(rValue); }
 
-    #pragma endregion Other Division Operations
+    #pragma endregion Other division operations
 
     #pragma region Other Multiplication Operations
 public:
@@ -5228,7 +5228,7 @@ public:
         static void RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDecBase& self, MediumDecBase Value);
 
         /// <summary>
-        /// Division Operation
+        /// division operation
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>MediumDecBase&</returns>
@@ -5652,7 +5652,7 @@ public:
    MediumDecBase DivideBy(const MediumDecBase& rValue) { MediumDecBase self = *this; self.DivOp(rValue); return self; }
 
         /// <summary>
-        /// Division Operation with only positive right side values
+        /// division operation with only positive right side values
         /// </summary>
         /// <param name="Value">The rightside rValue</param>
         /// <returns>MediumDecBase&</returns>
@@ -7959,14 +7959,14 @@ public:
     #pragma region Main Operator Overrides
 
         /// <summary>
-        /// Division Operation
+        /// division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         MediumDecBase& operator/=(const MediumDecBase& rValue) { return DivOp(rValue); }
 
         /// <summary>
-        /// Division Operation Between MediumDecBase and Integer Value
+        /// division operation Between MediumDecBase and Integer Value
         /// </summary>
         /// <param name="rValue">The value.</param>
         /// <returns>MediumDecBase</returns>
@@ -7980,7 +7980,7 @@ public:
         MediumDecBase& operator/=(const unsigned __int8& rValue) { return UIntDivOp(rValue); }
 
         /// <summary>
-        /// Division Operation
+        /// division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
@@ -8016,7 +8016,7 @@ public:
         MediumDecBase& operator*=(const unsigned __int8& rValue) { return UIntMultOp(rValue); }
 
         /// <summary>
-        /// Division Operation
+        /// division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
@@ -8031,7 +8031,7 @@ public:
         friend MediumDecBase operator*(MediumDecBase self, const unsigned __int64& rValue) { return self.UIntMultOp(rValue); }
 
         /// <summary>
-        /// Division Operation
+        /// division operation
         /// </summary>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
@@ -8341,7 +8341,7 @@ public:
         MediumDecBase Rem(const MediumDecBase& rValue) { MediumDecBase self = *this; return self.RemOp(rValue); }
 
         /// <summary>
-        /// Modulus Operation (Division operation that returns the remainder result)
+        /// Modulus Operation (division operation that returns the remainder result)
         /// </summary>
         /// <param name="self">The leftside value.</param>
         /// <param name="Value">The rightside value.</param>

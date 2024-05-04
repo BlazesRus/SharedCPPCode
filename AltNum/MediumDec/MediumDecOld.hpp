@@ -723,7 +723,7 @@ public:
     }
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
 
 public:
@@ -742,7 +742,7 @@ public:
 		static MediumDec BasicDiv(MediumDec& self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
         static MediumDec BasicDiv(MediumDec& self, unsigned long long Value) { MediumDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 	
 	#pragma region NormalRep AltNumToAltNum Operations
 protected:
@@ -815,7 +815,7 @@ public:
         //bool RepToRepDivOp(RepType& LRep, RepType& RRep, MediumDec& self, MediumDec& Value);
 
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         MediumDec& DivOp(MediumDec& Value) { BasicDivOp(Value); return *this; }
 
@@ -851,7 +851,7 @@ public:
 	
     #pragma region Other Integer Operations
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division operation Between MediumDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -860,7 +860,7 @@ public:
         static MediumDec& IntDivOp(MediumDec& self, IntType& Value) { return self.IntDivOp(Value); }
 
 		/// <summary>
-        /// Basic Multiplication Operation(without checking for special representation variations or zero)
+        /// Basic multiplication operation(without checking for special representation variations or zero)
 		/// Returns true if prevented from multiplying into nothing(except when multipling by zero)
         /// </summary>
         /// <param name="Value">The value.</param>
@@ -1000,7 +1000,7 @@ public:
 
         static MediumDec& MultOp(MediumDec& self, int& Value) { return self.IntMultOp(Value); }
 
-    #pragma endregion Multiplication/Division Operations
+    #pragma endregion Multiplication/division operations
 
 #pragma region Addition/Subtraction Operations
 
@@ -1082,7 +1082,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic Subtraction Operation
+        /// Basic subtraction Operation
         /// </summary>
         /// <param name="Value">The value.</param>
         void BasicSubOp(MediumDec& Value)
@@ -1207,7 +1207,7 @@ public:
 
     #pragma region Main Operator Overrides
         /// <summary>
-        /// Division Operation
+        /// Division operation
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1333,7 +1333,7 @@ public:
         //friend MediumDec operator*=(MediumDec* self, int Value) { return IntMultOp(**self, Value); }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division operation Between MediumDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
@@ -1401,7 +1401,7 @@ public:
         friend MediumDec operator*=(MediumDec& self, signed long long Value) { return IntMultOp(self, Value); }
 
         /// <summary>
-        /// Division Operation Between MediumDec and Integer Value
+        /// Division operation Between MediumDec and Integer Value
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>

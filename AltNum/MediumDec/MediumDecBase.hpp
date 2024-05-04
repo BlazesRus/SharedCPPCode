@@ -1001,7 +1001,7 @@ public:
 		}
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer Division Operations
+    #pragma region NormalRep Integer division operations
 protected:
 
         template<IntegerType IntType=unsigned int>
@@ -1134,7 +1134,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic Division Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1187,7 +1187,7 @@ public:
         constexpr auto BasicDivideByUInt16 = BasicDivideByUIntV1<unsigned short>;
         constexpr auto BasicDivideByInt16 = BasicDivideByIntV1<signed short>;
 
-    #pragma endregion NormalRep Integer Division Operations
+    #pragma endregion NormalRep Integer division operations
 		
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -1308,7 +1308,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Multiplication Operation between MediumDec variant and unsigned Integer value 
+        /// Basic multiplication operation between MediumDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1323,7 +1323,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Multiplication Operation between MediumDec variant and Integer value 
+        /// Basic multiplication operation between MediumDec variant and Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1344,6 +1344,7 @@ public:
         constexpr auto UnsignedBasicIntMultOp = BasicUIntMultOpV1<signed int>;
         constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
         constexpr auto BasicInt64MultOp = BasicIntMultOpV1<signed long long>;
+        constexpr auto UnsignedBasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
 
         constexpr auto BasicUInt8MultOp = BasicUIntMultOpV1<unsigned char>;
         constexpr auto BasicInt8MultOp = BasicIntMultOpV1<signed char>;
@@ -1355,6 +1356,7 @@ public:
         constexpr auto UnsignedBasicMultiplyByInt = BasicMultiplyByUIntV1<signed int>;
         constexpr auto BasicMultiplyByUInt64 = BasicMultiplyByUIntV1<unsigned long long>;
         constexpr auto BasicMultiplyByInt64 = BasicMultiplyByIntV1<signed long long>;
+        constexpr auto UnsignedBasicMultiplyByInt64 = BasicMultiplyByUIntV1<signed long long>;
 
         constexpr auto BasicMultiplyByUInt8 = BasicMultiplyByUIntV1<unsigned char>;
         constexpr auto BasicMultiplyByInt8 = BasicMultiplyByIntV1<signed char>;
@@ -1386,7 +1388,7 @@ protected:
     #endif
 
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and Integer value 
+        /// Basic addition operation between MediumDec Variant and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1450,7 +1452,7 @@ protected:
         }
 		
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1491,7 +1493,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1505,7 +1507,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic Addition Operation between MediumDec Variant and unsigned Integer value 
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modifify owner object)
         /// </summary>
@@ -1519,7 +1521,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Addition Operation between MediumDec variant and unsigned Integer value 
+        /// Basic addition operation between MediumDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1534,7 +1536,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Addition Operation between MediumDec variant and Integer value 
+        /// Basic addition operation between MediumDec variant and Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1550,23 +1552,17 @@ protected:
 
 public:
 
-        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
-        constexpr auto BasicIntAddOp = BasicIntAddOpV1<signed int>;
-        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicIntAddOpV1<signed long long>;
-	
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByIntV1<signed int>;
         constexpr auto UnsignedBasicAddByInt = BasicAddByUIntV1<signed int>;
-        constexpr auto BasicUInt64Add = BasicAddByUIntV1<unsigned long long>;
-        constexpr auto BasicInt64Add = BasicAddByIntV1<signed long long>;
-        constexpr auto UnsignedBasicAddByInt64 = BasicAddByUIntV1<signed long long>;
+        constexpr auto BasicAddByUInt64 = BasicAddByUIntV1<unsigned long long>;
+        constexpr auto BasicAddByInt64 = BasicAddByIntV1<signed long long>;
+        constexpr auto UnsignedBasicAddByInt64 = BasicAddByUIntV1<signed int>;
 
-        constexpr auto BasicAddByUInt8 = BasicAddByUIntV1<unsigned int>;
-        constexpr auto BasicAddByInt8 = BasicAddByIntV1<signed int>;
-        constexpr auto BasicAddByUInt16 = BasicAddByUIntV1<unsigned long long>;
-        constexpr auto BasicAddByInt16 = BasicAddByIntV1<signed long long>;
+        constexpr auto BasicAddByUInt8 = BasicAddByUIntV1<unsigned char>;
+        constexpr auto BasicAddByInt8 = BasicAddByIntV1<signed char>;
+        constexpr auto BasicAddByUInt16 = BasicAddByUIntV1<unsigned short>;
+        constexpr auto BasicAddByInt16 = BasicAddByIntV1<signed short>;
 
     	
 	#pragma endregion NormalRep Integer Addition Operations
@@ -1594,7 +1590,7 @@ protected:
     #endif
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDec variant and Integer value 
+        /// Basic subtraction operation between MediumDec variant and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1656,7 +1652,7 @@ protected:
         }
 		
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDec variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1718,7 +1714,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDec variant and unsigned Integer value 
+        /// Basic subtraction operation between MediumDec variant and unsigned Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1732,7 +1728,7 @@ protected:
         }
 
 		/// <summary>
-        /// Basic Subtraction Operation between MediumDec variant and Integer value 
+        /// Basic subtraction operation between MediumDec variant and Integer value 
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1762,10 +1758,10 @@ public:
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep AltNum Division Operations
+	#pragma region NormalRep AltNum division operations
 protected:
 		/// <summary>
-        /// Basic Division Operation(main code block)
+        /// Basic division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1850,7 +1846,7 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic unsigned division Operation that ignores special decimal status
+        /// Basic unsigned division operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -1904,11 +1900,11 @@ public:
             return self.BasicDivOp(rValue);
         }
 
-	#pragma endregion NormalRep AltNum Division Operations
+	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 		/// <summary>
-        /// Basic Multiplication Operation that ignores special decimal status with unsigned MediumDecBase
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDecBase
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
@@ -2222,7 +2218,7 @@ public:
 	//Used only in AltDec/MixedDec
 	#pragma endregion Mixed Fraction Operations
 
-	#pragma region Other Division Operations
+	#pragma region Other division operations
 
         /// <summary>
         /// Simplified division by 2 operation(to reduce cost of operations)
@@ -2382,7 +2378,7 @@ public:
         friend MediumDecBase& operator/=(MediumDecBase& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
         friend MediumDecBase& operator/=(MediumDecBase& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }
 
-	#pragma endregion Other Division Operations	
+	#pragma endregion Other division operations	
 
 	#pragma region Other Multiplication Operations
 		
