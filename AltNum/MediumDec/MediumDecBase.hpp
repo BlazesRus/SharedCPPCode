@@ -1077,9 +1077,7 @@ protected:
         {
             if(Value<0)
             {
-#if defined(AltNum_EnableMirroredSection)
                 SwapNegativeStatus();
-#endif
                 PartialUIntDivOp(-Value);
             }
             else

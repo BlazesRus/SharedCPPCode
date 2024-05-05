@@ -21,21 +21,7 @@
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
-/*
-  Using
-  const auto& new_fn_name = old_fn_name;
-  
-  or
-  
-  constexpr auto Function = MediumDecBase::Function<templateTypename>;
-  
-  or
-  
-  template<typename T>
-constexpr auto alias_to_old = old_function<T>;
-  
-  to reference functions from base class
-*/
+
 namespace BlazesRusCode
 {
 
@@ -148,6 +134,10 @@ public:
 	#pragma region ENum Setters
 	//Not used for this variant
 	#pragma endregion ENum Setters
+
+	#pragma region INum Setters
+	//Not used for this variant
+	#pragma endregion INum Setters
 
 	#pragma region Fractional Setters
 	//Not used for this variant

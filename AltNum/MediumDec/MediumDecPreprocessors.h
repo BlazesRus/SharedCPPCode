@@ -29,15 +29,15 @@ AltNum_UseBuiltinVirtualTable =
 	#define AltNum_EnableMirroredSection
 #endif
 
-#if defined(AltNum_EnableMirroredSection)
+//#if defined(AltNum_EnableMirroredSection)
 	#include "..\MirroredInt.hpp"
 	#define IntHalfType MirroredInt
-#else
+/*#else
 	#define IntHalfType signed int
 	#if !defined(AltNum_UseLegacyFloatingConversion)
 		#define AltNum_UseLegacyFloatingConversion
 	#endif
-#endif
+#endif*/
 
 #if defined(AltNum_UseIntForDecimalHalf)
 	#define DecimalHalfType signed int
