@@ -116,28 +116,16 @@ protected:
 		static signed _int64 const NegDecimalOverflowX = -1000000000;
 		
 		//Maximum IntValue that can be stored inside IntValue field
-	#if defined(AltNum_EnableMirroredSection)
         static MirroredInt const MaxIntValue;
-	#else
-        static signed int const MaxIntValue = 2147483647;
-	#endif
 	
 		//Minimum IntValue that can be stored inside IntValue field
-	#if defined(AltNum_EnableMirroredSection)
         static MirroredInt const MinIntValue;
-	#else
-        static signed int const MinIntValue = -2147483647;
-	#endif
 	public:
 
         /// <summary>
         /// Value when IntValue is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-	#if defined(AltNum_EnableMirroredSection)
         static MirroredInt const NegativeRep;
-	#else
-        static signed int const NegativeRep = -2147483648;
-	#endif
 
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
@@ -148,20 +136,12 @@ protected:
 		//Return IntHalf as signed int
         signed int GetIntHalf()
         {
-	#if defined(AltNum_EnableMirroredSection)
 			return IntValue.IsNegative()?((signed int)IntValue.Value)*-1:(signed int)IntValue.Value;
-	#else
-            return IntValue;
-	#endif
         }
 
         bool IsNegative()
         {
-	#if defined(AltNum_EnableMirroredSection)
             return IntValue.IsNegative();
-	#else
-			return IntValue<0;
-	#endif
         }
 
         /// <summary>
@@ -184,15 +164,10 @@ protected:
 
         MediumDecBase& operator=(const int& rhs)
         {
-	#if defined(AltNum_EnableMirroredSection)
 			if(rhs<0)
-			{
-				IntValue.Value = -rhs;
-				IntValue.IsPositive = 0;
-			}
+				IntValue = MirroredInt(-rhs,0);
 			else
-	#endif
-				IntValue = rhs;
+				IntValue = MirroredInt(rhs,1);
 			DecimalHalf = 0;
             return *this;
         } const
@@ -209,20 +184,12 @@ protected:
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredSection)
             return IntValue.Value==0;
-    #else
-            return IntValue==0||IntValue==NegativeRep;
-    #endif
         }
 
         bool IsNotAtZeroInt()
         {
-	#if defined(AltNum_EnableMirroredSection)
             return IntValue.Value!=0;
-    #else
-            return IntValue != 0 && IntValue != NegativeRep;
-    #endif
         }
 
         //Detect if at exactly zero(only overridden with MixedDec)
@@ -253,22 +220,7 @@ protected:
         /// </summary>
         void SwapNegativeStatus()
         {
-	#if defined(AltNum_EnableMirroredSection)
             IntValue.IsPositive ^= 1;
-    #else
-            if (IntValue == NegativeRep)
-            {
-                IntValue = 0;
-            }
-            else if (IntValue == 0)
-            {
-                IntValue = NegativeRep;
-            }
-            else
-            {
-                IntValue *= -1;
-            }
-    #endif
         }
 
     #pragma region Const Representation values
@@ -873,17 +825,12 @@ protected:
 		template<MediumDecVariant VariantType=MediumDecBase>
 		std::strong_ordering BasicComparisonV1(const VariantType& that) const
 		{
-	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
 			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
 			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
 				return IntHalfCmp;
 			int lVal; int rVal;
-	#else
-			int lVal = IntValue==NegativeZero?0:IntValue;
-			int rVal = that.IntValue==NegativeZero?0:that.IntValue;
-	#endif
 			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
@@ -898,7 +845,6 @@ protected:
 				return DecimalHalfCmp;
 		}
 		
-#if defined(AltNum_EnableMirroredSection)
 		//Compare only as if in NormalType representation mode ignoring sign(check before using)
 		template<MediumDecVariant VariantType=MediumDecBase>
 		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
@@ -919,29 +865,22 @@ protected:
 			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
-#endif
 	
 		//Compare only as if in NormalType representation mode
         constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecBase>;
 		
-#if defined(AltNum_EnableMirroredSection)
 		//Compare only as if in NormalType representation mode ignoring sign(check before using)
         constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecBase>;
-#endif
 		
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const
 		{
-	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
 			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
 			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			int lVal;
-	#else
-			int lVal = IntValue==NegativeZero?0:IntValue;
-	#endif
 			if (auto IntHalfCmp = lVal <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
@@ -954,7 +893,6 @@ protected:
 				return DecimalHalfCmp;
 		}
 		
-#if defined(AltNum_EnableMirroredSection)
 		//Compare only as if in NormalType representation mode ignoring sign(check before using)
 		std::strong_ordering BasicIntComparisonV2(const int& that) const
 		{
@@ -969,7 +907,6 @@ protected:
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
-#endif
 	
 public:
 
