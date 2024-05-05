@@ -1236,6 +1236,18 @@ protected:
     	
 public:
 
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto BasicUIntAddOp64 = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto BasicIntAddOp64 = BasicIntAddOpV1<signed long long>;
+        constexpr auto UnsignedBasicIntAddOp64 = BasicUIntAddOpV1<signed int>;
+
+        constexpr auto BasicUIntAddOp8 = BasicUIntAddOpV1<unsigned char>;
+        constexpr auto BasicIntAddOp8 = BasicIntAddOpV1<signed char>;
+        constexpr auto BasicUIntAddOp16 = BasicUIntAddOpV1<unsigned short>;
+        constexpr auto BasicIntAddOp16 = BasicIntAddOpV1<signed short>;
+
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByIntV1<signed int>;
         constexpr auto UnsignedBasicAddByInt = BasicAddByUIntV1<signed int>;
@@ -1484,12 +1496,6 @@ protected:
     		
 public:
 
-        constexpr auto PartialUIntSubOpV1 = PartialUIntSubOpV1<unsigned int>;
-        constexpr auto PartialIntSubOpV1 = PartialIntSubOpV1<signed int>;
-        constexpr auto UnsignedPartialIntSubOpV1 = PartialUIntSubOpV1<signed int>;
-        constexpr auto PartialUInt64SubOpV1 = PartialUIntSubOpV1<unsigned long long>;
-        constexpr auto PartialInt64SubOpV1 = PartialIntSubOpV1<signed long long>;
-
         constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<unsigned int>;
         constexpr auto BasicIntSubOp = BasicIntSubOpV1<signed int>;
         constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<signed int>;
@@ -1585,7 +1591,6 @@ protected:
         constexpr auto UnsignedPartialSubOp = MediumDec::UnsignedPartialSubOp;
 
 public:
-
 	
 		/// <summary>
         /// Basic unsigned subtraction operation that ignores special decimal status

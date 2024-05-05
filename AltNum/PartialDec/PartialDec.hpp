@@ -1001,7 +1001,7 @@ public:
         /// <param name="rValue">The right side value</param>
         /// <returns>PartialDec&</returns>
         template<IntegerType IntType=unsigned int>
-        auto& BasicUIntAddOp(const IntType& rValue)
+        auto& BasicUIntAddOpV1(const IntType& rValue)
         {
             IntValue += rValue;
             return *this;
@@ -1020,6 +1020,18 @@ public:
             auto self = *this;
             return self.BasicUIntAddOpV1(rValue);
         }
+
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto BasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto BasicUIntAddOp64 = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto BasicIntAddOp64 = BasicUIntAddOpV1<signed long long>;
+        constexpr auto UnsignedBasicIntAddOp64 = BasicUIntAddOpV1<signed int>;
+
+        constexpr auto BasicUIntAddOp8 = BasicUIntAddOpV1<unsigned char>;
+        constexpr auto BasicIntAddOp8 = BasicUIntAddOpV1<signed char>;
+        constexpr auto BasicUIntAddOp16 = BasicUIntAddOpV1<unsigned short>;
+        constexpr auto BasicIntAddOp16 = BasicUIntAddOpV1<signed short>;
 
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByUIntV1<signed int>;
@@ -1046,7 +1058,7 @@ public:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicUIntSubOp(const IntType& rValue)
+        auto BasicUIntSubOpV1(const IntType& rValue)
         {
             IntValue -= rValue;
             return *this;
@@ -1069,13 +1081,25 @@ public:
 
         constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<unsigned int>;
         constexpr auto BasicIntSubOp = BasicUIntSubOpV1<signed int>;
-        constexpr auto BasicUInt64SubOp = BasicUIntSubOpV1<unsigned long long>;
-        constexpr auto BasicInt64SubOp = BasicUIntSubOpV1<signed long long>;
+        constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<signed int>;
+        constexpr auto BasicUIntSubOp64 = BasicUIntSubOpV1<unsigned long long>;
+        constexpr auto BasicIntSubOp64 = BasicUIntSubOpV1<signed long long>;
+        constexpr auto UnsignedBasicIntSubOp64 = BasicUIntSubOpV1<signed int>;
 
-        constexpr auto BasicUIntSub = BasicUIntSubOpV1<unsigned int>;
-        constexpr auto BasicIntSub = BasicUIntSubOpV1<signed int>;
-        constexpr auto BasicUInt64Sub = BasicUIntSubOpV1<unsigned long long>;
-        constexpr auto BasicInt64Sub = BasicUIntSubOpV1<signed long long>;
+        constexpr auto BasicUIntSubOp8 = BasicUIntSubOpV1<unsigned char>;
+        constexpr auto BasicIntSubOp8 = BasicUIntSubOpV1<signed char>;
+        constexpr auto BasicUIntSubOp16 = BasicUIntSubOpV1<unsigned short>;
+        constexpr auto BasicIntSubOp16 = BasicUIntSubOpV1<signed short>;
+
+        constexpr auto BasicSubByUInt = BasicSubByUIntV1<unsigned int>;
+        constexpr auto BasicSubByInt = BasicSubByUIntV1<signed int>;
+        constexpr auto BasicSubByUInt64 = BasicSubByUIntV1<unsigned long long>;
+        constexpr auto BasicSubByInt64 = BasicSubByUIntV1<signed long long>;
+
+        constexpr auto BasicSubByUInt8 = BasicSubByUIntV1<unsigned char>;
+        constexpr auto BasicSubByInt8 = BasicSubByUIntV1<signed char>;
+        constexpr auto BasicSubByUInt16 = BasicSubByUIntV1<unsigned short>;
+        constexpr auto BasicSubByInt16 = BasicSubByUIntV1<signed short>;
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 

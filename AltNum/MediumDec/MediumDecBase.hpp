@@ -1552,6 +1552,18 @@ protected:
 
 public:
 
+        constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
+        constexpr auto BasicIntAddOp = BasicIntAddOpV1<signed int>;
+        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
+        constexpr auto BasicUIntAddOp64 = BasicUIntAddOpV1<unsigned long long>;
+        constexpr auto BasicIntAddOp64 = BasicIntAddOpV1<signed long long>;
+        constexpr auto UnsignedBasicIntAddOp64 = BasicUIntAddOpV1<signed int>;
+
+        constexpr auto BasicUIntAddOp8 = BasicUIntAddOpV1<unsigned char>;
+        constexpr auto BasicIntAddOp8 = BasicIntAddOpV1<signed char>;
+        constexpr auto BasicUIntAddOp16 = BasicUIntAddOpV1<unsigned short>;
+        constexpr auto BasicIntAddOp16 = BasicIntAddOpV1<signed short>;
+
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByIntV1<signed int>;
         constexpr auto UnsignedBasicAddByInt = BasicAddByUIntV1<signed int>;
