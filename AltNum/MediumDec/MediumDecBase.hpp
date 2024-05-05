@@ -1707,89 +1707,49 @@ public:
 
 	#pragma region NormalRep AltNum division operations
 protected:
+
 		/// <summary>
-        /// Basic division operation(main code block)
+        /// Basic unsigned division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The rValue</param
-        bool PartialDivOp(const MediumDecBase& rValue)
+        /// <param name="rValue.">The rValue</param>
+        bool UnsignedPartialDivOp(const auto& rValue)
         {
-			bool ResIsPositive = true;
-			signed _int64 SelfRes;
-			signed _int64 ValueRes;
-			if(IntValue<0)
-			{
-                if (IntValue == NegativeRep)
-                    SelfRes = DecimalHalf;
-                else
-			        SelfRes = NegDecimalOverflowX*IntValue + DecimalHalf;
-                if (rValue < 0)
-                {
-                    if (rValue.IntValue == NegativeRep)
-                        ValueRes = rValue.DecimalHalf;
-                    else
-                        ValueRes =  NegDecimalOverflowX* rValue.IntValue + rValue.DecimalHalf;
-                }
-				else
-				{
-				    ResIsPositive = false;
-					ValueRes = DecimalOverflowX * rValue.IntValue +rValue.DecimalHalf;
-				}
-			}
-			else
-			{
-                
-				SelfRes = DecimalOverflowX* IntValue+DecimalHalf;
-			    if(rValue<0)
-				{
-				    ResIsPositive = false;
-					ValueRes = rValue.IntValue==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntValue +rValue.DecimalHalf;
-				}
-				else
-					ValueRes = DecimalOverflowX* rValue.IntValue +rValue.DecimalHalf;
-			}
-			
-			signed _int64 IntHalfRes = SelfRes / ValueRes;
-			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
-			DecimalHalf = DecimalRes;
-			if(IntHalfRes==0&&DecimalRes==0)
-				return true;
-			else
-				return false;
-        }
+            unsigned _int64 SelfRes = DecimalOverflowX * IntValue.Value + (unsigned _int64)DecimalHalf;
+            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntValue.Value + (unsigned _int64)rValue.DecimalHalf;	
 
-        bool UnsignedPartialDivOp(const MediumDecBase& rValue)
-        {
-            bool ResIsPositive = true;
-            signed _int64 SelfRes;
-            signed _int64 ValueRes;
-            if (IntValue < 0)
-            {
-                if (IntValue == NegativeRep)
-                    SelfRes = DecimalHalf;
-                else
-                    SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
-                ResIsPositive = false;
-                ValueRes = DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
-            }
-            else
-            {
-
-                SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
-                ValueRes = DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
-            }
-
-            signed _int64 IntHalfRes = SelfRes / ValueRes;
-            signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntValue = IntHalfRes == 0 && ResIsPositive == false ? NegativeRep : IntHalfRes;
+            unsigned _int64 IntHalfRes = SelfRes / ValueRes;
+            unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+			IntValue.Value = (unsigned int) IntHalfRes;
+		#if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = DecimalRes;
+		#else
+            DecimalHalf.Value = DecimalRes;		
+		#endif
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
             else
                 return false;
         }
+		
+		/// <summary>
+        /// Basic division operation(main code block)
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rValue</param>
+        bool PartialDivOp(const auto& rValue)
+        {
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                return UnsignedPartialDivOp(-Value);
+            }
+            else
+                return UnsignedPartialDivOp(Value);
+        }
+		
 public:
 
 		/// <summary>
