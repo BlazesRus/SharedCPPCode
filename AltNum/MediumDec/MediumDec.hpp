@@ -245,11 +245,7 @@ public:
         /// <returns>MediumDec</returns>
         static MediumDec NegativeOneValue()
         {
-#if !defined(AltNum_EnableMirroredSection)
-            MediumDec NewSelf = MediumDec(-1);
-#else
             MediumDec NewSelf = MediumDec(MirroredInt(1,0));
-#endif
             return NewSelf;
         }
 

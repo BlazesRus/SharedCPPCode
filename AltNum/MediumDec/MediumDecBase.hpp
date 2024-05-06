@@ -400,11 +400,7 @@ public:
             if (Value >= 2147483648.0f)
             {
                 if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -414,12 +410,9 @@ public:
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (float)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			//To-Do:Add code here
 	#endif
         }
@@ -428,7 +421,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(const double& Value)
+        void SetDoubleVal(const double& Value)
         {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 			double lValue = Value;
@@ -438,11 +431,7 @@ public:
             if (Value >= 2147483648.0)
             {
                 if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -452,12 +441,9 @@ public:
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (double)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			//To-Do:Add code here
 	#endif
         }
@@ -466,7 +452,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const ldouble& Value)
         {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 			ldouble lValue = Value;
@@ -476,11 +462,7 @@ public:
             if (lValue >= 2147483648.0L)
             {
                 if (IsNegative)
-		    #if defined(AltNum_EnableMirroredSection)
 					IntValue = MirroredInt(2147483647,0);
-		    #else
-					IntValue = -2147483647;
-		    #endif
                 else
                     IntValue = 2147483647;
                 DecimalHalf = 999999999;
@@ -490,12 +472,9 @@ public:
                 signed __int64 WholeValue = (signed __int64)std::floor(lValue);
                 lValue -= (ldouble)WholeValue;
                 DecimalHalf = (signed int)lValue * 10000000000;
-                if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
-                else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                IntValue = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
             }
-	#elif defined(AltNum_EnableMirroredSection)//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			//To-Do:Add code here
 	#endif
         }
@@ -516,16 +495,13 @@ public:
         /// <param name="Value">The value.</param>
         virtual void SetIntVal(const int& Value)
         {
-	#if defined(AltNum_EnableMirroredSection)
 			if(Value<0)
 			{
 				IntValue.IsPositive = 0;
 				IntValue.Value = -Value;
 			}
 			else
-	#else
 				IntValue = Value;
-	#endif
 			DecimalHalf = 0;
         }
 
