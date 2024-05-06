@@ -562,24 +562,16 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
             float Value;
             if (IntValue.IsNegative())
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue;
-        #else
-                Value = (float)-IntValue;
-        #endif
+                Value = (float)-IntValue.Value;
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (float)IntValue;
-        #else
                 Value = (float)IntValue.Value;
-        #endif
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			if(IntValue.Value==0)//Exponent is negative
 			{
 				//To-Do:Add code here
@@ -602,24 +594,16 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
 		    double Value;
             if (IntValue < 0)
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0f : (double)IntValue;
-        #else
-                Value = (double)-IntValue;
-        #endif
+                Value = (double)-IntValue.Value;
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (double)IntValue;
-        #else
                 Value = (double)IntValue.Value;
-        #endif
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			if(IntValue.Value==0)//Exponent is negative
 			{
 				//To-Do:Add code here
@@ -642,24 +626,16 @@ protected://Adding more exact conversion from floating point to MediumDecBase va
             ldouble Value;
             if (IntValue < 0)
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = IntValue == NegativeRep ? 0.0L : (float)IntValue;
-        #else
-                Value = (ldouble)-IntValue;
-        #endif
+                Value = (ldouble)-IntValue.Value;
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-        #if !defined(AltNum_EnableMirroredSection)
-                Value = (ldouble)IntValue;
-        #else
                 Value = (ldouble)IntValue.Value;
-        #endif
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
-	#elif defined(AltNum_EnableMirroredSection)//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 			if(IntValue.Value==0)//Exponent is negative
 			{
 				//To-Do:Add code here
@@ -920,69 +896,24 @@ protected:
         template<IntegerType IntType=unsigned int>
         void PartialUIntDivOpV1(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
-#if !defined(AltNum_EnableMirroredSection)
-            bool ResIsNegative = IntValue < 0;
-#endif
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
             unsigned _int64 IntHalfRes;
             unsigned _int64 DecimalRes;
-#if !defined(AltNum_EnableMirroredSection)
-            if(DecimalHalf == 0)
-                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
-            else
-            {
-                if (ResIsNegative)
-                {
-                    if(IntValue==NegativeRep)
-    #if defined(AltNum_UseIntForDecimalHalf)
-                        SelfRes = DecimalHalf;
-    #else
-                        SelfRes = DecimalHalf.Value;
-    #endif
-                    else
-    #if defined(AltNum_UseIntForDecimalHalf)
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
-    #else
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
-    #endif
-                }
-                else
-    #if defined(AltNum_UseIntForDecimalHalf)
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
-    #else
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
-    #endif
-            }
-#else
     #if defined(AltNum_UseIntForDecimalHalf)
             SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
     #else
             SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
     #endif
-#endif
             Res = SelfRes / rValue;
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-#if !defined(AltNum_EnableMirroredSection)
-			if(ResIsNegative)
-			{
-				IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
-				DecimalHalf = (int) DecimalRes;
-			}
-			else
-			{
-				IntValue = (int)IntHalfRes;
-				DecimalHalf = DecimalRes;
-			}
-#else
 		    IntValue.Value = (unsigned int)IntHalfRes;
     #if defined(AltNum_UseIntForDecimalHalf)
 			DecimalHalf = (signed int)DecimalRes;
     #else
 			DecimalHalf.Value = (unsigned int)DecimalRes;
     #endif
-#endif
         }
 
         template<IntegerType IntType=signed int>
@@ -1115,35 +1046,17 @@ protected:
                 IntValue *= rValue;
             else
 			{
-		#if !defined(AltNum_EnableMirroredSection)
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
-                }
-			#if defined(AltNum_UseIntForDecimalHalf)
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
-			#else
-                __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue + DecimalHalf.Value;
-			#endif
-        #else
 			#if defined(AltNum_UseIntForDecimalHalf)
                 __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
 			#else
                 __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
 			#endif
-        #endif
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-		#if defined(AltNum_EnableMirroredSection)
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
-        #else
                     IntValue.Value = (unsigned int)OverflowVal;
-        #endif
 		#if defined(AltNum_UseIntForDecimalHalf)
                     DecimalHalf = (signed int)SRep;
 		#else
@@ -1152,11 +1065,7 @@ protected:
                 }
                 else
                 {
-		#if !defined(AltNum_EnableMirroredSection)
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
-		#else
 					IntValue.Value = 0;
-		#endif
 		#if defined(AltNum_UseIntForDecimalHalf)
                     DecimalHalf = (signed int)SRep;
 		#else
@@ -1173,9 +1082,7 @@ protected:
         {
             if(Value<0)
             {
-#if defined(AltNum_EnableMirroredSection)
                 SwapNegativeStatus();
-#endif
                 PartialUIntMultOp(-Value);
             }
             else
@@ -1278,25 +1185,6 @@ public:
 
 	#pragma region NormalRep Integer Addition Operations
 protected:
-    #if !defined(AltNum_EnableMirroredSection)
-        /// <summary>
-        /// Addition Operation that skips negative zero(for when decimal half is empty)
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        /// <returns>void</returns>
-        template<IntegerType IntType=signed int>
-        void NRepSkippingIntAddOp(const IntType& rValue)
-        {
-            if (RValue == 0)
-                return;
-            if (IntValue == 0)
-                IntValue = (int)rValue;
-            else
-                IntHalfAdditionOp(rValue);
-            return;
-        }
-    #endif
 
         /// <summary>
         /// Basic addition operation between MediumDec Variant and Integer value 
@@ -1308,18 +1196,6 @@ protected:
         template<IntegerType IntType=signed int>
         auto& BasicIntAddOpV1(const IntType& rValue)
         {
-    #if !defined(AltNum_EnableMirroredSection)
-            if(DecimalHalf==0)
-                NRepSkippingIntAddOp(rValue);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(rValue);
-                //If flips to other side of negative, invert the decimal section
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
-			}
-    #else
 			if(IntValue.IsPositive())
 			{
 				if(rValue<0)
@@ -1358,7 +1234,6 @@ protected:
 					}
 				}
 			}
-    #endif
             return *this;
         }
 		
@@ -1372,18 +1247,6 @@ protected:
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOpV1(const IntType& rValue)
         {
-    #if !defined(AltNum_EnableMirroredSection)
-            if(DecimalHalf==0)
-                NRepSkippingIntAddOp(rValue);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfAdditionOp(rValue);
-                //If flips to other side of negative, invert the decimal section
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
-			}
-    #else
 			if(IntValue.IsPositive())
 					IntValue += rValue;
 			else
@@ -1399,7 +1262,6 @@ protected:
 						DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
 				}
 			}
-    #endif
             return *this;
         }
 
@@ -1492,25 +1354,6 @@ public:
 
 	#pragma region NormalRep Integer Subtraction Operations
 protected:
-    #if !defined(AltNum_EnableMirroredSection)
-        /// <summary>
-        /// Subtraction Operation that skips negative zero(for when decimal half is empty)
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        /// <returns>void</returns>
-        template<IntegerType IntType=signed int>
-        void NRepSkippingIntSubOp(const IntType& rValue)
-        {
-            if (RValue == 0)
-                return;
-            if (IntValue == 0)
-                IntValue = -(int)rValue;
-            else
-                IntHalfSubtractionOp(rValue);
-            return;
-        }
-    #endif
 
 		/// <summary>
         /// Basic subtraction operation between MediumDec variant and Integer value 
@@ -1522,18 +1365,6 @@ protected:
         template<IntegerType IntType=signed int>
         auto BasicIntSubOp(const IntType& rValue)
         {
-    #if !defined(AltNum_EnableMirroredSection)
-            if (DecimalHalf == 0)
-                NRepSkippingIntSubOp(Value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(rValue);
-                //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
-			}
-    #else
                 if(IntValue.IsNegative())
                 {
                     if(rValue<0)
@@ -1570,7 +1401,6 @@ protected:
 						}
                     }
                 }
-    #endif
             return *this;
         }
 		
@@ -1584,18 +1414,6 @@ protected:
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubOp(const IntType& rValue)
         {
-    #if !defined(AltNum_EnableMirroredSection)
-            if (DecimalHalf == 0)
-                NRepSkippingIntSubOp(Value);
-            else
-            {
-                bool NegativeBeforeOperation = IntValue < 0;
-                IntHalfSubtractionOp(rValue);
-                //If flips to other side of negative, invert the decimals
-                if(NegativeBeforeOperation^(IntValue<0))
-                    DecimalHalf = MediumDecBase::DecimalOverflow - DecimalHalf;
-			}
-    #else
                 if(IntValue.IsNegative())
                 {
                     if(rValue<0)
@@ -1632,7 +1450,6 @@ protected:
 						}
                     }
                 }
-    #endif
             return *this;
         }
 
@@ -1750,9 +1567,7 @@ public:
         {
             if(Value<0)
             {
-#if defined(AltNum_EnableMirroredSection)
                 SwapNegativeStatus();
-#endif
                 BasicUnsignedMultOp(-Value);
             }
             else
@@ -1838,11 +1653,7 @@ public:
                     }
                 }
             }
-	#if !defined(AltNum_EnableMirroredSection)
-            else if (IntValue == 0)
-    #else
             else if (IntValue.Value == 0)
-    #endif
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf;
@@ -1878,58 +1689,8 @@ public:
                     }
                 }
             }
-	#if !defined(AltNum_EnableMirroredSection)
-            else if (IntValue == MediumDecBase::NegativeRep)
-            {
-                __int64 SRep = (__int64)DecimalHalf;
-                SRep *= rValue.DecimalHalf;
-                SRep /= MediumDecBase::DecimalOverflowX;
-                if (rValue.IntValue == 0)
-                {
-                    DecimalHalf = (signed int)SRep;
-                    if(DecimalHalf==0)
-                    {
-                        IntValue = 0;
-                        if(ExtraRep!=0)
-                            ExtraRep = 0;
-                    }
-                    return *this;
-                }
-                else
-                {
-                    SRep += (__int64)DecimalHalf * rValue.IntValue;
-                    if (SRep >= MediumDecBase::DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / MediumDecBase::DecimalOverflowX;
-                        SRep -= OverflowVal * MediumDecBase::DecimalOverflowX;
-                        IntValue = -OverflowVal;
-                        DecimalHalf = (signed int)SRep;
-						return *this;
-                    }
-                    else
-                    {
-                        DecimalHalf = (signed int)SRep;
-                        if(DecimalHalf==0)
-                        {
-                #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            if(DecimalHalf==0)
-                                DecimalHalf = 1;
-                #endif
-                        }
-                        return *this;
-                    }
-                }
-            }
-    #endif
             else
             {
-	#if !defined(AltNum_EnableMirroredSection)
-                bool SelfIsNegative = IntValue < 0;
-                if (SelfIsNegative)
-                {
-                    IntValue *= -1;
-                }
-    #endif
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
                     __int64 SRep = MediumDecBase::DecimalOverflowX * IntValue + DecimalHalf;
@@ -1938,11 +1699,7 @@ public:
                     {
                         __int64 OverflowVal = SRep / MediumDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDecBase::DecimalOverflowX;
-	#if !defined(AltNum_EnableMirroredSection)
-                        IntValue = (signed int)OverflowVal;
-	#else
                         IntValue.Value = (unsigned int)OverflowVal;
-	#endif
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -1955,11 +1712,7 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-				#if !defined(AltNum_EnableMirroredSection)
-                        IntValue = SelfIsNegative ? MediumDecBase::NegativeRep : 0;
-				#else
                         IntValue.Value = 0;
-				#endif
                     }
 				    return *this;
                 }
@@ -1972,11 +1725,7 @@ public:
                     {
                         __int64 OverflowVal = SRep / MediumDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * MediumDecBase::DecimalOverflowX;
-				#if !defined(AltNum_EnableMirroredSection)
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
-				#else
                         IntValue.Value = (unsigned int)OverflowVal;
-				#endif
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -1989,11 +1738,7 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-				#if !defined(AltNum_EnableMirroredSection)
-                        IntValue = SelfIsNegative ? MediumDecBase::NegativeRep : 0;
-				#else
                         IntValue.Value = 0;
-				#endif
                     }
                     return *this;
                 }
@@ -2010,10 +1755,7 @@ public:
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
                     __int64 IntHalf = IntegerRep / MediumDecBase::DecimalOverflow;
                     IntegerRep -= IntHalf * (__int64)MediumDecBase::DecimalOverflow;
-                    if (IntHalf == 0)
-                        IntValue = (signed int)SelfIsNegative ? MediumDecBase::NegativeRep : 0;
-                    else
-                        IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
+                    IntValue.Value = (unsigned int) IntHalf;
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
@@ -2028,9 +1770,7 @@ public:
         {
             if(Value<0)
             {
-#if defined(AltNum_EnableMirroredSection)
                 SwapNegativeStatus();
-#endif
                 BasicUnsignedMultOp(-Value);
             }
             else
