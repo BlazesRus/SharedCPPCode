@@ -26,7 +26,7 @@ AltNum_UseBuiltinVirtualTable =
     //#define AltNum_EnableDecimaledPiFractionals
     #define AltNum_EnableApproachingValues
     //#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
-	#define AltNum_EnableMirroredSection
+	//#define AltNum_EnableMirroredSection
 #endif
 
 //#if defined(AltNum_EnableMirroredSection)

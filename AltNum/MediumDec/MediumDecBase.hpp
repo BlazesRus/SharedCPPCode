@@ -2533,10 +2533,8 @@ public:
         {
             if (DecimalHalf == 0)
                 ++IntValue;
-#if !defined(AltNum_EnableMirroredSection)
             else if (IntValue == NegativeRep)
                 IntValue = MirroredInt::Zero;
-#endif
             else
                 ++IntValue;
             return *this;
@@ -2550,10 +2548,8 @@ public:
         {
             if (DecimalHalf == 0)
                 --IntValue;
-#if !defined(AltNum_EnableMirroredSection)
             else if (IntValue == 0)
                 IntValue = NegativeRep;
-#endif
             else
                 --IntValue;
             return *this;
@@ -2594,17 +2590,14 @@ public:
 // Static versions of functions for Full versions
 	#pragma region Math Etc Functions
 
-/*
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& Abs()
+        auto& Abs()
         {
-            if (IntValue == NegativeRep)
-                IntValue.Value = 0;
-            else if (IntValue.Value < 0)
-                IntValue *= -1;
+            if (IntValue.IsNegative())
+                IntValue.IsPositive = 1;
             return *this;
         }
 
@@ -2613,60 +2606,52 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Abs(MediumDecBase tValue)
+        static auto Abs(const auto tValue&)
         {
-            return tValue.Abs();
+            auto self = tValue;
+            return self.Abs();
         }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& Floor()
+        auto& Floor()
         {
             DecimalHalf = 0;
             return *this;
         }
 
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
-        /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
-        /// <returns>MediumDecBase&</returns>
-        static MediumDecBase Floor(MediumDecBase Value)
-        {
-            return Value.Floor();
-        }
-
-        /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        /// <param name="precision">The precision.</param>
-        static MediumDecBase Floor(MediumDecBase Value, int precision)
+        /// <returns>MediumDecBase</returns>
+        static auto Floor(const auto tValue&, const int precision&)
         {
+            auto self = tValue;
             switch (precision)
             {
             case 9: break;
-            case 8: Value.DecimalHalf /= 10; Value.DecimalHalf *= 10; break;
-            case 7: Value.DecimalHalf /= 100; Value.DecimalHalf *= 100; break;
-            case 6: Value.DecimalHalf /= 1000; Value.DecimalHalf *= 1000; break;
-            case 5: Value.DecimalHalf /= 10000; Value.DecimalHalf *= 10000; break;
-            case 4: Value.DecimalHalf /= 100000; Value.DecimalHalf *= 100000; break;
-            case 3: Value.DecimalHalf /= 1000000; Value.DecimalHalf *= 1000000; break;
-            case 2: Value.DecimalHalf /= 10000000; Value.DecimalHalf *= 10000000; break;
-            case 1: Value.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
-            default: Value.DecimalHalf = 0; break;
+            case 8: self.DecimalHalf /= 10; Value.DecimalHalf *= 10; break;
+            case 7: self.DecimalHalf /= 100; Value.DecimalHalf *= 100; break;
+            case 6: self.DecimalHalf /= 1000; Value.DecimalHalf *= 1000; break;
+            case 5: self.DecimalHalf /= 10000; Value.DecimalHalf *= 10000; break;
+            case 4: self.DecimalHalf /= 100000; Value.DecimalHalf *= 100000; break;
+            case 3: self.DecimalHalf /= 1000000; Value.DecimalHalf *= 1000000; break;
+            case 2: self.DecimalHalf /= 10000000; Value.DecimalHalf *= 10000000; break;
+            case 1: self.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
+            default: self.DecimalHalf = 0; break;
             }
-            if (Value.IntValue == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
-            return Value;
+            if (self.IntValue == NegativeRep && Value.DecimalHalf == 0) { self.IntValue = 0; }
+            return self;
         }
-        
+
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& Ceil()
+        auto& Ceil()
         {
             if (DecimalHalf != 0)
             {
@@ -2684,16 +2669,16 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        static int FloorInt(MediumDecBase Value)
+        static int FloorInt(const auto& tValue)
         {
-            if (Value.DecimalHalf == 0)
+            if (tValue.DecimalHalf == 0)
             {
-                return Value.IntValue;
+                return tValue.IntValue.Value;
             }
-            if (Value.IntValue == NegativeRep) { return -1; }
+            if (tValue.IntValue == NegativeRep) { return -1; }
             else
             {
-                return Value.IntValue - 1;
+                return tValue.IntValue.Value - 1;
             }
         }
 
@@ -2701,49 +2686,51 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        static int CeilInt(MediumDecBase Value)
+        static int CeilInt(const auto& tValue)
         {
-            if (Value.DecimalHalf == 0)
+            if (tValue.DecimalHalf == 0)
             {
-                return Value.IntValue;
+                return self.IntValue.Value;
             }
-            if (Value.IntValue == NegativeRep) { return 0; }
+            if (tValue.IntValue == NegativeRep) { return 0; }
             else
             {
-                return Value.IntValue + 1;
+                return tValue.IntValue.Value + 1;
             }
         }
-        
+
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Ceil(MediumDecBase Value)
+        auto& Ceil(const auto& tValue)
         {
-            return Value.Ceil();
+            auto self = tValue;
+            return self.Ceil();
         }
-        
+
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <returns>MediumDecBase &</returns>
-        MediumDecBase& Trunc()
+        auto& Trunc()
         {
             DecimalHalf = 0;
             return *this;
         }
-        
+
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Trunc(MediumDecBase Value)
+        static auto Trunc(const auto& Value)
         {
-            return Value.Trunc();
+            auto self = tValue;
+            return self.Trunc();
         }
-*/
+
 	#pragma endregion Math Etc Functions
 
 	#pragma region Pow and Sqrt Functions
