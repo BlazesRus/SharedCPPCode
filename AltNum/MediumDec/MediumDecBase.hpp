@@ -2735,12 +2735,12 @@ public:
 
 	#pragma region Pow and Sqrt Functions
 
-/*
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDecBase BasicSqrt(MediumDecBase& value, int precision=7)
+        static auto BasicSqrt(auto tValue, const int& precision=7)
         {//Ignores Alternate representations use Sqrt instead to check based on RepType
+		    auto value = tValue;
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
@@ -2775,12 +2775,12 @@ public:
                     return value;
                 }
             }
-            MediumDecBase number = value;
-            MediumDecBase start = 0, end = number;
-            MediumDecBase mid;
+            auto number = value;
+            auto start = 0, end = number;
+            auto mid;
 
             // variable to store the answer 
-            MediumDecBase ans;
+            auto ans;
 
             // for computing integral part 
             // of square root of number 
@@ -2807,7 +2807,7 @@ public:
 
             // For computing the fractional part 
             // of square root up to given precision 
-            MediumDecBase increment = "0.1";
+            auto increment = "0.1";
             for (int i = 0; i < precision; i++) {
                 while (ans * ans <= number) {
                     ans += increment;
@@ -2823,56 +2823,32 @@ public:
 		/// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-		static MediumDecBase Sqrt(MediumDecBase value, int precision=7)
+		static auto Sqrt(auto value, const int& precision=7)
 		{
 		    value.ConvertToNormType();
 			BasicSqrt(value, precision);
 		}
 
+protected:
+
         /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
+        /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        MediumDecBase BasicIntPowOp(ValueType& expValue)
+        auto BasicUIntPowOpV1(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntValue = 1; DecimalHalf = 0;
             }
-            else if (expValue < 0)//Negative Pow
-            {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
-                {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expValue *= -1;
-                    MediumDecBase self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (expValue % 2 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    return this;
-                }
-            }
-            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
+            else if (DecimalHalf == 0 && IntValue == 10)
                 IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDecBase self = *this;
+                auto self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -2887,143 +2863,96 @@ public:
             return *this;
         }
 
-        MediumDecBase BasicPowOp(int& expValue) { return BasicIntPowOp(expValue); }
-        MediumDecBase BasicPowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
-        MediumDecBase BasicPow(int expValue) { return BasicIntPowOp(expValue); }
-        MediumDecBase BasicPow(signed long long expValue) { return BasicIntPowOp(expValue); }
-
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecBase IntPowOp(MediumDecBase& targetValue, ValueType& expValue)
-        {
-            if (value.DecimalHalf == InfinityRep)
-            {
-                if (expValue == 0)
-#if defined(AltNum_EnableNaN)
-                    targetValue.SetAsUndefined();
-#else
-                    throw "Infinity to power of Zero returns Undefined value";
-#endif
-                else if (expValue < 0)
-                    targetValue.SetAsZero();
-                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
-                    targetValue.IntValue.Value = 1;
-                else
-                    return targetValue;//Returns infinity
-                return *this;
-            }
-            else
-                targetValue.BasicIntPowOp(expValue);
-            return targetValue;
-        }
-
-        static MediumDecBase PowOp(MediumDecBase& targetValue, int& expValue) { return IntPowOp(targetValue, expValue); }
-        static MediumDecBase PowOp(MediumDecBase& targetValue, signed long long& expValue) { return IntPowOp(targetValue, expValue); }
-        static MediumDecBase Pow(MediumDecBase targetValue, int expValue) { return IntPowOp(targetValue, expValue); }
-        static MediumDecBase Pow(MediumDecBase targetValue, signed long long expValue) { return IntPowOp(targetValue, expValue); }
-
-        /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        MediumDecBase BasicIntPowConstOp(const ValueType& expValue)
+        auto BasicIntPowOpV1(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntValue = 1; DecimalHalf = 0;
             }
             else if (expValue < 0)//Negative Pow
             {
                 if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
                 {
-                    int expVal = expValue * -1;
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
+                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
                 }
                 else
                 {
-                    int expVal = expValue;
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    expVal *= -1;
-                    MediumDecBase self = *this;
+                    expValue *= -1;
+                    auto self = *this;
                     IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expVal > 0)
+                    while (expValue > 0)
                     {
                         // If expValue is odd, multiply self with result
-                        if (expVal % 2 == 1)
+                        if (expValue % 2 == 1)
                             *this /= self;
                         // n must be even now
-                        expVal = expVal >> 1; // y = y/2
+                        expValue = expValue >> 1; // y = y/2
                         self = self / self; // Change x to x^-1
                     }
                     return this;
                 }
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && targetValue.ExtraRep == 0)
-            {
+            else if (DecimalHalf == 0 && IntValue == 10)
                 IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            }
+            else if (DecimalHalf == 0 && IntValue == -10)
+                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
             else
             {
-                int expVal = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                MediumDecBase self = *this;
+                auto self = *this;
                 IntValue = 1; DecimalHalf = 0;// Initialize result
-                while (expVal > 0)
+                while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
-                    if (expVal % 2 == 1)
+                    if (expValue % 2 == 1)
                         this *= self;
                     // n must be even now
-                    expVal = expVal >> 1; // y = y/2
+                    expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
                 }
             }
             return *this;
         }
-
-        MediumDecBase BasicPowConstOp(const int& expValue) { return BasicIntPowConstOp(expValue); }
-        MediumDecBase BasicPowConstOp(const signed long long& expValue) { return BasicIntPowConstOp(expValue); }
-        MediumDecBase BasicPowConst(const int expValue) { return BasicIntPowConstOp(expValue); }
-        MediumDecBase BasicPowConst(const signed long long expValue) { return BasicIntPowConstOp(expValue); }
-
+		
         /// <summary>
-        /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
+        /// Applies Power of operation(for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        static MediumDecBase IntPowConstOp(MediumDecBase& targetValue, const ValueType& expValue)
+        auto BasicUIntPowV1(const ValueType& expValue)
         {
-            if (value.DecimalHalf == InfinityRep)
-            {
-                if (expValue == 0)
-#if defined(AltNum_EnableNaN)
-                    targetValue.SetAsUndefined();
-#else
-                    throw "Infinity to power of Zero returns Undefined value";
-#endif
-                else if (expValue < 0)
-                    return Zero;
-                else if (value.IntValue.Value == -1 && expValue % 2 == 0)
-                    IntValue.Value = 1;
-                else
-                    return;//Returns infinity
-                return *this;
-            }
-            else
-                targetValue.BasicIntPowConstOp(expValue);
-            return *this;
-        }
+            auto self = tValue;
+            return self.BasicUIntPowOpV1();
+		}
+		
+        /// <summary>
+        /// Applies Power of operation(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto BasicIntPowV1(const ValueType& expValue)
+        {
+            auto self = tValue;
+            return self.BasicIntPowOpV1();
+		}
 
-        MediumDecBase PowConstOp(MediumDecBase& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        MediumDecBase PowConstOp(MediumDecBase& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
-        MediumDecBase PowConst(MediumDecBase& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        MediumDecBase PowConst(MediumDecBase& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+public:
 
+        constexpr auto UIntPowOp = BasicUIntPowOpV1<unsigned int>;
+        constexpr auto IntPowOp = BasicIntPowOpV1<signed int>;
+        constexpr auto UInt64PowOp = BasicUIntPowOpV1<unsigned long long>;
+        constexpr auto Int64PowOp = BasicIntPowOpV1<signed long long>;
+        constexpr auto UIntPow = BasicUIntPowV1<unsigned int>;
+        constexpr auto IntPow = BasicIntPowV1<signed int>;
+        constexpr auto UInt64Pow = BasicUIntPowV1<unsigned long long>;
+        constexpr auto Int64Pow = BasicIntPowV1<signed long long>;
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -3031,26 +2960,26 @@ public:
         /// <param name="value">The target value.</param>
         /// <param name="nValue">The nth value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDecBase NthRoot(MediumDecBase value, int n, MediumDecBase precision = MediumDecBase::JustAboveZero)
+        /// <returns>auto</returns>
+        auto NthRoot(const int& n, const auto& precision = auto::JustAboveZero)
         {
-            MediumDecBase xPre = ((value - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            auto xPre = ((this - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two 
             // roots by INT_MAX 
-            MediumDecBase delX = MediumDecBase(2147483647, 0);
+            auto delX = auto(2147483647, 0);
 
             //  xK denotes current value of x 
-            MediumDecBase xK;
+            auto xK;
 
             //  loop until we reach desired accuracy
             do
             {
                 //  calculating current value from previous
                 // value by newton's method
-                xK = (xPre * nMinus1 + value / MediumDecBase::Pow(xPre, nMinus1)) / n;
-                delX = MediumDecBase::Abs(xK - xPre);
+                xK = (xPre * nMinus1 + this / auto::Pow(xPre, nMinus1)) / n;
+                delX = auto::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
             return xK;
@@ -3062,25 +2991,25 @@ public:
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-        static MediumDecBase FractionalPow(MediumDecBase value, int expNum, int expDenom);
+        static auto FractionalPow(const auto& value, const int& expNum, const int& expDenom);
 
         /// <summary>
         /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-        static MediumDecBase FractionalPow(MediumDecBase& value, boost::rational<int>& Frac);
+        static auto FractionalPow(const auto& value, const boost::rational<int>& Frac);
 
-        void BasicPowOp(MediumDecBase& expValue);
+        void BasicPowOp(const auto& expValue);
 
         /// <summary>
         /// Applies Power of operation
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        MediumDecBase PowOp(MediumDecBase& expValue);
+        auto PowOp(const auto& expValue);
 
-        static MediumDecBase PowOp(MediumDecBase& targetValue, MediumDecBase& expValue)
+        static auto PowOp(const auto& targetValue, auto& expValue)
         {
             return targetValue.PowOp(expValue);
         }
@@ -3090,11 +3019,11 @@ public:
         /// </summary>
         /// <param name="targetValue">The target value.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDecBase Pow(MediumDecBase targetValue, MediumDecBase expValue)
+        static auto Pow(const auto& targetValue, auto expValue)
         {
             return PowOp(targetValue, expValue);
         }
-*/
+
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions

@@ -8478,16 +8478,15 @@ public:
     #pragma endregion Bitwise Functions
 
 	#pragma region Math Etc Functions
+
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& Abs()
+        auto& Abs()
         {
-            if (IntValue == NegativeRep)
-                IntValue = 0;
-            else if (IntValue < 0)
-                IntValue *= -1;
+            if (IntValue.IsNegative())
+                IntValue.IsPositive = 1;
             return *this;
         }
 
@@ -8496,40 +8495,18 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Abs(MediumDecBase tValue)
+        static auto Abs(const auto tValue&)
         {
-            return tValue.Abs();
+            auto self = tValue;
+            return self.Abs();
         }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& FloorOp()
+        auto& Floor()
         {
-            RepType repType = GetRepType();
-            switch (repType)
-            {
-            case RepType::NormalType:
-                break;
-            case RepType::PiNum:
-                ConvertPiToNum();
-                break;
-            case RepType::ApproachingBottom:
-            case RepType::ApproachingTop:
-                if (IntValue == NegativeRep)
-                    IntValue = 0;
-                ExtraRep = 0;
-                return *this;
-                break;
-            default:
-                ConvertToNormTypeV2();
-                break;
-            }
-            if (DecimalHalf == 0)
-            {
-                return *this;
-            }
             DecimalHalf = 0;
             return *this;
         }
@@ -8538,54 +8515,33 @@ public:
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        /// <param name="precision">The precision.</param>
-        static MediumDecBase Floor(MediumDecBase Value, int precision=0)
+        /// <returns>MediumDecBase</returns>
+        static auto Floor(const auto tValue&, const int precision&)
         {
-            Value.ConvertToNormTypeV2();
+            auto self = tValue;
             switch (precision)
             {
             case 9: break;
-            case 8: Value.DecimalHalf /= 10; Value.DecimalHalf *= 10; break;
-            case 7: Value.DecimalHalf /= 100; Value.DecimalHalf *= 100; break;
-            case 6: Value.DecimalHalf /= 1000; Value.DecimalHalf *= 1000; break;
-            case 5: Value.DecimalHalf /= 10000; Value.DecimalHalf *= 10000; break;
-            case 4: Value.DecimalHalf /= 100000; Value.DecimalHalf *= 100000; break;
-            case 3: Value.DecimalHalf /= 1000000; Value.DecimalHalf *= 1000000; break;
-            case 2: Value.DecimalHalf /= 10000000; Value.DecimalHalf *= 10000000; break;
-            case 1: Value.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
-            default: Value.DecimalHalf = 0; break;
+            case 8: self.DecimalHalf /= 10; Value.DecimalHalf *= 10; break;
+            case 7: self.DecimalHalf /= 100; Value.DecimalHalf *= 100; break;
+            case 6: self.DecimalHalf /= 1000; Value.DecimalHalf *= 1000; break;
+            case 5: self.DecimalHalf /= 10000; Value.DecimalHalf *= 10000; break;
+            case 4: self.DecimalHalf /= 100000; Value.DecimalHalf *= 100000; break;
+            case 3: self.DecimalHalf /= 1000000; Value.DecimalHalf *= 1000000; break;
+            case 2: self.DecimalHalf /= 10000000; Value.DecimalHalf *= 10000000; break;
+            case 1: self.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
+            default: self.DecimalHalf = 0; break;
             }
-            if (Value.IntValue == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
-            return Value;
+            if (self.IntValue == NegativeRep && Value.DecimalHalf == 0) { self.IntValue = 0; }
+            return self;
         }
-        
+
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        MediumDecBase& CeilOp()
+        auto& Ceil()
         {
-            RepType repType = GetRepType();
-            switch (repType)
-            {
-            case RepType::NormalType:
-                break;
-            case RepType::PiNum:
-                ConvertPiToNum();
-                break;
-            case RepType::ApproachingBottom:
-            case RepType::ApproachingTop:
-                if (IntValue == NegativeRep)
-                    IntValue = 0;
-                else
-                    ++IntValue;
-                ExtraRep = 0;
-                return *this;
-                break;
-            default:
-                //ConvertToNormTypeV2();//Prevent losing imaginery numbers
-                break;
-            }
             if (DecimalHalf != 0)
             {
                 DecimalHalf = 0;
@@ -8598,39 +8554,20 @@ public:
             return *this;
         }
 
-        static MediumDecBase Ceil(MediumDecBase Value) { return Value.CeilOp(); }
-
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        template<typename MediumDecBaseVariant = MediumDecBase>
-        static int FloorInt(MediumDecBaseVariant Value)
+        static int FloorInt(const auto& tValue)
         {
-            RepType repType = Value.GetRepType();
-            switch (repType)
+            if (tValue.DecimalHalf == 0)
             {
-            case RepType::NormalType:
-                break;
-            case RepType::PiNum:
-                Value.ConvertPiToNum();
-                break;
-            //case RepType::ApproachingTop:
-            //case RepType::ApproachingBottom:
-            //    return Value.IntValue;
-            //    break;
-            default:
-                Value.ConvertToNormTypeV2();
-                break;
+                return tValue.IntValue.Value;
             }
-            if (Value.DecimalHalf == 0)
-            {
-                return Value.GetIntHalf();
-            }
-            if (Value.IntValue == NegativeRep) { return -1; }
+            if (tValue.IntValue == NegativeRep) { return -1; }
             else
             {
-                return Value.GetIntHalf() - 1;
+                return tValue.IntValue.Value - 1;
             }
         }
 
@@ -8638,100 +8575,51 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        int CeilIntOp()
+        static int CeilInt(const auto& tValue)
         {
-            RepType repType = GetRepType();
-            switch (repType)
+            if (tValue.DecimalHalf == 0)
             {
-				case RepType::NormalType:
-					break;
-				case RepType::PiNum:
-				{
-					ConvertPiToNum();//return CeilInt(ConvertPiToNum());
-					break;
-				}
-	#if defined(AltNum_EnableERep)
-				case RepType::ENum:
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*E Representation
-			#else
-				case RepType::EFractional://  IntValue/DecimalHalf*E Representation
-			#endif
-		#endif
-					ConvertToNormType(repType);
-					break;
-	#endif
-	#if defined(AltNum_EnableImaginaryNum)
-				case RepType::INum:
-					break;
-		#if defined(AltNum_EnableAlternativeRepFractionals)
-			#if defined(AltNum_EnableDecimaledIFractionals)
-				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
-			#else
-				case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			#endif
-					ConvertToNormalIRepV2();
-					break;
-		#endif
-	#endif
-				//case RepType::ApproachingTop:
-				//case RepType::ApproachingBottom:
-				default:
-					ConvertToNormType(repType);
-					break;
+                return self.IntValue.Value;
             }
-            if (DecimalHalf == 0)
-            {
-                return GetIntHalf();
-            }
-            if (IntValue == NegativeRep) { return 0; }
+            if (tValue.IntValue == NegativeRep) { return 0; }
             else
             {
-                return GetIntHalf() + 1;
+                return tValue.IntValue.Value + 1;
             }
         }
-        
-        static int CeilInt(MediumDecBase Value) { return Value.CeilIntOp(); }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        auto& Ceil(const auto& tValue)
+        {
+            auto self = tValue;
+            return self.Ceil();
+        }
 
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <returns>MediumDecBase &</returns>
-        MediumDecBase& Trunc()
+        auto& Trunc()
         {
-#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-                return *this;
-            else if (DecimalHalf == ApproachingBottomRep)
-            {
-                DecimalHalf = 0; ExtraRep = 0;
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-                DecimalHalf = 999999999; ExtraRep = 0;
-            }
-            else
-            {
-#endif
-                ConvertToNormTypeV2();
-                DecimalHalf = 0;
-#if defined(AltNum_EnableInfinityRep)
-            }
-#endif
+            DecimalHalf = 0;
             return *this;
         }
-        
+
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        template<typename MediumDecBaseVariant = MediumDecBase>
-        static MediumDecBase Trunc(MediumDecBaseVariant Value)
+        static auto Trunc(const auto& Value)
         {
-            return Value.Trunc();
+            auto self = tValue;
+            return self.Trunc();
         }
+
 	#pragma endregion Math Etc Functions
 
 	#pragma region Pow and Sqrt Functions	
