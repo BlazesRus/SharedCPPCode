@@ -2704,7 +2704,7 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        auto& Ceil(const auto& tValue)
+        static auto Ceil(const auto& tValue)
         {
             auto self = tValue;
             return self.Ceil();
@@ -3066,11 +3066,8 @@ public:
              *      - approximation of e^x in MediumDecBase precision
              */
              // Check that x is a valid input.
-#if !defined(AltNum_EnableMirroredSection)
-            assert(-709 < IntValue && IntValue < 709);
-#else
             assert(IntValue.Value < 709);
-#endif
+
             // When x = 0 we already know e^x = 1.
             if (IsZero()) {
                 return One;
@@ -3476,128 +3473,7 @@ public:
 */
 	#pragma endregion Log Functions
 
-    #pragma region Trigonomic Etc Functions
-
-/*
-        /// <summary>
-        /// Get Sin from Value of angle.
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDecBase SinFromAngle(MediumDecBase Value)
-        {
-            if (Value.IsNegative())
-            {
-                if (Value.IntValue == NegativeRep)
-                {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
-                }
-                else
-                {
-                    Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
-                }
-            }
-            else
-            {
-                Value.IntValue %= 360;
-            }
-            if (Value == Zero) { return MediumDecBase::Zero; }
-            else if (Value.IntValue == 30 && Value.DecimalHalf == 0)
-            {
-                return PointFive;
-            }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
-            {
-                return One;
-            }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Zero;
-            }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
-            {
-                return NegativeOne;
-            }
-            else
-            {
-                MediumDecBase NewValue = Zero;
-                //Angle as Radian
-                MediumDecBase Radius = Pi * Value / 180;
-                for (int i = 0; i < 7; ++i)
-                { // That's Taylor series!!
-                    NewValue += MediumDecBase::Pow(Radius, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                }
-                return NewValue;
-            }
-        }
-
-        /// <summary>
-        /// Get Cos() from Value of Angle
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns></returns>
-        static MediumDecBase CosFromAngle(MediumDecBase Value)
-        {
-            if (Value.IsNegative())
-            {
-                if (Value.IntValue == NegativeRep)
-                {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
-                }
-                else
-                {
-                    Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
-                }
-            }
-            else
-            {
-                Value.IntValue %= 360;
-            }
-            if (Value == Zero) { return One; }
-            else if (Value.IntValue == 60 && Value.DecimalHalf == 0)
-            {
-                return PointFive;
-            }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Zero;
-            }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
-            {
-                return NegativeOne;
-            }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Zero;
-            }
-            else
-            {
-                MediumDecBase NewValue = Zero;
-                //Angle as Radian
-                MediumDecBase Radius = Pi * Value / 180;
-                for (int i = 0; i < 7; ++i)
-                { // That's also Taylor series!!
-                    NewValue += MediumDecBase::Pow(Radius, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
-                }
-                return NewValue;
-            }
-        }
-
-        /// <summary>
-        /// Get Sin from Value in Radians
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
-        //static MediumDecBase BasicSinOperation(MediumDecBase& Value);
+    #pragma region Trigonomic Functions
 
        /// <summary>
         /// Calculate Sine from Value in Radians
@@ -3605,36 +3481,28 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Sin(MediumDecBase Value)
+        static auto Sin(const auto& Value)
         {
-            MediumDecBase SinValue = Zero;
+            auto SinValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += MediumDecBase::Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
 
         /// <summary>
-        /// Get Sin from Value in Radians
+        /// Get Cos from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        //static MediumDecBase BasicCosOperation(MediumDecBase& Value);
-
-        /// <summary>
-        /// Get Sin from Value in Radians
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDecBase Cos(MediumDecBase Value)
+        static auto Cos(const auto& Value)
         {
-            MediumDecBase CosValue = Zero;
+            auto CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                CosValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -3645,64 +3513,16 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Tan(MediumDecBase Value)
+        static auto Tan(const auto& Value)
         {
-            MediumDecBase SinValue = Zero;
-            MediumDecBase CosValue = Zero;
+            auto SinValue = Zero;
+            auto CosValue = Zero;
             for (int i = 0; i < 7; ++i)
             {
-                SinValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
-            }
-            for (int i = 0; i < 7; ++i)
-            {
-                CosValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
-        }
-
-        /// <summary>
-        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDecBase TanFromAngle(MediumDecBase Value)
-        {
-            if (Value.IsNegative())
-            {
-                if (Value.IntValue == NegativeRep)
-                {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
-                }
-                else
-                {
-                    Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
-                }
-            }
-            else
-            {
-                Value.IntValue %= 360;
-            }
-            if (Value == Zero) { return MediumDecBase::Zero; }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Maximum;//Positive Infinity
-            }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Zero;
-            }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
-            {
-                return MediumDecBase::Minimum;//Negative Infinity
-            }
-            else
-            {
-                return Tan(Pi * Value / 180);
-            }
         }
 
         /// <summary>
@@ -3711,17 +3531,14 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase ATan(MediumDecBase Value)
+        static auto ATan(const auto& Value)
         {
-            MediumDecBase SinValue = Zero;
-            MediumDecBase CosValue = Zero;
+            auto SinValue = Zero;
+            auto CosValue = Zero;
             //Angle as Radian
             for (int i = 0; i < 7; ++i)
             { // That's Taylor series!!
                 SinValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-            }
-            for (int i = 0; i < 7; ++i)
-            { // That's also Taylor series!!
                 CosValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
@@ -3736,14 +3553,14 @@ public:
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase ArcTan2(MediumDecBase y, MediumDecBase x)
+        static auto ArcTan2(const auto& y, const auto& x)
         {
-            MediumDecBase coeff_1 = PiNum / 4;
-            MediumDecBase coeff_2 = coeff_1 * 3;
-            MediumDecBase abs_y = MediumDecBase::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
-            MediumDecBase r;
-            MediumDecBase angle;
-            if (x >= 0)
+            auto coeff_1 = PiNum / 4;
+            auto coeff_2 = coeff_1 * 3;
+            auto abs_y = Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            auto r;
+            auto angle;
+            if (x.IsPositive())
             {
                 r = (x - abs_y) / (x + abs_y);
                 angle = coeff_1 - coeff_1 * r;
@@ -3753,13 +3570,177 @@ public:
                 r = (x + abs_y) / (abs_y - x);
                 angle = coeff_2 - coeff_1 * r;
             }
-            if (y < 0)
+            if (y.IsNegative())
                 return -angle;// negate if in quad III or IV
             else
                 return angle;
         }
-*/
-    #pragma endregion Trigonomic Etc Functions
+
+        /// <summary>
+        /// Get Sin from Value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto SinFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntValue.Value == 0)
+                {
+                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntValue.Value %= 360;
+                    Value.IntValue.Value = 360 - Value.IntValue;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntValue.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntValue.Value)
+                {
+                    case 0:
+                    case 180:
+                        return Zero;
+                        break;
+                    case 90:
+                        return One;
+                        break;
+                    case 270:
+                        return NegativeOne;
+                        break;
+
+                    default:
+                        //Angle as Radian
+                        auto Radius = Pi * Value / 180;
+                        return Sin(Radius)
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = Pi * Value / 180;
+                return Sin(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Cos() from Value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns></returns>
+        static auto CosFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntValue.Value == 0)
+                {
+                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntValue.Value %= 360;
+                    Value.IntValue.Value = 360 - Value.IntValue;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntValue.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntValue.Value)
+                {
+                    case 0:
+                        return One;
+                        break;
+                    case 60:
+                        return PointFive;
+                        break;
+                    case 90:
+                    case 270:
+                        return Zero;
+                        break;
+                    case 180:
+                        return NegativeOne;
+                        break;
+                    default:
+                        //Angle as Radian
+                        auto Radius = Pi * Value / 180;
+                        return Cos(Radius)
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = Pi * Value / 180;
+                return Cos(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto TanFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntValue.Value == 0)
+                {
+                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntValue.Value %= 360;
+                    Value.IntValue.Value = 360 - Value.IntValue;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntValue.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntValue.Value)
+                {
+                    case 0:
+                    case 180:
+                        return Zero;
+                        break;
+                    case 90:
+                        return Maximum;//Positive Infinity
+                        break;
+                    case 270:
+                        return Minimum;//Negative Infinity
+                        break;
+
+                    default:
+                        return Tan(Pi * Value / 180);
+                        break;
+                }
+            }
+            else
+                return Tan(Pi * Value / 180);
+        }
+
+    #pragma endregion Trigonomic Functions
     };
 
     #pragma region ValueDefine Source
