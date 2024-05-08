@@ -3823,22 +3823,10 @@ public:
     std::string MediumDec::ToString()
     {
         std::string Value = "";
-#if !defined(AltNum_EnableMirroredSection)
-        signed int CurrentSection;
-#else
         unsigned int CurrentSection = IntValue.Value;
-#endif
         unsigned __int8 CurrentDigit;
         if (IsNegative())
-        {
             Value += "-";
-#if !defined(AltNum_EnableMirroredSection)
-            if (IntValue == NegativeRep)
-				CurrentSection = 0; }
-            else
-				CurrentSection = -IntValue;
-#endif
-        }
         for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
         {
             CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
@@ -3874,22 +3862,10 @@ public:
     std::string MediumDec::ToFullString()
     {
         std::string Value = "";
-#if !defined(AltNum_EnableMirroredSection)
-        signed int CurrentSection;
-#else
         unsigned int CurrentSection = IntValue.Value;
-#endif
         unsigned __int8 CurrentDigit;
         if (IsNegative())
-        {
             Value += "-";
-#if !defined(AltNum_EnableMirroredSection)
-            if (IntValue == NegativeRep)
-				CurrentSection = 0; }
-            else
-				CurrentSection = -IntValue;
-#endif
-        }
         for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
         {
             CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
