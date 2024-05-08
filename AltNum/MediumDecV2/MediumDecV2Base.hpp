@@ -4,20 +4,6 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-#ifndef DLL_API
-#ifdef UsingBlazesSharedCodeDLL
-#define DLL_API __declspec(dllimport)
-#elif defined(BLAZESSharedCode_LIBRARY)
-#define DLL_API __declspec(dllexport)
-#else
-#define DLL_API
-#endif
-#endif
-#else
-#include "..\..\DLLAPI.h"
-#endif
-
 #include "..\MediumDec\MediumDecBase.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 #if defined(AltNum_UseBuiltinVirtualTable)
@@ -1249,16 +1235,14 @@ public:
 	#if defined(MediumDecV2_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
-            return BasicToStringOp()+"i";
+			return ConvertToBasicString(RepType::ApproachingBottom)+"i";
 			#else
             return (std::string)IntValue + ".0..01i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
-            return BasicToStringOp()+"i";
+			return ConvertToBasicString(RepType::ApproachingTop)+"i";
 			#else
             return (std::string)IntValue + ".9..9i";
 			#endif
@@ -1287,8 +1271,7 @@ public:
             return "Nil";
     #endif
         default:
-			ConvertToNormType(repType);
-			return BasicToStringOp();
+			return ConvertToBasicString(repType);
             break;
         }
     }

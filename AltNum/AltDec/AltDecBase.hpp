@@ -1216,7 +1216,7 @@ public:
                     break;
 
             #if defined(AltNum_EnableDecimaledIFractionals)
-                case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+                case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
                     {
                 #if defined(AltNum_UseIntForDecimalHalf)
                         int Divisor = -ExtraRep;
@@ -2181,7 +2181,7 @@ public:
             break;
 
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+        case RepType::PiNumByDiv://  (Value/(ExtraRep.Value))*Pi Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"π";
             break;
@@ -2199,7 +2199,7 @@ public:
             break;
 
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+        case RepType::ENumByDiv://  (Value/(ExtraRep.Value))*e Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"e";
             break;
@@ -2257,16 +2257,14 @@ public:
 	#if defined(MediumDecV2_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
-            return BasicToStringOp()+"i";
+			return ConvertToBasicString(RepType::ApproachingBottom)+"i";
 			#else
             return (std::string)IntValue + ".0..01i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
-            return BasicToStringOp()+"i";
+			return ConvertToBasicString(RepType::ApproachingTop)+"i";
 			#else
             return (std::string)IntValue + ".9..9i";
 			#endif
@@ -2329,8 +2327,7 @@ public:
             return "Nil";
     #endif
         default:
-			ConvertToNormType(repType);
-			return BasicToStringOp();
+			return ConvertToBasicString(repType);
             break;
         }
     }
