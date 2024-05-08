@@ -878,7 +878,7 @@ public:
 	
 protected:
 
-        virtual void InitialyzeAltRepFromString(const std::string& Value)
+        void InitialyzeAltRepFromString(const std::string& Value)
         {
         #if defined(AltNum_EnablePiRep)
             if(str.find("Pi") != std::string::npos)
@@ -939,7 +939,6 @@ public:
         {
             ReadString(Value);
         }
-
         #pragma endregion String Commands
 
         #pragma region ConvertFromOtherTypes
@@ -948,7 +947,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(const float& Value)
+        void SetFloatVal(const float& Value)
         {
 		#if defined(AltNum_EnableMixedFractional)
 			//Can be converted at 100% precision from float after extracting "2^Exp + SignifNum*(2^(Exp - 23))" format information from bits of float
@@ -2134,6 +2133,207 @@ public:
     #pragma endregion Other Subtraction Operations
     }
     #pragma region String Function Source
+
+    std::string MediumDecV2Base::ToString()
+    {
+        RepType repType = GetRepType();
+        switch (repType)
+        {
+	#if defined(AltNum_EnableInfinityRep)
+        case RepType::Infinity:
+            return IsNegative()?"-∞":"∞";
+            break;
+	    #if defined(AltNum_EnableApproachingValues)
+        case RepType::ApproachingBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingBottom);
+			#else
+            return (std::string)IntValue + ".0..01";
+			#endif
+            break;
+        case RepType::ApproachingTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingTop);
+			#else
+            return (std::string)IntValue + ".9..9";
+			#endif
+            break;
+		    #if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingMidRight:
+        case RepType::ApproachingMidLeft:
+            return ConvertToBasicString(repType);
+			break;
+            #endif
+        #endif
+	#endif
+
+    #if defined(AltNum_EnableFractionals)
+        case RepType::NumByDiv:
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value);
+            break;
+    #endif
+
+	#if defined(AltNum_EnablePiRep)
+        case RepType::PiNum:
+            return BasicToStringOp()+"π";
+            break;
+
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"π";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
+            break;
+        #endif
+
+	#endif
+	#if defined(AltNum_EnableERep)
+        case RepType::ENum:
+            return BasicToStringOp()+"e";
+            break;
+
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"e";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
+            break;
+        #endif
+
+	#endif
+
+	#if defined(AltNum_EnableImaginaryNum)
+        case RepType::INum:
+            return BasicToStringOp()+"i";
+            break;
+
+        #if defined(AltNum_EnableDecimaledPiFractionals)
+        case RepType::INumByDiv://  (Value/(ExtraRep.Value))*i Representation
+            return BasicToStringOp()+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"i";
+            break;
+        #elif defined(AltNum_EnableAlternativeRepFractionals)
+        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            return (std::string)IntValue+"/"
+            +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
+            break;
+        #endif
+
+	#endif
+	#if defined(AltNum_EnableApproachingPi)
+        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingTop)+"π";
+			#else
+            return (std::string)IntValue + ".9..9π";
+			#endif
+            break;
+	#endif
+	#if defined(AltNum_EnableApproachingE)
+        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingTop)+"e";
+			#else
+            return (std::string)IntValue + ".9..9e";
+			#endif
+            break;
+	#endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+        case RepType::ImaginaryInfinity:
+            return IsNegative()?"-∞i":"∞i";
+            break;
+	#endif
+	
+	#if defined(MediumDecV2_EnableApproachingI)
+        case RepType::ApproachingImaginaryBottom:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingBottom);
+            return BasicToStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".0..01i";
+			#endif
+            break;
+        case RepType::ApproachingImaginaryTop:
+			#ifdef AltNum_DisplayApproachingAsReal
+			ConvertToNormType(RepType::ApproachingTop);
+            return BasicToStringOp()+"i";
+			#else
+            return (std::string)IntValue + ".9..9i";
+			#endif
+            break;
+		#if defined(AltNum_EnableApproachingDivided)
+		//ToDo:work on unreal string version for the various approaching values
+        case RepType::ApproachingImaginaryMidRight:
+        case RepType::ApproachingImaginaryMidLeft:
+            ConvertToNormType(repType);
+			return BasicToStringOp()+"i";
+			break;
+        #endif
+    #endif
+
+    #if defined(AltNum_EnableMixedFractional)
+        case RepType::MixedFrac://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf.Value)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value);
+            break;
+		#if defined(AltNum_EnableMixedPiFractional)
+        case RepType::MixedPi://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf.Value)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"π";
+            break;
+		#endif
+		#if defined(AltNum_EnableMixedEFractional)
+        case RepType::MixedE://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf.Value)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"e";
+            break;
+		#endif
+		#if defined(AltNum_EnableMixedIFractional)
+        case RepType::MixedI://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf.Value)
+            +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep.Value)+"i";
+            break;
+		#endif
+    #endif
+
+	#if defined(AltNum_EnableNaN)
+        case RepType::Undefined:
+            return "Undefined";
+        case RepType::NaN:
+            return "NaN";
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
+        case UndefinedButInRange:
+            return "UndefinedButInRange";
+            break;
+
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+        case WithinMinMaxRange:
+		    return "WithinMinMaxRange of "+VariableConversionFunctions::UnsignedIntToStringConversion((int)IntValue)+" to "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf);
+            break;
+        #endif
+
+	#endif
+    #if defined(AltNum_EnableNil)
+        case RepType::Nil:
+            return "Nil";
+    #endif
+        default:
+			ConvertToNormType(repType);
+			return BasicToStringOp();
+            break;
+        }
+    }
 
     #pragma endregion String Function Source
 }

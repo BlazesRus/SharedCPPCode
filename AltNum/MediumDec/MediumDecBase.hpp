@@ -315,15 +315,14 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void ReadString(const std::string& Value);
+        void ReadString(const std::string& Value);
 
         /// <summary>
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType GetValueFromString(std::string Value)
+        auto GetValueFromString(std::string Value)
         {
 
         }
@@ -335,18 +334,7 @@ public:
         MediumDecBase(const char* strVal)
         {
             std::string Value = strVal;
-            if (Value == "Pi")
-            {
-                this->SetVal(Pi);
-            }
-            else if (Value == "E")
-            {
-                this->SetVal(E);
-            }
-            else
-            {
-                this->ReadString(Value);
-            }
+            this->ReadString(Value);
         }
 
         /// <summary>
