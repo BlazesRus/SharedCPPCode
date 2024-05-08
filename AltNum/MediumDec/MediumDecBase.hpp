@@ -3744,11 +3744,11 @@ public:
     };
 
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableMirroredSection)
+
 	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
 	MirroredInt MediumDec::MaxIntValue = MirroredInt::Maximum;
 	MirroredInt MediumDec::MinIntValue = MirroredInt::Minimum;
-#endif
+
     #pragma endregion ValueDefine Source
 
     #pragma region String Function Source
@@ -3756,12 +3756,9 @@ public:
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void MediumDec::ReadString(std::string Value)
+    inline void MediumDec::ReadString(const std::string& Value)
     {
         IntValue = 0; DecimalHalf = 0;
-	#if !defined(AltNum_EnableMirroredSection)
-        bool IsNegative = false;
-	#endif
         int PlaceNumber;
         std::string WholeNumberBuffer = "";
         std::string DecimalBuffer = "";
@@ -3777,17 +3774,9 @@ public:
                 else { WholeNumberBuffer += StringChar; }
             }
             else if (StringChar == '-')
-            {
-	#if !defined(AltNum_EnableMirroredSection)
-                IsNegative = true;
-	#else
 				IntValue.IsPositive = 0;
-	#endif
-            }
             else if (StringChar == '.')
-            {
                 ReadingDecimal = true;
-            }
             else if(StringChar!=' ')
                 break;//Stop Extracting after encounter non-number character such as i
         }
@@ -3798,7 +3787,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TempInt02;
+                IntValue.Value += TempInt02;
             }
             PlaceNumber--;
         }
@@ -3817,13 +3806,6 @@ public:
                 PlaceNumber--;
             }
         }
-	#if !defined(AltNum_EnableMirroredSection)
-        if (IsNegative)
-        {
-            if (IntValue == 0) { IntValue = NegativeRep; }
-            else { IntValue *= -1; }
-        }
-	#endif
     }
 
     /// <summary>
