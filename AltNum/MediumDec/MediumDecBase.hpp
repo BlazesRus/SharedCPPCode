@@ -3060,13 +3060,11 @@ protected:
 public:
         /// <summary>
         /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
-        /// Does not modifier owner object
+        /// Does not modify owner object
         /// </summary>
-        /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>MediumDecBase</returns>
         auto ExpOf()
         {
-            //x.ConvertToNormType();//Prevent losing imaginary number status
             /*
              * Evaluates f(x) = e^x for any x in the interval [-709, 709].
              * If x < -709 or x > 709, raises an assertion error. Implemented
@@ -3126,13 +3124,24 @@ public:
         }
 
         /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Exp(const auto& x)
+        {
+			return x.ExpOf();
+        }
+
+        /// <summary>
         /// Get the (n)th Root
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
         /// Does not modify owner object
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
         /// <returns></returns>
-        auto NthRootOfV2(int n, const auto& Precision = FiveBillionth)
+        auto NthRootOf(const int& n, const auto& Precision = FiveBillionth)
         {
             int nMinus1 = n - 1;
             auto x[2] = { (One / n) * ((*this*nMinus1) + (*this / PowOf(nMinus1))), targetValue };
@@ -3144,22 +3153,36 @@ public:
             return x[0];
         }
 
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        static auto NthRoot(const auto& value, const int& n, const auto& Precision = FiveBillionth)
+        {
+            return value.NthRootOf(n, Precision);
+        }
+
 protected:
 
 		auto LnRef_Part02()
-		{	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+		{	
+            //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
 			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-			MediumDecBase TotalRes = (this - 1) / (this + 1);
-			MediumDecBase LastPow = TotalRes;
-			MediumDecBase WSquared = TotalRes * TotalRes;
-			MediumDecBase AddRes;
+			auto TotalRes = (this - 1) / (this + 1);
+			auto LastPow = TotalRes;
+			auto WSquared = TotalRes * TotalRes;
+			auto AddRes;
 			int WPow = 3;
 			do
 			{
 				LastPow *= WSquared;
 				AddRes = LastPow / WPow;
 				TotalRes += AddRes; WPow += 2;
-			} while (AddRes > MediumDecBase::JustAboveZero);
+			} while (AddRes > JustAboveZero);
 			return TotalRes;
 		}
 
@@ -3168,7 +3191,6 @@ public:
 		/// <summary>
 		/// Natural log (Equivalent to Log_E(value))
 		/// </summary>
-		/// <param name="value">The target value.</param>
 		/// <returns>BlazesRusCode::MediumDecBase</returns>
 		auto NaturalLogOf()
 		{
@@ -3194,8 +3216,9 @@ public:
                 } while (AddRes > MediumDecBase::JustAboveZero);
                 return TotalRes * 2;
             }
-            else if (IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
-            {//This section gives accurate answer(for values between 1 and 2)
+            else if (IntValue==1)//Threshold between 1 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {
+                //This section gives accurate answer(for values between 1 and 2)
                 auto threshold = MediumDecBase::FiveMillionth;
                 auto base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
@@ -3218,16 +3241,16 @@ public:
 
                 return result;
             }
-			else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-			{//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+			else
+                //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+                //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
 				return LnRef_Part02() * 2;
-			}
 		}
 	
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
-        /// <param name="value">The target value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>BlazesRusCode::MediumDecBase</returns>
         static auto Ln(const auto& value)
         {
@@ -3237,7 +3260,7 @@ public:
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
 		auto Log10Of()
 		{
@@ -3285,16 +3308,16 @@ public:
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Log10(const auto& value)
+        static auto Log10(const auto& value)
         {
 			return value.Log10Of();
         }
 		
 protected:
 
-    template<IntegerType IntType=signed int>
+    template<IntegerType IntType=unsigned int>
     static auto Log10_IntPart02(const IntType& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
         auto TotalRes = MediumDecBase(value - 1) / MediumDecBase(value + 1);
@@ -3316,10 +3339,10 @@ public:
         /// <summary>
         /// Log Base 10 of Value(integer value variant)
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
 		template<IntegerType IntType=unsigned int>
-        static MediumDecBase Log10OfInt(const IntType& value)
+        static auto Log10OfInt(const IntType& value)
         {
 			if(value<0)//Returns imaginary number if value is less than 0
 				throw "MediumDec does not support returning imaginary number result from log base 10";
@@ -3344,10 +3367,10 @@ public:
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
-        auto LogOf(const MediumDecBase& baseVal)
+        auto LogOf(const auto& baseVal)
         {
             if (IsOne())
                 return MediumDecBase::Zero;
@@ -3358,7 +3381,7 @@ public:
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
         static auto Log(const MediumDecBase& value, const MediumDecBase& baseVal)
@@ -3479,7 +3502,10 @@ protected:
                     else
                         result -= term / den;
                 }
-                return lnMultLog? result/baseTotalRes:(result*2)/ baseTotalRes;
+                if(lnMultLog)
+                    return result/baseTotalRes;
+                else
+                    return (result*2)/ baseTotalRes;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
@@ -3492,7 +3518,10 @@ protected:
                     AddRes = MediumDecBase::Pow(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > MediumDecBase::JustAboveZero);
-                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDecBase::HalfLN10Mult)/ baseTotalRes;
+                if(lnMultLog)
+                    return TotalRes/baseTotalRes;
+                else
+                    return (TotalRes * HalfLN10Mult)/ baseTotalRes;
             }
         }
 
@@ -3502,7 +3531,7 @@ public:
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
         auto LogOfInt(const int& baseVal)
@@ -3510,14 +3539,14 @@ public:
             //Calculate Base log first
             auto baseTotalRes;
             bool lnMultLog = LogOfInt_BaseCalculation(baseTotalRes);
-            return LogOf_Section02(lnMultLog, baseTotalRes)
+            return LogOf_Section02(lnMultLog, baseTotalRes);
         }
 
         /// <summary>
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
         auto LogOfV2(const auto& baseVal)
@@ -3525,7 +3554,7 @@ public:
             //Calculate Base log first
             auto baseTotalRes;
             bool lnMultLog = LogOf_BaseCalculation(baseTotalRes);
-            return LogOf_Section02(lnMultLog, baseTotalRes)
+            return LogOf_Section02(lnMultLog, baseTotalRes);
         }
 
 	#pragma endregion Log Functions
@@ -3586,7 +3615,7 @@ public:
         /// Gets Inverse Tangent from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
         static auto ATan(const auto& Value)
         {
@@ -3637,7 +3666,7 @@ public:
         /// Get Sin from Value of angle.
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
         static auto SinFromAngle(auto Value)
         {
@@ -3664,20 +3693,25 @@ public:
                 switch(Value.IntValue.Value)
                 {
                     case 0:
-                    case 180:
+                    case 180://Pi Radians
                         return Zero;
                         break;
-                    case 90:
+                    case 90://0.5 Pi Radians
                         return One;
                         break;
-                    case 270:
+                    case 270://1.5 Pi Radians
                         return NegativeOne;
                         break;
-
+                    case 30://0.1666666666 Pi Radians
+                    case 150://0.833333333 Pi Radians
+                        return PointFive;
+                    case 210:
+                    case 330:
+                        return NegPointFive;
                     default:
                         //Angle as Radian
                         auto Radius = Pi * Value / 180;
-                        return Sin(Radius)
+                        return Sin(Radius);
                         break;
                 }
             }
@@ -3693,7 +3727,7 @@ public:
         /// Get Cos() from Value of Angle
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns></returns>
         static auto CosFromAngle(auto Value)
         {
@@ -3725,13 +3759,16 @@ public:
                     case 60:
                         return PointFive;
                         break;
-                    case 90:
-                    case 270:
+                    case 90://0.5 Pi Radians
+                    case 270://1.5 Pi Radians
                         return Zero;
                         break;
-                    case 180:
+                    case 180://Pi Radians
                         return NegativeOne;
                         break;
+                    case 120:
+                    case 240:
+                        return NegPointFive;
                     default:
                         //Angle as Radian
                         auto Radius = Pi * Value / 180;
@@ -3751,7 +3788,7 @@ public:
         /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
         static auto TanFromAngle(auto Value)
         {
@@ -3778,16 +3815,15 @@ public:
                 switch(Value.IntValue.Value)
                 {
                     case 0:
-                    case 180:
+                    case 180://Pi Radians
                         return Zero;
                         break;
-                    case 90:
+                    case 90://0.5 Pi Radians
                         return Maximum;//Positive Infinity
                         break;
-                    case 270:
+                    case 270://1.5 Pi Radians
                         return Minimum;//Negative Infinity
                         break;
-
                     default:
                         return Tan(Pi * Value / 180);
                         break;
