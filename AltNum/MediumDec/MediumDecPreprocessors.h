@@ -9,7 +9,8 @@
 AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 AltNum_UseIntForDecimalHalf = Use signed int instead of using a custom bitfield structure for DecimalHalf
-	(uses old behavior); Disabled for now(forcing usage of bitfield instead)
+	(uses old behavior); Depreciating and removing old legacy code soon
+	
 AltNum_EnableMirroredSection = Enable new Bitfield structure usage instead of using signed int (Not fully implimented yet)
 AltNum_UseLegacyFloatingConversion = 
 		Use old method to convert from floating point number into MediumDec variant

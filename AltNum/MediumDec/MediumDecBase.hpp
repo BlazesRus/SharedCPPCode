@@ -1856,13 +1856,12 @@ public:
             //Checking if divisible by 4 based on
             //https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
             //checking if divible by 8 equals (((n >> 3) << 3) == n)
-            if(DecimalHalf==0&&(((n >> 2) << 2) == n))//Check if number can be perfectly divided by 4
+            if(DecimalHalf==0&&(((IntValue >> 2) << 2) == IntValue))//Check if number can be perfectly divided by 4
                 IntValue /= 4;
             else
                 rValue.UnsignedBasicIntDivOp(4);
         }
 	
-//Replace with actual functions inside MediumDecBaseV2 and other derived variants	
 protected:
         /// <summary>
         /// Division operation between MediumDecBase and Integer values
@@ -1916,7 +1915,7 @@ public:
 
         /// <summary>
         /// Division operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -1924,7 +1923,7 @@ public:
 
         /// <summary>
         /// Division operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -1991,14 +1990,14 @@ public:
 
 	#pragma endregion Other division operations	
 
-	#pragma region Other Multiplication Operations
+	#pragma region Other multiplication operations
 		
         /// <summary>
         /// Simplified multiplication by 2 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>void</returns>
         void MultipleByTwo()
         {
 	        UnsignedBasicIntMultOp(2);
@@ -2009,7 +2008,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>void</returns>
         void MultipleByFour()
         {
 	        UnsignedBasicIntMultOp(4);
@@ -2069,7 +2068,7 @@ public:
 
         /// <summary>
         /// Multiplication operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2077,7 +2076,7 @@ public:
 
         /// <summary>
         /// Multiplication operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2141,28 +2140,54 @@ public:
         friend MediumDecBase& operator*=(MediumDecBase& self, const unsigned char& Value) { return self.UInt8MultOp(Value); }
         friend MediumDecBase& operator*=(MediumDecBase& self, const unsigned short& Value) { return self.UInt16MultOp(Value); }
 
-	#pragma endregion Other Multiplication Operations
+	#pragma endregion Other multiplication operations
 
-	#pragma region Other Addition Operations
-
-//Replace with actual functions inside MediumDecBaseV2 and other derived variants
+	#pragma region Other addition operations
 protected:
+
         /// <summary>
-        /// Addition operation between MediumDecBase and Integer values
+        /// Addition operation between MediumDec variant and unsigned Integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<IntegerType IntType= int>
+        template<IntegerType IntType= unsigned int>
+        constexpr auto UIntAddOpV1 = BasicUIntAddOpV1<IntType>;
+
+        /// <summary>
+        /// Addition operation between MediumDec variant and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType= signed int>
         constexpr auto IntAddOpV1 = BasicIntAddOpV1<IntType>;
+
+        /// <summary>
+        /// Addition operation between MediumDec variant and unsigned Integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase</returns>
+        template<IntegerType IntType= unsigned int>
+        constexpr auto AddByUIntV1 = BasicAddByUIntV1<IntType>;
+
+        /// <summary>
+        /// Addition operation between MediumDec variant and Integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase</returns>
+        template<IntegerType IntType= signed int>
+        constexpr auto AddByIntV1 = BasicAddByIntV1<IntType>;
 
 public:
 
-        constexpr auto UIntAddOpV1 = BasicUIntAddOpV1<unsigned int>;
-        constexpr auto IntAddOpV1 = BasicIntAddOpV1<signed int>;
-        constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
-        constexpr auto UInt64AddOp = BasicUIntAddOpV1<unsigned long long>;
-        constexpr auto Int64AddOp = BasicIntAddOpV1<signed long long>;
+        constexpr auto UIntAddOpV1 = BasicUIntAddOpV1;
+        constexpr auto IntAddOpV1 = BasicIntAddOp;
+        constexpr auto UnsignedIntAddOp = UnsignedBasicIntAddOp;
+        constexpr auto UInt64AddOp = BasicUInt64AddOp;
+        constexpr auto Int64AddOp = BasicInt64AddOp;
 	
         constexpr auto AddByUInt = BasicAddByUInt;
         constexpr auto AddByInt = BasicAddByInt;
@@ -2176,15 +2201,8 @@ public:
         constexpr auto AddByUInt16 = BasicAddByUInt16;
         constexpr auto AddByInt16 = BasicAddByInt16;
 
-protected:
-
-        constexpr auto PartialAddOp = MediumDecBase::PartialAddOp;
-        constexpr auto UnsignedPartialAddOp = MediumDecBase::UnsignedPartialAddOp;
-
-public:
-
         /// <summary>
-        /// Addition operation between MediumDecBase values.
+        /// Unsigned Addition operation between MediumDecBase values.
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -2200,8 +2218,8 @@ public:
         constexpr auto AddOp = MediumDecBase::BasicAddOp;
 
         /// <summary>
-        /// Addition operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// Unsigned Addition operation between MediumDecBase values.
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2209,7 +2227,7 @@ public:
 
         /// <summary>
         /// Addition operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2273,20 +2291,47 @@ public:
         friend MediumDecBase& operator+=(MediumDecBase& self, const unsigned char& Value) { return self.UInt8AddOp(Value); }
         friend MediumDecBase& operator+=(MediumDecBase& self, const unsigned short& Value) { return self.UInt16AddOp(Value); }
 
-	#pragma endregion Other Addition Operations
+	#pragma endregion Other addition operations
 
 	#pragma region Other Subtraction Operations
-
-//Replace with actual functions inside MediumDecBaseV2 and other derived variants	
 protected:
+
         /// <summary>
-        /// Subtraction operation between MediumDecBase and Integer values
+        /// Subtraction operation between MediumDec variant and unsigned integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>AltDecBase&</returns>
+        template<IntegerType IntType= unsigned int>
+        constexpr auto& UIntSubOpV1 = BasicUIntSubOpV1<IntType>;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec variant and Integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
         template<IntegerType IntType= int>
         constexpr auto IntSubOpV1 = BasicIntSubOpV1<IntType>;
+
+        /// <summary>
+        /// Subtraction operation between MediumDec variant and unsigned integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>AltDecBase</returns>
+        template<IntegerType IntType= unsigned int>
+        constexpr auto SubByUIntV1 = BasicSubtractByUIntV1;
+
+
+        /// <summary>
+        /// Subtraction operation between MediumDec variant and integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>AltDecBase</returns>
+        template<IntegerType IntType= signed int>
+        constexpr auto SubByIntV1 = BasicSubtractByIntV1;
 
 public:
 
@@ -2308,13 +2353,6 @@ public:
         constexpr auto SubtractByUInt16 = BasicSubtractByUInt16;
         constexpr auto SubtractByInt16 = BasicSubtractByInt16;
 
-protected:
-
-        constexpr auto PartialSubOp = MediumDecBase::PartialSubOp;
-        constexpr auto UnsignedPartialSubOp = MediumDecBase::UnsignedPartialSubOp;
-
-public:
-
         /// <summary>
         /// Subtraction operation between MediumDecBase values.
         /// (Modifies owner object)
@@ -2333,7 +2371,7 @@ public:
 
         /// <summary>
         /// Subtraction operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2341,7 +2379,7 @@ public:
 
         /// <summary>
         /// Subtraction operation between MediumDecBase values.
-        /// (Modifies owner object)
+        /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
@@ -2409,7 +2447,7 @@ public:
 	#pragma endregion Other Subtraction Operations
 
 	#pragma region Modulus Operations
-
+    //Defined inside full version of class object
 	#pragma endregion Modulus Operations
 
 	#pragma region Bitwise Operations
@@ -2475,40 +2513,41 @@ public:
 
     #pragma region Floating Operator Overrides
     
-        friend MediumDec operator+(const MediumDec& self, const float& Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(const MediumDec& self, const float& Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(const MediumDec& self, const float& Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(const MediumDec& self, const float& Value) { return self / (MediumDec)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const float& Value) { return self + (MediumDecBase)Value; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const float& Value) { return self - (MediumDecBase)Value; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const float& Value) { return self * (MediumDecBase)Value; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const float& Value) { return self / (MediumDecBase)Value; }
 
-        friend MediumDec operator+(const float& Value, const MediumDec& self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(const float& Value, const MediumDec& self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(const float& Value, const MediumDec& self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(const float& Value, const MediumDec& self) { return (MediumDec)Value / self; }
+        friend MediumDecBase operator+(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value + self; }
+        friend MediumDecBase operator-(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value - self; }
+        friend MediumDecBase operator*(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value * self; }
+        friend MediumDecBase operator/(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value / self; }
 
-        friend MediumDec operator+(const MediumDec& self, const double& Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(const MediumDec& self, const double& Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(const MediumDec& self, const double& Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(const MediumDec& self, const double& Value) { return self / (MediumDec)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const double& Value) { return self + (MediumDecBase)Value; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const double& Value) { return self - (MediumDecBase)Value; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const double& Value) { return self * (MediumDecBase)Value; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const double& Value) { return self / (MediumDecBase)Value; }
 
-        friend MediumDec operator+(const MediumDec& self, const ldouble& Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(const MediumDec& self, const ldouble& Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(const MediumDec& self, const ldouble& Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(const MediumDec& self, const ldouble& Value) { return self / (MediumDec)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const ldouble& Value) { return self + (MediumDecBase)Value; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const ldouble& Value) { return self - (MediumDecBase)Value; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const ldouble& Value) { return self * (MediumDecBase)Value; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const ldouble& Value) { return self / (MediumDecBase)Value; }
 
-        friend MediumDec operator+(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value / self; }
+        friend MediumDecBase operator+(const ldouble& Value, const MediumDecBase& self) { return (MediumDecBase)Value + self; }
+        friend MediumDecBase operator-(const ldouble& Value, const MediumDecBase& self) { return (MediumDecBase)Value - self; }
+        friend MediumDecBase operator*(const ldouble& Value, const MediumDecBase& self) { return (MediumDecBase)Value * self; }
+        friend MediumDecBase operator/(const ldouble& Value, const MediumDecBase& self) { return (MediumDecBase)Value / self; }
 
     #pragma endregion Floating Operator Overrides
 
-    #pragma endregion Other Operators
+    #pragma region Other Operators
+
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>MediumDecBase</returns>
-        friend MediumDecBase& operator-(MediumDecBase& self)
+        friend MediumDecBase& operator-(MediumDecBase self)
         {
             self.SwapNegativeStatus(); return self;
         }
@@ -2573,6 +2612,7 @@ public:
         {
             return *this;
         }
+
     #pragma endregion Other Operators
 
 // Static versions of functions for Full versions
