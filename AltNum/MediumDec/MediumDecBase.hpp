@@ -3144,103 +3144,46 @@ public:
             return x[0];
         }
 
-/*
-        /// <summary>
-        /// Get the (n)th Root
-        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
-        /// </summary>
-        /// <param name="n">The n value to apply with root.</param>
-        /// <returns></returns>
-        static MediumDecBase NthRootV2(MediumDecBase targetValue, int n, MediumDecBase& Precision = MediumDecBase::FiveBillionth)
-        {
-            int nMinus1 = n - 1;
-            MediumDecBase x[2] = { (MediumDecBase::One / n) * ((targetValue*nMinus1) + (targetValue / MediumDecBase::Pow(targetValue, nMinus1))), targetValue };
-            while (MediumDecBase::Abs(x[0] - x[1]) > Precision)
-            {
-                x[1] = x[0];
-                x[0] = (MediumDecBase::One / n) * ((x[1]*nMinus1) + (targetValue / MediumDecBase::Pow(x[1], nMinus1)));
-            }
-            return x[0];
-        }
-
-
 protected:
-    static MediumDecBase LnRef_Part02(MediumDecBase& value)
-    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-        //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-        MediumDecBase TotalRes = (value - 1) / (value + 1);
-        MediumDecBase LastPow = TotalRes;
-        MediumDecBase WSquared = TotalRes * TotalRes;
-        MediumDecBase AddRes;
-        int WPow = 3;
-        do
-        {
-            LastPow *= WSquared;
-            AddRes = LastPow / WPow;
-            TotalRes += AddRes; WPow += 2;
-        } while (AddRes > MediumDecBase::JustAboveZero);
-        return TotalRes * 2;
-    }
+
+		auto LnRef_Part02()
+		{	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+			MediumDecBase TotalRes = (this - 1) / (this + 1);
+			MediumDecBase LastPow = TotalRes;
+			MediumDecBase WSquared = TotalRes * TotalRes;
+			MediumDecBase AddRes;
+			int WPow = 3;
+			do
+			{
+				LastPow *= WSquared;
+				AddRes = LastPow / WPow;
+				TotalRes += AddRes; WPow += 2;
+			} while (AddRes > MediumDecBase::JustAboveZero);
+			return TotalRes;
+		}
+
 public:
-        /// <summary>
-        /// Natural log (Equivalent to Log_E(value))
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <returns>BlazesRusCode::MediumDecBase</returns>
-        static MediumDecBase LnRef(MediumDecBase& value)
-        {
-            //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MediumDecBase::One)
-                return MediumDecBase::Zero;
-            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
-            {//This section gives accurate answer(for values between 1 and 2)
-                MediumDecBase threshold = MediumDecBase::FiveMillionth;
-                MediumDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
-                int den = 2;              // Denominator of the nth term
-                bool posSign = true;             // Used to swap the sign of each term
-                MediumDecBase term = base;       // First term
-                MediumDecBase prev;          // Previous sum
-                MediumDecBase result = term;     // Kick it off
 
-                do
-                {
-                    posSign = !posSign;
-                    term *= base;
-                    prev = result;
-                    if (posSign)
-                        result += term / den;
-                    else
-                        result -= term / den;
-                    ++den;
-                } while (MediumDecBase::Abs(prev - result) > threshold);
-
-                return result;
-            }
-            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                return LnRef_Part02(value);
-            }
-        }
-
-        /// <summary>
-        /// Natural log (Equivalent to Log_E(value))
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <returns>BlazesRusCode::MediumDecBase</returns>
-        static MediumDecBase LnRefV2(MediumDecBase& value)
-        {
-            //if (value <= 0) {}else//Error if equal or less than 0
-            if (value == MediumDecBase::One)
-                return MediumDecBase::Zero;
+		/// <summary>
+		/// Natural log (Equivalent to Log_E(value))
+		/// </summary>
+		/// <param name="value">The target value.</param>
+		/// <returns>BlazesRusCode::MediumDecBase</returns>
+		auto NaturalLogOf()
+		{
+			if(IntValue.IsNegative)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from natural log";
+			if (IsOne())
+				return Zero;
             if(IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDecBase W = (value - 1)/ (value + 1);
-                MediumDecBase TotalRes = W;
-                W.SwapNegativeStatus();
-                MediumDecBase LastPow = W;
-                MediumDecBase WSquared = W * W;
+                auto W = (value - 1)/ (value + 1);
+                auto TotalRes = -W;
+                auto LastPow = W;
+                auto WSquared = W * W;
                 int WPow = 3;
-                MediumDecBase AddRes;
+                auto AddRes;
 
                 do
                 {
@@ -3253,13 +3196,13 @@ public:
             }
             else if (IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
-                MediumDecBase threshold = MediumDecBase::FiveMillionth;
-                MediumDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
+                auto threshold = MediumDecBase::FiveMillionth;
+                auto base = value - 1;        // Base of the numerator; exponent will be explicit
                 int den = 2;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDecBase term = base;       // First term
-                MediumDecBase prev;          // Previous sum
-                MediumDecBase result = term;     // Kick it off
+                auto term = base;       // First term
+                auto prev;          // Previous sum
+                auto result = term;     // Kick it off
 
                 do
                 {
@@ -3275,68 +3218,53 @@ public:
 
                 return result;
             }
-            else
-            {
-                return LnRef_Part02(value);
-            }
-        }
-
+			else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+			{//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+				return LnRef_Part02() * 2;
+			}
+		}
+	
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        static MediumDecBase Ln(MediumDecBase value)
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Ln(const auto& value)
         {
-            return LnRef(value);
+			return value.NaturalLogOf();
         }
-
-protected:
-    static MediumDecBase Log10_Part02(MediumDecBase& value)
-    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-        MediumDecBase TotalRes = (value - 1) / (value + 1);
-        MediumDecBase LastPow = TotalRes;
-        MediumDecBase WSquared = TotalRes * TotalRes;
-        MediumDecBase AddRes;
-        int WPow = 3;
-        do
-        {
-            LastPow *= WSquared;
-            AddRes = LastPow / WPow;
-            TotalRes += AddRes; WPow += 2;
-        } while (AddRes > MediumDecBase::JustAboveZero);
-        return TotalRes * MediumDecBase::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
-    }
-public:
-
+		
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Log10(MediumDecBase value)
-        {
-            if (value == MediumDecBase::One)
-                return MediumDecBase::Zero;
-            if (DecimalHalf == 0 && IntValue % 10 == 0)
+		auto Log10Of()
+		{
+			if(IntValue.IsNegative)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log base 10";
+			if (IsOne())
+				return Zero;
+            if (DecimalHalf == 0 && IntValue.Value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
-                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    if (IntValue.Value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
                         return MediumDecBase(index, 0);
                 }
                 return MediumDecBase(9, 0);
             }
-            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MediumDecBase threshold = MediumDecBase::FiveBillionth;
-                MediumDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
+                auto threshold = FiveBillionth;
+                auto base = this - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDecBase term = base;       // First term
-                MediumDecBase prev = 0;          // Previous sum
-                MediumDecBase result = term;     // Kick it off
+                auto term = base;       // First term
+                auto prev = 0;          // Previous sum
+                auto result = term;     // Kick it off
 
-                while (MediumDecBase::Abs(prev - result) > threshold) {
+                while (Abs(prev - result) > threshold) {
                     den++;
                     posSign = !posSign;
                     term *= base;
@@ -3346,13 +3274,24 @@ public:
                     else
                         result -= term / den;
                 }
-                return result*MediumDecBase::LN10Mult;// result/MediumDecBase::LN10;//Using Multiplication instead of division for speed improvement
+                return result*LN10Mult;// result/MediumDecBase::LN10;//Using Multiplication instead of division for speed improvement
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                return Log10_Part02(value);
+                return LnRef_Part02() * HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
             }
+		}
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Log10(const auto& value)
+        {
+			return value.Log10Of();
         }
+/*
 
 protected:
     template<typename ValueType>
@@ -3419,7 +3358,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Log(MediumDecBase value, int baseVal)
+        static auto Log(auto value, int baseVal)
         {
             //Calculate Base log first
             MediumDecBase baseTotalRes;
@@ -3496,7 +3435,6 @@ public:
                 } while (AddRes > MediumDecBase::JustAboveZero);
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDecBase::HalfLN10Mult)/ baseTotalRes;
             }
-            //return Log10(Value) / Log10(BaseVal);
         }
 */
 	#pragma endregion Log Functions
