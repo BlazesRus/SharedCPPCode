@@ -3384,7 +3384,7 @@ public:
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
-        static auto Log(const MediumDecBase& value, const MediumDecBase& baseVal)
+        static auto Log(const auto& value, const auto& baseVal)
         {
             return value.LogOf(baseVal);
         }
