@@ -3291,16 +3291,16 @@ public:
         {
 			return value.Log10Of();
         }
-/*
-
+		
 protected:
-    template<typename ValueType>
-    static MediumDecBase Log10_IntPart02(ValueType& value)
+
+    template<IntegerType IntType=signed int>
+    static auto Log10_IntPart02(const IntType& value)
     {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-        MediumDecBase TotalRes = MediumDecBase((value - 1), 0) / MediumDecBase((value + 1), 0);
-        MediumDecBase LastPow = TotalRes;
-        MediumDecBase WSquared = TotalRes * TotalRes;
-        MediumDecBase AddRes;
+        auto TotalRes = MediumDecBase(value - 1) / MediumDecBase(value + 1);
+        auto LastPow = TotalRes;
+        auto WSquared = TotalRes * TotalRes;
+        auto AddRes;
         int WPow = 3;
         do
         {
@@ -3310,6 +3310,7 @@ protected:
         } while (AddRes > MediumDecBase::JustAboveZero);
         return TotalRes * MediumDecBase::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
     }
+	
 public:
 
         /// <summary>
@@ -3317,12 +3318,14 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        template<typename ValueType>
-        static MediumDecBase Log10(ValueType value)
+		template<IntegerType IntType=unsigned int>
+        static MediumDecBase Log10OfInt(const IntType& value)
         {
-            if (value == 1)
+			if(value<0)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log base 10";
+            else if (value == 1)
                 return MediumDecBase::Zero;
-            if (value % 10 == 0)
+            else if (value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3336,6 +3339,36 @@ public:
                 return Log10_IntPart02(value);
             }
         }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOf(const MediumDecBase& baseVal)
+        {
+            if (IsOne())
+                return MediumDecBase::Zero;
+            return Log10Of() / baseVal.Log10Of();
+        }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Log(const MediumDecBase& value, const MediumDecBase& baseVal)
+        {
+            return value.LogOf(baseVal);
+        }
+/*
+
+
+public:
 
         /// <summary>
         /// Log with Base of BaseVal of Value
