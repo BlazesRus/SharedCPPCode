@@ -3365,36 +3365,11 @@ public:
         {
             return value.LogOf(baseVal);
         }
-/*
 
+protected:
 
-public:
-
-        /// <summary>
-        /// Log with Base of BaseVal of Value
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="baseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDecBase Log(MediumDecBase value, MediumDecBase baseVal)
+        bool LogOfInt_BaseCalculation(const int& baseVal, auto& baseTotalRes)
         {
-            if (ConvertedVal == MediumDecBase::One)
-                return MediumDecBase::Zero;
-            return Log10(value) / Log10(baseVal);
-        }
-
-        /// <summary>
-        /// Log with Base of BaseVal of Value
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <param name="BaseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
-        static auto Log(auto value, int baseVal)
-        {
-            //Calculate Base log first
-            MediumDecBase baseTotalRes;
             bool lnMultLog = true;
             if (baseVal % 10 == 0)
             {
@@ -3406,14 +3381,15 @@ public:
                         break;
                     }
                 }
-                baseTotalRes = MediumDecBase(9, 0); lnMultLog = false;
+                baseTotalRes = MediumDecBase(9, 0); 
+                return false;
             }
             else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 baseTotalRes = MediumDecBase((baseVal - 1), 0) / MediumDecBase((baseVal + 1), 0);
-                MediumDecBase baseLastPow = baseTotalRes;
-                MediumDecBase baseWSquared = baseTotalRes * baseTotalRes;
-                MediumDecBase baseAddRes;
+                auto baseLastPow = baseTotalRes;
+                auto baseWSquared = baseTotalRes * baseTotalRes;
+                auto baseAddRes;
                 int baseWPow = 3;
                 do
                 {
@@ -3422,29 +3398,79 @@ public:
                     baseTotalRes += baseAddRes; baseWPow += 2;
                 } while (baseAddRes > MediumDecBase::JustAboveZero);
             }
+            return true;
+        }
 
-            //Now calculate other log
-            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
+        bool LogOf_BaseCalculation(const auto& baseVal, auto& baseTotalRes)
+        {
+            if (baseVal.DecimalHalf==0&&baseVal.IntValue.Value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
-                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? MediumDecBase(index, 0) / (baseTotalRes * MediumDecBase::HalfLN10Mult): MediumDecBase(index, 0)/ baseTotalRes;
+                    if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    {
+                        baseTotalRes = MediumDecBase(index, 0);
+                        break;
+                    }
                 }
-                return lnMultLog? MediumDecBase(9, 0) / (baseTotalRes*MediumDecBase::HalfLN10Mult):MediumDecBase(9, 0)/baseTotalRes;
+                baseTotalRes = MediumDecBase(9, 0); 
+                return false;
             }
-            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                baseTotalRes = MediumDecBase((baseVal - 1), 0) / MediumDecBase((baseVal + 1), 0);
+                auto baseLastPow = baseTotalRes;
+                auto baseWSquared = baseTotalRes * baseTotalRes;
+                auto baseAddRes;
+                int baseWPow = 3;
+                do
+                {
+                    baseLastPow *= baseWSquared;
+                    baseAddRes = baseLastPow / baseWPow;
+                    baseTotalRes += baseAddRes; baseWPow += 2;
+                } while (baseAddRes > MediumDecBase::JustAboveZero);
+            }
+            return true;
+        }
+
+        auto LogOf_Section02(const bool& lnMultLog, const auto& baseTotalRes)
+        {
+            //Now calculate other log
+			if(IsNegative())//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log";
+            if (DecimalHalf == 0 && IntValue % 10 == 0)
+            {
+                if(lnMultLog)
+                {
+                    for (int index = 1; index < 9; ++index)
+                    {
+                        if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                            return MediumDecBase(index, 0) / (baseTotalRes * MediumDecBase::HalfLN10Mult);
+                    }
+                    return MediumDecBase(9, 0) / (baseTotalRes*MediumDecBase::HalfLN10Mult);
+                }
+                else
+                {
+                    for (int index = 1; index < 9; ++index)
+                    {
+                        if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                            return MediumDecBase(index, 0)/ baseTotalRes;
+                    }
+                    return MediumDecBase(9, 0)/baseTotalRes;
+                }
+            }
+            if (IntValue.Value<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                MediumDecBase threshold = MediumDecBase::FiveBillionth;
-                MediumDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
+                auto threshold = MediumDecBase::FiveBillionth;
+                auto base = this - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
-                MediumDecBase term = base;       // First term
-                MediumDecBase prev = 0;          // Previous sum
-                MediumDecBase result = term;     // Kick it off
+                auto term = base;       // First term
+                auto prev = Zero;          // Previous sum
+                auto result = term;     // Kick it off
 
-                while (MediumDecBase::Abs(prev - result) > threshold) {
-                    den++;
+                while (Abs(prev - result) > threshold) {
+                    ++den;
                     posSign = !posSign;
                     term *= base;
                     prev = result;
@@ -3457,9 +3483,9 @@ public:
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                MediumDecBase W = (value - 1) / (value + 1);
-                MediumDecBase TotalRes = W;
-                MediumDecBase AddRes;
+                auto W = (this - 1) / (this + 1);
+                auto TotalRes = W;
+                auto AddRes;
                 int WPow = 3;
                 do
                 {
@@ -3469,7 +3495,39 @@ public:
                 return lnMultLog? TotalRes/baseTotalRes:(TotalRes * MediumDecBase::HalfLN10Mult)/ baseTotalRes;
             }
         }
-*/
+
+public:
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfInt(const int& baseVal)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOfInt_BaseCalculation(baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes)
+        }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfV2(const auto& baseVal)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOf_BaseCalculation(baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes)
+        }
+
 	#pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
