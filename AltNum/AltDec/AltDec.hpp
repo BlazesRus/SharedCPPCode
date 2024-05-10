@@ -1860,12 +1860,13 @@ public:
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <returns>AltDec</returns>
-        friend AltDec& operator-(AltDec& self)
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        AltDec operator- ()
         {
+			auto self = this;
             self.SwapNegativeStatus(); return self;
-        }
+        } const
 
         /// <summary>
         /// ++AltDec Operator

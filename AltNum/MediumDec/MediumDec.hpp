@@ -1809,15 +1809,17 @@ public:
     #pragma endregion Floating Operator Overrides
 
     #pragma endregion Other Operators
+	
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-(MediumDec& self)
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        MediumDec operator- ()
         {
+			auto self = this;
             self.SwapNegativeStatus(); return self;
-        }
+        } const
 
         /// <summary>
         /// ++MediumDec Operator

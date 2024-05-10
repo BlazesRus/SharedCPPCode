@@ -1374,12 +1374,13 @@ public:
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <returns>MediumDecV2</returns>
-        friend MediumDecV2& operator-(MediumDecV2& self)
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        MediumDecV2 operator- ()
         {
+			auto self = this;
             self.SwapNegativeStatus(); return self;
-        }
+        } const
 
         /// <summary>
         /// ++MediumDecV2 Operator
