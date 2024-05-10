@@ -1466,11 +1466,7 @@ protected:
             unsigned _int64 IntHalfRes = SelfRes / ValueRes;
             unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
 			IntValue.Value = (unsigned int) IntHalfRes;
-		#if defined(AltNum_UseIntForDecimalHalf)
-            DecimalHalf = DecimalRes;
-		#else
             DecimalHalf.Value = DecimalRes;		
-		#endif
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
             else

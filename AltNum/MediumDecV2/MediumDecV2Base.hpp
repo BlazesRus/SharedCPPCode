@@ -112,72 +112,44 @@ namespace BlazesRusCode
 
     #pragma region Const Representation values
     protected:
-	#if defined(AltNum_EnablePiRep) && defined(AltNum_UseIntForDecimalHalf)
+	#if defined(AltNum_EnablePiRep)
         //Pi*Value representation(when DecimalHalf.Flag==1)
         static const unsigned int PiRep = 1;
 	#endif
-	#if defined(AltNum_EnableERep) && defined(AltNum_UseIntForDecimalHalf)
+	#if defined(AltNum_EnableERep)
         //e*Value representation(DecimalHalf.Flag==2)
         static const unsigned int ERep = 2;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum) && defined(AltNum_UseIntForDecimalHalf)
+	#if defined(AltNum_EnableImaginaryNum)
         //e*Value representation(DecimalHalf.Flag==3)
         static const unsigned int IRep = 3;
 	#endif
 	
 	#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int InfinityRep = -2147483648;
-		#else
 		static const unsigned int InfinityRep = 1073741824;
-		#endif
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int ApproachingBottomRep = -2147483647;
-		#else
         static const unsigned int ApproachingBottomRep = 1073741823;
-		#endif
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)
-		#if defined(AltNum_UseIntForDecimalHalf)
-		static const signed int ApproachingTopRep = -2147483646;
-		#else
 		static const unsigned int ApproachingTopRep = 1073741822;
-		#endif
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)
 		//When DecimalHalf is at this value, than value is undefined but within real number range
 		//Such as result of Cos of infinity
 		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int UndefinedInRangeRep = -2147483645;
-		#else
         static const unsigned int UndefinedInRangeRep = 1073741821;
-		#endif
 	#endif
 	#if defined(AltNum_EnableNaN)
         //Is NaN when DecimalHalf is at this value
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int NaNRep = 2147483647;
-		#else
         static const signed int NaNRep = 1073741820;
-		#endif
         //Is Undefined when DecimalHalf is at this value
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int UndefinedRep = 2147483646;
-		#else
         static const signed int UndefinedRep = 1073741819;
-		#endif
 	#endif
 	#if defined(AltNum_EnableNil)
         //Is defined at empty value when DecimalHalf is at this value
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int NilRep = 2147483645;
-		#else
         static const signed int NilRep = 1073741818;
-		#endif
 	#endif
     public:
     #pragma endregion Const Representation values
@@ -193,10 +165,8 @@ namespace BlazesRusCode
         RepType GetRepType()
 #endif
         {
-#if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
             {
-#endif
 		#if defined(MediumDecV2_EnablePiRep)
                 case 1:
                     {
@@ -245,10 +215,8 @@ namespace BlazesRusCode
 				    return RepType::WithinMinMaxRange;
                     break;
         #endif
-#if !defined(AltNum_UseIntForDecimalHalf)
                 default:
                     {
-#endif
 		#if defined(MediumDecV2_EnableInfinityRep)
                         if(DecimalHalf == InfinityRep)
                             return RepType::Infinity;
@@ -276,11 +244,9 @@ namespace BlazesRusCode
                             return RepType::UndefinedButInRange;
 		#endif
                         return RepType::NormalType;
-#if !defined(AltNum_UseIntForDecimalHalf)
                     }
                     break;
             }
-#endif
 			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }
@@ -701,26 +667,10 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
                     {
-                #if defined(AltNum_UseIntForDecimalHalf)
-                        int Divisor = -ExtraRep;
-                        BasicUnsignedDivOp(Divisor);
-                        ExtraRep = IRep;
-                #else
                         BasicUnsignedDivOp(ExtraRep.Value);
                         ExtraRep = 0;
-                #endif
                     }
                     break;
-                //AltNum_EnableIFractional only used when AltNum_UseIntForDecimalHalf is enabled
-            #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                {
-                    int Divisor = DecimalHalf;
-                    DecimalHalf = 0;
-                    BasicIntDivOp(Divisor);
-                    ExtraRep = IRep;
-                    break;
-                }
             #endif*/
             #if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingImaginaryBottom:
@@ -807,7 +757,7 @@ public:
 			#endif
 		#endif
 		/*
-		#if defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnablePiPowers)
+		#if defined(AltNum_EnablePowerOfRepresentation)
             case RepType::PiPower:
                 ConvertPiPowerToNum(); break;
 		#endif
@@ -835,14 +785,14 @@ public:
 		/*
 		#if defined(AltNum_EnablePowerOfRepresentation)
             case RepType::EPower:
-                ConvertPiPowerToNum(); break;
+                ConvertEPowerToNum(); break;
 		#endif
 		*/
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::Infinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
-				DecimalHalf.Value = 999999999;
+				DecimalHalf = 999999999;
 				/*ExtraRep = 0;*/
 				break;
 	#endif
@@ -885,14 +835,8 @@ public:
 		#if defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
 				{
-			#if defined(AltNum_UseIntForDecimalHalf)
-					int Divisor = ExtraRep.Value;
-					BasicUnsignedDivOp(Divisor);
-					ExtraRep = IRep;
-			#else
 					BasicUnsignedDivOp(ExtraRep.Value);
 					ExtraRep = 0;
-			#endif
 				}
 				break;
 		#endif*/
@@ -1022,11 +966,9 @@ protected:
 				//To-do compare within min-max range code here
 			}
 	#endif
-	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
 			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
 				return SignCmp;
-	#endif
 	
 			RepType LRep = GetRepType();
 			RepType RRep = that.GetRepType();
@@ -1034,8 +976,6 @@ protected:
 			if(LRep^UndefinedBit||RRep^UndefinedBit)
 				throw "Can't compare undefined/nil representations";
     #endif
-    //AltNum_UseIntForDecimalHalf is required to not be set for
-    //imaginary numbers to be supported by MediumDecV2
     #if defined(AltNum_EnableImaginaryNum)
             if (LValue.DecimalHalf.Flags == 3)
             {
@@ -1049,13 +989,7 @@ protected:
 						return 1<=>0;
                 }
                 else
-                {
-	    #if defined(AltNum_EnableMirroredSection)
 			    	return BasicComparisonV2(rSide);
-	    #else
-					return BasicComparison(rSide);
-	    #endif
-                }
             }
             else if(RValue.Flags==3)
                 throw "Can't compare imaginary number with real number";
@@ -1073,11 +1007,7 @@ protected:
 				default:
 				{
 					if(LRep==RRep)
-	#if defined(AltNum_EnableMirroredSection)
 						return BasicComparisonV2(that);
-	#else
-						return BasicComparison(that);
-	#endif
 					else if(RRep==RepType:Infinity)
                     {
                         if(that.IntValue==1)
@@ -1090,11 +1020,7 @@ protected:
 						auto lSide = *this;
 						auto rSide = that;
 						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
-	#if defined(AltNum_EnableMirroredSection)
 						return lSide.BasicComparisonV2(rSide);
-	#else
-						return rSide.BasicComparison(rSide);
-	#endif
 					}
 				}
 			}
@@ -1106,12 +1032,9 @@ protected:
 		{
 			int lVal; int rVal;
 			//Pi and E only enabled if imbedded flags are enabled
-	#if !defined(AltNum_UseIntForDecimalHalf)
 			if(DecimalHalf.Flags==0)
 			{
-	#endif
 				return BasicIntComparison(that);
-	#if !defined(AltNum_UseIntForDecimalHalf)
 			}
 			else
 			{
@@ -1119,7 +1042,6 @@ protected:
 				lSide.ConvertToNormTypeV2();
 				return lSide.BasicIntComparison(that);
 			}
-	#endif
 		}
 
 		//Alias to prevent creating function more than once with template arguments
