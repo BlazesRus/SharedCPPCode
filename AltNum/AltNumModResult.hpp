@@ -64,6 +64,17 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator VarType(){ return modRes; }
+		
+        /// <summary>
+        /// Unary + Operator (Returns modulus operation result value)
+		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        VarType operator+ ()
+        {
+			return modRes;
+        } const
 	
     #pragma endregion ConvertToOtherTypes
 	
