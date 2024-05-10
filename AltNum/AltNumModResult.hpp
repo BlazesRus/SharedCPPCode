@@ -45,10 +45,19 @@ namespace BlazesRusCode
     #pragma region ConvertToOtherTypes
 	
         /// <summary>
-        /// Calculates if remainder is zero. (explicit conversion operation)
+        /// Calculates if remainder is zero. (implicit conversion operation)
         /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator bool(){ return modRes==0; }
+        /// <returns>True if the remainder is equal to zero</returns>
+        implicit operator bool(){ return modRes==0; }
+		
+        /// <summary>
+        /// Calculates if remainder is zero.
+        /// </summary>
+        /// <returns>True if the remainder is equal to zero</returns>
+		bool operator! () 
+		{
+			return modRes==0;
+		} const
 		
         /// <summary>
         /// Returns modulus operation result value (explicit conversion operation)
