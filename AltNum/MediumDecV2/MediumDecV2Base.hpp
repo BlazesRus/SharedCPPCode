@@ -794,9 +794,6 @@ public:
 		#if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 ConvertFromPiByDivToNorm(); break;
-		#elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-                ConvertFromPiFractionalToNorm(); break;
 		#endif
 		*/
 		#if defined(AltNum_EnableApproachingValues)
@@ -823,9 +820,6 @@ public:
 		#if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv:
                 ConvertFromEByDivToNorm(); break;
-		#elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://IntValue/DecimalHalf*e Representation
-                ConvertFromEFractionalToNorm(); break;
 		#endif
 		*/
 		#if defined(AltNum_EnableApproachingValues)
@@ -901,16 +895,6 @@ public:
 			#endif
 				}
 				break;
-			//AltNum_EnableIFractional only used when AltNum_UseIntForDecimalHalf is enabled
-		#elif defined(AltNum_EnableIFractional)
-			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-			{
-				int Divisor = DecimalHalf;
-				DecimalHalf = 0;
-				BasicIntDivOp(Divisor);
-				ExtraRep = IRep;
-				break;
-			}
 		#endif*/
 		#if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingImaginaryBottom:
