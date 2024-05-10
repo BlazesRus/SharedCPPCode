@@ -3067,10 +3067,11 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>AltDecBase</returns>
-        friend AltDecBase& operator-(AltDecBase self)
+        AltDecBase operator- ()
         {
+			auto self = this;
             self.SwapNegativeStatus(); return self;
-        }
+        } const
 
         /// <summary>
         /// ++AltDecBase Operator

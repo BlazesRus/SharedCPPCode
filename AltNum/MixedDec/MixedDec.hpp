@@ -2583,6 +2583,17 @@ public:
     #pragma region Other Operators
 	
         /// <summary>
+        /// Negative Unary Operator(Flips negative status)
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        MixedDec operator- ()
+        {
+			auto self = this;
+            self.SwapNegativeStatus(); return self;
+        } const
+	
+        /// <summary>
         /// ++MixedDec Operator
         /// </summary>
         /// <returns>MixedDec &</returns>

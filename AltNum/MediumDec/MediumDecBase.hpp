@@ -2508,10 +2508,11 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>MediumDecBase</returns>
-        friend MediumDecBase& operator-(MediumDecBase self)
+        MediumDecBase operator- ()
         {
+			auto self = this;
             self.SwapNegativeStatus(); return self;
-        }
+        } const
 
         /// <summary>
         /// ++MediumDecBase Operator

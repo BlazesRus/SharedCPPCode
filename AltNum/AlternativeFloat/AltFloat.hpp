@@ -1276,6 +1276,17 @@ public:
     #pragma region Other Operators
 
         /// <summary>
+        /// Negative Unary Operator(Flips negative status)
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        AltFloat operator- ()
+        {
+			auto self = this;
+            self.SwapNegativeStatus(); return self;
+        } const
+
+        /// <summary>
         /// ++AltFloat Operator
         /// </summary>
         /// <returns>AltFloat &</returns>
