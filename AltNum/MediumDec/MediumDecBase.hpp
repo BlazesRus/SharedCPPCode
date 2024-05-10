@@ -774,13 +774,8 @@ protected:
 			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
-			rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
-	#else
 			lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
 			rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-	#endif
 			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
@@ -795,13 +790,8 @@ protected:
 			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			int lVal = IsNegative()?0-DecimalHalf:DecimalHalf;
-			int rVal = that.IsNegative()?0-that.DecimalHalf:that.DecimalHalf;
-	#else
 			int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
 			int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-	#endif
 			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
@@ -824,11 +814,7 @@ protected:
 			if (auto IntHalfCmp = lVal <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			lVal = DecimalHalf>0?1:0;
-	#else
 			lVal = DecimalHalf.Value>0?1:0;
-	#endif
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
@@ -839,11 +825,7 @@ protected:
 			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
-	#if defined(AltNum_UseIntForDecimalHalf)
-			int lVal = DecimalHalf>0?1:0;
-	#else
 			int lVal = DecimalHalf.Value>0?1:0;
-	#endif
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
@@ -888,20 +870,13 @@ protected:
             unsigned _int64 Res;
             unsigned _int64 IntHalfRes;
             unsigned _int64 DecimalRes;
-    #if defined(AltNum_UseIntForDecimalHalf)
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
-    #else
             SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
-    #endif
             Res = SelfRes / rValue;
+			
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = Res - DecimalOverflowX * IntHalfRes;
 		    IntValue.Value = (unsigned int)IntHalfRes;
-    #if defined(AltNum_UseIntForDecimalHalf)
-			DecimalHalf = (signed int)DecimalRes;
-    #else
 			DecimalHalf.Value = (unsigned int)DecimalRes;
-    #endif
         }
 
         template<IntegerType IntType=signed int>
@@ -1034,31 +1009,19 @@ protected:
                 IntValue *= rValue;
             else
 			{
-			#if defined(AltNum_UseIntForDecimalHalf)
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
-			#else
                 __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
-			#endif
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
                     IntValue.Value = (unsigned int)OverflowVal;
-		#if defined(AltNum_UseIntForDecimalHalf)
-                    DecimalHalf = (signed int)SRep;
-		#else
                     DecimalHalf.Value = (unsigned int)SRep;
-		#endif
                 }
                 else
                 {
 					IntValue.Value = 0;
-		#if defined(AltNum_UseIntForDecimalHalf)
-                    DecimalHalf = (signed int)SRep;
-		#else
                     DecimalHalf.Value = (unsigned int)SRep;
-		#endif
                 }
             }
         }
