@@ -20,7 +20,6 @@
 
 namespace BlazesRusCode
 {
-#if !defined(AltNum_UseIntForDecimalHalf)
 	struct PartialInt {
 		#pragma options align=bit_packed
 		//Stores Digits XXX XXX XXX
@@ -34,17 +33,30 @@ namespace BlazesRusCode
 			Value = value;
 			Flags = flags;
 		}
+		
 		std::strong_ordering operator<=>(const PartialInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
 		}
+		
 		bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
 				return false;
 			return true;
 		}
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned int() { return Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned long long() { return Value; }
 	};
-#endif
 }
