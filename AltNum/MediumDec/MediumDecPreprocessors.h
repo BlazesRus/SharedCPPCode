@@ -40,15 +40,15 @@ AltNum_UseBuiltinVirtualTable =
 	#endif
 #endif*/
 
-#if defined(AltNum_UseIntForDecimalHalf)
+/*#if defined(AltNum_UseIntForDecimalHalf)
 	#define DecimalHalfType signed int
 	#if !defined(AltNum_UseLegacyFloatingConversion)
 		#define AltNum_UseLegacyFloatingConversion
 	#endif
-#else
+#else*/
 	#include "..\PartialInt.hpp"
 	#define DecimalHalfType PartialInt
-#endif
+//#endif
 
 #if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
     #undef AltNum_DisablePiRep

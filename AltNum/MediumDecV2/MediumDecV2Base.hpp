@@ -18,7 +18,7 @@ namespace BlazesRusCode
     /// Separating functions that don't use static variables inside this base class for deriving
     /// Completed class inside MediumDec
 	/// </summary>
-    class DLL_API MediumDecV2Base : public virtual MediumDecBase
+    class DLL_API MediumDecV2Base : public MediumDecBase
     {
 	#if defined(AltNum_UseBuiltinVirtualTable)
 	protected:
@@ -188,7 +188,7 @@ namespace BlazesRusCode
         /// Returns representation type data that is stored in value
         /// </summary>
 #if defined(AltNum_UseBuiltinVirtualTable)
-        virtual RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
+        RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
 #else
         RepType GetRepType()
 #endif
@@ -287,7 +287,7 @@ namespace BlazesRusCode
 
 #if defined(AltNum_UseBuiltinVirtualTable)
         /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling virtual function)
+        /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetRepType()
 		{
@@ -322,14 +322,14 @@ public:
     #if defined(MediumDecV2_EnablePiRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetPiValV1(const VariantType& Value)
+        void SetPiValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
         }
 public:
         constexpr auto SetPiVal = SetPiValV1<MediumDecV2Base>;
   
-        virtual void SetPiValFromInt(int Value)
+        void SetPiValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
         }
@@ -340,14 +340,14 @@ public:
     #if defined(MediumDecV2_EnableERep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetEValV1(const VariantType& Value)
+        void SetEValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
         }
 public:
         constexpr auto SetEVal = SetEValV1<MediumDecV2Base>;
 		
-        virtual void SetEValFromInt(int Value)
+        void SetEValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
         }
@@ -358,14 +358,14 @@ public:
     #if defined(MediumDecV2_EnableIRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
-        virtual void SetIValV1(const VariantType& Value)
+        void SetIValV1(const VariantType& Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
         }
 public:
         constexpr auto SetIVal = SetEValV1<MediumDecV2Base>;
 		
-        virtual void SetIValFromInt(int Value)
+        void SetIValFromInt(int Value)
         {
             IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
         }
@@ -587,7 +587,7 @@ public:
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual float toFloat()
+        float toFloat()
         {
             auto self = *this;
             self.ConvertToNormTypeV2();
@@ -602,7 +602,7 @@ public:
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual double toDouble()
+        double toDouble()
         {
             auto self = *this;
             self.ConvertToNormTypeV2();
@@ -617,7 +617,7 @@ public:
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual ldouble toDecimal()
+        ldouble toDecimal()
         {
             auto self = *this;
             self.ConvertToNormTypeV2();
@@ -628,13 +628,13 @@ public:
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        virtual int toInt() {
+        int toInt() {
             auto self = *this;
             self.ConvertToNormTypeV2();
             return IntValue.GetValue();
         }
 
-        virtual bool toBool() {
+        bool toBool() {
             auto self = *this;
             self.ConvertToNormTypeV2();
             return IntValue.IsZero() ? false : true;
@@ -675,7 +675,7 @@ public:
     #pragma region Pi Conversion
     #if defined(AltNum_EnablePiRep)
     
-    virtual void ConvertPiToNum();
+    void ConvertPiToNum();
 
     #endif
     #pragma endregion Pi Conversion
@@ -683,7 +683,7 @@ public:
     #pragma region E Conversion
     #if defined(AltNum_EnableERep)
     
-    virtual void ConvertEToNum();
+    void ConvertEToNum();
 
     #endif
     #pragma endregion E Conversion
@@ -691,35 +691,293 @@ public:
     #pragma region Imaginary Conversion
     #if defined(AltNum_EnableImaginaryNum)
 
-
-    #endif
-    #pragma endregion region Imaginary Conversion
-        virtual void ConvertIRepToINum(const RepType& repType)
+        void ConvertIRepToINum(const RepType& repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
             {
                 case RepType::INum:
                     break;
-                //To-Do:Add other INum variant representation conversions
+			/*
+            #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
+                    {
+                #if defined(AltNum_UseIntForDecimalHalf)
+                        int Divisor = -ExtraRep;
+                        BasicUnsignedDivOp(Divisor);
+                        ExtraRep = IRep;
+                #else
+                        BasicUnsignedDivOp(ExtraRep.Value);
+                        ExtraRep = 0;
+                #endif
+                    }
+                    break;
+                //AltNum_EnableIFractional only used when AltNum_UseIntForDecimalHalf is enabled
+            #elif defined(AltNum_EnableIFractional)
+                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                {
+                    int Divisor = DecimalHalf;
+                    DecimalHalf = 0;
+                    BasicIntDivOp(Divisor);
+                    ExtraRep = IRep;
+                    break;
+                }
+            #endif*/
+            #if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingImaginaryBottom:
+                DecimalHalf.Value = 1;
+                break;
+                #if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryTop:
+                DecimalHalf.Value = 999999999;
+                break;
+                #endif
+                /*#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingImaginaryMidLeft:
+                ConvertFromApproachingIMidLeftToNorm(); break;
+					#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryMidRight:
+                ConvertFromApproachingIMidRightToNorm(); break;
+					#endif
+				#endif*/
+			#endif
+            #if defined(AltNum_EnableInfinityRep)
+            case RepType::ImaginaryInfinity:
+                IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+                DecimalHalf.Value = 999999999; 
+                /*ExtraRep = 0;*/
+                break;
+            #endif
+            #ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+                {
+                    throw "Conversion from complex number to real number not supported yet.";
+                    break;
+                }
+            #endif
                 default:
                     throw "Conversion not supported.";
                     break;
             }
         }
 
-protected:
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
-		AltDecBase ConvertAsNormalIRepV1(const RepType& repType)
+		auto ConvertAsNormalIRep(const RepType& repType)
         {
             auto Res = *this;
             Res.ConvertIRepToINum(repType);
             return Res;
         } const
-public:
 
-        constexpr auto ConvertAsNormalIRep = ConvertAsNormalIRepV1<MediumDecV2Base>;
+    #endif
+    #pragma endregion region Imaginary Conversion
+
 
     #pragma region Other RepType Conversion
+      //To-Do: Test cost of making vs alternative means of making sure uses updated code after derivation    
+
+        //Returns value as normal type or INum representation
+        void ConvertToNormType(const RepType& repType)
+        {
+            switch (repType)
+            {
+            case RepType::NormalType:
+                break;
+			/*
+            case RepType::NumByDiv:
+                BasicIntDivOp(ExtraRep);
+                ExtraRep = 0;
+                break;
+			*/
+	#if defined(AltNum_EnablePiRep)
+            case RepType::PiNum:
+                ConvertPiToNum(); break;
+		/*
+		#if defined(AltNum_EnableDecimaledPiFractionals)
+            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+                ConvertFromPiByDivToNorm(); break;
+		#elif defined(AltNum_EnablePiFractional)
+            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                ConvertFromPiFractionalToNorm(); break;
+		#endif
+		*/
+		#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottomPi:
+                DecimalHalf.Value = 1;
+                break;
+			#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTopPi:
+                DecimalHalf.Value = 999999999;
+                break;
+			#endif
+		#endif
+		/*
+		#if defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnablePiPowers)
+            case RepType::PiPower:
+                ConvertPiPowerToNum(); break;
+		#endif
+		*/
+	#endif
+	#if defined(AltNum_EnableERep)
+            case RepType::ENum:
+                ConvertENumToNum(); break;
+		/*
+		#if defined(AltNum_EnableDecimaledEFractionals)
+            case RepType::ENumByDiv:
+                ConvertFromEByDivToNorm(); break;
+		#elif defined(AltNum_EnableEFractional)
+            case RepType::EFractional://IntValue/DecimalHalf*e Representation
+                ConvertFromEFractionalToNorm(); break;
+		#endif
+		*/
+		#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottomPi:
+                DecimalHalf.Value = 1;
+                break;
+			#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTopPi:
+                DecimalHalf.Value = 999999999;
+                break;
+			#endif
+		#endif
+		/*
+		#if defined(AltNum_EnablePowerOfRepresentation)
+            case RepType::EPower:
+                ConvertPiPowerToNum(); break;
+		#endif
+		*/
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+            case RepType::Infinity:
+				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+				DecimalHalf.Value = 999999999;
+				/*ExtraRep = 0;*/
+				break;
+	#endif
+	#if defined(AltNum_EnableApproachingValues)
+            case RepType::ApproachingBottom:
+                DecimalHalf = 1;
+                break;
+		#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTop:
+                DecimalHalf = 999999999;
+                break;
+		#endif
+		/*
+		#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingMidLeft:
+                ConvertFromApproachingMidLeftToNorm(); break;
+			#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingMidRight:
+                ConvertFromApproachingMidRightToNorm(); break;
+			#endif
+		#endif*/
+	#endif/*
+	#if defined(AltNum_EnableMixedFractional)
+            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            {
+                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
+                Res /= ExtraRep;
+                if (IntValue != 0 && IntValue != NegativeRep)
+                    Res += IntValue;
+                IntValue = Res.IntValue;
+                DecimalHalf.Value = Res.DecimalHalf;
+                ExtraRep = 0;
+                break;
+            }
+	#endif*/
+	#if defined(AltNum_EnableImaginaryNum)
+			case RepType::INum:
+				break;
+		/*
+		#if defined(AltNum_EnableDecimaledIFractionals)
+			case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
+				{
+			#if defined(AltNum_UseIntForDecimalHalf)
+					int Divisor = ExtraRep.Value;
+					BasicUnsignedDivOp(Divisor);
+					ExtraRep = IRep;
+			#else
+					BasicUnsignedDivOp(ExtraRep.Value);
+					ExtraRep = 0;
+			#endif
+				}
+				break;
+			//AltNum_EnableIFractional only used when AltNum_UseIntForDecimalHalf is enabled
+		#elif defined(AltNum_EnableIFractional)
+			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+			{
+				int Divisor = DecimalHalf;
+				DecimalHalf = 0;
+				BasicIntDivOp(Divisor);
+				ExtraRep = IRep;
+				break;
+			}
+		#endif*/
+		#if defined(AltNum_EnableApproachingValues)
+		case RepType::ApproachingImaginaryBottom:
+			DecimalHalf.Value = 1;
+			break;
+			#if !defined(AltNum_DisableApproachingTop)
+		case RepType::ApproachingImaginaryTop:
+			DecimalHalf.Value = 999999999;
+			break;
+			#endif
+			/*#if defined(AltNum_EnableApproachingDivided)
+		case RepType::ApproachingImaginaryMidLeft:
+			ConvertFromApproachingIMidLeftToNorm(); break;
+				#if !defined(AltNum_DisableApproachingTop)
+		case RepType::ApproachingImaginaryMidRight:
+			ConvertFromApproachingIMidRightToNorm(); break;
+				#endif
+			#endif*/
+		#endif
+		#if defined(AltNum_EnableInfinityRep)
+		case RepType::ImaginaryInfinity:
+			IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+			DecimalHalf.Value = 999999999;
+			/*ExtraRep = 0;*/
+			break;
+		#endif
+		#ifdef AltNum_EnableComplexNumbers
+			case RepType::ComplexIRep:
+			{
+				throw "Conversion from complex number to real number not supported yet.";
+				break;
+			}
+		#endif
+	#endif/*
+	#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+                throw "Conversion from complex number to real number not supported yet.";
+                break;
+	#endif*/
+            default:
+                throw "Conversion to normal number not supported yet?";
+                break;
+            }
+        } const
+
+		//Returns value as normal type or INum representation
+        auto ConvertAsNormType(const RepType& repType)
+        {
+            auto Res = *this;
+            Res.ConvertToNormType(repType);
+            return Res;
+        }
+
+        //Converts value to normal type representation
+        void ConvertToNormTypeV2()
+        {
+            RepType repType = GetRepType();
+            ConvertToNormType(repType);
+        }
+
+		//Returns value as normal type representation
+        auto ConvertAsNormTypeV2()
+        {
+            VariantType Res = *this;
+            Res.ConvertToNormTypeV2();
+            return Res;
+        }
 
     #pragma endregion Other RepType Conversion
 
