@@ -82,8 +82,10 @@ protected:
 		RepTypeUnderlayer IFlag = 4;
 		//BitFlag 04(8) = Fractional Rep
 		RepTypeUnderlayer FractionalFlag = 8;
+		//If BitFlag#7 and BitFlag#4 is set and BitFlag#6 isn't set,
+		//then Approaching From Top side;
 		//If BitFlag#7 is set and BitFlag#6 isn't set,
-		//then Approaching From Top side; 
+		//then Approaching From Bottom side; 
 		RepTypeUnderlayer ApproachFromRFlag = 8;
 		//BitFlag 05 (16) = Power of flag
 		RepTypeUnderlayer ToPowerOfFlag = 16;

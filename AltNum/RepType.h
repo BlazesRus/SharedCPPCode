@@ -36,8 +36,13 @@ namespace BlazesRusCode
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
 		//(Enum Bits:7,1)
+		//equal to IntValue.0..01 Pi
+		ApproachingBottomPi = 65,
+		#if !defined(AltNum_DisableApproachingTop)
+		//(Enum Bits:7,1,4)
 		//equal to IntValue.9..9 Pi
-		ApproachingTopPi = 65,
+		ApproachingTopPi = 73,
+		#endif
 	#endif
 	#if defined(MixedDec_EnableApproachingAlternativeDiv)
 		//(Enum Bits:7,5,1)
@@ -58,8 +63,13 @@ namespace BlazesRusCode
 	#endif
 	#if defined(AltNum_EnableApproachingE)
 		//(Enum Bits:7,2)
+		//equal to IntValue.0..01 e
+		ApproachingBottomE = 66,
+		#if !defined(AltNum_DisableApproachingTop)
+		//(Enum Bits:7,2)
 		//equal to IntValue.9..9 e
-		ApproachingTopE = 66,
+		ApproachingTopE = 74,
+		#endif
 	#endif
 	#if defined(MixedDec_EnableApproachingAlternativeDiv)
 		//(Enum Bits:7,5,2)

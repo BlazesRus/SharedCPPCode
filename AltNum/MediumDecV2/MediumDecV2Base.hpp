@@ -171,7 +171,9 @@ namespace BlazesRusCode
                 case 1:
                     {
             #if defined(MediumDecV2_EnableApproachingPi)
-                        if (DecimalHalf == ApproachingTopRep)
+                        if (DecimalHalf == ApproachingBottomRep)
+                            return RepType::ApproachingBottomPi;
+                        else if (DecimalHalf == ApproachingTopRep)
                             return RepType::ApproachingTopPi;
             #endif
                         return RepType::PiNum;
@@ -182,7 +184,9 @@ namespace BlazesRusCode
                 case 2:
                     {
             #if defined(MediumDecV2_EnableApproachingE)
-                        if (DecimalHalf == ApproachingTopRep)
+                        if (DecimalHalf == ApproachingBottomRep)
+                            return RepType::ApproachingBottomE;
+                        else if (DecimalHalf == ApproachingTopRep)
                             return RepType::ApproachingTopE;
             #endif
                         return RepType::ENum;
@@ -375,7 +379,7 @@ public:
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
-        void SetAsApproachingBottom(int value=0)
+        void SetAsApproachingBottom(const int& value=0)
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
         }
@@ -383,7 +387,7 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-        void SetAsApproachingTop(int value)
+        void SetAsApproachingTop(const int& value)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
         }
@@ -391,25 +395,40 @@ public:
 		
 		#if defined(MediumDecV2_EnableApproachingPi)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
-        void SetAsApproachingTopPi(int value)
+        void SetAsApproachingTopPi(const int& value)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
+        }
+		
+        void SetAsApproachingBottomPi(const int& value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
 		#endif
 		
 		#if defined(MediumDecV2_EnableApproachingE)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
-        void SetAsApproachingTopE(int value)
+        void SetAsApproachingTopE(const int& value)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+        }
+		
+        void SetAsApproachingBottomE(const int& value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
         }
 		#endif
 		
 		#if defined(MediumDecV2_EnableApproachingI)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
-        void SetAsApproachingTopE(int value)
+        void SetAsApproachingTopI(const int& value)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+        }
+		
+        void SetAsApproachingBottomI(const int& value)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
         }
 		#endif
     #endif
@@ -731,21 +750,9 @@ public:
             {
             case RepType::NormalType:
                 break;
-			/*
-            case RepType::NumByDiv:
-                BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
-                break;
-			*/
 	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 ConvertPiToNum(); break;
-		/*
-		#if defined(AltNum_EnableDecimaledPiFractionals)
-            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
-                ConvertFromPiByDivToNorm(); break;
-		#endif
-		*/
 		#if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottomPi:
                 DecimalHalf.Value = 1;
@@ -756,22 +763,10 @@ public:
                 break;
 			#endif
 		#endif
-		/*
-		#if defined(AltNum_EnablePowerOfRepresentation)
-            case RepType::PiPower:
-                ConvertPiPowerToNum(); break;
-		#endif
-		*/
 	#endif
 	#if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
-		/*
-		#if defined(AltNum_EnableDecimaledEFractionals)
-            case RepType::ENumByDiv:
-                ConvertFromEByDivToNorm(); break;
-		#endif
-		*/
 		#if defined(AltNum_EnableApproachingValues)
             case RepType::ApproachingBottomPi:
                 DecimalHalf.Value = 1;
@@ -782,102 +777,53 @@ public:
                 break;
 			#endif
 		#endif
-		/*
-		#if defined(AltNum_EnablePowerOfRepresentation)
-            case RepType::EPower:
-                ConvertEPowerToNum(); break;
-		#endif
-		*/
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
-            case RepType::Infinity:
+			case RepType::Infinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
 				DecimalHalf = 999999999;
-				/*ExtraRep = 0;*/
 				break;
 	#endif
 	#if defined(AltNum_EnableApproachingValues)
-            case RepType::ApproachingBottom:
-                DecimalHalf = 1;
-                break;
+			case RepType::ApproachingBottom:
+				DecimalHalf = 1;
+				break;
 		#if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingTop:
-                DecimalHalf = 999999999;
-                break;
+			case RepType::ApproachingTop:
+				DecimalHalf = 999999999;
+				break;
 		#endif
-		/*
-		#if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft:
-                ConvertFromApproachingMidLeftToNorm(); break;
-			#if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingMidRight:
-                ConvertFromApproachingMidRightToNorm(); break;
-			#endif
-		#endif*/
-	#endif/*
-	#if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
-            {
-                AltDec Res = IntValue < 0 ? AltDec(DecimalHalf, 0) : AltDec(DecimalHalf, 0);
-                Res /= ExtraRep;
-                if (IntValue != 0 && IntValue != NegativeRep)
-                    Res += IntValue;
-                IntValue = Res.IntValue;
-                DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = 0;
-                break;
-            }
-	#endif*/
+	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 			case RepType::INum:
 				break;
-		/*
-		#if defined(AltNum_EnableDecimaledIFractionals)
-			case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
-				{
-					BasicUnsignedDivOp(ExtraRep.Value);
-					ExtraRep = 0;
-				}
-				break;
-		#endif*/
 		#if defined(AltNum_EnableApproachingValues)
-		case RepType::ApproachingImaginaryBottom:
-			DecimalHalf.Value = 1;
-			break;
+			case RepType::ApproachingImaginaryBottom:
+				DecimalHalf.Value = 1;
+				break;
 			#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingImaginaryTop:
-			DecimalHalf.Value = 999999999;
-			break;
+			case RepType::ApproachingImaginaryTop:
+				DecimalHalf.Value = 999999999;
+				break;
 			#endif
-			/*#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingImaginaryMidLeft:
-			ConvertFromApproachingIMidLeftToNorm(); break;
-				#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingImaginaryMidRight:
-			ConvertFromApproachingIMidRightToNorm(); break;
-				#endif
-			#endif*/
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
-		case RepType::ImaginaryInfinity:
-			IntValue = IsPositive()?MaxIntValue:MinIntValue; 
-			DecimalHalf.Value = 999999999;
-			/*ExtraRep = 0;*/
-			break;
+			case RepType::ImaginaryInfinity:
+				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+				DecimalHalf.Value = 999999999;
+				break;
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
 			case RepType::ComplexIRep:
-			{
 				throw "Conversion from complex number to real number not supported yet.";
 				break;
-			}
 		#endif
-	#endif/*
+	#endif
 	#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
                 throw "Conversion from complex number to real number not supported yet.";
                 break;
-	#endif*/
+	#endif
             default:
                 throw "Conversion to normal number not supported yet?";
                 break;
@@ -2070,6 +2016,13 @@ public:
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
+        case RepType::ApproachingBottomPi://equal to IntValue.0..01 Pi
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingBottom)+"π";
+			#else
+            return (std::string)IntValue + ".0..01π";
+			#endif
+            break;
         case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop)+"π";
@@ -2079,6 +2032,13 @@ public:
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
+        case RepType::ApproachingBottomE://equal to IntValue.0..01 e
+			#ifdef AltNum_DisplayApproachingAsReal
+			return ConvertToBasicString(RepType::ApproachingBottom)+"e";
+			#else
+            return (std::string)IntValue + ".0..01e";
+			#endif
+            break;
         case RepType::ApproachingTopE://equal to IntValue.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop)+"e";
