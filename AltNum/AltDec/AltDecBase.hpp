@@ -3145,10 +3145,182 @@ public:
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
+public:
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto ExpOf = MediumDecV2Base::ExpOf;
+
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        constexpr auto Exp = MediumDecV2Base::Exp;
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        constexpr auto NthRootOf = MediumDecV2Base::NthRootOf;
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        constexpr auto NthRoot = MediumDecV2Base::NthRoot;
+
+		/// <summary>
+		/// Natural log (Equivalent to Log_E(value))
+		/// </summary>
+		/// <returns>BlazesRusCode::MediumDecBase</returns>
+        constexpr auto NaturalLogOf = MediumDecV2Base::NaturalLogOf;
+	
+        /// <summary>
+        /// Natural log (Equivalent to Log_E(value))
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        constexpr auto Ln = MediumDecV2Base::Ln;
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Log10Of = MediumDecV2Base::Log10Of;
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Log10 = MediumDecV2Base::Log10;
+
+        /// <summary>
+        /// Log Base 10 of Value(integer value variant)
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Log10OfInt = MediumDecV2Base::Log10OfInt;
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto LogOf = MediumDecV2Base::LogOf;
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Log = MediumDecV2Base::Log;
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto LogOfInt = MediumDecV2Base::LogOfInt;
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto LogOfV2 = MediumDecV2Base::LogOfV2;
 
 	#pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
+public:
+       /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Sin = MediumDecV2Base::Sin;
+
+        /// <summary>
+        /// Get Cos from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Cos = MediumDecV2Base::Cos;
+
+        /// <summary>
+        /// Get Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Tan = MediumDecV2Base::Tan;
+
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto ATan = MediumDecV2Base::ATan;
+
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto ArcTan2 = MediumDecV2Base::ArcTan2;
+
+        /// <summary>
+        /// Get Sin from Value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto SinFromAngle = MediumDecV2Base::SinFromAngle;
+
+        /// <summary>
+        /// Get Cos() from Value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns></returns>
+        constexpr auto CosFromAngle = MediumDecV2Base::CosFromAngle;
+
+        /// <summary>
+        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto TanFromAngle = MediumDecV2Base::TanFromAngle;
+
+    #pragma endregion Trigonomic Functions
 
     #pragma endregion Trigonomic Functions
     }
