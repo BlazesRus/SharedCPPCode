@@ -2728,13 +2728,15 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static auto BasicSqrt(auto tValue, const int& precision=7)
-        {//Ignores Alternate representations use Sqrt instead to check based on RepType
-		    auto value = tValue;
-            if (value.DecimalHalf == 0)
+        auto SqrtOf(const int& precision=7)
+        { 
+            if(IsNegative())
+                throw "Can't display result of negative square root without imaginary number support";
+            else if (DecimalHalf == 0)
             {
+                auto value = this;
                 bool AutoSetValue = true;
-                switch (value.IntValue)
+                switch (IntValue.Value)
                 {
                 case 1: value.IntValue = 1; break;
                 case 4: value.IntValue = 2; break;
@@ -2756,16 +2758,16 @@ public:
                 case 324: value.IntValue = 18; break;
                 case 361: value.IntValue = 19; break;
                 case 400: value.IntValue = 20; break;
+                case 1600: value.IntValue = 40; break;
                 default:
                     AutoSetValue = false;
                     break;
                 }
                 if(AutoSetValue)
-                {
-                    return value;
-                }
+                    return value;//Techically both positive and negative numbers of same equal the result
             }
-            auto number = value;
+
+            auto number = this;
             auto start = 0, end = number;
             auto mid;
 
@@ -2798,7 +2800,7 @@ public:
             // For computing the fractional part 
             // of square root up to given precision 
             auto increment = "0.1";
-            for (int i = 0; i < precision; i++) {
+            for (int i = 0; i < precision; ++i) {
                 while (ans * ans <= number) {
                     ans += increment;
                 }
@@ -2813,10 +2815,9 @@ public:
 		/// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-		static auto Sqrt(auto value, const int& precision=7)
+		static auto Sqrt(const auto& value, const int& precision=7)
 		{
-		    value.ConvertToNormType();
-			BasicSqrt(value, precision);
+			return value.BasicSqrtOf(precision);
 		}
 
 protected:
@@ -2947,8 +2948,7 @@ public:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <param name="nValue">The nth value.</param>
+        /// <param name="nValue">The nth root value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
         /// <returns>auto</returns>
         auto NthRoot(const int& n, const auto& precision = auto::JustAboveZero)

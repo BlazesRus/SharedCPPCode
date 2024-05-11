@@ -1962,6 +1962,122 @@ public:
 
 	#pragma region Pow and Sqrt Functions
 
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        auto SqrtOf(const int& precision=7)
+        {
+    #if !defined(AltNum_EnableImaginaryNum)
+            if(IsNegative())
+                throw "Can't display result of negative square root without imaginary number support";
+    #endif
+            if (DecimalHalf.Value == 0&&DecimalHalf.Flags==0)
+            {
+                auto value = this;
+                bool AutoSetValue = true;
+                switch (IntValue.Value)
+                {
+                case 1: value.IntValue = 1; break;
+                case 4: value.IntValue = 2; break;
+                case 9: value.IntValue = 3; break;
+                case 16: value.IntValue = 4; break;
+                case 25: value.IntValue = 5; break;
+                case 36: value.IntValue = 6; break;
+                case 49: value.IntValue = 7; break;
+                case 64: value.IntValue = 8; break;
+                case 81: value.IntValue = 9; break;
+                case 100: value.IntValue = 10; break;
+                case 121: value.IntValue = 11; break;
+                case 144: value.IntValue = 12; break;
+                case 169: value.IntValue = 13; break;
+                case 196: value.IntValue = 14; break;
+                case 225: value.IntValue = 15; break;
+                case 256: value.IntValue = 16; break;
+                case 289: value.IntValue = 17; break;
+                case 324: value.IntValue = 18; break;
+                case 361: value.IntValue = 19; break;
+                case 400: value.IntValue = 20; break;
+                case 1600: value.IntValue = 40; break;
+                default:
+                    AutoSetValue = false;
+                    break;
+                }
+                if(AutoSetValue)
+                {
+    #if defined(AltNum_EnableImaginaryNum)
+                    if(IsNegative())
+                        DecimalHalf.Flags = 3;
+    #endif
+                    return value;//Techically both positive and negative numbers of same equal the result
+                }
+            }
+
+            auto number = this;
+            auto start = 0, end = number;
+            auto mid;
+
+            // variable to store the answer 
+            auto ans;
+
+            // for computing integral part 
+            // of square root of number 
+            while (start <= end) {
+                mid = (start + end) / 2;
+                if (mid * mid == number) {
+                    ans = mid;
+                    break;
+                }
+
+                // incrementing start if integral 
+                // part lies on right side of the mid 
+                if (mid * mid < number) {
+                    start = mid + 1;
+                    ans = mid;
+                }
+
+                // decrementing end if integral part 
+                // lies on the left side of the mid 
+                else {
+                    end = mid - 1;
+                }
+            }
+
+            // For computing the fractional part 
+            // of square root up to given precision 
+            auto increment = "0.1";
+            for (int i = 0; i < precision; ++i) {
+                while (ans * ans <= number) {
+                    ans += increment;
+                }
+
+                // loop terminates when ans * ans > number 
+                ans = ans - increment;
+                increment = increment / 10;
+            }
+            return ans;
+        }
+		
+		/// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+		static auto Sqrt(const auto& value, const int& precision=7)
+		{
+			return value.BasicSqrtOf(precision);
+		}
+
+protected:
+
+
+public:
+
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="nValue">The nth root value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        /// <returns>auto</returns>
+        constexpr auto NthRoot = MediumDecBase::NthRoot;
+
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
@@ -2002,7 +2118,7 @@ public:
         /// <returns></returns>
         auto NthRootOf(const int& n, const auto& Precision = FiveBillionth)
         {
-            auto self = x.ConvertAsNormType();
+            auto self = x.ConvertAsNormTypeV2();
             return self.NthRootOfV1();
         }
 
