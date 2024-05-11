@@ -1965,10 +1965,385 @@ public:
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
+protected:
+
+        constexpr auto ExpOfV1 = MediumDecBase::ExpOf;
+        constexpr auto NthRootOfV1 = MediumDecBase::NthRootOf;
+
+public:
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        auto ExpOf()
+        {
+            auto self = x.ConvertAsNormType();//Prevent losing imaginary number status
+            return self.ExpOfV1();
+        }
+
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Exp(const auto& x)
+        {
+			return x.ExpOf();
+        }
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        auto NthRootOf(const int& n, const auto& Precision = FiveBillionth)
+        {
+            auto self = x.ConvertAsNormType();
+            return self.NthRootOfV1();
+        }
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        static auto NthRoot(const auto& value, const int& n, const auto& Precision = FiveBillionth)
+        {
+            return value.NthRootOf(n, Precision);
+        }
+
+protected:
+
+        constexpr auto LnRef_Part02V1 = MediumDecBase::LnRef_Part02;
+
+		auto LnRef_Part02()
+		{
+            auto self = x.ConvertAsNormType();
+            return self.LnRef_Part02V1();
+		}
+
+        constexpr auto NaturalLogOfV1 = MediumDecBase::NaturalLogOf;
+        constexpr auto Log10OfV1 = MediumDecBase::Log10Of;
+
+public:
+
+		/// <summary>
+		/// Natural log (Equivalent to Log_E(value))
+		/// </summary>
+		/// <returns>BlazesRusCode::MediumDecBase</returns>
+		auto NaturalLogOf()
+		{
+            auto self = x.ConvertAsNormType();
+            return self.NaturalLogOfV1();
+		}
+	
+        /// <summary>
+        /// Natural log (Equivalent to Log_E(value))
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Ln(const auto& value)
+        {
+			return value.NaturalLogOf();
+        }
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+		auto Log10Of()
+		{
+            auto self = x.ConvertAsNormType();
+            return self.Log10OfV1();
+		}
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Log10(const auto& value)
+        {
+			return value.Log10Of();
+        }
+		
+protected:
+	
+
+public:
+
+        /// <summary>
+        /// Log Base 10 of Value(integer value variant)
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto Log10OfInt = MediumDecBase::Log10OfInt;
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOf(const auto& baseVal)
+        {
+            auto self = x.ConvertAsNormType();
+            if (self.IsOne())
+                return Zero;
+            return Log10Of() / baseVal.Log10Of();
+        }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Log(const auto& value, const auto& baseVal)
+        {
+            return value.LogOf(baseVal);
+        }
+
+protected:
+
+
+public:
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfInt(const int& baseVal, const auto& threshold = FiveBillionth)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOfInt_BaseCalculation(baseTotalRes.ConvertAsNormTypeV2());
+            return LogOf_Section02(lnMultLog, baseTotalRes.ConvertAsNormTypeV2(), threshold);
+        }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfV2(const auto& baseVal, const auto& threshold = FiveBillionth)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOf_BaseCalculation(baseTotalRes.ConvertAsNormTypeV2());
+            return LogOf_Section02(lnMultLog, baseTotalRes.ConvertAsNormTypeV2(), threshold);
+        }
 
 	#pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
+protected:
+
+        constexpr auto SinV1 = MediumDecBase::Sin;
+        constexpr auto CosV1 = MediumDecBase::Cos;
+        constexpr auto TanV1 = MediumDecBase::Tan;
+        constexpr auto SinFromAngleV1 = MediumDecBase::SinFromAngle;
+        constexpr auto CosFromAngleV1 = MediumDecBase::CosFromAngle;
+        constexpr auto TanFromAngleV1 = MediumDecBase::TanFromAngle;
+
+public:
+       /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Sin(const auto& Value)
+        {
+            if(DecimalHalf.Flags==PiRep)
+            {
+                auto self = Value.ConvertAsPiNum(repType);
+                if(Value.IsNegative())
+                {
+                    IntValue.Value %= 2;
+                    IntValue.Value = 2 - IntValue.Value;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+                else
+                    IntValue.Value %= 2;
+                if(DecimalHalf==0)//0 or 1 Pi
+                    return Zero;
+                else if(DecimalHalf==500000000)
+                {
+                    if(IntValue==0)//)0.5 Pi
+                        return One;
+                    else//1.5 Pi
+                        return NegativeOne;
+                }
+                else
+                {
+                    self = Value.ConvertToNormType(repType);    
+                    return self.SinV1(Value);
+                }       
+            }
+            else
+            {
+                auto self = Value.ConvertAsNormType(repType);    
+                return self.SinV1(Value);
+            }
+        }
+
+        /// <summary>
+        /// Get Cos from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Cos(const auto& Value)
+        {
+            if(DecimalHalf.Flags==PiRep)
+            {
+                auto self = Value.ConvertAsPiNum(repType);
+                if(Value.IsNegative())
+                {
+                    IntValue.Value %= 2;
+                    IntValue.Value = 2 - IntValue.Value;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+                else
+                    IntValue.Value %= 2;
+                if(DecimalHalf==0)
+                    if(IntValue==0)//)0
+                        return One;
+                    else//1 Pi
+                        return NegativeOne;
+                else if(DecimalHalf==500000000)//0.5 Pi or 1.5 Pi
+					return Zero;
+                else
+                {
+                    self = Value.ConvertToNormType(repType);    
+                    return self.CosV1(Value);
+                }       
+            }
+            else
+            {
+                auto self = Value.ConvertAsNormType(repType);    
+                return self.CosV1(Value);
+            }
+        }
+
+        /// <summary>
+        /// Get Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Tan(const auto& Value)
+        {
+            if(DecimalHalf.Flags==PiRep)
+            {
+                auto self = Value.ConvertAsPiNum(repType);
+                if(Value.IsNegative())
+                {
+                    IntValue.Value %= 2;
+                    IntValue.Value = 2 - IntValue.Value;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+                else
+                    IntValue.Value %= 2;
+                if(DecimalHalf==0)//0 or 1 Pi
+					return Zero;
+                else if(DecimalHalf==500000000)//0.5 Pi or 1.5 Pi
+				{
+					if(IntValue==0)
+					#if defined(AltNum_EnableInfinityRep)
+						return PositiveInfinity;
+					#else
+						return Maximum;
+					#endif
+					else
+					#if defined(AltNum_EnableInfinityRep)
+						return NegativeInfinity;
+					#else
+						return Minimum;
+					#endif
+				}
+                else
+                {
+                    self = Value.ConvertToNormType(repType);    
+                    return self.TanV1(Value);
+                }       
+            }
+            else
+            {
+                auto self = Value.ConvertAsNormType(repType);    
+                return self.TanV1(Value);
+            }
+        }
+
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto ATan = MediumDecBase::ATan;
+
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDecBase</returns>
+        constexpr auto ArcTan2 = MediumDecBase::ArcTan2;
+
+        /// <summary>
+        /// Get Sin from Value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto SinFromAngle(const auto& Value)
+        {
+            auto self = Value.ConvertAsNormType(repType);    
+            return self.SinFromAngleV1(Value);
+        }
+
+        /// <summary>
+        /// Get Cos() from Value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns></returns>
+        static auto CosFromAngle(const auto& Value)
+        {
+            auto self = Value.ConvertAsNormType(repType);    
+            return self.CosFromAngleV1(Value);
+        }
+
+        /// <summary>
+        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto TanFromAngle(const auto& Value)
+        {
+            auto self = Value.ConvertAsNormType(repType);    
+            return self.TanFromAngleV1(Value);
+        }
 
     #pragma endregion Trigonomic Functions
     };

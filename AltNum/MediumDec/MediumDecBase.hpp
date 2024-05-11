@@ -133,7 +133,7 @@ protected:
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        IntHalfType IntHalf;
+        MirroredInt IntHalf;
 
 		//Return IntHalf as signed int
         signed int GetIntHalf()
@@ -149,7 +149,7 @@ protected:
         /// <summary>
         /// Stores decimal section info and other special info
         /// </summary>
-        DecimalHalfType DecimalHalf;
+        PartialInt DecimalHalf;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
@@ -2508,7 +2508,7 @@ public:
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>MediumDecBase</returns>
-        MediumDecBase operator- ()
+        MediumDecBase operator -()
         {
 			auto self = this;
             self.SwapNegativeStatus(); return self;
@@ -3063,17 +3063,17 @@ public:
             // Normalize x to a non-negative value to take advantage of
             // reciprocal symmetry. But keep track of the original sign
             // in case we need to return the reciprocal of e^x later.
-            VariantType x0 = *this;
+            auto x0 = *this;
             x0.Abs();
             // First term of Taylor expansion of e^x at a = 0 is 1.
             // tn is the variable we we will return for e^x, and its
             // value at any time is the sum of all currently evaluated
             // Taylor terms thus far.
-            VariantType tn = One;
+            auto tn = One;
             // Chose a truncation point for the Taylor series using the
             // heuristic bound 12 * ceil(|x| e), then work down from there
             // using Horner's method.
-            int n = VariantType::CeilInt(x0 * E) * 12;
+            int n = CeilInt(x0 * E) * 12;
             for (int i = n; i > 0; --i) {
                 tn = tn * (x0 / i) + One;
             }
@@ -3335,7 +3335,7 @@ public:
         auto LogOf(const auto& baseVal)
         {
             if (IsOne())
-                return MediumDecBase::Zero;
+                return Zero;
             return Log10Of() / baseVal.Log10Of();
         }
 		
@@ -3381,7 +3381,7 @@ protected:
                     baseLastPow *= baseWSquared;
                     baseAddRes = baseLastPow / baseWPow;
                     baseTotalRes += baseAddRes; baseWPow += 2;
-                } while (baseAddRes > MediumDecBase::JustAboveZero);
+                } while (baseAddRes > JustAboveZero);
             }
             return true;
         }
@@ -3413,12 +3413,12 @@ protected:
                     baseLastPow *= baseWSquared;
                     baseAddRes = baseLastPow / baseWPow;
                     baseTotalRes += baseAddRes; baseWPow += 2;
-                } while (baseAddRes > MediumDecBase::JustAboveZero);
+                } while (baseAddRes > JustAboveZero);
             }
             return true;
         }
 
-        auto LogOf_Section02(const bool& lnMultLog, const auto& baseTotalRes)
+        auto LogOf_Section02(const bool& lnMultLog, const auto& baseTotalRes, const auto& threshold)
         {
             //Now calculate other log
 			if(IsNegative())//Returns imaginary number if value is less than 0
@@ -3430,9 +3430,9 @@ protected:
                     for (int index = 1; index < 9; ++index)
                     {
                         if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                            return MediumDecBase(index, 0) / (baseTotalRes * MediumDecBase::HalfLN10Mult);
+                            return MediumDecBase(index, 0) / (baseTotalRes * HalfLN10Mult);
                     }
-                    return MediumDecBase(9, 0) / (baseTotalRes*MediumDecBase::HalfLN10Mult);
+                    return MediumDecBase(9, 0) / (baseTotalRes*HalfLN10Mult);
                 }
                 else
                 {
@@ -3446,7 +3446,6 @@ protected:
             }
             if (IntValue.Value<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-                auto threshold = MediumDecBase::FiveBillionth;
                 auto base = this - 1;        // Base of the numerator; exponent will be explicit
                 int den = 1;              // Denominator of the nth term
                 bool posSign = true;             // Used to swap the sign of each term
@@ -3477,9 +3476,9 @@ protected:
                 int WPow = 3;
                 do
                 {
-                    AddRes = MediumDecBase::Pow(W, WPow) / WPow;
+                    AddRes = Pow(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
-                } while (AddRes > MediumDecBase::JustAboveZero);
+                } while (AddRes > JustAboveZero);
                 if(lnMultLog)
                     return TotalRes/baseTotalRes;
                 else
@@ -3496,12 +3495,12 @@ public:
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
-        auto LogOfInt(const int& baseVal)
+        auto LogOfInt(const int& baseVal, const auto& threshold = FiveBillionth)
         {
             //Calculate Base log first
             auto baseTotalRes;
             bool lnMultLog = LogOfInt_BaseCalculation(baseTotalRes);
-            return LogOf_Section02(lnMultLog, baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes, threshold);
         }
 
         /// <summary>
@@ -3511,12 +3510,12 @@ public:
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
-        auto LogOfV2(const auto& baseVal)
+        auto LogOfV2(const auto& baseVal, const auto& threshold = FiveBillionth)
         {
             //Calculate Base log first
             auto baseTotalRes;
             bool lnMultLog = LogOf_BaseCalculation(baseTotalRes);
-            return LogOf_Section02(lnMultLog, baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes, threshold);
         }
 
 	#pragma endregion Log Functions
@@ -3531,8 +3530,8 @@ public:
         /// <returns>MediumDecBase</returns>
         static auto Sin(const auto& Value)
         {
-            auto SinValue = Zero;
-            for (int i = 0; i < 7; ++i)
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            for (int i = 1; i < 7; ++i)
             {
                 SinValue += Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
@@ -3547,8 +3546,8 @@ public:
         /// <returns>MediumDecBase</returns>
         static auto Cos(const auto& Value)
         {
-            auto CosValue = Zero;
-            for (int i = 0; i < 7; ++i)
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
             {
                 CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
@@ -3563,9 +3562,9 @@ public:
         /// <returns>MediumDecBase</returns>
         static auto Tan(const auto& Value)
         {
-            auto SinValue = Zero;
-            auto CosValue = Zero;
-            for (int i = 0; i < 7; ++i)
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
             {
                 SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
                 CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
@@ -3581,13 +3580,13 @@ public:
         /// <returns>MediumDecBase</returns>
         static auto ATan(const auto& Value)
         {
-            auto SinValue = Zero;
-            auto CosValue = Zero;
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
-            for (int i = 0; i < 7; ++i)
+            for (int i = 1; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                CosValue += MediumDecBase::Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
