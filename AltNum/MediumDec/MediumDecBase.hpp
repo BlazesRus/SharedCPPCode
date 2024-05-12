@@ -2843,7 +2843,8 @@ protected:
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                auto self = *this;
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                auto self = AbsOf();
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
@@ -2854,6 +2855,8 @@ protected:
                     expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
                 }
+                if(IsNegative)
+                    IntValue.IsPositive = 0;
             }
             return *this;
         }
