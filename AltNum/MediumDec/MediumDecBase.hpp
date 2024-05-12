@@ -2827,7 +2827,7 @@ protected:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        auto BasicUIntPowOpV1(const ValueType& expValue)
+        auto UIntPowOpV1(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -2863,7 +2863,7 @@ protected:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        auto BasicIntPowOfOpV1(const ValueType& expValue)
+        auto IntPowOfOpV1(const ValueType& expValue)
         {
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
@@ -2931,10 +2931,10 @@ protected:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        auto BasicUIntPowOfV1(const ValueType& expValue)
+        auto UIntPowOfV1(const ValueType& expValue)
         {
             auto self = this;
-            return self.BasicUIntPowOpV1();
+            return self.UIntPowOpV1();
 		}
 		
         /// <summary>
@@ -2942,23 +2942,23 @@ protected:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        auto BasicIntPowOfV1(const ValueType& expValue)
+        auto IntPowOfV1(const ValueType& expValue)
         {
             auto self = this;
-            return self.BasicIntPowOpV1();
+            return self.IntPowOpV1();
 		}
 
 public:
 
-        constexpr auto BasicUIntPowOfOp = BasicUIntPowOfOpV1<unsigned int>;
-        constexpr auto BasicIntPowOfOp = BasicIntPowOfOpV1<signed int>;
-        constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<unsigned long long>;
-        constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<signed long long>;
+        constexpr auto UIntPowOfOp = UIntPowOfOpV1<unsigned int>;
+        constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
+        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<unsigned long long>;
+        constexpr auto Int64PowOfOp = IntPowOpOfV1<signed long long>;
         
-        constexpr auto BasicUIntPowOf = BasicUIntPowOfV1<unsigned int>;
-        constexpr auto BasicIntPowOf = BasicIntPowOfV1<signed int>;
-        constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<unsigned long long>;
-        constexpr auto BasicInt64PowOf = BasicIntPowOfV1<signed long long>;
+        constexpr auto UIntPowOf = UIntPowOfV1<unsigned int>;
+        constexpr auto IntPowOf = IntPowOfV1<signed int>;
+        constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
+        constexpr auto Int64PowOf = IntPowOfV1<signed long long>;
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
