@@ -2954,12 +2954,30 @@ protected:
 
 public:
 
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
         constexpr auto UIntPowOfOp = UIntPowOfOpV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
         constexpr auto UInt64PowOfOp = UIntPowOfOpV1<unsigned long long>;
         constexpr auto Int64PowOfOp = IntPowOpOfV1<signed long long>;
         
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
         constexpr auto UIntPowOf = UIntPowOfV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOf = IntPowOfV1<signed int>;
         constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
         constexpr auto Int64PowOf = IntPowOfV1<signed long long>;

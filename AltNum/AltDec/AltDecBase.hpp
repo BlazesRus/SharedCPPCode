@@ -3396,6 +3396,82 @@ public:
         constexpr auto BasicInt64PowOf = BasicIntPowOfV1<signed long long>;
 
 
+protected:
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto UIntPowOpV1(const ValueType& expValue)
+        {
+			//Add code here
+            return *this;
+        }
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto IntPowOfOpV1(const ValueType& expValue)
+        {
+			//Add code here
+            return *this;
+        }
+		
+        /// <summary>
+        /// Applies Power of operation(for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto UIntPowOfV1(const ValueType& expValue)
+        {
+            auto self = this;
+            return self.UIntPowOpV1();
+		}
+		
+        /// <summary>
+        /// Applies Power of operation(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto IntPowOfV1(const ValueType& expValue)
+        {
+            auto self = this;
+            return self.IntPowOpV1();
+		}
+
+public:
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto UIntPowOfOp = UIntPowOfOpV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
+        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<unsigned long long>;
+        constexpr auto Int64PowOfOp = IntPowOpOfV1<signed long long>;
+        
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto UIntPowOf = UIntPowOfV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto IntPowOf = IntPowOfV1<signed int>;
+        constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
+        constexpr auto Int64PowOf = IntPowOfV1<signed long long>;
+
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
