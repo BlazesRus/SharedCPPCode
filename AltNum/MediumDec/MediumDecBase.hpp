@@ -2904,7 +2904,8 @@ protected:
             }
             else if (DecimalHalf == 0 && IntValue.Value == 10)
             {
-                IntValue.IsPositive = IsPositive?1:exp&1==1?1:0;
+                if(IsNegative()&&exp&1==1)
+                    IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
             }
             else
