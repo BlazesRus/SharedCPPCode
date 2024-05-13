@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -121,74 +121,22 @@ public:
 
     protected:
         #pragma region Const Representation values
-	#if defined(AltNum_UseIntForDecimalHalf)
-		#if defined(AltNum_EnablePiRep)
-		//When ExtraRep is this, then represents Value*Pi
-        static const signed int PiRep = -2147483648;
-			#if defined(AltNum_EnableAlternativeRepFractionals)
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
-        static const signed int PiByDivisorRep = -2147483645;
-			#endif
-		#endif
-		#if defined(AltNum_EnableERep)
-		//When ExtraRep is this, then represents Value*e
-        static const signed int ERep = -2147483646;
-			#if defined(AltNum_EnableAlternativeRepFractionals)
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
-        static const signed int EByDivisorRep = -2147483643;
-			#endif
-		#endif
-		#if defined(AltNum_EnableImaginaryNum)
-		//When ExtraRep is this, then represents Value*i 
-        static const signed int IRep = -2147483647;
-			#if defined(AltNum_EnableAlternativeRepFractionals)
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
-        static const signed int IByDivisorRep = -2147483644;
-			#endif
-		#endif
-	#endif
 
 	#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)/ExtraRep.Value
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int ApproachingBottomDivRep = 2147483644;
-		#else
         static const unsigned int ApproachingBottomDivRep = 1073741817;
-        #endif
 		//When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)/ExtraRep.Value
-		#if defined(AltNum_UseIntForDecimalHalf)
-		static const signed int ApproachingTopDivRep = 2147483643;
-		#else
 		static const unsigned int ApproachingTopDivRep = 1073741816;
-		#endif
 	#endif
     #if defined(AltNum_EnableWithinMinMaxRange)
         //Undefined but in ranged of IntValue to DecimalHalf when at this ExtraRep.Value
-		#if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int WithinMinMaxRangeRep = -2147483648;
-		#else
         static const unsigned int WithinMinMaxRangeRep = 2147483648;
-		#endif
     #endif
-    #if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int AlternativeFractionalLowerBound = -2147483640;
-    #else
         static const unsigned int AlternativeFractionalLowerBound = 1073741816;
-    #endif
         //Maximum divisor for Fractionals and mixed Fractions
-   #if defined(AltNum_UseIntForDecimalHalf)
-        static const signed int FractionalDivisorLimit = 2147483642;
-		//Infinisimals and infinity representations start here
-		static const signed int FractionalDivisorOverflow = 2147483643;
-   #else
         static const unsigned int FractionalDivisorLimit = 1073741815;
-   #endif
 	//Fractional Division Maximum at this ExtraRep.Value
-    #if defined(AltNum_EnableWithinMinMaxRange)
-        static const signed int FractionalMaximum = 2147483647;
-	#else
         static const unsigned int FractionalMaximum = 2147483648;
-	#endif
 	
     #pragma endregion Const Representation values
 
