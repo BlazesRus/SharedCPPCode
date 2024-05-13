@@ -3250,6 +3250,110 @@ protected:
 
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
+        /// without expValue checks
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto PartialUIntPowOp(const ValueType& expValue)
+        {
+            auto convertedVal = ConvertAsNormTypeV2();
+            if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntValue.IsPositive = 1;
+                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                DecimalHalf = 0; ExtraRep = 0;
+            }
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                auto self = AbsOf();
+                IntValue = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntValue.IsPositive = 0;
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// without expValue checks
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto PartialIntPowOfOp(const ValueType& expValue)
+        {
+            auto convertedVal = ConvertAsNormTypeV2();
+            if (expValue < 0)//Negative Pow
+            {
+                ValueType exp = expValue * -1;
+                if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue == 10 && expValue >= -9)
+                {
+                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
+                    if(IsNegative()&&exp&1==1)
+                        IsPositive = 1;
+                }
+                else
+                {
+                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                    //Switches from negative to positive if exp is odd number
+                    bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                    auto self = AbsOf();
+                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    while (expValue > 0)
+                    {
+                        // If expValue is odd, multiply self with result
+                        if (exp & 1 == 1)
+                            *this /= self;
+                        // n must be even now
+                        expValue = expValue >> 1; // y = y/2
+                        self = self / self; // Change x to x^-1
+                    }
+                    if(IsNegative)
+                        IntValue.IsPositive = 0;
+                }
+                return *this;
+            }
+            else if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntValue.IsPositive = 1;
+                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                DecimalHalf = 0; ExtraRep = 0;
+            }
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                auto self = AbsOf();
+                IntValue = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntValue.IsPositive = 0;
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
@@ -3405,8 +3509,27 @@ protected:
         template<typename ValueType>
         auto UIntPowOpV1(const ValueType& expValue)
         {
-			//Add code here
-            return *this;
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf.Value==InfinityRep)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableApproachingValues)
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableWithinMinMaxRange)
+            if(DecimalHalf.Flags==3)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)
+        #endif
+			return BasicUIntPowOpV1(expValue);
         }
 
         /// <summary>
@@ -3416,8 +3539,27 @@ protected:
         template<typename ValueType>
         auto IntPowOfOpV1(const ValueType& expValue)
         {
-			//Add code here
-            return *this;
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf.Value==InfinityRep)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableApproachingValues)
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableWithinMinMaxRange)
+            if(DecimalHalf.Flags==3)
+            {
+            }
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)
+        #endif
+			return BasicIntPowOpV1(expValue);
         }
 		
         /// <summary>
