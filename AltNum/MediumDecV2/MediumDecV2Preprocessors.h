@@ -25,8 +25,6 @@ AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based v
 
 MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 
-AltNum_EnableApproachingValues
-
 */
 
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation

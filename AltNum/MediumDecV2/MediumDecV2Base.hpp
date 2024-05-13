@@ -1224,6 +1224,51 @@ public:
         constexpr auto DivByUInt16 = BasicDivByUInt16;
         constexpr auto DivByInt16 = BasicDivByInt16;
 
+protected:
+		void UnsignedDivOp_RValueIntSwitch(const auto& rValue)
+		{
+			switch(rValue.IntValue.Value)
+			{
+				case 2:
+					if(IntValue&1==1)//Check if number is odd
+						UnsignedBasicIntDivOp(2);
+					else
+						IntValue.Value /= 2;
+					break;
+				case 4:
+					if(((IntValue >> 2) << 2) == IntValue)
+						IntValue.Value /= 4;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 8:
+					if(((IntValue >> 3) << 3) == IntValue)
+						IntValue.Value /= 8;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 16:
+					if(((IntValue >> 4) << 4) == IntValue)
+						IntValue.Value /= 16;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 32:
+					if(((IntValue >> 5) << 5) == IntValue)
+						IntValue.Value /= 32;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 0:
+					throw "Target value can not be divided by zero";
+					break;
+				default:
+					UnsignedBasicIntDivOp(rValue.IntValue.Value);
+					break;
+			}
+		}
+
+public:
 		/// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// Return true if divide into zero
@@ -1232,57 +1277,33 @@ public:
         /// <param name="rValue.">The right side Value</param>
         auto& UnsignedDivOp(const auto& rValue)
 		{
-			if(DecimalHalf==0)
+			switch(rValue.DecimalHalf.Flags)
 			{
-				if(rValue.DecimalHalf==0)
+	#if defined(AltNum_EnableERep)
+				case 1://Pi Variants
+					break;
+	#endif
+	#if defined(AltNum_EnableERep)
+				case 2://ENum Variants
+					break;
+	#endif
+	#if defined(AltNum_EnableImaginaryNum)
+				case 3://Imaginary numbers
+					break;
+	#endif
+				default://Normal numbers, infinity, and infinisimal numbers etc
 				{
-					switch(rValue.IntValue.Value)
+					if(DecimalHalf==0)
 					{
-						case 2:
-							if(IntValue&1==1)//Check if number is odd
-								UnsignedBasicIntDivOp(2);
-							else
-								IntValue.Value /= 2;
-							break;
-						case 4:
-							if(((IntValue >> 2) << 2) == IntValue)
-								IntValue.Value /= 4;
-							else
-								UnsignedBasicIntDivOp(4);
-							break;
-						case 8:
-							if(((IntValue >> 3) << 3) == IntValue)
-								IntValue.Value /= 8;
-							else
-								UnsignedBasicIntDivOp(4);
-							break;
-						case 16:
-							if(((IntValue >> 4) << 4) == IntValue)
-								IntValue.Value /= 16;
-							else
-								UnsignedBasicIntDivOp(4);
-							break;
-						case 32:
-							if(((IntValue >> 5) << 5) == IntValue)
-								IntValue.Value /= 32;
-							else
-								UnsignedBasicIntDivOp(4);
-							break;
-                        case 0:
-                            throw "Target value can not be divided by zero";
-                            break;
-						default:
-							UnsignedBasicIntDivOp(rValue.IntValue.Value);
-							break;
+						if(rValue.DecimalHalf==0)
+							UnsignedDivOp_RValueIntSwitch(rValue);
+						else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+							DecimalHalf = 1;
 					}
+					else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+						DecimalHalf = 1;
 				}
-                //To-Do add code for other representations
-				else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-				    DecimalHalf = 1;
 			}
-            //To-Do add code for other representations
-			else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-		        DecimalHalf = 1;
             return *this;
 		}
 

@@ -145,7 +145,11 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-        virtual RepType GetRepType()
+#if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
+#else
+        RepType GetRepType()
+#endif
         {
 #if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
@@ -362,6 +366,18 @@ public:
 			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
             return RepType::UnknownType;//Catch-All Value;
         }
+
+#if defined(AltNum_UseBuiltinVirtualTable)
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
+		}
+		
+#endif
 
     #pragma endregion RepType
 
