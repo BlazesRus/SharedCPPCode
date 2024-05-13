@@ -1502,7 +1502,17 @@ public:
         /// <param name="rValue.">The right side Value</param>
         auto& BasicUnsignedDivOp(const auto& rValue)
 		{
-			//Add code here
+			if(DecimalHalf==0)
+			{
+				if(rValue.DecimalHalf==0)
+					UnsignedBasicIntDivOp(rValue.IntValue.Value);
+				else
+				{
+				}
+			}
+			else
+			{
+			}
             return *this;
 		}
 
@@ -1858,37 +1868,105 @@ protected:
 
 public:
 
-        /// <summary>
-        /// Division operation between MediumDecBase values.
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
-        constexpr auto UnsignedDivOp = MediumDecBase::UnsignedDivOp;
+        auto& UnsignedDivOp(const auto& rValue)
+		{
+			if(DecimalHalf==0)
+			{
+				if(rValue.DecimalHalf==0)
+				{
+					switch(rValue.IntValue.Value)
+					{
+						case 2:
+							if(IntValue&1==1)//Check if number is odd
+								UnsignedBasicIntDivOp(2);
+							else
+								IntValue.Value /= 2;
+							break;
+						case 4:
+							if(((IntValue >> 2) << 2) == IntValue)
+								IntValue.Value /= 4;
+							else
+								UnsignedBasicIntDivOp(4);
+							break;
+						case 8:
+							if(((IntValue >> 3) << 3) == IntValue)
+								IntValue.Value /= 8;
+							else
+								UnsignedBasicIntDivOp(4);
+							break;
+						case 16:
+							if(((IntValue >> 4) << 4) == IntValue)
+								IntValue.Value /= 16;
+							else
+								UnsignedBasicIntDivOp(4);
+							break;
+						case 32:
+							if(((IntValue >> 5) << 5) == IntValue)
+								IntValue.Value /= 32;
+							else
+								UnsignedBasicIntDivOp(4);
+							break;
+						default:
+							UnsignedBasicIntDivOp(rValue.IntValue.Value);
+							break;
+					}
+				}
+				else
+				{
+				}
+			}
+			else
+			{
+			}
+            return *this;
+		}
 
-        /// <summary>
-        /// Division operation between MediumDecBase values.
+		/// <summary>
+        /// Division operation that ignores special decimal status
+        /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
-        constexpr auto DivOp = MediumDecBase::BasicDivOp;
+        /// <param name="rValue.">The right side Value</param> 
+        void DivOp(const auto& Value)
+        {
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UnsignedMultOp(-Value);
+            }
+            else
+                UnsignedDivOp(Value);
+        }
 
-        /// <summary>
-        /// Division operation between MediumDecBase values.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
-        constexpr auto DivideByUnsigned = MediumDecBase::BasicUnsignedDivision;
+        /// <param name="rValue.">The right side Value</param> 
+        auto DivideByUnsigned(const auto& rValue)
+        {
+            auto self = *this;
+            return self.UnsignedDivOp(rValue);
+        }
 
-        /// <summary>
-        /// Division operation between MediumDecBase values.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
-        constexpr auto DivideBy = MediumDecBase::BasicDivision;
+        /// <param name="rValue.">The right side Value</param> 
+        auto DivideBy(const auto& rValue)
+        {
+            auto self = *this;
+            return self.DivOp(rValue);
+        }
 
         /// <summary>
         /// Division operation
