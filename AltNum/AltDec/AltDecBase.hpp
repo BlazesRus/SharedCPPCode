@@ -145,229 +145,280 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetPiRepType()
+    #else
+        RepType GetPiRepType()
+    #endif
+        {
+    #if defined(AltNum_EnableApproachingPi)
+            if (DecimalHalf == ApproachingTopRep)
+        #if defined(AltNum_EnableApproachingAlternativeDiv)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeftPi;
+                else
+        #endif
+                    return RepType::ApproachingTopPi;
+    #endif
+    #if defined(AltNum_EnableApproachingAlternativeDiv)
+            else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+        #if defined(AltNum_EnableApproachingAlternativeDiv)
+                 return RepType::ApproachingMidRightPi;
+        #endif
+    #endif
+    #if defined(AltNum_EnablePowerOfRepresentation)
+        #if defined(AltNum_EnableNegativePowerRep)
+            if(ExtraRep!=0)
+        #else
+            if(ExtraRep.IsNegative())
+        #endif
+                return RepType::PiPower;
+    #endif
+    #if defined(AltNum_EnableFractionals)
+            if(ExtraRep!=0)
+        #if defined(AltNum_EnableMixedFractional)
+                if(ExtraRep.IsNegative())
+                    return RepType::MixedPi;
+                else
+        #endif
+                    return RepType::PiNumByDiv;
+    #endif
+            return RepType::PiNum;
+        }
+
+#if defined(AltNum_EnableERep)
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetERepType()
+    #else
+        RepType GetERepType()
+    #endif
+        {
+    #if defined(AltNum_EnableApproachingE)
+            if (DecimalHalf == ApproachingTopRep)
+        #if defined(AltNum_EnableApproachingAlternativeDiv)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeftE;
+                else
+        #endif
+                    return RepType::ApproachingTopE;
+        #if defined(AltNum_EnableApproachingAlternativeDiv)
+            else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                 return RepType::ApproachingMidRightE;
+        #endif
+    #endif
+    #if defined(AltNum_EnablePowerOfRepresentation)
+        #if defined(AltNum_EnableNegativePowerRep)
+            if(ExtraRep!=0)
+        #else
+            if(ExtraRep.IsNegative())
+        #endif
+                return RepType::EPower;
+    #endif
+    #if defined(AltNum_EnableFractionals)
+            if(ExtraRep!=0)
+        #if defined(AltNum_EnableMixedFractional)
+                if(ExtraRep.IsNegative())
+                    return RepType::MixedE;
+                else
+        #endif
+                    return RepType::ENumByDiv;
+    #endif
+            return RepType::ENum;
+        }
+#endif
+
+#if defined(MediumDecV2_EnableImaginaryNum)
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetIRepType()
+    #else
+        RepType GetIRepType()
+    #endif
+        {
+    #if defined(AltNum_EnableImaginaryInfinity)
+            if(DecimalHalf == InfinityRep)
+                return RepType::ImaginaryInfinity;
+    #endif
+    #if defined(AltNum_EnableApproachingI)
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+        #if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingImaginaryMidLeft;
+                else
+        #endif
+                return RepType::ApproachingImaginaryBottom;
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+        #if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingImaginaryMidRight;
+                else
+        #endif
+                return RepType::ApproachingImaginaryTop;
+            }
+    #endif
+    #if defined(AltNum_EnablePowerOfRepresentation)
+        #if defined(AltNum_EnableNegativePowerRep)
+            if(ExtraRep!=0)
+        #else
+            if(ExtraRep.IsNegative())
+        #endif
+                return RepType::EPower;
+    #endif
+    #if defined(AltNum_EnableFractionals)
+            if(ExtraRep!=0)
+        #if defined(AltNum_EnableMixedFractional)
+                if(ExtraRep.IsNegative())
+                    return RepType::MixedI;
+                else
+        #endif
+                    return RepType::INumByDiv;
+    #endif
+            return RepType::INum;
+        }
+#endif
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetNormRepType()
+    #else
+        RepType GetNormRepType()
+    #endif
+        {
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf == InfinityRep)
+                return RepType::Infinity;
+        #endif
+        #if defined(AltNum_EnableApproachingValues)
+            if (DecimalHalf == ApproachingBottomRep)
+            {
+        #if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeft;
+                else
+        #endif
+                    return RepType::ApproachingBottom;
+            }
+            else if (DecimalHalf == ApproachingTopRep)
+            {
+        #if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidRight;
+                else
+        #endif
+                return RepType::ApproachingTop;
+            }
+        #endif
+        #if defined(AltNum_EnableNaN)
+            if(DecimalHalf==NaNRep)
+                return RepType::NaN;
+            else if(DecimalHalf==UndefinedRep)
+                return RepType::Undefined;
+        #endif
+        #if defined(AltNum_EnableNil)
+            if(DecimalHalf==NilRep)
+                return RepType::Nil;
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
+            #if defined(AltNum_EnableWithinMinMaxRange)
+            if (ExtraRep == WithinMinMaxRangeRep)
+                return RepType::WithinMinMaxRange;
+            #endif
+            if(DecimalHalf==UndefinedInRangeRep)
+                //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+                //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
+                return RepType::UndefinedButInRange;
+        #endif
+        #if defined(AltNum_EnablePowerOfRepresentation)
+            #if defined(AltNum_EnableNegativePowerRep)
+            if(ExtraRep!=0)
+            #else
+            if(ExtraRep.IsNegative())
+            #endif
+                return RepType::ToPowerOf;
+        #endif
+        #if defined(AltNum_EnableFractionals)
+            if(ExtraRep!=0)
+            #if defined(AltNum_EnableMixedFractional)
+                if(ExtraRep.IsNegative())
+                    return RepType::MixedFrac;
+                else
+            #endif
+                    return RepType::NumByDiv;
+        #endif
+            return RepType::NormalType;
+        }
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
 #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
+        RepType VirtualTable_GetRepType()
 #else
         RepType GetRepType()
 #endif
         {
-#if !defined(AltNum_UseIntForDecimalHalf)
             switch(DecimalHalf.Flag)
             {
-#endif
-		#if defined(AltNum_EnablePiRep)
-            #if defined(AltNum_UseIntForDecimalHalf)
-                //Add code here later
-            #else
+		#if defined(MediumDecV2_EnablePiRep)
                 case 1:
-                    {
-                #if defined(AltNum_EnableApproachingPi)
-                        if (DecimalHalf == ApproachingTopRep)
-                    #if defined(AltNum_EnableApproachingAlternativeDiv)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingMidLeftPi;
-                            else
-                    #endif
-                                return RepType::ApproachingTopPi;
-                #endif
-                #if defined(AltNum_EnableApproachingAlternativeDiv)
-                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
-                    #if defined(AltNum_EnableApproachingAlternativeDiv)
-                             return RepType::ApproachingMidRightPi;
-                    #endif
-                #endif
-                #if defined(AltNum_EnablePowerOfRepresentation)
-                    #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
-                    #else
-                        if(ExtraRep.IsNegative())
-                    #endif
-                            return RepType::PiPower;
-                #endif
-                #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
-                    #if defined(AltNum_EnableMixedFractional)
-                            if(ExtraRep.IsNegative())
-                                return RepType::MixedPi;
-                            else
-                    #endif
-                                return RepType::PiNumByDiv;
-                #endif
-                        return RepType::PiNum;
-                    }
-                    break;
-            #endif
+                    return GetPiRepType(); break;
         #endif
-		#if defined(AltNum_EnableERep)
-            #if defined(AltNum_UseIntForDecimalHalf)
-                //Add code here later
-            #else
+		#if defined(MediumDecV2_EnableERep)
                 case 2:
-                    {
-                #if defined(AltNum_EnableApproachingE)
-                        if (DecimalHalf == ApproachingTopRep)
-                    #if defined(AltNum_EnableApproachingAlternativeDiv)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingMidLeftE;
-                            else
-                    #endif
-                                return RepType::ApproachingTopE;
-                    #if defined(AltNum_EnableApproachingAlternativeDiv)
-                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
-                             return RepType::ApproachingMidRightE;
-                    #endif
-                #endif
-                #if defined(AltNum_EnablePowerOfRepresentation)
-                    #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
-                    #else
-                        if(ExtraRep.IsNegative())
-                    #endif
-                            return RepType::EPower;
-                #endif
-                #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
-                    #if defined(AltNum_EnableMixedFractional)
-                            if(ExtraRep.IsNegative())
-                                return RepType::MixedE;
-                            else
-                    #endif
-                                return RepType::ENumByDiv;
-                #endif
-                        return RepType::ENum;
-                    }
-                    
-                    break;
-            #endif
-		#endif
-        #if defined(AltNum_EnableImaginaryNum)
-            #if defined(AltNum_UseIntForDecimalHalf)
-                //Add code here later
-            #else
-                case 3:
-                    {
-                #if defined(AltNum_EnableImaginaryInfinity)
-                        if(DecimalHalf == InfinityRep)
-                            return RepType::ImaginaryInfinity;
-                #endif
-                #if defined(AltNum_EnableApproachingI)
-                        if (DecimalHalf == ApproachingBottomRep)
-                        {
-                    #if defined(AltNum_EnableApproachingDivided)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingImaginaryMidLeft;
-                            else
-                    #endif
-                            return RepType::ApproachingImaginaryBottom;
-                        }
-                        else if (DecimalHalf == ApproachingTopRep)
-                        {
-                    #if defined(AltNum_EnableApproachingDivided)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingImaginaryMidRight;
-                            else
-                    #endif
-                            return RepType::ApproachingImaginaryTop;
-                        }
-                #endif
-                #if defined(AltNum_EnablePowerOfRepresentation)
-                    #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
-                    #else
-                        if(ExtraRep.IsNegative())
-                    #endif
-                            return RepType::EPower;
-                #endif
-                #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
-                    #if defined(AltNum_EnableMixedFractional)
-                            if(ExtraRep.IsNegative())
-                                return RepType::MixedI;
-                            else
-                    #endif
-                                return RepType::INumByDiv;
-                #endif
-                        return RepType::INum;
-                    }
-                    break;
-            #endif
+                    return GetERepType(); break;
         #endif
-#if !defined(AltNum_UseIntForDecimalHalf)
+		#if defined(MediumDecV2_EnableImaginaryNum)
+                case 3:
+                    return GetIRepType(); break;
+        #endif
                 default:
-                    {
-#endif
-		#if defined(AltNum_EnableInfinityRep)
-                        if(DecimalHalf == InfinityRep)
-                            return RepType::Infinity;
-		#endif
-		#if defined(AltNum_EnableApproachingValues)
-                        if (DecimalHalf == ApproachingBottomRep)
-                        {
-            #if defined(AltNum_EnableApproachingDivided)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingMidLeft;
-                            else
-            #endif
-                                return RepType::ApproachingBottom;
-                        }
-                        else if (DecimalHalf == ApproachingTopRep)
-                        {
-            #if defined(AltNum_EnableApproachingDivided)
-                            if(ExtraRep!=0)
-                                return RepType::ApproachingMidRight;
-                            else
-            #endif
-                            return RepType::ApproachingTop;
-                        }
-	    #endif
-		#if defined(AltNum_EnableNaN)
-			            if(DecimalHalf==NaNRep)
-				            return RepType::NaN;
-			            else if(DecimalHalf==UndefinedRep)
-				            return RepType::Undefined;
-		#endif
-        #if defined(AltNum_EnableNil)
-			            if(DecimalHalf==NilRep)
-				            return RepType::Nil;
-		#endif
-		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-            #if defined(AltNum_EnableWithinMinMaxRange)
-                        if (ExtraRep == WithinMinMaxRangeRep)
-                            return RepType::WithinMinMaxRange;
-            #endif
-			            if(DecimalHalf==UndefinedInRangeRep)
-				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
-                            //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
-                            return RepType::UndefinedButInRange;
-		#endif
-                #if defined(AltNum_EnablePowerOfRepresentation)
-                    #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
-                    #else
-                        if(ExtraRep.IsNegative())
-                    #endif
-                            return RepType::ToPowerOf;
-                #endif
-                #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
-                    #if defined(AltNum_EnableMixedFractional)
-                            if(ExtraRep.IsNegative())
-                                return RepType::MixedFrac;
-                            else
-                    #endif
-                                return RepType::NumByDiv;
-                #endif
-                        return RepType::NormalType;
-#if !defined(AltNum_UseIntForDecimalHalf)
-                    }
-                    break;
+                    return GetNormRepType(); break;
             }
-#endif
-			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
-            return RepType::UnknownType;//Catch-All Value;
         }
 
 #if defined(AltNum_UseBuiltinVirtualTable)
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetPiRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetERepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetERepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetIRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetNormRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
+		}
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
@@ -376,7 +427,7 @@ public:
 		{
 			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
 		}
-		
+
 #endif
 
     #pragma endregion RepType

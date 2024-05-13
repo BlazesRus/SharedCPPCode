@@ -159,8 +159,106 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetPiRepType()
+    #else
+        RepType GetPiRepType()
+    #endif
+        {
+        #if defined(MediumDecV2_EnableApproachingPi)
+            if (DecimalHalf == ApproachingBottomRep)
+                return RepType::ApproachingBottomPi;
+            else if (DecimalHalf == ApproachingTopRep)
+                return RepType::ApproachingTopPi;
+        #endif
+             return RepType::PiNum;
+        }
+
+#if defined(MediumDecV2_EnableERep)
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetERepType()
+    #else
+        RepType GetERepType()
+    #endif
+        {
+        #if defined(MediumDecV2_EnableApproachingPi)
+            if (DecimalHalf == ApproachingBottomRep)
+                return RepType::ApproachingBottomE;
+            else if (DecimalHalf == ApproachingTopRep)
+                return RepType::ApproachingTopE;
+        #endif
+             return RepType::ENum;
+        }
+#endif
+
+#if defined(MediumDecV2_EnableImaginaryNum)
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetIRepType()
+    #else
+        RepType GetIRepType()
+    #endif
+        {
+        #if defined(MediumDecV2_EnableImaginaryInfinity)
+			if(DecimalHalf == InfinityRep)
+				return RepType::ImaginaryInfinity;
+        #endif
+        #if defined(MediumDecV2_EnableApproachingI)
+			if (DecimalHalf == ApproachingTopRep)
+				return RepType::ApproachingImaginaryTop;
+			else if (DecimalHalf == ApproachingTopRep)
+				return RepType::ApproachingImaginaryBottom;
+        #endif
+            return RepType::INum;
+        }
+#endif
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
+    #if defined(AltNum_UseBuiltinVirtualTable)
+        RepType VirtualTable_GetNormRepType()
+    #else
+        RepType GetNormRepType()
+    #endif
+        {
+            switch(DecimalHalf.Value)
+            {
+		#if defined(MediumDecV2_EnableApproachingValues)
+                case ApproachingBottomRep:
+                    return RepType::ApproachingBottom; break;
+                case ApproachingTopRep:
+                    return RepType::ApproachingTop; break;
+	    #endif
+		#if defined(MediumDecV2_EnableInfinityRep)
+                case InfinityRep:
+                    return RepType::Infinity; break;
+		#endif
+		#if defined(AltNum_EnableNaN)
+                case NaNRep:
+                    return RepType::NaN; break;
+                case UndefinedRep:
+                    return RepType::Undefined; break;
+		#endif
+        #if defined(AltNum_EnableNil)
+                case NilRep:
+                    return RepType::Nil; break;
+		#endif
+                default:
+                    return RepType::NormalType; break;
+            }
+        }
+
+        /// <summary>
+        /// Returns representation type data that is stored in value
+        /// </summary>
 #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetRepType()//Virtual Function for use in directly calling
+        RepType VirtualTable_GetRepType()
 #else
         RepType GetRepType()
 #endif
@@ -169,93 +267,61 @@ namespace BlazesRusCode
             {
 		#if defined(MediumDecV2_EnablePiRep)
                 case 1:
-                    {
-            #if defined(MediumDecV2_EnableApproachingPi)
-                        if (DecimalHalf == ApproachingBottomRep)
-                            return RepType::ApproachingBottomPi;
-                        else if (DecimalHalf == ApproachingTopRep)
-                            return RepType::ApproachingTopPi;
-            #endif
-                        return RepType::PiNum;
-                    }
-                    break;
+                    return GetPiRepType(); break;
         #endif
 		#if defined(MediumDecV2_EnableERep)
                 case 2:
-                    {
-            #if defined(MediumDecV2_EnableApproachingE)
-                        if (DecimalHalf == ApproachingBottomRep)
-                            return RepType::ApproachingBottomE;
-                        else if (DecimalHalf == ApproachingTopRep)
-                            return RepType::ApproachingTopE;
-            #endif
-                        return RepType::ENum;
-                    }
-                    
-                    break;
-		#endif
-        #if defined(MediumDecV2_EnableImaginaryNum)
+                    return GetERepType(); break;
+        #endif
+		#if defined(MediumDecV2_EnableImaginaryNum)
                 case 3:
-                    {
-            #if defined(MediumDecV2_EnableImaginaryInfinity)
-                        if(DecimalHalf == InfinityRep)
-                            return RepType::ImaginaryInfinity;
-            #endif
-            #if defined(MediumDecV2_EnableApproachingI)
-                        if (DecimalHalf == ApproachingTopRep)
-                            return RepType::ApproachingImaginaryTop;
-                        else if (DecimalHalf == ApproachingTopRep)
-                            return RepType::ApproachingImaginaryBottom;
-            #endif
-                        return RepType::INum;
-                    }
-                    break;
-        #elif defined(MediumDecV2_EnableWithinMinMaxRange)
+                    return GetIRepType(); break;
+		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
                 case 3:
 				    //If IntValue==???, then left side range value equals negative infinity
 				    //If DecimalHalf.Value==???, then right side range value equals positive infinity
 				    //IntValue represents left side minimum
 				    //For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
 				    return RepType::WithinMinMaxRange;
-                    break;
         #endif
                 default:
-                    {
-		#if defined(MediumDecV2_EnableInfinityRep)
-                        if(DecimalHalf == InfinityRep)
-                            return RepType::Infinity;
-		#endif
-		#if defined(MediumDecV2_EnableApproachingValues)
-                        if (DecimalHalf == ApproachingBottomRep)
-                            return RepType::ApproachingBottom;
-                        else if (DecimalHalf == ApproachingTopRep)
-                            return RepType::ApproachingTop;
-	    #endif
-		#if defined(AltNum_EnableNaN)
-			            if(DecimalHalf==NaNRep)
-				            return RepType::NaN;
-			            else if(DecimalHalf==UndefinedRep)
-				            return RepType::Undefined;
-		#endif
-        #if defined(AltNum_EnableNil)
-			            if(DecimalHalf==NilRep)
-				            return RepType::Nil;
-		#endif
-		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-			            if(DecimalHalf==UndefinedInRangeRep)
-				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
-                            //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
-                            return RepType::UndefinedButInRange;
-		#endif
-                        return RepType::NormalType;
-                    }
-                    break;
+                    return GetNormRepType(); break;
             }
-			throw "Unknown or non-enabled representation type detected";//Should not reach this point when code is fully working
-            return RepType::UnknownType;//Catch-All Value;
         }
 
 #if defined(AltNum_UseBuiltinVirtualTable)
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetPiRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetERepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetERepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetIRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
+		}
+
+        /// <summary>
+        /// Returns representation type data that is stored in value(Directly calling function)
+        /// </summary>
+        RepType GetNormRepType()
+		{
+			GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
+		}
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
@@ -264,12 +330,7 @@ namespace BlazesRusCode
 		{
 			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
 		}
-		
-		/*
-		static std::string RepTypeAsString(const RepType& repType)
-		{
-			GetVTable(VTable)->VirtualTable_RepTypeAsString(VTable, repType);
-		}*/
+
 #endif
 
     #pragma endregion RepType
