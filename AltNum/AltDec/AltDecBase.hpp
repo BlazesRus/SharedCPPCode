@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -3196,26 +3196,23 @@ public:
 
 protected:
 
+	#if defined(AltNum_EnableImaginaryNum)
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
-        /// without expValue checks
+        /// without flipping of negative status and other checks
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
         auto PartialUIntPowOp(const ValueType& expValue)
         {
-            auto convertedVal = ConvertAsNormTypeV2();
-            if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
-                if(IsNegative()&&exp&1==1)
-                    IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = 0;
+                DecimalHalf.Value = 0; ExtraRep = 0;
             }
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
                 auto self = AbsOf();
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
@@ -3227,62 +3224,43 @@ protected:
                     expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
                 }
-                if(IsNegative)
-                    IntValue.IsPositive = 0;
             }
             return *this;
         }
 
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
-        /// without expValue checks
+        /// without flipping of negative status and other checks
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
         auto PartialIntPowOfOp(const ValueType& expValue)
         {
-            auto convertedVal = ConvertAsNormTypeV2();
             if (expValue < 0)//Negative Pow
             {
                 ValueType exp = expValue * -1;
-                if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue == 10 && expValue >= -9)
-                {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
-                    if(IsNegative()&&exp&1==1)
-                        IsPositive = 1;
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    //Switches from negative to positive if exp is odd number
-                    bool IsNegative = IsPositive()?false:exp&1==1?false:true;
-                    auto self = AbsOf();
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, multiply self with result
-                        if (exp & 1 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
-                    }
-                    if(IsNegative)
-                        IntValue.IsPositive = 0;
-                }
+				//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+				auto self = AbsOf();
+				IntValue = 1; DecimalHalf = 0;// Initialize result
+				while (expValue > 0)
+				{
+					// If expValue is odd, multiply self with result
+					if (exp & 1 == 1)
+						*this /= self;
+					// n must be even now
+					expValue = expValue >> 1; // y = y/2
+					self = self / self; // Change x to x^-1
+				}
                 return *this;
             }
-            else if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            else if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
-                if(IsNegative()&&exp&1==1)
-                    IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = 0;
+                DecimalHalf.Value = 0; ExtraRep = 0;
             }
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
                 auto self = AbsOf();
                 IntValue = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
@@ -3294,24 +3272,19 @@ protected:
                     expValue = expValue >> 1; // y = y/2
                     self = self * self; // Change x to x^2
                 }
-                if(IsNegative)
-                    IntValue.IsPositive = 0;
             }
             return *this;
         }
+    #endif
 
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
+        /// without checking for specific representation type
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
         auto BasicUIntPowOpV1(const ValueType& expValue)
         {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
-            {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0; return *this;
-            }
             auto convertedVal = ConvertAsNormTypeV2();
             if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
             {
@@ -3342,22 +3315,19 @@ protected:
         }
 
         /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
+        /// Applies Power of operation (for integer exponents)
+        /// without checking for specific representation type
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
         auto BasicIntPowOfOpV1(const ValueType& expValue)
         {
-            if (expValue == 1) { return *this; }//Return self
-            else if (expValue == 0)
-            {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0; return *this;
-            }
-            else if (expValue < 0)//Negative Pow
+            auto convertedVal = ConvertAsNormTypeV2();
+            if (expValue < 0)//Negative Pow
             {
                 auto convertedVal = ConvertAsNormTypeV2();
                 ValueType exp = expValue * -1;
-                if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue == 10 && expValue >= -9)
+                if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntValue == 10 && expValue >= -9)
                 {
                     IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
                     if(IsNegative()&&exp&1==1)
@@ -3384,8 +3354,7 @@ protected:
                 }
                 return *this;
             }
-            auto convertedVal = ConvertAsNormTypeV2();
-            if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            else if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntValue.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
                     IntValue.IsPositive = 1;
@@ -3447,6 +3416,31 @@ public:
         constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<unsigned long long>;
         constexpr auto BasicInt64PowOf = BasicIntPowOfV1<signed long long>;
 
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="nValue">The nth root value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        /// <returns>auto</returns>
+        constexpr auto NthRootOf = MediumDecBase::NthRootOf;
+
+        /// <summary>
+        /// Multiply by Pi exp times
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto MultiplyByPiPower(const ValueType& exp)
+        {
+        }
+
+        /// <summary>
+        /// Multiply by E exp times
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto MultiplyByEPower(const ValueType& exp)
+        {
+        }
 
 protected:
 
@@ -3455,29 +3449,67 @@ protected:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         template<typename ValueType>
-        auto UIntPowOpV1(const ValueType& expValue)
+        auto UIntPowOpV1(const ValueType& exp)
         {
+			if (expValue == 1)
+				return *this;//Return self
+			else if (expValue == 0)
+				SetAsOne(); return *this;
+		#if defined(AltNum_EnablePiRep)
+			else if(DecimalHalf.Flags==1)
+			{
+				BasicUIntPowOp(expValue);
+				MultiplyByPiPower(exp-1);
+			}
+		#endif
+		#if defined(AltNum_EnableERep)
+			else if(DecimalHalf.Flags==2)
+			{
+				if (expValue == 1)
+					return *this;//Return self
+				else if (expValue == 0)
+					SetAsOne(); return *this;
+				BasicUIntPowOp(expValue);
+				MultiplyByEPower(exp-1);
+			}
+		#endif
+		#if defined(AltNum_EnableImaginaryNum)
+            else if(DecimalHalf.Flags==3)
+            {
+				if (expValue == 1)
+					return *this;//Return self
+				else if (expValue == 0)
+					SetAsOne(); return *this;
+                //Add code here
+                return *this;
+            }
+        #endif
         #if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf.Value==InfinityRep)
+            else if(DecimalHalf.Value==InfinityRep)
             {
             }
         #endif
         #if defined(AltNum_EnableApproachingValues)
-            if (DecimalHalf == ApproachingBottomRep)
+            else if (DecimalHalf == ApproachingBottomRep)
             {
             }
             else if (DecimalHalf == ApproachingTopRep)
             {
             }
         #endif
-        #if defined(AltNum_EnableWithinMinMaxRange)
-            if(DecimalHalf.Flags==3)
+        #if defined(AltNum_EnableUndefinedButInRange)
+            else if(DecimalHalf.Value==UndefinedInRangeRep)
             {
             }
         #endif
-        #if defined(AltNum_EnableUndefinedButInRange)
+        #if defined(AltNum_EnableWithinMinMaxRange)
+            else if(ExtraRep==WithinMinMaxRangeRep)
+            {
+            }
         #endif
-			return BasicUIntPowOpV1(expValue);
+            else
+                BasicUIntPowOpV1(expValue); 
+			return *this;
         }
 
         /// <summary>
@@ -3500,14 +3532,19 @@ protected:
             {
             }
         #endif
-        #if defined(AltNum_EnableWithinMinMaxRange)
-            if(DecimalHalf.Flags==3)
+        #if defined(AltNum_EnableUndefinedButInRange)
+            else if(DecimalHalf.Value==UndefinedInRangeRep)
             {
             }
         #endif
-        #if defined(AltNum_EnableUndefinedButInRange)
+        #if defined(AltNum_EnableWithinMinMaxRange)
+            else if(ExtraRep==WithinMinMaxRangeRep)
+            {
+            }
         #endif
-			return BasicIntPowOpV1(expValue);
+            else
+                BasicIntPowOpV1(expValue); 
+			return *this;
         }
 		
         /// <summary>
@@ -3561,14 +3598,6 @@ public:
         constexpr auto IntPowOf = IntPowOfV1<signed int>;
         constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
         constexpr auto Int64PowOf = IntPowOfV1<signed long long>;
-
-        /// <summary>
-        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
-        /// </summary>
-        /// <param name="nValue">The nth root value.</param>
-        /// <param name="precision">Precision level (smaller = more precise)</param>
-        /// <returns>auto</returns>
-        constexpr auto NthRoot = MediumDecBase::NthRoot;
 
 	#pragma endregion Pow and Sqrt Functions
 
