@@ -1475,23 +1475,6 @@ protected:
                 return false;
         }
 		
-		/// <summary>
-        /// Basic division operation(main code block)
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The rValue</param>
-        bool PartialDivOp(const auto& rValue)
-        {
-            if(Value<0)
-            {
-                SwapNegativeStatus();
-                return UnsignedPartialDivOp(-Value);
-            }
-            else
-                return UnsignedPartialDivOp(Value);
-        }
-		
 public:
 
 		/// <summary>
@@ -1505,14 +1488,12 @@ public:
 			if(DecimalHalf==0)
 			{
 				if(rValue.DecimalHalf==0)
-					UnsignedBasicIntDivOp(rValue.IntValue.Value);
-				else
-				{
-				}
+			        UnsignedBasicIntDivOp(rValue.IntValue.Value);
+                else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+				    DecimalHalf = 1;
 			}
-			else
-			{
-			}
+			else if (UnsignedPartialDivOp(Value))
+			    DecimalHalf = 1;
             return *this;
 		}
 
@@ -1527,10 +1508,10 @@ public:
             if(Value<0)
             {
                 SwapNegativeStatus();
-                BasicUnsignedMultOp(-Value);
+                BasicUnsignedDivOp(-Value);
             }
             else
-                BasicUnsignedMultOp(Value);
+                BasicUnsignedDivOp(Value);
         }
 
 		/// <summary>
@@ -1863,11 +1844,6 @@ public:
         constexpr auto DivideByUInt16 = BasicDivideByUInt16;
         constexpr auto DivideByInt16 = BasicDivideByInt16;
 
-protected:
-
-
-public:
-
 		/// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// Return true if divide into zero
@@ -1912,18 +1888,19 @@ public:
 							else
 								UnsignedBasicIntDivOp(4);
 							break;
+                        case 0:
+                            throw "Target value can not be divided by zero";
+                            break;
 						default:
 							UnsignedBasicIntDivOp(rValue.IntValue.Value);
 							break;
 					}
 				}
-				else
-				{
-				}
+				else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+				    DecimalHalf = 1;
 			}
-			else
-			{
-			}
+			else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+		        DecimalHalf = 1;
             return *this;
 		}
 
