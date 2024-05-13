@@ -256,6 +256,7 @@ namespace BlazesRusCode
         }
 
 #if defined(AltNum_UseBuiltinVirtualTable)
+
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
