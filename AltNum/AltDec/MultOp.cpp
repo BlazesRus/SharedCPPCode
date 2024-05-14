@@ -2,6 +2,13 @@
 using AltDecBase = BlazesRusCode::AltDecBase;
 using RepType = BlazesRusCode::RepType;
 
+void CatchAllOp(const auto& rValue)
+{
+	RepType RRep = GetERepType();
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	BasicUnsignedDivOp(RValue);
+}
+
 auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 {
 	switch(DecimalHalf.Flags)
@@ -12,6 +19,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 			RepType LRep = GetPiRepType();
 			switch(rValue.DecimalHalf.Flags)
 			{
+#pragma region PiRep_to_PiRep
 				case 1:
 				{
 					RepType RRep = GetPiRepType();
@@ -22,14 +30,10 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 					{
 					}
 				} break;
+#pragma endregion PiRep_to_PiRep
 	#if defined(AltNum_EnableERep)
 				case 2:
-				{
-					RepType RRep = GetERepType();
-					ConvertToNormType(LRep);
-					auto RValue = rValue.ConvertAsNormType(LRep);
-					BasicUnsignedDivOp(RValue);
-				} break;
+					CatchAllOp(rValue); break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
 				case 3:
@@ -37,10 +41,12 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 					RepType RRep = GetIRepType();
 				} break;
 	#endif
+#pragma region PiRep_to_NormRep
 				default:
 				{
 					RepType RRep = GetNormRepType();
 				} break;
+#pragma endregion PiRep_to_NormRep
 		} break;
 #endif
 #if defined(AltNum_EnableERep)
@@ -51,13 +57,10 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 			{
 	#if defined(AltNum_EnablePiRep)
 				case 1:
-				{
-					RepType RRep = GetPiRepType();
-					ConvertToNormType(LRep);
-					auto RValue = rValue.ConvertAsNormType(LRep);
-					BasicUnsignedDivOp(RValue);
+					CatchAllOp(rValue); break;
 				} break;
 	#endif
+#pragma region ERep_to_ERep
 				case 2:
 				{
 					RepType RRep = GetERepType();
@@ -68,6 +71,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 					{
 					}
 				} break;
+#pragma region ERep_to_ERep
 	#if defined(AltNum_EnableImaginaryNum)
 				case 3:
 				{
@@ -88,22 +92,13 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 			{
 	#if defined(AltNum_EnablePiRep)
 				case 1:
-				{
-					RepType RRep = GetPiRepType();
-					ConvertToNormType(LRep);
-					auto RValue = rValue.ConvertAsNormType(LRep);
-					BasicUnsignedDivOp(RValue);
-				} break;
+					CatchAllOp(rValue); break;
 	#endif
 	#if defined(AltNum_EnableERep)
 				case 2:
-				{
-					RepType RRep = GetERepType();
-					ConvertToNormType(LRep);
-					auto RValue = rValue.ConvertAsNormType(LRep);
-					BasicUnsignedDivOp(RValue);
-				} break;
+					CatchAllOp(rValue); break;
 	#endif
+#pragma region IRep_to_IRep
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -124,6 +119,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 						}
 					}
 				} break;
+#pragma endregion IRep_to_IRep
 				default:
 				{
 					RepType RRep = GetNormRepType();
@@ -136,6 +132,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 			switch(rValue.DecimalHalf.Flags)
 			{
 	#if defined(AltNum_EnablePiRep)
+#pragma region NormRep_to_PiRep
 				case 1:
 				{
 					RepType RRep = GetPiRepType();
@@ -162,6 +159,8 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							
 							}
 						} break;
+	#pragma region AltDecVariantExclusive							
+	#pragma endregion AltDecVariantExclusive
 						case RepType::InfinityRep:
 						{
 							switch(RRep)
@@ -173,8 +172,10 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							throw "Unsupported operation";
 					}
 				} break;
+#pragma endregion NormRep_to_PiRep
 	#endif
 	#if defined(AltNum_EnableERep)
+#pragma region NormRep_to_ERep
 				case 2:
 				{
 					RepType RRep = GetERepType();
@@ -201,6 +202,8 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							
 							}
 						} break;
+	#pragma region AltDecVariantExclusive							
+	#pragma endregion AltDecVariantExclusive
 						case RepType::InfinityRep:
 						{
 							switch(RRep)
@@ -212,8 +215,10 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							throw "Unsupported operation";
 					}
 				} break;
+#pragma endregion NormRep_to_ERep
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
+#pragma endregion NormRep_to_IRep
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -240,6 +245,8 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							
 							}
 						} break;
+	#pragma region AltDecVariantExclusive							
+	#pragma endregion AltDecVariantExclusive
 						case RepType::InfinityRep:
 						{
 							switch(RRep)
@@ -251,7 +258,9 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							throw "Unsupported operation";
 					}
 				} break;
+#pragma endregion NormRep_to_IRep
 	#endif
+#pragma region NormRep_to_NormRep
 				default:
 				{
 					RepType RRep = GetNormRepType();
@@ -270,6 +279,8 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 							{
 
 							} break;
+	#pragma region AltDecVariantExclusive							
+	#pragma endregion AltDecVariantExclusive
 							case RepType::InfinityRep:
 							{
 
@@ -303,6 +314,8 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 								
 								}
 							} break;
+	#pragma region AltDecVariantExclusive							
+	#pragma endregion AltDecVariantExclusive
 							case RepType::InfinityRep:
 							{
 								switch(RRep)
@@ -317,7 +330,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 				} break;
 			}
 		} break;
-		
+#pragma endregion NormRep_to_NormRep
 	}
 	return *this;
 }
