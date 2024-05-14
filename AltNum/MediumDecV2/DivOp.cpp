@@ -17,9 +17,257 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 					RepType RRep = GetPiRepType();
 					if(LRep==RRep)
 					{
+                        switch(LRep)
+                        {
+                    		case RepType::PiNum:
+                            {
+                            } break;
+                    	#if defined(AltNum_EnablePowerOfRepresentation)
+                    		case RepType::PiPower:
+                            {
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnableFractionals)
+                    		case RepType::PiNumByDiv:
+                            {
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnableApproachingValues)
+                    		ApproachingBottomPi:
+                            {
+                            } break;
+                    		#if !defined(AltNum_DisableApproachingTop)
+                    		case RepType::ApproachingTopPi:
+                            {
+                            } break;
+                    		#endif
+                    	#endif
+                    	#if defined(AltNum_EnableApproachingDivided)
+                    		case RepType::ApproachingMidLeftPi:
+                            {
+                            } break;
+                    		#if !defined(AltNum_DisableApproachingTop)
+                    		case RepType::ApproachingMidRightPi:
+                            {
+                            } break;,
+                    		#endif
+						#endif
+            			default:
+            				throw "Unsupported operation"; break;
+                        }
 					}
 					else
 					{
+                        switch(LRep)
+                        {
+                    		case RepType::PiNum:
+                            {
+                                RepType RRep = GetPiRepType();
+                                switch(RRep)
+                                {
+                            	#if defined(AltNum_EnablePowerOfRepresentation)
+                            		case RepType::PiPower:
+                                    {
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableFractionals)
+                            		case RepType::PiNumByDiv:
+                                    {
+
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingValues)
+                            		case RepType::ApproachingBottomPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingTopPi:
+                                    {
+                                    } break;
+                            		#endif
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingDivided)
+                            		case RepType::ApproachingMidLeftPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingMidRightPi:
+                                    {
+                                    } break;,
+                            		#endif
+                            	#endif
+                    			default:
+                    				throw "Unsupported operation"; break;
+                                }
+                            } break;
+                    	#if defined(AltNum_EnablePowerOfRepresentation)
+                    		case RepType::PiPower:
+                            {
+                                RepType RRep = GetPiRepType();
+                                switch(RRep)
+                                {
+                            		case RepType::PiNum:
+                                    {
+                                    } break;
+                            	#if defined(AltNum_EnableFractionals)
+                            		case RepType::PiNumByDiv:
+                                    {
+
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingValues)
+                            		case RepType::ApproachingBottomPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingTopPi:
+                                    {
+                                    } break;
+                            		#endif
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingDivided)
+                            		case RepType::ApproachingMidLeftPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingMidRightPi:
+                                    {
+                                    } break;,
+                            		#endif
+                            	#endif
+                    			default:
+                    				throw "Unsupported operation"; break;
+                                }
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnableFractionals)
+                    		case RepType::PiNumByDiv:
+                            {
+                                RepType RRep = GetPiRepType();
+                                switch(RRep)
+                                {
+                            		case RepType::PiNum:
+                                    {
+                                    } break;
+                            	#if defined(AltNum_EnablePowerOfRepresentation)
+                            		case RepType::PiPower:
+                                    {
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingValues)
+                            		case RepType::ApproachingBottomPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingTopPi:
+                                    {
+                                    } break;
+                            		#endif
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingDivided)
+                            		case RepType::ApproachingMidLeftPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingMidRightPi:
+                                    {
+                                    } break;,
+                            		#endif
+                            	#endif
+                    			default:
+                    				throw "Unsupported operation"; break;
+                                }
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnableApproachingValues)
+                    		case RepType::ApproachingBottomPi:
+                            {
+                                RepType RRep = GetPiRepType();
+                                switch(RRep)
+                                {
+                            		case RepType::PiNum:
+                                    {
+                                    } break;
+                            	#if defined(AltNum_EnablePowerOfRepresentation)
+                            		case RepType::PiPower:
+                                    {
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableFractionals)
+                            		case RepType::PiNumByDiv:
+                                    {
+
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingValues)
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingTopPi:
+                                    {
+                                    } break;
+                            		#endif
+                            	#endif
+                            	#if defined(AltNum_EnableApproachingDivided)
+                            		case RepType::ApproachingMidLeftPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingMidRightPi:
+                                    {
+                                    } break;,
+                            		#endif
+                            	#endif
+                    			default:
+                    				throw "Unsupported operation"; break;
+                                }
+                            } break;
+                    		#endif
+                    		#if !defined(AltNum_DisableApproachingTop)
+                    		case RepType::ApproachingTopPi:
+                            {
+                                RepType RRep = GetPiRepType();
+                                switch(RRep)
+                                {
+                            		case RepType::PiNum:
+                                    {
+                                    } break;
+                            	#if defined(AltNum_EnablePowerOfRepresentation)
+                            		case RepType::PiPower:
+                                    {
+                                    } break;
+                            	#endif
+                            	#if defined(AltNum_EnableFractionals)
+                            		case RepType::PiNumByDiv:
+                                    {
+
+                                    } break;
+                            	#endif
+                            		case RepType::ApproachingBottomPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingTopPi:
+                                    {
+                                    } break;
+                            		#endif
+                            	#if defined(AltNum_EnableApproachingDivided)
+                            		case RepType::ApproachingMidLeftPi:
+                                    {
+                                    } break;
+                            		#if !defined(AltNum_DisableApproachingTop)
+                            		case RepType::ApproachingMidRightPi:
+                                    {
+                                    } break;,
+                            		#endif
+                            	#endif
+                    			default:
+                    				throw "Unsupported operation"; break;
+                                }
+                            } break;
+                    		#endif
+                    	#endif
+            			default:
+            				throw "Unsupported operation"; break;
+                        }
 					}
 				} break;
 	#if defined(AltNum_EnableERep)
@@ -35,11 +283,21 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
+                    switch(RRep)
+                    {
+            			default:
+            				throw "Unsupported operation"; break;
+                    }
 				} break;
 	#endif
 				default:
 				{
 					RepType RRep = GetNormRepType();
+                    switch(RRep)
+                    {
+            			default:
+            				throw "Unsupported operation"; break;
+                    }
 				} break;
 		} break;
 #endif

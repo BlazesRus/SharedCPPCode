@@ -46,6 +46,7 @@ MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2
 	#undef MediumDecV2_EnableWithinMinMaxRange
 #endif
 
+/*
 #if defined(AltNum_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingPi)
 	#define AltNum_EnableApproachingPi
 #endif
@@ -57,3 +58,4 @@ MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2
 #if defined(AltNum_EnableImaginaryNum)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingI)
 	#define AltNum_EnableApproachingI
 #endif
+*/
