@@ -23,14 +23,12 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 					}
 				} break;
 	#if defined(AltNum_EnableERep)
-				case 2:
-				{
+				case 2:{
 					RepType RRep = GetERepType();
 				} break;
 	#endif
 	#if defined(AltNum_EnableImaginaryNum)
-				case 3:
-				{
+				case 3:{
 					throw "Complex number operations not enabled yet."
 				} break;
 	#endif
@@ -66,8 +64,7 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 					}
 				} break;
 	#if defined(AltNum_EnableImaginaryNum)
-				case 3:
-				{
+				case 3:{
 					throw "Complex number operations not enabled yet."
 				} break;
 	#endif
