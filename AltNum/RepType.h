@@ -33,7 +33,6 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableFractionals)
 		PiNumByDiv = 9,//  (Value/(ExtraRep.Value))*Pi Representation
 	#endif
-	#endif
 	#if defined(AltNum_EnableApproachingPi)
 		//(Enum Bits:7,1)
 		//equal to IntValue.0..01 Pi
@@ -44,7 +43,7 @@ namespace BlazesRusCode
 		ApproachingTopPi = 73,
 		#endif
 	#endif
-	#if defined(MixedDec_EnableApproachingAlternativeDiv)
+	#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,1)
 		ApproachingMidLeftPi = 81,
 		#if !defined(AltNum_DisableApproachingTop)
@@ -71,7 +70,7 @@ namespace BlazesRusCode
 		ApproachingTopE = 74,
 		#endif
 	#endif
-	#if defined(MixedDec_EnableApproachingAlternativeDiv)
+	#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,2)
 		ApproachingMidLeftE = 82,
 		#if !defined(AltNum_DisableApproachingTop)
