@@ -63,9 +63,64 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 					RepType RRep = GetERepType();
 					if(LRep==RRep)
 					{
+                		case RepType::ENum:
+                        {
+                        } break;
+                	#if defined(AltNum_EnableFractionals)
+                		case RepType::ENumByDiv = 10:
+                        {
+                        } break;
+                	#endif
+                	#if defined(AltNum_EnablePowerOfRepresentation)
+                		case RepType::EPower = 18:
+                        {
+                        } break;
+                	#endif
+                	#if defined(AltNum_EnableApproachingE)
+                		//(Enum Bits:7,2)
+                		//equal to IntValue.0..01 e
+                		case RepType::ApproachingBottomE:
+                        {
+                        } break;
+                		#if !defined(AltNum_DisableApproachingTop)
+                		case RepType::ApproachingTopE:
+                        {
+                        } break;
+                		#endif
+                	#endif
+            			default:
+            				throw "Unsupported operation"; break;
 					}
 					else
 					{
+                        switch(LRep)
+                        {
+                    		case RepType::ENum:
+                            {
+                            } break;
+                    	#if defined(AltNum_EnableFractionals)
+                    		case RepType::ENumByDiv = 10:
+                            {
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnablePowerOfRepresentation)
+                    		case RepType::EPower = 18:
+                            {
+                            } break;
+                    	#endif
+                    	#if defined(AltNum_EnableApproachingE)
+                    		case RepType::ApproachingBottomE:
+                            {
+                            } break;
+                    		#if !defined(AltNum_DisableApproachingTop)
+                    		case RepType::ApproachingTopE:
+                            {
+                            } break;
+                    		#endif
+                    	#endif
+							default:
+								throw "Unsupported operation";
+                        }
 					}
 				} break;
 	#if defined(AltNum_EnableImaginaryNum)
@@ -170,7 +225,7 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 							}
 						} break;
 						default:
-							throw "Unsupported operation";
+							throw "Unsupported operation"; break;
 					}
 				} break;
 	#endif
@@ -248,7 +303,7 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 							}
 						} break;
 						default:
-							throw "Unsupported operation";
+							throw "Unsupported operation"; break;
 					}
 				} break;
 	#endif
@@ -275,7 +330,7 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 
 							} break;
 							default:
-								throw "Unsupported operation";
+								throw "Unsupported operation"; break;
 						}
 					}
 					else
@@ -311,7 +366,7 @@ auto& MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 								}
 							} break;
 							default:
-								throw "Unsupported operation";
+								throw "Unsupported operation"; break;
 						}
 					}
 				} break;
