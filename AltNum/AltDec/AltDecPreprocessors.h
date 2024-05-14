@@ -174,114 +174,25 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 	#define AltNum_EnableDecimaledIFractionals
 #endif
 
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledEFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledIFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableMixedPiFractional)
-//	#define AltNum_EnableMixedPiFractional
-//#endif
-//
-//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableMixedEFractional)
-//	#define AltNum_EnableMixedEFractional
-//#endif
-//
-//#if defined(AltNum_EnableMixedFractional)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableMixedIFractional)
-//	#define AltNum_EnableMixedIFractional
-//#endif
-
-//#if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional) || defined(AltNum_EnableMixedIFractional)
-//    #define AltNum_EnableAlternativeMixedFrac
-//#endif
-
-//Require AltNum_UseIntForDecimalHalf to be disabled for power of representation flag to work on E
-#if defined(AltNum_EnablePowerOfRepresentation)&&defined(AltNum_UseIntForDecimalHalf)
-	#undef AltNum_EnablePowerOfRepresentation
-#endif
-
 #if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 	#define AltNum_EnablePiPowers
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableEPowers)
+#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableEPowers)
 	#define AltNum_EnableEPowers
 #endif
 
-/*
-
-#if defined(AltNum_UseDeveloperExtraDefaults)
-    #define AltNum_EnableImaginaryNum
-    #define AltNum_EnableApproachingI
-    #define AltNum_EnableMixedPiFractional
-    #define AltNum_EnableERep
-    //#define AltNum_EnableApproachingDivided
+#if defined(AltNum_EnableApproachingPi)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingPiDivided)
+	#define AltNum_EnableApproachingPiDivided
 #endif
 
-//Force required preprocessor flag for AltNum_EnableAlternativeRepFractionals
-#if defined(AltNum_EnableAlternativeRepFractionals)
-	#if !defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableERep)&&!defined(AltNum_EnableImaginaryNum)
-		#undef AltNum_EnableAlternativeRepFractionals//Alternative Fractionals require the related representations enabled
-	#elif !defined(AltNum_EnableFractionals)
-		#define AltNum_EnableFractionals
-	#endif
+#if defined(AltNum_EnableApproachingE)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingEDivided)
+	#define AltNum_EnableApproachingEDivided
 #endif
 
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledPiFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
+#if defined(AltNum_EnableApproachingI)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingIDivided)
+	#define AltNum_EnableApproachingIDivided
 #endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledEFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if !defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnableDecimaledIFractionals)
-    #define AltNum_EnableDecimaledAlternativeFractionals
-#endif
-
-#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledEFractionals)
-    #undef AltNum_EnableDecimaledEFractionals
-#endif
-
-#if defined(AltNum_EnableDecimaledPiFractionals) && defined(AltNum_EnableDecimaledIFractionals)
-    #undef AltNum_EnableDecimaledIFractionals
-#endif
-
-//Turn off Pi Power's feature if AltNum_EnableDecimaledAlternativeFractionals enabled
-#if defined(AltNum_EnableDecimaledAlternativeFractionals) && defined(AltNum_EnablePiPowers)
-	#undef AltNum_EnablePiPowers
-#endif
-
-#if (defined(AltNum_EnableDecimaledAlternativeFractionals)||defined(AltNum_EnablePiPowers)) && defined(AltNum_EnableNormalPowers)
-	#undef AltNum_EnableNormalPowers
-#endif
-
-
-#if !defined(AltNum_EnablePiFractional) &&defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnablePiFractional//PiFractional enabled (AltNum_EnablePiRep and AltNum_EnableAlternativeRepFractionals active)
-#endif
-#if !defined(AltNum_EnableEFractional) &&defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableEFractional//EFractional enabled (AltNum_EnableERep and AltNum_EnableAlternativeRepFractionals active)
-#endif
-#if !defined(AltNum_EnableIFractional) &&defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)&&defined(AltNum_EnableAlternativeRepFractionals)
-    #define AltNum_EnableIFractional//IFractional enabled (AltNum_EnableImaginaryNum and AltNum_EnableAlternativeRepFractionals active)
-#endif
-
-#if defined(AltNum_EnablePiFractional) || defined(AltNum_EnableEFractional) || defined(AltNum_EnableIFractional)
-	#define AltNum_UsingAltFractional//AltNum_EnablePiFractional, AltNum_EnableEFractional, or AltNum_EnableIFractional active
-#endif
-
-//Require variables in base to allow functions to be in base class
-#if !defined(AltNum_DisableCommonVariablesInBase)&&defined(AltNum_StoreCommonFunctionsInBase)
-    #undef AltNum_StoreCommonFunctionsInBase
-#endif*/
 
 #pragma endregion PreprocessorToggles
 
