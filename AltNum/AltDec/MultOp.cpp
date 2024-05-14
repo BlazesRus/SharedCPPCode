@@ -1,5 +1,6 @@
 #include "AltDecBase.hpp"
 using AltDecBase = BlazesRusCode::AltDecBase;
+using RepType = BlazesRusCode::RepType;
 
 auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 {

@@ -1,5 +1,6 @@
 #include "MediumDecV2Base.hpp"
 using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
+using RepType = BlazesRusCode::RepType;
 
 auto& MediumDecV2Base::UnsignedSubOp(const auto& rValue)
 {
