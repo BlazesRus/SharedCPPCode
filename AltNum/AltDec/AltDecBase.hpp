@@ -2416,325 +2416,15 @@ public:
         constexpr auto DivByUInt16 = BasicDivByUInt16;
         constexpr auto DivByInt16 = BasicDivByInt16;
 
+public:
+
 		/// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& UnsignedDivOp(const auto& rValue)
-		{
-            switch(DecimalHalf.Flags)
-			{
-		#if defined(AltNum_EnablePiRep)
-				case 1:
-				{
-					RepType LRep = GetPiRepType();
-					switch(rValue.DecimalHalf.Flags)
-					{
-			#if defined(AltNum_EnablePiRep)
-						case 1:
-						{
-							RepType RRep = GetPiRepType();
-							if(LRep==RRep)
-							{
-							}
-							else
-							{
-							}
-						} break;
-			#endif
-			#if defined(AltNum_EnableERep)
-						case 2:
-						{
-							RepType RRep = GetERepType();
-						} break;
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)
-						case 3:
-						{
-							RepType RRep = GetIRepType();
-						} break;
-			#endif
-						default:
-						{
-							RepType RRep = GetNormRepType();
-						} break;
-				} break;
-		#endif
-		#if defined(AltNum_EnableERep)
-				case 2:
-				{
-					RepType LRep = GetERepType();
-					switch(rValue.DecimalHalf.Flags)
-					{
-			#if defined(AltNum_EnablePiRep)
-						case 1:
-						{
-							RepType RRep = GetPiRepType();
-						} break;
-			#endif
-			#if defined(AltNum_EnableERep)
-						case 2:
-						{
-							RepType RRep = GetERepType();
-							if(LRep==RRep)
-							{
-							}
-							else
-							{
-							}
-						} break;
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)
-						case 3:
-						{
-							RepType RRep = GetIRepType();
-						} break;
-			#endif
-						default:
-						{
-							RepType RRep = GetNormRepType();
-						} break;
-				} break;
-		#endif
-		#if defined(AltNum_EnableImaginaryNum)
-				case 3:
-				{
-					RepType LRep = GetIRepType();
-					switch(rValue.DecimalHalf.Flags)
-					{
-			#if defined(AltNum_EnablePiRep)
-						case 1:
-						{
-							RepType RRep = GetPiRepType();
-						} break;
-			#endif
-			#if defined(AltNum_EnableERep)
-						case 2:
-						{
-							RepType RRep = GetERepType();
-						} break;
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)
-						case 3:
-						{
-							RepType RRep = GetIRepType();
-							if(LRep==RRep)
-							{
-								switch(LRep)
-								{
-									default:
-										throw "Unsupported division operation";
-								}
-							}
-							else
-							{
-								switch(LRep)
-								{
-									default:
-										throw "Unsupported division operation";
-								}
-							}
-						} break;
-			#endif
-						default:
-						{
-							RepType RRep = GetNormRepType();
-						} break;
-				} break;
-		#endif
-				default:
-				{
-					RepType LRep = GetNormRepType();
-					switch(rValue.DecimalHalf.Flags)
-					{
-			#if defined(AltNum_EnablePiRep)
-						case 1:
-						{
-							RepType RRep = GetPiRepType();
-							switch(LRep)
-							{
-								case RepType::NormalType:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingBottomRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingTopRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::InfinityRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								default:
-									throw "Unsupported division operation";
-							}
-						} break;
-			#endif
-			#if defined(AltNum_EnableERep)
-						case 2:
-						{
-							RepType RRep = GetERepType();
-							switch(LRep)
-							{
-								case RepType::NormalType:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingBottomRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingTopRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::InfinityRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								default:
-									throw "Unsupported division operation";
-							}
-						} break;
-			#endif
-			#if defined(AltNum_EnableImaginaryNum)
-						case 3:
-						{
-							RepType RRep = GetIRepType();
-							switch(LRep)
-							{
-								case RepType::NormalType:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingBottomRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::ApproachingTopRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								case RepType::InfinityRep:
-								{
-									switch(RRep)
-									{
-									
-									}
-								} break;
-								default:
-									throw "Unsupported division operation";
-							}
-						} break;
-			#endif
-						default:
-						{
-							RepType RRep = GetNormRepType();
-							if(LRep==RRep)
-							{
-								switch(LRep)
-								{
-									case RepType::NormalType:
-									{
-									}; break;
-									case RepType::ApproachingBottomRep:
-									{
-
-									} break;
-									case RepType::ApproachingTopRep:
-									{
-
-									} break;
-									case RepType::InfinityRep:
-									{
-
-									} break;
-									default:
-										throw "Unsupported division operation";
-								}
-							}
-							else
-							{
-								switch(LRep)
-								{
-									case RepType::NormalType:
-									{
-										switch(RRep)
-										{
-										
-										}
-									} break;
-									case RepType::ApproachingBottomRep:
-									{
-										switch(RRep)
-										{
-										
-										}
-									} break;
-									case RepType::ApproachingTopRep:
-									{
-										switch(RRep)
-										{
-										
-										}
-									} break;
-									case RepType::InfinityRep:
-									{
-										switch(RRep)
-										{
-										
-										}
-									} break;
-									default:
-										throw "Unsupported division operation";
-								}
-							}
-						} break;
-					}
-				} break;
-				
-			}
-            return *this;
-		}
+        auto& UnsignedDivOp(const auto& rValue);
 
 		/// <summary>
         /// Division operation that ignores special decimal status
@@ -2944,31 +2634,48 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>auto&</returns>
-        constexpr auto UnsignedMultOp
+        auto& UnsignedMultOp(const auto& rValue);
 
-        /// <summary>
-        /// Multiplication operation between MediumDec variants.
+		/// <summary>
+        /// Multiplication operation that ignores special decimal status
+        /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        constexpr auto MultOp
+        /// <param name="rValue.">The right side Value</param> 
+        void MultOp(const auto& Value)
+        {
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UnsignedMultOp(-Value);
+            }
+            else
+                UnsignedMultOp(Value);
+        }
 
-        /// <summary>
-        /// Unsigned multiplication operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
-        constexpr auto MultByUnsigned
+        /// <param name="rValue.">The right side Value</param> 
+        auto MultiplyByUnsigned(const auto& rValue)
+        {
+            auto self = *this;
+            return self.UnsignedMultOp(rValue);
+        }
 
-        /// <summary>
-        /// Multiplication operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Multiplication operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
-        constexpr auto MultBy
+        /// <param name="rValue.">The right side Value</param> 
+        auto MultiplyBy(const auto& rValue)
+        {
+            auto self = *this;
+            return self.MultOp(rValue);
+        }
 
         /// <summary>
         /// Multiplication operation
@@ -3107,10 +2814,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>auto&</returns>
-        auto& UnsignedAddOp(const auto& rValue)
-		{
-			//Add Code here
-		}
+        auto& UnsignedAddOp(const auto& rValue);
 
         /// <summary>
         /// Addition operation between MediumDec variants.
@@ -3118,32 +2822,37 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>auto&</returns>
-        auto& AddOp(const auto& rValue)
-		{
-			//Add Code here
-		}
+        auto& AddOp(const auto& Value)
+        {
+            if(Value<0)
+                return UnsignedSubOp(-Value);
+            else
+                return UnsignedAddOp(Value);
+        }
 
-        /// <summary>
-        /// Unsigned Addition operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Unsigned addition operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
+        /// <param name="rValue.">The right side Value</param> 
         auto AddByUnsigned(const auto& rValue)
-		{
-			//Add Code here
-		}
+        {
+            auto self = *this;
+            return self.UnsignedAddOp(rValue);
+        }
 
-        /// <summary>
-        /// ___ operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Addition operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
+        /// <param name="rValue.">The right side Value</param> 
         auto AddBy(const auto& rValue)
-		{
-			//Add Code here
-		}
+        {
+            auto self = *this;
+            return self.AddOp(rValue);
+        }
 
         /// <summary>
         /// Addition operation
@@ -3282,10 +2991,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>auto&</returns>
-        auto& UnsignedSubOp(const auto& rValue)
-		{
-			//Add Code here
-		}
+        auto& UnsignedSubOp(const auto& rValue);
 
         /// <summary>
         /// Subtraction operation between MediumDec variants.
@@ -3293,32 +2999,37 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>auto&</returns>
-        auto& SubOp(const auto& rValue)
-		{
-			//Add Code here
-		}
+        auto& SubOp(const auto& Value)
+        {
+            if(Value<0)
+                return UnsignedAddOp(-Value);
+            else
+                return UnsignedSubOp(Value);
+        }
 
-        /// <summary>
-        /// Unsigned subtraction operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Unsigned subtraction operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
-        auto SubByUnsigned(const auto& rValue)
-		{
-			//Add Code here
-		}
+        /// <param name="rValue.">The right side Value</param> 
+        auto SubtractByUnsigned(const auto& rValue)
+        {
+            auto self = *this;
+            return self.UnsignedSubOp(rValue);
+        }
 
-        /// <summary>
-        /// Subtraction operation between MediumDec variants.
-        /// (Doesn't modifify owner object)
+		/// <summary>
+        /// Subtraction operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto</returns>
-        auto SubBy(const auto& rValue)
-		{
-			//Add Code here
-		}
+        /// <param name="rValue.">The right side Value</param> 
+        auto SubtractBy(const auto& rValue)
+        {
+            auto self = *this;
+            return self.SubOp(rValue);
+        }
 
         /// <summary>
         /// Subtraction operation

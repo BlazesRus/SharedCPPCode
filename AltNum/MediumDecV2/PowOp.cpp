@@ -1,5 +1,5 @@
-#include "MediumDecV2Base.hpp"
-using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
+#include "AltDecBase.hpp"
+using AltDecBase = BlazesRusCode::AltDecBase;
 
 /// <summary>
 /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
@@ -7,42 +7,42 @@ using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
 /// <param name="value">The target value.</param>
 /// <param name="expNum">The numerator of the exponent value.</param>
 /// <param name="expDenom">The denominator of the exponent value.</param>
-inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::FractionalPow(int expNum, int expDenom)
+inline AltDecBase BlazesRusCode::AltDecBase::FractionalPow(int expNum, int expDenom)
 {
-	MediumDecV2Base targetVal = IntPowOp(expNum);
-    MediumDecV2Base CalcVal = MediumDecV2Base::NthRoot(targetVal, expDenom);
+	AltDecBase targetVal = IntPowOp(expNum);
+    AltDecBase CalcVal = AltDecBase::NthRoot(targetVal, expDenom);
     return CalcVal;
 }
 
-inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::FractionalPow(boost::rational<int>& Frac)
+inline AltDecBase BlazesRusCode::AltDecBase::FractionalPow(boost::rational<int>& Frac)
 {
-	MediumDecV2Base targetVal = IntPow(Frac.numerator());
-	MediumDecV2Base CalcVal = MediumDecV2Base::NthRoot(targetVal, Frac.denominator());
+	AltDecBase targetVal = IntPow(Frac.numerator());
+	AltDecBase CalcVal = AltDecBase::NthRoot(targetVal, Frac.denominator());
 	return CalcVal;
 }
 
-inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::BasicPowOp(MediumDecV2Base& expValue)
+inline AltDecBase BlazesRusCode::AltDecBase::BasicPowOp(AltDecBase& expValue)
 {
-	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecV2Base::DecimalOverflow);
+	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDecBase::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 	case 0:
 		return FractionalPow(Frac);
 		break;
-	case MediumDecV2Base::NegativeRep:
+	case AltDecBase::NegativeRep:
 		return One / FractionalPow(Frac);
 		break;
 	default:
 	{
-		if (expValue.IntValue < 0)//Negative Exponent 
+		if (expValue.IntValue < 0)//Negative Exponent
 		{
-			MediumDecV2Base CalcVal = One / IntPow(expValue.IntValue * -1);
+			AltDecBase CalcVal = One / IntPow(expValue.IntValue * -1);
 			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		}
 		else
 		{
-			MediumDecV2Base CalcVal = IntPowOp(expValue.IntValue);
+			AltDecBase CalcVal = IntPowOp(expValue.IntValue);
 			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
@@ -51,14 +51,14 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::BasicPowOp(MediumDecV2Bas
 	}
 }
 
-inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& expValue)
+inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
 {
-	if (expValue.DecimalHalf == 0)
-		return IntPowOp(expValue.IntValue);
+	if (exponent.DecimalHalf == 0)
+		return IntPowOp(exponent.IntValue);
 #if defined(AltNum_EnableInfinityRep)
 	else if (DecimalHalf == InfinityRep)
 	{
-		if (expValue == Zero)
+		if (exponent == Zero)
     #if defined(AltNum_EnableNaN)
 			return Undefined;
     #else
@@ -69,7 +69,7 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
         {
 	        case RepType::PositiveInfinity:
 	        case RepType::NegativeInfinity:
-                if(expValue.IntValue==1)
+                if(exponent.IntValue==1)
                     return *this;
                 else
                     return Zero;
@@ -88,10 +88,10 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
         #endif
     #endif
             default:
-            	RepType expType = expValue.GetRepType();
-        		if (expValue.IntValue < 0)
+            	RepType expType = exponent.GetRepType();
+        		if (exponent.IntValue < 0)
         			return Zero;
-        		else if (IntValue == -1 && expValue.GetIntHalf() % 2 == 0)
+        		else if (IntValue == -1 && exponent.GetIntegerPartition() % 2 == 0)
         			IntValue = 1;
         		else
         			return *this;//Returns infinity
@@ -99,49 +99,49 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
         return *this;
 	}
 #endif
-	RepType expType = expValue.GetRepType();
+	RepType expType = exponent.GetRepType();
 	switch (expType)
 	{
 		#if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
 		{
-			MediumDecV2Base targetVal = MediumDecV2Base(expValue.IntValue, expValue.DecimalHalf);
+			AltDecBase targetVal = AltDecBase(exponent.IntValue, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
-			return MediumDecV2Base::NthRoot(targetVal, expValue.ExtraRep);
+			return AltDecBase::NthRoot(targetVal, exponent.ExtraRep);
 			break;
 		}
 		#endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv:
 		{
-			MediumDecV2Base targetVal = MediumDecV2Base(expValue.IntValue, expValue.DecimalHalf, PiRep);
+			AltDecBase targetVal = AltDecBase(exponent.IntValue, exponent.DecimalHalf, PiRep);
 			targetVal = Pow(targetVal);
-			return MediumDecV2Base::NthRoot(targetVal, -expValue.ExtraRep);
+			return AltDecBase::NthRoot(targetVal, -exponent.ExtraRep);
 			break;
 		}
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv:
 		{
-			MediumDecV2Base targetVal = MediumDecV2Base(expValue.IntValue, expValue.DecimalHalf, ERep);
+			AltDecBase targetVal = AltDecBase(exponent.IntValue, exponent.DecimalHalf, ERep);
 			targetVal = Pow(targetVal);
-			return MediumDecV2Base::NthRoot(targetVal, -expValue.ExtraRep);
+			return AltDecBase::NthRoot(targetVal, -expValue.ExtraRep);
 			break;
 		}
 		#endif
 		#if defined(AltNum_EnablePiFractional)
 		case RepType::PiFractional:
 		{
-			MediumDecV2Base targetVal = MediumDecV2Base(expValue.IntValue, 0, PiRep);
+			AltDecBase targetVal = AltDecBase(exponent.IntValue, 0, PiRep);
 			targetVal = Pow(targetVal);
-			return MediumDecV2Base::NthRoot(targetVal, expValue.DecimalHalf);
+			return AltDecBase::NthRoot(targetVal, expValue.DecimalHalf);
 		}
 		#endif
 		#if defined(AltNum_EnableEFractional)
 		case RepType::EFractional:
 		{
-			MediumDecV2Base targetVal = MediumDecV2Base(expValue.IntValue, 0, ERep);
+			AltDecBase targetVal = AltDecBase(exponent.IntValue, 0, ERep);
 			targetVal = Pow(targetVal);
-			return MediumDecV2Base::NthRoot(targetVal, expValue.DecimalHalf);
+			return AltDecBase::NthRoot(targetVal, exponent.DecimalHalf);
 			break;
 		}
 		#endif
@@ -155,7 +155,7 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
 			if (IsNegative())
 				return NegativeInfinity;
 			else
-				return Infinity;//Techically within range of Positive and NegativeInfinity
+				return Infinity;//Technically within range of Positive and NegativeInfinity
 			return *this;
 			break;
 		case RepType::NegativeInfinity:
@@ -172,12 +172,12 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
 		#endif
 		#if defined(AltNum_EnableApproachingValues)
 		case RepType::ApproachingBottom:
-			if(expValue.IntValue==0)
+			if(exponent.IntValue==0)
 				return ApproachingOneFromRightValue();
-			else if(expValue.IntValue==NegativeRep)
+			else if(exponent.IntValue==NegativeRep)
 				return ApproachingOneFromLeftValue();
 			else
-				expValue.ConvertToNormType(expType);
+				//exponent.ConvertToNormType(expType);
 			break;
 		#endif
 		#if defined(AltNum_EnableImaginaryNum)
@@ -210,28 +210,31 @@ inline MediumDecV2Base BlazesRusCode::MediumDecV2Base::PowOp(MediumDecV2Base& ex
 			break;
 		#endif
 		default:
-			expValue.ConvertToNormType(expType);
+			//expValue.ConvertToNormType(expType);
 			break;
 	}
-	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecV2Base::DecimalOverflow);
+	//If don't return value before this point convert into normal Type
+	AltDecBase expValue = exponent;//Copy the value to allow converting
+    expValue.ConvertToNormType(expType);
+	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, AltDecBase::DecimalOverflow);
 	switch (expValue.IntValue)
 	{
 		case 0:
 			return FractionalPow(Frac);
 			break;
-		case MediumDecV2Base::NegativeRep:
+		case AltDecBase::NegativeRep:
 			return One / FractionalPow(Frac);
 			break;
 		default:
 			if (expValue.IntValue < 0)//Negative Exponent 
 			{
-				MediumDecV2Base CalcVal = One / IntPow(expValue.IntValue * -1);
+				AltDecBase CalcVal = One / IntPow(expValue.IntValue * -1);
 				CalcVal /= FractionalPow(Frac);
 				return CalcVal;
 			}
 			else
 			{
-				MediumDecV2Base CalcVal = IntPowOp(expValue.IntValue);
+				AltDecBase CalcVal = IntPowOp(expValue.IntValue);
 				CalcVal *= FractionalPow(Frac);
 				return CalcVal;
 			}
