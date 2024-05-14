@@ -230,7 +230,7 @@ public:
         }
 #endif
 
-#if defined(MediumDecV2_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
@@ -369,15 +369,15 @@ public:
         {
             switch(DecimalHalf.Flag)
             {
-		#if defined(MediumDecV2_EnablePiRep)
+		#if defined(AltNum_EnablePiRep)
                 case 1:
                     return GetPiRepType(); break;
         #endif
-		#if defined(MediumDecV2_EnableERep)
+		#if defined(AltNum_EnableERep)
                 case 2:
                     return GetERepType(); break;
         #endif
-		#if defined(MediumDecV2_EnableImaginaryNum)
+		#if defined(AltNum_EnableImaginaryNum)
                 case 3:
                     return GetIRepType(); break;
         #endif
@@ -2424,73 +2424,315 @@ public:
         /// <param name="rValue.">The right side Value</param>
         auto& UnsignedDivOp(const auto& rValue)
 		{
-			if(DecimalHalf==0)
+            switch(DecimalHalf.Flags)
 			{
-				if(rValue.DecimalHalf==0)
+		#if defined(AltNum_EnablePiRep)
+				case 1:
 				{
-    #if defined(AltNum_EnableFractionals)
-                    if(ExtraRep==0)
-                        ExtraRep.Value = rValue.IntValue.Value;
-                    else//Checking for overflow before applying based on https://www.geeksforgeeks.org/check-integer-overflow-multiplication/#
-                    {
-                        unsigned int result = ExtraRep.Value;
-                        result *= rValue;
-                        if (ExtraRep.Value == result / rValue)//checking for overflow
-                            ExtraRep.Value = result;
-                        else
-                        {
-    #endif
-        					switch(rValue.IntValue.Value)
-        					{
-        						case 2:
-        							if(IntValue&1==1)//Check if number is odd
-        								UnsignedBasicIntDivOp(2);
-        							else
-        								IntValue.Value /= 2;
-        							break;
-        						case 4:
-        							if(((IntValue >> 2) << 2) == IntValue)
-        								IntValue.Value /= 4;
-        							else
-        								UnsignedBasicIntDivOp(4);
-        							break;
-        						case 8:
-        							if(((IntValue >> 3) << 3) == IntValue)
-        								IntValue.Value /= 8;
-        							else
-        								UnsignedBasicIntDivOp(4);
-        							break;
-        						case 16:
-        							if(((IntValue >> 4) << 4) == IntValue)
-        								IntValue.Value /= 16;
-        							else
-        								UnsignedBasicIntDivOp(4);
-        							break;
-        						case 32:
-        							if(((IntValue >> 5) << 5) == IntValue)
-        								IntValue.Value /= 32;
-        							else
-        								UnsignedBasicIntDivOp(4);
-        							break;
-                                case 0:
-                                    throw "Target value can not be divided by zero";
-                                    break;
-        						default:
-        							UnsignedBasicIntDivOp(rValue.IntValue.Value);
-        							break;
-        					}
-    #if defined(AltNum_EnableFractionals)
-                        }
-                    }
-    #endif
-				}
-                //To-Do add code for other representations
-				else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-				    DecimalHalf = 1;
+					RepType LRep = GetPiRepType();
+					switch(rValue.DecimalHalf.Flags)
+					{
+			#if defined(AltNum_EnablePiRep)
+						case 1:
+						{
+							RepType RRep = GetPiRepType();
+							if(LRep==RRep)
+							{
+							}
+							else
+							{
+							}
+						} break;
+			#endif
+			#if defined(AltNum_EnableERep)
+						case 2:
+						{
+							RepType RRep = GetERepType();
+						} break;
+			#endif
+			#if defined(AltNum_EnableImaginaryNum)
+						case 3:
+						{
+							RepType RRep = GetIRepType();
+						} break;
+			#endif
+						default:
+						{
+							RepType RRep = GetNormRepType();
+						} break;
+				} break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case 2:
+				{
+					RepType LRep = GetERepType();
+					switch(rValue.DecimalHalf.Flags)
+					{
+			#if defined(AltNum_EnablePiRep)
+						case 1:
+						{
+							RepType RRep = GetPiRepType();
+						} break;
+			#endif
+			#if defined(AltNum_EnableERep)
+						case 2:
+						{
+							RepType RRep = GetERepType();
+							if(LRep==RRep)
+							{
+							}
+							else
+							{
+							}
+						} break;
+			#endif
+			#if defined(AltNum_EnableImaginaryNum)
+						case 3:
+						{
+							RepType RRep = GetIRepType();
+						} break;
+			#endif
+						default:
+						{
+							RepType RRep = GetNormRepType();
+						} break;
+				} break;
+		#endif
+		#if defined(AltNum_EnableImaginaryNum)
+				case 3:
+				{
+					RepType LRep = GetIRepType();
+					switch(rValue.DecimalHalf.Flags)
+					{
+			#if defined(AltNum_EnablePiRep)
+						case 1:
+						{
+							RepType RRep = GetPiRepType();
+						} break;
+			#endif
+			#if defined(AltNum_EnableERep)
+						case 2:
+						{
+							RepType RRep = GetERepType();
+						} break;
+			#endif
+			#if defined(AltNum_EnableImaginaryNum)
+						case 3:
+						{
+							RepType RRep = GetIRepType();
+							if(LRep==RRep)
+							{
+								switch(LRep)
+								{
+									default:
+										throw "Unsupported division operation";
+								}
+							}
+							else
+							{
+								switch(LRep)
+								{
+									default:
+										throw "Unsupported division operation";
+								}
+							}
+						} break;
+			#endif
+						default:
+						{
+							RepType RRep = GetNormRepType();
+						} break;
+				} break;
+		#endif
+				default:
+				{
+					RepType LRep = GetNormRepType();
+					switch(rValue.DecimalHalf.Flags)
+					{
+			#if defined(AltNum_EnablePiRep)
+						case 1:
+						{
+							RepType RRep = GetPiRepType();
+							switch(LRep)
+							{
+								case RepType::NormalType:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingBottomRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingTopRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::InfinityRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								default:
+									throw "Unsupported division operation";
+							}
+						} break;
+			#endif
+			#if defined(AltNum_EnableERep)
+						case 2:
+						{
+							RepType RRep = GetERepType();
+							switch(LRep)
+							{
+								case RepType::NormalType:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingBottomRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingTopRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::InfinityRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								default:
+									throw "Unsupported division operation";
+							}
+						} break;
+			#endif
+			#if defined(AltNum_EnableImaginaryNum)
+						case 3:
+						{
+							RepType RRep = GetIRepType();
+							switch(LRep)
+							{
+								case RepType::NormalType:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingBottomRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::ApproachingTopRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								case RepType::InfinityRep:
+								{
+									switch(RRep)
+									{
+									
+									}
+								} break;
+								default:
+									throw "Unsupported division operation";
+							}
+						} break;
+			#endif
+						default:
+						{
+							RepType RRep = GetNormRepType();
+							if(LRep==RRep)
+							{
+								switch(LRep)
+								{
+									case RepType::NormalType:
+									{
+									}; break;
+									case RepType::ApproachingBottomRep:
+									{
+
+									} break;
+									case RepType::ApproachingTopRep:
+									{
+
+									} break;
+									case RepType::InfinityRep:
+									{
+
+									} break;
+									default:
+										throw "Unsupported division operation";
+								}
+							}
+							else
+							{
+								switch(LRep)
+								{
+									case RepType::NormalType:
+									{
+										switch(RRep)
+										{
+										
+										}
+									} break;
+									case RepType::ApproachingBottomRep:
+									{
+										switch(RRep)
+										{
+										
+										}
+									} break;
+									case RepType::ApproachingTopRep:
+									{
+										switch(RRep)
+										{
+										
+										}
+									} break;
+									case RepType::InfinityRep:
+									{
+										switch(RRep)
+										{
+										
+										}
+									} break;
+									default:
+										throw "Unsupported division operation";
+								}
+							}
+						} break;
+					}
+				} break;
+				
 			}
-            //To-Do add code for other representations
-			else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-		        DecimalHalf = 1;
             return *this;
 		}
 
@@ -4069,7 +4311,7 @@ public:
             break;
 	#endif
 	
-	#if defined(MediumDecV2_EnableApproachingI)
+	#if defined(AltNum_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingBottom)+"i";

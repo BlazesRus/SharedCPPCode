@@ -9,21 +9,19 @@
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
-	Depreciated Defined Values:
-      When DecimalHalf is -2147483648, it represents negative infinity(if IntValue is -1) or positive infinity(if IntValue is 1)
 	New Defined Values:
+		When DecimalHalf.Value is InfinityRep and IntValue is positive, it represents positive infinity
+		When DecimalHalf.Value is InfinityRep and IntValue is negative, it represents negative infinity
 AltNum_EnableApproachingValues
-	Depreciated Defined Values:
-      When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
-	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
 	New Defined Values:
-      When DecimalHalf is ApproachingRToLRep, it represents Approaching IntValue from right towards left (IntValue.0..1)
+      When DecimalHalf.Value is ApproachingBottomRep, it represents Approaching IntValue from right towards left (IntValue.0..1)
+      When DecimalHalf.Value is ApproachingTopRep, it represents Approaching IntValue from left towards right (IntValue.9..9)
 	  
-AltNum_EnableApproachingPi = AltNum_EnableApproachingMidDec for Pi based variables(Partially Implimented)
-AltNum_EnableApproachingE = AltNum_EnableApproachingMidDec for e based variables(Partially Implimented)
-AltNum_EnableApproachingI = AltNum_EnableApproachingMidDec for imaginary based variables(Partially Implimented)
+AltNum_EnableApproachingPi = Enable approaching values for PiNum representations
+AltNum_EnableApproachingE = Enable approaching values for ENum representations
+AltNum_EnableApproachingI = Enable approaching values for INum representations
 
-MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
+MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 
 */
 
@@ -32,48 +30,30 @@ MediumDecV2_EnableUndefinedButInRange = Can't be enabled at as time as MediumDec
     #define AltNum_EnablePiRep
 #endif
 
-#if defined(MediumDecV2_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
-	#define MediumDecV2_EnablePiRep
-	#define MediumDecV2_EnableERep
+#if defined(AltNum_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
+	#define AltNum_EnablePiRep
+	#define AltNum_EnableERep
 #endif
 
-//Force enable PiRep in derived AltDec if manually toggled for MediumDecV2
-#if defined(MediumDecV2_EnablePiRep) &&!defined(AltNum_EnablePiRep)
-    #define AltNum_EnablePiRep
+//Forcing rename of toggle if alternative toggle used
+#if defined(AltNum_EnableIRep)&&!defined(AltNum_EnableImaginaryNum)
+	#define AltNum_EnableImaginaryNum
+	#undef AltNum_EnableIRep
 #endif
 
-//Force enable ERep in derived AltDec if manually toggled for MediumDecV2
-#if defined(MediumDecV2_EnableERep) &&!defined(AltNum_EnableERep)
-    #define AltNum_EnableERep
+#if defined(MediumDecV2_EnableWithinMinMaxRange)&&defined(AltNum_EnableImaginaryNum)
+	//Don't enable if MediumDecV2_EnableWithinMinMaxRange if Imaginary numbers are enabled because using flag 3 for MediumDecV2_EnableWithinMinMaxRange inside MediumDecV2
+	#undef MediumDecV2_EnableWithinMinMaxRange
 #endif
 
-#if defined(AltNum_EnablePiRep)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnablePiRep)
-	//Only Enable Pi if Partial Int is used(Is a Pi representation when DecimalHalf.Flag==1)
-	#define MediumDecV2_EnablePiRep
+#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingPi)
+	#define AltNum_EnableApproachingPi
 #endif
 
-#if defined(AltNum_EnableERep)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnableERep)
-	//Only Enable E if Partial Int is used(Is a E representation when DecimalHalf.Flag==2)
-	#define MediumDecV2_EnableERep
+#if defined(AltNum_EnableERep)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingE)
+	#define AltNum_EnableApproachingE
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_UseIntForDecimalHalf)&&!defined(MediumDecV2_EnableWithinMinMaxRange)&&!defined(MediumDecV2_EnableIRep)
-	//Don't enable if MediumDecV2_EnableWithinMinMaxRange is toggled (because uses flag 3)
-	#define MediumDecV2_EnableIRep
-#endif
-
-#if defined(MediumDecV2_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingPi)
-	#define MediumDecV2_EnableApproachingPi
-#endif
-
-#if defined(MediumDecV2_EnableERep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingE)
-	#define MediumDecV2_EnableApproachingE
-#endif
-
-#if defined(MediumDecV2_EnableIRep)&&defined(AltNum_EnableApproachingValues)&&!defined(MediumDecV2_EnableApproachingI)
-	#define MediumDecV2_EnableApproachingI
-#endif
-
-#if defined(MediumDecV2_EnableIRep)&&defined(AltNum_EnableImaginaryInfinity)&&!defined(MediumDecV2_EnableImaginaryInfinity)
-	#define MediumDecV2_EnableImaginaryInfinity
+#if defined(AltNum_EnableImaginaryNum)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingI)
+	#define AltNum_EnableApproachingI
 #endif

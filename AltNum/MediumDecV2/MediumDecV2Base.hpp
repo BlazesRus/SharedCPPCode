@@ -52,14 +52,12 @@ namespace BlazesRusCode
 
         MediumDecV2Base& operator=(const int& rhs)
         {
-	#if defined(AltNum_EnableMirroredSection)
 			if(rhs<0)
 			{
 				IntValue.Value = -rhs;
 				IntValue.IsPositive = 0;
 			}
 			else
-	#endif
 				IntValue = rhs;
 			DecimalHalf = 0;
             return *this;
@@ -165,7 +163,7 @@ namespace BlazesRusCode
         RepType GetPiRepType()
     #endif
         {
-        #if defined(MediumDecV2_EnableApproachingPi)
+        #if defined(AltNum_EnableApproachingPi)
             if (DecimalHalf == ApproachingBottomRep)
                 return RepType::ApproachingBottomPi;
             else if (DecimalHalf == ApproachingTopRep)
@@ -174,7 +172,7 @@ namespace BlazesRusCode
              return RepType::PiNum;
         }
 
-#if defined(MediumDecV2_EnableERep)
+#if defined(AltNum_EnableERep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
@@ -184,7 +182,7 @@ namespace BlazesRusCode
         RepType GetERepType()
     #endif
         {
-        #if defined(MediumDecV2_EnableApproachingPi)
+        #if defined(AltNum_EnableApproachingE)
             if (DecimalHalf == ApproachingBottomRep)
                 return RepType::ApproachingBottomE;
             else if (DecimalHalf == ApproachingTopRep)
@@ -194,7 +192,7 @@ namespace BlazesRusCode
         }
 #endif
 
-#if defined(MediumDecV2_EnableImaginaryNum)
+#if defined(AltNum_EnableImaginaryNum)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
@@ -204,11 +202,11 @@ namespace BlazesRusCode
         RepType GetIRepType()
     #endif
         {
-        #if defined(MediumDecV2_EnableImaginaryInfinity)
+        #if defined(AltNum_EnableImaginaryInfinity)
 			if(DecimalHalf == InfinityRep)
 				return RepType::ImaginaryInfinity;
         #endif
-        #if defined(MediumDecV2_EnableApproachingI)
+        #if defined(AltNum_EnableApproachingI)
 			if (DecimalHalf == ApproachingTopRep)
 				return RepType::ApproachingImaginaryTop;
 			else if (DecimalHalf == ApproachingTopRep)
@@ -229,13 +227,13 @@ namespace BlazesRusCode
         {
             switch(DecimalHalf.Value)
             {
-		#if defined(MediumDecV2_EnableApproachingValues)
+		#if defined(AltNum_EnableApproachingValues)
                 case ApproachingBottomRep:
                     return RepType::ApproachingBottom; break;
                 case ApproachingTopRep:
                     return RepType::ApproachingTop; break;
 	    #endif
-		#if defined(MediumDecV2_EnableInfinityRep)
+		#if defined(AltNum_EnableInfinityRep)
                 case InfinityRep:
                     return RepType::Infinity; break;
 		#endif
@@ -265,15 +263,15 @@ namespace BlazesRusCode
         {
             switch(DecimalHalf.Flag)
             {
-		#if defined(MediumDecV2_EnablePiRep)
+		#if defined(AltNum_EnablePiRep)
                 case 1:
                     return GetPiRepType(); break;
         #endif
-		#if defined(MediumDecV2_EnableERep)
+		#if defined(AltNum_EnableERep)
                 case 2:
                     return GetERepType(); break;
         #endif
-		#if defined(MediumDecV2_EnableImaginaryNum)
+		#if defined(AltNum_EnableImaginaryNum)
                 case 3:
                     return GetIRepType(); break;
 		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
@@ -351,7 +349,7 @@ public:
     #pragma endregion RangeLimits
 
     #pragma region PiNum Setters
-    #if defined(MediumDecV2_EnablePiRep)
+    #if defined(AltNum_EnablePiRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetPiValV1(const VariantType& Value)
@@ -369,7 +367,7 @@ public:
     #pragma endregion PiNum Setters
 
     #pragma region ENum Setters
-    #if defined(MediumDecV2_EnableERep)
+    #if defined(AltNum_EnableERep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetEValV1(const VariantType& Value)
@@ -387,7 +385,7 @@ public:
     #pragma endregion ENum Setters
 
     #pragma region INum Setters
-    #if defined(MediumDecV2_EnableIRep)
+    #if defined(AltNum_EnableIRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetIValV1(const VariantType& Value)
@@ -455,7 +453,7 @@ public:
         }
         #endif
 		
-		#if defined(MediumDecV2_EnableApproachingPi)
+		#if defined(AltNum_EnableApproachingPi)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
         void SetAsApproachingTopPi(const int& value)
         {
@@ -468,7 +466,7 @@ public:
         }
 		#endif
 		
-		#if defined(MediumDecV2_EnableApproachingE)
+		#if defined(AltNum_EnableApproachingE)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
         void SetAsApproachingTopE(const int& value)
         {
@@ -481,7 +479,7 @@ public:
         }
 		#endif
 		
-		#if defined(MediumDecV2_EnableApproachingI)
+		#if defined(AltNum_EnableApproachingI)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
         void SetAsApproachingTopI(const int& value)
         {
@@ -520,15 +518,15 @@ protected:
 
         void InitialyzeAltRepFromString(const std::string& Value)
         {
-        #if defined(MediumDecV2_EnablePiRep)
+        #if defined(AltNum_EnablePiRep)
             if(str.find("Pi") != std::string::npos)
                 DecimalHalf.Flags = 1;
         #endif
-        #if defined(MediumDecV2_EnableERep)
+        #if defined(AltNum_EnableERep)
             if(Value.last()=='e')
                 DecimalHalf.Flags = 2;
         #endif
-        #if defined(MediumDecV2_EnableImaginaryNum)
+        #if defined(AltNum_EnableImaginaryNum)
             if(Value.last()=='i')
                 DecimalHalf.Flags = 3;
         #endif
@@ -3153,7 +3151,7 @@ public:
             break;
 	#endif
 	
-	#if defined(MediumDecV2_EnableApproachingI)
+	#if defined(AltNum_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingBottom)+"i";
@@ -3180,7 +3178,7 @@ public:
             return "UndefinedButInRange";
             break;
 		/*
-		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+		#if defined(MediumDecV2_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
         case WithinMinMaxRange:
 		    return "WithinMinMaxRange of "+VariableConversionFunctions::UnsignedIntToStringConversion((int)IntValue)+" to "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf);
             break;
