@@ -1474,7 +1474,7 @@ public:
 		#elif defined(AltNum_EnableEFractional)
 				case RepType::IFractional:
 		#endif
-                    #if defined(AltNum_EnableImaginaryNum)
+                    #if defined(AltNum_EnableIRep)
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
                     break;
@@ -1486,9 +1486,9 @@ public:
 					return;
 					break;
     #endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 					if(self.IntValue.IsZero())
 						return;
@@ -1833,7 +1833,7 @@ public:
 		bool BasicMultOp(TinyUDec& Value)
 		{
 			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+/*#if defined(AltNum_EnableApproaching)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
@@ -1849,7 +1849,7 @@ public:
 		bool BasicMultOpV2(TinyUDec& Value)
 		{
 			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+/*#if defined(AltNum_EnableApproaching)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
@@ -1986,9 +1986,9 @@ public:
 				case RepType::NegativeImaginaryInfinity:
 					return;
 					break;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 					if(self.IsZero())
 						return;
@@ -2233,7 +2233,7 @@ protected:
         {
             if (value == 0)
                 return;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert TinyUDec into complex number at moment";
@@ -2359,7 +2359,7 @@ public:
         {
             if (value == 0)
                 return;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert TinyUDec into complex number at moment";
@@ -4085,7 +4085,7 @@ public:
 
 	MirroredInt TinyUDec::NegativeRep = MirroredInt::NegativeZero;
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     TinyUDec TinyUDec::AlmostOne = ApproachingRightRealValue();
 #endif
     TinyUDec TinyUDec::Pi = PiNumValue();
@@ -4240,7 +4240,7 @@ public:
         case RepType::NegativeInfinity:
             return "-∞";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -4305,7 +4305,7 @@ public:
         #endif
 	#endif
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         case RepType::INum:
             return BasicToStringOp()+"i";
             break;
@@ -4348,7 +4348,7 @@ public:
         case RepType::NegativeImaginaryInfinity:
             return "-∞i";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -4464,7 +4464,7 @@ public:
         case RepType::NegativeInfinity:
             return "-∞";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -4529,7 +4529,7 @@ public:
         #endif
 	#endif
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         case RepType::INum:
             return BasicToFullStringOp()+"i";
             break;
@@ -4572,7 +4572,7 @@ public:
         case RepType::NegativeImaginaryInfinity:
             return "-∞i";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);

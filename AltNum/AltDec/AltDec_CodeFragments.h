@@ -316,7 +316,7 @@
                 IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
                 break;
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 DecimalHalf = 1;
                 break;
@@ -402,7 +402,7 @@
             }
             break;
 	#endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
             case RepType::INum:
     #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
@@ -464,7 +464,7 @@
             Res.ConvertToNormTypeV2();
             return Res;
         }
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
         void ConvertIRepToNormal(RepType repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
@@ -571,10 +571,10 @@
     {
         AltDecBase LValue = *this;
         RepType LRep = LValue.GetRepType();
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (LRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -606,11 +606,11 @@
             default:
 #endif
                 LValue.ConvertToNormType(LRep);
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
                 break;
 		}
 #endif
-#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
+#if !defined(AltNum_EnableIRep)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> that; IntHalfCmp != 0)
             return IntHalfCmp;
         return (std::strong_ordering)LValue.DecimalHalf <=> 0;
@@ -628,10 +628,10 @@
         AltDecBase RValue = that;
         RepType LRep = LValue.GetRepType();
         RepType RRep = RValue.GetRepType();
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (LRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -669,14 +669,14 @@
             default:
 #endif
                 LValue.ConvertToNormType(LRep);
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
                 break;
 		}
 #endif
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (RRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -713,19 +713,19 @@
             default:
 #endif
                 RValue.ConvertToNormType(RRep);
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
                 break;
 		}
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
         if (LValue.ExtraRep != RValue.ExtraRep)
         {
                 //throw "Can't compare imaginary number with real number";
                 return std::partial_ordering::unordered;
         }
 #endif
-#if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
+#if !defined(AltNum_EnableIRep)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
             return IntHalfCmp;
         std::strong_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf;
@@ -743,10 +743,10 @@
     {
         AltDecBase LValue = *this;
         RepType LRep = LValue.GetRepType();
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (LRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -777,7 +777,7 @@
             default:
 #endif
                 LValue.ConvertToNormType(LRep);
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
                 break;
 		}
 #endif
@@ -794,10 +794,10 @@
     {
         AltDecBase LValue = *this;
         RepType LRep = LValue.GetRepType();
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (LRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -828,16 +828,16 @@
             default:
 #endif
                 LValue.ConvertToNormType(LRep);
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
                 break;
 		}
 #endif
         AltDecBase RValue = that;
         RepType RRep = RValue.GetRepType();
-#if defined(AltNum_EnableImaginaryNum)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
+#if defined(AltNum_EnableIRep)||defined(AltNum_EnableInfinityRep)//||defined(AltNum_EnableNaN)||defined(AltNum_EnableNil)||defined(AltNum_EnableUndefinedButInRange)
 		switch (RRep)
 		{
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             case RepType::INum:
 		#if defined(AltNum_EnableAlternativeRepFractionals)
 			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -874,7 +874,7 @@
             default:
 #endif
                 RValue.ConvertToNormType(RRep);
-#if !defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
+#if !defined(AltNum_EnableIRep)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
                 break;
 		}
 #endif
@@ -2793,7 +2793,7 @@ protected:
                     return *this;
                     break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                 {
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -2824,7 +2824,7 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                 {
                     if (IsAtZeroInt())
@@ -3091,7 +3091,7 @@ protected:
                     return *this;
                     break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                 {
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -3110,7 +3110,7 @@ protected:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                 {
                     if (IsAtZeroInt())
@@ -3418,12 +3418,12 @@ protected:
                     return *this;
                     break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                     BasicIntMultOp(rightSideValue);
                     break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     if(IntValue==0||IntValue==NegativeRep)
                     {
@@ -3827,12 +3827,12 @@ protected:
                     return *this;
                     break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                     BasicUIntMultOp(rightSideValue);
                     break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     if(IntValue!=0&&IntValue!=NegativeRep)
                         CatchAllUIntMultiplication(rightSideValue, LRep);
@@ -4174,7 +4174,7 @@ protected:
         {
             if (rValue == 0)
                 return *this;
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert AltDecBase into complex number at moment";
@@ -4264,7 +4264,7 @@ protected:
         {
             if (rValue == 0)
                 return *this;
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert AltDecBase into complex number at moment";
@@ -4361,7 +4361,7 @@ public:
         { AltDecBase self = *this; CatchAllDivisionV3(rValue); return self; }
         
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
         void CatchAllImaginaryDivision(AltDecBase& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
@@ -4400,7 +4400,7 @@ protected:
         {
             switch (RRep)
             {
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingTop:
                 if (Value.IntValue == 0)
                 {
@@ -4535,7 +4535,7 @@ protected:
     #endif
     #endif
 
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
             case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
     #endif
@@ -4594,7 +4594,7 @@ protected:
     #endif
     #endif
 
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
             case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
     #endif
@@ -4683,7 +4683,7 @@ protected:
             #endif
             #endif
 
-            #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableIRep)
             //Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
             case RepType::INum:
             {
@@ -4736,7 +4736,7 @@ protected:
                 else
                     self.BasicDivOp(Value);
                 break;
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableIFractional)
@@ -4824,7 +4824,7 @@ protected:
             break;
             #endif
 
-            #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableIRep)
             //Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
             case RepType::INum:
                 self.BasicDivOp(Value);
@@ -4876,7 +4876,7 @@ protected:
                 self.BasicDivOp(Value);
                 break;
 
-            #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableIRep)
             //Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
             case RepType::INum:
             {
@@ -4937,7 +4937,7 @@ protected:
                         self.BasicDivOp(Value);
                     }
                     break;
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableIFractional)
@@ -5015,7 +5015,7 @@ protected:
                 break;
         #endif
 
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
                 //Num/Yi = Num/Yi * i/i = Numi/-Y = -Numi/Y
             case RepType::INum:
                 self.BasicDivOp(Value);
@@ -5071,7 +5071,7 @@ protected:
                     self.BasicDivOp(Value);
                 }
                 break;
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableIFractional)
@@ -5168,7 +5168,7 @@ protected:
 				    self.BasicUnsignedDivOp(ENum);
                     break;
             #endif
-            #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific DivOperation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableIFractional)
@@ -5199,13 +5199,13 @@ protected:
         }
     #endif
 
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
         //ApproachingBottom representation multiplied by other representation types
         static void ApproachingBottomRtRDivision(RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific DivOperation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5244,7 +5244,7 @@ protected:
         {
             switch (RRep)
             {
-                    #if defined(AltNum_EnableImaginaryNum)
+                    #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5285,7 +5285,7 @@ protected:
         {
             switch (RRep)
             {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific operation code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5324,7 +5324,7 @@ protected:
         {
             switch (RRep)
             {
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5360,7 +5360,7 @@ protected:
             #endif
         #endif
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
         //INum representation multiplied by other representation types
         static void INumRtRDivision(RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
@@ -5490,7 +5490,7 @@ protected:
         {
             switch (RRep)
             {
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5530,7 +5530,7 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5567,7 +5567,7 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5603,7 +5603,7 @@ protected:
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5697,7 +5697,7 @@ protected:
         static void RepToRepDivision(RepType& LRep, RepType& RRep, AltDecBase& self, AltDecBase& Value)
         {
             //LRep Overrides
-            #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)
             switch (LRep)
             {
                 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -5705,7 +5705,7 @@ protected:
                 throw "UndefinedButInRange operations not supported yet(from left side)"; return;
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 #if defined(AltNum_EnableAlternativeRepFractionals)
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -5727,7 +5727,7 @@ protected:
             //RRep Overrides before Main RepToRep Code
             switch (RRep)
             {
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 //Any real number / 0.0..1 = Infinity
                 if (Value.IntValue == 0)
@@ -5804,7 +5804,7 @@ protected:
             case RepType::ENum:
                 ENumRtRDivision(RRep, self, Value); break;
                 #endif
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 ApproachingBottomRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_DisableApproachingTop)
@@ -5842,7 +5842,7 @@ protected:
                 #endif
                 #endif
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 INumRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_EnableFractionals)
@@ -5901,7 +5901,7 @@ protected:
                     throw "Result is undefined(Infinity by Infinity)";
     #endif
                 else
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 {
                     DecimalHalf = ApproachingBottomRep;
                     if(rightSideValue.IntValue<0)
@@ -5952,10 +5952,10 @@ protected:
 #if defined(AltNum_EnableERep)
                 case RepType::ENum:
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
                 case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
-#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableImaginaryNum)
+#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableIRep)
                     ExtraRep = 0;
                     BasicUnsignedDivOp(rightSideValue);
                     break;
@@ -5977,7 +5977,7 @@ protected:
                     break;
 #endif
 
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
                     int rInverted = rightSideValue.IntValue==NegativeRep?0:-rightSideValue.IntValue;
@@ -6338,7 +6338,7 @@ protected:
                     throw "Result is undefined(Infinity by Infinity)";
     #endif
                 else
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 {
                     DecimalHalf = ApproachingBottomRep;
                     if(rValue.IntValue<0)
@@ -6389,10 +6389,10 @@ protected:
 #if defined(AltNum_EnableERep)
                 case RepType::ENum:
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
                 case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
-#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableImaginaryNum)
+#if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableIRep)
                     ExtraRep = 0;
                     BasicUnsignedDivOp(rValue);
                     break;
@@ -6414,7 +6414,7 @@ protected:
                     break;
 #endif
 
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
                     int rInverted = -rValue.IntValue;
@@ -6739,7 +6739,7 @@ protected:
         }
 
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
         void CatchAllImaginaryMultiplication(AltDecBase rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
@@ -6811,7 +6811,7 @@ protected:
             break;
             #endif
             #endif
-            #if defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableIRep)
         case RepType::INum:
             self.BasicMultOp(Value);
             self.ExtraRep = AltDecBase::IRep;
@@ -6882,7 +6882,7 @@ protected:
                 self = AltDecBase::MixedEFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
                 self.BasicMultOp(Value);
@@ -6916,7 +6916,7 @@ protected:
                 self.BasicMultOp(Value);
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 self.BasicMultOp(Value);
                 self.ExtraRep = AltDecBase::IRep;
@@ -7081,7 +7081,7 @@ protected:
                 #endif
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 self.BasicMultOp(Value);
                 self.ConvertToNormType(RepType::ENum);
@@ -7163,7 +7163,7 @@ protected:
                 self = AltDecBase::MixedEFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 self.BasicMultOp(Value);
                 #if defined(AltNum_EnableDecimaledPiFractionals)
@@ -7181,13 +7181,13 @@ protected:
             }
         }
 
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
         //ApproachingBottm representation multiplied by other representation types
         static void ApproachingBottomRtRMultiplication(RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
             switch (RRep)
             {
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 if (self.IntValue = 0 || self.IntValue == AltDecBase::NegativeRep)
                 {
@@ -7278,7 +7278,7 @@ protected:
             #endif
         #endif
 
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
         //INum representation multiplied by other representation types
         static void INumRtRMultiplication(RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
@@ -7686,7 +7686,7 @@ protected:
         static void RepToRepMultiplication(RepType& LRep, RepType& RRep, AltDecBase& self, AltDecBase& Value)
         {
             //LRep Overrides
-            #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)
+            #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)
             switch (LRep)
             {
                 #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -7694,7 +7694,7 @@ protected:
                 throw "UndefinedButInRange MultOperations not supported yet(from left side)"; return;
                 break;
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 #if defined(AltNum_EnableAlternativeRepFractionals)
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -7716,7 +7716,7 @@ protected:
             //RRep Overrides before Main RtR Code
             switch (RRep)
             {
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
             {
                 if (Value.IntValue == 0)
@@ -7782,7 +7782,7 @@ protected:
             case RepType::ENum:
                 ENumRtRMultiplication(RRep, self, Value); break;
                 #endif
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 ApproachingBottomRtRMultiplication(RRep, self, Value); break;
                 #if !defined(AltNum_DisableApproachingTop)
@@ -7822,7 +7822,7 @@ protected:
                 #endif
                 #endif
                 #endif
-                #if defined(AltNum_EnableImaginaryNum)
+                #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 INumRtRMultiplication(RRep, self, Value); break;
                 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -7904,7 +7904,7 @@ public:
                     BasicMultOp(ENum);
                     break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
                 case RepType::INum://Xi * Yi = -XY
                 {
                     ExtraRep = 0;
@@ -7922,7 +7922,7 @@ public:
                     break;
 #endif
 
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
                     if (IntValue == NegativeRep)
@@ -8161,7 +8161,7 @@ public:
                 }
                 break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                 {
                     //(IntValue/DecimalHalf)i*(rightSideValue.IntValue/rightSideValue.DecimalHalf)i
@@ -8441,7 +8441,7 @@ public:
                         BasicUnsignedMultOp(ENum);
                         break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                     case RepType::INum://Xi * Yi = -XY
                         ExtraRep = 0;
                         BasicUnsignedMultOp(-rValue);
@@ -8455,7 +8455,7 @@ public:
                         break;
     #endif
 
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                     case RepType::ApproachingBottom:
                     {
                         if (IntValue < 0)
@@ -8594,7 +8594,7 @@ public:
                     }
                     break;
         #endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
                     case RepType::IFractional://  IntValue/DecimalHalf*i Representation
                     {
                         //(IntValue/DecimalHalf)i*(rValue.IntValue/rValue.DecimalHalf)i
@@ -8821,7 +8821,7 @@ public:
         { AltDecBase self = *this; CatchAllAdditionV3(rValue); return self; }
         
     //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
         void CatchAllImaginaryAddition(AltDecBase& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
@@ -9091,7 +9091,7 @@ protected:
 	        #endif
         #endif
 
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
         static void ApproachingBottomAddOp(RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
         }
@@ -9114,7 +9114,7 @@ protected:
 	        #endif
         #endif
 
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
         static void ImaginaryNumberAddOp(RepType& LRep, RepType& RRep, AltDecBase& self, AltDecBase& Value)
         {
             switch (RRep)
@@ -9270,7 +9270,7 @@ protected:
         static void RepToRepAddition(RepType LRep, RepType RRep, AltDecBase& self, AltDecBase rValue)
         {
             bool LeftIsNegative = self.IntValue<0;
-#if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)//LRep Overrides
+#if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)//LRep Overrides
             switch (LRep)
             {
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -9278,7 +9278,7 @@ protected:
                 throw "UndefinedButInRange AddOperations not supported yet(from left side)";
                 break;
                 #endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
             case RepType::INum:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
@@ -9298,7 +9298,7 @@ protected:
             //RRep Overrides before Main RepToRep Code
             switch (RRep)
             {
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
             {
                 if (LRep == RepType::ApproachingTop && LeftIsNegative == false)
@@ -9473,7 +9473,7 @@ protected:
                 #if defined(AltNum_EnablePiPowers)
             case RepType::PiPower:
                 #endif
-                #if defined(AltNum_EnableApproachingValues)
+                #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 #if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingTop:
@@ -9524,7 +9524,7 @@ protected:
                     self.CatchAllAddition(rValue, LRep, RRep);
                 break;
 
-                #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
+                #if defined(AltNum_EnableIRep)//Replace with specific code instead of catchall code later
             case RepType::INum:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
@@ -9602,13 +9602,13 @@ public:
     #if defined(AltNum_EnableERep)
                 case RepType::ENum:
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
     #endif
                     BasicAddOp(rValue);
                     break;
 
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                     if (IntValue == NegativeRep)
                     {
@@ -9986,7 +9986,7 @@ public:
         AltDecBase CatchAllSubtractionAsCopiesV3(AltDecBase& rValue) { AltDecBase self = *this; CatchAllSubtractionV3(rValue); return self; }
 
         //Both sides are assumed to be imaginary number types of representations for CatchAllImaginary..
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
         void CatchAllImaginarySubtraction(AltDecBase& rValue, RepType LRep, RepType RRep)
         {
            ConvertIRepToNormal(LRep);
@@ -10209,7 +10209,7 @@ protected:
         }
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
         //INum,INumByDivisor, IFractional, or MixedI representation subtracted by other representation types
         static void ImaginaryNumberRtRSubtraction(RepType LRep, RepType RRep, AltDecBase& self, AltDecBase& Value)
         {
@@ -10404,7 +10404,7 @@ protected:
         static void RepToRepSubtraction(RepType LRep, RepType RRep, AltDecBase& self, AltDecBase Value)
         {
         	bool LeftIsNegative = self.IntValue<0;
-        #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableImaginaryNum)//LRep Overrides
+        #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)//LRep Overrides
             switch(LRep)
             {
             #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
@@ -10412,7 +10412,7 @@ protected:
         			throw "UndefinedButInRange SubOperations not supported yet(from left side)";
                     break;
             #endif
-        	#if defined(AltNum_EnableImaginaryNum)
+        	#if defined(AltNum_EnableIRep)
         		case RepType::INum:
         		#if defined(AltNum_EnableAlternativeRepFractionals)
         			#if defined(AltNum_EnableDecimaledIFractionals)
@@ -10434,7 +10434,7 @@ protected:
             //RRep Overrides before Main RepToRep Code
             switch(RRep)
             {
-        	#if defined(AltNum_EnableApproachingValues)
+        	#if defined(AltNum_EnableApproaching)
         		case RepType::ApproachingBottom:
         		{
         			if(LRep==RepType::ApproachingTop&&LeftIsNegative)
@@ -10634,7 +10634,7 @@ protected:
         #if defined(AltNum_EnablePiPowers)
         		case RepType::PiPower:
         #endif
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
         		case RepType::ApproachingBottom:
             #if !defined(AltNum_DisableApproachingTop)
         		case RepType::ApproachingTop:
@@ -10684,7 +10684,7 @@ protected:
         			    self.CatchAllSubtraction(Value, LRep, RRep);
         			break;
         #endif
-        #if defined(AltNum_EnableImaginaryNum)//Replace with specific code instead of catchall code later
+        #if defined(AltNum_EnableIRep)//Replace with specific code instead of catchall code later
         		case RepType::INum:
             #if defined(AltNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
@@ -10762,7 +10762,7 @@ public:
     #if defined(AltNum_EnableERep)
                 case RepType::ENum:
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
     #endif
                     BasicSubOp(rValue);
@@ -11850,7 +11850,7 @@ public:
                     ConvertToNormType(repType);
                     break;
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                     break;
         #if defined(AltNum_EnableAlternativeRepFractionals)
@@ -12363,7 +12363,7 @@ public:
             AltDecBase ConvertedVal;
             switch (repType)
             {
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12423,7 +12423,7 @@ public:
             AltDecBase ConvertedVal;
             switch (repType)
             {
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12528,7 +12528,7 @@ public:
             AltDecBase ConvertedVal;
             switch (repType)
             {
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12638,7 +12638,7 @@ public:
             AltDecBase ConvertedVal;
             switch (repType)
             {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12672,7 +12672,7 @@ public:
             AltDecBase ConvertedVal;
             switch (repType)
             {
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
             case RepType::INum:
 #if defined(AltNum_EnableAlternativeRepFractionals)
 #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12791,7 +12791,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledIFractionals)
@@ -12876,7 +12876,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledIFractionals)
@@ -13168,7 +13168,7 @@ public:
             RepType repType = Value.GetRepType();
             switch (repType)
             {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             case RepType::INum:
         #if defined(AltNum_EnableAlternativeRepFractionals)
             #if defined(AltNum_EnableDecimaledIFractionals)

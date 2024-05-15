@@ -74,7 +74,7 @@ inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
                 else
                     return Zero;
                 break;
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
 	        case RepType::INum:
         #if defined(AltNum_EnableDecimaledIFractionals)
 	        case RepType::INumByDiv:
@@ -159,7 +159,7 @@ inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
 			return *this;
 			break;
 		case RepType::NegativeInfinity:
-			#if defined(AltNum_EnableApproachingValues)
+			#if defined(AltNum_EnableApproaching)
 			if (IsNegative())
 				SetAsApproachingBottom(NegativeRep);
 			else
@@ -170,7 +170,7 @@ inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
 			return *this;
 			break;
 		#endif
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
 		case RepType::ApproachingBottom:
 			if(exponent.IntValue==0)
 				return ApproachingOneFromRightValue();
@@ -180,7 +180,7 @@ inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
 				//exponent.ConvertToNormType(expType);
 			break;
 		#endif
-		#if defined(AltNum_EnableImaginaryNum)
+		#if defined(AltNum_EnableIRep)
 		case RepType::INum:
 		#if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv:

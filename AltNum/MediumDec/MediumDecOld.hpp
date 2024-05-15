@@ -136,7 +136,7 @@ namespace BlazesRusCode
 			//#endif
 		//#endif
 	//#endif
-	//#if defined(AltNum_EnableImaginaryNum)
+	//#if defined(AltNum_EnableIRep)
 				case RepType::INum:
                     return "INum"; break;
 		//#if defined(AltNum_EnableAlternativeRepFractionals)
@@ -174,7 +174,7 @@ namespace BlazesRusCode
 				case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
 					return "NegativeInfinity"; break;
 	//#endif
-	//#if defined(AltNum_EnableApproachingValues)
+	//#if defined(AltNum_EnableApproaching)
 				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     return "ApproachingBottom"; break;
 		//#if !defined(AltNum_DisableApproachingTop)
@@ -867,7 +867,7 @@ public:
 		bool BasicMultOp(MediumDec& Value)
 		{
 			if(BasicMultOpPt1(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+/*#if defined(AltNum_EnableApproaching)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
@@ -883,7 +883,7 @@ public:
 		bool BasicMultOpV2(MediumDec& Value)
 		{
 			if(BasicMultOpPt2(Value))//Prevent multiplying into zero
-/*#if defined(AltNum_EnableApproachingValues)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
+/*#if defined(AltNum_EnableApproaching)//Might adjust later to set to approaching zero in only certain situations(might be overkill to set to .0..1 in most cases)
 			{	
 				DecimalHalf = ApproachingBottomRep; ExtraRep = 0; 
 			}
@@ -1016,7 +1016,7 @@ protected:
         {
             if (value == 0)
                 return;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert MediumDec into complex number at moment";
@@ -1140,7 +1140,7 @@ public:
         {
             if (value == 0)
                 return;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
             if(ExtraRep==IRep)
             {
                 throw "Can't convert MediumDec into complex number at moment";
@@ -2862,7 +2862,7 @@ public:
 
 	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     MediumDec MediumDec::AlmostOne = ApproachingRightRealValue();
 #endif
     MediumDec MediumDec::Pi = PiNumValue();
@@ -3017,7 +3017,7 @@ public:
         case RepType::NegativeInfinity:
             return "-∞";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -3082,7 +3082,7 @@ public:
         #endif
 	#endif
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         case RepType::INum:
             return BasicToStringOp()+"i";
             break;
@@ -3125,7 +3125,7 @@ public:
         case RepType::NegativeImaginaryInfinity:
             return "-∞i";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -3241,7 +3241,7 @@ public:
         case RepType::NegativeInfinity:
             return "-∞";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);
@@ -3306,7 +3306,7 @@ public:
         #endif
 	#endif
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         case RepType::INum:
             return BasicToFullStringOp()+"i";
             break;
@@ -3349,7 +3349,7 @@ public:
         case RepType::NegativeImaginaryInfinity:
             return "-∞i";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingBottom);

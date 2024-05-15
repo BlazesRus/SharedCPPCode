@@ -358,6 +358,6 @@ inline void BlazesRusCode::AltDecBase::ConvertEPowerToERep()
 #endif
 
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 
 #endif

@@ -123,6 +123,6 @@ inline void BlazesRusCode::MixedDec::ConvertEByDivToNumByDiv()
 #endif
 
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 
 #endif

@@ -6,7 +6,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 	MirroredInt AltDecBase::NegativeRep = MirroredInt::NegativeZero;
 #endif
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     AltDecBase AltDecBase::AlmostOne = AltDecBase::ApproachingRightRealValue();
 #endif
     AltDecBase AltDecBase::Pi = AltDecBase::PiValue();
@@ -38,7 +38,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 #if defined(AltNum_EnableInfinityRep)
     AltDecBase AltDecBase::Infinity = AltDecBase::InfinityValue();
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     AltDecBase AltDecBase::NegativeInfinity = AltDecBase::NegativeInfinityValue();
     AltDecBase AltDecBase::ApproachingZero = AltDecBase::ApproachingZeroValue();
 #endif
@@ -48,7 +48,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 #endif
     #pragma endregion ValueDefine Source
 	
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 #endif
 
     std::string AltDecBase::BasicToStringOp()
@@ -136,7 +136,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 return "-∞";
                 break;
         #endif
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 #ifdef AltNum_DisplayApproachingAsReal
                 ConvertToNormType(RepType::ApproachingBottom);
@@ -182,7 +182,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
             #endif
         #endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
             case RepType::INum:
                 return BasicToStringOp()+"i";
                 break;
@@ -402,7 +402,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				return "-∞";
 				break;
 		#endif
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
 			case RepType::ApproachingBottom:
 				#ifdef AltNum_DisplayApproachingAsReal
 				ConvertToNormType(RepType::ApproachingBottom);
@@ -446,7 +446,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
             #endif
         #endif
-		#if defined(AltNum_EnableImaginaryNum)
+		#if defined(AltNum_EnableIRep)
 			case RepType::INum:
 				return BasicToFullStringOp()+"i";
 				break;

@@ -125,7 +125,7 @@ namespace BlazesRusCode
             #endif
         #endif
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                 case RepType::INum:
                     return "INum"; break;
         #if defined(AltNum_EnableAlternativeRepFractionals)
@@ -163,7 +163,7 @@ namespace BlazesRusCode
                 case RepType::NegativeInfinity://If Negative Infinity: then convert number into MinimumValue instead when need as real number
                     return "NegativeInfinity"; break;
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
                     return "ApproachingBottom"; break;
         #if !defined(AltNum_DisableApproachingTop)
@@ -303,7 +303,7 @@ namespace BlazesRusCode
         }
     #endif
         
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
         static AltDec ApproachingZeroValue()
         {
             AltDec NewSelf = AltDec(0, ApproachingBottomRep);
@@ -643,7 +643,7 @@ public:
         static AltDec Nil;
     #endif
     
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
         static AltDec ApproachingRightRealValue(int IntValue=0)
         {
             return AltDec(IntValue, 999999999);

@@ -6,7 +6,7 @@ using RepType = BlazesRusCode::MediumDecBase::RepType;
 	MirroredInt MediumDecV2::NegativeRep = MirroredInt::NegativeZero;
 #endif
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     MediumDecV2 MediumDecV2::AlmostOne = MediumDecV2::ApproachingRightRealValue();
 #endif
     MediumDecV2 MediumDecV2::Pi = MediumDecV2::PiValue();
@@ -38,7 +38,7 @@ using RepType = BlazesRusCode::MediumDecBase::RepType;
 #if defined(AltNum_EnableInfinityRep)
     MediumDecV2 MediumDecV2::Infinity = MediumDecV2::InfinityValue();
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     MediumDecV2 MediumDecV2::NegativeInfinity = MediumDecV2::NegativeInfinityValue();
     MediumDecV2 MediumDecV2::ApproachingZero = MediumDecV2::ApproachingZeroValue();
 #endif

@@ -32,7 +32,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
                             {
                             } break;
                     	#endif
-                    	#if defined(AltNum_EnableApproachingValues)
+                    	#if defined(AltNum_EnableApproaching)
                     		ApproachingBottomPi:
                             {
                             } break;
@@ -76,7 +76,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 
                                     } break;
                             	#endif
-                            	#if defined(AltNum_EnableApproachingValues)
+                            	#if defined(AltNum_EnableApproaching)
                             		case RepType::ApproachingBottomPi:
                                     {
                                     } break;
@@ -115,7 +115,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 
                                     } break;
                             	#endif
-                            	#if defined(AltNum_EnableApproachingValues)
+                            	#if defined(AltNum_EnableApproaching)
                             		case RepType::ApproachingBottomPi:
                                     {
                                     } break;
@@ -154,7 +154,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
                                     {
                                     } break;
                             	#endif
-                            	#if defined(AltNum_EnableApproachingValues)
+                            	#if defined(AltNum_EnableApproaching)
                             		case RepType::ApproachingBottomPi:
                                     {
                                     } break;
@@ -179,7 +179,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
                                 }
                             } break;
                     	#endif
-                    	#if defined(AltNum_EnableApproachingValues)
+                    	#if defined(AltNum_EnableApproaching)
                     		case RepType::ApproachingBottomPi:
                             {
                                 RepType RRep = GetPiRepType();
@@ -199,7 +199,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 
                                     } break;
                             	#endif
-                            	#if defined(AltNum_EnableApproachingValues)
+                            	#if defined(AltNum_EnableApproaching)
                             		#if !defined(AltNum_DisableApproachingTop)
                             		case RepType::ApproachingTopPi:
                                     {
@@ -354,7 +354,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 					BasicUnsignedDivOp(RValue);
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -441,7 +441,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 					{
 					}
 				} break;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -453,7 +453,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 				} break;
 		} break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		case 3:
 		{
 			RepType LRep = GetIRepType();
@@ -586,7 +586,7 @@ auto& AltDecBase::UnsignedDivOp(const auto& rValue)
 					}
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();

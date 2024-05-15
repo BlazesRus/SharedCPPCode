@@ -8,7 +8,7 @@
         static const signed int InfinityRep = 2147483647;
 		#endif
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
         //Is Approaching Bottom when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
         //If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
@@ -41,7 +41,7 @@
         static signed int const NilRep = -2147483648;
     #endif
 #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
         #if defined(AltNum_EnableApproachingI)
         //Is Approaching Bottom i when DecimalHalf==-2147483645:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)i
@@ -55,23 +55,23 @@
         //Is Pi*Value representation when ExtraRep==-2147483648
         static const signed int PiRep = -2147483648;
         #ifdef AltNum_EnableAlternativeRepFractionals
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
+        //If AltNum_EnableIRep is enabled and ExtraRep== -2147483645, then represents (IntValue/DecimalHalf)*Pi
         static const signed int PiByDivisorRep = -2147483645;
         #endif
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*i
+    #if defined(AltNum_EnableIRep)
+        //If AltNum_EnableIRep is enabled and ExtraRep== -2147483646, then represents Value*i
         static const signed int IRep = -2147483647;
         #ifdef AltNum_EnableAlternativeRepFractionals
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
+        //If AltNum_EnableIRep is enabled and ExtraRep== -2147483644, then represents (IntValue/DecimalHalf)*i
         static const signed int IByDivisorRep = -2147483644;
         #endif
     #endif
     #if defined(AltNum_EnableERep)&&defined(AltNum_EnableAlternativeRepFractionals)
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483646, then represents Value*e
+        //If AltNum_EnableIRep is enabled and ExtraRep== -2147483646, then represents Value*e
         static const signed int ERep = -2147483646;
         #ifdef AltNum_EnableAlternativeRepFractionals
-        //If AltNum_EnableImaginaryNum is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
+        //If AltNum_EnableIRep is enabled and ExtraRep== -2147483643, then represents (IntValue/DecimalHalf)*e
         static const signed int EByDivisorRep = -2147483643;
         #endif
     #endif

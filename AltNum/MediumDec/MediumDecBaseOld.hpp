@@ -264,7 +264,7 @@ public:
 		//If AltNum_EnableImaginaryInfinity is enabled and ExtraRep = IRep, then represents either negative or positive imaginary infinity
         static const signed int InfinityRep = -2147483648;
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
         //Is Approaching Bottom when DecimalHalf==-2147483647:
         //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0__1)
 		//If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
@@ -1069,7 +1069,7 @@ public:
 
     auto operator<=>(const MediumDecBase& that) const
     {
-    #if !defined(AltNum_EnableImaginaryNum)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
+    #if !defined(AltNum_EnableIRep)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
         if (std::weak_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
             return IntHalfCmp;
         if (std::weak_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf; DecimalHalfCmp != 0)

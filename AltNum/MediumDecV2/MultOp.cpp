@@ -31,7 +31,7 @@ auto& MediumDecV2Base::UnsignedMultOp(const auto& rValue)
 					BasicUnsignedDivOp(RValue);
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -68,7 +68,7 @@ auto& MediumDecV2Base::UnsignedMultOp(const auto& rValue)
 					{
 					}
 				} break;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -80,7 +80,7 @@ auto& MediumDecV2Base::UnsignedMultOp(const auto& rValue)
 				} break;
 		} break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		case 3:
 		{
 			RepType LRep = GetIRepType();
@@ -213,7 +213,7 @@ auto& MediumDecV2Base::UnsignedMultOp(const auto& rValue)
 					}
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();

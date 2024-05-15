@@ -35,7 +35,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 				case 2:
 					CatchAllOp(rValue); break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -72,7 +72,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 					}
 				} break;
 #pragma region ERep_to_ERep
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();
@@ -84,7 +84,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 				} break;
 		} break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		case 3:
 		{
 			RepType LRep = GetIRepType();
@@ -217,7 +217,7 @@ auto& AltDecBase::UnsignedMultOp(const auto& rValue)
 				} break;
 #pragma endregion NormRep_to_ERep
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 #pragma endregion NormRep_to_IRep
 				case 3:
 				{

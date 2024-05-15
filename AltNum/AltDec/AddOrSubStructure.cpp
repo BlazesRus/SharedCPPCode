@@ -50,7 +50,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
                             } break;
                         #endif
 	#pragma endregion AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproachingValues)
+                    	#if defined(AltNum_EnableApproaching)
                     		case RepType::ApproachingBottomPi:{
                             } break;
                     		#if !defined(AltNum_DisableApproachingTop)
@@ -92,7 +92,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
                             } break;
                         #endif
 	#pragma endregion AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproachingValues)
+                    	#if defined(AltNum_EnableApproaching)
                     		case RepType::ApproachingBottomPi:{
                             } break;
                     		#if !defined(AltNum_DisableApproachingTop)
@@ -120,7 +120,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 				case 2:
 					CatchAllEOp(rValue); break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:{
 					RepType RRep = rValue.GetIRepType();
 				} break;
@@ -155,7 +155,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 					}
 				} break;
 #pragma region ERep_to_ERep
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:{
 					throw "Complex number operations not enabled yet."
 				} break;
@@ -166,7 +166,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 				} break;
 		} break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		case 3:
 		{
 			RepType LRep = GetIRepType();
@@ -301,7 +301,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 				} break;
 #pragma endregion NormRep_to_ERep
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 #pragma endregion NormRep_to_IRep
 				case 3:
 				{

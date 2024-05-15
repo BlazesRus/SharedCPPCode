@@ -12,7 +12,7 @@ AltNum_EnableInfinityRep = Enable support of positive/negative infinity represen
 	New Defined Values:
 		When DecimalHalf.Value is InfinityRep and IntValue is positive, it represents positive infinity
 		When DecimalHalf.Value is InfinityRep and IntValue is negative, it represents negative infinity
-AltNum_EnableApproachingValues
+AltNum_EnableApproaching
 	New Defined Values:
       When DecimalHalf.Value is ApproachingBottomRep, it represents Approaching IntValue from right towards left (IntValue.0..1)
       When DecimalHalf.Value is ApproachingTopRep, it represents Approaching IntValue from left towards right (IntValue.9..9)
@@ -36,26 +36,26 @@ MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2
 #endif
 
 //Forcing rename of toggle if alternative toggle used
-#if defined(AltNum_EnableIRep)&&!defined(AltNum_EnableImaginaryNum)
-	#define AltNum_EnableImaginaryNum
+#if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableIRep)
+	#define AltNum_EnableIRep
 	#undef AltNum_EnableIRep
 #endif
 
-#if defined(MediumDecV2_EnableWithinMinMaxRange)&&defined(AltNum_EnableImaginaryNum)
+#if defined(MediumDecV2_EnableWithinMinMaxRange)&&defined(AltNum_EnableIRep)
 	//Don't enable if MediumDecV2_EnableWithinMinMaxRange if Imaginary numbers are enabled because using flag 3 for MediumDecV2_EnableWithinMinMaxRange inside MediumDecV2
 	#undef MediumDecV2_EnableWithinMinMaxRange
 #endif
 
 /*
-#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingPi)
+#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingPi)
 	#define AltNum_EnableApproachingPi
 #endif
 
-#if defined(AltNum_EnableERep)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingE)
+#if defined(AltNum_EnableERep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingE)
 	#define AltNum_EnableApproachingE
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)&&defined(AltNum_EnableApproachingValues)&&!defined(AltNum_EnableApproachingI)
+#if defined(AltNum_EnableIRep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingI)
 	#define AltNum_EnableApproachingI
 #endif
 */

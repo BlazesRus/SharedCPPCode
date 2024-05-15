@@ -25,7 +25,7 @@ AltNum_UseBuiltinVirtualTable =
     //#define AltNum_EnableInfinityRep
 	//#define AltNum_EnableFractionals
     //#define AltNum_EnableDecimaledPiFractionals
-    #define AltNum_EnableApproachingValues
+    #define AltNum_EnableApproaching
     //#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
 	//#define AltNum_EnableMirroredSection
 #endif
@@ -55,20 +55,20 @@ AltNum_UseBuiltinVirtualTable =
 #endif
 
 #if defined(AltNum_EnableImaginaryInfinity)
-    #define AltNum_EnableImaginaryNum
+    #define AltNum_EnableIRep
 	#define AltNum_EnableInfinityRep
 #endif
 
 #if define(AltNum_EnableIRep)
-	#define AltNum_EnableImaginaryNum
+	#define AltNum_EnableIRep
 #endif
 
 //Force required flags to be enabled if AltNum_EnableApproachingDivided toggled
-#if !defined(AltNum_EnableApproachingValues)
+#if !defined(AltNum_EnableApproaching)
 	#if defined(AltNum_EnableApproachingDivided)
-		#define AltNum_EnableApproachingValues
+		#define AltNum_EnableApproaching
 	#elif defined(AltNum_EnableApproachingPi) || defined(AltNum_EnableApproachingE) || defined(AltNum_EnableApproachingI)
-		#define AltNum_EnableApproachingValues
+		#define AltNum_EnableApproaching
 	#endif
 #endif
 
@@ -93,8 +93,8 @@ AltNum_UseBuiltinVirtualTable =
 		#if !defined(AltNum_EnableERep) && defined(AltNum_EnableMixedEFractional)
 			#define AltNum_EnableERep
 		#endif
-		#if !defined(AltNum_EnableImaginaryNum) && defined(AltNum_EnableMixedIFractional)
-			#define AltNum_EnableImaginaryNum
+		#if !defined(AltNum_EnableIRep) && defined(AltNum_EnableMixedIFractional)
+			#define AltNum_EnableIRep
 		#endif
 	#endif*/
 
@@ -122,7 +122,7 @@ AltNum_UseBuiltinVirtualTable =
 		#endif
 	#endif
 	
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 		#if defined(AltNum_EnableFractionals)
 			#define AltNum_EnableIFractional
 		#endif
@@ -142,7 +142,7 @@ AltNum_UseBuiltinVirtualTable =
 		#endif
 	#endif
 	
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 		#if defined(AltNum_EnableFractionals)
 			#define AltNum_EnableDecimaledIFractionals
 		#endif
@@ -162,8 +162,8 @@ AltNum_UseBuiltinVirtualTable =
 	#define AltNum_EnableERep
 #endif
 
-#if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableImaginaryNum)
-    #define AltNum_EnableImaginaryNum
+#if defined(AltNum_EnableApproachingI) && !defined(AltNum_EnableIRep)
+    #define AltNum_EnableIRep
 #endif
 
 #if defined(AltNum_EnableMixedPiFractional) || defined(AltNum_EnableMixedEFractional)

@@ -17,7 +17,7 @@ AltNum_EnableNegativePowerRep =
 	Allows negative powers when AltNum_EnablePowerOfRepresentation is enabled
 
 //--Infinity based preprocessors--
-AltNum_EnableApproachingValues
+AltNum_EnableApproaching
 	Depreciated Defined Values:
       When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
@@ -70,7 +70,7 @@ AltNum_EnableComplexNum =
 	  (Requires ExtraRep.IsNegative not to be used by other values
 If ExtraRep.IsNegative == 1, then represents value as IntValue.DecimalHalf + (ExtraRep.Value i)
 If AltNum_EnableFractionals is disabled and ExtraRep.IsNegative == 0, then represents value as IntValue + (DecimalHalf.(ExtraRep.Value) i)
-(Requires AltNum_EnableImaginaryNum, Not Implemented)
+(Requires AltNum_EnableIRep, Not Implemented)
 
 AltNum_EnableERep =
 	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
@@ -84,7 +84,7 @@ AltNum_EnableERep =
         represents (+- 2147483647.999999999 * e)/(ExtraRep*-1)
         (Not Fully Implemented)
 
-AltNum_EnableImaginaryNum =
+AltNum_EnableIRep =
 	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If DecimalHalf is positive and ExtraRep is -2147483647, then
       represents +- 2147483647.999999999i
@@ -170,7 +170,7 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 	#define AltNum_EnableDecimaledEFractionals
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableDecimaledIFractionals)
+#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
 	#define AltNum_EnableDecimaledIFractionals
 #endif
 
@@ -201,7 +201,7 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
     #define AltNum_EnableInfinityRep
     #define AltNum_EnableAlternativeRepFractionals
     #define AltNum_EnableDecimaledPiFractionals
-    #define AltNum_EnableApproachingValues
+    #define AltNum_EnableApproaching
 #define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
     //#define AltNum_EnableERep
 #endif

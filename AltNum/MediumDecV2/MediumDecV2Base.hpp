@@ -118,7 +118,7 @@ namespace BlazesRusCode
         //e*Value representation(DecimalHalf.Flag==2)
         static const unsigned int ERep = 2;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         //e*Value representation(DecimalHalf.Flag==3)
         static const unsigned int IRep = 3;
 	#endif
@@ -127,7 +127,7 @@ namespace BlazesRusCode
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
 		static const unsigned int InfinityRep = 1073741824;
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)
         static const unsigned int ApproachingBottomRep = 1073741823;
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)
@@ -192,7 +192,7 @@ namespace BlazesRusCode
         }
 #endif
 
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
@@ -227,7 +227,7 @@ namespace BlazesRusCode
         {
             switch(DecimalHalf.Value)
             {
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
                 case ApproachingBottomRep:
                     return RepType::ApproachingBottom; break;
                 case ApproachingTopRep:
@@ -271,7 +271,7 @@ namespace BlazesRusCode
                 case 2:
                     return GetERepType(); break;
         #endif
-		#if defined(AltNum_EnableImaginaryNum)
+		#if defined(AltNum_EnableIRep)
                 case 3:
                     return GetIRepType(); break;
 		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
@@ -435,7 +435,7 @@ public:
     #pragma endregion Infinity Setters
 
     #pragma region ApproachingZero Setters
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
@@ -526,7 +526,7 @@ protected:
             if(Value.last()=='e')
                 DecimalHalf.Flags = 2;
         #endif
-        #if defined(AltNum_EnableImaginaryNum)
+        #if defined(AltNum_EnableIRep)
             if(Value.last()=='i')
                 DecimalHalf.Flags = 3;
         #endif
@@ -734,7 +734,7 @@ public:
     #pragma endregion E Conversion
 
     #pragma region Imaginary Conversion
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
 
         void ConvertIRepToINum(const RepType& repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
@@ -751,7 +751,7 @@ public:
                     }
                     break;
             #endif*/
-            #if defined(AltNum_EnableApproachingValues)
+            #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingImaginaryBottom:
                 DecimalHalf.Value = 1;
                 break;
@@ -813,7 +813,7 @@ public:
 	#if defined(AltNum_EnablePiRep)
             case RepType::PiNum:
                 ConvertPiToNum(); break;
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottomPi:
                 DecimalHalf.Value = 1;
                 break;
@@ -827,7 +827,7 @@ public:
 	#if defined(AltNum_EnableERep)
             case RepType::ENum:
                 ConvertENumToNum(); break;
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottomPi:
                 DecimalHalf.Value = 1;
                 break;
@@ -844,7 +844,7 @@ public:
 				DecimalHalf = 999999999;
 				break;
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
 			case RepType::ApproachingBottom:
 				DecimalHalf = 1;
 				break;
@@ -854,10 +854,10 @@ public:
 				break;
 		#endif
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 			case RepType::INum:
 				break;
-		#if defined(AltNum_EnableApproachingValues)
+		#if defined(AltNum_EnableApproaching)
 			case RepType::ApproachingImaginaryBottom:
 				DecimalHalf.Value = 1;
 				break;
@@ -982,7 +982,7 @@ protected:
 			if(LRep^UndefinedBit||RRep^UndefinedBit)
 				throw "Can't compare undefined/nil representations";
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             if (LValue.DecimalHalf.Flags == 3)
             {
                 if(RValue.Flags!=3)
@@ -1007,7 +1007,7 @@ protected:
                     LSideInfinityComparison(that, RRep);
                     break;
 	#endif
-	#if defined(AltNum_EnableApproachingValues)
+	#if defined(AltNum_EnableApproaching)
 	
 	#endif
 				default:
@@ -2111,7 +2111,7 @@ public:
         /// </summary>
         auto SqrtOf(const int& precision=7)
         {
-    #if !defined(AltNum_EnableImaginaryNum)
+    #if !defined(AltNum_EnableIRep)
             if(IsNegative())
                 throw "Can't display result of negative square root without imaginary number support";
     #endif
@@ -2148,7 +2148,7 @@ public:
                 }
                 if(AutoSetValue)
                 {
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
                     if(IsNegative())
                         DecimalHalf.Flags = 3;
     #endif
@@ -2211,7 +2211,7 @@ public:
 
 protected:
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// without flipping of negative status and other checks
@@ -2521,7 +2521,7 @@ protected:
 				MultiplyByEPower(exp-1);
 			}
 		#endif
-		#if defined(AltNum_EnableImaginaryNum)
+		#if defined(AltNum_EnableIRep)
             else if(DecimalHalf.Flags==3)
             {
                 //Add code here
@@ -2532,7 +2532,7 @@ protected:
             {
             }
         #endif
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
             else if (DecimalHalf == ApproachingBottomRep)
             {
             }
@@ -2590,7 +2590,7 @@ protected:
 				    MultiplyByEPower(exp-1);
 			}
 		#endif
-		#if defined(AltNum_EnableImaginaryNum)
+		#if defined(AltNum_EnableIRep)
             else if(DecimalHalf.Flags==3)
             {
                 //Add code here
@@ -2601,7 +2601,7 @@ protected:
             {
             }
         #endif
-        #if defined(AltNum_EnableApproachingValues)
+        #if defined(AltNum_EnableApproaching)
             else if (DecimalHalf == ApproachingBottomRep)
             {
             }
@@ -3072,7 +3072,7 @@ public:
         case RepType::Infinity:
             return IsNegative()?"-∞":"∞";
             break;
-	    #if defined(AltNum_EnableApproachingValues)
+	    #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
             return ConvertToBasicString(RepType::ApproachingBottom);
@@ -3100,7 +3100,7 @@ public:
             break;
 	#endif
 
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
         case RepType::INum:
             return BasicToStringOp()+"i";
             break;

@@ -33,7 +33,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableFractionals)
 		PiNumByDiv = 9,//  (Value/(ExtraRep.Value))*Pi Representation
 	#endif
-	#if defined(AltNum_EnableApproachingPi)
+	#if defined(AltNum_EnableApproaching)
 		//(Enum Bits:7,1)
 		//equal to IntValue.0..01 Pi
 		ApproachingBottomPi = 65,
@@ -42,13 +42,13 @@ namespace BlazesRusCode
 		//equal to IntValue.9..9 Pi
 		ApproachingTopPi = 73,
 		#endif
-	#endif
-	#if defined(AltNum_EnableApproachingDivided)
+		#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,1)
 		ApproachingMidLeftPi = 81,
-		#if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4,5,1)
 		ApproachingMidRightPi = 89,
+			#endif
 		#endif
 	#endif
 #endif
@@ -60,7 +60,7 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableFractionals)
 		ENumByDiv = 10,//(Value/(ExtraRep.Value))*e Representation
 	#endif
-	#if defined(AltNum_EnableApproachingE)
+	#if defined(AltNum_EnableApproaching)
 		//(Enum Bits:7,2)
 		//equal to IntValue.0..01 e
 		ApproachingBottomE = 66,
@@ -69,17 +69,17 @@ namespace BlazesRusCode
 		//equal to IntValue.9..9 e
 		ApproachingTopE = 74,
 		#endif
-	#endif
-	#if defined(AltNum_EnableApproachingDivided)
+		#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,2)
 		ApproachingMidLeftE = 82,
-		#if !defined(AltNum_DisableApproachingTop)
+			#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4,5,2)
 		ApproachingMidRightE = 90,
+			#endif
 		#endif
 	#endif
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		INum = 4,
 	#if defined(AltNum_EnableFractionals)
 		//(Value/(ExtraRep.Value))*i Representation
@@ -97,7 +97,7 @@ namespace BlazesRusCode
 		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
 		MixedE = 34,
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
 		MixedI = 36,
 	#endif
@@ -109,7 +109,7 @@ namespace BlazesRusCode
 		//If Negative Infinity, then convert number into MinimumValue instead when need as real number
 		Infinity = 96,
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
 		//(Enum Bits:7)
 		ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
 	#if !defined(AltNum_DisableApproachingTop)

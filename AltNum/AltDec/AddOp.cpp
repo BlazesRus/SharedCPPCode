@@ -27,7 +27,7 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 					RepType RRep = GetERepType();
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:{
 					throw "Complex number operations not enabled yet."
 				} break;
@@ -63,7 +63,7 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 					{
 					}
 				} break;
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:{
 					throw "Complex number operations not enabled yet."
 				} break;
@@ -74,7 +74,7 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 				} break;
 		} break;
 #endif
-#if defined(AltNum_EnableImaginaryNum)
+#if defined(AltNum_EnableIRep)
 		case 3:
 		{
 			RepType LRep = GetIRepType();
@@ -201,7 +201,7 @@ auto& AltDecBase::UnsignedAddOp(const auto& rValue)
 					}
 				} break;
 	#endif
-	#if defined(AltNum_EnableImaginaryNum)
+	#if defined(AltNum_EnableIRep)
 				case 3:
 				{
 					RepType RRep = GetIRepType();

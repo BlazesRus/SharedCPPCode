@@ -6,7 +6,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
 	MirroredInt AltDec::NegativeRep = MirroredInt::NegativeZero;
 #endif
     #pragma region ValueDefine Source
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     AltDec AltDec::AlmostOne = AltDec::ApproachingRightRealValue();
 #endif
     AltDec AltDec::Pi = AltDec::PiValue();
@@ -38,7 +38,7 @@ using RepType = BlazesRusCode::AltDec::RepType;
 #if defined(AltNum_EnableInfinityRep)
     AltDec AltDec::Infinity = AltDec::InfinityValue();
 #endif
-#if defined(AltNum_EnableApproachingValues)
+#if defined(AltNum_EnableApproaching)
     AltDec AltDec::NegativeInfinity = AltDec::NegativeInfinityValue();
     AltDec AltDec::ApproachingZero = AltDec::ApproachingZeroValue();
 #endif

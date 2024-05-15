@@ -46,7 +46,7 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
             #define MixedDec_EnableEFractional//  IntValue/DecimalHalf*e Representation
 	    #endif
     #endif
-    #if defined(AltNum_EnableImaginaryNum)
+    #if defined(AltNum_EnableIRep)
             #define MixedDec_EnableImaginaryNum
 	    #if defined(AltNum_EnableDecimaledIFractionals)
             #define MixedDec_EnableDecimaledIFractionals//(Value/(ExtraRep*-1))*i Representation
@@ -70,7 +70,7 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
     #if defined(AltNum_EnableInfinityRep)
         #define MixedDec_EnableInfinityRep
     #endif
-    #if defined(AltNum_EnableApproachingValues)
+    #if defined(AltNum_EnableApproaching)
         #define MixedDec_EnableApproachingValues
     #endif
 	#if defined(AltNum_DisableApproachingTop)
