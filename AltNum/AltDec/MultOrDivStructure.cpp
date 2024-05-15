@@ -218,8 +218,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 			{
 	#if defined(AltNum_EnablePiRep)
 				case 1:
-					CatchAllOp(rValue, RRep); break;
-				} break;
+					CatchAllPiOp(rValue, RRep); break;
 	#endif
 #pragma region ERep_to_ERep
 				case 2:
@@ -328,7 +327,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 				} break;
 #pragma endregion ERep_to_ERep
 	#if defined(AltNum_EnableIRep)
-				case 3:{
+				case 3:{//ERep_to_IRep
 					RepType RRep = rValue.GetIRepType();
 					switch(LRep)
 					{
@@ -387,7 +386,7 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 					}
 				} break;
 	#endif
-				default:{
+				default:{//ERep_to_NormalRep
 					RepType RRep = rValue.GetNormRepType();
 					switch(LRep)
 					{
@@ -627,34 +626,54 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 					RepType RRep = rValue.GetIRepType();
 					switch(LRep)
 					{
-						case RepType::NormalType:
-						{
-							switch(RRep)
-							{
-							
+						case RepType::NormalType:{
+							switch(RRep){
 							}
 						} break;
-						case RepType::ApproachingBottomRep:
-						{
-							switch(RRep)
-							{
-							
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnableFractionals)
+						case RepType::NumByDiv:{
+							switch(RRep){
+							}
+						}; break;
+				#endif
+				#if defined(AltNum_EnablePowerOfRepresentation)
+						case RepType::ToPowerOf:{
+							switch(RRep){
+							}
+						}; break;
+				#endif
+				#if defined(AltNum_EnableMixedFractional)
+						case RepType::MixedFrac:{
+							switch(RRep){
+							}
+						}; break;
+				#endif
+#pragma endregion AltDecVariantExclusive
+						case RepType::ApproachingBottomRep:{
+							switch(RRep){
 							}
 						} break;
-						case RepType::ApproachingTopRep:
-						{
-							switch(RRep)
-							{
-							
+						case RepType::ApproachingTopRep:{
+							switch(RRep){
 							}
 						} break;
-	#pragma region AltDecVariantExclusive							
-	#pragma endregion AltDecVariantExclusive
-						case RepType::InfinityRep:
-						{
-							switch(RRep)
-							{
-							
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnableApproachingDivided)
+						case RepType::ApproachingMidLeft:{
+							switch(RRep){
+							}
+						} break;
+					#if !defined(AltNum_DisableApproachingTop)
+						case RepType::ApproachingMidRight:{
+							switch(RRep){
+							}
+						} break;
+					#endif
+				#endif
+#pragma endregion AltDecVariantExclusive
+						case RepType::InfinityRep:{
+							switch(RRep){
 							}
 						} break;
 						default:
