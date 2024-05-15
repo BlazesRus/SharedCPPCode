@@ -16,201 +16,222 @@ void CatchAllEOp(const auto& rValue, const RepType& RRep)
 	BasicUnsigned___Op(RValue);
 }
 
+#if defined(AltNum_EnablePiRep)//PiRep_to_others
+void PiRepSwitch(const auto& rValue)
+{
+	RepType LRep = GetPiRepType();
+	switch(rValue.DecimalHalf.Flags)
+	{
+#pragma region PiRep_to_PiRep
+		case 1:{
+			RepType RRep = rValue.GetPiRepType();
+			if(LRep==RRep)
+			{
+				switch(LRep)
+				{
+					case RepType::PiNum:{
+					} break;
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnablePowerOfRepresentation)
+					case RepType::PiPower:{
+					} break;
+				#endif
+				#if defined(AltNum_EnableFractionals)
+					case RepType::PiNumByDiv:{
+					} break;
+				#endif
+				#if defined(AltNum_EnableMixedFractional)
+					case RepType::MixedPi:{
+					} break;
+				#endif
+#pragma endregion AltDecVariantExclusive
+				#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottomPi:{
+					} break;
+					#if !defined(AltNum_DisableApproachingTop)
+					case RepType::ApproachingTopPi:{
+					} break;
+					#endif
+				#endif
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnableApproachingDivided)
+					case RepType::ApproachingMidLeftPi:{
+					} break;
+					#if !defined(AltNum_DisableApproachingTop)
+					case RepType::ApproachingMidRightPi:{
+					} break;
+					#endif
+				#endif
+#pragma endregion AltDecVariantExclusive
+				default:
+					throw "Unsupported operation"; break;
+				}
+			}
+			else
+			{
+				switch(LRep)
+				{
+					case RepType::PiNum:{
+					} break;
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnablePowerOfRepresentation)
+					case RepType::PiPower:{
+					} break;
+				#endif
+				#if defined(AltNum_EnableFractionals)
+					case RepType::PiNumByDiv:{
+					} break;
+				#endif
+				#if defined(AltNum_EnableMixedFractional)
+					case RepType::MixedPi:{
+					} break;
+				#endif
+#pragma endregion AltDecVariantExclusive
+				#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottomPi:{
+					} break;
+					#if !defined(AltNum_DisableApproachingTop)
+					case RepType::ApproachingTopPi:{
+					} break;
+					#endif
+				#endif
+#pragma region AltDecVariantExclusive
+				#if defined(AltNum_EnableApproachingDivided)
+					case RepType::ApproachingMidLeftPi:{
+					} break;
+					#if !defined(AltNum_DisableApproachingTop)
+					case RepType::ApproachingMidRightPi:{
+					} break;
+					#endif
+				#endif
+#pragma endregion AltDecVariantExclusive
+				default:
+					throw "Unsupported operation"; break;
+				}
+			}
+		} break;
+#pragma endregion PiRep_to_PiRep
+#if defined(AltNum_EnableERep)
+		case 2:
+			CatchAllEOp(rValue, RRep); break;
+#endif
+#if defined(AltNum_EnableIRep)
+		case 3:{
+			RepType RRep = rValue.GetIRepType();
+			switch(LRep)
+			{
+				case RepType::PiNum:{
+				} break;
+#pragma region AltDecVariantExclusive
+			#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepType::PiPower:{
+				} break;
+			#endif
+			#if defined(AltNum_EnableFractionals)
+				case RepType::PiNumByDiv:{
+				} break;
+			#endif
+			#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedPi:{
+				} break;
+			#endif
+#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+				case RepType::ApproachingBottomPi:{
+				} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTopPi:{
+				} break;
+				#endif
+			#endif
+#pragma region AltDecVariantExclusive
+			#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidLeftPi:{
+				} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingMidRightPi:{
+				} break;
+				#endif
+			#endif
+#pragma endregion AltDecVariantExclusive
+			default:
+				throw "Unsupported operation"; break;
+			}
+		} break;
+#endif
+#pragma region PiRep_to_NormRep
+		default:{
+			RepType RRep = rValue.GetNormRepType();
+			switch(LRep)
+			{
+				case RepType::PiNum:{
+				} break;
+#pragma region AltDecVariantExclusive
+			#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepType::PiPower:{
+				} break;
+			#endif
+			#if defined(AltNum_EnableFractionals)
+				case RepType::PiNumByDiv:{
+				} break;
+			#endif
+			#if defined(AltNum_EnableMixedFractional)
+				case RepType::MixedPi:{
+				} break;
+			#endif
+#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+				case RepType::ApproachingBottomPi:{
+				} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingTopPi:{
+				} break;
+				#endif
+			#endif
+#pragma region AltDecVariantExclusive
+			#if defined(AltNum_EnableApproachingDivided)
+				case RepType::ApproachingMidLeftPi:{
+				} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				case RepType::ApproachingMidRightPi:{
+				} break;
+				#endif
+			#endif
+#pragma endregion AltDecVariantExclusive
+			default:
+				throw "Unsupported operation"; break;
+			}
+		} break;
+	}
+#pragma endregion PiRep_to_NormRep
+}
+#endif
+
+#if defined(AltNum_EnableERep)//ERep_to_others
+void ERepSwitch(const auto& rValue)
+{
+}
+#endif
+
+#if defined(AltNum_EnableERep)//IRep_to_others
+void IRepSwitch(const auto& rValue)
+{
+}
+#endif
+
+//IRep_to_others
+void NormRepSwitch(const auto& rValue)
+{
+}
+
 //UnsignedMultOp or UnsignedDivOp
 auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 {
 	switch(DecimalHalf.Flags)
 	{
-#if defined(AltNum_EnablePiRep)//PiRep_to_others
 		case 1:
-		{
-			RepType LRep = GetPiRepType();
-			switch(rValue.DecimalHalf.Flags)
-			{
-#pragma region PiRep_to_PiRep
-				case 1:{
-					RepType RRep = rValue.GetPiRepType();
-					if(LRep==RRep)
-					{
-                        switch(LRep)
-                        {
-                    		case RepType::PiNum:{
-                            } break;
-	#pragma region AltDecVariantExclusive
-                    	#if defined(AltNum_EnablePowerOfRepresentation)
-                    		case RepType::PiPower:{
-                            } break;
-                    	#endif
-                    	#if defined(AltNum_EnableFractionals)
-                    		case RepType::PiNumByDiv:{
-                            } break;
-                    	#endif
-                        #if defined(AltNum_EnableMixedFractional)
-                    		case RepType::MixedPi:{
-                            } break;
-                        #endif
-	#pragma endregion AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproaching)
-                    		case RepType::ApproachingBottomPi:{
-                            } break;
-                    		#if !defined(AltNum_DisableApproachingTop)
-                    		case RepType::ApproachingTopPi:{
-                            } break;
-                    		#endif
-                    	#endif
-	#pragma region AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproachingDivided)
-                    		case RepType::ApproachingMidLeftPi:{
-                            } break;
-                    		#if !defined(AltNum_DisableApproachingTop)
-                    		case RepType::ApproachingMidRightPi:{
-                            } break;
-                    		#endif
-						#endif
-	#pragma endregion AltDecVariantExclusive
-            			default:
-            				throw "Unsupported operation"; break;
-                        }
-					}
-					else
-					{
-                        switch(LRep)
-                        {
-                    		case RepType::PiNum:{
-                            } break;
-	#pragma region AltDecVariantExclusive
-                    	#if defined(AltNum_EnablePowerOfRepresentation)
-                    		case RepType::PiPower:{
-                            } break;
-                    	#endif
-                    	#if defined(AltNum_EnableFractionals)
-                    		case RepType::PiNumByDiv:{
-                            } break;
-                    	#endif
-                        #if defined(AltNum_EnableMixedFractional)
-                    		case RepType::MixedPi:{
-                            } break;
-                        #endif
-	#pragma endregion AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproaching)
-                    		case RepType::ApproachingBottomPi:{
-                            } break;
-                    		#if !defined(AltNum_DisableApproachingTop)
-                    		case RepType::ApproachingTopPi:{
-                            } break;
-                    		#endif
-                    	#endif
-	#pragma region AltDecVariantExclusive
-                    	#if defined(AltNum_EnableApproachingDivided)
-                    		case RepType::ApproachingMidLeftPi:{
-                            } break;
-                    		#if !defined(AltNum_DisableApproachingTop)
-                    		case RepType::ApproachingMidRightPi:{
-                            } break;
-                    		#endif
-						#endif
-	#pragma endregion AltDecVariantExclusive
-            			default:
-            				throw "Unsupported operation"; break;
-                        }
-					}
-				} break;
-#pragma endregion PiRep_to_PiRep
-	#if defined(AltNum_EnableERep)
-				case 2:
-					CatchAllEOp(rValue, RRep); break;
-	#endif
-	#if defined(AltNum_EnableIRep)
-				case 3:{
-					RepType RRep = rValue.GetIRepType();
-					switch(LRep)
-					{
-						case RepType::PiNum:{
-						} break;
-#pragma region AltDecVariantExclusive
-					#if defined(AltNum_EnablePowerOfRepresentation)
-						case RepType::PiPower:{
-						} break;
-					#endif
-					#if defined(AltNum_EnableFractionals)
-						case RepType::PiNumByDiv:{
-						} break;
-					#endif
-					#if defined(AltNum_EnableMixedFractional)
-						case RepType::MixedPi:{
-						} break;
-					#endif
-#pragma endregion AltDecVariantExclusive
-					#if defined(AltNum_EnableApproaching)
-						case RepType::ApproachingBottomPi:{
-						} break;
-						#if !defined(AltNum_DisableApproachingTop)
-						case RepType::ApproachingTopPi:{
-						} break;
-						#endif
-					#endif
-#pragma region AltDecVariantExclusive
-					#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingMidLeftPi:{
-						} break;
-						#if !defined(AltNum_DisableApproachingTop)
-						case RepType::ApproachingMidRightPi:{
-						} break;
-						#endif
-					#endif
-#pragma endregion AltDecVariantExclusive
-					default:
-						throw "Unsupported operation"; break;
-					}
-				} break;
-	#endif
-#pragma region PiRep_to_NormRep
-				default:{
-					RepType RRep = rValue.GetNormRepType();
-					switch(LRep)
-					{
-						case RepType::PiNum:{
-						} break;
-#pragma region AltDecVariantExclusive
-					#if defined(AltNum_EnablePowerOfRepresentation)
-						case RepType::PiPower:{
-						} break;
-					#endif
-					#if defined(AltNum_EnableFractionals)
-						case RepType::PiNumByDiv:{
-						} break;
-					#endif
-					#if defined(AltNum_EnableMixedFractional)
-						case RepType::MixedPi:{
-						} break;
-					#endif
-#pragma endregion AltDecVariantExclusive
-					#if defined(AltNum_EnableApproaching)
-						case RepType::ApproachingBottomPi:{
-						} break;
-						#if !defined(AltNum_DisableApproachingTop)
-						case RepType::ApproachingTopPi:{
-						} break;
-						#endif
-					#endif
-#pragma region AltDecVariantExclusive
-					#if defined(AltNum_EnableApproachingDivided)
-						case RepType::ApproachingMidLeftPi:{
-						} break;
-						#if !defined(AltNum_DisableApproachingTop)
-						case RepType::ApproachingMidRightPi:{
-						} break;
-						#endif
-					#endif
-#pragma endregion AltDecVariantExclusive
-					default:
-						throw "Unsupported operation"; break;
-					}
-				} break;
-#pragma endregion PiRep_to_NormRep
-		} break;
-#endif
-#if defined(AltNum_EnableERep)//ERep_to_others
+			PiRepSwitch(rValue); break;
+
 		case 2:
 		{
 			RepType LRep = GetERepType();
@@ -601,10 +622,12 @@ auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 					#endif
 				#endif
 #pragma endregion AltDecVariantExclusive
+#if defined(AltNum_EnableInfinityRep)
 						case RepType::InfinityRep:{
 							switch(RRep){
 							}
 						} break;
+#endif
 						default:
 							throw "Unsupported operation";
 					}

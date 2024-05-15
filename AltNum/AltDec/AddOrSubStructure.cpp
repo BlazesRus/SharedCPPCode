@@ -16,6 +16,29 @@ void CatchAllEOp(const auto& rValue, const RepType& RRep)
 	BasicUnsigned___Op(RValue);
 }
 
+#if defined(AltNum_EnablePiRep)//PiRep_to_others
+void PiRepSwitch(const auto& rValue)
+{
+}
+#endif
+
+#if defined(AltNum_EnableERep)//ERep_to_others
+void ERepSwitch(const auto& rValue)
+{
+}
+#endif
+
+#if defined(AltNum_EnableERep)//IRep_to_others
+void IRepSwitch(const auto& rValue)
+{
+}
+#endif
+
+//IRep_to_others
+void NormRepSwitch(const auto& rValue)
+{
+}
+
 //UnsignedAddOp or UnsignedSubOp
 auto& MediumDecVariant::Unsigned___Op(const auto& rValue)
 {
