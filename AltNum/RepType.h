@@ -137,7 +137,6 @@ namespace BlazesRusCode
 		//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		ApproachingImaginaryBottom = 68,
 	#if !defined(AltNum_DisableApproachingTop)
-
 		//(Enum Bits:7,3,4)
 		//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		ApproachingImaginaryTop = 76,
