@@ -1224,7 +1224,178 @@ protected:
         template<IntegerType IntType= unsigned int>
         auto UIntDivOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if (rValue == 1)
+                return *this;
+            if (rValue == 0)
+            {
+                #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_DefineDivideByZeroAsInfinity)
+                if (IntValue < 0)
+                    SetAsNegativeInfinity();
+                else
+                    SetAsInfinity();
+                return *this;
+                #else
+                throw "Target rValue can not be divided by zero";
+                #endif
+            }
+        	switch(DecimalHalf.Flags)
+        	{
+        #if defined(AltNum_EnablePiRep)
+        		case 1:{
+                    RepType LRep = rValue.GetPiRepType();
+                    switch(LRep)
+                    {
+                        case RepType::PiNum:{
+                            #if defined(AltNum_EnableFractionals)
+                            ExtraRep = rValue;
+                            #else
+                            BasicUIntDivOp(rValue);
+                            #endif
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomPi://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopPi://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableERep)
+        		case 2:{
+                    RepType LRep = rValue.GetERepType();
+                    switch(LRep)
+                    {
+                        case RepType::ENum:{
+                            #if defined(AltNum_EnableFractionals)
+                            ExtraRep = rValue;
+                            #else
+                            BasicUIntDivOp(rValue);
+                            #endif
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomE://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopE://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableIRep)//IRep_to_integer
+        		case 3:{
+                    RepType LRep = rValue.GetIRepType();
+                    switch(LRep){
+                        case RepType::INum:{
+                            #if defined(AltNum_EnableFractionals)
+                            ExtraRep = rValue;
+                            #else
+                            BasicUIntDivOp(rValue);
+                            #endif
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                    #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                    #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormalIRep(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+            #endif
+            #if defined(AltNum_EnableImaginaryInfinity)
+                        case RepType::ImaginaryInfinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        		default:{
+                    RepType LRep = rValue.GetNormRepType();
+                    switch(LRep)
+                    {
+                        case RepType::NormalType:
+                        {
+                            #if defined(AltNum_EnableAlternativeRepFractionals)
+                            ExtraRep = rValue;
+                            #else
+                            BasicUIntDivOp(rValue);
+                            #endif
+                        }
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        	}
 		}
 
         /// <summary>
@@ -1236,7 +1407,13 @@ protected:
         template<IntegerType IntType= signed int>
         auto IntDivOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UIntDivOpV1(-Value);
+            }
+            else
+                UIntDivOpV1(Value);
 		}
 
         /// <summary>
@@ -1248,7 +1425,8 @@ protected:
         template<IntegerType IntType= unsigned int>
         auto DivByUIntV1(const IntType& rValue)
 		{
-			//Add Code here
+            auto self = *this;
+            return self.UIntDivOpV1(rValue);
 		}
 
         /// <summary>
@@ -1260,7 +1438,8 @@ protected:
         template<IntegerType IntType= signed int>
         constexpr auto DivByIntV1(const IntType& rValue)
 		{
-			//Add Code here
+            auto self = *this;
+            return self.IntDivOpV1(rValue);
 		}
 
 public:
