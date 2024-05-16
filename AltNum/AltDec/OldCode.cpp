@@ -81,8 +81,7 @@
                 break; 
     #endif
     #ifdef AltNum_EnableInfinity
-                case RepType::PositiveInfinity:
-                case RepType::NegativeInfinity:
+                case RepType::Infinity:
                     return *this;
                     break;
     #endif

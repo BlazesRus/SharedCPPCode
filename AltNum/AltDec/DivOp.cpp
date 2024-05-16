@@ -518,8 +518,8 @@ void IRepSwitch(const auto& rValue)
 				#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-					} break;
+					case RepType::ImaginaryInfinity:
+                        break;//Return *this;
 #endif
 				default:
 					throw "Unsupported operation"; break;
@@ -574,10 +574,8 @@ void IRepSwitch(const auto& rValue)
 				#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-						switch(RRep){
-						}
-					} break;
+					case RepType::ImaginaryInfinity:
+						break;
 #endif
 				default:
 					throw "Unsupported operation"; break;
@@ -637,10 +635,8 @@ void IRepSwitch(const auto& rValue)
 			#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:{
-					switch(RRep){
-					}
-				} break;
+				case RepType::ImaginaryInfinity:
+                    break;
 #endif
 			default:
 				throw "Unsupported operation"; break;
