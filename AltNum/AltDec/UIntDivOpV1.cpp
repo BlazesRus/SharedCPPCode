@@ -26,24 +26,21 @@
         #if defined(AltNum_EnablePiRep)
         		case 1:{
                     RepType LRep = rValue.GetPiRepType();
-                    switch(LRep)
-                    {
+                    switch(LRep){
                     }
                 } break;
         #endif
         #if defined(AltNum_EnableERep)
         		case 2:{
                     RepType LRep = rValue.GetERepType();
-                    switch(LRep)
-                    {
+                    switch(LRep){
                     }
                 } break;
         #endif
         #if defined(AltNum_EnableIRep)//IRep_to_integer
         		case 3:{
                     RepType LRep = rValue.GetIRepType();
-                    switch(LRep)
-                    {
+                    switch(LRep){
                         case RepType::INum:
                         {
                             #if defined(AltNum_EnableFractionals)
@@ -53,7 +50,7 @@
                             #endif
                         }
                         break;
-            #if defined(AltNum_EnableApproachingI)
+            #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
                     #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
@@ -76,17 +73,64 @@
         #endif
         		default:{
                     RepType LRep = rValue.GetNormRepType();
-                    switch(LRep)
-                    {
-                        case RepType::NumByDiv:
-                        {
+                    switch(LRep){
+                        case RepType::NormalType:{
+                            #if defined(AltNum_EnableAlternativeRepFractionals)
+                            ExtraRep = rValue;
+                            #else
+                            BasicUIntDivOp(rValue);
+                            #endif
+                        }
+                        break;
+    #pragma region AltDecVariantExclusive	
+            #if defined(AltNum_EnableFractionals)
+                        case RepType::NumByDiv:{
                             int result = ExtraRep * rValue;
-                            if (ExtraRep == result / rValue)//checking for overflow
-                                ExtraRep = result;
+                            if (ExtraRep.Value == result / rValue)//checking for overflow
+                                ExtraRep.Value = result;
                             else
                                 BasicUIntDivOp(rValue);
                         }
                         break;
+            #endif
+            #if defined(AltNum_EnableMixedFractional)
+                        case RepType::MixedFrac://IntValue + DecimalHalf.Value/ExtraRep.Value
+                        {
+                            unsigned int divRes;
+                            unsigned int C;
+                            if (IsAtZeroInt())//Become NumByDiv
+                            {
+                                divRes = DecimalHalf.Value / ExtraRep.Value;
+                                C = DecimalHalf.Value - ExtraRep.Value * divRes;
+                                if (C == 0)
+                                {
+                                    IntValue = divRes;
+                                    DecimalHalf = 0;
+                                }
+                                else
+                                {
+                                    IntValue.Value = DecimalHalf.Value;
+                                    DecimalHalf = 0;
+                                    ExtraRep *= rValue;
+                                }
+                            }
+							else
+							{
+								divRes = IntValue.Value / ExtraRep.Value;
+								C = IntValue.Value - ExtraRep.Value * divRes;
+								if (C == 0)
+								{
+									throw "ToDo: Impliment code here";
+								}
+								else
+								{
+									throw "ToDo: Impliment code here";
+								}
+							}
+                        }
+                        break;
+            #endif
+    #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
                         {
@@ -112,6 +156,11 @@
                             BasicUIntDivOp(rValue);
                         }
                         break;
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
             #endif
                     }
                 } break;

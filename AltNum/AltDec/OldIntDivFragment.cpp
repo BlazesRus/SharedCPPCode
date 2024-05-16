@@ -24,15 +24,7 @@
             RepType LRep = GetRepType();
             switch (LRep)
             {
-                case RepType::NormalType:
-                {
-                    #if defined(AltNum_EnableAlternativeRepFractionals)
-                    ExtraRep = rValue;
-                    #else
-                    BasicUIntDivOp(rValue);
-                    #endif
-                }
-                break;
+
 #if defined(AltNum_EnableAlternativeRepFractionals)
 
     #if defined(AltNum_UsingAltFractional)
@@ -72,11 +64,6 @@
                 }
                 break; 
     #endif
-    #ifdef AltNum_EnableInfinity
-                case RepType::Infinity:
-                    return *this;
-                    break;
-    #endif
 
 
     #if defined(AltNum_EnableImaginaryInfinity)
@@ -86,52 +73,7 @@
     #endif
 
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-                {
-                    int divRes;
-                    int C;
-                    if (IsAtZeroInt())//Become NumByDiv
-                    {
-                        divRes = DecimalHalf / ExtraRep;//-4/3
-                        C = DecimalHalf - ExtraRep * divRes;//-4 - -3
-                        if (C == 0)
-                        {
-                            if (IntValue == NegativeRep)
-                                IntValue = divRes;
-                            else
-                                IntValue = -divRes;
-                            DecimalHalf = 0;
-                        }
-                        else
-                        {
-                            if (IntValue == NegativeRep)
-                                IntValue = DecimalHalf;
-                            else
-                                IntValue = -DecimalHalf;
-                            DecimalHalf = 0;
-                            ExtraRep *= rValue;
-                        }
-                        return *this;
-                    }
-                    divRes = IntValue / ExtraRep;
-                    if (divRes != 0)
-                    {
-                        C = IntValue - ExtraRep * divRes;
-                        if (C == 0)
-                        {
-                            throw "ToDo: Impliment code here";
-                        }
-                        else
-                        {
-                            throw "ToDo: Impliment code here";
-                        }
-                    }
-                    else
-                    {
-                        throw "ToDo: Impliment code here";
-                    }
-                }
-                break;
+
         #if defined(AltNum_EnableMixedPiFractional)
                 case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
         #elif defined(AltNum_EnableMixedEFractional)
