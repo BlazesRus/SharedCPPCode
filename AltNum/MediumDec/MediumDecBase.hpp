@@ -1008,7 +1008,7 @@ protected:
         void PartialUIntMultOpV1(const IntType& rValue)
         {
             if (DecimalHalf == 0)
-                IntValue *= rValue;
+                IntValue.Value *= rValue;
             else
 			{
                 __int64 SRep = IntValue == 0 ? DecimalHalf.Value : DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
@@ -1201,7 +1201,7 @@ protected:
         auto& BasicUIntAddOpV1(const IntType& rValue)
         {
 			if(IntValue.IsPositive())
-					IntValue += rValue;
+				IntValue += rValue;
 			else
 			{
 				IntType invertedValue = -IntValue.Value;
@@ -1816,13 +1816,39 @@ public:
 	
 protected:
         /// <summary>
+        /// Division operation between MediumDecBase and unsigned Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType= unsigned int>
+        constexpr auto UIntDivOpV1 = BasicUIntDivOpV1<IntType>;
+
+        /// <summary>
         /// Division operation between MediumDecBase and Integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecBase&</returns>
-        template<IntegerType IntType= int>
+        template<IntegerType IntType= signed int>
         constexpr auto IntDivOpV1 = BasicIntDivOpV1<IntType>;
+
+        /// <summary>
+        /// Division operation between MediumDecBase and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType= signed int>
+        constexpr auto DivideByUIntV1 = BasicDivideByUIntV1<IntType>;
+
+        /// <summary>
+        /// Division operation between MediumDecBase and Integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        constexpr auto DivideByIntV1 = BasicDivideByIntV1<IntType>;
 
 public:
 

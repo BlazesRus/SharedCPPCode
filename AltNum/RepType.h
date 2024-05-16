@@ -132,7 +132,7 @@ namespace BlazesRusCode
 		//(Enum Bits:7,6,3)
 		ImaginaryInfinity = 100,
 #endif
-#if defined(AltNum_EnableApproachingI)
+#if defined(AltNum_EnableApproaching)&&defined(AltNum_EnableIRep)
 		//(Enum Bits:7,3)
 		//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		ApproachingImaginaryBottom = 68,

@@ -1345,7 +1345,7 @@ public:
         /// <param name="rValue.">The right side Value</param> 
         void DivOp(const auto& Value)
         {
-            if(Value<0)
+            if(Value.IsNegative())
             {
                 SwapNegativeStatus();
                 UnsignedMultOp(-Value);
