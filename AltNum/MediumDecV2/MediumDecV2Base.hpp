@@ -1246,11 +1246,7 @@ protected:
                     switch(LRep)
                     {
                         case RepType::PiNum:{
-                            #if defined(AltNum_EnableFractionals)
-                            ExtraRep = rValue;
-                            #else
                             BasicUIntDivOp(rValue);
-                            #endif
                         } break;
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1284,11 +1280,7 @@ protected:
                     switch(LRep)
                     {
                         case RepType::ENum:{
-                            #if defined(AltNum_EnableFractionals)
-                            ExtraRep = rValue;
-                            #else
                             BasicUIntDivOp(rValue);
-                            #endif
                         } break;
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1321,11 +1313,7 @@ protected:
                     RepType LRep = rValue.GetIRepType();
                     switch(LRep){
                         case RepType::INum:{
-                            #if defined(AltNum_EnableFractionals)
-                            ExtraRep = rValue;
-                            #else
                             BasicUIntDivOp(rValue);
-                            #endif
                         } break;
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1358,11 +1346,7 @@ protected:
                     {
                         case RepType::NormalType:
                         {
-                            #if defined(AltNum_EnableAlternativeRepFractionals)
-                            ExtraRep = rValue;
-                            #else
                             BasicUIntDivOp(rValue);
-                            #endif
                         }
                         break;
     #pragma region AltDecVariantExclusive
