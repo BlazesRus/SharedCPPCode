@@ -385,19 +385,13 @@ void IRepSwitch(const auto& rValue)
 	{
 #if defined(AltNum_EnablePiRep)
 		case 1:
-			if(IsZero())
-				SetAsValue(rValue);
-			else
-				throw "Complex number operations not enabled yet.";
+			throw "Complex number operations not enabled yet.";
 			break;
 #endif
 
 #if defined(AltNum_EnableERep)
 		case 2:
-			if(IsZero())
-				SetAsValue(rValue);
-			else
-				throw "Complex number operations not enabled yet.";
+			throw "Complex number operations not enabled yet.";
 			break;
 #endif
 
