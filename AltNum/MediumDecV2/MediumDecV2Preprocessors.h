@@ -8,7 +8,7 @@
 /*
 
 //--Infinity based preprocessors--
-AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations and approaching value representations
+AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations
 	New Defined Values:
 		When DecimalHalf.Value is InfinityRep and IntValue is positive, it represents positive infinity
 		When DecimalHalf.Value is InfinityRep and IntValue is negative, it represents negative infinity
@@ -23,7 +23,12 @@ AltNum_EnableApproachingI = Enable approaching values for INum representations
 
 MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 
+AltNum_DefineDivideByZeroAsInfinity = Sets value as infinity when divide by zero instead of undefined result
 */
+
+#if defined(AltNum_DefineDivideByZeroAsInfinity)&& !defined(AltNum_EnableInfinityRep)
+	#define AltNum_EnableInfinityRep
+#endif
 
 //If Pi rep is neither disabled or enabled, default to enabling Pi representation
 #if !defined(AltNum_DisablePiRep) && !defined(AltNum_EnablePiRep)

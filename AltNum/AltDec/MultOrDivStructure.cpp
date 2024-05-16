@@ -711,10 +711,8 @@ void NormRepSwitch(const auto& rValue)
 		#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableInfinityRep)
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
+				case RepType::InfinityRep:
+					break;
 #endif
 				default:
 					throw "Unsupported operation";
@@ -776,10 +774,8 @@ void NormRepSwitch(const auto& rValue)
 			#endif
 		#endif
     #pragma endregion AltDecVariantExclusive
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
+				case RepType::InfinityRep:
+					break;
 				default:
 					throw "Unsupported operation";
 			}
@@ -840,10 +836,10 @@ void NormRepSwitch(const auto& rValue)
 			#endif
 		#endif
     #pragma endregion AltDecVariantExclusive
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
+				case RepType::InfinityRep:
+					SwapNegativeStatus();
+					DecimalHalf.Flags = 3;
+					break;
 				default:
 					throw "Unsupported operation";
 			}
@@ -889,8 +885,8 @@ void NormRepSwitch(const auto& rValue)
 				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-					} break;
+					case RepType::InfinityRep:
+						break;
 					default:
 						throw "Unsupported operation";
 				}
