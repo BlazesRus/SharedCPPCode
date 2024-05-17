@@ -2407,15 +2407,16 @@ protected:
                                 C = DecimalHalf.Value - ExtraRep.Value * divRes;
                                 if (C == 0)
                                 {
-                                    IntValue = divRes;
-                                    DecimalHalf = 0;
+                                    IntValue.Value = divRes;
+                                    DecimalHalf.Value = 0;
                                 }
                                 else
                                 {
                                     IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf = 0;
-                                    ExtraRep *= rValue;
+                                    DecimalHalf.Value = 0;
+                                    ExtraRep.Value *= rValue;
                                 }
+								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2519,15 +2520,16 @@ protected:
                                 C = DecimalHalf.Value - ExtraRep.Value * divRes;
                                 if (C == 0)
                                 {
-                                    IntValue = divRes;
-                                    DecimalHalf = 0;
+                                    IntValue.Value = divRes;
+                                    DecimalHalf.Value = 0;
                                 }
                                 else
                                 {
                                     IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf = 0;
-                                    ExtraRep *= rValue;
+                                    DecimalHalf.Value = 0;
+                                    ExtraRep.Value *= rValue;
                                 }
+								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2630,15 +2632,16 @@ protected:
                                 C = DecimalHalf.Value - ExtraRep.Value * divRes;
                                 if (C == 0)
                                 {
-                                    IntValue = divRes;
-                                    DecimalHalf = 0;
+                                    IntValue.Value = divRes;
+                                    DecimalHalf.Value = 0;
                                 }
                                 else
                                 {
                                     IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf = 0;
-                                    ExtraRep *= rValue;
+                                    DecimalHalf.Value = 0;
+                                    ExtraRep.Value *= rValue;
                                 }
+								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2741,15 +2744,16 @@ protected:
                                 C = DecimalHalf.Value - ExtraRep.Value * divRes;
                                 if (C == 0)
                                 {
-                                    IntValue = divRes;
-                                    DecimalHalf = 0;
+                                    IntValue.Value = divRes;
+                                    DecimalHalf.Value = 0;
                                 }
                                 else
                                 {
                                     IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf = 0;
-                                    ExtraRep *= rValue;
+                                    DecimalHalf.Value = 0;
+                                    ExtraRep.Value *= rValue;
                                 }
+								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else

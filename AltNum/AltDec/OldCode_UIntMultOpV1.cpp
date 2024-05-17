@@ -286,7 +286,7 @@
                 {
 					DecimalHalf *= rValue;
 					UIntHalfMultiplicationOp(rValue);
-					int divRes = DecimalHalf / -ExtraRep;
+					int divRes = DecimalHalf.Value / ExtraRep.Value;
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
@@ -335,3 +335,47 @@
             }
             return *this;
         }
+
+        /// <summary>
+        /// Multiplication operation between MediumDec variant and integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase&</returns>
+        template<IntegerType IntType= signed int>
+        auto& IntMultOpV1(const IntType& rValue)
+		{
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UIntMultOpV1(-rValue);
+            }
+            else
+                UIntMultOpV1(rValue);
+		}
+
+        /// <summary>
+        /// Multiplication operation between MediumDec variant and unsigned integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase</returns>
+        template<IntegerType IntType= unsigned int>
+        auto MultByUIntV1(const IntType& rValue)
+		{
+            auto self = *this;
+            return self.UIntDivOpV1(rValue);
+		}
+
+        /// <summary>
+        /// Multiplication operation between MediumDec variant and integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecBase</returns>
+        template<IntegerType IntType= signed int>
+        auto MultByIntV1(const IntType& rValue)
+		{
+            auto self = *this;
+            return self.IntDivOpV1(rValue);
+		}

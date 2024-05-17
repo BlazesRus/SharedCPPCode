@@ -179,7 +179,14 @@
             #if defined(AltNum_EnableMixedFractional)
                         case RepType::MixedFrac://IntValue + (DecimalHalf.Value)/ExtraRep.Value
                         {
-
+                            if (IsAtZeroInt())
+                            {
+                                
+                            }
+                            else
+                            {
+                                boost::rational<unsigned int> lSideFrac = boost::rational<unsigned int>(IntValue.Value, rValue);
+                            }
                         } break;
             #endif
     #pragma endregion AltDecVariantExclusive
@@ -214,6 +221,7 @@
                     }
                 } break;
         	}
+            return *this;
 		}
 
         /// <summary>
