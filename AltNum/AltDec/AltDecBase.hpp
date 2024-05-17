@@ -2711,7 +2711,7 @@ protected:
                     {
                         case RepType::NormalType:
                         {
-                            #if defined(AltNum_EnableAlternativeRepFractionals)
+                            #if defined(AltNum_EnableFractionals)
                             ExtraRep = rValue;
                             #else
                             BasicUIntDivOp(rValue);
