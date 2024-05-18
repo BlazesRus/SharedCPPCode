@@ -98,11 +98,29 @@
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
-                        case RepType::ApproachingMidRightPi:{
-
-                        } break;
+                        case RepType::ApproachingMidRightPi:
+        					if(IntValue.Value==0)
+        					{
+        						//0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
+        						int divRes = ExtraRep/rValue;
+        						if((ExtraRep.Value - rValue * divRes)==0)
+        						{
+        							if(divRes == 0)//Become 0.9..9
+        							{
+        								IntValue.Value = 1; ExtraRep = 0;
+        								DecimalHalf.Value = ApproachingBottomRep;
+        							}
+        							else
+        								ExtraRep = divRes;
+        						}
+                                else
+        						    CatchAllUIntMultiplication(rValue, LRep);
+        					}
+        					else
+        						CatchAllUIntMultiplication(rValue, LRep);
+                        break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingMidLeftPi:{
+                        case RepType::ApproachingMidLeftPi:
         					if(IntValue.Value==0)
         					{
         						//0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
@@ -122,7 +140,7 @@
         					}
         					else
         						CatchAllUIntMultiplication(rValue, LRep);
-                        } break;
+                        break;
                         #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
@@ -214,11 +232,29 @@
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
-                        case RepType::ApproachingMidRightE:{
-
-                        } break;
+                        case RepType::ApproachingMidRightE:
+        					if(IntValue.Value==0)
+        					{
+        						//0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
+        						int divRes = ExtraRep/rValue;
+        						if((ExtraRep.Value - rValue * divRes)==0)
+        						{
+        							if(divRes == 0)//Become 0.9..9
+        							{
+        								IntValue.Value = 1; ExtraRep = 0;
+        								DecimalHalf.Value = ApproachingBottomRep;
+        							}
+        							else
+        								ExtraRep = divRes;
+        						}
+                                else
+        						    CatchAllUIntMultiplication(rValue, LRep);
+        					}
+        					else
+        						CatchAllUIntMultiplication(rValue, LRep);
+                        break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingMidLeftE:{
+                        case RepType::ApproachingMidLeftE:
         					if(IntValue.Value==0)
         					{
         						//0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
@@ -238,7 +274,7 @@
         					}
         					else
         						CatchAllUIntMultiplication(rValue, LRep);
-                        } break;
+                        break;
                         #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
@@ -277,7 +313,6 @@
             #endif
             #if defined(AltNum_EnableMixedFractional)
                         case RepType::MixedI://IntValue + (DecimalHalf.Value)/ExtraRep.Value
-                        {
                             if (IsAtZeroInt())
                             {
                                 unsigned int result = DecimalHalf.Value * rValue;
@@ -308,7 +343,7 @@
                                 DecimalHalf.Value = (unsigned int) C;
                                 ExtraRep.Value = (unsigned int) rSideFrac.denominator();
                             }
-                        } break;
+                        break;
             #endif
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
@@ -325,15 +360,33 @@
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
-                        case RepType::ApproachingImaginaryMidRight:{
-
-                        } break;
+                        case RepType::ApproachingImaginaryMidRight:
+        					if(IntValue.Value==0)
+        					{
+        						//0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
+        						unsigned int divRes = ExtraRep.Value/rValue;
+        						if((ExtraRep.Value - rValue * divRes)==0)
+        						{
+        							if(divRes == 0)//Become 0.9..9
+        							{
+        								IntValue.Value = 1; ExtraRep = 0;
+        								DecimalHalf.Value = ApproachingBottomRep;
+        							}
+        							else
+        								ExtraRep = divRes;
+        						}
+                                else
+        						    CatchAllUIntMultiplication(rValue, LRep);
+        					}
+        					else
+        						CatchAllUIntMultiplication(rValue, LRep);
+                        break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingImaginaryMidLeft:{
+                        case RepType::ApproachingImaginaryMidLeft:
         					if(IntValue.Value==0)
         					{
         						//0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
-        						int divRes = ExtraRep.Value/rValue;
+        						unsigned int divRes = ExtraRep.Value/rValue;
         						if((ExtraRep.Value - rValue * divRes)==0)
         						{
         							if(divRes == 0)//Become 0.9..9
@@ -349,7 +402,7 @@
         					}
         					else
         						CatchAllUIntMultiplication(rValue, LRep);
-                        } break;
+                        break;
                         #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
@@ -400,10 +453,10 @@
                                 {
                                 #if defined(AltNum_EnableNegativePowerRep)
                                     if(ExtraRep<0)
-                                        ExtraRep -= 1;
+                                        --ExtraRep;
                                     else
                                 #endif
-                                        ExtraRep.Value += 1;
+                                        ++ExtraRep.Value;
                                 }
                                 else
                                     CatchAllUIntMultiplication(rValue, LRep);
@@ -461,15 +514,33 @@
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
-                        case RepType::ApproachingMidRight:{
-
-                        } break;
+                        case RepType::ApproachingMidRight:
+        					if(IntValue.Value==0)
+        					{
+        						//0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
+        						unsigned int divRes = ExtraRep.Value/rValue;
+        						if((ExtraRep.Value - rValue * divRes)==0)
+        						{
+        							if(divRes == 0)//Become 0.9..9
+        							{
+        								IntValue.Value = 1; ExtraRep = 0;
+        								DecimalHalf.Value = ApproachingBottomRep;
+        							}
+        							else
+        								ExtraRep = divRes;
+        						}
+                                else
+        						    CatchAllUIntMultiplication(rValue, LRep);
+        					}
+        					else
+        						CatchAllUIntMultiplication(rValue, LRep);
+                        break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingMidLeft:{
+                        case RepType::ApproachingMidLeft:
         					if(IntValue.Value==0)
         					{
         						//0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
-        						int divRes = ExtraRep.Value/rValue;
+        						unsigned int divRes = ExtraRep.Value/rValue;
         						if((ExtraRep.Value - rValue * divRes)==0)
         						{
         							if(divRes == 0)//Become 0.9..9
@@ -485,7 +556,7 @@
         					}
         					else
         						CatchAllUIntMultiplication(rValue, LRep);
-                        } break;
+                        break;
                         #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
