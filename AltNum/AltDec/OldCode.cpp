@@ -944,61 +944,6 @@
         }
 		
         /// <summary>
-        /// Addition AltDecBase modifying operation with right side Integer rValue.
-        /// (copy by parameter and pointer version)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="rValue.">The rValue</param>
-        /// <returns>AltDecBase&</returns>
-        template<IntegerType IntType=signed int>
-        AltDecBase& IntAddOp(const IntType& rValue)
-        {
-            if (rValue == 0)
-                return *this;
-	#if defined(AltNum_EnableIRep)
-            if(ExtraRep==IRep)
-            {
-                throw "Can't convert AltDecBase into complex number at moment";
-				return *this;
-            }
-	#endif
-	#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-                return *this;
-	#endif
-	#if defined(AltNum_EnableMixedFractional)
-            if(DecimalHalf<0)//Mixed Fraction detected
-            {}
-			else
-	#endif
-			if(ExtraRep!=0)//Don't convert if mixed fraction
-				ConvertToNormTypeV2();
-			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
-			//If flips to other side of negative, invert the decimals
-	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
-			{
-				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
-				{
-		#if defined(AltNum_EnableAlternativeMixedFrac)
-					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
-						DecimalHalf = ExtraRep - DecimalHalf;
-					else
-		#endif			
-						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
-				}
-				else
-					DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
-			}
-	#else
-            if(WasNegative ^ (IntValue >= 0))
-				DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
-	#endif
-            return *this;
-        }
-		
-        /// <summary>
         /// Addition Operation  with right side AltDecBase
         /// (Modifies owner object)
         /// </summary>
@@ -1383,61 +1328,6 @@
             }
             else
                 RepToRepAddOp(LRep, RRep, *this, rValue);
-            return *this;
-        }
-		
-        /// <summary>
-        /// Subtraction AltDecBase modifying operation with right side Integer rValue.
-        /// (copy by parameter and pointer version)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="rValue.">The rValue</param>
-        /// <returns>AltDecBase</returns>
-        template<IntegerType IntType=signed int>
-        AltDecBase& IntSubOp(const IntType& rValue)
-        {
-            if (rValue == 0)
-                return *this;
-	#if defined(AltNum_EnableIRep)
-            if(ExtraRep==IRep)
-            {
-                throw "Can't convert AltDecBase into complex number at moment";
-				return *this;
-            }
-	#endif
-	#if defined(AltNum_EnableInfinityRep)
-            if (DecimalHalf == InfinityRep)
-                return *this;
-	#endif
-	#if defined(AltNum_EnableMixedFractional)
-            if(DecimalHalf<0)//Mixed Fraction detected
-            {}
-			else
-	#endif
-			if(ExtraRep!=0)//Don't convert if mixed fraction
-				ConvertToNormTypeV2();
-			bool WasNegative = IntValue < 0;
-			IntHalfAdditionOp(rValue);
-			//If flips to other side of negative, invert the decimals
-	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ (IntValue >= 0))//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
-			{
-				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
-				{
-		#if defined(AltNum_EnableAlternativeMixedFrac)
-					if(ExtraRep<0)// DecimalHalf:-2,ExtraRep:-3 becomes DecimalHalf:-1, ExtraRep:-3
-						DecimalHalf = ExtraRep - DecimalHalf;
-					else
-		#endif			
-						DecimalHalf = -(ExtraRep+DecimalHalf);// DecimalHalf:-2,ExtraRep:3 becomes DecimalHalf:-1, ExtraRep:3
-				}
-				else
-					DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
-			}
-	#else
-            if(WasNegative ^ (IntValue >= 0))
-				DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
-	#endif
             return *this;
         }
 		

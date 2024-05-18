@@ -1632,7 +1632,7 @@ protected:
 		{
             if (rValue == 1)
                 return *this;
-            if (rValue == 0)
+            else if (rValue == 0)
             {
                 SetAsZero();
                 return *this;
@@ -1971,7 +1971,10 @@ protected:
         template<IntegerType IntType= signed int>
         auto& IntAddOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if(Value<0)
+                UIntSubOpV1(-rValue);
+            else
+                UIntAddOpV1(rValue);
 		}
 
         /// <summary>
@@ -1981,9 +1984,9 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
-        auto AddByUIntV1(const IntType& rValue)
-		{
-			//Add Code here
+        auto AddByUIntV1(const IntType& rValue){
+            auto self = *this;
+            return self.UIntAddOpV1(rValue);
 		}
 
         /// <summary>
@@ -1993,11 +1996,10 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        auto AddByIntV1(const IntType& rValue)
-		{
-			//Add Code here
+        auto AddByIntV1(const IntType& rValue){
+            auto self = *this;
+            return self.IntAddOpV1(rValue);
 		}
-
 public:
 
         constexpr auto UIntAddOpV1 = UIntAddOpV1<unsigned int>;
@@ -2140,7 +2142,7 @@ protected:
 		}
 
         /// <summary>
-        /// Subtraction operation between MediumDec variant and integer values
+        /// Subtraction operation between MediumDec variant and Integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -2148,31 +2150,34 @@ protected:
         template<IntegerType IntType= signed int>
         auto& IntSubOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if(Value<0)
+                UIntAddOpV1(-rValue);
+            else
+                UIntSubOpV1(rValue);
 		}
 
         /// <summary>
-        /// Subtraction operation between MediumDec variant and unsigned integer values
+        /// Subtraction operation between MediumDec variant and unsigned Integer values
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
-        auto SubByUIntV1(const IntType& rValue)
-		{
-			//Add Code here
+        auto SubtractByUIntV1(const IntType& rValue){
+            auto self = *this;
+            return self.UIntSubOpV1(rValue);
 		}
 
         /// <summary>
-        /// Subtraction operation between MediumDec variant and integer values
+        /// Subtraction operation between MediumDec variant and Integer values
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        auto SubByIntV1(const IntType& rValue)
-		{
-			//Add Code here
+        auto SubtractByIntV1(const IntType& rValue){
+            auto self = *this;
+            return self.IntSubOpV1(rValue);
 		}
 
 public:
