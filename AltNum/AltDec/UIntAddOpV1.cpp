@@ -63,43 +63,28 @@
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingBottom:
-        					if(IsNegative())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                            break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTop:
-        					if(IsNegative())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                            break;
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRight:
-        					if(IsNegative())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                        break;
                         case RepType::ApproachingMidLeft:
-        					if(IsNegative())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                        break;
                 #endif
     #pragma endregion AltDecVariantExclusive
+        					if(IsNegative())
+        					{
+                                if(rValue>IntValue.Value)
+								{
+                                    IntValue.IsPositive = 1;
+                                    IntValue.Value = rValue - IntValue.Value;
+								}
+								else
+									IntValue.Value -= rValue;
+                            }
+                            else
+                                IntValue.Value += rValue;
+                        break;
             #endif
             #ifdef AltNum_EnableInfinity
                         case RepType::Infinity:

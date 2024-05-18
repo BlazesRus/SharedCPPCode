@@ -63,43 +63,28 @@
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingBottom:
-        					if(IsPositive())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                            break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTop:
-        					if(IsPositive())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                            break;
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRight:
-        					if(IsPositive())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                        break;
                         case RepType::ApproachingMidLeft:
-        					if(IsPositive())
-        					{
-                                //Add code
-                            }
-                            else
-                                IntValue += rValue;
-                        break;
                 #endif
     #pragma endregion AltDecVariantExclusive
+        					if(IsPositive())
+        					{
+                                if(rValue>IntValue.Value)
+								{
+                                    IntValue.IsPositive = 0;
+                                    IntValue.Value = rValue - IntValue.Value;
+								}
+								else
+									IntValue.Value -= rValue;
+                            }
+                            else
+                                IntValue.Value += rValue;
+                            break;
             #endif
             #ifdef AltNum_EnableInfinity
                         case RepType::Infinity:
@@ -114,7 +99,7 @@
 		}
 
         /// <summary>
-        /// Addition operation between MediumDec variant and Integer values
+        /// Subtraction operation between MediumDec variant and Integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
