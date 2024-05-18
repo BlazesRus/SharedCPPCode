@@ -2409,14 +2409,27 @@ protected:
                                 {
                                     IntValue.Value = divRes;
                                     DecimalHalf.Value = 0;
+                                    ExtraRep = rValue;
                                 }
                                 else
                                 {
-                                    IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf.Value = 0;
-                                    ExtraRep.Value *= rValue;
+                                    unsigned int result = ExtraRep.Value * rValue;
+                                    if (ExtraRep.Value == result / rValue)
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, result);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+                                    }
+                                    else
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, ExtraRep.Value);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+										BasicUIntDivOp(rValue);
+                                    }
                                 }
-								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2522,14 +2535,27 @@ protected:
                                 {
                                     IntValue.Value = divRes;
                                     DecimalHalf.Value = 0;
+                                    ExtraRep = rValue;
                                 }
                                 else
                                 {
-                                    IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf.Value = 0;
-                                    ExtraRep.Value *= rValue;
+                                    unsigned int result = ExtraRep.Value * rValue;
+                                    if (ExtraRep.Value == result / rValue)
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, result);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+                                    }
+                                    else
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, ExtraRep.Value);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+										BasicUIntDivOp(rValue);
+                                    }
                                 }
-								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2634,14 +2660,27 @@ protected:
                                 {
                                     IntValue.Value = divRes;
                                     DecimalHalf.Value = 0;
+                                    ExtraRep = rValue;
                                 }
                                 else
                                 {
-                                    IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf.Value = 0;
-                                    ExtraRep.Value *= rValue;
+                                    unsigned int result = ExtraRep.Value * rValue;
+                                    if (ExtraRep.Value == result / rValue)
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, result);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+                                    }
+                                    else
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, ExtraRep.Value);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+										BasicUIntDivOp(rValue);
+                                    }
                                 }
-								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
@@ -2746,14 +2785,27 @@ protected:
                                 {
                                     IntValue.Value = divRes;
                                     DecimalHalf.Value = 0;
+                                    ExtraRep = rValue;
                                 }
                                 else
                                 {
-                                    IntValue.Value = DecimalHalf.Value;
-                                    DecimalHalf.Value = 0;
-                                    ExtraRep.Value *= rValue;
+                                    unsigned int result = ExtraRep.Value * rValue;
+                                    if (ExtraRep.Value == result / rValue)
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, result);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+                                    }
+                                    else
+                                    {
+                                        boost::rational<unsigned int> rSideFrac = boost::rational<unsigned int>(DecimalHalf.Value, ExtraRep.Value);
+                                        IntValue.Value = rSideFrac.numerator();
+										DecimalHalf.Value = 0;
+                                        ExtraRep = rSideFrac.denominator();
+										BasicUIntDivOp(rValue);
+                                    }
                                 }
-								ExtraRep.IsPositive = 1;
                                 return *this;
                             }
 							else
