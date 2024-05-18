@@ -162,7 +162,12 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 
 #pragma region PreprocessorToggles
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
+//Require AltNum_DisableApproachingTop not to be toggled to allow AltNum_EnableApproachingDivided to be enabled
+#if defined(AltNum_DisableApproachingTop) && defined(AltNum_EnableApproachingDivided)
+	#undef AltNum_EnableApproachingDivided
+#endif
+
+/*#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
 	#define AltNum_EnableDecimaledPiFractionals
 #endif
 
@@ -172,17 +177,17 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 
 #if defined(AltNum_EnableFractionals)&&define(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
 	#define AltNum_EnableDecimaledIFractionals
-#endif
+#endif*/
 
-#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
+/*#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
 	#define AltNum_EnablePiPowers
 #endif
 
 #if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableEPowers)
 	#define AltNum_EnableEPowers
-#endif
+#endif*/
 
-#if defined(AltNum_EnableApproachingPi)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingPiDivided)
+/*#if defined(AltNum_EnableApproachingPi)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingPiDivided)
 	#define AltNum_EnableApproachingPiDivided
 #endif
 
@@ -192,7 +197,7 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 
 #if defined(AltNum_EnableApproachingI)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingIDivided)
 	#define AltNum_EnableApproachingIDivided
-#endif
+#endif*/
 
 #pragma endregion PreprocessorToggles
 

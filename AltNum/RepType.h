@@ -121,11 +121,9 @@ namespace BlazesRusCode
 		//(Enum Bits:7,5)
 		//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
 		ApproachingMidLeft = 80,
-		#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4,5)
 		//DecimalHalf:1000000000/ExtraRep + ApproachingZero (AlternativeName:ApproachingMidRight)
 		ApproachingMidRight = 88,
-		#endif
 	#endif
 #endif
 #if defined(AltNum_EnableImaginaryInfinity)

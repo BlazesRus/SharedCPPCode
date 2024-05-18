@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -151,20 +151,24 @@ public:
         RepType GetPiRepType()
     #endif
         {
-    #if defined(AltNum_EnableApproachingPi)
+    #if defined(AltNum_EnableApproaching)
+		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
-        #if defined(AltNum_EnableApproachingAlternativeDiv)
+			#if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeftPi;
+                else
+			#endif
+                    return RepType::ApproachingTopPi;
+            else
+		#endif
+			if (DecimalHalf == ApproachingBottomRep)
+        #if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep!=0)
                     return RepType::ApproachingMidLeftPi;
                 else
         #endif
-                    return RepType::ApproachingTopPi;
-    #endif
-    #if defined(AltNum_EnableApproachingAlternativeDiv)
-            else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
-        #if defined(AltNum_EnableApproachingAlternativeDiv)
-                 return RepType::ApproachingMidRightPi;
-        #endif
+					return RepType::ApproachingBottomPi;
     #endif
     #if defined(AltNum_EnablePowerOfRepresentation)
         #if defined(AltNum_EnableNegativePowerRep)
@@ -196,18 +200,24 @@ public:
         RepType GetERepType()
     #endif
         {
-    #if defined(AltNum_EnableApproachingE)
+    #if defined(AltNum_EnableApproaching)
+		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
-        #if defined(AltNum_EnableApproachingAlternativeDiv)
+			#if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeftE;
+                else
+			#endif
+                    return RepType::ApproachingTopE;
+            else
+		#endif
+			if (DecimalHalf == ApproachingBottomRep)
+        #if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep!=0)
                     return RepType::ApproachingMidLeftE;
                 else
         #endif
-                    return RepType::ApproachingTopE;
-        #if defined(AltNum_EnableApproachingAlternativeDiv)
-            else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
-                 return RepType::ApproachingMidRightE;
-        #endif
+					return RepType::ApproachingBottomE;
     #endif
     #if defined(AltNum_EnablePowerOfRepresentation)
         #if defined(AltNum_EnableNegativePowerRep)
@@ -240,29 +250,28 @@ public:
         RepType GetIRepType()
     #endif
         {
-    #if defined(AltNum_EnableImaginaryInfinity)
-            if(DecimalHalf == InfinityRep)
-                return RepType::ImaginaryInfinity;
-    #endif
-    #if defined(AltNum_EnableApproachingI)
-            if (DecimalHalf == ApproachingBottomRep)
-            {
+    #if defined(AltNum_EnableApproaching)
+		#if !defined(AltNum_DisableApproachingTop)
+            if (DecimalHalf == ApproachingTopRep)
+			#if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingImaginaryMidLeft;
+                else
+			#endif
+                    return RepType::ApproachingImaginaryTop;
+            else
+		#endif
+			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep!=0)
                     return RepType::ApproachingImaginaryMidLeft;
                 else
         #endif
-                return RepType::ApproachingImaginaryBottom;
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
-                    return RepType::ApproachingImaginaryMidRight;
-                else
-        #endif
-                return RepType::ApproachingImaginaryTop;
-            }
+					return RepType::ApproachingImaginaryBottom;
+    #endif
+    #if defined(AltNum_EnableImaginaryInfinity)
+            if(DecimalHalf == InfinityRep)
+                return RepType::ImaginaryInfinity;
     #endif
     #if defined(AltNum_EnablePowerOfRepresentation)
         #if defined(AltNum_EnableNegativePowerRep)
@@ -294,30 +303,25 @@ public:
         RepType GetNormRepType()
     #endif
         {
-        #if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf == InfinityRep)
-                return RepType::Infinity;
-        #endif
-        #if defined(AltNum_EnableApproaching)
-            if (DecimalHalf == ApproachingBottomRep)
-            {
+    #if defined(AltNum_EnableApproaching)
+		#if !defined(AltNum_DisableApproachingTop)
+            if (DecimalHalf == ApproachingTopRep)
+			#if defined(AltNum_EnableApproachingDivided)
+                if(ExtraRep!=0)
+                    return RepType::ApproachingMidLeft;
+                else
+			#endif
+                    return RepType::ApproachingTop;
+            else
+		#endif
+			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep!=0)
                     return RepType::ApproachingMidLeft;
                 else
         #endif
-                    return RepType::ApproachingBottom;
-            }
-            else if (DecimalHalf == ApproachingTopRep)
-            {
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
-                    return RepType::ApproachingMidRight;
-                else
-        #endif
-                return RepType::ApproachingTop;
-            }
-        #endif
+					return RepType::ApproachingBottom;
+    #endif
         #if defined(AltNum_EnableNaN)
             if(DecimalHalf==NaNRep)
                 return RepType::NaN;
@@ -337,6 +341,10 @@ public:
                 //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
                 //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
                 return RepType::UndefinedButInRange;
+        #endif
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf == InfinityRep)
+                return RepType::Infinity;
         #endif
         #if defined(AltNum_EnablePowerOfRepresentation)
             #if defined(AltNum_EnableNegativePowerRep)
