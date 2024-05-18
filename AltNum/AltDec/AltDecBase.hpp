@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -802,7 +802,7 @@ public:
         }
         #endif
 		
-		#if defined(AltNum_EnableApproachingPi)
+		#if defined(AltNum_EnablePiRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
         void SetAsApproachingTopPi(const int& value=0)
         {
@@ -817,7 +817,7 @@ public:
         }
 		#endif
 		
-		#if defined(AltNum_EnableApproachingE)
+		#if defined(AltNum_EnableERep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
         void SetAsApproachingTopE(const int& value=0)
         {
@@ -832,7 +832,7 @@ public:
         }
 		#endif
 		
-		#if defined(AltNum_EnableApproachingI)
+		#if defined(AltNum_EnableIRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
         void SetAsApproachingTopI(const int& value=0)
         {
@@ -858,7 +858,6 @@ public:
             ExtraRep = divisor;
         }
 
-		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
         void SetAsApproachingTopDiv(const int& value, const unsigned int& divisor)
@@ -866,9 +865,8 @@ public:
             IntValue = value; DecimalHalf = ApproachingTopRep;
             ExtraRep = divisor;
         }
-        #endif
 		
-		#if defined(AltNum_EnableApproachingPi)
+		#if defined(AltNum_EnablePiRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
         void SetAsApproachingTopPiDiv(const int& value, const unsigned int& divisor)
         {
@@ -883,7 +881,7 @@ public:
         }
 		#endif
 		
-		#if defined(AltNum_EnableApproachingE)
+		#if defined(AltNum_EnableERep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
         void SetAsApproachingTopEDiv(const int& value, const unsigned int& divisor)
         {
@@ -898,7 +896,7 @@ public:
         }
 		#endif
 		
-		#if defined(AltNum_EnableApproachingI)
+		#if defined(AltNum_EnableIRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
         void SetAsApproachingTopIDiv(const int& value, const unsigned int& divisor)
         {
@@ -1345,10 +1343,8 @@ public:
 		#if defined(AltNum_EnableApproachingDivided)
             case RepType::ApproachingMidLeft:
                 ConvertFromApproachingMidLeftToNorm(); break;
-			#if !defined(AltNum_DisableApproachingTop)
             case RepType::ApproachingMidRight:
                 ConvertFromApproachingMidRightToNorm(); break;
-			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
@@ -1425,10 +1421,8 @@ public:
 			#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingImaginaryMidLeft:
 				ConvertFromApproachingIMidLeftToNorm(); break;
-				#if !defined(AltNum_DisableApproachingTop)
 			case RepType::ApproachingImaginaryMidRight:
 				ConvertFromApproachingIMidRightToNorm(); break;
-				#endif
 			#endif
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
@@ -2496,9 +2490,7 @@ protected:
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRightPi://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                        #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingMidLeftPi://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                        #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
                         {
@@ -2626,9 +2618,7 @@ protected:
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRightE://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                        #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingMidLeftE://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                        #endif
                 #endif
     #pragma endregion AltDecVariantExclusive
                         {
@@ -2737,21 +2727,40 @@ protected:
             #endif
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-                    #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-                    #endif
+                        case RepType::ApproachingImaginaryBottom:{
+                            if (IsAtZeroInt())
+                #if defined(AltNum_EnableApproachingDivided)
+                                ExtraRep = rValue;
+				#else
+                                return *this;
+				#endif
+							else
+							{
+								ConvertToNormType(LRep);
+								BasicUIntDivOp(rValue);
+							}
+                        } break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingImaginaryTop:{
+                #if defined(AltNum_EnableApproachingDivided)
+                            if (IsAtZeroInt())
+                                ExtraRep = rValue;//Becomes ApproachingMidLeft
+							return *this;
+				#eendif
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+						} break;
+                        #endif
+    #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                    #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                    #endif
-                #endif
                         {
-                            ConvertToNormalIRep(LRep);
+                            ConvertToNormType(LRep);
                             BasicUIntDivOp(rValue);
-                        }
-                        break;
+                        } break;
+                #endif
+    #pragma endregion AltDecVariantExclusive
             #endif
             #if defined(AltNum_EnableImaginaryInfinity)
                         case RepType::ImaginaryInfinity:
@@ -2881,29 +2890,41 @@ protected:
             #endif
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
-                        {
+                        case RepType::ApproachingBottom:{
                             if (IsAtZeroInt())
+                #if defined(AltNum_EnableApproachingDivided)
+                                ExtraRep = rValue;
+				#else
                                 return *this;
+				#endif
+							else
+							{
+				#endif
+								ConvertToNormType(LRep);
+								BasicUIntDivOp(rValue);
+							}
+                        } break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop:{
+                #if defined(AltNum_EnableApproachingDivided)
+                            if (IsAtZeroInt())
+                                ExtraRep = rValue;//Becomes ApproachingMidLeft
+							return *this;
+				#eendif
                             ConvertToNormType(LRep);
                             BasicUIntDivOp(rValue);
-                        }
-                        break;
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+						} break;
                         #endif
     #pragma region AltDecVariantExclusive
                 #if defined(AltNum_EnableApproachingDivided)
                         case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
-                        #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                        #endif
-                #endif
-    #pragma endregion AltDecVariantExclusive
                         {
                             ConvertToNormType(LRep);
                             BasicUIntDivOp(rValue);
                         } break;
+                #endif
+    #pragma endregion AltDecVariantExclusive
             #endif
             #ifdef AltNum_EnableInfinity
                         case RepType::Infinity:
