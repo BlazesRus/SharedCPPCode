@@ -44,7 +44,11 @@
                             }
                         } break;
             #endif
-            #if defined(AltNum_EnableMixedFractional)
+            #if defined(AltNum_EnablePowerOfRepresentation)
+                        case RepType::PiPower:
+                            CatchAllUIntMultiplication(rValue, LRep);
+                            break;
+            #elif defined(AltNum_EnableMixedFractional)
                         case RepType::MixedPi://IntValue + (DecimalHalf.Value)/ExtraRep.Value
                         {
                             if (IsAtZeroInt())
@@ -156,7 +160,11 @@
                             }
                         } break;
             #endif
-            #if defined(AltNum_EnableMixedFractional)
+            #if defined(AltNum_EnablePowerOfRepresentation)
+                        case RepType::EPower:
+                            CatchAllUIntMultiplication(rValue, LRep);
+                            break;
+            #elif defined(AltNum_EnableMixedFractional)
                         case RepType::MixedE://IntValue + (DecimalHalf.Value)/ExtraRep.Value
                         {
                             if (IsAtZeroInt())
@@ -384,7 +392,26 @@
                         }
                         break;
             #endif
-            #if defined(AltNum_EnableMixedFractional)
+            #if defined(AltNum_EnablePowerOfRepresentation)
+                        case RepType::ToPowerOf:
+                            if(DecimalHalf.Value==0)
+                            {
+                                if(IntValue==rValue)
+                                {
+                                #if defined(AltNum_EnableNegativePowerRep)
+                                    if(ExtraRep<0)
+                                        ExtraRep -= 1;
+                                    else
+                                #endif
+                                        ExtraRep.Value += 1;
+                                }
+                                else
+                                    CatchAllUIntMultiplication(rValue, LRep);
+                            }
+                            else
+                                CatchAllUIntMultiplication(rValue, LRep);
+                            break;
+            #elif defined(AltNum_EnableMixedFractional)
                         case RepType::MixedFrac://IntValue + (DecimalHalf.Value)/ExtraRep.Value
                         {
                             if (IsAtZeroInt())
