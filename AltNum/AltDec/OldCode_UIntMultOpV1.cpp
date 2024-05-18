@@ -79,45 +79,24 @@
     #endif
     #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(IntValue!=0&&IntValue!=NegativeRep)
+					if(IntValue.Value!=0)
 						CatchAllUIntMultiplication(rValue, LRep);
 					break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-					if(IntValue==NegativeRep)
-						IntValue = -(int)rValue;
-					else if(IntValue==0)
-						IntValue = (int)rValue - 1;
-					else if(IntValue<0)//-5.9..9 * 100
-						IntValue = (IntValue-1)*(int)rValue + 1;
+					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
+						IntValue.Value = (int)rValue - 1;
 					else//5.9..9 * 100 = 599.9..9
-						IntValue = (IntValue+1)*(int)rValue - 1;
+						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
 					break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-		        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
-                {
-					if(IntValue==0)
+		        case RepType::ApproachingMidLeft:{
+					if(IntValue.Value==0)
 					{
 						//0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
-						int divRes = ExtraRep/rValue;
-						if((ExtraRep - rValue * divRes)==0)
-						{
-							if(divRes == 0)//Become 0.9..9
-							{
-								ExtraRep = 0;
-								DecimalHalf = ApproachingTopRep;
-							}
-							else
-							{
-							}
-						}
-					}
-					else if(IntValue==NegativeRep)
-					{
-						//-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
-						int divRes = ExtraRep/rValue;
-						if((ExtraRep - rValue * divRes)==0)
+						int divRes = ExtraRep.Value/rValue;
+						if((ExtraRep.Value - rValue * divRes)==0)
 						{
 							if(divRes == 0)//Become 0.9..9
 							{
@@ -131,11 +110,12 @@
 							else
 								ExtraRep = divRes;
 						}
+                        else
+						    CatchAllUIntMultiplication(rValue, LRep);
 					}
 					else
 						CatchAllUIntMultiplication(rValue, LRep);
-                }
-                break;
+                } break;
                 #if !defined(AltNum_DisableApproachingTop)
                 case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
 					if(IntValue==0)
@@ -172,17 +152,16 @@
         #endif
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
-                case RepType::PositiveImaginaryInfinity:
-                case RepType::NegativeImaginaryInfinity:
+                case RepType::ImaginaryInfinity:
                     return *this;
                     break;
     #endif
     #if defined(AltNum_EnableApproachingI)
                 case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-					if(IntValue==0||IntValue==NegativeRep)
+					if(IntValue.Value==0)
 					{
 						if(rValue<0)
-							IntValue = NegativeRep;
+							SwapNegativeStatus;
 					}
 					else
 						CatchAllUIntMultiplication(rValue, LRep);
