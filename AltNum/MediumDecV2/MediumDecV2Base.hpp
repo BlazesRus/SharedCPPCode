@@ -1666,7 +1666,7 @@ protected:
     #pragma endregion AltDecVariantExclusive
             #endif
                         default:
-                            throw "Unable to perform integer division on current representation.";
+                            throw "Unable to perform integer multiplication on current representation.";
                     }
                 } break;
         #endif
@@ -1696,7 +1696,7 @@ protected:
     #pragma endregion AltDecVariantExclusive
             #endif
                         default:
-                            throw "Unable to perform integer division on current representation.";
+                            throw "Unable to perform integer multiplication on current representation.";
                     }
                 } break;
         #endif
@@ -1731,7 +1731,7 @@ protected:
                             break;
             #endif
                         default:
-                            throw "Unable to perform integer division on current representation.";
+                            throw "Unable to perform integer multiplication on current representation.";
                     }
                 } break;
         #endif
@@ -1766,7 +1766,7 @@ protected:
                             break;
             #endif
                         default:
-                            throw "Unable to perform integer division on current representation.";
+                            throw "Unable to perform integer multiplication on current representation.";
                     }
                 } break;
         	}
