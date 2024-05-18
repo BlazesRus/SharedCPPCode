@@ -548,7 +548,7 @@ public:
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
 
         /// <summary>
@@ -1220,7 +1220,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
         auto UIntDivOpV1(const IntType& rValue)
 		{
@@ -1387,7 +1387,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
         auto IntDivOpV1(const IntType& rValue)
 		{
@@ -1405,7 +1405,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto DivByUIntV1(const IntType& rValue)
 		{
@@ -1418,7 +1418,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
         constexpr auto DivByIntV1(const IntType& rValue)
 		{
@@ -1546,7 +1546,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivideBy(Value); }
 		
         /// <summary>
@@ -1554,7 +1554,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivOp(Value); }
 		
         /// <summary>
@@ -1562,7 +1562,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed int& Value) { return self.DivideByInt(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed long long& Value) { return self.DivideByInt64(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned int& Value) { return self.DivideByUInt(Value); }
@@ -1589,7 +1589,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed int& Value) { return self.IntDivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64DivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntDivOp(Value); }
@@ -1622,15 +1622,155 @@ public:
 
 protected:
         /// <summary>
-        /// Multiplication operation between MediumDec variant and unsigned integer values
+        /// Unsigned multiplication operation between MediumDec variant and unsigned integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
         auto& UIntMultOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if (rValue == 1)
+                return *this;
+            if (rValue == 0)
+            {
+                SetAsZero();
+                return *this;
+            }
+        	switch(DecimalHalf.Flags)
+        	{
+        #if defined(AltNum_EnablePiRep)
+        		case 1:{
+                    RepType LRep = rValue.GetPiRepType();
+                    switch(LRep)
+                    {
+                        case RepType::PiNum:
+                            BasicUIntMultOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomPi:
+        					if(IntValue.Value!=0)
+        						CatchAllUIntMultiplication(rValue, LRep);
+        					break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopPi:
+        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntValue.Value = (int)rValue - 1;
+        					else//5.9..9 * 100 = 599.9..9
+        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+    					break;
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableERep)
+        		case 2:{
+                    RepType LRep = rValue.GetERepType();
+                    switch(LRep)
+                    {
+                        case RepType::ENum:
+                            BasicUIntMultOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomE:{
+
+                        } break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopE:
+        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntValue.Value = (int)rValue - 1;
+        					else//5.9..9 * 100 = 599.9..9
+        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+    					break;
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableIRep)//IRep_to_integer
+        		case 3:{
+                    RepType LRep = rValue.GetIRepType();
+                    switch(LRep){
+                        case RepType::INum:
+                            BasicUIntMultOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingImaginaryBottom:
+        					if(IntValue.Value!=0)
+        						CatchAllUIntMultiplication(rValue, LRep);
+                            break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingImaginaryTop:
+        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntValue.Value = (int)rValue - 1;
+        					else//5.9..9 * 100 = 599.9..9
+        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+    					break;
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #endif
+            #if defined(AltNum_EnableImaginaryInfinity)
+                        case RepType::ImaginaryInfinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        		default:{
+                    RepType LRep = rValue.GetNormRepType();
+                    switch(LRep)
+                    {
+                        case RepType::NormalType:
+                            BasicUIntMultOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottom:
+        					if(IntValue.Value!=0)
+        						CatchAllUIntMultiplication(rValue, LRep);
+                            break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop:
+        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntValue.Value = (int)rValue - 1;
+        					else//5.9..9 * 100 = 599.9..9
+        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+    					break;
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        	}
+            return *this;
 		}
 
         /// <summary>
@@ -1638,11 +1778,17 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
         auto& IntMultOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UIntMultOpV1(-rValue);
+            }
+            else
+                UIntMultOpV1(rValue);
 		}
 
         /// <summary>
@@ -1650,11 +1796,12 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto MultByUIntV1(const IntType& rValue)
 		{
-			//Add Code here
+            auto self = *this;
+            return self.UIntDivOpV1(rValue);
 		}
 
         /// <summary>
@@ -1662,11 +1809,12 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
         auto MultByIntV1(const IntType& rValue)
 		{
-			//Add Code here
+            auto self = *this;
+            return self.IntDivOpV1(rValue);
 		}
 
 
@@ -1744,7 +1892,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.MultBy(Value); }
 
         /// <summary>
@@ -1752,7 +1900,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.MultOp(Value); }
 		
         /// <summary>
@@ -1760,7 +1908,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed int& Value) { return self.MultByInt(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed long long& Value) { return self.MultByInt64(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned int& Value) { return self.MultByUInt(Value); }
@@ -1786,7 +1934,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed int& Value) { return self.IntMultOp(Value); }
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64MultOp(Value); }
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntMultOp(Value); }
@@ -1807,7 +1955,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
         auto& UIntAddOpV1(const IntType& rValue)
 		{
@@ -1819,7 +1967,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
         auto& IntAddOpV1(const IntType& rValue)
 		{
@@ -1831,7 +1979,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto AddByUIntV1(const IntType& rValue)
 		{
@@ -1843,7 +1991,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
         auto AddByIntV1(const IntType& rValue)
 		{
@@ -1921,7 +2069,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.AddBy(Value); }
 
         /// <summary>
@@ -1929,7 +2077,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.AddOp(Value); }
 		
         /// <summary>
@@ -1937,7 +2085,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed int& Value) { return self.AddByInt(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed long long& Value) { return self.AddByInt64(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned int& Value) { return self.AddByUInt(Value); }
@@ -1963,7 +2111,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed int& Value) { return self.IntAddOp(Value); }
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64AddOp(Value); }
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntAddOp(Value); }
@@ -1984,7 +2132,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
         auto& UIntSubOpV1(const IntType& rValue)
 		{
@@ -1996,7 +2144,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base&</returns>
+        /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
         auto& IntSubOpV1(const IntType& rValue)
 		{
@@ -2008,7 +2156,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto SubByUIntV1(const IntType& rValue)
 		{
@@ -2020,7 +2168,7 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
         auto SubByIntV1(const IntType& rValue)
 		{
@@ -2098,7 +2246,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubtractBy(Value); }
 		
         /// <summary>
@@ -2106,7 +2254,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubOp(Value); }
 		
         /// <summary>
@@ -2114,7 +2262,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed int& Value) { return self.SubtractByInt(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed long long& Value) { return self.SubtractByInt64(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned int& Value) { return self.SubtractByUInt(Value); }
@@ -2141,7 +2289,7 @@ public:
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed int& Value) { return self.IntSubOp(Value); }
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64SubOp(Value); }
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntSubOp(Value); }
@@ -2193,7 +2341,7 @@ public:
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecV2Base operator- ()
         {
 			auto self = this;
@@ -2233,7 +2381,7 @@ public:
         /// <summary>
         /// MediumDec Variant++ Operator
         /// </summary>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecV2Base operator ++(int)
         {
             MediumDecV2Base tmp(*this);
@@ -2244,7 +2392,7 @@ public:
         /// <summary>
         /// MediumDec Variant-- Operator
         /// </summary>
-        /// <returns>MediumDecV2Base</returns>
+        /// <returns>MediumDecVariant</returns>
         MediumDecV2Base operator --(int)
         {
             MediumDecV2Base tmp(*this);
@@ -2852,7 +3000,7 @@ public:
         /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
         /// Does not modify owner object
         /// </summary>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         auto ExpOf()
         {
             auto self = x.ConvertAsNormType();//Prevent losing imaginary number status
@@ -2934,7 +3082,7 @@ public:
         /// Log Base 10 of Value
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
 		auto Log10Of()
 		{
             auto self = x.ConvertAsNormType();
@@ -2945,7 +3093,7 @@ public:
         /// Log Base 10 of Value
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto Log10(const auto& value)
         {
 			return value.Log10Of();
@@ -2960,7 +3108,7 @@ public:
         /// Log Base 10 of Value(integer value variant)
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         constexpr auto Log10OfInt = MediumDecBase::Log10OfInt;
 		
         /// <summary>
@@ -2969,7 +3117,7 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="baseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         auto LogOf(const auto& baseVal)
         {
             auto self = x.ConvertAsNormType();
@@ -2984,7 +3132,7 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="baseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto Log(const auto& value, const auto& baseVal)
         {
             return value.LogOf(baseVal);
@@ -3001,7 +3149,7 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         auto LogOfInt(const int& baseVal, const auto& threshold = FiveBillionth)
         {
             //Calculate Base log first
@@ -3016,7 +3164,7 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <param name="BaseVal">The base of Log</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         auto LogOfV2(const auto& baseVal, const auto& threshold = FiveBillionth)
         {
             //Calculate Base log first
@@ -3043,7 +3191,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto Sin(const auto& Value)
         {
             if(DecimalHalf.Flags==PiRep)
@@ -3084,7 +3232,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto Cos(const auto& Value)
         {
             if(DecimalHalf.Flags==PiRep)
@@ -3123,7 +3271,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto Tan(const auto& Value)
         {
             if(DecimalHalf.Flags==PiRep)
@@ -3172,7 +3320,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         constexpr auto ATan = MediumDecBase::ATan;
 
         /// <summary>
@@ -3183,7 +3331,7 @@ public:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         constexpr auto ArcTan2 = MediumDecBase::ArcTan2;
 
         /// <summary>
@@ -3191,7 +3339,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto SinFromAngle(const auto& Value)
         {
             auto self = Value.ConvertAsNormType(repType);    
@@ -3215,7 +3363,7 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDecVariant</returns>
         static auto TanFromAngle(const auto& Value)
         {
             auto self = Value.ConvertAsNormType(repType);    
