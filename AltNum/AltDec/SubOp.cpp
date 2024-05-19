@@ -133,6 +133,41 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 		CatchAllSubtractionV2(LRep);
 }
 
+void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
+	{
+	#if defined(AltNum_EnableNegativePowerRep)
+		if(ExtraRep==rValue.ExtraRep)
+	#else
+		if(ExtraRep.Value==rValue.ExtraRep.Value)
+	#endif
+			SetAsOne();
+	#if defined(AltNum_EnableNegativePowerRep)
+		else if(rValue.ExtraRep>ExtraRep)
+			CatchAllSubtractionV2(LRep);
+	#endif
+		else
+		{
+	#if defined(AltNum_EnableNegativePowerRep)
+			ExtraRep -= rValue.ExtraRep;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsOne())
+				ExtraRep = 0;
+	#else
+			ExtraRep.Value -= rValue.ExtraRep.Value;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsAtOneInt())
+				ExtraRep = 0;
+	#endif
+		}
+	}
+	else
+		CatchAllSubtractionV2(LRep);
+}
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
@@ -151,8 +186,8 @@ void PiRepSwitch(const auto& rValue)
 					} break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::PiPower:{
-					} break;
+					case RepType::PiPower:
+						SameRep_PowerOf(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableFractionals)
 					case RepType::PiNumByDiv:
@@ -236,7 +271,6 @@ void PiRepSwitch(const auto& rValue)
 			if(rValue.IsNotZero())
 				throw "Complex number operations not enabled yet.";
 			break;
-		} break;
 #endif
 
     #pragma region PiRep_to_NormRep
@@ -310,8 +344,8 @@ void ERepSwitch(const auto& rValue)
 					} break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::EPower:{
-					} break;
+					case RepType::EPower:
+						SameRep_PowerOf(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableFractionals)
 					case RepType::ENumByDiv:
