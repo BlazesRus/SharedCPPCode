@@ -168,6 +168,33 @@ void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 		CatchAllSubtractionV2(LRep);
 }
 
+void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+	if(ExtraRep.Value==rValue.ExtraRep.Value)
+	{
+		IntValue -= rValue.IntValue;
+		if(rValue.DecimalHalf>DecimalHalf)
+		{
+			--IntValue;
+			DecimalHalf.Value = ExtraRep - (rValue.DecimalHalf-DecimalHalf);
+		}
+		else
+			DecimalHalf.Value -= rValue.DecimalHalf.Value;
+	}
+	else
+	{
+		//Add code here later that normalizes the ExtraRep fields and then performs operation
+		CatchAllSubtractionV2(LRep);
+	}
+}
+
+#if defined(AltNum_EnableWithinMinMaxRange)
+void SameRep_WithinMinMaxRange
+{
+	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+}
+#endif
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
@@ -194,8 +221,8 @@ void PiRepSwitch(const auto& rValue)
 						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedPi:{
-					} break;
+					case RepType::MixedPi:
+						SameRep_MixedFrac(rValue, LRep); break;
 				#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)

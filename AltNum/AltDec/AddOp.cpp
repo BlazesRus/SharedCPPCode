@@ -157,6 +157,34 @@ void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 		CatchAllAdditionV2(LRep);
 }
 
+void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+	if(ExtraRep.Value==rValue.ExtraRep.Value)
+	{
+		IntValue += rValue.IntValue;
+		unsigned int result = DecimalHalf.Value+rValue.DecimalHalf.Value;
+		if(result>ExtraRep.Value)
+		{
+			++IntValue;
+			DecimalHalf.Value = result - ExtraRep.Value;
+		}
+		else
+			DecimalHalf.Value = result;
+	}
+	else
+	{
+		//Add code here later that normalizes the ExtraRep fields and then performs operation
+		CatchAllSubtractionV2(LRep);
+	}
+}
+
+#if defined(AltNum_EnableWithinMinMaxRange)
+void SameRep_WithinMinMaxRange
+{
+	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+}
+#endif
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
