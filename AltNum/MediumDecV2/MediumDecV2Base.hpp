@@ -1951,7 +1951,7 @@ public:
 protected:
 
         /// <summary>
-        /// Addition operation between MediumDecBase and unsigned integer values
+        /// Addition operation between MediumDec variant and unsigned integer values
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
@@ -1959,7 +1959,67 @@ protected:
         template<IntegerType IntType= unsigned int>
         auto& UIntAddOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if (rValue == 0)
+                return *this;
+        	switch(DecimalHalf.Flags)
+        	{
+        #if defined(AltNum_EnablePiRep)
+        		case 1:{
+                    RepType LRep = rValue.GetPiRepType();
+                    CatchAllUIntAddition(rValue, LRep);
+                } break;
+        #endif
+        #if defined(AltNum_EnableERep)
+        		case 2:{
+                    RepType LRep = rValue.GetERepType();
+                    CatchAllUIntAddition(rValue, LRep);
+                } break;
+        #endif
+        #if defined(AltNum_EnableIRep)//IRep_to_integer
+        		case 3:
+                    throw "Can't convert into complex number at moment";
+                break;
+        #endif
+        		default:{
+                    RepType LRep = rValue.GetNormRepType();
+                    switch(LRep)
+                    {
+                        case RepType::NormalType:
+                            BasicUIntAddOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottom:
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop:
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+        					if(IsNegative())
+        					{
+                                if(rValue>IntValue.Value)
+								{
+                                    IntValue.IsPositive = 1;
+                                    IntValue.Value = rValue - IntValue.Value;
+								}
+								else
+									IntValue.Value -= rValue;
+                            }
+                            else
+                                IntValue.Value += rValue;
+                        break;
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        	}
 		}
 
         /// <summary>
@@ -2138,7 +2198,67 @@ protected:
         template<IntegerType IntType= unsigned int>
         auto& UIntSubOpV1(const IntType& rValue)
 		{
-			//Add Code here
+            if (rValue == 0)
+                return *this;
+        	switch(DecimalHalf.Flags)
+        	{
+        #if defined(AltNum_EnablePiRep)
+        		case 1:{
+                    RepType LRep = rValue.GetPiRepType();
+                    CatchAllUIntSubtraction(rValue, LRep);
+                } break;
+        #endif
+        #if defined(AltNum_EnableERep)
+        		case 2:{
+                    RepType LRep = rValue.GetERepType();
+                    CatchAllUIntSubtraction(rValue, LRep);
+                } break;
+        #endif
+        #if defined(AltNum_EnableIRep)//IRep_to_integer
+        		case 3:
+                    throw "Can't convert into complex number at moment";
+                break;
+        #endif
+        		default:{
+                    RepType LRep = rValue.GetNormRepType();
+                    switch(LRep)
+                    {
+                        case RepType::NormalType:
+                            BasicUIntSubOp(rValue);
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottom:
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop:
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+        					if(IsPositive())
+        					{
+                                if(rValue>IntValue.Value)
+								{
+                                    IntValue.IsPositive = 0;
+                                    IntValue.Value = rValue - IntValue.Value;
+								}
+								else
+									IntValue.Value -= rValue;
+                            }
+                            else
+                                IntValue.Value += rValue;
+                            break;
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer subtraction on current representation.";
+                    }
+                } break;
+        	}
 		}
 
         /// <summary>
