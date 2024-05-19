@@ -150,6 +150,13 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 	(Not Implimented--Depreciated)
 */
 
+#if !defined(AltNum_DisableAltDecBaseDefaultToggles)
+    #define AltNum_EnablePiRep
+    #define AltNum_EnableInfinityRep
+    #define AltNum_EnableApproaching
+    //#define AltNum_EnableERep
+#endif
+
 #pragma region PreprocessorToggles
 
 //Require AltNum_DisableApproachingTop not to be toggled to allow AltNum_EnableApproachingDivided to be enabled
@@ -157,46 +164,16 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 	#undef AltNum_EnableApproachingDivided
 #endif
 
-/*#if defined(AltNum_EnableFractionals)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
-	#define AltNum_EnableDecimaledPiFractionals
+#if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableWithinMinMaxRange)
+	#undef AltNum_EnableWithinMinMaxRange
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
-	#define AltNum_EnableDecimaledEFractionals
+#if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableFractionals)
+	#undef AltNum_EnableFractionals
 #endif
 
-#if defined(AltNum_EnableFractionals)&&define(AltNum_EnableIRep)&&!defined(AltNum_EnableDecimaledIFractionals)
-	#define AltNum_EnableDecimaledIFractionals
-#endif*/
-
-/*#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)
-	#define AltNum_EnablePiPowers
+#if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableMixedFractional)
+	#undef AltNum_EnableMixedFractional
 #endif
-
-#if defined(AltNum_EnablePowerOfRepresentation)&&define(AltNum_EnableERep)&&!defined(AltNum_EnableEPowers)
-	#define AltNum_EnableEPowers
-#endif*/
-
-/*#if defined(AltNum_EnableApproachingPi)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingPiDivided)
-	#define AltNum_EnableApproachingPiDivided
-#endif
-
-#if defined(AltNum_EnableApproachingE)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingEDivided)
-	#define AltNum_EnableApproachingEDivided
-#endif
-
-#if defined(AltNum_EnableApproachingI)&&defined(AltNum_EnableApproachingDivided)&&!defined(AltNum_EnableApproachingIDivided)
-	#define AltNum_EnableApproachingIDivided
-#endif*/
 
 #pragma endregion PreprocessorToggles
-
-#if !defined(AltNum_DisableAltDecBaseDefaultToggles)
-    #define AltNum_EnablePiRep
-    #define AltNum_EnableInfinityRep
-    #define AltNum_EnableAlternativeRepFractionals
-    #define AltNum_EnableDecimaledPiFractionals
-    #define AltNum_EnableApproaching
-#define AltNum_UseDeveloperExtraDefaults//Turns on extra defaults just for testing
-    //#define AltNum_EnableERep
-#endif

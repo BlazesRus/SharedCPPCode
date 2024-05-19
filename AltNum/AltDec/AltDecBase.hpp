@@ -41,7 +41,7 @@ protected:
 	#endif
         /// </summary>
 	#if defined(AltNum_EnableNegativePowerRep)
-		MirroredInt ExtraRep;
+		signed int ExtraRep;
 	#else
         FlaggedInt ExtraRep;
 	#endif
@@ -146,12 +146,14 @@ public:
     #if defined(AltNum_EnableWithinMinMaxRange)
         //Undefined but in ranged of IntValue to DecimalHalf when at this ExtraRep.Value
         static const unsigned int WithinMinMaxRangeRep = 2147483648;
+        //Undefined but in ranged of IntValue to -DecimalHalf.Value when at this ExtraRep.Value
+        static const unsigned int WithinMinToNegativeMaxRep = 2147483647;
     #endif
         static const unsigned int AlternativeFractionalLowerBound = 1073741816;
-        //Maximum divisor for Fractionals and mixed Fractions
-        static const unsigned int FractionalDivisorLimit = 1073741815;
-	//Fractional Division Maximum at this ExtraRep.Value
-        static const unsigned int FractionalMaximum = 2147483648;
+        //Maximum divisor for mixed Fractions
+        static const unsigned int MixedFracDivisorLimit = 1073741815;
+		//Fractional Division Maximum at this ExtraRep.Value
+        static const unsigned int FractionalMaximum = 2147483646;
 	
     #pragma endregion Const Representation values
 
