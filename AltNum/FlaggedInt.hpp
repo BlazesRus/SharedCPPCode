@@ -36,7 +36,12 @@ namespace BlazesRusCode
 		
 		bool IsAlternative()
 		{
-			return IsAlternative!=1;
+			return IsAltRep==1;
+		}
+		
+		bool IsNormal()
+		{
+			return IsAltRep==0;
 		}
 		
 		void SwitchToAlternative()

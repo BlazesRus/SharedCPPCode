@@ -191,14 +191,14 @@ public:
         #if defined(AltNum_EnableNegativePowerRep)
             if(ExtraRep!=0)
         #else
-            if(ExtraRep.IsNegative())
+            if(ExtraRep.IsAlternative())
         #endif
                 return RepType::PiPower;
     #endif
     #if defined(AltNum_EnableFractionals)
             if(ExtraRep!=0)
         #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsNegative())
+                if(ExtraRep.IsAlternative())
                     return RepType::MixedPi;
                 else
         #endif
@@ -240,14 +240,14 @@ public:
         #if defined(AltNum_EnableNegativePowerRep)
             if(ExtraRep!=0)
         #else
-            if(ExtraRep.IsNegative())
+            if(ExtraRep.IsAlternative())
         #endif
                 return RepType::EPower;
     #endif
     #if defined(AltNum_EnableFractionals)
             if(ExtraRep!=0)
         #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsNegative())
+                if(ExtraRep.IsAlternative())
                     return RepType::MixedE;
                 else
         #endif
@@ -294,14 +294,14 @@ public:
         #if defined(AltNum_EnableNegativePowerRep)
             if(ExtraRep!=0)
         #else
-            if(ExtraRep.IsNegative())
+            if(ExtraRep.IsAlternative())
         #endif
                 return RepType::EPower;
     #endif
     #if defined(AltNum_EnableFractionals)
             if(ExtraRep!=0)
         #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsNegative())
+                if(ExtraRep.IsAlternative())
                     return RepType::MixedI;
                 else
         #endif
@@ -367,14 +367,14 @@ public:
             #if defined(AltNum_EnableNegativePowerRep)
             if(ExtraRep!=0)
             #else
-            if(ExtraRep.IsNegative())
+            if(ExtraRep.IsAlternative())
             #endif
                 return RepType::ToPowerOf;
         #endif
         #if defined(AltNum_EnableFractionals)
             if(ExtraRep!=0)
             #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsNegative())
+                if(ExtraRep.IsAlternative())
                     return RepType::MixedFrac;
                 else
             #endif
@@ -1496,7 +1496,7 @@ public:
 			//To-Do:Add code to convert down to base PiNum,ENum,INum, and NormalType
 	#else
 		#if defined(AltNum_EnableMixedFractional)
-			if(ExtraRep.IsNegative())
+			if(ExtraRep.IsAlternative())
 			{
 				//To-Do add code here to convert from mixed fraction
 				return;
@@ -1505,7 +1505,7 @@ public:
 			#if defined(AltNum_EnableNegativePowerRep)
 			if(ExtraRep!=0)
 			#else
-			if(ExtraRep.IsNegative())
+			if(ExtraRep.IsAlternative())
 			#endif
 			{
 				if(DecimalHalf.Flag==1)//Convert down to PiNum
