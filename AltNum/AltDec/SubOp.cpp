@@ -31,6 +31,108 @@ void RightSideEOp(const auto& rValue, const RepType& RRep)
 }
 #pragma endregion AltDecVariantExclusive
 
+void SameRep_ApproachingBottom(const auto& rValue)
+{
+	if (IntValue.Value == 0)
+	{
+		if(IsNegative()&&rValue.IntValue != 0)//-0.0..1 - 5.0..1
+			IntValue = -rValue.IntValue;
+		else if (rValue.IntValue.Value != 0)//0.0..1 - 5.0..1
+		{
+			DecimalHalf = 0;
+			IntValue = -rValue.IntValue;
+		}
+	}
+	else if (IsNegative())
+	{
+		if (IntValue == rValue.IntValue)//-1.01 - 1.01
+			SetAsZero();
+		else if(rValue.IntValue != 0)//-1.0..1 - 2.0..1 = 1
+		{
+			IntValue -= rValue.IntValue;
+		}
+	}
+	else
+	{
+		if (rValue.IntValue == 0)//1.0..1 - 0.0..1
+			DecimalHalf = 0;
+		else if (rValue.IntValue == NegativeRep)//1.0..1 + 0.0..1
+		{/*Do Nothing*/
+		}
+		else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+			SetAsZero();
+		else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+		{
+			DecimalHalf = 0;
+			IntValue -= rValue.IntValue;
+		}
+		else//1.0..1 - 1.0..1
+		{
+			IntValue -= rValue.IntValue;
+		}
+	}
+}
+
+void SameRep_ApproachingTop(const auto& rValue)
+{
+	if (IntValue.Value == 0)
+	{
+		if(IsNegative())
+		{
+			if (rValue.IntValue == 0)//-0.9..9 - 0.9..9 = 0
+				IntValue = -1;
+			else if (rValue.IntValue == NegativeRep)//-0.9..9 + 0.9..9
+				SetAsZero();
+			else//-0.9..9 - 5.9..9 = -6.9..8
+				IntValue = -rValue.IntValue - 1;
+		}
+		else if (rValue.IntValue == 0)//0.9..9 - 0.9..9
+			SetAsZero();
+		else if (rValue.IntValue == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
+			IntValue = 1;
+		else if (rValue.IntValue < 0)//0.9..9 + 1.9..9 = 1.9..8
+			IntValue = -rValue.IntValue;
+		else//0.9..9 - 5.9..9 = -5
+		{
+			DecimalHalf = 0; ExtraRep = 0;
+			IntValue = -rValue.IntValue;
+		}
+	}
+	else if (IsNegative())
+	{
+		if (rValue.IntValue == 0)//-1.9..9 - 0.9..9  = -2.9..8
+			--IntValue;
+		else if (IntValue == rValue.IntValue)//-1.01 + 1.01
+			SetAsZero();
+		else//-1.9..9 - 2.9..9
+		{
+			IntValue -= rValue.IntValue + 1;
+		}
+	}
+	else
+	{
+		if (rValue.IntValue == 0)//1.9..9 - 0.9..9 = 2.9..8
+		{
+			DecimalHalf = 0; ExtraRep = 0;
+		}
+		else if (IntValue == rValue.IntValue)//1.9..9 - 1.9..9
+			SetAsZero();
+		else//1.9..9 - 2.9..9
+		{
+			DecimalHalf = 0; ExtraRep = 0;
+			IntValue -= rValue.IntValue;
+		}
+	}
+}
+
+void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+{
+	if (ExtraRep == rValue.ExtraRep)
+		BasicSubOp(rValue);
+	else
+		CatchAllSubtractionV2(LRep);
+}
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
@@ -53,32 +155,28 @@ void PiRepSwitch(const auto& rValue)
 					} break;
 				#endif
 				#if defined(AltNum_EnableFractionals)
-					case RepType::PiNumByDiv:{
-					} break;
+					case RepType::PiNumByDiv:
+						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
 					case RepType::MixedPi:{
 					} break;
 				#endif
     #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopPi:{
-					} break;
-					#endif
-				#endif
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottomPi:
+						SameRep_ApproachingBottom(rValue); break;
+					case RepType::ApproachingTopPi:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRightPi:{
-					} break;
-					#endif
+					case RepType::ApproachingMidLeftPi:
+					case RepType::ApproachingMidRightPi:
+						CatchAllSubtractionV2(rValue, LRep);
+						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
+			#endif
 				default:
 					throw "Unsupported operation"; break;
 				}
@@ -216,32 +314,28 @@ void ERepSwitch(const auto& rValue)
 					} break;
 				#endif
 				#if defined(AltNum_EnableFractionals)
-					case RepType::ENumByDiv:{
-					} break;
+					case RepType::ENumByDiv:
+						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
 					case RepType::MixedE:{
 					} break;
 				#endif
     #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopE:{
-					} break;
-					#endif
-				#endif
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottomE:
+						SameRep_ApproachingBottom(rValue); break;
+					case RepType::ApproachingTopE:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRightE:{
-					} break;
-					#endif
+					case RepType::ApproachingMidLeftE:
+					case RepType::ApproachingMidRightE:
+						CatchAllSubtractionV2(rValue, LRep);
+						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
+			#endif
 				default:
 					throw "Unsupported operation"; break;
 				}
@@ -407,8 +501,8 @@ void IRepSwitch(const auto& rValue)
 					} break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableFractionals)
-					case RepType::INumByDiv:{
-					} break;
+					case RepType::INumByDiv:
+						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
 					case RepType::MixedI:{
@@ -463,32 +557,20 @@ void IRepSwitch(const auto& rValue)
 					} break;
 				#endif
     #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:{
-						switch(RRep){
-						}
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryTop:{
-						switch(RRep){
-						}
-					} break;
-					#endif
-				#endif
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingImaginaryBottom:
+						SameRep_AppoachingBottom(rValue); break;
+					case RepType::ApproachingImaginaryTop:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingImaginaryMidLeft:{
-						switch(RRep){
-						}
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryMidRight:{
-						switch(RRep){
-						}
-					} break;
-					#endif
+					case RepType::ApproachingImaginaryMidLeft:
+					case RepType::ApproachingImaginaryMidRight:
+						CatchAllSubtractionV2(rValue, LRep);
+						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
+			#endif
 #if defined(AltNum_EnableImaginaryInfinity)
 					case RepType::ImaginaryInfinity:{
 						switch(RRep){
@@ -726,8 +808,8 @@ void NormRepSwitch(const auto& rValue)
 					}; break;
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableFractionals)
-					case RepType::NumByDiv:{
-					}; break;
+					case RepType::NumByDiv:
+						SameRep_NumByDiv(rValue, LRep); break;
 			#endif
 			#if defined(AltNum_EnablePowerOfRepresentation)
 					case RepType::ToPowerOf:{
@@ -738,20 +820,20 @@ void NormRepSwitch(const auto& rValue)
 					}; break;
 			#endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottomRep:{
-					} break;
-					case RepType::ApproachingTopRep:{
-					} break;
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottom:
+						SameRep_ApproachingBottom(rValue); break;
+					case RepType::ApproachingTop:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeft:{
-					} break;
-				#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRight:{
-					} break;
+				#if defined(AltNum_EnableApproachingDivided)
+					case RepType::ApproachingMidLeft:
+					case RepType::ApproachingMidRight:
+						CatchAllSubtractionV2(rValue, LRep);
+						break;
 				#endif
-			#endif
     #pragma endregion AltDecVariantExclusive
+			#endif
 					case RepType::InfinityRep:{
 					} break;
 					default:

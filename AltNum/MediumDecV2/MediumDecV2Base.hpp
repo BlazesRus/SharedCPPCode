@@ -2060,6 +2060,7 @@ protected:
             auto self = *this;
             return self.IntAddOpV1(rValue);
 		}
+
 public:
 
         constexpr auto UIntAddOpV1 = UIntAddOpV1<unsigned int>;
