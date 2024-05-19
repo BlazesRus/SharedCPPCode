@@ -6,6 +6,9 @@
 
 #include "..\MediumDecV2\MediumDecV2Base.hpp"
 #include "..\MediumDecV2\MediumDecV2.hpp"
+#if !defined(AltNum_EnableNegativePowerRep)
+	#include "..\FlaggedInt.hpp"
+#endif
 #include "AltDecPreprocessors.h"
 
 namespace BlazesRusCode
@@ -24,12 +27,24 @@ protected:
         #pragma region DigitStorage
 
         /// <summary>
-        /// (Used exclusively for alternative represents of numbers including imaginary numbers and for fractionals)
-        /// If ExtraRep>0 and DecimalHalf.Value<AlternativeFractionalLowerBound(and ExtraRep.Value<=FractionalMaximum), then ExtraRep acts as denominator
-        /// If ExtraRep is Negative and DecimalHalf.Value<AlternativeFractionalLowerBound, then AltDecBase represents mixed fraction of -2147483648 to 2147483647 + (DecimalHalf*-1)/ExtraRep
+        /// Multiplied by Pi, e, or i if DecimalHalf.Flags!=0
         /// If ExtraRep is zero and DecimalHalf.Value<999999999, then AltDecBase represents +- 2147483647.999999999
+	#if defined(AltNum_EnableFractionals)
+		/// If ExtraRep is greator than zero, then AltDecBase represents +- 2147483647.999999999
+	#endif
+	#if defined(AltNum_EnableNegativePowerRep)
+		/// If ExtraRep is not zero, than representation number to the power of ExtraRep
+	#elif defined(AltNum_EnablePowerOfRepresentation)
+		/// If ExtraRep.IsAltRep==1, than is representation number to the power of ExtraRep	
+	#elif defined(AltNum_EnableMixedFractional)
+		/// If ExtraRep.IsAltRep==1, than is representation number is a mixed fraction	
+	#endif
         /// </summary>
-        MirroredInt ExtraRep;
+	#if defined(AltNum_EnableNegativePowerRep)
+		MirroredInt ExtraRep;
+	#else
+        FlaggedInt ExtraRep;
+	#endif
 
         #pragma region DigitStorage
 
@@ -1566,8 +1581,7 @@ public:
 
 protected:
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
-		template<MediumDecVariant VariantType=AltDecBase>
-		std::strong_ordering CompareWithV1(const VariantType& that) const
+		std::strong_ordering CompareWithV1(const auto& that) const
 		{
 	#if defined(AltNum_EnableWithinMinMaxRange)
 			if(ExtraRep==WithinMinMaxRangeRep) {
@@ -1610,8 +1624,8 @@ protected:
                 }
                 else
                 {
-					VariantType LValue = this;
-					VariantType RValue = that;
+					auto LValue = this;
+					auto RValue = that;
 			#if defined(AltNum_EnablePowerOfRepresentation)
 				#if defined(AltNum_EnableNegativePowerRep)
 					int LComp = (int)LValue.ExtraRep;
@@ -1632,9 +1646,9 @@ protected:
 						//Add code here
 					}
 				#else
-					if(ExtraRep.IsPositive==0)//Left side is to power of ExtraRep.Value
+					if(ExtraRep.IsAlternative())//Left side is to power of ExtraRep.Value
 					{
-						if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+						if(that.ExtraRep.IsAlternative())//Right side is to power of ExtraRep.Value
 						{
 							//Add Code here
 						}
@@ -1643,15 +1657,15 @@ protected:
 							//Add code here
 						}
 					}
-					else if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+					else if(that.ExtraRep.IsAlternative())//Right side is to power of ExtraRep.Value
 					{
 						//Add code here
 					}
 				#endif
 			#elif defined(AltNum_EnableMixedFractional)
-					if(ExtraRep.IsPositive==0)//Left side is a mixed Fraction
+					if(ExtraRep.IsAlternative())//Left side is a mixed Fraction
 					{
-						if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+						if(that.ExtraRep.IsAlternative())//Right side is a mixed Fraction
 						{
 							//Add Code here
 						}
@@ -1660,7 +1674,7 @@ protected:
 							//Add code here
 						}
 					}
-					else if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+					else if(that.ExtraRep.IsAlternative())//Right side is a mixed Fraction
 					{
 						//Add code here
 					}
@@ -2216,7 +2230,7 @@ public:
             #else
 					ExtraRep.Value = rValue.ExtraRep.Value;
             #endif
-                    ExtraRep.IsPositive = 0;
+                    ExtraRep.SwitchToAlternative();
 				}
 			}
 			else
@@ -2267,7 +2281,7 @@ public:
             #else
 					ExtraRep.Value = rValue.ExtraRep.Value;
             #endif
-                    ExtraRep.IsPositive = 0;
+                    ExtraRep.SwitchToAlternative();
 				}
 			}
 			else
@@ -2279,7 +2293,7 @@ public:
                 if(IntValue.Value!=0)
                 #endif
 					DecimalHalf = -DecimalHalf;
-                ExtraRep.IsPositive = 0;
+                ExtraRep.SwitchToAlternative();
             #else
             #endif
 			}
@@ -3943,7 +3957,7 @@ protected:
                         #if defined(AltNum_EnableMixedFractional)
                             if(DecimalHalf.Value==0)//Become Mixed Fraction
                             {
-                                ExtraRep.IsPositive = 0;
+                                ExtraRep.SwitchToAlternative();
                                 if(IsNegative()){
                                     DecimalHalf.Value = ExtraRep.Value - IntValue.Value;
                                     IntValue = rValue;
@@ -4219,7 +4233,7 @@ protected:
                         #if defined(AltNum_EnableMixedFractional)
                             if(DecimalHalf.Value==0)//Become Mixed Fraction
                             {
-                                ExtraRep.IsPositive = 0;
+                                ExtraRep.SwitchToAlternative();
                                 if(IsPositive()){
                                     DecimalHalf.Value = ExtraRep.Value - IntValue.Value; 
                                     IntValue.Value = rValue; IntValue.IsPositive = 0;

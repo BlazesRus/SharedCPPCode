@@ -63,6 +63,18 @@ namespace BlazesRusCode
 			return Value!=0;
         }
 		
+        //Is at either zero or negative one
+        bool IsAtOneInt()
+        {
+			return Value==0;
+        }
+
+        //Is at neither zero or negative one
+        bool IsNotAtOneInt()
+        {
+			return Value!=0;
+        }
+		
 		bool IsEven()
 		{
 			return Value^1==0;
