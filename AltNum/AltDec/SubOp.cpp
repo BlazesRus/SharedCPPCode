@@ -277,10 +277,8 @@ void PiRepSwitch(const auto& rValue)
 				#if defined(AltNum_EnableApproachingDivided)
 					case RepType::ApproachingMidLeftPi:{
 					} break;
-					#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingMidRightPi:{
 					} break;
-					#endif
 				#endif
     #pragma endregion AltDecVariantExclusive
 				default:
@@ -308,37 +306,467 @@ void PiRepSwitch(const auto& rValue)
 			switch(LRep)
 			{
 				case RepType::PiNum:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnablePowerOfRepresentation)
 				case RepType::PiPower:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
 			#if defined(AltNum_EnableFractionals)
 				case RepType::PiNumByDiv:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
 			#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedPi:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)
 				case RepType::ApproachingBottomPi:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTopPi:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 				#endif
 			#endif
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableApproachingDivided)
 				case RepType::ApproachingMidLeftPi:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
-				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRightPi:{
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
-				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
 			default:
@@ -451,12 +879,10 @@ void ERepSwitch(const auto& rValue)
 						switch(RRep){
 						}
 					} break;
-					#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingMidRightE:{
 						switch(RRep){
 						}
 					} break;
-					#endif
 				#endif
     #pragma endregion AltDecVariantExclusive
 				default:
@@ -478,54 +904,467 @@ void ERepSwitch(const auto& rValue)
 			switch(LRep)
 			{
 				case RepType::ENum:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnablePowerOfRepresentation)
 				case RepType::EPower:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
 			#if defined(AltNum_EnableFractionals)
 				case RepType::ENumByDiv:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
 			#if defined(AltNum_EnableMixedFractional)
 				case RepType::MixedE:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 			#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)
 				case RepType::ApproachingBottomE:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingTopE:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 				#endif
 			#endif
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftE:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
-				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRightE:{
-					switch(RRep){
-					}
+						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
+						}
 				} break;
 				#endif
-			#endif
     #pragma endregion AltDecVariantExclusive
 			default:
 				throw "Unsupported operation"; break;
@@ -619,19 +1458,30 @@ void IRepSwitch(const auto& rValue)
 				#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:
-						SameRep_AppoachingBottom(rValue); break;
-					case RepType::ApproachingImaginaryTop:
-						SameRep_ApproachingTop(rValue); break;
+					case RepType::ApproachingImaginaryBottom:{
+						switch(RRep){
+						}
+					} break;
+					#if !defined(AltNum_DisableApproachingTop)
+					case RepType::ApproachingImaginaryTop:{
+						switch(RRep){
+						}
+					} break;
+					#endif
+				#endif
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingImaginaryMidLeft:
-					case RepType::ApproachingImaginaryMidRight:
-						CatchAllSubtractionV2(rValue, LRep);
-						break;
+					case RepType::ApproachingImaginaryMidLeft:{
+						switch(RRep){
+						}
+					} break;
+					case RepType::ApproachingImaginaryMidRight:{
+						switch(RRep){
+						}
+					} break;
 				#endif
     #pragma endregion AltDecVariantExclusive
-			#endif
+            #endif
 #if defined(AltNum_EnableImaginaryInfinity)
 					case RepType::ImaginaryInfinity:{
 						switch(RRep){
@@ -649,62 +1499,9 @@ void IRepSwitch(const auto& rValue)
 		default:
 		{
 			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::INum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableFractionals)
-				case RepType::INumByDiv:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedI:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingImaginaryBottom:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidLeft:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidRight:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:{
-					switch(RRep){
-					}
-				} break;
-#endif
-			default:
-				throw "Unsupported operation"; break;
-			}
-		} break;
+			if(rValue.IsNotZero())
+				throw "Complex number operations not enabled yet.";
+        } break;
     #pragma region IRep_to_NormRep
 	}
 }
@@ -761,12 +1558,10 @@ void NormRepSwitch(const auto& rValue)
 					switch(RRep){
 					}
 				} break;
-			#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRight:{
 					switch(RRep){
 					}
 				} break;
-			#endif
 		#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableInfinityRep)
@@ -827,12 +1622,10 @@ void NormRepSwitch(const auto& rValue)
 					switch(RRep){
 					}
 				} break;
-			#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRight:{
 					switch(RRep){
 					}
 				} break;
-			#endif
 		#endif
     #pragma endregion AltDecVariantExclusive
 				case RepType::InfinityRep:{
@@ -911,54 +1704,468 @@ void NormRepSwitch(const auto& rValue)
 				{
 					case RepType::NormalType:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					} break;
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableFractionals)
 					case RepType::NumByDiv:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					}; break;
 			#endif
 			#if defined(AltNum_EnablePowerOfRepresentation)
 					case RepType::ToPowerOf:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					}; break;
 			#endif
 			#if defined(AltNum_EnableMixedFractional)
 					case RepType::MixedFrac:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					}; break;
 			#endif
     #pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
 					case RepType::ApproachingBottomRep:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					} break;
 					case RepType::ApproachingTopRep:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					} break;
+            #endif
     #pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableApproachingDivided)
 					case RepType::ApproachingMidLeft:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					} break;
-				#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingMidRight:{
 						switch(RRep){
+	//						case RepType::NormalType:{
+	//						}; break;
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableFractionals)
+	//						case RepType::NumByDiv:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnablePowerOfRepresentation)
+	//						case RepType::ToPowerOf:{
+	//						}; break;
+					#endif
+					#if defined(AltNum_EnableMixedFractional)
+	//						case RepType::MixedFrac:{
+	//						}; break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+	//						case RepType::ApproachingBottomRep:{
+	//						} break;
+						#if !defined(AltNum_DisableApproachingTop)
+	//						case RepType::ApproachingTopRep:{
+	//						} break;
+						#endif
+	#pragma region AltDecVariantExclusive
+					#if defined(AltNum_EnableApproachingDivided)
+	//						case RepType::ApproachingMidLeft:{
+	//						} break;
+	//						case RepType::ApproachingMidRight:{
+	//						} break;
+					#endif
+	#pragma endregion AltDecVariantExclusive
+							case RepType::InfinityRep:
+								SetValue(-rValue);
+					#if defined(AltNum_EnableNaN)
+							case RepType::Undefined:
+							case RepType::NaN:
+					#endif
+					#if defined(AltNum_EnableNil)
+							case RepType::Nil:
+					#endif
+					#if defined(AltNum_EnableNil)||defined(AltNum_EnableNaN)
+								throw "Unsupported operation";
+					#endif
+					#if defined(AltNum_EnableUndefinedButInRange)
+							case RepType::UndefinedButInRange:
+								throw "Unsupported operation";
+						#if defined(AltNum_EnableWithinMinMaxRange)
+							case RepType::WithinMinMaxRange:
+								throw "WithinMinMaxRange needs to be updated";
+						#endif
+					#endif
+                            default:
+                                CatchAllSubtraction(rValue, LRep); break;
 						}
 					} break;
-				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-						switch(RRep){
-						}
-					} break;
+					case RepType::InfinityRep:
+                        break;
 					default:
 						throw "Unsupported operation";
 				}
