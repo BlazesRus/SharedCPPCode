@@ -17,6 +17,9 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 
 #pragma region AltDecVariantExclusive
 
+#if defined(AltNum_EnablePiRep)
+
+//Convert right side down to Pi representation and then perform operation
 void RightSidePiOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToPiRep(RRep);
@@ -24,12 +27,56 @@ void RightSidePiOp(const auto& rValue, const RepType& RRep)
     BasicUnsignedDivOp(PiNum);
 }
 
+//Convert left side down to Pi representation and right side down to normal
+//and then perform operation
+void LeftSidePiOp(const auto& rValue, , const RepType& LRep, const RepType& RRep)
+{
+	ConvertToPiRep(LRep);
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	BasicUnsignedMultOp(RValue);
+}
+#endif
+
+#if defined(AltNum_EnableERep)
+
+//Convert right side down to e representation and then perform operation
 void RightSideEOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToERep(RRep);
 	BasicUnsignedDivOp(RValue);
     BasicUnsignedDivOp(ENum);
 }
+
+//Convert left side down to e representation and right side down to normal
+//and then perform operation
+void LeftSideEOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	ConvertToERep(LRep);
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	BasicUnsignedMultOp(RValue);
+}
+#endif
+
+#if defined(AltNum_EnableIRep)
+
+//Convert right side down to i representation and then perform operation
+void RightSideIOp(const auto& rValue, const RepType& RRep)
+{
+	auto RValue = rValue.ConvertToIRep(RRep);
+	BasicUnsignedDivOp(RValue);
+    SwapNegativeStatus();
+    DecimalHalf.Flags = 3;
+}
+
+//Convert left side down to i representation and right side down to normal
+//and then perform operation
+void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	ConvertToIRep(LRep);
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	BasicUnsignedDivOp(RValue);
+}
+#endif
 
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {

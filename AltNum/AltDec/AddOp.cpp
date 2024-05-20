@@ -2,6 +2,7 @@
 using MediumDecVariant = BlazesRusCode::AltDecBase;
 using RepType = BlazesRusCode::RepType;
 
+//Convert both left and right side down to normal representation and then perform operation
 void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
     ConvertToNormType(LRep);
@@ -9,6 +10,7 @@ void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 	BasicUnsignedAddOp(RValue);
 }
 
+//Convert right side down to normal representation and then perform operation
 void RightSideOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertAsNormType(RRep);
@@ -17,19 +19,44 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 
 #pragma region AltDecVariantExclusive
 
-void RightSidePiOp(const auto& rValue, const RepType& RRep)
+#if defined(AltNum_EnablePiRep)
+
+//Convert left and right side down to Pi representation
+//and then perform operation
+void PiOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-	auto RValue = rValue.ConvertToPiRep(RRep);
+	ConvertToPiRep(LRep);
+	auto RValue = rValue.ConvertAsPiRep(RRep);
 	BasicUnsignedAddOp(RValue);
-    BasicUnsignedAddOp(PiNum);
 }
 
-void RightSideEOp(const auto& rValue, const RepType& RRep)
+#endif
+
+#if defined(AltNum_EnableERep)
+
+//Convert left and right side down to e representation
+//and then perform operation
+void EOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-	auto RValue = rValue.ConvertToERep(RRep);
+	ConvertToERep(LRep);
+	auto RValue = rValue.ConvertAsERep(RRep);
 	BasicUnsignedAddOp(RValue);
-    BasicUnsignedAddOp(ENum);
 }
+
+#endif
+
+#if defined(AltNum_EnableIRep)
+
+//Convert left and right side down to e representation
+//and then perform operation
+void IOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	ConvertToIRep(LRep);
+	auto RValue = rValue.ConvertAsIRep(RRep);
+	BasicUnsignedAddOp(RValue);
+}
+
+#endif
 
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {

@@ -2,6 +2,7 @@
 using MediumDecVariant = BlazesRusCode::AltDecBase;
 using RepType = BlazesRusCode::RepType;
 
+//Convert both left and right side down to normal representation and then perform operation
 void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
     ConvertToNormType(LRep);
@@ -9,6 +10,7 @@ void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 	BasicUnsignedSubOp(RValue);
 }
 
+//Convert right side down to normal representation and then perform operation
 void RightSideOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertAsNormType(RRep);
@@ -16,19 +18,115 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 }
 
 #pragma region AltDecVariantExclusive
-void RightSidePiOp(const auto& rValue, const RepType& RRep)
+
+#if defined(AltNum_EnablePiRep)
+
+//Convert left and right side down to Pi representation
+//and then perform operation
+void PiOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-	auto RValue = rValue.ConvertToPiRep(RRep);
+	ConvertToPiRep(LRep);
+	auto RValue = rValue.ConvertAsPiRep(RRep);
 	BasicUnsignedSubOp(RValue);
-    BasicUnsignedSubOp(PiNum);
 }
 
-void RightSideEOp(const auto& rValue, const RepType& RRep)
+#endif
+
+#if defined(AltNum_EnableERep)
+
+//Convert left and right side down to e representation
+//and then perform operation
+void EOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-	auto RValue = rValue.ConvertToERep(RRep);
+	ConvertToERep(LRep);
+	auto RValue = rValue.ConvertAsERep(RRep);
 	BasicUnsignedSubOp(RValue);
-    BasicUnsignedSubOp(ENum);
 }
+
+#endif
+
+#if defined(AltNum_EnableIRep)
+
+//Convert left and right side down to e representation
+//and then perform operation
+void IOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	ConvertToIRep(LRep);
+	auto RValue = rValue.ConvertAsIRep(RRep);
+	BasicUnsignedSubOp(RValue);
+}
+
+#endif
+
+void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+{
+	if (ExtraRep == rValue.ExtraRep)
+		BasicSubOp(rValue);
+	else
+		CatchAllSubtractionV2(LRep);
+}
+
+void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
+	{
+	#if defined(AltNum_EnableNegativePowerRep)
+		if(ExtraRep==rValue.ExtraRep)
+	#else
+		if(ExtraRep.Value==rValue.ExtraRep.Value)
+	#endif
+			SetAsOne();
+	#if defined(AltNum_EnableNegativePowerRep)
+		else if(rValue.ExtraRep>ExtraRep)
+			CatchAllSubtractionV2(LRep);
+	#endif
+		else
+		{
+	#if defined(AltNum_EnableNegativePowerRep)
+			ExtraRep -= rValue.ExtraRep;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsOne())
+				ExtraRep = 0;
+	#else
+			ExtraRep.Value -= rValue.ExtraRep.Value;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsAtOneInt())
+				ExtraRep = 0;
+	#endif
+		}
+	}
+	else
+		CatchAllSubtractionV2(LRep);
+}
+
+void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+	if(ExtraRep.Value==rValue.ExtraRep.Value)
+	{
+		IntValue -= rValue.IntValue;
+		if(rValue.DecimalHalf>DecimalHalf)
+		{
+			--IntValue;
+			DecimalHalf.Value = ExtraRep - (rValue.DecimalHalf-DecimalHalf);
+		}
+		else
+			DecimalHalf.Value -= rValue.DecimalHalf.Value;
+	}
+	else
+	{
+		//Add code here later that normalizes the ExtraRep fields and then performs operation
+		CatchAllSubtractionV2(LRep);
+	}
+}
+
+#if defined(AltNum_EnableWithinMinMaxRange)
+void SameRep_WithinMinMaxRange
+{
+	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+}
+#endif
 #pragma endregion AltDecVariantExclusive
 
 void SameRep_ApproachingBottom(const auto& rValue)
@@ -124,76 +222,6 @@ void SameRep_ApproachingTop(const auto& rValue)
 		}
 	}
 }
-
-void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
-{
-	if (ExtraRep == rValue.ExtraRep)
-		BasicSubOp(rValue);
-	else
-		CatchAllSubtractionV2(LRep);
-}
-
-void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
-{
-	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
-	{
-	#if defined(AltNum_EnableNegativePowerRep)
-		if(ExtraRep==rValue.ExtraRep)
-	#else
-		if(ExtraRep.Value==rValue.ExtraRep.Value)
-	#endif
-			SetAsOne();
-	#if defined(AltNum_EnableNegativePowerRep)
-		else if(rValue.ExtraRep>ExtraRep)
-			CatchAllSubtractionV2(LRep);
-	#endif
-		else
-		{
-	#if defined(AltNum_EnableNegativePowerRep)
-			ExtraRep -= rValue.ExtraRep;
-			if(ExtraRep.IsZero())
-				SetAsOne();
-			else if(ExtraRep.IsOne())
-				ExtraRep = 0;
-	#else
-			ExtraRep.Value -= rValue.ExtraRep.Value;
-			if(ExtraRep.IsZero())
-				SetAsOne();
-			else if(ExtraRep.IsAtOneInt())
-				ExtraRep = 0;
-	#endif
-		}
-	}
-	else
-		CatchAllSubtractionV2(LRep);
-}
-
-void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
-{
-	if(ExtraRep.Value==rValue.ExtraRep.Value)
-	{
-		IntValue -= rValue.IntValue;
-		if(rValue.DecimalHalf>DecimalHalf)
-		{
-			--IntValue;
-			DecimalHalf.Value = ExtraRep - (rValue.DecimalHalf-DecimalHalf);
-		}
-		else
-			DecimalHalf.Value -= rValue.DecimalHalf.Value;
-	}
-	else
-	{
-		//Add code here later that normalizes the ExtraRep fields and then performs operation
-		CatchAllSubtractionV2(LRep);
-	}
-}
-
-#if defined(AltNum_EnableWithinMinMaxRange)
-void SameRep_WithinMinMaxRange
-{
-	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
-}
-#endif
 
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
