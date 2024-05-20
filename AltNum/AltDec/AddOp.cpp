@@ -174,7 +174,7 @@ void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 	else
 	{
 		//Add code here later that normalizes the ExtraRep fields and then performs operation
-		CatchAllSubtractionV2(LRep);
+		CatchAllAdditionV2(LRep);
 	}
 }
 
@@ -211,8 +211,8 @@ void PiRepSwitch(const auto& rValue)
 						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedPi:{
-					} break;
+					case RepType::MixedPi:
+						SameRep_MixedFrac(rValue, LRep); break;
 				#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)
@@ -229,6 +229,8 @@ void PiRepSwitch(const auto& rValue)
 				#endif
     #pragma endregion AltDecVariantExclusive
 			#endif
+            #if defined(AltNum_EnableUndefinedButInRange)
+            #endif
 				default:
 					throw "Unsupported operation"; break;
 				}
@@ -556,8 +558,8 @@ void IRepSwitch(const auto& rValue)
 						SameRep_NumByDiv(rValue, LRep); break;
 				#endif
 				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedI:{
-					} break;
+					case RepType::MixedI:
+						SameRep_MixedFrac(rValue, LRep); break;
 				#endif
     #pragma endregion AltDecVariantExclusive
 			#if defined(AltNum_EnableApproaching)
@@ -630,6 +632,7 @@ void IRepSwitch(const auto& rValue)
 					#endif
 				#endif
     #pragma endregion AltDecVariantExclusive
+            #endif
 #if defined(AltNum_EnableImaginaryInfinity)
 					case RepType::ImaginaryInfinity:{
 						switch(RRep){
@@ -871,30 +874,34 @@ void NormRepSwitch(const auto& rValue)
 						SameRep_NumByDiv(rValue, LRep); break;
 			#endif
 			#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::ToPowerOf:{
-					}; break;
+					case RepType::ToPowerOf:
+						SameRep_PowerOf(rValue, LRep); break;
 			#endif
 			#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedFrac:{
-					}; break;
+					case RepType::MixedFrac:
+						SameRep_MixedFrac(rValue, LRep); break;
 			#endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottomRep:{
-					} break;
-					case RepType::ApproachingTopRep:{
-					} break;
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottom:
+						SameRep_ApproachingBottom(rValue); break;
+					case RepType::ApproachingTop:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeft:{
-					} break;
-				#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRight:{
-					} break;
-				#endif
-			#endif
+			    #if defined(AltNum_EnableApproachingDivided)
+					case RepType::ApproachingMidLeft:
+					case RepType::ApproachingMidRight:
+						CatchAllAdditionV2(rValue, LRep);
+						break;
+			    #endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-					} break;
+			#endif
+					case RepType::InfinityRep:
+					    break;//Techically should return indeterminate form
+	#if defined(AltNum_EnableUndefinedButInRange)
+					case RepType::WithinMinMaxRange:
+						SameRep_WithinMinMaxRange(rValue, LRep); break;
+	#endif
 					default:
 						throw "Unsupported operation";
 				}
