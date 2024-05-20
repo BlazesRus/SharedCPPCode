@@ -947,18 +947,14 @@ void NormRepSwitch(const auto& rValue)
 						switch(RRep){
 						}
 					} break;
-				#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingMidRight:{
 						switch(RRep){
 						}
 					} break;
-				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-						switch(RRep){
-						}
-					} break;
+					case RepType::InfinityRep:
+					    break;
 					default:
 						throw "Unsupported operation";
 				}
