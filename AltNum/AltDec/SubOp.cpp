@@ -358,7 +358,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
     #pragma region AltDecVariantExclusive
@@ -416,7 +416,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -474,7 +474,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -532,7 +532,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -591,7 +591,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				#if !defined(AltNum_DisableApproachingTop)
@@ -648,7 +648,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				#endif
@@ -708,7 +708,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				case RepType::ApproachingMidRightPi:{
@@ -764,7 +764,7 @@ void PiRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -956,7 +956,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
     #pragma region AltDecVariantExclusive
@@ -1014,7 +1014,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -1072,7 +1072,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -1130,7 +1130,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 			#endif
@@ -1189,7 +1189,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				#if !defined(AltNum_DisableApproachingTop)
@@ -1246,7 +1246,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				#endif
@@ -1305,7 +1305,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				case RepType::ApproachingMidRightE:{
@@ -1361,7 +1361,7 @@ void ERepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 				} break;
 				#endif
@@ -1755,7 +1755,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					} break;
     #pragma region AltDecVariantExclusive
@@ -1813,7 +1813,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					}; break;
 			#endif
@@ -1871,7 +1871,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					}; break;
 			#endif
@@ -1929,7 +1929,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					}; break;
 			#endif
@@ -1988,7 +1988,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					} break;
 					case RepType::ApproachingTopRep:{
@@ -2044,7 +2044,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					} break;
             #endif
@@ -2103,7 +2103,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					} break;
 					case RepType::ApproachingMidRight:{
@@ -2159,7 +2159,7 @@ void NormRepSwitch(const auto& rValue)
 						#endif
 					#endif
                             default:
-                                CatchAllSubtraction(rValue, LRep); break;
+                                CatchAllSubtraction(rValue, LRep, RRep); break;
 						}
 					} break;
 			#endif
