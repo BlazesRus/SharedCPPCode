@@ -16,6 +16,7 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 }
 
 #pragma region AltDecVariantExclusive
+
 void RightSidePiOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToPiRep(RRep);
@@ -29,7 +30,39 @@ void RightSideEOp(const auto& rValue, const RepType& RRep)
 	BasicUnsignedDivOp(RValue);
     BasicUnsignedDivOp(ENum);
 }
+
+void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+{
+    //Add Code Here
+}
+
+void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+    //Add Code Here
+}
+
+void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+    //Add Code Here
+}
+
+#if defined(AltNum_EnableWithinMinMaxRange)
+void SameRep_WithinMinMaxRange
+{
+	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+}
+#endif
 #pragma endregion AltDecVariantExclusive
+
+void SameRep_ApproachingBottom(const auto& rValue)
+{
+    //Add Code Here
+}
+
+void SameRep_ApproachingTop(const auto& rValue)
+{
+    //Add Code Here
+}
 
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others

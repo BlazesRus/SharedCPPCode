@@ -16,6 +16,7 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 }
 
 #pragma region AltDecVariantExclusive
+
 void RightSidePiOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToPiRep(RRep);
@@ -29,6 +30,73 @@ void RightSideEOp(const auto& rValue, const RepType& RRep)
 	BasicUnsignedAddOp(RValue);
     BasicUnsignedAddOp(ENum);
 }
+
+void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+{
+	if (ExtraRep == rValue.ExtraRep)
+		BasicAddOp(rValue);
+	else
+		CatchAllAdditionV2(LRep);
+}
+
+void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
+	{
+	#if defined(AltNum_EnableNegativePowerRep)
+		if(ExtraRep==rValue.ExtraRep)
+	#else
+		if(ExtraRep.Value==rValue.ExtraRep.Value)
+	#endif
+			SetAsOne();
+		else
+		{
+	#if defined(AltNum_EnableNegativePowerRep)
+			ExtraRep += rValue.ExtraRep;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsOne())
+				ExtraRep = 0;
+	#else
+			ExtraRep.Value += rValue.ExtraRep.Value;
+			if(ExtraRep.IsZero())
+				SetAsOne();
+			else if(ExtraRep.IsAtOneInt())
+				ExtraRep = 0;
+	#endif
+		}
+	}
+	else
+		CatchAllAdditionV2(LRep);
+}
+
+void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+	if(ExtraRep.Value==rValue.ExtraRep.Value)
+	{
+		IntValue += rValue.IntValue;
+		unsigned int result = DecimalHalf.Value+rValue.DecimalHalf.Value;
+		if(result>ExtraRep.Value)
+		{
+			++IntValue;
+			DecimalHalf.Value = result - ExtraRep.Value;
+		}
+		else
+			DecimalHalf.Value = result;
+	}
+	else
+	{
+		//Add code here later that normalizes the ExtraRep fields and then performs operation
+		CatchAllAdditionV2(LRep);
+	}
+}
+
+#if defined(AltNum_EnableWithinMinMaxRange)
+void SameRep_WithinMinMaxRange
+{
+	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+}
+#endif
 #pragma endregion AltDecVariantExclusive
 
 void SameRep_ApproachingBottom(const auto& rValue)
@@ -117,73 +185,6 @@ void SameRep_ApproachingTop(const auto& rValue)
 	else//1.9..9 + 1.9..9 = 3.9..8
 		IntValue += rValue.IntValue + 1;
 }
-
-void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
-{
-	if (ExtraRep == rValue.ExtraRep)
-		BasicAddOp(rValue);
-	else
-		CatchAllAdditionV2(LRep);
-}
-
-void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
-{
-	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
-	{
-	#if defined(AltNum_EnableNegativePowerRep)
-		if(ExtraRep==rValue.ExtraRep)
-	#else
-		if(ExtraRep.Value==rValue.ExtraRep.Value)
-	#endif
-			SetAsOne();
-		else
-		{
-	#if defined(AltNum_EnableNegativePowerRep)
-			ExtraRep += rValue.ExtraRep;
-			if(ExtraRep.IsZero())
-				SetAsOne();
-			else if(ExtraRep.IsOne())
-				ExtraRep = 0;
-	#else
-			ExtraRep.Value += rValue.ExtraRep.Value;
-			if(ExtraRep.IsZero())
-				SetAsOne();
-			else if(ExtraRep.IsAtOneInt())
-				ExtraRep = 0;
-	#endif
-		}
-	}
-	else
-		CatchAllAdditionV2(LRep);
-}
-
-void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
-{
-	if(ExtraRep.Value==rValue.ExtraRep.Value)
-	{
-		IntValue += rValue.IntValue;
-		unsigned int result = DecimalHalf.Value+rValue.DecimalHalf.Value;
-		if(result>ExtraRep.Value)
-		{
-			++IntValue;
-			DecimalHalf.Value = result - ExtraRep.Value;
-		}
-		else
-			DecimalHalf.Value = result;
-	}
-	else
-	{
-		//Add code here later that normalizes the ExtraRep fields and then performs operation
-		CatchAllAdditionV2(LRep);
-	}
-}
-
-#if defined(AltNum_EnableWithinMinMaxRange)
-void SameRep_WithinMinMaxRange
-{
-	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
-}
-#endif
 
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
