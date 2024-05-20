@@ -351,7 +351,7 @@ public:
         #endif
         #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
             #if defined(AltNum_EnableWithinMinMaxRange)
-            if (ExtraRep == WithinMinMaxRangeRep)
+            if (ExtraRep.Value == WithinMinMaxRangeRep||ExtraRep.Value==WithinMinToNegativeMaxRep)
                 return RepType::WithinMinMaxRange;
             #endif
             if(DecimalHalf==UndefinedInRangeRep)
