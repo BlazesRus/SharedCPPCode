@@ -123,12 +123,14 @@ public:
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
         } const
 
+		//Set value as exactly zero
         void SetAsZero()
         {
             IntValue = 0;
             DecimalHalf = 0; ExtraRep = 0;
         }
 
+		//Set value as exactly one
         void SetAsOne()
         {
             IntValue = 1;
@@ -1497,6 +1499,112 @@ public:
             return Res;
         }
 
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)||defined(AltNum_EnableIRep)
+        static RepType GetRepAsNormalEquivalent(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::INum:
+		#endif
+					return RepType::NormalType; break;
+		#if defined(AltNum_EnableFractionals)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::PiNumByDiv:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::ENumByDiv:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::INumByDiv:
+			#endif
+					return RepType::NumByDiv; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::PiPower:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::EPower:
+			#endif
+					return RepType::ToPowerOf; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::MixedPi:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::MixedE:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::MixedI:
+			#endif
+					return RepType::MixedFrac; break;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+			#endif
+					return RepType::ApproachingBottom; break;
+			#if !defined(AltNum_DisableApproachingTop
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+				#endif
+					return RepType::ApproachingTop; break;
+			#endif
+		#endif
+			#if defined(AltNum_EnableApproachingDivided)
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingMidLeftPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingMidLeftE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryMidLeft:
+				#endif
+					return RepType::RepType::ApproachingMidLeft;
+					break;
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingMidRightPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingMidRightE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryMidRight:
+				#endif
+					return RepType::RepType::ApproachingMidRight;
+					break;
+			#endif
+		#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::ImaginaryInfinity:
+					return RepType::Infinity; break;
+		#endif
+				default:
+					return repType;
+			}
+		}
+	#endif
+
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
         RepType ConvertToNormalEquivalant(const RepType& repType)
         {
@@ -1604,8 +1712,8 @@ public:
 				case RepType::ApproachingMidRightPi:
 				#endif
 				#if defined(AltNum_EnableERep)
-				case RepType::ApproachingMidLeftPi:
-				case RepType::ApproachingMidRightPi:
+				case RepType::ApproachingMidLeftE:
+				case RepType::ApproachingMidRightE:
 				#endif
 					ConvertToNormType(repType);
 					return RepType::NormalType;
