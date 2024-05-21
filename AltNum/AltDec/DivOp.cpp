@@ -117,38 +117,61 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	{
 		switch(LRep)
 		{
-			case RepType::NormalType:{
-			}; break;
+			case RepType::NormalType:
+				BasicDivOp(rValue); break;
 #pragma region AltDecVariantExclusive
 	#if defined(AltNum_EnableFractionals)
-			case RepType::NumByDiv:{
-			}; break;
+			case RepType::NumByDiv:
+				SameRep_NumByDiv(rValue, LRep); break;
 	#endif
 	#if defined(AltNum_EnablePowerOfRepresentation)
-			case RepType::ToPowerOf:{
-			}; break;
+			case RepType::ToPowerOf:
+				SameRep_PowerOf(rValue, LRep); break;
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac:{
-			}; break;
+			case RepType::MixedFrac:
+				SameRep_MixedFrac(rValue, LRep); break;
 	#endif
 #pragma endregion AltDecVariantExclusive
-			case RepType::ApproachingBottomRep:{
-			} break;
-		#if !defined(AltNum_DisableApproachingTop)
-			case RepType::ApproachingTopRep:{
-			} break;
-		#endif
+	#if defined(AltNum_EnableApproaching)
+			case RepType::ApproachingBottom:
+				SameRep_ApproachingBottom(rValue); break;
+			case RepType::ApproachingTop:
+				SameRep_ApproachingTop(rValue); break;
 #pragma region AltDecVariantExclusive
-	#if defined(AltNum_EnableApproachingDivided)
-			case RepType::ApproachingMidLeft:{
-			} break;
-			case RepType::ApproachingMidRight:{
-			} break;
-	#endif
+		#if defined(AltNum_EnableApproachingDivided)
+			case RepType::ApproachingMidLeft:
+                if(IntValue.Value==0&&rValue.IntValue.Value==0)
+                {
+                    if(ExtraRep==rValue.ExtraRep))
+                    {
+                        IntValue.Value = 1; DecimalHalf = 0; ExtraRep = 0;
+                    }
+                    else
+                    {
+                        //Add code here
+                        CatchAllDivisionV2(rValue, LRep);
+                    }
+                }
+                else
+				    CatchAllDivisionV2(rValue, LRep);
+			case RepType::ApproachingMidRight:
+                if(IntValue.Value==0&&rValue.IntValue.Value==0&&ExtraRep==rValue.ExtraRep)
+                {
+                    IntValue.Value = 1; DecimalHalf = 0; ExtraRep = 0;
+                }
+                else
+				    CatchAllDivisionV2(rValue, LRep);
+				break;
+		#endif
 #pragma endregion AltDecVariantExclusive
-			case RepType::InfinityRep:{
-			} break;
+	#endif
+			case RepType::InfinityRep:
+				break;//Techically should return indeterminate form
+#if defined(AltNum_EnableUndefinedButInRange)
+			case RepType::WithinMinMaxRange:
+				SameRep_WithinMinMaxRange(rValue, LRep); break;
+#endif
 			default:
 				throw "Unsupported operation";
 		}
