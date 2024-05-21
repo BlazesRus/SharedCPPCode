@@ -211,12 +211,27 @@ protected:
             DecimalHalf = Value.DecimalHalf;
         }
 
+		//Set value as exactly zero
         void SetAsZero()
         {
             IntValue = 0;
             DecimalHalf = 0;
         }
-        
+
+		//Set value as exactly one
+        void SetAsOne()
+        {
+            IntValue = 1;
+            DecimalHalf = 0;
+        }
+		
+		//Set as +-1 while keeping current sign
+        void SetAsOneVal()
+        {
+            IntValue.Value = 1;
+            DecimalHalf = 0;
+        }
+		
         /// <summary>
         /// Swaps the negative status.
         /// </summary>

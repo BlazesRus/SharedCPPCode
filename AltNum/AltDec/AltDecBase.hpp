@@ -123,9 +123,22 @@ public:
             DecimalHalf = Value.DecimalHalf; ExtraRep = Value.ExtraRep;
         } const
 
-        virtual void SetAsZero()
+        void SetAsZero()
         {
             IntValue = 0;
+            DecimalHalf = 0; ExtraRep = 0;
+        }
+
+        void SetAsOne()
+        {
+            IntValue = 1;
+            DecimalHalf = 0; ExtraRep = 0;
+        }
+		
+		//Set as +-1 while keeping current sign
+        void SetAsOneVal()
+        {
+            IntValue.Value = 1;
             DecimalHalf = 0; ExtraRep = 0;
         }
 

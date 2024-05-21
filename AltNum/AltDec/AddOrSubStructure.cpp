@@ -130,7 +130,7 @@ void PiRepSwitch(const auto& rValue)
 				#if defined(AltNum_EnableApproachingDivided)
 					case RepType::ApproachingMidLeftPi:
 					case RepType::ApproachingMidRightPi:
-						CatchAllAdditionV2(rValue, LRep);
+						PiOperation(rValue, LRep, RRep);
 						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
@@ -251,7 +251,7 @@ void ERepSwitch(const auto& rValue)
 	{
 #if defined(AltNum_EnablePiRep)
 		case 1:
-			RightSidePiOp(rValue, RRep); break;
+			CatchAllOp(rValue, LRep, RRep); break;
 #endif
     #pragma region ERep_to_ERep
 		case 2:
@@ -286,7 +286,7 @@ void ERepSwitch(const auto& rValue)
 				#if defined(AltNum_EnableApproachingDivided)
 					case RepType::ApproachingMidLeftE:
 					case RepType::ApproachingMidRightE:
-						CatchAllAdditionV2(rValue, LRep);
+						EOperation(rValue, LRep, RRep);
 						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
@@ -365,56 +365,7 @@ void ERepSwitch(const auto& rValue)
 
 		default:{//ERep_to_NormalRep
 			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::ENum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::EPower:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableFractionals)
-				case RepType::ENumByDiv:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedE:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomE:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTopE:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftE:{
-					switch(RRep){
-					}
-				} break;
-				case RepType::ApproachingMidRightE:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
+            } break;
 			default:
 				throw "Unsupported operation"; break;
 			}

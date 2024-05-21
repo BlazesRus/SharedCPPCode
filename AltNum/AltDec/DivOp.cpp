@@ -142,26 +142,17 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingMidLeft:
                 if(IntValue.Value==0&&rValue.IntValue.Value==0)
-                {
-                    if(ExtraRep==rValue.ExtraRep))
-                    {
-                        IntValue.Value = 1; DecimalHalf = 0; ExtraRep = 0;
-                    }
-                    else
-                    {
-                        //Add code here
-                        CatchAllDivisionV2(rValue, LRep);
-                    }
-                }
+					//0.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~0.12459..9(ExtraRep:8)
+                    ExtraRep.Value *= rValue.ExtraRep;
                 else
-				    CatchAllDivisionV2(rValue, LRep);
+					CatchAllDivisionV2(rValue, LRep);
+				break;
 			case RepType::ApproachingMidRight:
-                if(IntValue.Value==0&&rValue.IntValue.Value==0&&ExtraRep==rValue.ExtraRep)
-                {
-                    IntValue.Value = 1; DecimalHalf = 0; ExtraRep = 0;
-                }
+                if(IntValue.Value==0&&rValue.IntValue.Value==0)
+					//0.250..01(ExtraRep:4) / 0.50..01(ExtraRep:2) = ~0.12500..1(ExtraRep:8)
+                    ExtraRep.Value *= rValue.ExtraRep;
                 else
-				    CatchAllDivisionV2(rValue, LRep);
+					CatchAllDivisionV2(rValue, LRep);
 				break;
 		#endif
 #pragma endregion AltDecVariantExclusive
@@ -521,35 +512,271 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 	switch(LRep)
 	{
 		case RepType::PiNum:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 #pragma region AltDecVariantExclusive
 	#if defined(AltNum_EnablePowerOfRepresentation)
 		case RepType::PiPower:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 	#endif
 	#if defined(AltNum_EnableFractionals)
 		case RepType::PiNumByDiv:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
 		case RepType::MixedPi:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 	#endif
 #pragma endregion AltDecVariantExclusive
 	#if defined(AltNum_EnableApproaching)
 		case RepType::ApproachingBottomPi:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 		#if !defined(AltNum_DisableApproachingTop)
 		case RepType::ApproachingTopPi:{
+			switch(RRep){
+				//case RepType::NormalType:{
+				//}; break;
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableFractionals)
+				//case RepType::NumByDiv:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				//case RepType::ToPowerOf:{
+				//}; break;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				//case RepType::MixedFrac:{
+				//}; break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::ApproachingBottomRep:{
+				//} break;
+				#if !defined(AltNum_DisableApproachingTop)
+				//case RepType::ApproachingTopRep:{
+				//} break;
+				#endif
+	#pragma region AltDecVariantExclusive
+		#if defined(AltNum_EnableApproachingDivided)
+				//case RepType::ApproachingMidLeft:{
+				//} break;
+				//case RepType::ApproachingMidRight:{
+				//} break;
+		#endif
+	#pragma endregion AltDecVariantExclusive
+				//case RepType::InfinityRep:{
+				//} break;
+				default:
+					CatchAllOp(rValue, LRep, RRep);
+			}
 		} break;
 		#endif
 	#endif
 #pragma region AltDecVariantExclusive
 	#if defined(AltNum_EnableApproachingDivided)
 		case RepType::ApproachingMidLeftPi:{
-		} break;
-		case RepType::ApproachingMidRightPi:{
-		} break;
+			switch(RRep){
+				case RepType::ApproachingMidLeft:
+					if(IntValue.Value==0&&rValue.IntValue.Value==0)
+						ExtraRep.Value *= rValue.ExtraRep;
+					else
+						CatchAllDivision(rValue, LRep, RRep);
+				break;
+				default:
+					CatchAllDivision(rValue, LRep, RRep);
+					break;
+			}
+		case RepType::ApproachingMidRightPi:
+			switch(RRep){
+				case RepType::ApproachingMidRight:
+					if(IntValue.Value==0&&rValue.IntValue.Value==0)
+						ExtraRep.Value *= rValue.ExtraRep;
+					else
+						CatchAllDivision(rValue, LRep, RRep);
+				break;
+				default:
+					CatchAllDivision(rValue, LRep, RRep);
+					break;
+			}
 	#endif
 #pragma endregion AltDecVariantExclusive
 	default:
@@ -679,6 +906,14 @@ void CatchAllIOperation(const auto& rValue, const RepType& LRep, const RepType& 
 }
 #endif
 
+//Same Representation division
+void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	RepType convertedLRep = GetRepAsNormalEquivalent(LRep);
+	RepType convertedRRep = GetRepAsNormalEquivalent(RRep);
+	NormalToNormalOperation(rValue, convertedLRep, convertedRRep);
+}
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
@@ -691,43 +926,7 @@ void PiRepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetPiRepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::PiNum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::PiPower:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableFractionals)
-					case RepType::PiNumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedPi:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopPi:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftPi:{
-					} break;
-					case RepType::ApproachingMidRightPi:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -844,43 +1043,7 @@ void ERepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetERepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::ENum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::EPower:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableFractionals)
-					case RepType::ENumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedE:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopE:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftE:{
-					} break;
-					case RepType::ApproachingMidRightE:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -1031,43 +1194,7 @@ void IRepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetIRepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::INum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableFractionals)
-					case RepType::INumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedI:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryTop:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingImaginaryMidLeft:{
-					} break;
-					case RepType::ApproachingImaginaryMidRight:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:
-                        break;//Return *this;
-#endif
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -1240,6 +1367,7 @@ void NormRepSwitch(const auto& rValue)
 //UnsignedDivOp
 auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 {
+	if(DecimalHalf.Value==rVale&&
 	switch(DecimalHalf.Flags)
 	{
 #if defined(AltNum_EnablePiRep)

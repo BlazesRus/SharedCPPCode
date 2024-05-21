@@ -912,6 +912,55 @@ public:
             return Res;
         }
 
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)||defined(AltNum_EnableIRep)
+        RepType GetRepAsNormalEquavant(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::INum:
+		#endif
+					return RepType::NormalType; break;
+		#if defined(AltNum_EnableApproaching)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+			#endif
+					return RepType::ApproachingBottom; break;
+			#if !defined(AltNum_DisableApproachingTop
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+				#endif
+					return RepType::ApproachingTop; break;
+			#endif
+		#endif
+		#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::ImaginaryInfinity:
+					return RepType::Infinity; break;
+		#endif
+				default:
+					return repType;
+			}
+		}
+	#endif
+		
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
         RepType ConvertToNormalEquivalant(const RepType& repType)
         {
