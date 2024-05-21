@@ -1484,6 +1484,134 @@ public:
             return Res;
         }
 
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
+        RepType ConvertToNormalEquivalant(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:{
+					BasicUnsignedMultOp(PiNum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:{
+					BasicUnsignedMultOp(ENum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}	break;
+		#endif
+#pragma region AltDecVariantExclusive
+#if defined(AltNum_EnableFractionals)
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNumByDiv:{
+					BasicUnsignedMultOp(PiNum); DecimalHalf.Flags = 0;
+					return RepType::NumByDiv;
+				} break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENumByDiv:
+					BasicUnsignedMultOp(ENum); DecimalHalf.Flags = 0;
+					return RepType::NumByDiv;
+				break;
+		#endif
+#endif
+#if defined(AltNum_EnablePowerOfRepresentation)
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiPower:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::EPower:
+		#endif
+					ConvertToNormType(repType);
+					return RepType::NormalType;
+				break;
+#endif
+#if defined(AltNum_EnableMixedFractional)
+		#if defined(AltNum_EnablePiRep)
+				case RepType::MixedPi:{
+					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
+					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
+					unsigned long long decHalf = DecimalOverflowX*Frac.numerator()
+					decHalf /= Frac.denominator();
+					DecimalHalf.Value = (unsigned int) decHalf;
+					BasicUnsignedMultOp(PiNum); 
+					DecimalHalf.Flags = 0; ExtraRep.IsAltRep = 0;
+					return RepType::NumByDiv;
+				} break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::MixedE:{
+					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
+					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
+					unsigned long long decHalf = DecimalOverflowX*Frac.numerator()
+					decHalf /= Frac.denominator();
+					DecimalHalf.Value = (unsigned int) decHalf;
+					BasicUnsignedMultOp(ENum); 
+					DecimalHalf.Flags = 0; ExtraRep.IsAltRep = 0;
+					return RepType::NumByDiv;
+				} break;
+		#endif
+#endif
+#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+				#endif
+					if(IntValue.Value==0)
+					{
+						DecimalHalf.Flags = 0;
+						return RepType::ApproachingBottom; 
+					}
+					else
+					{
+						ConvertToNormType(repType);
+						return RepType::NormalType;
+					}
+					break;
+				#if !defined(AltNum_DisableApproachingTop)
+					#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+					#endif
+					#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+					#endif
+					ConvertToNormType(repType);
+					return RepType::NormalType;
+					break;
+				#endif
+			#endif
+			
+			#if defined(AltNum_EnableApproachingDivided)
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingMidLeftPi:
+				case RepType::ApproachingMidRightPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingMidLeftPi:
+				case RepType::ApproachingMidRightPi:
+				#endif
+					ConvertToNormType(repType);
+					return RepType::NormalType;
+					break;
+			#endif
+				default:
+					return repType;
+			}
+		}
+
+		//Returns std::pair of Value and RepType
+        auto ConvertAsNormalEquivalant(const RepType& repType)
+        {
+            auto Res = *this;
+            RepType convertedRep = ConvertToNormalEquivalant(repType, convertedRep);
+            return std::make_pair(Res, convertedRep);
+		}
+	#endif
+
     #pragma endregion Other RepType Conversion
 
     #pragma endregion Other RepType Conversion

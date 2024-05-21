@@ -735,11 +735,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 
 void CatchAllOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-	RepType ConvertedLRep;
-	ConvertToNormalEquivalant(LRep, ConvertedLRep);
-	RepType ConvertedRRep;
-	auto RValue = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
-	NormalToNormalOperation(rValue.Ge, LRep, ConvertedRRep);
+	RepType convertedLRep = ConvertToNormalEquivalant(LRep, ConvertedLRep);
+	auto convertedRVal = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
+	NormalToNormalOperation(convertedRVal.first, convertedLRep, convertedRVal.second);
 }
 
 #if defined(AltNum_EnablePiRep)
@@ -1134,10 +1132,9 @@ void NormRepSwitch(const auto& rValue)
     #pragma region NormRep_to_PiRep
 		case 1:
 		{
-			RepType RRep = rValue.GetPiRepType();
-			RepType ConvertedRRep;
-			auto RValue = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
-			NormalToNormalOperation(rValue.Ge, LRep, ConvertedRRep);
+			RepType RRep = rValue.GetERepType();
+			auto convertedVal = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
+			NormalToNormalOperation(convertedVal.first, LRep, convertedVal.second);
 		} break;
     #pragma endregion NormRep_to_PiRep
 #endif
@@ -1147,9 +1144,8 @@ void NormRepSwitch(const auto& rValue)
 		case 2:
 		{
 			RepType RRep = rValue.GetERepType();
-			RepType ConvertedRRep;
-			auto RValue = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
-			NormalToNormalOperation(rValue.Ge, LRep, ConvertedRRep);
+			auto convertedVal = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
+			NormalToNormalOperation(convertedVal.first, LRep, convertedVal.second);
 		} break;
     #pragma endregion NormRep_to_ERep
 #endif

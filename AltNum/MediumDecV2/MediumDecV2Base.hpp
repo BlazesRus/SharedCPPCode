@@ -801,7 +801,6 @@ public:
 
 
     #pragma region Other RepType Conversion
-      //To-Do: Test cost of making vs alternative means of making sure uses updated code after derivation    
 
         //Returns value as normal type or INum representation
         void ConvertToNormType(const RepType& repType)
@@ -908,10 +907,71 @@ public:
 		//Returns value as normal type representation
         auto ConvertAsNormTypeV2()
         {
-            VariantType Res = *this;
+            auto Res = *this;
             Res.ConvertToNormTypeV2();
             return Res;
         }
+
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
+        RepType ConvertToNormalEquivalant(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:{
+					BasicUnsignedMultOp(PiNum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:{
+					BasicUnsignedMultOp(ENum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}	break;
+		#endif
+			#if defined(AltNum_EnableApproaching)
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+				#endif
+					if(IntValue.Value==0)
+					{
+						DecimalHalf.Flags = 0;
+						return RepType::ApproachingBottom; 
+					}
+					else
+					{
+						ConvertToNormType(repType);
+						return RepType::NormalType;
+					}
+					break;
+				#if !defined(AltNum_DisableApproachingTop)
+					#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+					#endif
+					#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+					#endif
+					ConvertToNormType(repType);
+					return RepType::NormalType;
+					break;
+				#endif
+			#endif
+				default:
+					return repType;
+			}
+		}
+
+		//Returns std::pair of Value and RepType
+        auto ConvertAsNormalEquivalant(const RepType& repType)
+        {
+            auto Res = *this;
+            RepType convertedRep = ConvertToNormalEquivalant(repType, convertedRep);
+            return std::make_pair(Res, convertedRep);
+		}
+	#endif
 
     #pragma endregion Other RepType Conversion
 

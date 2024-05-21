@@ -67,8 +67,7 @@ inline AltDecBase BlazesRusCode::AltDecBase::PowOp(const AltDecBase& exponent)
 	    RepType RRep = GetRepType();
         switch(RRep)
         {
-	        case RepType::PositiveInfinity:
-	        case RepType::NegativeInfinity:
+	        case RepType::Infinity:
                 if(exponent.IntValue==1)
                     return *this;
                 else
