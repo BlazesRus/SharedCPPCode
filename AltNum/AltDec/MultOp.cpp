@@ -29,7 +29,7 @@ void RightSidePiOp(const auto& rValue, const RepType& RRep)
 
 //Convert left side down to Pi representation and right side down to normal
 //and then perform operation
-void LeftSidePiOp(const auto& rValue, , const RepType& LRep, const RepType& RRep)
+void LeftSidePiOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
 	ConvertToPiRep(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
@@ -139,24 +139,22 @@ void PiRepSwitch(const auto& rValue)
 					} break;
 				#endif
     #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopPi:{
-					} break;
-					#endif
-				#endif
+			#if defined(AltNum_EnableApproaching)
+					case RepType::ApproachingBottomPi:
+						SameRep_ApproachingBottom(rValue); break;
+					case RepType::ApproachingTopPi:
+						SameRep_ApproachingTop(rValue); break;
     #pragma region AltDecVariantExclusive
 				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRightPi:{
-					} break;
-					#endif
+					case RepType::ApproachingMidLeftPi:
+					case RepType::ApproachingMidRightPi:
+						LeftSidePiOp(rValue, LRep, RRep);
+						break;
 				#endif
     #pragma endregion AltDecVariantExclusive
+			#endif
+            #if defined(AltNum_EnableUndefinedButInRange)
+            #endif
 				default:
 					throw "Unsupported operation"; break;
 				}
