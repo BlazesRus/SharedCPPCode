@@ -153,9 +153,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                         catch (std::overflow_error& e){
                             CatchAllOp(rValue);
                         }
-    				}
-                    else
-    				{
+    				} else {
                         //2.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~1.1249..9(ExtraRep:8)
                         try{
                             unsigned int result = ExtraRep.Value * rValue.ExtraRep;
@@ -180,7 +178,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                 {
                     if(IntValue.Value==0)
     				{
-    					//0.250..01(ExtraRep:4) * 0.50..01(ExtraRep:2) = ~0.12500..1(ExtraRep:8)
+    					//0.250..01(ExtraRep:4) * 0.50..01(ExtraRep:2) = ~0.1250..01(ExtraRep:8)
                         try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
                             unsigned int result = ExtraRep.Value * rValue.ExtraRep;
                             ExtraRep.Value = result;
@@ -188,9 +186,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                         catch (std::overflow_error& e){
                             CatchAllOp(rValue);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         try{
                             unsigned int result = ExtraRep.Value * rValue.ExtraRep;
                             unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
@@ -569,14 +565,8 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
 				//case RepType::ToPowerOf:{
 				//}; break;
-		#endif
-		#if defined(AltNum_EnableMixedFractional)
-				//case RepType::MixedFrac:{
-				//}; break;
-		#endif
 	#pragma endregion AltDecVariantExclusive
 				//case RepType::ApproachingBottom:{
 				//} break;
@@ -645,10 +635,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				//case RepType::ToPowerOf:{
-				//}; break;
-		#endif
 		#if defined(AltNum_EnableMixedFractional)
 				//case RepType::MixedFrac:{
 				//}; break;
@@ -693,8 +679,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottom:{
-				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
 				//case RepType::ApproachingTop:{
 				//} break;
@@ -732,10 +716,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 	#pragma endregion AltDecVariantExclusive
 				//case RepType::ApproachingBottom:{
 				//} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTop:{
-				//} break;
-				#endif
 	#pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableApproachingDivided)
 				//case RepType::ApproachingMidLeft:{
@@ -757,20 +737,39 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				case RepType::NormalType:{
 					LeftSidePiOp(rValue);
 				}; break;
+				case RepType::NumByDiv:{
+					LeftSidePiOp(rValue);
+				}; break;
 				case RepType::ApproachingMidLeft:
-					if(IntValue.Value==0&&rValue.IntValue.Value==0)
+					if(rValue.IntValue.Value==0)
 					{
-                        try{
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            ExtraRep.Value = result;
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
+						if(IntValue.Value==0){
+                            try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
+                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                                ExtraRep.Value = result;
+                            }
+                            catch (std::overflow_error& e){
+                                LeftSidePiOp(rValue);
+                            }
+						} else {
+                            try{
+                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
+                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+    						    {
+                                    ExtraRep.Value = result;
+                                    IntValue.Value *= intHalfRes;
+                                } else
+    						        LeftSidePiOp(rValue);
+                            }
+                            catch (std::overflow_error& e){
+                                LeftSidePiOp(rValue);
+                            }
+						}
 					}
 					else
 						LeftSidePiOp(rValue);
-				break;
+					break;
 				default:
 					LeftSidePiOp(rValue);
 			}
@@ -778,32 +777,40 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 		case RepType::ApproachingMidRightPi:{
 			switch(RRep){
 				case RepType::NormalType:{
-                    LeftSidePiOp(rValue);
+					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidRight:
-					if(IntValue.Value==0&&rValue.IntValue.Value==0)
+					if(rValue.IntValue.Value==0)
 					{
-                        try{
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            ExtraRep.Value = result;
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
+						if(IntValue.Value==0){
+                            try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
+                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                                ExtraRep.Value = result;
+                            }
+                            catch (std::overflow_error& e){
+                                LeftSidePiOp(rValue);
+                            }
+						} else {
+                            try{
+                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
+                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+    						    {
+                                    ExtraRep.Value = result;
+                                    IntValue.Value *= intHalfRes;
+                                } else
+    						        LeftSidePiOp(rValue);
+                            }
+                            catch (std::overflow_error& e){
+                                LeftSidePiOp(rValue);
+                            }
+						}
 					}
 					else
 						LeftSidePiOp(rValue);
 					break;
 				default:
-					auto RValue = rValue.ConvertAsNormType(RRep);
-					if(rValue.DecimalHalf==0)
-						ExtraRep *= rValue.IntValue
-					else
-					{
-						ConvertToPiRep(LRep);
-						BasicUnsignedMultOp(RValue);
-					}
-					break;
+					LeftSidePiOp(rValue);
 			}
 		} break;
 	#endif

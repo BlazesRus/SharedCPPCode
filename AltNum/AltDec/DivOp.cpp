@@ -151,15 +151,13 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 						    ExtraRep.Value = result;
 					    else
 						    CatchAllOp(rValue);
-                    }
-                    else
-                    {
+                    } else {
                         //2.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~4.49..9(ExtraRep:2)
                         unsigned int result = ExtraRep.Value / rValue.ExtraRep;
                         if (ExtraRep.Value == result * rValue)//checking for truncation
 						{
                             ExtraRep.Value = result;
-                            IntValue.Value *= IntValue;
+                            IntValue.Value *= rValue.ExtraRep;
                         } else
 						    CatchAllOp(rValue);
                     }
@@ -168,13 +166,24 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					CatchAllOp(rValue);
 				break;
 			case RepType::ApproachingMidRight:
-                if(IntValue.Value==0&&rValue.IntValue.Value==0)
-				{
-					unsigned int result = ExtraRep.Value / rValue.ExtraRep;
-                    if (ExtraRep.Value == result * rValue)//checking for truncation
-						ExtraRep.Value = result;
-					else
-						CatchAllOp(rValue);
+                if(rValue.IntValue.Value==0)
+                {
+                    if(IntValue.Value==0)
+				    {
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						    ExtraRep.Value = result;
+					    else
+						    CatchAllOp(rValue);
+                    } else {
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						{
+                            ExtraRep.Value = result;
+                            IntValue.Value *= rValue.ExtraRep;
+                        } else
+						    CatchAllOp(rValue);
+                    }
 				}
                 else
 					CatchAllOp(rValue);
@@ -535,14 +544,8 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
 				//case RepType::ToPowerOf:{
 				//}; break;
-		#endif
-		#if defined(AltNum_EnableMixedFractional)
-				//case RepType::MixedFrac:{
-				//}; break;
-		#endif
 	#pragma endregion AltDecVariantExclusive
 				//case RepType::ApproachingBottom:{
 				//} break;
@@ -611,10 +614,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				//case RepType::ToPowerOf:{
-				//}; break;
-		#endif
 		#if defined(AltNum_EnableMixedFractional)
 				//case RepType::MixedFrac:{
 				//}; break;
@@ -659,8 +658,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottom:{
-				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
 				//case RepType::ApproachingTop:{
 				//} break;
@@ -698,10 +695,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 	#pragma endregion AltDecVariantExclusive
 				//case RepType::ApproachingBottom:{
 				//} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTop:{
-				//} break;
-				#endif
 	#pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableApproachingDivided)
 				//case RepType::ApproachingMidLeft:{
@@ -726,31 +719,37 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					else
 						LeftSidePiOp(rValue);
 				}; break;
+				case RepType::NumByDiv:{
+					LeftSidePiOp(rValue);
+				}; break;
 				case RepType::ApproachingMidLeft:
-					if(IntValue.Value==0&&rValue.IntValue.Value==0)
-					{
-						unsigned int result = ExtraRep.Value / rValue.ExtraRep;
-						if (ExtraRep.Value == result * rValue)//checking for truncation
-							ExtraRep.Value = result;
-						else
-							LeftSidePiOp(rValue);
-					}
-					else
-						LeftSidePiOp(rValue);
-				break;
-				default:
-					auto RValue = rValue.ConvertAsNormType(RRep);
-					if(rValue.DecimalHalf==0)
-						ExtraRep *= rValue.IntValue
-					else
-					{
-						ConvertToPiRep(LRep);
-						BasicUnsignedMultOp(RValue);
-					}
+                    if(rValue.IntValue.Value==0)
+                    {
+                        if(IntValue.Value==0)
+    				    {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						    ExtraRep.Value = result;
+    					    else
+    						    LeftSidePiOp(rValue);
+                        } else {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						{
+                                ExtraRep.Value = result;
+                                IntValue.Value *= rValue.ExtraRep;
+                            } else
+    						    LeftSidePiOp(rValue);
+                        }
+    				}
+                    else
+    					LeftSidePiOp(rValue);
 					break;
+				default:
+					LeftSidePiOp(rValue);
 			}
-		} break;	
-		case RepType::ApproachingMidRightPi:
+		} break;
+		case RepType::ApproachingMidRightPi:{
 			switch(RRep){
 				case RepType::NormalType:{
 					if(rValue.DecimalHalf==0)
@@ -758,28 +757,34 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					else
 						LeftSidePiOp(rValue);
 				}; break;
+				case RepType::NumByDiv:{
+					LeftSidePiOp(rValue);
+				}; break;
 				case RepType::ApproachingMidRight:
-					if(IntValue.Value==0&&rValue.IntValue.Value==0)
-					{
-						unsigned int result = ExtraRep.Value / rValue.ExtraRep;
-						if (ExtraRep.Value == result * rValue)//checking for truncation
-							ExtraRep.Value = result;
-						else
-							LeftSidePiOp(rValue);
-					}
-					else
-						LeftSidePiOp(rValue);
+                    if(rValue.IntValue.Value==0)
+                    {
+                        if(IntValue.Value==0)
+    				    {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						    ExtraRep.Value = result;
+    					    else
+    						    LeftSidePiOp(rValue);
+                        } else {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						{
+                                ExtraRep.Value = result;
+                                IntValue.Value *= rValue.ExtraRep;
+                            } else
+    						    LeftSidePiOp(rValue);
+                        }
+    				}
+                    else
+    					LeftSidePiOp(rValue);
 					break;
 				default:
-					auto RValue = rValue.ConvertAsNormType(RRep);
-					if(rValue.DecimalHalf==0)
-						ExtraRep *= rValue.IntValue
-					else
-					{
-						ConvertToPiRep(LRep);
-						BasicUnsignedMultOp(RValue);
-					}
-					break;
+					LeftSidePiOp(rValue);
 			}
 		} break;
 	#endif
