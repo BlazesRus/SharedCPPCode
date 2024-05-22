@@ -176,11 +176,17 @@ namespace BlazesRusCode
 		//(Enum Bits:8, 1, 2)
 		Nil = 131,
 #endif
+#if defined(AltNum_EnableIndeterminateForms)
+		//0/0, infinity/infinity, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
+		//(Enum Bits:8,4)
+		//Defined when DecimalHalf.Value == IndeterminateRep with exact value determined by IntValue field
+		IndeterminateForm = 136,
+#endif
 	#ifdef AltNum_EnableComplexNumbers
 		//Enum Bits subject to change for Complec Number later(Not completely used yet)
 		ComplexIRep = 255,
 	#endif
-		//(Enum Bits:8, 1, 2, 3)
+		//Not currently used(Enum Bits:8, 1, 2, 3)
 		UnknownType = 135
 	}
 ]

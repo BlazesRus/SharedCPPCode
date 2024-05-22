@@ -148,6 +148,10 @@ AltNum_AllowOverflowRep = Allow representation of numbers greator than 214748364
 	If AltNum_EnableFractionals is disabled, represents numbers 2147483647.999999999 x 10^ExtraRep with the smallest digits truncated for each value above normal limit
 	If AltNum_EnableFractionals is enabled and negative ExtraRep values are not used for any representation, represents numbers 2147483647.999999999 x 10^-ExtraRep with similar above truncation
 	(Not Implimented--Depreciated)
+	
+AltNum_EnableIndeterminateForms = Enables extra representations for outputing and preserving the indeterminate form such 
+	as 0/0, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
+	(Not Implimented yet)
 */
 
 #if !defined(AltNum_DisableAltDecBaseDefaultToggles)
