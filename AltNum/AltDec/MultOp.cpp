@@ -735,9 +735,40 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 		case RepType::ApproachingMidLeftPi:{
 			switch(RRep){
 				case RepType::NormalType:{
-					LeftSidePiOp(rValue);
+                    if(rValue.DecimalHalf==0){
+                        try{
+                            unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
+                            unsigned int result = ExtraRep.Value / rValue.IntValue.Value;
+                            if (ExtraRep.Value == result * rValue.IntValue.Value){
+                                ExtraRep.Value = result;
+                                IntValue.Value = intHalfRes;
+                            } else
+                                LeftSidePiOp(rValue);
+                        }
+                        catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
+                    }
 				}; break;
 				case RepType::NumByDiv:{
+                    if(rValue.DecimalHalf==0){
+                        if(rValue.IntValue==1){
+                            try{ ExtraRep *= rValue.ExtraRep; }
+                            catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
+                        }
+                        else
+                        {
+                            try{
+                                unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
+                                unsigned int result01 = ExtraRep * rValue.ExtraRep;
+                                unsigned int result02 = result01 / rValue.IntValue.Value;
+                                if (result01 == result02 * rValue.IntValue.Value){
+                                    ExtraRep.Value = result02;
+                                    IntValue.Value = intHalfRes;
+                                } else
+                                    LeftSidePiOp(rValue);
+                            }
+                            catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
+                        }
+                    }
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidLeft:

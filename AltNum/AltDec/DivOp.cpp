@@ -715,7 +715,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 			switch(RRep){
 				case RepType::NormalType:{
 					if(rValue.DecimalHalf==0)
-						ExtraRep *= rValue.IntValue
+                    {
+                        try{ ExtraRep *= rValue.IntValue; }
+                        catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
+                    }
 					else
 						LeftSidePiOp(rValue);
 				}; break;
