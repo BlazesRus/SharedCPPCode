@@ -29,8 +29,10 @@
 	//						} break;
 					#endif
 	#pragma endregion AltDecVariantExclusive
+					#if defined(AltNum_EnableInfinityRep)
 							case RepType::InfinityRep:
 								SetValue(rValue);
+					#endif
 					#if defined(AltNum_EnableNaN)
 							case RepType::Undefined:
 							case RepType::NaN:

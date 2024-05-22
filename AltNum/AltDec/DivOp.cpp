@@ -194,6 +194,13 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	}
 	else
 	{
+        #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
+            if(RRep==RepType::InfinityRep){
+                IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+                ExtraRep = 0;
+                return;
+            }
+        #endif
 		switch(LRep)
 		{
 			case RepType::NormalType:{
@@ -214,10 +221,10 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
 					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 					#endif
 		#pragma region AltDecVariantExclusive
@@ -228,8 +235,6 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
@@ -254,10 +259,10 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
 					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 					#endif
 		#pragma region AltDecVariantExclusive
@@ -268,8 +273,6 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
@@ -294,10 +297,10 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
 					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 					#endif
 		#pragma region AltDecVariantExclusive
@@ -308,8 +311,6 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
@@ -334,10 +335,10 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
 					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 					#endif
 		#pragma region AltDecVariantExclusive
@@ -348,15 +349,13 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
 			}; break;
 	#endif
 #pragma endregion AltDecVariantExclusive
-			case RepType::ApproachingBottomRep:{
+			case RepType::ApproachingBottom:{
 				switch(RRep){
 					//case RepType::NormalType:{
 					//}; break;
@@ -374,10 +373,10 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
 					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 					#endif
 		#pragma region AltDecVariantExclusive
@@ -388,13 +387,11 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
 			} break;
-			case RepType::ApproachingTopRep:{
+			case RepType::ApproachingTop:{
 				switch(RRep){
 				}
 			} break;
@@ -418,9 +415,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 		#pragma region AltDecVariantExclusive
 			#if defined(AltNum_EnableApproachingDivided)
@@ -428,8 +425,6 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//} break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
@@ -452,60 +447,22 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					//}; break;
 			#endif
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
+					//case RepType::ApproachingBottom:{
 					//} break;
-					//case RepType::ApproachingTopRep:{
+					//case RepType::ApproachingTop:{
 					//} break;
 		#pragma region AltDecVariantExclusive
 					//case RepType::ApproachingMidLeft:{
 					//} break;
 		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
 					default:
 						CatchAllOp(rValue, LRep, RRep);
 				}
 			} break;
 	#endif
 #pragma endregion AltDecVariantExclusive
-			case RepType::InfinityRep:{
-				switch(RRep){
-					//case RepType::NormalType:{
-					//}; break;
-		#pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableFractionals)
-					//case RepType::NumByDiv:{
-					//}; break;
-			#endif
-			#if defined(AltNum_EnablePowerOfRepresentation)
-					//case RepType::ToPowerOf:{
-					//}; break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-					//case RepType::MixedFrac:{
-					//}; break;
-			#endif
-		#pragma endregion AltDecVariantExclusive
-					//case RepType::ApproachingBottomRep:{
-					//} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					//case RepType::ApproachingTopRep:{
-					//} break;
-					#endif
-		#pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-					//case RepType::ApproachingMidLeft:{
-					//} break;
-					//case RepType::ApproachingMidRight:{
-					//} break;
-			#endif
-		#pragma endregion AltDecVariantExclusive
-					//case RepType::InfinityRep:{
-					//} break;
-					default:
-						CatchAllOp(rValue, LRep, RRep);
-				}
-			} break;
+			case RepType::InfinityRep:
+                break;
 			default:
 				throw "Unsupported operation";
 		}
@@ -522,6 +479,13 @@ void CatchAllOperation(const auto& rValue, const RepType& LRep, const RepType& R
 #if defined(AltNum_EnablePiRep)
 void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
+    if(RRep==RepType::InfinityRep){
+        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        ExtraRep = 0;
+        return;
+    }
+#endif
 	switch(LRep)
 	{
 		case RepType::PiNum:{
@@ -542,10 +506,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -556,8 +520,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -582,10 +544,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -596,8 +558,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -622,10 +582,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -636,8 +596,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -662,10 +620,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -676,8 +634,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -703,10 +659,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -717,8 +673,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -742,10 +696,10 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//}; break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::ApproachingBottomRep:{
+				//case RepType::ApproachingBottom:{
 				//} break;
 				#if !defined(AltNum_DisableApproachingTop)
-				//case RepType::ApproachingTopRep:{
+				//case RepType::ApproachingTop:{
 				//} break;
 				#endif
 	#pragma region AltDecVariantExclusive
@@ -756,8 +710,6 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//} break;
 		#endif
 	#pragma endregion AltDecVariantExclusive
-				//case RepType::InfinityRep:{
-				//} break;
 				default:
 					CatchAllOp(rValue, LRep, RRep);
 			}
@@ -848,6 +800,13 @@ void CatchAllPiOperation(const auto& rValue, const RepType& LRep, const RepType&
 #if defined(AltNum_EnablePiRep)
 void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
+    if(RRep==RepType::InfinityRep){
+        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        ExtraRep = 0;
+        return;
+    }
+#endif
 	switch(LRep)
 	{
 		case RepType::ENum:{
@@ -898,6 +857,13 @@ void CatchAllEOperation(const auto& rValue, const RepType& LRep, const RepType& 
 #if defined(AltNum_EnablePiRep)
 void IToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
+    if(RRep==RepType::InfinityRep){
+        IntValue.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
+        ExtraRep = 0;
+        return;
+    }
+#endif
 	switch(LRep)
 	{
 		case RepType::INum:{
@@ -1376,11 +1342,11 @@ void NormRepSwitch(const auto& rValue)
 				}; break;
 		#endif
     #pragma endregion AltDecVariantExclusive
-				case RepType::ApproachingBottomRep:{
+				case RepType::ApproachingBottom:{
 					switch(RRep){
 					}
 				} break;
-				case RepType::ApproachingTopRep:{
+				case RepType::ApproachingTop:{
 					switch(RRep){
 					}
 				} break;
