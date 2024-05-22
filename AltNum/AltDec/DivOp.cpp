@@ -141,15 +141,28 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 #pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingMidLeft:
-                if(IntValue.Value==0&&rValue.IntValue.Value==0)
-				{
-					//0.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~0.12459..9(ExtraRep:8)
-					//0.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~0.49..9(ExtraRep:2)
-					unsigned int result = ExtraRep.Value / rValue.ExtraRep;
-                    if (ExtraRep.Value == result * rValue)//checking for truncation
-						ExtraRep.Value = result;
-					else
-						CatchAllOp(rValue);
+                if(rValue.IntValue.Value==0)
+                {
+                    if(IntValue.Value==0)
+				    {
+					    //0.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~0.49..9(ExtraRep:2)
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						    ExtraRep.Value = result;
+					    else
+						    CatchAllOp(rValue);
+                    }
+                    else
+                    {
+                        //2.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~4.49..9(ExtraRep:2)
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						{
+                            ExtraRep.Value = result;
+                            IntValue.Value *= IntValue;
+                        } else
+						    CatchAllOp(rValue);
+                    }
 				}
                 else
 					CatchAllOp(rValue);
@@ -157,7 +170,6 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 			case RepType::ApproachingMidRight:
                 if(IntValue.Value==0&&rValue.IntValue.Value==0)
 				{
-					//0.250..01(ExtraRep:4) * 0.50..01(ExtraRep:2) = ~0.12500..1(ExtraRep:8)
 					unsigned int result = ExtraRep.Value / rValue.ExtraRep;
                     if (ExtraRep.Value == result * rValue)//checking for truncation
 						ExtraRep.Value = result;
