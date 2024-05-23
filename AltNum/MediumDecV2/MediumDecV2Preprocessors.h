@@ -9,21 +9,23 @@
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations
-	New Defined Values:
 		When DecimalHalf.Value is InfinityRep and IntValue is positive, it represents positive infinity
 		When DecimalHalf.Value is InfinityRep and IntValue is negative, it represents negative infinity
 AltNum_EnableApproaching
-	New Defined Values:
       When DecimalHalf.Value is ApproachingBottomRep, it represents Approaching IntValue from right towards left (IntValue.0..1)
       When DecimalHalf.Value is ApproachingTopRep, it represents Approaching IntValue from left towards right (IntValue.9..9)
-	  
-AltNum_EnableApproachingPi = Enable approaching values for PiNum representations
-AltNum_EnableApproachingE = Enable approaching values for ENum representations
-AltNum_EnableApproachingI = Enable approaching values for INum representations
 
 MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 
 AltNum_DefineDivideByZeroAsInfinity = Sets value as infinity when divide by zero instead of undefined result
+
+AltNum_EnableIndeterminateForms = Enables extra representations for outputing and preserving the indeterminate form such 
+	as 0/0, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
+	(Not fully implimented yet)
+	
+AltNum_EnableInfinityPowers =
+Allows powers of infinity for operations where infinity is somehow more infinite than normal
+      (Not Implemented)
 */
 
 #if defined(AltNum_DefineDivideByZeroAsInfinity)&& !defined(AltNum_EnableInfinityRep)
@@ -38,6 +40,7 @@ AltNum_DefineDivideByZeroAsInfinity = Sets value as infinity when divide by zero
 #if defined(AltNum_EnableDefaultSettings)//Assuming AltNum_UseIntForDecimalHalf not toggled
 	#define AltNum_EnablePiRep
 	#define AltNum_EnableERep
+	//#define AltNum_EnableIndeterminateForms//use this toggle once have all the needed parts coded
 #endif
 
 //Forcing rename of toggle if alternative toggle used
@@ -49,18 +52,11 @@ AltNum_DefineDivideByZeroAsInfinity = Sets value as infinity when divide by zero
 #if defined(MediumDecV2_EnableWithinMinMaxRange)&&defined(AltNum_EnableIRep)
 	//Don't enable if MediumDecV2_EnableWithinMinMaxRange if Imaginary numbers are enabled because using flag 3 for MediumDecV2_EnableWithinMinMaxRange inside MediumDecV2
 	#undef MediumDecV2_EnableWithinMinMaxRange
+#elif defined(AltNum_EnableWithinMinMaxRange)&&!defined(AltNum_EnableIRep)
+	//Don't enable if MediumDecV2_EnableWithinMinMaxRange if Imaginary numbers are enabled because using flag 3 for MediumDecV2_EnableWithinMinMaxRange inside MediumDecV2
+	#define MediumDecV2_EnableWithinMinMaxRange
 #endif
 
-/*
-#if defined(AltNum_EnablePiRep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingPi)
-	#define AltNum_EnableApproachingPi
+#if defined(AltNum_EnableInfinity)&&defined(AltNum_EnableIRep)&&!defined(AltNum_EnableImaginaryInfinity)
+	#define AltNum_EnableImaginaryInfinity
 #endif
-
-#if defined(AltNum_EnableERep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingE)
-	#define AltNum_EnableApproachingE
-#endif
-
-#if defined(AltNum_EnableIRep)&&defined(AltNum_EnableApproaching)&&!defined(AltNum_EnableApproachingI)
-	#define AltNum_EnableApproachingI
-#endif
-*/

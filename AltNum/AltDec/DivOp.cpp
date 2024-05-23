@@ -1394,7 +1394,47 @@ void NormRepSwitch(const auto& rValue)
 //UnsignedDivOp
 auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 {
-	if(DecimalHalf.Value==rVale&&
+	#if defined(AltNum_EnableInfinityRep)
+	if(DecimalHalf.Value==InfinityRep){
+		if(rValue.DecimalHalf.Value==InfinityRep)
+		{
+		#if defined(AltNum_EnableIRep)
+			if(rValue.DecimalHalf.Flags==3) {//Divided by Imaginary Infinity
+				if(DecimalHalf.Flags==3)
+					DecimalHalf.Flags = 0
+				else {
+					SwapNegativeStatus();
+					DecimalHalf.Flags = 3;
+				}
+			} 
+		#endif
+		#if defined(AltNum_EnableInfinityPowers)
+			if(IntValue.Value==1)
+				SetAsZero();//Techically should maybe be indeterminate but normally can not have even larger infinity anyway
+			else
+				--IntValue.Value;
+		#elif defined(AltNum_EnableIndeterminateForms)
+			SetAsIndeterminate(InfDividedByInfRep);
+		#else
+			throw "Can't divide infinity by infinity";
+		#endif
+		} else if(rValue.IsZero())
+		#if defined(AltNum_EnableInfinityPowers)
+			++IntValue.Value;//Make into even larger infinity
+		#elif defined(AltNum_EnableIndeterminateForms)
+			SetAsIndeterminate(InfDividedByZeroRep);
+		#elif defined(AltNum_DefineDivideByZeroAsInfinity)
+			return *this;
+		#else
+			throw "Divide by zero is not allowed with current toggles";
+		#endif
+		return *this;
+	} else if(rValue.DecimalHalf.Value==InfinityRep){
+		SetAsZero();
+		return *this;
+	}
+	else
+	#endif
 	switch(DecimalHalf.Flags)
 	{
 #if defined(AltNum_EnablePiRep)

@@ -109,7 +109,7 @@ AltNum_EnableMixedFractional =
 
 ----===============================================================================================================
 	
-AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
+AltNum_EnableImaginaryInfinity = Enables imaginary infinity option (Depreciated--Enabled by default if both infinity and Imaginary numbers are enabled)
 AltNum_DisableApproachingTop = Disables IntValue.9..9 representation
 
 AltNum_EnableNil = Enables Nil representation(detection not in code right now)
