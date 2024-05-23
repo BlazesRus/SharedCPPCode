@@ -1,19 +1,18 @@
 #include "AltDecBase.hpp"
-#include <stdexcept>
-using MediumDecVariant = BlazesRusCode::AltDecBase;
+using AltDecBase = BlazesRusCode::AltDecBase;
 using RepType = BlazesRusCode::RepType;
 
 void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
     ConvertToNormType(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
+	BasicUnsignedDivOp(RValue);
 }
 
 void RightSideOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
+	BasicUnsignedDivOp(RValue);
 }
 
 #pragma region AltDecVariantExclusive
@@ -24,13 +23,13 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 void RightSidePiOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToPiRep(RRep);
-	BasicUnsignedMultOp(RValue);
-    BasicUnsignedMultOp(PiNum);
+	BasicUnsignedDivOp(RValue);
+    BasicUnsignedDivOp(PiNum);
 }
 
 //Convert left side down to Pi representation and right side down to normal
 //and then perform operation
-void LeftSidePiOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+void LeftSidePiOp(const auto& rValue, , const RepType& LRep, const RepType& RRep)
 {
 	ConvertToPiRep(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
@@ -44,8 +43,8 @@ void LeftSidePiOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 void RightSideEOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToERep(RRep);
-	BasicUnsignedMultOp(RValue);
-    BasicUnsignedMultOp(ENum);
+	BasicUnsignedDivOp(RValue);
+    BasicUnsignedDivOp(ENum);
 }
 
 //Convert left side down to e representation and right side down to normal
@@ -59,11 +58,13 @@ void LeftSideEOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 #endif
 
 #if defined(AltNum_EnableIRep)
+
 //Convert right side down to i representation and then perform operation
 void RightSideIOp(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertToIRep(RRep);
-	BasicUnsignedMultOp(RValue);
+	BasicUnsignedDivOp(RValue);
+    SwapNegativeStatus();
     DecimalHalf.Flags = 3;
 }
 
@@ -73,7 +74,7 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
 	ConvertToIRep(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
+	BasicUnsignedDivOp(RValue);
 }
 #endif
 
@@ -117,7 +118,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 		switch(LRep)
 		{
 			case RepType::NormalType:
-				BasicMultOp(rValue); break;
+				BasicDivOp(rValue); break;
 #pragma region AltDecVariantExclusive
 	#if defined(AltNum_EnableFractionals)
 			case RepType::NumByDiv:
@@ -139,37 +140,28 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 				SameRep_ApproachingTop(rValue); break;
 #pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableApproachingDivided)
-            //To-Do:test if more effective to check via if statement vs try-catch block
 			case RepType::ApproachingMidLeft:
                 if(rValue.IntValue.Value==0)
                 {
                     if(IntValue.Value==0)
-    				{
-    					//0.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~0.1249..9(ExtraRep:8)
-                        try{
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+				    {
+					    //0.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~0.49..9(ExtraRep:2)
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						    ExtraRep.Value = result;
+					    else
+						    CatchAllOp(rValue);
+                    } else {
+                        //2.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~4.49..9(ExtraRep:2)
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						{
                             ExtraRep.Value = result;
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
-    				} else {
-                        //2.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~1.1249..9(ExtraRep:8)
-                        try{
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                            if (IntValue.Value == intHalfRes * rValue)//checking for truncation
-						    {
-                                ExtraRep.Value = result;
-                                IntValue.Value *= intHalfRes;
-                            } else
-						        CatchAllOp(rValue);
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
+                            IntValue.Value *= rValue.ExtraRep;
+                        } else
+						    CatchAllOp(rValue);
                     }
-                }
+				}
                 else
 					CatchAllOp(rValue);
 				break;
@@ -177,29 +169,20 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                 if(rValue.IntValue.Value==0)
                 {
                     if(IntValue.Value==0)
-    				{
-    					//0.250..01(ExtraRep:4) * 0.50..01(ExtraRep:2) = ~0.1250..01(ExtraRep:8)
-                        try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            ExtraRep.Value = result;
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
+				    {
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						    ExtraRep.Value = result;
+					    else
+						    CatchAllOp(rValue);
                     } else {
-                        try{
-                            unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                            if (IntValue.Value == intHalfRes * rValue)//checking for truncation
-						    {
-                                ExtraRep.Value = result;
-                                IntValue.Value *= intHalfRes;
-                            } else
-						        CatchAllOp(rValue);
-                        }
-                        catch (std::overflow_error& e){
-                            CatchAllOp(rValue);
-                        }
+                        unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                        if (ExtraRep.Value == result * rValue)//checking for truncation
+						{
+                            ExtraRep.Value = result;
+                            IntValue.Value *= rValue.ExtraRep;
+                        } else
+						    CatchAllOp(rValue);
                     }
 				}
                 else
@@ -208,6 +191,8 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 		#endif
 #pragma endregion AltDecVariantExclusive
 	#endif
+			case RepType::InfinityRep:
+				break;//Techically should return indeterminate form
 #if defined(AltNum_EnableUndefinedButInRange)
 			case RepType::WithinMinMaxRange:
 				SameRep_WithinMinMaxRange(rValue, LRep); break;
@@ -218,6 +203,13 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	}
 	else
 	{
+        #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
+            if(RRep==RepType::InfinityRep){
+                IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+                ExtraRep = 0;
+                return;
+            }
+        #endif
 		switch(LRep)
 		{
 			case RepType::NormalType:{
@@ -496,12 +488,10 @@ void CatchAllOperation(const auto& rValue, const RepType& LRep, const RepType& R
 #if defined(AltNum_EnablePiRep)
 void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-#if defined(AltNum_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-    	if(IsPositive())
-    		SetAsInfinity();
-    	else
-    		SetAsNegativeInfinity();
+        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        ExtraRep = 0;
         return;
     }
 #endif
@@ -724,71 +714,39 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 		case RepType::ApproachingMidLeftPi:{
 			switch(RRep){
 				case RepType::NormalType:{
-                    if(rValue.DecimalHalf==0){
-                        try{
-                            unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
-                            unsigned int result = ExtraRep.Value / rValue.IntValue.Value;
-                            if (ExtraRep.Value == result * rValue.IntValue.Value){
-                                ExtraRep.Value = result;
-                                IntValue.Value = intHalfRes;
-                            } else
-                                LeftSidePiOp(rValue);
-                        }
+					if(rValue.DecimalHalf==0)
+                    {
+                        try{ ExtraRep *= rValue.IntValue; }
                         catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
                     }
+					else
+						LeftSidePiOp(rValue);
 				}; break;
 				case RepType::NumByDiv:{
-                    if(rValue.DecimalHalf==0){
-                        if(rValue.IntValue==1){
-                            try{ ExtraRep *= rValue.ExtraRep; }
-                            catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
-                        }
-                        else
-                        {
-                            try{
-                                unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
-                                unsigned int result01 = ExtraRep * rValue.ExtraRep;
-                                unsigned int result02 = result01 / rValue.IntValue.Value;
-                                if (result01 == result02 * rValue.IntValue.Value){
-                                    ExtraRep.Value = result02;
-                                    IntValue.Value = intHalfRes;
-                                } else
-                                    LeftSidePiOp(rValue);
-                            }
-                            catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
-                        }
-                    }
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidLeft:
-					if(rValue.IntValue.Value==0)
-					{
-						if(IntValue.Value==0){
-                            try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
-                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                    if(rValue.IntValue.Value==0)
+                    {
+                        if(IntValue.Value==0)
+    				    {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						    ExtraRep.Value = result;
+    					    else
+    						    LeftSidePiOp(rValue);
+                        } else {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						{
                                 ExtraRep.Value = result;
-                            }
-                            catch (std::overflow_error& e){
-                                LeftSidePiOp(rValue);
-                            }
-						} else {
-                            try{
-                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
-    						    {
-                                    ExtraRep.Value = result;
-                                    IntValue.Value *= intHalfRes;
-                                } else
-    						        LeftSidePiOp(rValue);
-                            }
-                            catch (std::overflow_error& e){
-                                LeftSidePiOp(rValue);
-                            }
-						}
-					}
-					else
-						LeftSidePiOp(rValue);
+                                IntValue.Value *= rValue.ExtraRep;
+                            } else
+    						    LeftSidePiOp(rValue);
+                        }
+    				}
+                    else
+    					LeftSidePiOp(rValue);
 					break;
 				default:
 					LeftSidePiOp(rValue);
@@ -797,37 +755,36 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 		case RepType::ApproachingMidRightPi:{
 			switch(RRep){
 				case RepType::NormalType:{
+					if(rValue.DecimalHalf==0)
+						ExtraRep *= rValue.IntValue
+					else
+						LeftSidePiOp(rValue);
+				}; break;
+				case RepType::NumByDiv:{
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidRight:
-					if(rValue.IntValue.Value==0)
-					{
-						if(IntValue.Value==0){
-                            try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
-                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
+                    if(rValue.IntValue.Value==0)
+                    {
+                        if(IntValue.Value==0)
+    				    {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						    ExtraRep.Value = result;
+    					    else
+    						    LeftSidePiOp(rValue);
+                        } else {
+                            unsigned int result = ExtraRep.Value / rValue.ExtraRep;
+                            if (ExtraRep.Value == result * rValue)//checking for truncation
+    						{
                                 ExtraRep.Value = result;
-                            }
-                            catch (std::overflow_error& e){
-                                LeftSidePiOp(rValue);
-                            }
-						} else {
-                            try{
-                                unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
-    						    {
-                                    ExtraRep.Value = result;
-                                    IntValue.Value *= intHalfRes;
-                                } else
-    						        LeftSidePiOp(rValue);
-                            }
-                            catch (std::overflow_error& e){
-                                LeftSidePiOp(rValue);
-                            }
-						}
-					}
-					else
-						LeftSidePiOp(rValue);
+                                IntValue.Value *= rValue.ExtraRep;
+                            } else
+    						    LeftSidePiOp(rValue);
+                        }
+    				}
+                    else
+    					LeftSidePiOp(rValue);
 					break;
 				default:
 					LeftSidePiOp(rValue);
@@ -851,12 +808,10 @@ void CatchAllPiOperation(const auto& rValue, const RepType& LRep, const RepType&
 #if defined(AltNum_EnablePiRep)
 void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-#if defined(AltNum_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-    	if(IsPositive())
-    		SetAsInfinity();
-    	else
-    		SetAsNegativeInfinity();
+        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        ExtraRep = 0;
         return;
     }
 #endif
@@ -910,12 +865,10 @@ void CatchAllEOperation(const auto& rValue, const RepType& LRep, const RepType& 
 #if defined(AltNum_EnablePiRep)
 void IToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-#if defined(AltNum_EnableInfinityRep)
+#if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-    	if(IsPositive())
-    		SetAsImaginaryInfinity();
-    	else
-    		SetAsNegativeImaginaryInfinity();
+        IntValue.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
+        ExtraRep = 0;
         return;
     }
 #endif
@@ -980,6 +933,14 @@ void CatchAllIOperation(const auto& rValue, const RepType& LRep, const RepType& 
 }
 #endif
 
+//Same Representation division
+void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
+{
+	RepType convertedLRep = GetRepAsNormalEquivalent(LRep);
+	RepType convertedRRep = GetRepAsNormalEquivalent(RRep);
+	NormalToNormalOperation(rValue, convertedLRep, convertedRRep);
+}
+
 #if defined(AltNum_EnablePiRep)
 //PiRep_to_others
 void PiRepSwitch(const auto& rValue)
@@ -992,43 +953,7 @@ void PiRepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetPiRepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::PiNum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::PiPower:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableFractionals)
-					case RepType::PiNumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedPi:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:
-						SameRep_ApproachingBottom(rValue); break;
-					case RepType::ApproachingTopPi:
-						SameRep_ApproachingTop(rValue); break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftPi:
-					case RepType::ApproachingMidRightPi:
-						LeftSidePiOp(rValue, LRep, RRep);
-						break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-			#endif
-            #if defined(AltNum_EnableUndefinedButInRange)
-            #endif
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -1062,10 +987,8 @@ void PiRepSwitch(const auto& rValue)
 				#if defined(AltNum_EnableApproachingDivided)
 					case RepType::ApproachingMidLeftPi:{
 					} break;
-					#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingMidRightPi:{
 					} break;
-					#endif
 				#endif
     #pragma endregion AltDecVariantExclusive
 				default:
@@ -1111,10 +1034,8 @@ void PiRepSwitch(const auto& rValue)
 			#if defined(AltNum_EnableApproachingDivided)
 				case RepType::ApproachingMidLeftPi:{
 				} break;
-				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRightPi:{
 				} break;
-				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
 			default:
@@ -1125,45 +1046,7 @@ void PiRepSwitch(const auto& rValue)
     #pragma region PiRep_to_NormRep
 		default:{
 			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::PiNum:{
-				} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::PiPower:{
-				} break;
-			#endif
-			#if defined(AltNum_EnableFractionals)
-				case RepType::PiNumByDiv:{
-				} break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedPi:{
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomPi:{
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTopPi:{
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftPi:{
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingMidRightPi:{
-				} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			default:
-				throw "Unsupported operation"; break;
-			}
+			PiToNormalOperation(rValue, LRep, RRep);
 		} break;
     #pragma endregion PiRep_to_NormRep
 	}
@@ -1187,45 +1070,7 @@ void ERepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetERepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::ENum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::EPower:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableFractionals)
-					case RepType::ENumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedE:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopE:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeftE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRightE:{
-					} break;
-					#endif
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -1334,12 +1179,10 @@ void ERepSwitch(const auto& rValue)
 					switch(RRep){
 					}
 				} break;
-				#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRightE:{
 					switch(RRep){
 					}
 				} break;
-				#endif
 			#endif
     #pragma endregion AltDecVariantExclusive
 			default:
@@ -1349,61 +1192,7 @@ void ERepSwitch(const auto& rValue)
 #endif
 		default:{//ERep_to_NormalRep
 			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::ENum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::EPower:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableFractionals)
-				case RepType::ENumByDiv:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedE:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomE:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTopE:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftE:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingMidRightE:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			default:
-				throw "Unsupported operation"; break;
-			}
+			EToNormalOperation(rValue, LRep, RRep);
 		} break;
 	}
 }
@@ -1432,45 +1221,7 @@ void IRepSwitch(const auto& rValue)
 			RepType RRep = rValue.GetIRepType();
 			if(LRep==RRep)
 			{
-				switch(LRep)
-				{
-					case RepType::INum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableFractionals)
-					case RepType::INumByDiv:{
-					} break;
-				#endif
-				#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedI:{
-					} break;
-				#endif
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryTop:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingImaginaryMidLeft:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryMidRight:{
-					} break;
-					#endif
-				#endif
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-					} break;
-#endif
-				default:
-					throw "Unsupported operation"; break;
-				}
+				CatchAllAltOperation(rValue, LRep, RRep);
 			}
 			else
 			{
@@ -1512,19 +1263,15 @@ void IRepSwitch(const auto& rValue)
 						switch(RRep){
 						}
 					} break;
-					#if !defined(AltNum_DisableApproachingTop)
 					case RepType::ApproachingImaginaryMidRight:{
 						switch(RRep){
 						}
 					} break;
-					#endif
 				#endif
     #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-						switch(RRep){
-						}
-					} break;
+					case RepType::ImaginaryInfinity:
+						break;
 #endif
 				default:
 					throw "Unsupported operation"; break;
@@ -1537,61 +1284,7 @@ void IRepSwitch(const auto& rValue)
 		default:
 		{
 			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::INum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableFractionals)
-				case RepType::INumByDiv:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedI:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingImaginaryBottom:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidLeft:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidRight:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:{
-					switch(RRep){
-					}
-				} break;
-#endif
-			default:
-				throw "Unsupported operation"; break;
-			}
+			IToNormalOperation(rValue, LRep, RRep);
 		} break;
     #pragma region IRep_to_NormRep
 	}
@@ -1609,63 +1302,8 @@ void NormRepSwitch(const auto& rValue)
 		case 1:
 		{
 			RepType RRep = rValue.GetPiRepType();
-			switch(LRep)
-			{
-				case RepType::NormalType:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-		#if defined(AltNum_EnableFractionals)
-				case RepType::NumByDiv:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::ToPowerOf:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-		#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-    #pragma endregion AltDecVariantExclusive
-				case RepType::ApproachingBottom:{
-					switch(RRep){
-					}
-				} break;
-				case RepType::ApproachingTop:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeft:{
-					switch(RRep){
-					}
-				} break;
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingMidRight:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-		#endif
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableInfinityRep)
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
-#endif
-				default:
-					throw "Unsupported operation";
-			}
+			auto convertedVal = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
+			NormalToNormalOperation(convertedVal.first, LRep, convertedVal.second);
 		} break;
     #pragma endregion NormRep_to_PiRep
 #endif
@@ -1675,61 +1313,8 @@ void NormRepSwitch(const auto& rValue)
 		case 2:
 		{
 			RepType RRep = rValue.GetERepType();
-			switch(LRep)
-			{
-				case RepType::NormalType:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-		#if defined(AltNum_EnableFractionals)
-				case RepType::NumByDiv:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::ToPowerOf:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-		#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac:{
-					switch(RRep){
-					}
-				}; break;
-		#endif
-    #pragma endregion AltDecVariantExclusive
-				case RepType::ApproachingBottom:{
-					switch(RRep){
-					}
-				} break;
-				case RepType::ApproachingTop:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeft:{
-					switch(RRep){
-					}
-				} break;
-			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingMidRight:{
-					switch(RRep){
-					}
-				} break;
-			#endif
-		#endif
-    #pragma endregion AltDecVariantExclusive
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
-				default:
-					throw "Unsupported operation";
-			}
+			auto convertedVal = rValue.ConvertAsNormalEquivalant(RRep, ConvertedRRep);
+			NormalToNormalOperation(convertedVal.first, LRep, convertedVal.second);
 		} break;
     #pragma endregion NormRep_to_ERep
 #endif
@@ -1779,18 +1364,16 @@ void NormRepSwitch(const auto& rValue)
 					switch(RRep){
 					}
 				} break;
-			#if !defined(AltNum_DisableApproachingTop)
 				case RepType::ApproachingMidRight:{
 					switch(RRep){
 					}
 				} break;
-			#endif
 		#endif
     #pragma endregion AltDecVariantExclusive
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
+				case RepType::InfinityRep:
+					SwapNegativeStatus();
+					DecimalHalf.Flags = 3;
+					break;
 				default:
 					throw "Unsupported operation";
 			}
@@ -1802,134 +1385,16 @@ void NormRepSwitch(const auto& rValue)
 		default:
 		{
 			RepType RRep = rValue.GetNormRepType();
-			if(LRep==RRep)
-			{
-				switch(LRep)
-				{
-					case RepType::NormalType:{
-					}; break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableFractionals)
-					case RepType::NumByDiv:{
-					}; break;
-			#endif
-			#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::ToPowerOf:{
-					}; break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedFrac:{
-					}; break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottom:{
-					} break;
-					case RepType::ApproachingTop:{
-					} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeft:{
-					} break;
-				#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRight:{
-					} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-					} break;
-					default:
-						throw "Unsupported operation";
-				}
-			}
-			else
-			{
-				switch(LRep)
-				{
-					case RepType::NormalType:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableFractionals)
-					case RepType::NumByDiv:{
-						switch(RRep){
-						}
-					}; break;
-			#endif
-			#if defined(AltNum_EnablePowerOfRepresentation)
-					case RepType::ToPowerOf:{
-						switch(RRep){
-						}
-					}; break;
-			#endif
-			#if defined(AltNum_EnableMixedFractional)
-					case RepType::MixedFrac:{
-						switch(RRep){
-						}
-					}; break;
-			#endif
-    #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottom:{
-						switch(RRep){
-						}
-					} break;
-					case RepType::ApproachingTop:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-			#if defined(AltNum_EnableApproachingDivided)
-					case RepType::ApproachingMidLeft:{
-						switch(RRep){
-						}
-					} break;
-				#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingMidRight:{
-						switch(RRep){
-						}
-					} break;
-				#endif
-			#endif
-    #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-						switch(RRep){
-						}
-					} break;
-					default:
-						throw "Unsupported operation";
-				}
-			}
+			NormalToNormalOperation(rValue, LRep, RRep);
 		} break;
 #pragma endregion NormRep_to_NormRep
 	}
 }
 
-//UnsignedMultOp
-auto& MediumDecVariant::UnsignedMultOp(const auto& rValue)
+//UnsignedDivOp
+auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 {
-	#if defined(AltNum_EnableInfinityRep)
-	if(DecimalHalf.Value==InfinityRep){
-		if(rValue.IsZero())
-		#if defined(AltNum_EnableIndeterminateForms)
-			SetAsIndeterminate(ZeroTimesInfinityRep);
-		#else
-			throw "Can't multiply 0 by infinity";
-		#endif
-		return *this;
-	} else if(rValue.DecimalHalf.Value==InfinityRep){
-		if(IsZero())//Can not multiply 0 by infinity according to https://brilliant.org/wiki/is-infinity-times-zero-zero/
-		#if defined(AltNum_EnableIndeterminateForms)
-			SetAsIndeterminate(ZeroTimesInfinityRep);
-		#else
-			throw "Can't multiply 0 by infinity";
-		#endif
-		else
-			SetAsInfinityVal();
-		return *this;
-	}
-	else
-	#endif
+	if(DecimalHalf.Value==rVale&&
 	switch(DecimalHalf.Flags)
 	{
 #if defined(AltNum_EnablePiRep)

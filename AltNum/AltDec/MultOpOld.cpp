@@ -208,6 +208,8 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 		#endif
 #pragma endregion AltDecVariantExclusive
 	#endif
+			case RepType::InfinityRep:
+				break;//Techically should return indeterminate form
 #if defined(AltNum_EnableUndefinedButInRange)
 			case RepType::WithinMinMaxRange:
 				SameRep_WithinMinMaxRange(rValue, LRep); break;
@@ -218,6 +220,15 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	}
 	else
 	{
+        #if defined(AltNum_EnableInfinityRep)
+            if(RRep==RepType::InfinityRep){
+            	if(IsPositive())
+            		SetAsInfinity();
+            	else
+            		SetAsNegativeInfinity();
+                return;
+            }
+        #endif
 		switch(LRep)
 		{
 			case RepType::NormalType:{
@@ -1908,28 +1919,6 @@ void NormRepSwitch(const auto& rValue)
 //UnsignedMultOp
 auto& MediumDecVariant::UnsignedMultOp(const auto& rValue)
 {
-	#if defined(AltNum_EnableInfinityRep)
-	if(DecimalHalf.Value==InfinityRep){
-		if(rValue.IsZero())
-		#if defined(AltNum_EnableIndeterminateForms)
-			SetAsIndeterminate(ZeroTimesInfinityRep);
-		#else
-			throw "Can't multiply 0 by infinity";
-		#endif
-		return *this;
-	} else if(rValue.DecimalHalf.Value==InfinityRep){
-		if(IsZero())//Can not multiply 0 by infinity according to https://brilliant.org/wiki/is-infinity-times-zero-zero/
-		#if defined(AltNum_EnableIndeterminateForms)
-			SetAsIndeterminate(ZeroTimesInfinityRep);
-		#else
-			throw "Can't multiply 0 by infinity";
-		#endif
-		else
-			SetAsInfinityVal();
-		return *this;
-	}
-	else
-	#endif
 	switch(DecimalHalf.Flags)
 	{
 #if defined(AltNum_EnablePiRep)

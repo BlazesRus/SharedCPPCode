@@ -149,6 +149,20 @@ namespace BlazesRusCode
         //Is defined at empty value when DecimalHalf is at this value
         static const signed int NilRep = 1073741818;
 	#endif
+	#if defined(AltNum_EnableIndeterminateForms)
+        //Is indeterminate form when DecimalHalf above this value but less than NilRep 
+		static unsigned int IndeterminateRep = 1073741809;
+		//When IntValue.Value is this value, then the indeterminate form represents 0 x Infinity
+		static unsigned int ZeroTimesInfinityRep = 1073741810;
+		//When IntValue.Value is this value, then the indeterminate form represents Infinity / Infinity
+		static unsigned int InfDividedByInfRep = 1073741811;
+		//When IntValue.Value is this value, then the indeterminate form represents Infinity - Infinity
+		static unsigned int InfMinusInfRep = 1073741812;
+		//When IntValue.Value is this value, then the indeterminate form represents 0/0
+		static unsigned int ZeroByZeroRep = 1073741813;
+		//When IntValue.Value is this value, then the indeterminate form represents 0 to power of 0
+		static unsigned int ZeroToPowerOfZeroRep = 1073741814;
+	#endif
     public:
     #pragma endregion Const Representation values
 

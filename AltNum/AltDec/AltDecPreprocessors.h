@@ -25,10 +25,6 @@ AltNum_EnableApproachingDivided =
 	(Assumes AltNum_EnableInfinityRep is enabled)
 	(Partially Implimented)
 
-AltNum_EnableInfinityPowers =
-Allows powers of infinity for operations where infinity is somehow more infinite than normal
-      (Not Implemented)
-
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
 //----
@@ -112,20 +108,9 @@ AltNum_EnableMixedFractional =
       (Not Fully Implemented)
 
 ----===============================================================================================================
-AltNum_OutputTruncatedTrailingDigits =
-    Output to console trailing digits that are truncated when multiplication or division results in numbers getting too small(Not Implemented yet)
-    (Implement this before work to making working version with trailing digits such as for MixedDec (fixed point combined with floating point implementations of decimal-like format classes)
-
-AltNum_UseOldDivisionCode = Deprecated (Working on removing all traces)
-AltNum_AvoidUsingLargeInt = Removes AltNum_UseOldDivisionCode toggle and forces alternative code that doesn't need int128 from boost
-AltNum_UseOldRemOpCode
-
-AltNum_EnableBoostFractionalReduction
+	
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option
-AltNum_DisableApproachingTop = Disables IntValue.9..9 representation and .50..1 etc
-
-Auto toggles AltNum_EnableAlternativeMixedFrac if any of 3 above are toggled
-Auto toggles AltNum_MixedPiOrEEnabled if AltNum_EnableMixedPiFractional or AltNum_EnableMixedEFractional are active
+AltNum_DisableApproachingTop = Disables IntValue.9..9 representation
 
 AltNum_EnableNil = Enables Nil representation(detection not in code right now)
 
@@ -142,16 +127,12 @@ AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully tes
 AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bit checks instead of case statements(Not Implemented yet)
 
 AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
-
-AltNum_UsePositiveInfinityRep
-AltNum_AllowOverflowRep = Allow representation of numbers greator than 2147483647.999999999 and smaller than -2147483647.999999999
-	If AltNum_EnableFractionals is disabled, represents numbers 2147483647.999999999 x 10^ExtraRep with the smallest digits truncated for each value above normal limit
-	If AltNum_EnableFractionals is enabled and negative ExtraRep values are not used for any representation, represents numbers 2147483647.999999999 x 10^-ExtraRep with similar above truncation
-	(Not Implimented--Depreciated)
 	
 AltNum_EnableIndeterminateForms = Enables extra representations for outputing and preserving the indeterminate form such 
 	as 0/0, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
-	(Not Implimented yet)
+	(Not fully implimented yet)
+	
+AltNum_AllowNegativeZero = Allows zero to keep the negative sign when multiplying(not implimented yet)
 */
 
 #if !defined(AltNum_DisableAltDecBaseDefaultToggles)
