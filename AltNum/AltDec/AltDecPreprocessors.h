@@ -93,8 +93,6 @@ AltNum_EnableAutoToggleOfPreferredSettings =
       Force enables AltNum_EnablePiRep, AltNum_EnableInfinityRep,
       AltNum_EnableAlternativeRepFractionals & AltNum_EnableDecimaledPiFractionals
 
-AltNum_DisableSwitchBasedConversion =
-
 AltNum_EnableAltDecBasedSetValues =
    
 
@@ -123,8 +121,7 @@ AltNum_PreventModulusOverride = Turns off modulus overrides if toggled
 AltNum_EnableAlternativeModulusResult = Add addition modulus operations that give AltNumModChecker<AltNum> result
 AltNum_EnableBitwiseOverride = Enables bitwise operation overrides if enabled
 
-AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully test feature sets (but planning to use all these extra toggles for most projects that plan to use AltNum with)
-AltDec_SeekRepTypeViaBitwise = Alternative code that checks enum case blocks with bit checks instead of case statements(Not Implemented yet)
+AltNum_UseDeveloperExtraDefaults = Auto toggles extra settings to more fully test feature sets
 
 AltNum_DisableMultiplyDownToNothingPrevention = Disables preventing multiplication operations from multiplying into nothing as result of getting too small
 	
@@ -134,13 +131,6 @@ AltNum_EnableIndeterminateForms = Enables extra representations for outputing an
 	
 AltNum_AllowNegativeZero = Allows zero to keep the negative sign when multiplying(not implimented yet)
 */
-
-#if !defined(AltNum_DisableAltDecBaseDefaultToggles)
-    #define AltNum_EnablePiRep
-    #define AltNum_EnableInfinityRep
-    #define AltNum_EnableApproaching
-    //#define AltNum_EnableERep
-#endif
 
 #pragma region PreprocessorToggles
 
