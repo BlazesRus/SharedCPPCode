@@ -125,44 +125,46 @@ namespace BlazesRusCode
 	
 	#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
-		static const unsigned int InfinityRep = 1073741824;
+		static const unsigned int InfinityRep = 1073741805;
 	#endif
 	#if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)
-        static const unsigned int ApproachingBottomRep = 1073741823;
+        static const unsigned int ApproachingBottomRep = 1073741806;
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)
-		static const unsigned int ApproachingTopRep = 1073741822;
+		static const unsigned int ApproachingTopRep = 1073741807;
+	#endif
+    //If DecimalHalf is greator than NaNVariantThreshold, than number is at unknown range or indeterminate form
+    static const unsigned int NaNVariantThreshold = 1073741809;
+    #if defined(AltNum_EnableNil)
+        //Is defined at empty value when DecimalHalf is at this value
+        static const signed int NilRep = 1073741810;
+	#endif
+	#if defined(AltNum_EnableNaN)
+        //Is NaN when DecimalHalf is at this value
+        static const signed int NaNRep = 1073741811;
+        //Is Undefined when DecimalHalf is at this value
+        static const signed int UndefinedRep = 1073741812;
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)
 		//When DecimalHalf is at this value, than value is undefined but within real number range
 		//Such as result of Cos of infinity
 		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
-        static const unsigned int UndefinedInRangeRep = 1073741821;
-	#endif
-	#if defined(AltNum_EnableNaN)
-        //Is NaN when DecimalHalf is at this value
-        static const signed int NaNRep = 1073741820;
-        //Is Undefined when DecimalHalf is at this value
-        static const signed int UndefinedRep = 1073741819;
-	#endif
-	#if defined(AltNum_EnableNil)
-        //Is defined at empty value when DecimalHalf is at this value
-        static const signed int NilRep = 1073741818;
+        static const unsigned int UndefinedInRangeRep = 1073741813;
 	#endif
 	#if defined(AltNum_EnableIndeterminateForms)
-        //Is indeterminate form when DecimalHalf above this value but less than NilRep 
-		static unsigned int IndeterminateRep = 1073741809;
+        //Is indeterminate form when DecimalHalf above this value 
+		static unsigned int IndeterminateRep = UndefinedInRangeRep;
 		//When IntValue.Value is this value, then the indeterminate form represents 0 x Infinity
-		static unsigned int ZeroTimesInfinityRep = 1073741810;
+		static unsigned int ZeroTimesInfinityRep = IndeterminateRep+1;//1073741814;
 		//When IntValue.Value is this value, then the indeterminate form represents Infinity / Infinity
-		static unsigned int InfDividedByInfRep = 1073741811;
+		static unsigned int InfDividedByInfRep = IndeterminateRep+2;
 		//When IntValue.Value is this value, then the indeterminate form represents Infinity - Infinity
-		static unsigned int InfMinusInfRep = 1073741812;
+		static unsigned int InfMinusInfRep = IndeterminateRep+3;
 		//When IntValue.Value is this value, then the indeterminate form represents 0/0
-		static unsigned int ZeroByZeroRep = 1073741813;
+		static unsigned int ZeroByZeroRep = IndeterminateRep+4;
 		//When IntValue.Value is this value, then the indeterminate form represents 0 to power of 0
-		static unsigned int ZeroToPowerOfZeroRep = 1073741814;
-	#endif
+		static unsigned int ZeroToPowerOfZeroRep = IndeterminateRep+5;
+	#endif//Maximum DecimalHalf.Value = 1073741824
     public:
     #pragma endregion Const Representation values
 
@@ -761,7 +763,7 @@ public:
                 case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
                     {
                         BasicUnsignedDivOp(ExtraRep.Value);
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     break;
             #endif*/
@@ -787,7 +789,7 @@ public:
             case RepType::ImaginaryInfinity:
                 IntValue = IsPositive()?MaxIntValue:MinIntValue; 
                 DecimalHalf.Value = 999999999; 
-                /*ExtraRep = 0;*/
+                /*ExtraRep = InitialExtraRep;*/
                 break;
             #endif
             #ifdef AltNum_EnableComplexNumbers

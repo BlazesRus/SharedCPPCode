@@ -88,10 +88,17 @@ namespace BlazesRusCode
 			return Value^1==1;
 		}
 		
-		std::strong_ordering operator<=>(const PartialInt& that) const
+		std::strong_ordering operator<=>(const FlaggedInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
+		}
+		
+		bool operator==(const FlaggedInt& that) const
+		{
+			if (Value!=that.Value)
+				return false;
+			return true;
 		}
 		
 		bool operator==(const unsigned int& that) const
@@ -100,6 +107,37 @@ namespace BlazesRusCode
 				return false;
 			return true;
 		}
+		
+		bool operator==(const signed int& that) const
+		{
+			if (Value!=that)
+				return false;
+			return true;
+		}
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned int() { return Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned long long() { return Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed int() { return (signed int)Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed long long() { return (signed long long) Value; }
 		
 	protected:
         /// <summary>

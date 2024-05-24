@@ -162,13 +162,19 @@ namespace BlazesRusCode
 		UndefinedButInRange = 130,
 	#if defined(AltNum_EnableWithinMinMaxRange)
 		//(Enum Bits:8,6)
-		//Undefined except for ranged IntValue to DecimalHalf (ExtraRep.Value==WithinMinMaxRangeRep||ExtraRep.Value==WithinMinToNegativeMaxRep)
+		//Undefined except for ranged IntValue to DecimalHalf (ExtraRep.Value==0; IsAltRep==1 when right side is negative)
 		WithinMinMaxRange = 160,
-		#if defined(AltNum_EnablePiRep)//(Enum Bits:8,6,1)
+		#if defined(AltNum_EnablePiRep)
+		//(Enum Bits:8,6,1)
+		WithinMinMaxRangePi = 161,
 		#endif
-		#if defined(AltNum_EnableERep)//(Enum Bits:8,6,2)
+		#if defined(AltNum_EnableERep)
+		//(Enum Bits:8,6,2)
+		WithinMinMaxRangeE = 162,
 		#endif
-		#if defined(AltNum_EnableIRep)//(Enum Bits:8,6,3)
+		#if defined(AltNum_EnableIRep)
+		//(Enum Bits:8,6,3)
+		WithinMinMaxRangeI = 164,
 		#endif
 	#endif
 #endif

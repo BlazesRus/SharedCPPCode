@@ -63,7 +63,7 @@ namespace BlazesRusCode
         AltDec& operator=(const int& rhs)
         {
             IntValue = rhs; DecimalHalf = 0;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             return *this;
         } const
 

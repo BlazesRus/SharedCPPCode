@@ -36,7 +36,7 @@
                         else
                             IntValue = 0;
                     }
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                 }
     #else            
                     SetAsZero();
@@ -74,7 +74,7 @@
                 case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
 #if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableENum) || defined(AltNum_EnableIRep)
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                     BasicUnsignedDivOp(rValue);
                     break;
 #endif
@@ -85,7 +85,7 @@
                     if (rValue.ExtraRep<ExtraRep)
                     {
                         AltDecBase PiPowerDivisor = PiPowerNum(ExtraRep - rValue.ExtraRep);
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                         BasicUnsignedDivOp(PiPowerDivisor);
                     }
                     else
@@ -151,15 +151,15 @@
                         int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
                         if (IntValue == rValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == NegativeRep && rValue.IntValue == 0)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -177,11 +177,11 @@
                         int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
                         if (IntValue == rValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -250,7 +250,7 @@
                     if (RemRes == 0)
                     {
                         IntValue = divRes;
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     else
                     {
@@ -471,7 +471,7 @@
 #endif
 #if defined(AltNum_EnableIRep)
                 case RepType::INum://Xi * Yi = -XY
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                     BasicMultOp(-rValue);
                     break;
 #endif
@@ -736,7 +736,7 @@
                     if (RemRes == 0)
                     {
                         IntValue = divRes;
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     else
                     {

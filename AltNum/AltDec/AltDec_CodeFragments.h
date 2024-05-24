@@ -82,7 +82,7 @@
                 else
                     IntValue = (int)IntHalf;
             }
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
 }
 
         #if defined(AltNum_EnableDecimaledEFractionals)
@@ -165,7 +165,7 @@
         {
             int divisor = DecimalHalf;
             DecimalHalf = 0;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             bool IsNegative = IntValue < 0;
             if (IsNegative)
                 IntValue *= -1;
@@ -265,14 +265,14 @@
         void ConvertFromApproachingMidLeftToNorm()
         {//0.9..9/2 = 0.49..9
             DecimalHalf = (DecimalOverflow / ExtraRep) - 1;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
     #if !defined(AltNum_DisableApproachingTop)
         void ConvertFromApproachingMidRightToNorm()
         {
             DecimalHalf = (DecimalOverflow / ExtraRep) + 1;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
     #endif
 
@@ -304,16 +304,16 @@
             case RepType::NumByDiv:
             {
                 BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
             break;
 #endif
 #if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
                 break;
             case RepType::NegativeInfinity:
-                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = 0;
+                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
                 break;
 #endif
 #if defined(AltNum_EnableApproaching)
@@ -370,7 +370,7 @@
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
             break;
 	#endif
@@ -384,7 +384,7 @@
 				Res *= PiNum;
                 IntValue = Res.IntValue;
                 DecimalHalf = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
             break;
 	#endif
@@ -398,7 +398,7 @@
 				Res *= ENum;
                 IntValue = Res.IntValue;
                 DecimalHalf = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
             break;
 	#endif
@@ -411,7 +411,7 @@
     #endif
             {
                 if (IntValue == 0 && DecimalHalf != 0)
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                 else
                     throw "Can't convert imaginary number into real number unless is zero.";
             }
@@ -785,7 +785,7 @@
             return false;
         if (LValue.DecimalHalf!=0)
             return false;
-        if (LValue.ExtraRep!=0)
+        if (LValue.ExtraRep>InitialExtraRep)
             return false;
         return true;
     }
@@ -1938,8 +1938,8 @@ public:
                         {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
     #else
                             DecimalHalf = 1;
@@ -1992,8 +1992,8 @@ public:
                             {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                                 IntValue = 0;
-                                if(ExtraRep!=0)
-                                    ExtraRep = 0;
+                                if(ExtraRep>InitialExtraRep)
+                                    ExtraRep = InitialExtraRep;
                                 return *this;
     #else
                                 DecimalHalf = 1;
@@ -2030,8 +2030,8 @@ public:
                             {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                                 IntValue = 0;
-                                if(ExtraRep!=0)
-                                    ExtraRep = 0;
+                                if(ExtraRep>InitialExtraRep)
+                                    ExtraRep = InitialExtraRep;
                                 return *this;
     #else
                                 DecimalHalf = 1;
@@ -2061,8 +2061,8 @@ public:
                         {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
     #else
                             DecimalHalf = 1;
@@ -2093,8 +2093,8 @@ public:
                         {
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
 #else
                             DecimalHalf = 1;
@@ -2132,8 +2132,8 @@ public:
                 }
             }
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
-                ExtraRep = 0;
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+                ExtraRep = InitialExtraRep;
 #else
             if(DecimalHalf==0&&IntValue==0)
                 DecimalHalf = 1;
@@ -2188,8 +2188,8 @@ public:
                         {
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
 #else
                             DecimalHalf = 1;
@@ -2212,8 +2212,8 @@ public:
                     if (DecimalHalf == 0)
                         DecimalHalf = 1;
                 #else
-                    if (DecimalHalf == 0&&ExtraRep!=0)
-                        ExtraRep = 0;
+                    if (DecimalHalf == 0&&ExtraRep>InitialExtraRep)
+                        ExtraRep = InitialExtraRep;
                 #endif
                     return *this;
                 }
@@ -2232,8 +2232,8 @@ public:
                     {
                         DecimalHalf = (signed int)SRep;
                 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                        if(DecimalHalf==0&&ExtraRep!=0)
-                            ExtraRep = 0;
+                        if(DecimalHalf==0&&ExtraRep>InitialExtraRep)
+                            ExtraRep = InitialExtraRep;
                 #else
                         if(DecimalHalf==0)
                             DecimalHalf = 1;
@@ -2253,8 +2253,8 @@ public:
                     if(DecimalHalf==0)
                     {
                         IntValue = 0;
-                        if(ExtraRep!=0)
-                            ExtraRep = 0;
+                        if(ExtraRep>InitialExtraRep)
+                            ExtraRep = InitialExtraRep;
                     }
                     return *this;
                 }
@@ -2276,8 +2276,8 @@ public:
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
                     #else
                             DecimalHalf = 1;
@@ -2312,8 +2312,8 @@ public:
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
                     #else
                             DecimalHalf = 1;
@@ -2342,8 +2342,8 @@ public:
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             IntValue = 0;
-                            if(ExtraRep!=0)
-                                ExtraRep = 0;
+                            if(ExtraRep>InitialExtraRep)
+                                ExtraRep = InitialExtraRep;
                             return *this;
                     #else
                             DecimalHalf = 1;
@@ -2374,8 +2374,8 @@ public:
                 }
             }
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
-                ExtraRep = 0;
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+                ExtraRep = InitialExtraRep;
     #else
             if(DecimalHalf==0&&IntValue==0)
                 DecimalHalf = 1;
@@ -2393,8 +2393,8 @@ public:
         {
             AltDecBase& Res =  BasicMultBaseOp(rValue);
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
-                ExtraRep = 0;
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+                ExtraRep = InitialExtraRep;
     #endif
             return Res;
         }
@@ -2409,8 +2409,8 @@ public:
         {
             AltDecBase& Res =  BasicUnsignedMultBaseOp(rValue);
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep!=0)
-                ExtraRep = 0;
+            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+                ExtraRep = InitialExtraRep;
     #endif
             return Res;
         }
@@ -3384,7 +3384,7 @@ protected:
                     IntValue *= rightSideValue;
                     if(IntValue==0)
                     {
-                        DecimalHalf = 0; ExtraRep = 0;
+                        DecimalHalf = 0; ExtraRep = InitialExtraRep;
                     }
                 }
                 break;
@@ -3470,7 +3470,7 @@ protected:
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
                             }
                             else
@@ -3486,7 +3486,7 @@ protected:
                             if(divRes == 0)//Become 0.9..9
                             {
             #if !defined(AltNum_DisableApproachingTop)
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
             #else
                                 DecimalHalf = 999999999;
@@ -3605,7 +3605,7 @@ protected:
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
                             }
                             else
@@ -3621,7 +3621,7 @@ protected:
                             if(divRes == 0)//Become 0.9..9
                             {
             #if !defined(AltNum_DisableApproachingTop)
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
             #else
                                 DecimalHalf = 999999999;
@@ -3799,7 +3799,7 @@ protected:
                     IntValue *= rightSideValue;
                     if(IntValue==0)
                     {
-                        DecimalHalf = 0; ExtraRep = 0;
+                        DecimalHalf = 0; ExtraRep = InitialExtraRep;
                     }
                 }
                 break;
@@ -3860,7 +3860,7 @@ protected:
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
                             }
                             else
@@ -3877,7 +3877,7 @@ protected:
                             if(divRes == 0)//Become 0.9..9
                             {
             #if !defined(AltNum_DisableApproachingTop)
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
             #else
                                 DecimalHalf = 999999999;
@@ -3968,7 +3968,7 @@ protected:
                         {
                             if(divRes == 0)//Become 0.9..9
                             {
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
                             }
                             else
@@ -3984,7 +3984,7 @@ protected:
                             if(divRes == 0)//Become 0.9..9
                             {
             #if !defined(AltNum_DisableApproachingTop)
-                                ExtraRep = 0;
+                                ExtraRep = InitialExtraRep;
                                 DecimalHalf = ApproachingTopRep;
             #else
                                 DecimalHalf = 999999999;
@@ -4190,7 +4190,7 @@ protected:
             {}
             else
     #endif
-            if(ExtraRep!=0)//Don't convert if mixed fraction
+            if(ExtraRep>InitialExtraRep)//Don't convert if mixed fraction
                 ConvertToNormTypeV2();
             bool WasNegative = IntValue < 0;
             IntHalfAddition(rValue);
@@ -4280,7 +4280,7 @@ protected:
             {}
             else
     #endif
-            if(ExtraRep!=0)//Don't convert if mixed fraction
+            if(ExtraRep>InitialExtraRep)//Don't convert if mixed fraction
                 ConvertToNormTypeV2();
             bool WasNegative = IntValue < 0;
             IntHalfAddition(rValue);
@@ -4367,7 +4367,7 @@ public:
            ConvertIRepToNormal(LRep);
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(RRep);
            BasicUnsignedDivOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryDivisionAsCopies(AltDecBase& rValue, RepType LRep, RepType RRep)
@@ -4378,7 +4378,7 @@ public:
             ConvertIRepToNormal(SameRep);
             AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
             BasicUnsignedDivOp(convertedRVal);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryDivisionAsCopiesV2(AltDecBase& rValue, RepType SameRep)
@@ -4389,7 +4389,7 @@ public:
            ConvertIRepToNormalV2();
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRepV2();
            BasicUnsignedDivOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryDivisionAsCopiesV3(AltDecBase& rValue)
@@ -4438,7 +4438,7 @@ protected:
                     else//PositiveValue / 0.0..1 = Infinity
                         self.IntValue = 1;
                     self.DecimalHalf = AltDecBase::InfinityRep;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
     #else
                     throw "Result is Infinity";
                     if (self.IntValue < 0)
@@ -4786,7 +4786,7 @@ protected:
             case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
             {
                 //(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
                 self.BasicInt32DivOpV2(Value.IntValue);
             }
@@ -4806,7 +4806,7 @@ protected:
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
             {
                 //(XPi) / (Y.Value*Pi / -Y.ExtraRep) = (X*-Y.ExtraRep)/(Y.Value)
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 int rVal = -Value.ExtraRep;
                 self.BasicInt32DivOpV2(rVal);
                 self.BasicUnsignedMultOp(Value);
@@ -5003,14 +5003,14 @@ protected:
         #endif
         #if defined(AltNum_EnableEFractional)
             case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
                 self.BasicInt32DivOpV2(Value.IntValue);
                 break;
         #elif defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
                 self.BasicUnsignedIntMult(-Value.ExtraRep);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicDivOp(Value);
                 break;
         #endif
@@ -5402,7 +5402,7 @@ protected:
                     }
                     else
                     {
-                        self.ExtraRep = 0;
+                        self.ExtraRep = InitialExtraRep;
                         self.BasicDivOp(Value);
                     }
                     break;
@@ -5430,7 +5430,7 @@ protected:
                         self.ExtraRep = Value.ExtraRep;
                     else
                     {
-                        self.ExtraRep = 0;
+                        self.ExtraRep = InitialExtraRep;
                         self.BasicDivOp(Value);
                     }
                     break;
@@ -5505,7 +5505,7 @@ protected:
                     //Skip to performing DivOperation as normal type
                     self.ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
                     self.SwapNegativeStatus();
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     NormalRtRDivision(RRep, self, Value);
                 }
                 break;
@@ -5544,7 +5544,7 @@ protected:
                 //Skip to performing DivOperation as normal type
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryTop);
                 self.SwapNegativeStatus();
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 NormalRtRDivision(RRep, self, Value);
                 #endif
                 break;
@@ -5581,7 +5581,7 @@ protected:
                 //Skip to performing DivOperation as normal type
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryMidLeft);
                 self.SwapNegativeStatus();
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 NormalRtRDivision(RRep, self, Value);
                 #endif
             default:
@@ -5617,7 +5617,7 @@ protected:
                 //Skip to performing DivOperation as normal type
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryMidRight);
                 self.SwapNegativeStatus();
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 NormalRtRDivision(RRep, self, Value);
                 break;
                 #endif
@@ -5737,7 +5737,7 @@ protected:
                         self.IntValue = -1;
                     else
                         self.IntValue = 1;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     return;
                 }
                 else
@@ -5752,13 +5752,13 @@ protected:
                 if (Value.IntValue == 0 && LRep == RepType::NormalType)//1/0.9..9 = 1.0..1
                 {//(For positive left side values);Technically should return self.IntValue + 0.0..self.IntValue
                     self.DecimalHalf = ApproachingBottomRep;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     return;
                 }
                 else
                 {
                     Value.DecimalHalf = 999999999;
-                    Value.ExtraRep = 0;
+                    Value.ExtraRep = InitialExtraRep;
                     RRep = RepType::NormalType;
                 }
                 break;
@@ -5918,7 +5918,7 @@ protected:
                         else
                             IntValue = 0;
                     }
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                 }
     #else
                     SetAsZero();
@@ -5956,7 +5956,7 @@ protected:
                 case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
 #if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableIRep)
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                     BasicUnsignedDivOp(rightSideValue);
                     break;
 #endif
@@ -5967,7 +5967,7 @@ protected:
                     if (rightSideValue.ExtraRep<ExtraRep)
                     {
                         AltDecBase PiPowerDivisor = PiPowerNum(ExtraRep - rightSideValue.ExtraRep);
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                         BasicUnsignedDivOp(PiPowerDivisor);
                     }
                     else
@@ -6033,15 +6033,15 @@ protected:
                         int InvertedrightSideValue = rightSideValue.IntValue==NegativeRep?0:-(int)rightSideValue.IntValue;
                         if (IntValue == rightSideValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrightSideValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == NegativeRep && rightSideValue.IntValue == 0)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6059,11 +6059,11 @@ protected:
                         int InvertedrightSideValue = rightSideValue.IntValue==NegativeRep?0:-(int)rightSideValue.IntValue;
                         if (IntValue == rightSideValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrightSideValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6135,7 +6135,7 @@ protected:
                     if (RemRes == 0)
                     {
                         IntValue = divRes;
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     else
                     {
@@ -6355,7 +6355,7 @@ protected:
                         else
                             IntValue = 0;
                     }
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                 }
     #else            
                     SetAsZero();
@@ -6393,7 +6393,7 @@ protected:
                 case RepType::INum://Xi / Yi = (X(Sqrt(-1))/(Y(Sqrt(-1)) = X/Y
 #endif
 #if (defined(AltNum_EnablePiRep)&&!defined(AltNum_EnablePiPowers)) || defined(AltNum_EnableERep) || defined(AltNum_EnableIRep)
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                     BasicUnsignedDivOp(rValue);
                     break;
 #endif
@@ -6404,7 +6404,7 @@ protected:
                     if (rValue.ExtraRep<ExtraRep)
                     {
                         AltDecBase PiPowerDivisor = PiPowerNum(ExtraRep - rValue.ExtraRep);
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                         BasicUnsignedDivOp(PiPowerDivisor);
                     }
                     else
@@ -6470,15 +6470,15 @@ protected:
                         int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
                         if (IntValue == rValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == NegativeRep && rValue.IntValue == 0)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6496,11 +6496,11 @@ protected:
                         int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
                         if (IntValue == rValue.IntValue)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6560,7 +6560,7 @@ protected:
                     if (RemRes == 0)
                     {
                         IntValue = divRes;
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     else
                     {
@@ -6745,7 +6745,7 @@ protected:
            ConvertIRepToNormal(LRep);
            rValue.ConvertToNormalIRep(RRep);
            BasicMultOp(rValue);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
            SwapNegativeStatus();
         }
 
@@ -6757,7 +6757,7 @@ protected:
             ConvertIRepToNormal(SameRep);
             rValue.ConvertToNormalIRep(SameRep);
             BasicMultOp(rValue);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             SwapNegativeStatus();
         }
 
@@ -6768,7 +6768,7 @@ protected:
            ConvertIRepToNormalV2();
            rValue.ConvertToNormalIRepV2();
            BasicMultOp(rValue);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
            SwapNegativeStatus();
        }
 
@@ -7289,7 +7289,7 @@ protected:
                 break;
             case RepType::INum:
                 self.BasicMultOp(Value);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 break;
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv:
@@ -7300,7 +7300,7 @@ protected:
             case RepType::MixedI:
                 #endif
                 Value.ConvertToNormalIRep(RRep);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicMultOp(-Value);
                 break;
             default:
@@ -7383,7 +7383,7 @@ protected:
                 #endif
                 Value.ConvertIRepToNormal(RRep);
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicMultOp(-Value);
                 break;
               default:
@@ -7408,7 +7408,7 @@ protected:
                 #endif
                 Value.ConvertIRepToNormal(RRep);
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryTop);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicMultOp(-Value);
                 break;
               default:
@@ -7434,7 +7434,7 @@ protected:
                 #endif
                 Value.ConvertIRepToNormal(RRep);
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryMidLeft);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicMultOp(-Value);
                 break;
               default:
@@ -7459,7 +7459,7 @@ protected:
                 #endif
                 Value.ConvertIRepToNormal(RRep);
                 self.ConvertIRepToNormal(RepType::ApproachingImaginaryMidRight);
-                self.ExtraRep = 0;
+                self.ExtraRep = InitialExtraRep;
                 self.BasicMultOp(-Value);
                 break;
               default:
@@ -7723,7 +7723,7 @@ protected:
                 {
                     self.IntValue = self.IntValue < 0 ? NegativeRep : 0;
                     self.DecimalHalf = ApproachingBottomRep;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     return;
                 }
                 else
@@ -7737,7 +7737,7 @@ protected:
             case RepType::ApproachingTop:
             {
                 Value.DecimalHalf = 999999999;
-                Value.ExtraRep = 0;
+                Value.ExtraRep = InitialExtraRep;
                 RRep = RepType::NormalType;
             }
             break;
@@ -7907,7 +7907,7 @@ public:
 #if defined(AltNum_EnableIRep)
                 case RepType::INum://Xi * Yi = -XY
                 {
-                    ExtraRep = 0;
+                    ExtraRep = InitialExtraRep;
                     AltDecBase rValue = rightSideValue;
                     rValue.SwapNegativeStatus();
                     BasicMultOp(rValue);
@@ -8174,7 +8174,7 @@ public:
                     if (RemRes == 0)
                     {
                         IntValue = divRes;
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                     }
                     else
                     {
@@ -8443,7 +8443,7 @@ public:
     #endif
     #if defined(AltNum_EnableIRep)
                     case RepType::INum://Xi * Yi = -XY
-                        ExtraRep = 0;
+                        ExtraRep = InitialExtraRep;
                         BasicUnsignedMultOp(-rValue);
                         break;
     #endif
@@ -8607,7 +8607,7 @@ public:
                         if (RemRes == 0)
                         {
                             IntValue = divRes;
-                            ExtraRep = 0;
+                            ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -8827,7 +8827,7 @@ public:
            ConvertIRepToNormal(LRep);
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(RRep);
            BasicAddOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryAdditionAsCopies(AltDecBase& rValue, RepType LRep, RepType RRep)
@@ -8838,7 +8838,7 @@ public:
             ConvertIRepToNormal(SameRep);
             AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
             BasicAddOp(convertedRVal);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryAdditionAsCopiesV2(AltDecBase& rValue, RepType SameRep)
@@ -8849,7 +8849,7 @@ public:
            ConvertIRepToNormalV2();
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRepV2();
            BasicAddOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginaryAdditionAsCopiesV3(AltDecBase& rValue)
@@ -8926,7 +8926,7 @@ protected:
                                 self.IntValue -= self.DecimalHalf;//adding as negative of the representation
                                 if(self.IntValue==0)//Become zero instead of fractional
                                 {
-                                    self.ExtraRep = 0; return;
+                                    self.ExtraRep = InitialExtraRep; return;
                                 }
                             }
                             self.DecimalHalf = divisor;
@@ -8950,7 +8950,7 @@ protected:
                             self.IntHalfSubtraction(self.DecimalHalf);//adding as negative of the representation
                             if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                             {
-                                self.ExtraRep = 0; return;
+                                self.ExtraRep = InitialExtraRep; return;
                             }
                         }
                         self.ExtraRep = Value.ExtraRep;
@@ -9043,7 +9043,7 @@ protected:
                                 self.IntValue -= self.DecimalHalf;//adding as negative of the representation
                                 if(self.IntValue==0)//Become zero instead of fractional
                                 {
-                                    self.ExtraRep = 0; return;
+                                    self.ExtraRep = InitialExtraRep; return;
                                 }
                             }
                             self.DecimalHalf = divisor;
@@ -9067,7 +9067,7 @@ protected:
                             self.IntHalfSubtraction(self.DecimalHalf);//adding as negative of the representation
                             if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                             {
-                                self.ExtraRep = 0; return;
+                                self.ExtraRep = InitialExtraRep; return;
                             }
                         }
                         self.ExtraRep = Value.ExtraRep;
@@ -9326,7 +9326,7 @@ protected:
                 else
                 {
                     rValue.DecimalHalf = 999999999;
-                    rValue.ExtraRep = 0;
+                    rValue.ExtraRep = InitialExtraRep;
                     RRep = RepType::NormalType;
                 }
                 break;
@@ -9338,7 +9338,7 @@ protected:
                 if (LRep == RepType::ApproachingMidRight && self.ExtraRep == rValue.ExtraRep && LeftIsNegative == RightIsNegative)
                 {
                     self.DecimalHalf = 0;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     self.IntValue += rValue.IntValue + 1;
                     return;
                 }
@@ -9355,7 +9355,7 @@ protected:
                 if (LRep == RepType::ApproachingMidLeft && self.ExtraRep == rValue.ExtraRep && LeftIsNegative == false)
                 {
                     self.DecimalHalf = 0;
-                    self.ExtraRep = 0;
+                    self.ExtraRep = InitialExtraRep;
                     self.IntValue += rValue.IntValue + 1;
                     return;
                 }
@@ -9696,7 +9696,7 @@ public:
                         }
                         else//-0.9..9 + 5.9..9 = 5
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue = rValue.IntValue;
                         }
                     }
@@ -9708,7 +9708,7 @@ public:
                             SetAsZero();
                         else if (rValue.IntValue < 0)//0.9..9 - 1.9..9 = -1
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue = rValue.IntValue;
                         }
                         else//0.9..9 + 5.9..9 = 6.9..8
@@ -9720,7 +9720,7 @@ public:
                     {
                         if (rValue.IntValue == 0)//-1.9..9 + 0.9..9  = -1
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (rValue.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
                             IntValue += rValue.IntValue;
@@ -9732,7 +9732,7 @@ public:
                         }
                         else//-1.9..9 + 2.9..9
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue += rValue.IntValue;
                         }
                     }
@@ -9747,13 +9747,13 @@ public:
                         }
                         else if (rValue.IntValue == NegativeRep)//1.9..9 - 0.9..9
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
                             SetAsZero();
                         else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue += rValue.IntValue;
                         }
                         else//1.9..9 + 1.9..9 = 3.9..8
@@ -9992,7 +9992,7 @@ public:
            ConvertIRepToNormal(LRep);
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(RRep);
            BasicSubOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginarySubtractionAsCopies(AltDecBase& rValue, RepType LRep, RepType RRep) { AltDecBase self = *this; CatchAllImaginarySubtraction(rValue, LRep, RRep); return self; }
@@ -10002,7 +10002,7 @@ public:
             ConvertIRepToNormal(SameRep);
             AltDecBase convertedRVal = rValue.ConvertAsNormalIRep(SameRep);
             BasicSubOp(convertedRVal);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginarySubtractionAsCopiesV2(AltDecBase& rValue, RepType SameRep) { AltDecBase self = *this; CatchAllImaginarySubtractionV2(rValue, SameRep); return self; }
@@ -10012,7 +10012,7 @@ public:
            ConvertIRepToNormalV2();
            AltDecBase convertedRVal = rValue.ConvertAsNormalIRepV2();
            BasicSubOp(convertedRVal);
-           ExtraRep = 0;
+           ExtraRep = InitialExtraRep;
         }
 
         AltDecBase CatchAllImaginarySubtractionAsCopiesV3(AltDecBase& rValue) { AltDecBase self = *this; CatchAllImaginarySubtractionV3(rValue); return self; }
@@ -10092,7 +10092,7 @@ protected:
                         self.IntValue += self.DecimalHalf;//adding as negative of the representation
                         if (self.IntValue == 0)//Become zero instead of fractional
                         {
-                            self.ExtraRep = 0; return;
+                            self.ExtraRep = InitialExtraRep; return;
                         }
                     }
                     self.DecimalHalf = divisor;
@@ -10116,7 +10116,7 @@ protected:
                     self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
                     if (self.IntValue == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
                     {
-                        self.ExtraRep = 0; return;
+                        self.ExtraRep = InitialExtraRep; return;
                     }
                 }
                 self.ExtraRep = Value.ExtraRep;
@@ -10169,7 +10169,7 @@ protected:
                         self.IntValue += self.DecimalHalf;//adding as negative of the representation
                         if (self.IntValue == 0)//Become zero instead of fractional
                         {
-                            self.ExtraRep = 0; return;
+                            self.ExtraRep = InitialExtraRep; return;
                         }
                     }
                     self.DecimalHalf = divisor;
@@ -10193,7 +10193,7 @@ protected:
                     self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
                     if (self.IntValue == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
                     {
-                        self.ExtraRep = 0; return;
+                        self.ExtraRep = InitialExtraRep; return;
                     }
                 }
                 self.ExtraRep = Value.ExtraRep;
@@ -10468,7 +10468,7 @@ protected:
         			else
         			{
         				Value.DecimalHalf = 999999999;
-        				Value.ExtraRep = 0;
+        				Value.ExtraRep = InitialExtraRep;
         				RRep = RepType::NormalType;
         			}
         			break;
@@ -10480,7 +10480,7 @@ protected:
         			if(LRep==RepType::ApproachingMidRight&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative)
         			{
         				self.DecimalHalf = 0;
-        				self.ExtraRep = 0;
+        				self.ExtraRep = InitialExtraRep;
                         if(self.IntValue==NegativeRep)
                             self.IntValue = -1 - Value.GetIntegerPartition();
                         else
@@ -10500,7 +10500,7 @@ protected:
         			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative)
         			{
         				self.DecimalHalf = 0;
-        				self.ExtraRep = 0;
+        				self.ExtraRep = InitialExtraRep;
                         if(self.IntValue==NegativeRep)
                             self.IntValue = -1 - Value.GetIntegerPartition();
                         else
@@ -10865,7 +10865,7 @@ public:
                             IntValue = -rValue.IntValue;
                         else//0.9..9 - 5.9..9 = -5
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue = -rValue.IntValue;
                         }
                     }
@@ -10875,13 +10875,13 @@ public:
                             --IntValue;
                         else if (rValue.IntValue == NegativeRep)//-1.9..9  + 0.9..9 = -1
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (IntValue == rValue.IntValue)//-1.01 + 1.01
                             SetAsZero();
                         else if (rValue.IntValue < 0)//-1.9..9 + 2.9..9
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue -= rValue.IntValue;
                         }
                         else//-1.9..9 - 2.9..9
@@ -10893,7 +10893,7 @@ public:
                     {
                         if (rValue.IntValue == 0)//1.9..9 - 0.9..9 = 2.9..8
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else if (rValue.IntValue == NegativeRep)//1.9..9 + 0.9..9
                             ++IntValue;
@@ -10906,7 +10906,7 @@ public:
                         }
                         else//1.9..9 - 2.9..9
                         {
-                            DecimalHalf = 0; ExtraRep = 0;
+                            DecimalHalf = 0; ExtraRep = InitialExtraRep;
                             IntValue -= rValue.IntValue;
                         }
                     }
@@ -11708,7 +11708,7 @@ public:
             case RepType::ApproachingTop:
                 if (IntValue == NegativeRep)
                     IntValue = 0;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
                 return *this;
                 break;
             default:
@@ -11768,7 +11768,7 @@ public:
                     IntValue = 0;
                 else
                     ++IntValue;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
                 return *this;
                 break;
             default:
@@ -11893,11 +11893,11 @@ public:
                 return *this;
             else if (DecimalHalf == ApproachingBottomRep)
             {
-                DecimalHalf = 0; ExtraRep = 0;
+                DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else if (DecimalHalf == ApproachingTopRep)
             {
-                DecimalHalf = 999999999; ExtraRep = 0;
+                DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
             }
             else
             {
@@ -12026,7 +12026,7 @@ public:
             if (exponent == 1) { return *this; }//Return self
             else if (exponent == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else if (exponent < 0)//Negative Pow
             {
@@ -12086,7 +12086,7 @@ public:
             if (exponent == 1) { return *this; }//Return self
             else if (exponent == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
                 IntValue = VariableConversionFunctions::PowerOfTens[exponent];

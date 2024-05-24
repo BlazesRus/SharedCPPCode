@@ -206,7 +206,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
         #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
             if(RRep==RepType::InfinityRep){
                 IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
                 return;
             }
         #endif
@@ -491,7 +491,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
         IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
-        ExtraRep = 0;
+        ExtraRep = InitialExtraRep;
         return;
     }
 #endif
@@ -811,7 +811,7 @@ void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
         IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
-        ExtraRep = 0;
+        ExtraRep = InitialExtraRep;
         return;
     }
 #endif
@@ -868,7 +868,7 @@ void IToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
         IntValue.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
-        ExtraRep = 0;
+        ExtraRep = InitialExtraRep;
         return;
     }
 #endif

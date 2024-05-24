@@ -10,12 +10,12 @@
     #endif
     #if defined(AltNum_EnableApproaching)
         //Is Approaching Bottom when DecimalHalf==-2147483647:
-        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
+        //If ExtraRep==1, it represents Approaching IntValue from right towards left (IntValue.0..1)
         //If ExtraRep above 1 and 2147483645 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
         //If ExtraRep=PiRep, then it represents Approaching IntValue from right towards left (IntValue.0..1)Pi
         static const signed int ApproachingBottomRep = -2147483647;
         //Is Approaching Top i when DecimalHalf==-2147483646:
-        //If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
+        //If ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)
         //If ExtraRep above 1 and AltNum_EnableApproachingDivided enabled, Represents approaching 1/ExtraRep point
         //If ExtraRep=PiRep, then it represents Approaching IntValue+1 from left towards right (IntValue.9__9)Pi
         static const signed int ApproachingTopRep = -2147483646;
@@ -44,10 +44,10 @@
     #if defined(AltNum_EnableApproaching)
         #if defined(AltNum_EnableApproachingI)
         //Is Approaching Bottom i when DecimalHalf==-2147483645:
-        //If ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)i
+        //If ExtraRep==1, it represents Approaching IntValue from right towards left (IntValue.0..1)i
         static const signed int ApproachingImaginaryBottomRep = -2147483645;
         //Is Approaching Top i when DecimalHalf==-2147483644:
-        //If ExtraRep==0, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)i
+        //If ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9__9)i
         static const signed int ApproachingImaginaryTopRep = -2147483644;
         #endif
     #endif

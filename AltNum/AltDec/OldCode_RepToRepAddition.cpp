@@ -78,7 +78,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
                         self.IntValue -= self.DecimalHalf;//adding as negative of the representation
                         if(self.IntValue==0)//Become zero instead of fractional
                         {
-                            self.ExtraRep = 0; return;
+                            self.ExtraRep = InitialExtraRep; return;
                         }
                     }
                     self.DecimalHalf = divisor;
@@ -102,7 +102,7 @@ void PiNumOp(RepType& RRep, AltDec& self, AltDec& Value)
                     self.IntHalfSubtractionOp(self.DecimalHalf);//adding as negative of the representation
                     if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                     {
-                        self.ExtraRep = 0; return;
+                        self.ExtraRep = InitialExtraRep; return;
                     }
                 }
                 self.ExtraRep = Value.ExtraRep;
@@ -170,7 +170,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
                         self.IntValue -= self.DecimalHalf;//adding as negative of the representation
                         if(self.IntValue==0)//Become zero instead of fractional
                         {
-                            self.ExtraRep = 0; return;
+                            self.ExtraRep = InitialExtraRep; return;
                         }
                     }
                     self.DecimalHalf = divisor;
@@ -194,7 +194,7 @@ void ENumOp(RepType& RRep, AltDec& self, AltDec& Value)
                     self.IntHalfSubtractionOp(self.DecimalHalf);//adding as negative of the representation
                     if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
                     {
-                        self.ExtraRep = 0; return;
+                        self.ExtraRep = InitialExtraRep; return;
                     }
                 }
                 self.ExtraRep = Value.ExtraRep;
@@ -518,7 +518,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			else
 			{
 				Value.DecimalHalf = 999999999;
-				Value.ExtraRep = 0;
+				Value.ExtraRep = InitialExtraRep;
 				RRep = RepType::NormalType;
 			}
 			break;
@@ -530,7 +530,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if(LRep==RepType::ApproachingMidRight&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==RightIsNegative)
 			{
 				self.DecimalHalf = 0;
-				self.ExtraRep = 0;
+				self.ExtraRep = InitialExtraRep;
                 self.IntValue += Value.IntValue+1;
 				return;
 			}
@@ -547,7 +547,7 @@ inline void BlazesRusCode::AltDec::RepToRepAddOp(RepType& LRep, RepType& RRep, A
 			if(LRep==RepType::ApproachingMidLeft&&self.ExtraRep==Value.ExtraRep&&LeftIsNegative==false)
 			{
 				self.DecimalHalf = 0;
-				self.ExtraRep = 0;
+				self.ExtraRep = InitialExtraRep;
                 self.IntValue += Value.IntValue+1;
 				return;
 			}

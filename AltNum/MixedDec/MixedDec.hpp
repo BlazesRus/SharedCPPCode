@@ -113,7 +113,7 @@ public:
             IntValue = 0;
             DecimalHalf = 0;
 	#if defined(MixedDec_DeriveFromAltDec)
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
 	#endif
             SetTrailingDigitAsZero();
         }
@@ -225,7 +225,7 @@ public:
 				IntValue = rhs;
 			DecimalHalf = 0;
 	#if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
 	#endif
             SetTrailingDigitAsZero();
             return *this;
@@ -465,28 +465,28 @@ public:
                 #if defined(MixedDec_EnableApproachingPi)
                         if (DecimalHalf == ApproachingTopRep)
                     #if defined(MixedDec_EnableApproachingAlternativeDiv)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingMidLeftPi;
                             else
                     #endif
                                 return RepType::ApproachingTopPi;
                 #endif
                 #if defined(MixedDec_EnableApproachingAlternativeDiv)
-                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep>InitialExtraRep
                     #if defined(MixedDec_EnableApproachingAlternativeDiv)
                              return RepType::ApproachingMidRightPi;
                     #endif
                 #endif
                 #if defined(AltNum_EnablePowerOfRepresentation)
                     #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #else
                         if(ExtraRep.IsNegative())
                     #endif
                             return RepType::PiPower;
                 #endif
                 #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #if defined(MixedDec_EnableMixedFractional)
                             if(ExtraRep.IsNegative())
                                 return RepType::MixedPi;
@@ -508,26 +508,26 @@ public:
                 #if defined(MixedDec_EnableApproachingE)
                         if (DecimalHalf == ApproachingTopRep)
                     #if defined(MixedDec_EnableApproachingAlternativeDiv)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingMidLeftE;
                             else
                     #endif
                                 return RepType::ApproachingTopE;
                     #if defined(MixedDec_EnableApproachingAlternativeDiv)
-                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep!=0
+                        else if (DecimalHalf == ApproachingBottomRep)//ExtraRep>InitialExtraRep
                              return RepType::ApproachingMidRightE;
                     #endif
                 #endif
                 #if defined(AltNum_EnablePowerOfRepresentation)
                     #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #else
                         if(ExtraRep.IsNegative())
                     #endif
                             return RepType::EPower;
                 #endif
                 #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #if defined(MixedDec_EnableMixedFractional)
                             if(ExtraRep.IsNegative())
                                 return RepType::MixedE;
@@ -558,7 +558,7 @@ public:
                         if (DecimalHalf == ApproachingBottomRep)
                         {
                         #if defined(MixedDec_EnableApproachingDivided)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingImaginaryMidLeft;
                             else
                         #endif
@@ -567,7 +567,7 @@ public:
                         else if (DecimalHalf == ApproachingTopRep)
                         {
                         #if defined(MixedDec_EnableApproachingDivided)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingImaginaryMidRight;
                             else
                         #endif
@@ -576,14 +576,14 @@ public:
                     #endif
                     #if defined(AltNum_EnablePowerOfRepresentation)
                         #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                         #else
                         if(ExtraRep.IsNegative())
                         #endif
                             return RepType::EPower;
                     #endif
                     #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                         #if defined(MixedDec_EnableMixedFractional)
                             if(ExtraRep.IsNegative())
                                 return RepType::MixedI;
@@ -609,7 +609,7 @@ public:
                         if (DecimalHalf == ApproachingBottomRep)
                         {
             #if defined(MixedDec_EnableApproachingDivided)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingMidLeft;
                             else
             #endif
@@ -618,7 +618,7 @@ public:
                         else if (DecimalHalf == ApproachingTopRep)
                         {
             #if defined(MixedDec_EnableApproachingDivided)
-                            if(ExtraRep!=0)
+                            if(ExtraRep>InitialExtraRep)
                                 return RepType::ApproachingMidRight;
                             else
             #endif
@@ -647,14 +647,14 @@ public:
 		#endif
                 #if defined(AltNum_EnablePowerOfRepresentation)
                     #if defined(AltNum_EnableNegativePowerRep)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #else
                         if(ExtraRep.IsNegative())
                     #endif
                             return RepType::ToPowerOf;
                 #endif
                 #if defined(AltNum_EnableFractionals)
-                        if(ExtraRep!=0)
+                        if(ExtraRep>InitialExtraRep)
                     #if defined(MixedDec_EnableMixedFractional)
                             if(ExtraRep.IsNegative())
                                 return RepType::MixedFrac;
@@ -688,7 +688,7 @@ public:
             DecimalHalf = Value.DecimalHalf;
         #endif
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -705,7 +705,7 @@ public:
         #else
             DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -757,7 +757,7 @@ public:
         #else
             DecimalHalf = PartialInt(0,1);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -777,7 +777,7 @@ public:
             DecimalHalf = Value.DecimalHalf;
         #endif
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -794,7 +794,7 @@ public:
         #else
             DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -846,7 +846,7 @@ public:
         #else
             DecimalHalf = PartialInt(0,2);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -866,7 +866,7 @@ public:
             DecimalHalf = Value.DecimalHalf;
         #endif
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -883,7 +883,7 @@ public:
         #else
             DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -935,7 +935,7 @@ public:
         #else
             DecimalHalf = PartialInt(0,2);
             #if defined(MixedDec_DeriveFromAltDec)
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         #endif
             SetTrailingDigitAsZero();
@@ -1327,7 +1327,7 @@ public:
         {
 			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 			#endif
         }
 
@@ -1339,7 +1339,7 @@ public:
         {
 			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 			#endif
         }
 
@@ -1351,7 +1351,7 @@ public:
         {
 			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 			#endif
         }
 
@@ -1791,7 +1791,7 @@ protected:
 	#if !defined(MixedDec_UseIntForDecimalHalf)
 			if(DecimalHalf.Flags==0)
 	#else
-			if(ExtraRep==0)
+			if(ExtraRep==1)
 	#endif
 			{
 				return BasicIntComparison(that);
@@ -2205,7 +2205,7 @@ public:
         {
 		#if defined(MixedDec_DeriveFromAltDec)
 			//To-Do:Adjust code for including power of and mixed fractions
-            if(ExtraRep==0)
+            if(ExtraRep==1)
                 ExtraRep = 2;
             else if(ExtraRep<=1073741823)
                 ExtraRep *= 2;

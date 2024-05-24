@@ -265,7 +265,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 			else//PositiveValue / 0.0..1 = Infinity
 				self.IntValue = 1;
 			self.DecimalHalf = AltDec::InfinityRep;
-			self.ExtraRep = 0;
+			self.ExtraRep = InitialExtraRep;
 		#else
 			throw "Result is Infinity";
 			if (self.IntValue < 0)
@@ -379,7 +379,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
                     self.IntValue = -1;
                 else
                     self.IntValue = 1;
-				self.ExtraRep = 0;
+				self.ExtraRep = InitialExtraRep;
                 return;
             }
             else
@@ -394,13 +394,13 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
             if(Value.IntValue==0&&LRep==RepType::NormalType)//1/0.9..9 = 1.0..1
             {//(For positive left side values)Techically returns self.IntValue + 0.0..self.IntValue
 				self.DecimalHalf = ApproachingBottomRep;
-				self.ExtraRep = 0;
+				self.ExtraRep = InitialExtraRep;
                 return;
             }
             else
             {
                 Value.DecimalHalf = 999999999;
-                Value.ExtraRep = 0;
+                Value.ExtraRep = InitialExtraRep;
                 RRep = RepType::NormalType;
             }
 			break;

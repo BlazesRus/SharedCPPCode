@@ -83,13 +83,13 @@ void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 			if(ExtraRep.IsZero())
 				SetAsOne();
 			else if(ExtraRep.IsOne())
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 	#else
 			ExtraRep.Value += rValue.ExtraRep.Value;
 			if(ExtraRep.IsZero())
 				SetAsOne();
 			else if(ExtraRep.IsAtOneInt())
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 	#endif
 		}
 	}
@@ -177,7 +177,7 @@ void SameRep_ApproachingTop(const auto& rValue)
 			}
 			else//-0.9..9 + 5.9..9 = 5
 			{
-				DecimalHalf = 0; ExtraRep = 0;
+				DecimalHalf = 0; ExtraRep = InitialExtraRep;
 				IntValue = rValue.IntValue;
 			}
 		}
@@ -192,13 +192,13 @@ void SameRep_ApproachingTop(const auto& rValue)
 	{
 		if (rValue.IntValue == 0)//-1.9..9 + 0.9..9  = -1
 		{
-			DecimalHalf = 0; ExtraRep = 0;
+			DecimalHalf = 0; ExtraRep = InitialExtraRep;
 		}
 		else if (IntValue.Value == rValue.IntValue.Value)//-1.9..9 + 1.9..9
 			SetAsZero();
 		else//-1.9..9 + 2.9..9
 		{
-			DecimalHalf = 0; ExtraRep = 0;
+			DecimalHalf = 0; ExtraRep = InitialExtraRep;
 			IntValue += rValue.IntValue;
 		}
 	}

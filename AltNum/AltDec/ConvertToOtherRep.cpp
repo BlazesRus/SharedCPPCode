@@ -112,11 +112,11 @@ void ConvertPiByDivToNorm()
 }
     #endif
 
-#if defined(AltNum_EnablePiPowers)
+#if defined(AltNum_EnablePowerOfRepresentation)
 /* //Keep in header for template output
 inline AltDecBase BlazesRusCode::AltDecBase::PiPowerNum(int powerExponent)
 {
-	ExtraRep = 0;
+	ExtraRep = InitialExtraRep;
 	AltDecBase PiSide = PiNum;
 	PiSide.IntPowOp(powerExponent);
 	return PiSide;
@@ -126,58 +126,34 @@ inline AltDecBase BlazesRusCode::AltDecBase::PiPowerNum(int powerExponent)
 inline void BlazesRusCode::AltDecBase::ConvertPiPowerToNum()
 {
 	int powerExponent = ExtraRep.Value;
-	ExtraRep = 0;
-	AltDecBase PiSide = PiPowerNum(powerExponent);
+	ExtraRep = InitialExtraRep;
+	auto PiSide = PiPowerNum(powerExponent);
 	BasicMultOp(PiSide);
 }
 
 inline void BlazesRusCode::AltDecBase::ConvertPiPowerToPiRep()
 {
-	if (ExtraRep.Value == 0)//Become Normal Representation
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = 0;
-    #else
-		DecimalHalf.Flags = 0;
-        #if !defined(AltNum_EnableNegativePowerRep)
-        DecimalHalf.IsNegative = 0;
-        #endif
-    #endif
     #if defined(AltNum_EnableNegativePowerRep)
-    else if(ExtraRep.IsNegative)
-    {
-	    int powerExponent = (signed int)ExtraRep.Value*-1;
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = PiRep;
-    #else
+	if(ExtraRep<0){//Negative PiPowers
+		int powerExponent = -ExtraRep.Value;
+		SetAsOne();
+		auto PiSide = PiPowerNum(powerExponent);
+		BasicUnsignedDivOp(PiSide);
+	} else {
+	    int powerExponent = ExtraRep.Value - 1;
 		DecimalHalf.Flags = 1;
-        DecimalHalf.IsNegative = 0;
-    #endif
-		powerExponent -= 1;
         //Pi^-1 = 0.31
         //Pi^-1 = Pi^-2 * Pi
-		AltDecBase PiSide = PiPowerNum(powerExponent);
-		BasicMultOp(PiSide);
-    }
-    #endif
-	else
-	{
-        int powerExponent = (signed int)ExtraRep.Value;
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = PiRep;
-    #else
-		DecimalHalf.Flags = 1;
-        #if !defined(AltNum_EnableNegativePowerRep)
-        DecimalHalf.IsNegative = 0;
-        #endif
-    #endif
-		if (powerExponent != 1)
-		{
-			AltDecBase PiSide = PiPowerNum(powerExponent);
-			powerExponent -= 1;
-			PiSide.IntPowOp();
-			BasicMultOp(PiSide);
-		}
+		auto PiSide = PiPowerNum(powerExponent);
+		BasicUnsignedMultOp(PiSide);
 	}
+	#else
+        unsigned int powerExponent = ExtraRep.Value - 1;
+		DecimalHalf.Flags = 1;
+        ExtraRep.IsAltRep = 0;
+		auto PiSide = PiPowerNum(powerExponent);
+		BasicUnsignedMultOp(PiSide);
+    #endif
 }
 #endif
 
@@ -293,7 +269,7 @@ void ConvertEByDivToNorm()
 }
     #endif
 
-#if defined(AltNum_EnableEPowers)
+#if defined(AltNum_EnablePowerOfRepresentation)
 /*
 inline AltDecBase BlazesRusCode::AltDecBase::EPowerNum(int powerExponent)
 {
@@ -306,58 +282,55 @@ inline AltDecBase BlazesRusCode::AltDecBase::EPowerNum(int powerExponent)
 inline void BlazesRusCode::AltDecBase::ConvertEPowerToNum()
 {
 	int powerExponent = ExtraRep.Value;
-	ExtraRep = 0;
+	ExtraRep = InitialExtraRep;
 	AltDecBase ESide = EPowerNum(powerExponent);
 	BasicMultOp(ESide);
 }
 
 inline void BlazesRusCode::AltDecBase::ConvertEPowerToERep()
 {
-	if (ExtraRep.Value == 0)
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = 0;
-    #else
-		DecimalHalf.Flags = 0;
-    #endif
     #if defined(AltNum_EnableNegativePowerRep)
-    else if(ExtraRep.IsNegative)
-    {
-	    int powerExponent = (signed int)ExtraRep.Value*-1;
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = ERep;
-    #else
-		DecimalHalf.Flags = 2;
-        DecimalHalf.IsNegative = 0;
-    #endif
-		powerExponent -= 1;
-		AltDecBase ESide = EPowerNum(powerExponent);
-		BasicMultOp(ESide);
-    }
-    #endif
-	else
-	{
-        int powerExponent = (signed int)ExtraRep.Value;
-    #if defined(AltNum_UseIntForDecimalHalf)
-		ExtraRep = ERep;
-    #else
-		DecimalHalf.Flags = 2;
-        #if !defined(AltNum_EnableNegativePowerRep)
-        DecimalHalf.IsNegative = 0;
-        #endif
-    #endif
-		if (powerExponent != 1)
-		{
-			powerExponent -= 1;
-			AltDecBase ESide = EPowerNum(powerExponent);
-			BasicMultOp(ESide);
-		}
+	if(ExtraRep<0){//Negative PiPowers
+		int powerExponent = -ExtraRep.Value;
+		SetAsOne();
+		auto ESide = EPowerNum(powerExponent);
+		BasicUnsignedDivOp(ESide);
+	} else {
+	    int powerExponent = ExtraRep.Value - 1;
+		DecimalHalf.Flags = 1;
+		auto ESide = EPowerNum(powerExponent);
+		BasicUnsignedMultOp(PiSide);
 	}
+	#else
+        unsigned int powerExponent = ExtraRep.Value - 1;
+		DecimalHalf.Flags = 1;
+        ExtraRep.IsAltRep = 0;
+		auto ESide = EPowerNum(powerExponent);
+		BasicUnsignedMultOp(ESide);
+    #endif
 }
 #endif
 
 #endif
 
-
 #if defined(AltNum_EnableIRep)
 
+#endif
+#if defined(AltNum_EnablePowerOfRepresentation)
+	//To-Do:Code in ToPowerOf
+	
+/*
+inline void BlazesRusCode::AltDecBase::ConvertToPowerOfToNormal()
+{
+    #if defined(AltNum_EnableNegativePowerRep)
+	if(ExtraRep<0){//Negative PiPowers
+
+	} else {
+
+	}
+	#else
+
+    #endif
+}
+*/
 #endif

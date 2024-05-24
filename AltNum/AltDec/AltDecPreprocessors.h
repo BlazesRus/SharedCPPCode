@@ -16,7 +16,7 @@ AltNum_EnableNegativePowerRep =
 //--Infinity based preprocessors--
 AltNum_EnableApproaching
 	Depreciated Defined Values:
-      When DecimalHalf is -2147483647 and ExtraRep==0, it represents Approaching IntValue from right towards left (IntValue.0..1)
+      When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue from right towards left (IntValue.0..1)
 	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
 AltNum_EnableApproachingDivided =
 	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)

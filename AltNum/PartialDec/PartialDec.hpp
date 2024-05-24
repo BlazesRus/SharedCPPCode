@@ -87,12 +87,14 @@ namespace BlazesRusCode
         //Divisor of Fractional
         unsigned int ExtraRep;
 
+		static const unsigned int InitialExtraRep = 1;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        PartialDec(const unsigned _int64& intVal = 0, const unsigned _int64& decVal = 0, const unsigned int& extraRep = 0,)
+        PartialDec(const unsigned _int64& intVal = 0, const unsigned _int64& decVal = 0, const unsigned int& extraRep = 1)
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -105,7 +107,7 @@ namespace BlazesRusCode
         {
 			IntValue = rhs;
 			DecimalHalf = 0;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             return *this;
         } const
 
@@ -141,7 +143,7 @@ namespace BlazesRusCode
         void SetAsZero()
         {
             IntValue = 0;
-            DecimalHalf = 0; ExtraRep = 0;
+            DecimalHalf = 0; ExtraRep = InitialExtraRep;
         }
 
 	#pragma endregion Check_if_Zero
@@ -180,7 +182,7 @@ public:
         {
             IntValue = 18446744073709551615;
 			DecimalHalf = 999999999;
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
         }
 	
         /// <summary>
@@ -1313,7 +1315,7 @@ public:
 		//Simplified division by 2 operation(to reduce cost of multiplication)
         void DivideByTwo()
         {
-            if(ExtraRep==0)
+            if(ExtraRep==1)
                 ExtraRep = 2;
             else if(ExtraRep<=2147483648)
                 ExtraRep *= 2;
@@ -1327,7 +1329,7 @@ public:
 		//Simplified division by 4 operation(to reduce cost of multiplication)
         void DivideByFour()
         {
-            if(ExtraRep==0)
+            if(ExtraRep==1)
                 ExtraRep = 4;
             else if(ExtraRep<=1073741824)
                 ExtraRep *= 4;

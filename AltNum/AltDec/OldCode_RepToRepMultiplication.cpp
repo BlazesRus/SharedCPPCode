@@ -235,7 +235,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 				{
 					self.IntValue = self.IntValue<0?NegativeRep:0;
 					self.DecimalHalf = ApproachingBottomRep;
-					self.ExtraRep = 0;
+					self.ExtraRep = InitialExtraRep;
 					return;
 				}
 				else
@@ -247,7 +247,7 @@ inline void BlazesRusCode::AltDec::RepToRepMultOp(RepType& LRep, RepType& RRep, 
 
 		case RepType::ApproachingTop:
 			Value.DecimalHalf = 999999999;
-			Value.ExtraRep = 0;
+			Value.ExtraRep = InitialExtraRep;
 			RRep = RepType::NormalType;
 			break;
 		#if defined(AltNum_EnableApproachingDivided)

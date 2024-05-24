@@ -46,6 +46,11 @@ protected:
         FlaggedInt ExtraRep;
 	#endif
 
+	#if defined(AltNum_EnableNegativePowerRep)
+	static const signed int InitialExtraRep = 0;
+	#else
+	static const unsigned int InitialExtraRep = 1;
+	#endif
         #pragma region DigitStorage
 
 public:
@@ -56,7 +61,11 @@ public:
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const MirroredInt& extraVal = 0)
+	#if defined(AltNum_EnableNegativePowerRep)
+		AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const signed int& extraVal = 0)
+	#else
+        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const FlaggedInt& extraVal = 1)
+	#endif
         {
             IntValue = intVal;
             DecimalHalf = decVal;
@@ -77,7 +86,7 @@ public:
 	#endif
 				IntValue = rhs;
 			DecimalHalf = 0;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             return *this;
         } const
 
@@ -87,7 +96,7 @@ public:
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             return *this;
         } const
 
@@ -97,7 +106,7 @@ public:
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             return *this;
         } const
 
@@ -127,21 +136,21 @@ public:
         void SetAsZero()
         {
             IntValue = 0;
-            DecimalHalf = 0; ExtraRep = 0;
+            DecimalHalf = 0; ExtraRep = InitialExtraRep;
         }
 
 		//Set value as exactly one
         void SetAsOne()
         {
             IntValue = 1;
-            DecimalHalf = 0; ExtraRep = 0;
+            DecimalHalf = 0; ExtraRep = InitialExtraRep;
         }
 		
 		//Set as +-1 while keeping current sign
         void SetAsOneVal()
         {
             IntValue.Value = 1;
-            DecimalHalf = 0; ExtraRep = 0;
+            DecimalHalf = 0; ExtraRep = InitialExtraRep;
         }
 
         /// <summary>
@@ -154,21 +163,18 @@ public:
 
 	#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)/ExtraRep.Value
-        static const unsigned int ApproachingBottomDivRep = 1073741817;
+        static const unsigned int ApproachingBottomDivRep = 1073741808;
 		//When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)/ExtraRep.Value
-		static const unsigned int ApproachingTopDivRep = 1073741816;
+		static const unsigned int ApproachingTopDivRep = 1073741809;
 	#endif
     #if defined(AltNum_EnableWithinMinMaxRange)
-        //Undefined but in ranged of IntValue to DecimalHalf when at this ExtraRep.Value
-        static const unsigned int WithinMinMaxRangeRep = 2147483648;
-        //Undefined but in ranged of IntValue to -DecimalHalf.Value when at this ExtraRep.Value
-        static const unsigned int WithinMinToNegativeMaxRep = 2147483647;
+        //Undefined but in ranged of IntValue to DecimalHalf when at this ExtraRep.Value(if Extra.IsAltRep==1 then right side range is negative number)
+        static const unsigned int WithinMinMaxRangeRep = 0;
     #endif
-        static const unsigned int AlternativeFractionalLowerBound = 1073741816;
         //Maximum divisor for mixed Fractions
-        static const unsigned int MixedFracDivisorLimit = 1073741815;
-		//Fractional Division Maximum at this ExtraRep.Value
-        static const unsigned int FractionalMaximum = 2147483646;
+        static const unsigned int MixedFracDivisorLimit = 1073741804;//InfinityRep-1
+		//Fractional Division Maximum at this ExtraRep.Value (maximum of 2^31 since last is used for IsAltRep flag)
+        static const unsigned int FractionalMaximum = 2147483648;
 	
     #pragma endregion Const Representation values
 
@@ -187,7 +193,7 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
 			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeftPi;
                 else
 			#endif
@@ -196,29 +202,32 @@ public:
 		#endif
 			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeftPi;
                 else
         #endif
 					return RepType::ApproachingBottomPi;
     #endif
-    #if defined(AltNum_EnablePowerOfRepresentation)
-        #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep!=0)
-        #else
-            if(ExtraRep.IsAlternative())
-        #endif
-                return RepType::PiPower;
-    #endif
-    #if defined(AltNum_EnableFractionals)
-            if(ExtraRep!=0)
-        #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsAlternative())
-                    return RepType::MixedPi;
-                else
-        #endif
-                    return RepType::PiNumByDiv;
-    #endif
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep)
+				return RepType::WithinMinMaxRangePi;
+		#endif
+		#if defined(AltNum_EnableNegativePowerRep)
+			if(ExtraRep>0)
+				return RepType::PiPower;
+		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsAlternative())
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				return RepType::PiPower;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				return RepType::MixedPi;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+            if(ExtraRep>InitialExtraRep)
+				return RepType::PiNumByDiv;
+		#endif
             return RepType::PiNum;
         }
 
@@ -236,7 +245,7 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
 			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeftE;
                 else
 			#endif
@@ -245,30 +254,33 @@ public:
 		#endif
 			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeftE;
                 else
         #endif
 					return RepType::ApproachingBottomE;
     #endif
-    #if defined(AltNum_EnablePowerOfRepresentation)
-        #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep!=0)
-        #else
-            if(ExtraRep.IsAlternative())
-        #endif
-                return RepType::EPower;
-    #endif
-    #if defined(AltNum_EnableFractionals)
-            if(ExtraRep!=0)
-        #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsAlternative())
-                    return RepType::MixedE;
-                else
-        #endif
-                    return RepType::ENumByDiv;
-    #endif
-            return RepType::ENum;
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep)
+				return RepType::WithinMinMaxRangePi;
+		#endif
+		#if defined(AltNum_EnableNegativePowerRep)
+			if(ExtraRep>0)
+				return RepType::PiPower;
+		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsAlternative())
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				return RepType::PiPower;
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				return RepType::MixedPi;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+            if(ExtraRep>InitialExtraRep)
+				return RepType::PiNumByDiv;
+		#endif
+            return RepType::PiNum;
         }
 #endif
 
@@ -286,7 +298,7 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
 			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingImaginaryMidLeft;
                 else
 			#endif
@@ -295,7 +307,7 @@ public:
 		#endif
 			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingImaginaryMidLeft;
                 else
         #endif
@@ -307,14 +319,14 @@ public:
     #endif
     #if defined(AltNum_EnablePowerOfRepresentation)
         #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep!=0)
+            if(ExtraRep>InitialExtraRep)
         #else
             if(ExtraRep.IsAlternative())
         #endif
                 return RepType::EPower;
     #endif
     #if defined(AltNum_EnableFractionals)
-            if(ExtraRep!=0)
+            if(ExtraRep>InitialExtraRep)
         #if defined(AltNum_EnableMixedFractional)
                 if(ExtraRep.IsAlternative())
                     return RepType::MixedI;
@@ -339,7 +351,7 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
             if (DecimalHalf == ApproachingTopRep)
 			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeft;
                 else
 			#endif
@@ -348,7 +360,7 @@ public:
 		#endif
 			if (DecimalHalf == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep!=0)
+                if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingMidLeft;
                 else
         #endif
@@ -380,14 +392,14 @@ public:
         #endif
         #if defined(AltNum_EnablePowerOfRepresentation)
             #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep!=0)
+            if(ExtraRep>InitialExtraRep)
             #else
             if(ExtraRep.IsAlternative())
             #endif
                 return RepType::ToPowerOf;
         #endif
         #if defined(AltNum_EnableFractionals)
-            if(ExtraRep!=0)
+            if(ExtraRep>InitialExtraRep)
             #if defined(AltNum_EnableMixedFractional)
                 if(ExtraRep.IsAlternative())
                     return RepType::MixedFrac;
@@ -480,7 +492,7 @@ public:
         /// </summary>
         virtual void SetAsMaximum()
         {
-            IntValue = MaxIntValue; DecimalHalf = 999999999; ExtraRep = 0;
+            IntValue = MaxIntValue; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
         }
 
         /// <summary>
@@ -488,7 +500,7 @@ public:
         /// </summary>
         virtual void SetAsMinimum()
         {
-            IntValue = MinIntValue; DecimalHalf = 999999999; ExtraRep = 0;
+            IntValue = MinIntValue; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
         }
 
     #pragma endregion RangeLimits
@@ -551,7 +563,7 @@ public:
             ExtraRep = PiRep;
             #else
             DecimalHalf = PartialInt(0,1);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         }
     #endif
@@ -615,7 +627,7 @@ public:
             ExtraRep = ERep;
             #else
             DecimalHalf = PartialInt(0,2);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         }
     #endif
@@ -679,7 +691,7 @@ public:
             ExtraRep = IRep;
             #else
             DecimalHalf = PartialInt(0,3);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
             #endif
         }
     #endif
@@ -798,7 +810,7 @@ public:
     #else
             IntValue = 1; DecimalHalf = InfinityRep;
     #endif
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
         void SetAsNegativeInfinity()
@@ -808,7 +820,7 @@ public:
     #else
             IntValue = -1; DecimalHalf = InfinityRep;
     #endif
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 	#endif
     #pragma endregion Infinity Setters
@@ -821,7 +833,7 @@ public:
         void SetAsApproachingBottom(const int& value=0)
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
@@ -830,7 +842,7 @@ public:
         void SetAsApproachingTop(const int& value=0)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
         #endif
 		
@@ -839,13 +851,13 @@ public:
         void SetAsApproachingTopPi(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		
         void SetAsApproachingBottomPi(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		#endif
 		
@@ -854,13 +866,13 @@ public:
         void SetAsApproachingTopE(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		
         void SetAsApproachingBottomE(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		#endif
 		
@@ -869,13 +881,13 @@ public:
         void SetAsApproachingTopI(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		
         void SetAsApproachingBottomI(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
-            ExtraRep = 0;
+            ExtraRep = InitialExtraRep;
         }
 		#endif
     #endif
@@ -949,12 +961,12 @@ public:
 	#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
-            IntValue = 0; DecimalHalf = NaNRep; ExtraRep = 0;
+            IntValue = 0; DecimalHalf = NaNRep; ExtraRep = InitialExtraRep;
         }
 
         void SetAsUndefined()
         {
-            IntValue = 0; DecimalHalf = UndefinedRep; ExtraRep = 0;
+            IntValue = 0; DecimalHalf = UndefinedRep; ExtraRep = InitialExtraRep;
         }
 	#endif
     #pragma endregion NaN Setters
@@ -1042,7 +1054,7 @@ public:
 			//Can be converted at 100% precision from float after extracting "2^Exp + SignifNum*(2^(Exp - 23))" format information from bits of float
 		#else
 			MediumDec::SetFloatVal(Value);
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
 		#endif
         }
 
@@ -1053,7 +1065,7 @@ public:
         virtual void SetDoubleVal(const double& Value)
         {
 			MediumDec::SetDoubleVal(Value);
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
         }
 
         /// <summary>
@@ -1063,7 +1075,7 @@ public:
         virtual void SetDecimalVal(const ldouble& Value)
         {
 			MediumDec::SetDecimalVal(Value);
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
         }
 
         /// <summary>
@@ -1073,7 +1085,7 @@ public:
         virtual void SetBoolVal(const bool& Value)
         {
 			MediumDec::SetBoolVal(Value);
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
         }
 
         /// <summary>
@@ -1083,7 +1095,7 @@ public:
         virtual void SetIntVal(const int& Value)
         {
 			MediumDec::SetIntVal(Value);
-			ExtraRep = 0;
+			ExtraRep = InitialExtraRep;
         }
 		
         /// <summary>
@@ -1176,7 +1188,7 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         VariantType PiPowerNum(int powerExponent)
         {
-	        ExtraRep = 0;
+	        ExtraRep = InitialExtraRep;
 	        auto PiSide = PiNum;
 	        PiSide.IntPowOp(powerExponent);
 	        return PiSide;
@@ -1237,7 +1249,7 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         VariantType EPowerNum(int powerExponent)
         {
-	        ExtraRep = 0;
+	        ExtraRep = InitialExtraRep;
 	        auto ESide = ENum;
 	        ESide.IntPowOp(powerExponent);
 	        return ESide;
@@ -1309,7 +1321,7 @@ public:
 	#if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
                 BasicIntDivOp(ExtraRep);
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
                 break;
 	#endif
 	#if defined(AltNum_EnablePiRep)
@@ -1360,7 +1372,7 @@ public:
             case RepType::Infinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
 				DecimalHalf = 999999999;
-				/*ExtraRep = 0;*/
+				/*ExtraRep = InitialExtraRep;*/
 				break;
 	#endif
 	#if defined(AltNum_EnableApproaching)
@@ -1388,7 +1400,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
 			break;
 		#if defined(AltNum_EnablePiRep)
@@ -1400,7 +1412,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
 			break;
 		#endif
@@ -1413,7 +1425,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
 			break;
 		#endif
@@ -1426,7 +1438,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = 0;
+                ExtraRep = InitialExtraRep;
             }
 			break;
 		#endif
@@ -1438,7 +1450,7 @@ public:
 		#if defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
 					BasicUnsignedDivOp(ExtraRep.Value);
-					ExtraRep = 0;
+					ExtraRep = InitialExtraRep;
 				break;
 		#endif
 		#if defined(AltNum_EnableApproaching)
@@ -1461,7 +1473,7 @@ public:
 			case RepType::ImaginaryInfinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
 				DecimalHalf.Value = 999999999;
-				ExtraRep = 0;
+				ExtraRep = InitialExtraRep;
 				break;
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
@@ -1752,7 +1764,7 @@ public:
 			}
 		#elif defined(AltNum_EnablePowerOfRepresentation)
 			#if defined(AltNum_EnableNegativePowerRep)
-			if(ExtraRep!=0)
+			if(ExtraRep>InitialExtraRep)
 			#else
 			if(ExtraRep.IsAlternative())
 			#endif
@@ -1798,12 +1810,12 @@ public:
 		//To-Do add code here
 	#else
 		#if defined(AltNum_EnableFractionals)
-			if(ExtraRep!=0)//RepType:NumByDiv Assumed
+			if(ExtraRep>InitialExtraRep)//RepType:NumByDiv Assumed
 			{
 				auto lSide = *this;
 				lSide.BasicIntDivOp(ExtraRep.Value);
 				auto rSide = that;
-				if(that.ExtraRep!=0)
+				if(that.ExtraRep>InitialExtraRep)
 					rSide.BasicIntDivOp(that.ExtraRep.Value);
 #if defined(AltNum_EnableMirroredSection)
 				return BasicComparisonV2(rSide);
@@ -1811,7 +1823,7 @@ public:
 				return BasicComparison(rSide);
 #endif
 			}
-			else if(that.ExtraRep!=0)//RepType:NumByDiv Assumed
+			else if(that.ExtraRep>InitialExtraRep)//RepType:NumByDiv Assumed
 			{
 				auto rSide = that;
 				rSide.BasicIntDivOp(that.ExtraRep.Value);
@@ -2098,7 +2110,7 @@ protected:
 	#if !defined(AltNum_UseIntForDecimalHalf)
 			if(DecimalHalf.Flags==0)
 	#else
-			if(ExtraRep==0)
+			if(ExtraRep==1)
 	#endif
 			{
 				return BasicIntComparison(that);
@@ -2577,7 +2589,7 @@ public:
         void DivideByTwo()
         {
 			//To-Do:Adjust code for including power of and mixed fractions
-            if(ExtraRep==0)
+            if(ExtraRep==1)
                 ExtraRep = 2;
             else if(ExtraRep<=1073741823)
                 ExtraRep *= 2;
@@ -2593,7 +2605,7 @@ public:
 		//Simplified division by 4 operation(to reduce cost of multiplication)
         void DivideByFour()
         {
-            if(ExtraRep==0)
+            if(ExtraRep==1)
                 ExtraRep = 4;
             else if(ExtraRep<=1073741824)
                 ExtraRep *= 4;
@@ -3520,7 +3532,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = 0;
+        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3542,7 +3554,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = 0;
+        								ExtraRep = InitialExtraRep;
         								DecimalHalf.Value = ApproachingTopRep;
         							}
         							else
@@ -3654,7 +3666,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = 0;
+        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3676,7 +3688,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = 0;
+        								ExtraRep = InitialExtraRep;
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -3783,7 +3795,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = 0;
+        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3805,7 +3817,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = 0;
+        								ExtraRep = InitialExtraRep;
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -3938,7 +3950,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = 0;
+        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3960,7 +3972,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = 0;
+        								ExtraRep = InitialExtraRep;
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -4950,7 +4962,7 @@ protected:
             if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ExtraRep = 0;
+                DecimalHalf.Value = 0; ExtraRep = InitialExtraRep;
             }
             else
             {
@@ -4998,7 +5010,7 @@ protected:
             else if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ExtraRep = 0;
+                DecimalHalf.Value = 0; ExtraRep = InitialExtraRep;
             }
             else
             {
@@ -5033,7 +5045,7 @@ protected:
                 if(IsNegative()&&exp&1==1)
                     IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = 0;
+                DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else
             {
@@ -5101,7 +5113,7 @@ protected:
                 if(IsNegative()&&exp&1==1)
                     IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = 0;
+                DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else
             {
