@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -51,6 +51,10 @@ protected:
 	#else
 	static const unsigned int InitialExtraRep = 1;
 	#endif
+
+	void ResetDivisor(){
+		ExtraRep = InitialExtraRep;
+	}
         #pragma region DigitStorage
 
 public:
@@ -86,7 +90,7 @@ public:
 	#endif
 				IntValue = rhs;
 			DecimalHalf = 0;
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             return *this;
         } const
 
@@ -96,7 +100,7 @@ public:
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             return *this;
         } const
 
@@ -106,7 +110,7 @@ public:
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             return *this;
         } const
 
@@ -136,21 +140,21 @@ public:
         void SetAsZero()
         {
             IntValue = 0;
-            DecimalHalf = 0; ExtraRep = InitialExtraRep;
+            DecimalHalf = 0; ResetDivisor();
         }
 
 		//Set value as exactly one
         void SetAsOne()
         {
             IntValue = 1;
-            DecimalHalf = 0; ExtraRep = InitialExtraRep;
+            DecimalHalf = 0; ResetDivisor();
         }
 		
 		//Set as +-1 while keeping current sign
         void SetAsOneVal()
         {
             IntValue.Value = 1;
-            DecimalHalf = 0; ExtraRep = InitialExtraRep;
+            DecimalHalf = 0; ResetDivisor();
         }
 
         /// <summary>
@@ -483,7 +487,7 @@ public:
         /// </summary>
         virtual void SetAsMaximum()
         {
-            IntValue = MaxIntValue; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
+            IntValue = MaxIntValue; DecimalHalf = 999999999; ResetDivisor();
         }
 
         /// <summary>
@@ -491,7 +495,7 @@ public:
         /// </summary>
         virtual void SetAsMinimum()
         {
-            IntValue = MinIntValue; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
+            IntValue = MinIntValue; DecimalHalf = 999999999; ResetDivisor();
         }
 
     #pragma endregion RangeLimits
@@ -554,7 +558,7 @@ public:
             ExtraRep = PiRep;
             #else
             DecimalHalf = PartialInt(0,1);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             #endif
         }
     #endif
@@ -618,7 +622,7 @@ public:
             ExtraRep = ERep;
             #else
             DecimalHalf = PartialInt(0,2);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             #endif
         }
     #endif
@@ -682,7 +686,7 @@ public:
             ExtraRep = IRep;
             #else
             DecimalHalf = PartialInt(0,3);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
             #endif
         }
     #endif
@@ -801,7 +805,7 @@ public:
     #else
             IntValue = 1; DecimalHalf = InfinityRep;
     #endif
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 
         void SetAsNegativeInfinity()
@@ -811,7 +815,7 @@ public:
     #else
             IntValue = -1; DecimalHalf = InfinityRep;
     #endif
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 	#endif
     #pragma endregion Infinity Setters
@@ -824,7 +828,7 @@ public:
         void SetAsApproachingBottom(const int& value=0)
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
@@ -833,7 +837,7 @@ public:
         void SetAsApproachingTop(const int& value=0)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
         #endif
 		
@@ -842,13 +846,13 @@ public:
         void SetAsApproachingTopPi(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		
         void SetAsApproachingBottomPi(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		#endif
 		
@@ -857,13 +861,13 @@ public:
         void SetAsApproachingTopE(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		
         void SetAsApproachingBottomE(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		#endif
 		
@@ -872,13 +876,13 @@ public:
         void SetAsApproachingTopI(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		
         void SetAsApproachingBottomI(const int& value=0)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
-            ExtraRep = InitialExtraRep;
+            ResetDivisor();
         }
 		#endif
     #endif
@@ -952,12 +956,12 @@ public:
 	#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
-            IntValue = 0; DecimalHalf = NaNRep; ExtraRep = InitialExtraRep;
+            IntValue = 0; DecimalHalf = NaNRep; ResetDivisor();
         }
 
         void SetAsUndefined()
         {
-            IntValue = 0; DecimalHalf = UndefinedRep; ExtraRep = InitialExtraRep;
+            IntValue = 0; DecimalHalf = UndefinedRep; ResetDivisor();
         }
 	#endif
     #pragma endregion NaN Setters
@@ -1045,7 +1049,7 @@ public:
 			//Can be converted at 100% precision from float after extracting "2^Exp + SignifNum*(2^(Exp - 23))" format information from bits of float
 		#else
 			MediumDec::SetFloatVal(Value);
-			ExtraRep = InitialExtraRep;
+			ResetDivisor();
 		#endif
         }
 
@@ -1056,7 +1060,7 @@ public:
         virtual void SetDoubleVal(const double& Value)
         {
 			MediumDec::SetDoubleVal(Value);
-			ExtraRep = InitialExtraRep;
+			ResetDivisor();
         }
 
         /// <summary>
@@ -1066,7 +1070,7 @@ public:
         virtual void SetDecimalVal(const ldouble& Value)
         {
 			MediumDec::SetDecimalVal(Value);
-			ExtraRep = InitialExtraRep;
+			ResetDivisor();
         }
 
         /// <summary>
@@ -1076,7 +1080,7 @@ public:
         virtual void SetBoolVal(const bool& Value)
         {
 			MediumDec::SetBoolVal(Value);
-			ExtraRep = InitialExtraRep;
+			ResetDivisor();
         }
 
         /// <summary>
@@ -1086,7 +1090,7 @@ public:
         virtual void SetIntVal(const int& Value)
         {
 			MediumDec::SetIntVal(Value);
-			ExtraRep = InitialExtraRep;
+			ResetDivisor();
         }
 		
         /// <summary>
@@ -1179,7 +1183,7 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         VariantType PiPowerNum(int powerExponent)
         {
-	        ExtraRep = InitialExtraRep;
+	        ResetDivisor();
 	        auto PiSide = PiNum;
 	        PiSide.IntPowOp(powerExponent);
 	        return PiSide;
@@ -1206,7 +1210,7 @@ public:
         #if defined(AltNum_UseIntForDecimalHalf)
                         ExtraRep = PiRep;
         #else
-                        ExtraRep.Value = 0;
+                        ResetDivisor();
         #endif
                     }
                     break;
@@ -1240,7 +1244,7 @@ public:
         template<MediumDecVariant VariantType=AltDecBase>
         VariantType EPowerNum(int powerExponent)
         {
-	        ExtraRep = InitialExtraRep;
+	        ResetDivisor();
 	        auto ESide = ENum;
 	        ESide.IntPowOp(powerExponent);
 	        return ESide;
@@ -1267,7 +1271,7 @@ public:
         #if defined(AltNum_UseIntForDecimalHalf)
                         ExtraRep = ERep;
         #else
-                        ExtraRep.Value = 0;
+                        ResetDivisor();
         #endif
                     }
                     break;
@@ -1311,8 +1315,8 @@ public:
                 break;
 	#if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
-                BasicIntDivOp(ExtraRep);
-                ExtraRep = InitialExtraRep;
+                BasicUIntDivOp(ExtraRep.Value);
+                ResetDivisor();
                 break;
 	#endif
 	#if defined(AltNum_EnablePiRep)
@@ -1363,7 +1367,7 @@ public:
             case RepType::Infinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
 				DecimalHalf = 999999999;
-				/*ExtraRep = InitialExtraRep;*/
+				/*ResetDivisor();*/
 				break;
 	#endif
 	#if defined(AltNum_EnableApproaching)
@@ -1391,7 +1395,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = InitialExtraRep;
+                ResetDivisor();
             }
 			break;
 		#if defined(AltNum_EnablePiRep)
@@ -1403,7 +1407,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = InitialExtraRep;
+                ResetDivisor();
             }
 			break;
 		#endif
@@ -1416,7 +1420,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = InitialExtraRep;
+                ResetDivisor();
             }
 			break;
 		#endif
@@ -1429,7 +1433,7 @@ public:
                     Res += IntValue;
                 IntValue = Res.IntValue;
                 DecimalHalf.Value = Res.DecimalHalf;
-                ExtraRep = InitialExtraRep;
+                ResetDivisor();
             }
 			break;
 		#endif
@@ -1440,8 +1444,8 @@ public:
 
 		#if defined(AltNum_EnableDecimaledIFractionals)
 			case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
-					BasicUnsignedDivOp(ExtraRep.Value);
-					ExtraRep = InitialExtraRep;
+					BasicUIntDivOp(ExtraRep.Value);
+					ResetDivisor();
 				break;
 		#endif
 		#if defined(AltNum_EnableApproaching)
@@ -1464,7 +1468,7 @@ public:
 			case RepType::ImaginaryInfinity:
 				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
 				DecimalHalf.Value = 999999999;
-				ExtraRep = InitialExtraRep;
+				ResetDivisor();
 				break;
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
@@ -1656,7 +1660,7 @@ public:
 				case RepType::MixedPi:{
 					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
 					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
-					unsigned long long decHalf = DecimalOverflowX*Frac.numerator()
+					unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
 					decHalf /= Frac.denominator();
 					DecimalHalf.Value = (unsigned int) decHalf;
 					BasicUnsignedMultOp(PiNum); 
@@ -1668,7 +1672,7 @@ public:
 				case RepType::MixedE:{
 					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
 					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
-					unsigned long long decHalf = DecimalOverflowX*Frac.numerator()
+					unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
 					decHalf /= Frac.denominator();
 					DecimalHalf.Value = (unsigned int) decHalf;
 					BasicUnsignedMultOp(ENum); 
@@ -3523,7 +3527,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
+        								IntValue.Value = 1; ResetDivisor();
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3545,7 +3549,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = InitialExtraRep;
+        								ResetDivisor();
         								DecimalHalf.Value = ApproachingTopRep;
         							}
         							else
@@ -3657,7 +3661,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
+        								IntValue.Value = 1; ResetDivisor();
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3679,7 +3683,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = InitialExtraRep;
+        								ResetDivisor();
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -3786,7 +3790,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
+        								IntValue.Value = 1; ResetDivisor();
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3808,7 +3812,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = InitialExtraRep;
+        								ResetDivisor();
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -3941,7 +3945,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								IntValue.Value = 1; ExtraRep = InitialExtraRep;
+        								IntValue.Value = 1; ResetDivisor();
         								DecimalHalf.Value = ApproachingBottomRep;
         							}
         							else
@@ -3963,7 +3967,7 @@ protected:
         						{
         							if(divRes == 0)//Become 0.9..9
         							{
-        								ExtraRep = InitialExtraRep;
+        								ResetDivisor();
         								DecimalHalf = ApproachingTopRep;
         							}
         							else
@@ -4953,7 +4957,7 @@ protected:
             if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ExtraRep = InitialExtraRep;
+                DecimalHalf.Value = 0; ResetDivisor();
             }
             else
             {
@@ -5001,7 +5005,7 @@ protected:
             else if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ExtraRep = InitialExtraRep;
+                DecimalHalf.Value = 0; ResetDivisor();
             }
             else
             {
@@ -5036,7 +5040,7 @@ protected:
                 if(IsNegative()&&exp&1==1)
                     IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                DecimalHalf = 0; ResetDivisor();
             }
             else
             {
@@ -5104,7 +5108,7 @@ protected:
                 if(IsNegative()&&exp&1==1)
                     IntValue.IsPositive = 1;
                 IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                DecimalHalf = 0; ResetDivisor();
             }
             else
             {
