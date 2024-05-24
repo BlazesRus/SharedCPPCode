@@ -1740,47 +1740,72 @@ public:
 		}
 	#endif
 
-    #pragma endregion Other RepType Conversion
+	#if defined(AltNum_EnableMixedFractional)
+		void ConvertFromMixedFracToMediumDecV2Equiv()
+		{
+			//RepType repType = GetRepType();
+			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
+			unsigned int denon = Frac.denominator();
+			//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
+			unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
+			decHalf /= denon;
+			DecimalHalf.Value = (unsigned int) decHalf;
+			ResetDivisor();
+			BasicUnsignedDivOp(denom);
+		}
+	#endif
 
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
 		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
-		virtual void ConvertDownToMediumDecV2Equiv()
+		void ConvertDownToMediumDecV2Equiv()
 		{
-	#if defined(AltNum_UseIntForDecimalHalf)
-			//To-Do:Add code to convert down to base PiNum,ENum,INum, and NormalType
-	#else
+			RepType repType = GetRepType();
+			switch(repType)
+			{
 		#if defined(AltNum_EnableMixedFractional)
-			if(ExtraRep.IsAlternative())
-			{
-				//To-Do add code here to convert from mixed fraction
-				return;
-			}
-		#elif defined(AltNum_EnablePowerOfRepresentation)
-			#if defined(AltNum_EnableNegativePowerRep)
-			if(ExtraRep>InitialExtraRep)
-			#else
-			if(ExtraRep.IsAlternative())
+			#if defined(AltNum_EnablePiRep)
+				case RepType::MixedPi:
 			#endif
-			{
-				if(DecimalHalf.Flag==1)//Convert down to PiNum
-					ConvertPiPowerToPiRep();
-				else if(DecimalHalf.Flag==2)//Convert down to ENum
-					ConvertEPowerToERep();
-				return;
-			}
+			#if defined(AltNum_EnableERep)
+				case RepType::MixedE:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::MixedI:
+			#endif
+				case RepType::MixedFrac:
+					ConvertFromMixedFracToMediumDecV2Equiv(); break;
+		#elif defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::PiPower:
+					ConvertPiPowerToPiRep(); break;
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::EPower:
+					ConvertEPowerToERep(); break;
+			#endif
+				case RepType::ToPowerOf:
+					ConvertToNormType(repType); break;
 		#endif
 		#if defined(AltNum_EnableFractionals)
-			if(ExtraRep.Value!=0)
-			{
-				BasicIntDivOp(ExtraRep.Value);
-				ExtraRep.Value = 0;
-				return;
-			}
+			#if defined(AltNum_EnablePiRep)
+				case RepType::PiNumByDiv:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::ENumByDiv:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::INumByDiv:
+			#endif
+				case RepType::NumByDiv:
+					BasicIntDivOp(ExtraRep.Value);
+					ResetDivisor();
 		#endif
+				default:
+					ConvertToNormType(repType);
+			}
 			ConvertToNormTypeV2();
-	#endif
 		}
 
 protected:
