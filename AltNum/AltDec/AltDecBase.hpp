@@ -220,8 +220,7 @@ public:
 		#endif
 		#if defined(AltNum_EnablePowerOfRepresentation)
 				return RepType::PiPower;
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+		#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedPi;
 		#endif
 		#if defined(AltNum_EnableFractionals)
@@ -262,25 +261,24 @@ public:
     #endif
 		#if defined(AltNum_EnableWithinMinMaxRange)
 			if(ExtraRep==WithinMinMaxRangeRep)
-				return RepType::WithinMinMaxRangePi;
+				return RepType::WithinMinMaxRangeE;
 		#endif
 		#if defined(AltNum_EnableNegativePowerRep)
 			if(ExtraRep>0)
-				return RepType::PiPower;
+				return RepType::EPower;
 		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
 			if(ExtraRep.IsAlternative())
 		#endif
 		#if defined(AltNum_EnablePowerOfRepresentation)
-				return RepType::PiPower;
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				return RepType::MixedPi;
+				return RepType::EPower;
+		#elif defined(AltNum_EnableMixedFractional)
+				return RepType::MixedE;
 		#endif
 		#if defined(AltNum_EnableFractionals)
             if(ExtraRep>InitialExtraRep)
-				return RepType::PiNumByDiv;
+				return RepType::ENumByDiv;
 		#endif
-            return RepType::PiNum;
+            return RepType::ENum;
         }
 #endif
 
@@ -317,23 +315,18 @@ public:
             if(DecimalHalf == InfinityRep)
                 return RepType::ImaginaryInfinity;
     #endif
-    #if defined(AltNum_EnablePowerOfRepresentation)
-        #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep>InitialExtraRep)
-        #else
-            if(ExtraRep.IsAlternative())
-        #endif
-                return RepType::EPower;
-    #endif
-    #if defined(AltNum_EnableFractionals)
-            if(ExtraRep>InitialExtraRep)
-        #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsAlternative())
-                    return RepType::MixedI;
-                else
-        #endif
-                    return RepType::INumByDiv;
-    #endif
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep)
+				return RepType::WithinMinMaxRangeI;
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsAlternative())
+				return RepType::MixedI;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+        if(ExtraRep>InitialExtraRep)
+				return RepType::INumByDiv;
+		#endif
             return RepType::INum;
         }
 #endif
@@ -366,6 +359,35 @@ public:
         #endif
 					return RepType::ApproachingBottom;
     #endif
+        #if defined(AltNum_EnableInfinityRep)
+            if(DecimalHalf == InfinityRep)
+                return RepType::Infinity;
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)
+            if(DecimalHalf==UndefinedInRangeRep)
+                //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+                //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
+                return RepType::UndefinedButInRange;
+        #endif
+		#if defined(AltNum_EnableWithinMinMaxRange)
+			if(ExtraRep==WithinMinMaxRangeRep)
+				return RepType::WithinMinMaxRange;
+		#endif
+		#if defined(AltNum_EnableNegativePowerRep)
+			if(ExtraRep>0)
+				return RepType::ToPowerOf;
+		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
+			if(ExtraRep.IsAlternative())
+		#endif
+		#if defined(AltNum_EnablePowerOfRepresentation)
+				return RepType::ToPowerOf;
+		#elif defined(AltNum_EnableMixedFractional)
+				return RepType::MixedFrac;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+            if(ExtraRep>InitialExtraRep)
+				return RepType::NumByDiv;
+		#endif
         #if defined(AltNum_EnableNaN)
             if(DecimalHalf==NaNRep)
                 return RepType::NaN;
@@ -375,37 +397,6 @@ public:
         #if defined(AltNum_EnableNil)
             if(DecimalHalf==NilRep)
                 return RepType::Nil;
-        #endif
-        #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity
-            #if defined(AltNum_EnableWithinMinMaxRange)
-            if (ExtraRep.Value == WithinMinMaxRangeRep||ExtraRep.Value==WithinMinToNegativeMaxRep)
-                return RepType::WithinMinMaxRange;
-            #endif
-            if(DecimalHalf==UndefinedInRangeRep)
-                //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
-                //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
-                return RepType::UndefinedButInRange;
-        #endif
-        #if defined(AltNum_EnableInfinityRep)
-            if(DecimalHalf == InfinityRep)
-                return RepType::Infinity;
-        #endif
-        #if defined(AltNum_EnablePowerOfRepresentation)
-            #if defined(AltNum_EnableNegativePowerRep)
-            if(ExtraRep>InitialExtraRep)
-            #else
-            if(ExtraRep.IsAlternative())
-            #endif
-                return RepType::ToPowerOf;
-        #endif
-        #if defined(AltNum_EnableFractionals)
-            if(ExtraRep>InitialExtraRep)
-            #if defined(AltNum_EnableMixedFractional)
-                if(ExtraRep.IsAlternative())
-                    return RepType::MixedFrac;
-                else
-            #endif
-                    return RepType::NumByDiv;
         #endif
             return RepType::NormalType;
         }
