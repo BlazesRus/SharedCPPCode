@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -505,25 +505,13 @@ public:
         virtual void SetPiVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
-        #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
-            ExtraRep = PiRep;
-        #else
-            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
-            ExtraRep = Value.ExtraRep;
-        #endif
         }
 
         virtual void SetPiVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
-        #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
-            ExtraRep = PiRep;
-        #else
-            DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
-            ExtraRep = Value.ExtraRep;
-        #endif
         }
 
 protected:
@@ -545,7 +533,7 @@ protected:
 public:
         constexpr auto SetPiVal = SetPiValV1<AltDecBase>;
 
-        virtual void SetPiValFromInt(const int& Value)
+        void SetPiValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
