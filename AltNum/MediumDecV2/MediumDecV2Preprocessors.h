@@ -26,6 +26,9 @@ AltNum_EnableIndeterminateForms = Enables extra representations for outputing an
 AltNum_EnableInfinityPowers =
 Allows powers of infinity for operations where infinity is somehow more infinite than normal
       (Not Implemented)
+	
+AltNum_PiOrEEnabled = At least PiRep or ERep flags enabled  
+AltNum_AltFlagsEnabled = Pi representation, E representation, and/or I representation enabled
 */
 
 #if defined(AltNum_DefineDivideByZeroAsInfinity)&& !defined(AltNum_EnableInfinityRep)
@@ -43,10 +46,18 @@ Allows powers of infinity for operations where infinity is somehow more infinite
 	//#define AltNum_EnableIndeterminateForms//use this toggle once have all the needed parts coded
 #endif
 
+#if defined(AltNum_EnablePiRep) || defined(AltNum_EnableERep)
+	#define AltNum_PiOrEEnabled
+#endif
+
 //Forcing rename of toggle if alternative toggle used
 #if defined(AltNum_EnableImaginaryNum)&&!defined(AltNum_EnableIRep)
 	#define AltNum_EnableIRep
 	#undef AltNum_EnableIRep
+#endif
+
+#if defined(AltNum_EnablePiRep) || defined(AltNum_EnableERep) || defined(AltNum_EnableIRep)
+	#define AltNum_AltFlagsEnabled
 #endif
 
 #if defined(MediumDecV2_EnableWithinMinMaxRange)&&defined(AltNum_EnableIRep)
