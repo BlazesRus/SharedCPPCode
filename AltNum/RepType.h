@@ -188,6 +188,11 @@ namespace BlazesRusCode
 		//Defined when DecimalHalf.Value == IndeterminateRep with exact value determined by IntValue field
 		IndeterminateForm = 136,
 #endif
+#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+		//Indeterminate form of divided by zero
+		//(Enum Bits:8,5)
+		DividedByZero = 144,
+#endif
 	#ifdef AltNum_EnableComplexNumbers
 		//Enum Bits subject to change for Complec Number later(Not completely used yet)
 		ComplexIRep = 255,

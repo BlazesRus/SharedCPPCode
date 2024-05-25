@@ -241,7 +241,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
-				return RepType::IndeterminateForm;
+				return RepType::DividedByZero;
 		#endif
 		#if defined(AltNum_EnableIndeterminateForms)
 			if(DecimalHalf.Value>IndeterminateThreshold)
@@ -300,7 +300,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
-				return RepType::IndeterminateForm;
+				return RepType::DividedByZero;
 		#endif
 		#if defined(AltNum_EnableIndeterminateForms)
 			if(DecimalHalf.Value>IndeterminateThreshold)
@@ -357,7 +357,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
-				return RepType::IndeterminateForm;
+				return RepType::DividedByZero;
 		#endif
 		#if defined(AltNum_EnableIndeterminateForms)
 			if(DecimalHalf.Value>IndeterminateThreshold)
@@ -426,7 +426,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
-				return RepType::IndeterminateForm;
+				return RepType::DividedByZero;
 		#endif
 		#if defined(AltNum_EnableIndeterminateForms)
 			if(DecimalHalf.Value>IndeterminateThreshold)
