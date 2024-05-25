@@ -2445,7 +2445,7 @@ public:
                         if(IntValue.IsPositive())//(2/6)+ -(5/12)
 						    --intTotal;
                         else//(-2/6)+ (11/12)
-                            ++intTotal
+                            ++intTotal;
 					} else//(4/6)+ -(5/12)
 						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);
 				}
