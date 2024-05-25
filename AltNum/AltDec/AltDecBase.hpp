@@ -2657,12 +2657,12 @@ public:
         {
             if(ExtraRep==1)
                 ExtraRep = 4;
-            else if(ExtraRep<=1073741824)
+            else if(ExtraRep<=536870911)
                 ExtraRep *= 4;
             else
             {
                 rValue.UnsignedBasicIntDivOp(65536);//Divided by 2^16
-                ExtraRep /= 16384;//Divided by 2^16, and then multiplied by 2
+                ExtraRep /= 16384;//Divided by 2^16, and then multiplied by 4
             }       
         }
 
