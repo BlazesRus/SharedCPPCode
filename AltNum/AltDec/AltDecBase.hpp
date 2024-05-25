@@ -2437,7 +2437,7 @@ public:
                 } else {//Left and right values have opposite signs
 				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
 					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
-				    if(leftNum==rightNum){
+				    if(leftNum==rightNum){//4/6 + -4/6 = 0/6
 						IntValue = intTotal; DecimalHalf.Value = 0;
 						ResetDivisor(); return;
 					} else if(rightNum>leftNum){
@@ -2454,9 +2454,9 @@ public:
 				unsigned long long denom = frac.denominator();
 				unsigned long long num = frac.numerator();
 				if(num>denom){ num -= denom;
-					if(IntValue.IsPositive())
+					if(IntValue.IsPositive())//11/12 + (4/12) = 1 3/12
 						++intTotal;
-					else
+					else//-11/12 + (-4/12) = -1 3/12
 						--intTotal;
 				}
 				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
@@ -2562,27 +2562,26 @@ public:
                             ++intTotal;
 					} else//(4/6)+ -(5/12)
 						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
-                } else {
+                } else {//Left and right values have opposite signs
 				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
 					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
-/*				    if(leftNum==rightNum){
-						IntValue = intTotal; DecimalHalf.Value = 0;
-						ResetDivisor(); return;
-					} else if(rightNum>leftNum){
+				    if(leftNum==rightNum)//4/6 - (-4/6) = 8/6
+						frac = boost::rational<unsigned long long>(leftNum + rightNum, ExtraRep.Value);
+					else if(rightNum>leftNum){
 						frac = boost::rational<unsigned long long>(rightNum-leftNum, ExtraRep.Value);
-                        if(IntValue.IsPositive())//(2/6)+ -(5/12)
+                        if(IntValue.IsPositive())//(2/6)- (5/12)
 						    --intTotal;
                         else//(-2/6)+ (11/12)
-                            ++intTotal
-					} else//(4/6)+ -(5/12)
-						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);*/
+                            ++intTotal;
+					} else//(4/6) - (-2/6) = 6/6
+						frac = boost::rational<unsigned long long>(leftNum + rightNum, ExtraRep.Value);
 				}
 				unsigned long long denom = frac.denominator();
 				unsigned long long num = frac.numerator();
 				if(num>denom){ num -= denom;
-					if(IntValue.IsPositive())
-						++intTotal;
-					else
+					if(IntValue.IsPositive())//4/6 - (-4/6) = 1 2/6
+						++intTotal;//
+					else//-4/6 + (-4/6) = 1 2/6
 						--intTotal;
 				}
 				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
@@ -2611,7 +2610,6 @@ public:
 				}
 			}
 		}
-	
 
     #endif
 #endif
