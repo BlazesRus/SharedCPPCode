@@ -150,7 +150,7 @@ AltNum_ReserveLastRepForDivideByZero
 #endif
 
 #if defined(AltNum_ReserveZeroRepForDivideByZero)
-	#undef AltNum_EnableWithinMinMaxRange
+	#undef AltNum_ReserveZeroRepForDivideByZero
 #endif
 
 #if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableFractionals)
