@@ -838,8 +838,8 @@ public:
 		
         constexpr auto PartialUIntDivOpV1 = PartialUIntDivOpV1<unsigned int>;
         constexpr auto PartialIntDivOpV1 = PartialUIntDivOpV1<signed int>;
-        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<unsigned long long>;
-        constexpr auto PartialInt64DivOpV1 = PartialUIntDivOpV1<signed long long>;
+        constexpr auto PartialUInt64DivOpV1 = PartialUIntDivOpV1<UInt64>;
+        constexpr auto PartialInt64DivOpV1 = PartialUIntDivOpV1<Int64>;
 
 protected:
 
@@ -883,8 +883,8 @@ public:
 
         constexpr auto BasicUIntDivOp = BasicUIntDivOpV1<unsigned int>;
         constexpr auto BasicIntDivOp = BasicUIntDivOpV1<signed int>;
-        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<unsigned long long>;
-        constexpr auto BasicInt64DivOp = BasicUIntDivOpV1<signed long long>;
+        constexpr auto BasicUInt64DivOp = BasicUIntDivOpV1<UInt64>;
+        constexpr auto BasicInt64DivOp = BasicUIntDivOpV1<Int64>;
 
         constexpr auto BasicUInt8DivOp = BasicUIntDivOpV1<unsigned char>;
         constexpr auto BasicInt8DivOp = BasicUIntDivOpV1<signed char>;
@@ -893,8 +893,8 @@ public:
 
         constexpr auto BasicDivideByUInt = BasicDivideByUIntV1<unsigned int>;
         constexpr auto BasicDivideByInt = BasicDivideByUIntV1<signed int>;
-        constexpr auto BasicDivideByUInt64 = BasicDivideByUIntV1<unsigned long long>;
-        constexpr auto BasicDivideByInt64 = BasicDivideByUIntV1<signed long long>;
+        constexpr auto BasicDivideByUInt64 = BasicDivideByUIntV1<UInt64>;
+        constexpr auto BasicDivideByInt64 = BasicDivideByUIntV1<Int64>;
 
         constexpr auto BasicDivideByUInt8 = BasicDivideByUIntV1<unsigned char>;
         constexpr auto BasicDivideByInt8 = BasicDivideByUIntV1<signed char>;
@@ -932,8 +932,8 @@ public:
 		
         constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<unsigned int>;
         constexpr auto PartialIntMultOp = PartialUIntMultOpV1<signed int>;
-        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<unsigned long long>;
-        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<signed long long>;
+        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<UInt64>;
+        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<Int64>;
 		
 protected:
         template<IntegerType IntType=signed int>
@@ -969,8 +969,8 @@ public:
 
         constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<unsigned int>;
         constexpr auto BasicIntMultOp = BasicUIntMultOpV1<signed int>;
-        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<unsigned long long>;
-        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<signed long long>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<UInt64>;
+        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<Int64>;
 
         constexpr auto BasicUInt8MultOp = BasicUIntMultOpV1<unsigned char>;
         constexpr auto BasicInt8MultOp = BasicUIntMultOpV1<signed char>;
@@ -979,8 +979,8 @@ public:
 
         constexpr auto BasicMultiplyByUInt = BasicMultiplyByUIntV1<unsigned int>;
         constexpr auto BasicMultiplyByInt = BasicMultiplyByUIntV1<signed int>;
-        constexpr auto BasicMultiplyByUInt64 = BasicMultiplyByUIntV1<unsigned long long>;
-        constexpr auto BasicMultiplyByInt64 = BasicMultiplyByUIntV1<signed long long>;
+        constexpr auto BasicMultiplyByUInt64 = BasicMultiplyByUIntV1<UInt64>;
+        constexpr auto BasicMultiplyByInt64 = BasicMultiplyByUIntV1<Int64>;
 
         constexpr auto BasicMultiplyByUInt8 = BasicMultiplyByUIntV1<unsigned char>;
         constexpr auto BasicMultiplyByInt8 = BasicMultiplyByUIntV1<signed char>;
@@ -1026,8 +1026,8 @@ public:
         constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<unsigned int>;
         constexpr auto BasicIntAddOp = BasicUIntAddOpV1<signed int>;
         constexpr auto UnsignedBasicIntAddOp = BasicUIntAddOpV1<signed int>;
-        constexpr auto BasicUIntAddOp64 = BasicUIntAddOpV1<unsigned long long>;
-        constexpr auto BasicIntAddOp64 = BasicUIntAddOpV1<signed long long>;
+        constexpr auto BasicUIntAddOp64 = BasicUIntAddOpV1<UInt64>;
+        constexpr auto BasicIntAddOp64 = BasicUIntAddOpV1<Int64>;
         constexpr auto UnsignedBasicIntAddOp64 = BasicUIntAddOpV1<signed int>;
 
         constexpr auto BasicUIntAddOp8 = BasicUIntAddOpV1<unsigned char>;
@@ -1037,8 +1037,8 @@ public:
 
         constexpr auto BasicAddByUInt = BasicAddByUIntV1<unsigned int>;
         constexpr auto BasicAddByInt = BasicAddByUIntV1<signed int>;
-        constexpr auto BasicAddByUInt64 = BasicAddByUIntV1<unsigned long long>;
-        constexpr auto BasicAddByInt64 = BasicAddByUIntV1<signed long long>;
+        constexpr auto BasicAddByUInt64 = BasicAddByUIntV1<UInt64>;
+        constexpr auto BasicAddByInt64 = BasicAddByUIntV1<Int64>;
 
         constexpr auto BasicAddByUInt8 = BasicAddByUIntV1<unsigned char>;
         constexpr auto BasicAddByInt8 = BasicAddByUIntV1<signed char>;
@@ -1084,8 +1084,8 @@ public:
         constexpr auto BasicUIntSubOp = BasicUIntSubOpV1<unsigned int>;
         constexpr auto BasicIntSubOp = BasicUIntSubOpV1<signed int>;
         constexpr auto UnsignedBasicIntSubOp = BasicUIntSubOpV1<signed int>;
-        constexpr auto BasicUIntSubOp64 = BasicUIntSubOpV1<unsigned long long>;
-        constexpr auto BasicIntSubOp64 = BasicUIntSubOpV1<signed long long>;
+        constexpr auto BasicUIntSubOp64 = BasicUIntSubOpV1<UInt64>;
+        constexpr auto BasicIntSubOp64 = BasicUIntSubOpV1<Int64>;
         constexpr auto UnsignedBasicIntSubOp64 = BasicUIntSubOpV1<signed int>;
 
         constexpr auto BasicUIntSubOp8 = BasicUIntSubOpV1<unsigned char>;
@@ -1095,8 +1095,8 @@ public:
 
         constexpr auto BasicSubByUInt = BasicSubByUIntV1<unsigned int>;
         constexpr auto BasicSubByInt = BasicSubByUIntV1<signed int>;
-        constexpr auto BasicSubByUInt64 = BasicSubByUIntV1<unsigned long long>;
-        constexpr auto BasicSubByInt64 = BasicSubByUIntV1<signed long long>;
+        constexpr auto BasicSubByUInt64 = BasicSubByUIntV1<UInt64>;
+        constexpr auto BasicSubByInt64 = BasicSubByUIntV1<Int64>;
 
         constexpr auto BasicSubByUInt8 = BasicSubByUIntV1<unsigned char>;
         constexpr auto BasicSubByInt8 = BasicSubByUIntV1<signed char>;

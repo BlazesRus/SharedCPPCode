@@ -64,3 +64,7 @@ AltNum_UseBuiltinVirtualTable =
 		#define AltNum_EnableApproaching
 	#endif
 #endif
+
+#define UInt64 UInt64
+
+#define Int64 Int64

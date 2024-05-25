@@ -1184,27 +1184,27 @@ public:
 
 		void PartialDivOp(signed int& Value) { PartialIntDivOp(Value); }
 		void PartialDivOp(unsigned int& Value) { PartialIntDivOp(Value); }
-		void PartialDivOp(signed long long& Value) { PartialIntDivOp(Value); }
-        void PartialDivOp(unsigned long long& Value) { PartialIntDivOp(Value); }
+		void PartialDivOp(Int64& Value) { PartialIntDivOp(Value); }
+        void PartialDivOp(UInt64& Value) { PartialIntDivOp(Value); }
 
 		static void PartialDivOp(TinyUDec& self, signed int& Value) { self.PartialIntDivOp(Value); }
 		static void PartialDivOp(TinyUDec& self, unsigned int& Value) { self.PartialIntDivOp(Value); }
-		static void PartialDivOp(TinyUDec& self, signed long long& Value) { self.PartialIntDivOp(Value); }
-        static void PartialDivOp(TinyUDec& self, unsigned long long& Value) { self.PartialIntDivOp(Value); }
+		static void PartialDivOp(TinyUDec& self, Int64& Value) { self.PartialIntDivOp(Value); }
+        static void PartialDivOp(TinyUDec& self, UInt64& Value) { self.PartialIntDivOp(Value); }
 
 		TinyUDec PartialDiv(signed int Value)
         { TinyUDec self = *this; PartialIntDivOp(Value); return self; }
 		TinyUDec PartialDiv(unsigned int Value)
         { TinyUDec self = *this; PartialIntDivOp(Value); return self; }
-		TinyUDec PartialDiv(signed long long Value)
+		TinyUDec PartialDiv(Int64 Value)
         { TinyUDec self = *this; PartialIntDivOp(Value); return self; }
-        TinyUDec PartialDiv(unsigned long long Value)
+        TinyUDec PartialDiv(UInt64 Value)
         { TinyUDec self = *this; PartialIntDivOp(Value); return self; }
 
 		static TinyUDec PartialDiv(TinyUDec& self, signed int Value) { self.PartialIntDivOp(Value); return self; }
 		static TinyUDec PartialDiv(TinyUDec& self, unsigned int Value) { self.PartialIntDivOp(Value); return self; }
-		static TinyUDec PartialDiv(TinyUDec& self, signed long long Value) { self.PartialIntDivOp(Value); return self; }
-        static TinyUDec PartialDiv(TinyUDec& self, unsigned long long Value) { self.PartialIntDivOp(Value); return self; }
+		static TinyUDec PartialDiv(TinyUDec& self, Int64 Value) { self.PartialIntDivOp(Value); return self; }
+        static TinyUDec PartialDiv(TinyUDec& self, UInt64 Value) { self.PartialIntDivOp(Value); return self; }
 
 protected:
         template<IntegerType IntType=signed int>
@@ -1243,27 +1243,27 @@ public:
 
 		void BasicDivOp(signed int& Value) { BasicIntDivOp(Value); }
 		void BasicDivOp(unsigned int& Value) { BasicUnsignedIntDivOp(Value); }
-		void BasicDivOp(signed long long& Value) { BasicIntDivOp(Value); }
-        void BasicDivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+		void BasicDivOp(Int64& Value) { BasicIntDivOp(Value); }
+        void BasicDivOp(UInt64& Value) { BasicUnsignedIntDivOp(Value); }
 
 		static void BasicDivOp(TinyUDec& self, signed int& Value) { self.BasicIntDivOp(Value); }
 		static void BasicDivOp(TinyUDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOp(Value); }
-		static void BasicDivOp(TinyUDec& self, signed long long& Value) { self.BasicIntDivOp(Value); }
-        static void BasicDivOp(TinyUDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOp(Value); }
+		static void BasicDivOp(TinyUDec& self, Int64& Value) { self.BasicIntDivOp(Value); }
+        static void BasicDivOp(TinyUDec& self, UInt64& Value) { self.BasicUnsignedIntDivOp(Value); }
 
 		TinyUDec BasicDiv(signed int Value)
         { TinyUDec self = *this; BasicIntDivOp(Value); return self; }
 		TinyUDec BasicDiv(unsigned int Value)
         { TinyUDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
-		TinyUDec BasicDiv(signed long long Value)
+		TinyUDec BasicDiv(Int64 Value)
         { TinyUDec self = *this; BasicIntDivOp(Value); return self; }
-        TinyUDec BasicDiv(unsigned long long Value)
+        TinyUDec BasicDiv(UInt64 Value)
         { TinyUDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
 		static TinyUDec BasicDiv(TinyUDec& self, signed int Value) { self.BasicIntDivOp(Value); return self; }
 		static TinyUDec BasicDiv(TinyUDec& self, unsigned int Value) { self.BasicUnsignedIntDivOp(Value); return self; }
-		static TinyUDec BasicDiv(TinyUDec& self, signed long long Value) { self.BasicIntDivOp(Value); return self; }
-        static TinyUDec BasicDiv(TinyUDec& self, unsigned long long Value) { TinyUDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
+		static TinyUDec BasicDiv(TinyUDec& self, Int64 Value) { self.BasicIntDivOp(Value); return self; }
+        static TinyUDec BasicDiv(TinyUDec& self, UInt64 Value) { TinyUDec self = *this; BasicUnsignedIntDivOp(Value); return self; }
 
 //protected:
 //        template<IntegerType IntType=signed int>
@@ -1292,27 +1292,27 @@ public:
 //
 //		void BasicDivOpV2(signed int& Value) { BasicIntDivOpV2(Value); }
 //		void BasicDivOpV2(unsigned int& Value) { BasicUnsignedIntDivOpV2(Value); }
-//		void BasicDivOpV2(signed long long& Value) { BasicIntDivOpV2(Value); }
-//        void BasicDivOpV2(unsigned long long& Value) { BasicUnsignedIntDivOpV2(Value); }
+//		void BasicDivOpV2(Int64& Value) { BasicIntDivOpV2(Value); }
+//        void BasicDivOpV2(UInt64& Value) { BasicUnsignedIntDivOpV2(Value); }
 //
 //		static void BasicDivOpV2(TinyUDec& self, signed int& Value) { self.BasicIntDivOpV2(Value); }
 //		static void BasicDivOpV2(TinyUDec& self, unsigned int& Value) { self.BasicUnsignedIntDivOpV2(Value); }
-//		static void BasicDivOpV2(TinyUDec& self, signed long long& Value) { self.BasicIntDivOpV2(Value); }
-//        static void BasicDivOpV2(TinyUDec& self, unsigned long long& Value) { self.BasicUnsignedIntDivOpV2(Value); }
+//		static void BasicDivOpV2(TinyUDec& self, Int64& Value) { self.BasicIntDivOpV2(Value); }
+//        static void BasicDivOpV2(TinyUDec& self, UInt64& Value) { self.BasicUnsignedIntDivOpV2(Value); }
 //
 //		TinyUDec BasicDivV2(signed int Value)
 //        { TinyUDec self = *this; BasicIntDivOpV2(Value); return self; }
 //		TinyUDec BasicDivV2(unsigned int Value)
 //        { TinyUDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
-//		TinyUDec BasicDivV2(signed long long Value)
+//		TinyUDec BasicDivV2(Int64 Value)
 //        { TinyUDec self = *this; BasicIntDivOpV2(Value); return self; }
-//        TinyUDec BasicDivV2(unsigned long long Value)
+//        TinyUDec BasicDivV2(UInt64 Value)
 //        { TinyUDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
 //
 //		static TinyUDec BasicDivV2(signed int Value) { self.BasicIntDivOpV2(Value); return self; }
 //		static TinyUDec BasicDivV2(unsigned int Value) { self.BasicUnsignedIntDivOpV2(Value); return self; }
-//		static TinyUDec BasicDivV2(signed long long Value) { self.BasicIntDivOpV2(Value); return self; }
-//        static TinyUDec BasicDivV2(unsigned long long Value) { TinyUDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
+//		static TinyUDec BasicDivV2(Int64 Value) { self.BasicIntDivOpV2(Value); return self; }
+//        static TinyUDec BasicDivV2(UInt64 Value) { TinyUDec self = *this; BasicUnsignedIntDivOpV2(Value); return self; }
 
     #pragma endregion NormalRep Integer division operations
 	
@@ -2579,7 +2579,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec operator+(TinyUDec self, signed long long Value) { return IntAddOp(self, Value); }
+        friend TinyUDec operator+(TinyUDec self, Int64 Value) { return IntAddOp(self, Value); }
 
         ///// <summary>
         ///// += Operation Between TinyUDec and Integer Value
@@ -2588,7 +2588,7 @@ public:
         ///// <param name="Value">The value.</param>
         ///// <returns>TinyUDec</returns>
         template<IntegerType IntType=signed int>
-        friend TinyUDec& operator+=(TinyUDec& self, signed long long Value) { return IntAddOp(self, Value); }
+        friend TinyUDec& operator+=(TinyUDec& self, Int64 Value) { return IntAddOp(self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between TinyUDec and Integer Value
@@ -2596,7 +2596,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec operator-(TinyUDec self, signed long long Value) { return IntSubOp(self, Value); }
+        friend TinyUDec operator-(TinyUDec self, Int64 Value) { return IntSubOp(self, Value); }
 
         /// <summary>
         /// -= Operation Between TinyUDec and Integer Value
@@ -2604,7 +2604,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec& operator-=(TinyUDec& self, signed long long Value) { return IntSubOp(self, Value); }
+        friend TinyUDec& operator-=(TinyUDec& self, Int64 Value) { return IntSubOp(self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between TinyUDec and Integer Value
@@ -2612,7 +2612,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec operator*(TinyUDec self, signed long long Value) { return IntMultOp(self, Value); }
+        friend TinyUDec operator*(TinyUDec self, Int64 Value) { return IntMultOp(self, Value); }
 
         /// <summary>
         /// *= Operation Between TinyUDec and Integer Value
@@ -2621,7 +2621,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
         template<IntegerType IntType=signed int>
-        friend TinyUDec operator*=(TinyUDec& self, signed long long Value) { return IntMultOp(self, Value); }
+        friend TinyUDec operator*=(TinyUDec& self, Int64 Value) { return IntMultOp(self, Value); }
 
         /// <summary>
         /// Division operation Between TinyUDec and Integer Value
@@ -2629,7 +2629,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec operator/(TinyUDec self, signed long long Value) { return IntDivOp(self, Value); }
+        friend TinyUDec operator/(TinyUDec self, Int64 Value) { return IntDivOp(self, Value); }
 
         /// <summary>
         /// /= Operation Between TinyUDec and Integer Value
@@ -2637,7 +2637,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>TinyUDec</returns>
-        friend TinyUDec operator/=(TinyUDec& self, signed long long Value) { return IntDivOp(self, Value); }
+        friend TinyUDec operator/=(TinyUDec& self, Int64 Value) { return IntDivOp(self, Value); }
     
         friend TinyUDec operator+(TinyUDec self, float Value) { return self + (TinyUDec)Value; }
         friend TinyUDec operator-(TinyUDec self, float Value) { return self - (TinyUDec)Value; }
@@ -2794,19 +2794,19 @@ public:
     #if !defined(AltNum_PreventModulusOverride)
 
         friend TinyUDec operator%(TinyUDec& self, int Value) { return IntRemOp(self, Value); }
-        friend TinyUDec operator%(TinyUDec& self, signed long long Value) { return IntRemOp(self, Value); }
+        friend TinyUDec operator%(TinyUDec& self, Int64 Value) { return IntRemOp(self, Value); }
 
         friend TinyUDec operator%=(TinyUDec& self, int Value) { return IntRemOp(self, Value); }
-        friend TinyUDec operator%=(TinyUDec& self, signed long long Value) { return IntRemOp(self, Value); }
+        friend TinyUDec operator%=(TinyUDec& self, Int64 Value) { return IntRemOp(self, Value); }
 
         friend TinyUDec operator%=(TinyUDec* self, int Value) { return IntRemOp(**self, Value); }
-        friend TinyUDec operator%=(TinyUDec* self, signed long long Value) { return IntRemOp(**self, Value); }
+        friend TinyUDec operator%=(TinyUDec* self, Int64 Value) { return IntRemOp(**self, Value); }
         
         friend TinyUDec operator%(TinyUDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
     
         #if defined(AltNum_EnableAlternativeModulusResult)
         //friend TinyUDec operator%(TinyUDec& self, int Value) { return IntRemOp(self, Value); }
-        //friend TinyUDec operator%(TinyUDec& self, signed long long Value) { return IntRemOp(self, Value); }
+        //friend TinyUDec operator%(TinyUDec& self, Int64 Value) { return IntRemOp(self, Value); }
         //friend TinyUDec operator%(TinyUDec self, unsigned __int64 Value) { return UnsignedRemOp(self, Value); }
         #endif
     #endif
@@ -3174,9 +3174,9 @@ public:
         }
 
         TinyUDec BasicPowOp(int& expValue) { return BasicIntPowOp(expValue); }
-        TinyUDec BasicPowOp(signed long long& expValue) { return BasicIntPowOp(expValue); }
+        TinyUDec BasicPowOp(Int64& expValue) { return BasicIntPowOp(expValue); }
         TinyUDec BasicPow(int expValue) { return BasicIntPowOp(expValue); }
-        TinyUDec BasicPow(signed long long expValue) { return BasicIntPowOp(expValue); }
+        TinyUDec BasicPow(Int64 expValue) { return BasicIntPowOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation on references(for integer exponents)
@@ -3207,9 +3207,9 @@ public:
         }
 
         static TinyUDec PowOp(TinyUDec& targetValue, int& expValue) { return IntPowOp(targetValue, expValue); }
-        static TinyUDec PowOp(TinyUDec& targetValue, signed long long& expValue) { return IntPowOp(targetValue, expValue); }
+        static TinyUDec PowOp(TinyUDec& targetValue, Int64& expValue) { return IntPowOp(targetValue, expValue); }
         static TinyUDec Pow(TinyUDec targetValue, int expValue) { return IntPowOp(targetValue, expValue); }
-        static TinyUDec Pow(TinyUDec targetValue, signed long long expValue) { return IntPowOp(targetValue, expValue); }
+        static TinyUDec Pow(TinyUDec targetValue, Int64 expValue) { return IntPowOp(targetValue, expValue); }
 
         /// <summary>
         /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)
@@ -3273,9 +3273,9 @@ public:
         }
 
         TinyUDec BasicPowConstOp(const int& expValue) { return BasicIntPowConstOp(expValue); }
-        TinyUDec BasicPowConstOp(const signed long long& expValue) { return BasicIntPowConstOp(expValue); }
+        TinyUDec BasicPowConstOp(const Int64& expValue) { return BasicIntPowConstOp(expValue); }
         TinyUDec BasicPowConst(const int expValue) { return BasicIntPowConstOp(expValue); }
-        TinyUDec BasicPowConst(const signed long long expValue) { return BasicIntPowConstOp(expValue); }
+        TinyUDec BasicPowConst(const Int64 expValue) { return BasicIntPowConstOp(expValue); }
 
         /// <summary>
         /// Applies Power of operation on references with const expValue(for integer exponents)(C3892 fix)

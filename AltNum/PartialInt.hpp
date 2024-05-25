@@ -57,6 +57,6 @@ namespace BlazesRusCode
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator unsigned long long() { return Value; }
+        explicit operator UInt64() { return Value; }
 	};
 }

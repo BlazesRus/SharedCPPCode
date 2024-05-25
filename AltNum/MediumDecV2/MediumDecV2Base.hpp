@@ -1563,15 +1563,15 @@ public:
         constexpr auto UIntDivOpV1 = UIntDivOpV1<unsigned int>;
         constexpr auto IntDivOpV1 = IntDivOpV1<signed int>;
         constexpr auto UnsignedIntDivOp = UIntDivOpV1<signed int>;
-        constexpr auto UInt64DivOp = UIntDivOpV1<unsigned long long>;
-        constexpr auto Int64DivOp = IntDivOpV1<signed long long>;
+        constexpr auto UInt64DivOp = UIntDivOpV1<UInt64>;
+        constexpr auto Int64DivOp = IntDivOpV1<Int64>;
 	
         constexpr auto DivByUInt = DivByUIntV1<unsigned int>;
         constexpr auto DivByInt = DivByIntV1<signed int>;
         constexpr auto UnsignedDivByInt = DivByUInt<signed int>;
         constexpr auto DivByUInt64 = DivByUInt<;
         constexpr auto DivByInt64 = BasicDivByInt64;
-        constexpr auto UnsignedDivByInt64 = DivByUInt<signed long long>;
+        constexpr auto UnsignedDivByInt64 = DivByUInt<Int64>;
 		
         constexpr auto DivByUInt8 = BasicDivByUInt8;
         constexpr auto DivByInt8 = BasicDivByInt8;
@@ -1696,14 +1696,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed int& Value) { return self.DivideByInt(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed long long& Value) { return self.DivideByInt64(Value); }
+        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const Int64& Value) { return self.DivideByInt64(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned int& Value) { return self.DivideByUInt(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned long long& Value) { return self.DivideByUInt64(Value); }
+        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const UInt64& Value) { return self.DivideByUInt64(Value); }
 		
         friend MediumDecV2Base operator/(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const signed long long& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
+        friend MediumDecV2Base operator/(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
         friend MediumDecV2Base operator/(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const unsigned long long& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
+        friend MediumDecV2Base operator/(const UInt64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
 
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed char& Value) { return self.DivideByInt8(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed short& Value) { return self.DivideByInt16(Value); }
@@ -1723,9 +1723,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed int& Value) { return self.IntDivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64DivOp(Value); }
+        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const Int64& Value) { return self.Int64DivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntDivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned long long& Value) { return self.UInt64DivOp(Value); }
+        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64DivOp(Value); }
 
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed char& Value) { return self.Int8DivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed short& Value) { return self.Int16DivOp(Value); }
@@ -1955,15 +1955,15 @@ public:
         constexpr auto UIntMultOpV1 = UIntMultOpV1<unsigned int>;
         constexpr auto IntMultOpV1 = IntMultOpV1<signed int>;
         constexpr auto UnsignedIntMultOp = UIntMultOpV1<signed int>;
-        constexpr auto UInt64MultOp = UIntMultOpV1<unsigned long long>;
-        constexpr auto Int64MultOp = IntMultOpV1<signed long long>;
+        constexpr auto UInt64MultOp = UIntMultOpV1<UInt64>;
+        constexpr auto Int64MultOp = IntMultOpV1<Int64>;
 	
         constexpr auto MultByUInt = MultByUIntV1<unsigned int>;
         constexpr auto MultByInt = MultByIntV1<signed int>;
         constexpr auto UnsignedMultByInt = MultByUInt<signed int>;
         constexpr auto MultByUInt64 = MultByUInt<;
         constexpr auto MultByInt64 = BasicMultByInt64;
-        constexpr auto UnsignedMultByInt64 = MultByUInt<signed long long>;
+        constexpr auto UnsignedMultByInt64 = MultByUInt<Int64>;
 		
         constexpr auto MultByUInt8 = BasicMultByUInt8;
         constexpr auto MultByInt8 = BasicMultByInt8;
@@ -2042,14 +2042,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed int& Value) { return self.MultByInt(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed long long& Value) { return self.MultByInt64(Value); }
+        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const Int64& Value) { return self.MultByInt64(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned int& Value) { return self.MultByUInt(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned long long& Value) { return self.MultByUInt64(Value); }
+        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const UInt64& Value) { return self.MultByUInt64(Value); }
 		
         friend MediumDecV2Base operator*(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt(lValue); }
-        friend MediumDecV2Base operator*(const signed long long& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt64(lValue); }
+        friend MediumDecV2Base operator*(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt64(lValue); }
         friend MediumDecV2Base operator*(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt(lValue); }
-        friend MediumDecV2Base operator*(const unsigned long long& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt64(lValue); }
+        friend MediumDecV2Base operator*(const UInt64& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt64(lValue); }
 
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed char& Value) { return self.MultByInt8(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed short& Value) { return self.MultByInt16(Value); }
@@ -2068,9 +2068,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed int& Value) { return self.IntMultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64MultOp(Value); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const Int64& Value) { return self.Int64MultOp(Value); }
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntMultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned long long& Value) { return self.UInt64MultOp(Value); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64MultOp(Value); }
 
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed char& Value) { return self.Int8MultOp(Value); }
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed short& Value) { return self.Int16MultOp(Value); }
@@ -2198,15 +2198,15 @@ public:
         constexpr auto UIntAddOpV1 = UIntAddOpV1<unsigned int>;
         constexpr auto IntAddOpV1 = IntAddOpV1<signed int>;
         constexpr auto UnsignedIntAddOp = UIntAddOpV1<signed int>;
-        constexpr auto UInt64AddOp = UIntAddOpV1<unsigned long long>;
-        constexpr auto Int64AddOp = IntAddOpV1<signed long long>;
+        constexpr auto UInt64AddOp = UIntAddOpV1<UInt64>;
+        constexpr auto Int64AddOp = IntAddOpV1<Int64>;
 	
         constexpr auto AddByUInt = AddByUIntV1<unsigned int>;
         constexpr auto AddByInt = AddByIntV1<signed int>;
         constexpr auto UnsignedAddByInt = AddByUInt<signed int>;
         constexpr auto AddByUInt64 = AddByUInt<;
         constexpr auto AddByInt64 = BasicAddByInt64;
-        constexpr auto UnsignedAddByInt64 = AddByUInt<signed long long>;
+        constexpr auto UnsignedAddByInt64 = AddByUInt<Int64>;
 		
         constexpr auto AddByUInt8 = BasicAddByUInt8;
         constexpr auto AddByInt8 = BasicAddByInt8;
@@ -2282,14 +2282,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed int& Value) { return self.AddByInt(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed long long& Value) { return self.AddByInt64(Value); }
+        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const Int64& Value) { return self.AddByInt64(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned int& Value) { return self.AddByUInt(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned long long& Value) { return self.AddByUInt64(Value); }
+        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const UInt64& Value) { return self.AddByUInt64(Value); }
 		
         friend MediumDecV2Base operator+(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt(lValue); }
-        friend MediumDecV2Base operator+(const signed long long& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt64(lValue); }
+        friend MediumDecV2Base operator+(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt64(lValue); }
         friend MediumDecV2Base operator+(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt(lValue); }
-        friend MediumDecV2Base operator+(const unsigned long long& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt64(lValue); }
+        friend MediumDecV2Base operator+(const UInt64& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt64(lValue); }
 
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed char& Value) { return self.AddByInt8(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed short& Value) { return self.AddByInt16(Value); }
@@ -2308,9 +2308,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed int& Value) { return self.IntAddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64AddOp(Value); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const Int64& Value) { return self.Int64AddOp(Value); }
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntAddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned long long& Value) { return self.UInt64AddOp(Value); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64AddOp(Value); }
 
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed char& Value) { return self.Int8AddOp(Value); }
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed short& Value) { return self.Int16AddOp(Value); }
@@ -2438,15 +2438,15 @@ public:
         constexpr auto UIntSubOpV1 = UIntSubOpV1<unsigned int>;
         constexpr auto IntSubOpV1 = IntSubOpV1<signed int>;
         constexpr auto UnsignedIntSubOp = UIntSubOpV1<signed int>;
-        constexpr auto UInt64SubOp = UIntSubOpV1<unsigned long long>;
-        constexpr auto Int64SubOp = IntSubOpV1<signed long long>;
+        constexpr auto UInt64SubOp = UIntSubOpV1<UInt64>;
+        constexpr auto Int64SubOp = IntSubOpV1<Int64>;
 	
         constexpr auto SubByUInt = SubByUIntV1<unsigned int>;
         constexpr auto SubByInt = SubByIntV1<signed int>;
         constexpr auto UnsignedSubByInt = SubByUInt<signed int>;
         constexpr auto SubByUInt64 = SubByUInt<;
         constexpr auto SubByInt64 = BasicSubByInt64;
-        constexpr auto UnsignedSubByInt64 = SubByUInt<signed long long>;
+        constexpr auto UnsignedSubByInt64 = SubByUInt<Int64>;
 		
         constexpr auto SubByUInt8 = BasicSubByUInt8;
         constexpr auto SubByInt8 = BasicSubByInt8;
@@ -2522,14 +2522,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed int& Value) { return self.SubtractByInt(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed long long& Value) { return self.SubtractByInt64(Value); }
+        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const Int64& Value) { return self.SubtractByInt64(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned int& Value) { return self.SubtractByUInt(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned long long& Value) { return self.SubtractByUInt64(Value); }
+        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const UInt64& Value) { return self.SubtractByUInt64(Value); }
 		
         friend MediumDecV2Base operator-(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
-        friend MediumDecV2Base operator-(const signed long long& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
+        friend MediumDecV2Base operator-(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
-        friend MediumDecV2Base operator-(const unsigned long long& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
+        friend MediumDecV2Base operator-(const UInt64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
 
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed char& Value) { return self.SubtractByInt8(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed short& Value) { return self.SubtractByInt16(Value); }
@@ -2549,9 +2549,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed int& Value) { return self.IntSubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed long long& Value) { return self.Int64SubOp(Value); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const Int64& Value) { return self.Int64SubOp(Value); }
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntSubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned long long& Value) { return self.UInt64SubOp(Value); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64SubOp(Value); }
 
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed char& Value) { return self.Int8SubOp(Value); }
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed short& Value) { return self.Int16SubOp(Value); }
@@ -2995,13 +2995,13 @@ public:
 
         constexpr auto BasicUIntPowOfOp = BasicUIntPowOfOpV1<unsigned int>;
         constexpr auto BasicIntPowOfOp = BasicIntPowOfOpV1<signed int>;
-        constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<unsigned long long>;
-        constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<signed long long>;
+        constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<UInt64>;
+        constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<Int64>;
         
         constexpr auto BasicUIntPowOf = BasicUIntPowOfV1<unsigned int>;
         constexpr auto BasicIntPowOf = BasicIntPowOfV1<signed int>;
-        constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<unsigned long long>;
-        constexpr auto BasicInt64PowOf = BasicIntPowOfV1<signed long long>;
+        constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<UInt64>;
+        constexpr auto BasicInt64PowOf = BasicIntPowOfV1<Int64>;
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -3228,8 +3228,8 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
-        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<unsigned long long>;
-        constexpr auto Int64PowOfOp = IntPowOpOfV1<signed long long>;
+        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<UInt64>;
+        constexpr auto Int64PowOfOp = IntPowOpOfV1<Int64>;
         
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
@@ -3242,8 +3242,8 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOf = IntPowOfV1<signed int>;
-        constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
-        constexpr auto Int64PowOf = IntPowOfV1<signed long long>;
+        constexpr auto UInt64PowOf = UIntPowOfV1<UInt64>;
+        constexpr auto Int64PowOf = IntPowOfV1<Int64>;
 
 	#pragma endregion Pow and Sqrt Functions
 

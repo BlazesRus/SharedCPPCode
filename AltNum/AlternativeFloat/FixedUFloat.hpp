@@ -522,7 +522,7 @@ public:
         /// FixedUFloat to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator signed long long()
+        explicit operator Int64()
         {
             //Add code here later
         }
@@ -531,7 +531,7 @@ public:
         /// FixedUFloat to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator unsigned long long()
+        explicit operator UInt64()
         {
             //Add code here later
         }
@@ -888,13 +888,13 @@ public:
 		}
 
         friend FixedUFloat operator%(FixedUFloat& self, int Value) { return ModulusByIntOp(self, Value); }
-        friend FixedUFloat operator%(FixedUFloat& self, signed long long Value) { return ModulusByIntOp(self, Value); }
+        friend FixedUFloat operator%(FixedUFloat& self, Int64 Value) { return ModulusByIntOp(self, Value); }
 
         friend FixedUFloat operator%=(FixedUFloat& self, int Value) { return ModulusByIntOp(self, Value); }
-        friend FixedUFloat operator%=(FixedUFloat& self, signed long long Value) { return ModulusByIntOp(self, Value); }
+        friend FixedUFloat operator%=(FixedUFloat& self, Int64 Value) { return ModulusByIntOp(self, Value); }
 
         friend FixedUFloat operator%=(FixedUFloat* self, int Value) { return ModulusByIntOp(**self, Value); }
-        friend FixedUFloat operator%=(FixedUFloat* self, signed long long Value) { return ModulusByIntOp(**self, Value); }
+        friend FixedUFloat operator%=(FixedUFloat* self, Int64 Value) { return ModulusByIntOp(**self, Value); }
         
         friend FixedUFloat operator%(FixedUFloat self, unsigned __int64 Value) { return ModulusByIntOp(self, Value); }
     
@@ -912,7 +912,7 @@ public:
         /// <returns>MediumDec &</returns>
         FixedUFloat& Trunc()
         {
-            signed long long ValueAsInt = (signed long long)*this;
+            Int64 ValueAsInt = (Int64)*this;
 			SetInt64Value(ValueAsInt);
             return *this;
         }

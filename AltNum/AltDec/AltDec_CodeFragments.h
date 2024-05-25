@@ -1074,7 +1074,7 @@ public:
 
         void BasicInt32DivOpV2(signed int& rValue) { BasicUIntDivOp(rValue); }
 
-        void BasicInt64DivOp(signed long long& rValue) { BasicIntDivOp(rValue); }
+        void BasicInt64DivOp(Int64& rValue) { BasicIntDivOp(rValue); }
 
         /// <summary>
         /// Division operation Between AltDecBase and unsigned Integer Value that ignores special representation status
@@ -11126,7 +11126,7 @@ public:
         friend AltDecBase operator/(AltDecBase self, const AltDecBase& rValue) { return self.DivOp(rValue); }
         friend AltDecBase operator/(AltDecBase self, const int& rValue) { return self.IntDivOp(rValue); }
         friend AltDecBase operator/(AltDecBase self, const unsigned int rValue) { return self.UIntDivOp(rValue); }
-        friend AltDecBase operator/(AltDecBase self, const signed long long rValue) { return self.IntDivOp(rValue); }
+        friend AltDecBase operator/(AltDecBase self, const Int64 rValue) { return self.IntDivOp(rValue); }
         friend AltDecBase operator/(AltDecBase self, const unsigned __int64 rValue) { return self.UIntDivOp(rValue); }
         friend AltDecBase operator/(AltDecBase self, const __int16& rValue) { return self.IntDivOp(rValue); }
         friend AltDecBase operator/(AltDecBase self, const unsigned __int16& rValue) { return self.UIntDivOp(rValue); }
@@ -11169,7 +11169,7 @@ public:
         friend AltDecBase operator*(AltDecBase self, const AltDecBase& rValue) { return self.MultOp(rValue); }
         friend AltDecBase operator*(AltDecBase self, const int& rValue) { return self.Int32MultOp(rValue); }
         friend AltDecBase operator*(AltDecBase self, const unsigned int rValue) { return self.UInt32MultOp(rValue); }
-        friend AltDecBase operator*(AltDecBase self, const signed long long rValue) { return self.Int64MultOp(rValue); }
+        friend AltDecBase operator*(AltDecBase self, const Int64 rValue) { return self.Int64MultOp(rValue); }
         friend AltDecBase operator*(AltDecBase self, const unsigned __int64 rValue) { return self.UIntMultOp(rValue); }
         friend AltDecBase operator*(AltDecBase self, const __int16& rValue) { return self.IntMultOp(rValue); }
         friend AltDecBase operator*(AltDecBase self, const unsigned __int16& rValue) { return self.UIntMultOp(rValue); }
@@ -11212,7 +11212,7 @@ public:
         friend AltDecBase operator+(AltDecBase self, const AltDecBase& rValue) { return self.AddOp(rValue); }
         friend AltDecBase operator+(AltDecBase self, const int& rValue) { return self.Int32AddOp(rValue); }
         friend AltDecBase operator+(AltDecBase self, const unsigned int rValue) { return self.IntAddOp(rValue); }
-        friend AltDecBase operator+(AltDecBase self, const signed long long rValue) { return self.Int64AddOp(rValue); }
+        friend AltDecBase operator+(AltDecBase self, const Int64 rValue) { return self.Int64AddOp(rValue); }
         friend AltDecBase operator+(AltDecBase self, const unsigned __int64 rValue) { return self.IntAddOp(rValue); }
         friend AltDecBase operator+(AltDecBase self, const __int16& rValue) { return self.IntAddOp(rValue); }
         friend AltDecBase operator+(AltDecBase self, const unsigned __int16& rValue) { return self.IntAddOp(rValue); }
@@ -11255,7 +11255,7 @@ public:
         friend AltDecBase operator-(AltDecBase self, const AltDecBase& rValue) { return self.SubOp(rValue); }
         friend AltDecBase operator-(AltDecBase self, const int& rValue) { return self.Int32SubOp(rValue); }
         friend AltDecBase operator-(AltDecBase self, const unsigned int rValue) { return self.IntSubOp(rValue); }
-        friend AltDecBase operator-(AltDecBase self, const signed long long rValue) { return self.Int64SubOp(rValue); }
+        friend AltDecBase operator-(AltDecBase self, const Int64 rValue) { return self.Int64SubOp(rValue); }
         friend AltDecBase operator-(AltDecBase self, const unsigned __int64 rValue) { return self.IntSubOp(rValue); }
         friend AltDecBase operator-(AltDecBase self, const __int16& rValue) { return self.IntSubOp(rValue); }
         friend AltDecBase operator-(AltDecBase self, const unsigned __int16& rValue) { return self.IntSubOp(rValue); }
@@ -11420,18 +11420,18 @@ public:
 
         AltDecBase Int32BasicRemOp(signed int& RValue) { return BasicIntRemOp(RValue); }
         AltDecBase UInt32BasicRemOp(unsigned int& RValue) { return BasicIntRemOp(RValue); }
-        AltDecBase Int64BasicRemOp(signed long long& RValue) { return BasicIntRemOp(RValue); }
-        AltDecBase UInt64BasicRemOp(unsigned long long& RValue) { return BasicIntRemOp(RValue); }
+        AltDecBase Int64BasicRemOp(Int64& RValue) { return BasicIntRemOp(RValue); }
+        AltDecBase UInt64BasicRemOp(UInt64& RValue) { return BasicIntRemOp(RValue); }
 
         AltDecBase Int32BasicRem(signed int RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
         AltDecBase UInt32BasicRem(unsigned int RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
-        AltDecBase Int64BasicRem(signed long long RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
-        AltDecBase UInt64BasicRem(unsigned long long RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
+        AltDecBase Int64BasicRem(Int64 RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
+        AltDecBase UInt64BasicRem(UInt64 RValue) { AltDecBase self = *this; return BasicIntRemOp(RValue); }
 
         static AltDecBase Int32BasicModulus(AltDecBase self, signed int RValue) { return self.BasicIntRemOp(RValue); }
         static AltDecBase UInt32BasicModulus(AltDecBase self, unsigned int RValue) { return self.BasicIntRemOp(RValue); }
-        static AltDecBase Int64BasicModulus(AltDecBase self, signed long long RValue) { return self.BasicIntRemOp(RValue); }
-        static AltDecBase UInt64BasicModulus(AltDecBase self, unsigned long long RValue) { return self.BasicIntRemOp(RValue); }
+        static AltDecBase Int64BasicModulus(AltDecBase self, Int64 RValue) { return self.BasicIntRemOp(RValue); }
+        static AltDecBase UInt64BasicModulus(AltDecBase self, UInt64 RValue) { return self.BasicIntRemOp(RValue); }
 
         //Performs modulus operation based on "C = A - B * (A / B)" formula
         template<IntegerType IntType=int>
@@ -11453,18 +11453,18 @@ public:
             return C;
         }
         AltDecBase UInt32RemOp(unsigned int& RValue) { return IntRemOp(RValue); }
-        AltDecBase Int64RemOp(signed long long& RValue) { return IntRemOp(RValue); }
-        AltDecBase UInt64RemOp(unsigned long long& RValue) { return IntRemOp(RValue); }
+        AltDecBase Int64RemOp(Int64& RValue) { return IntRemOp(RValue); }
+        AltDecBase UInt64RemOp(UInt64& RValue) { return IntRemOp(RValue); }
 
         AltDecBase Int32Rem(signed int RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
         AltDecBase UInt32Rem(unsigned int RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
-        AltDecBase Int64Rem(signed long long RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
-        AltDecBase UInt64Rem(unsigned long long RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
+        AltDecBase Int64Rem(Int64 RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
+        AltDecBase UInt64Rem(UInt64 RValue) { AltDecBase self = *this; return self.IntRemOp(RValue); }
 
         static AltDecBase Int32Modulus(AltDecBase self, signed int RValue) { return self.IntRemOp(RValue); }
         static AltDecBase UInt32Modulus(AltDecBase self, unsigned int RValue) { return self.IntRemOp(RValue); }
-        static AltDecBase Int64Modulus(AltDecBase self, signed long long RValue) { return self.IntRemOp(RValue); }
-        static AltDecBase UInt64Modulus(AltDecBase self, unsigned long long RValue) { return self.IntRemOp(RValue); }
+        static AltDecBase Int64Modulus(AltDecBase self, Int64 RValue) { return self.IntRemOp(RValue); }
+        static AltDecBase UInt64Modulus(AltDecBase self, UInt64 RValue) { return self.IntRemOp(RValue); }
 
 
         //Performs modulus operation based on "C = A - B * (A / B)" formula
@@ -11561,13 +11561,13 @@ public:
         friend AltDecBase operator%=(AltDecBase& self, AltDecBase Value) { return self.RemOp(Value); }
         friend AltDecBase operator%=(AltDecBase& self, int Value) { return self.Int32RemOp(Value); }
         friend AltDecBase operator%=(AltDecBase& self, unsigned int Value) { return self.UInt32RemOp(Value); }
-        friend AltDecBase operator%=(AltDecBase& self, signed long long Value) { return self.Int64RemOp(Value); }
+        friend AltDecBase operator%=(AltDecBase& self, Int64 Value) { return self.Int64RemOp(Value); }
         friend AltDecBase operator%=(AltDecBase& self, unsigned __int64 Value) { return self.UInt64RemOp(Value); }
 
         friend AltDecBase operator%(AltDecBase self, AltDecBase Value) { return self.RemOp(Value); }
         friend AltDecBase operator%(AltDecBase self, int Value) { return self.Int32RemOp(Value); }
         friend AltDecBase operator%(AltDecBase self, unsigned int Value) { return self.UInt32RemOp(Value); }
-        friend AltDecBase operator%(AltDecBase self, signed long long Value) { return self.Int64RemOp(Value); }
+        friend AltDecBase operator%(AltDecBase self, Int64 Value) { return self.Int64RemOp(Value); }
         friend AltDecBase operator%(AltDecBase self, unsigned __int64 Value) { return self.UInt64RemOp(Value); }
 
 
@@ -11586,13 +11586,13 @@ public:
         /// <param name="RValue">The value.</param>
         AltNumModChecker<AltDecBase> ModulusOp(signed int& RValue) { IntModulusOp(RValue); }
         AltNumModChecker<AltDecBase> ModulusOp(unsigned int& RValue) { IntModulusOp(RValue); }
-        AltNumModChecker<AltDecBase> ModulusOp(signed long long& RValue) { IntModulusOp(RValue); }
-        AltNumModChecker<AltDecBase> ModulusOp(unsigned long long& RValue) { IntModulusOp(RValue); }
+        AltNumModChecker<AltDecBase> ModulusOp(Int64& RValue) { IntModulusOp(RValue); }
+        AltNumModChecker<AltDecBase> ModulusOp(UInt64& RValue) { IntModulusOp(RValue); }
 
         static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, signed int& RValue) { self.IntModulusOp(RValue); }
         static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, unsigned int& RValue) { self.IntModulusOp(RValue); }
-        static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, signed long long& RValue) { self.IntModulusOp(RValue); }
-        static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, unsigned long long& RValue) { self.IntModulusOp(RValue); }
+        static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, Int64& RValue) { self.IntModulusOp(RValue); }
+        static AltNumModChecker<AltDecBase> ModulusOp(AltDecBase& self, UInt64& RValue) { self.IntModulusOp(RValue); }
 
 
         static AltNumModChecker<AltDecBase> ModulusOp(const AltDecBase& RValue)

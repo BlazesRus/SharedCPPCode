@@ -178,7 +178,7 @@ namespace BlazesRusCode
 	
 		#if defined(AltFloat_ExtendedRange)
 		//Equal to 2^31
-		static unsigned long long DenomMax = 2147483648;
+		static UInt64 DenomMax = 2147483648;
 		//Equal to (2^31) - 1
 		static SignifBitfield MaxSignif = 2147483647;
 		static SignifBitfield NegMaxSignif = -2147483647;
@@ -753,7 +753,7 @@ public:
         /// AltFloat to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator signed long long()
+        explicit operator Int64()
         {
             if(IsNegative())
             {
@@ -785,7 +785,7 @@ public:
         /// AltFloat to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator unsigned long long()
+        explicit operator UInt64()
         {
             if(IsNegative())
 			#if defined(AltFloat_GiveErrorInsteadOfMaxingOnOverflowConversion)
@@ -1349,13 +1349,13 @@ public:
 		}
 
         friend AltFloat operator%(AltFloat& self, int Value) { return ModulusByIntOp(self, Value); }
-        friend AltFloat operator%(AltFloat& self, signed long long Value) { return ModulusByIntOp(self, Value); }
+        friend AltFloat operator%(AltFloat& self, Int64 Value) { return ModulusByIntOp(self, Value); }
 
         friend AltFloat operator%=(AltFloat& self, int Value) { return ModulusByIntOp(self, Value); }
-        friend AltFloat operator%=(AltFloat& self, signed long long Value) { return ModulusByIntOp(self, Value); }
+        friend AltFloat operator%=(AltFloat& self, Int64 Value) { return ModulusByIntOp(self, Value); }
 
         friend AltFloat operator%=(AltFloat* self, int Value) { return ModulusByIntOp(**self, Value); }
-        friend AltFloat operator%=(AltFloat* self, signed long long Value) { return ModulusByIntOp(**self, Value); }
+        friend AltFloat operator%=(AltFloat* self, Int64 Value) { return ModulusByIntOp(**self, Value); }
         
         friend AltFloat operator%(AltFloat self, unsigned __int64 Value) { return ModulusByIntOp(self, Value); }
     
@@ -1373,7 +1373,7 @@ public:
         /// <returns>MediumDec &</returns>
         AltFloat& Trunc()
         {
-            signed long long ValueAsInt = (signed long long)*this;
+            Int64 ValueAsInt = (Int64)*this;
 			SetInt64Value(ValueAsInt);
             return *this;
         }

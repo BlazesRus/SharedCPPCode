@@ -851,7 +851,7 @@ public:
         }
 
 		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
-        void BasicInt64DivOp(unsigned long long& Value) { BasicUnsignedIntDivOp(Value); }
+        void BasicInt64DivOp(UInt64& Value) { BasicUnsignedIntDivOp(Value); }
 
     #pragma endregion NormalRep Integer division operations
 		
@@ -884,8 +884,8 @@ public:
 		
         constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<const unsigned int>;
         constexpr auto PartialIntMultOp = PartialUIntMultOpV1<const signed int>;
-        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const unsigned long long>;
-        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const signed long long>;
+        constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const UInt64>;
+        constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const Int64>;
 		
 protected:
         template<MediumDecVariant VariantType=FloatingDuoRangeDec, IntegerType IntType=signed int>
@@ -906,8 +906,8 @@ public:
 
         constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<const unsigned int>;
         constexpr auto BasicIntMultOp = BasicUIntMultOpV1<const signed int>;
-        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<const unsigned long long>;
-        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<const signed long long>;
+        constexpr auto BasicUInt64MultOp = BasicUIntMultOpV1<const UInt64>;
+        constexpr auto BasicInt64MultOp = BasicUIntMultOpV1<const Int64>;
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -932,8 +932,8 @@ public:
 
         constexpr auto BasicUIntAddOp = BasicUIntAddOpV1<const unsigned int>;
         constexpr auto BasicIntAddOp = BasicUIntAddOpV1<const signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<const signed long long>;
+        constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const UInt64>;
+        constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<const Int64>;
 
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -958,8 +958,8 @@ public:
 
         constexpr auto BasicUIntAddOp = BasicUIntSubOpV1<const unsigned int>;
         constexpr auto BasicIntAddOp = BasicUIntSubOpV1<const signed int>;
-        constexpr auto BasicUInt64AddOp = BasicUIntSubOpV1<const unsigned long long>;
-        constexpr auto BasicInt64AddOp = BasicUIntSubOpV1<const signed long long>;
+        constexpr auto BasicUInt64AddOp = BasicUIntSubOpV1<const UInt64>;
+        constexpr auto BasicInt64AddOp = BasicUIntSubOpV1<const Int64>;
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
@@ -1331,7 +1331,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, signed long long Value) { return IntAddOp(self, Value); }
+        friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, Int64 Value) { return IntAddOp(self, Value); }
 
         ///// <summary>
         ///// += Operation Between FloatingDuoRangeDec and Integer Value
@@ -1340,7 +1340,7 @@ public:
         ///// <param name="Value">The value.</param>
         ///// <returns>FloatingDuoRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingDuoRangeDec& operator+=(FloatingDuoRangeDec& self, signed long long Value) { return IntAddOp(self, Value); }
+        friend FloatingDuoRangeDec& operator+=(FloatingDuoRangeDec& self, Int64 Value) { return IntAddOp(self, Value); }
 
         /// <summary>
         /// Subtraction Operation Between FloatingDuoRangeDec and Integer Value
@@ -1348,7 +1348,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec operator-(FloatingDuoRangeDec self, signed long long Value) { return IntSubOp(self, Value); }
+        friend FloatingDuoRangeDec operator-(FloatingDuoRangeDec self, Int64 Value) { return IntSubOp(self, Value); }
 
         /// <summary>
         /// -= Operation Between FloatingDuoRangeDec and Integer Value
@@ -1356,7 +1356,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec& operator-=(FloatingDuoRangeDec& self, signed long long Value) { return IntSubOp(self, Value); }
+        friend FloatingDuoRangeDec& operator-=(FloatingDuoRangeDec& self, Int64 Value) { return IntSubOp(self, Value); }
 
         /// <summary>
         /// Multiplication Operation Between FloatingDuoRangeDec and Integer Value
@@ -1364,7 +1364,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec operator*(FloatingDuoRangeDec self, signed long long Value) { return IntMultOp(self, Value); }
+        friend FloatingDuoRangeDec operator*(FloatingDuoRangeDec self, Int64 Value) { return IntMultOp(self, Value); }
 
         /// <summary>
         /// *= Operation Between FloatingDuoRangeDec and Integer Value
@@ -1373,7 +1373,7 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
         template<IntegerType IntType=signed int>
-        friend FloatingDuoRangeDec operator*=(FloatingDuoRangeDec& self, signed long long Value) { return IntMultOp(self, Value); }
+        friend FloatingDuoRangeDec operator*=(FloatingDuoRangeDec& self, Int64 Value) { return IntMultOp(self, Value); }
 
         /// <summary>
         /// Division operation Between FloatingDuoRangeDec and Integer Value
@@ -1381,7 +1381,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec operator/(FloatingDuoRangeDec self, signed long long Value) { return IntDivOp(self, Value); }
+        friend FloatingDuoRangeDec operator/(FloatingDuoRangeDec self, Int64 Value) { return IntDivOp(self, Value); }
 
         /// <summary>
         /// /= Operation Between FloatingDuoRangeDec and Integer Value
@@ -1389,7 +1389,7 @@ public:
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>FloatingDuoRangeDec</returns>
-        friend FloatingDuoRangeDec operator/=(FloatingDuoRangeDec& self, signed long long Value) { return IntDivOp(self, Value); }
+        friend FloatingDuoRangeDec operator/=(FloatingDuoRangeDec& self, Int64 Value) { return IntDivOp(self, Value); }
     
         friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, float Value) { return self + (FloatingDuoRangeDec)Value; }
         friend FloatingDuoRangeDec operator-(FloatingDuoRangeDec self, float Value) { return self - (FloatingDuoRangeDec)Value; }

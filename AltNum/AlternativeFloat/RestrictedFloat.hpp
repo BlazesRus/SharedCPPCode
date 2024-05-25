@@ -65,15 +65,15 @@ namespace BlazesRusCode
 	public:
         #if defined(RestrictedFloat_UseSmallerFractional)//Restrict to 2 bytes worth of SignifNum instead
 		//Equal to 2^16
-		static unsigned long long DenomMax = 65536;
+		static UInt64 DenomMax = 65536;
 		//Equal to (2^31) - 1
-		static unsigned long long MaxSignif = 65535;
+		static UInt64 MaxSignif = 65535;
 		static unsigned int DenomMaxExponent = 16;
         #else
 		//Equal to 2^32
-		static unsigned long long DenomMax = 4294967296;
+		static UInt64 DenomMax = 4294967296;
 		//Equal to (2^31) - 1
-		static unsigned long long MaxSignif = 4294967295;
+		static UInt64 MaxSignif = 4294967295;
 		static unsigned int DenomMaxExponent = 32;
         #endif
 	#if defined(RestrictedFloat_PackInSmallerBits)

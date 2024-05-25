@@ -1648,7 +1648,7 @@ public:
 				case RepType::MixedPi:{
 					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
 					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
-					unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
+					UInt64 decHalf = DecimalOverflowX*Frac.numerator();
 					decHalf /= Frac.denominator();
 					DecimalHalf.Value = (unsigned int) decHalf;
 					BasicUnsignedMultOp(PiNum); 
@@ -1660,7 +1660,7 @@ public:
 				case RepType::MixedE:{
 					boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
 					//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
-					unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
+					UInt64 decHalf = DecimalOverflowX*Frac.numerator();
 					decHalf /= Frac.denominator();
 					DecimalHalf.Value = (unsigned int) decHalf;
 					BasicUnsignedMultOp(ENum); 
@@ -1735,7 +1735,7 @@ public:
 			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(DecimalHalf, ExtraRep.Value);
 			unsigned int denon = Frac.denominator();
 			//Expanding size to int 64 to prevent overflow during multiplication and reduce truncation (can prevent overflow with int 32 via dividing before multiplying but has more truncation in that order)
-			unsigned long long decHalf = DecimalOverflowX*Frac.numerator();
+			UInt64 decHalf = DecimalOverflowX*Frac.numerator();
 			decHalf /= denon;
 			DecimalHalf.Value = (unsigned int) decHalf;
 			ResetDivisor();
@@ -2415,33 +2415,33 @@ public:
 			else
 			{
 				MirroredInt intTotal = IntValue + rValue.IntValue;
-				boost::rational<unsigned long long> frac;
+				boost::rational<UInt64> frac;
 				if(IntValue.IsPositive==rValue.IntValue.IsPositive){//Both sides have same sign
 					if(ExtraRep.Value==rValue.ExtraRep.Value)
-						frac = boost::rational<unsigned long long>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
 					else
-						frac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue.ExtraRep.Value+rValue.DecimalHalf.Value*ExtraRep.Value, ExtraRep.Value*rValue.ExtraRep.Value);
+						frac = boost::rational<UInt64>(DecimalHalf.Value*rValue.ExtraRep.Value+rValue.DecimalHalf.Value*ExtraRep.Value, ExtraRep.Value*rValue.ExtraRep.Value);
 				}
 				else if(ExtraRep.Value==rValue.ExtraRep.Value){
 				    if(rValue.DecimalHalf.Value==DecimalHalf.Value){
 						IntValue = intTotal; DecimalHalf.Value = 0;
 						ResetDivisor(); return;
 					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-						frac = boost::rational<unsigned long long>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
                         if(IntValue.IsPositive())
 						    --intTotal;
                         else
                             ++intTotal
 					} else//(4/6)+ -(5/12)
-						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
                 } else {//Left and right values have opposite signs
-				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
-					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+				    UInt64 leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+					UInt64 rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
 				    if(leftNum==rightNum){//4/6 + -4/6 = 0/6
 						IntValue = intTotal; DecimalHalf.Value = 0;
 						ResetDivisor(); return;
 					} else if(rightNum>leftNum){
-						frac = boost::rational<unsigned long long>(rightNum-leftNum, ExtraRep.Value);
+						frac = boost::rational<UInt64>(rightNum-leftNum, ExtraRep.Value);
                         if(IntValue.IsPositive())//(2/6)+ -(5/12)
 						    --intTotal;
                         else//(-2/6)+ (11/12)
@@ -2449,10 +2449,10 @@ public:
 					} else
 						//(3/4)+ -(1/4) = 2/4
 						//(-3/4) + 1/4 = -2/4
-						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);
+						frac = boost::rational<UInt64>(leftNum - rightNum, ExtraRep.Value);
 				}
-				unsigned long long denom = frac.denominator();
-				unsigned long long num = frac.numerator();
+				UInt64 denom = frac.denominator();
+				UInt64 num = frac.numerator();
 				if(num>denom){ num -= denom;
 					if(IntValue.IsPositive())//11/12 + (4/12) = 1 3/12
 						++intTotal;
@@ -2462,18 +2462,18 @@ public:
 				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
 					IntValue = intTotal;//unsigned int 64 max = 18446744073709551615
 					if(num>18446744073){//Catching potential overflow
-						unsigned long long num02 = DecimalOverflowX/denom;
+						UInt64 num02 = DecimalOverflowX/denom;
 						num02 *= num;
 						DecimalHalf.Value = num02;
 					} else {
-						unsigned long long num02 = DecimalOverflowX*num;
+						UInt64 num02 = DecimalOverflowX*num;
 						num02 /= denom;
 						DecimalHalf.Value = num02; 
 					}
 					ResetDivisor();
 				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor or NormalVariant instead
 					//2147483647 + 1073741803/1973741804 =  4238578247490279188/1973741804 + 1073741803/1973741804
-					unsigned long long numTotal = intTotal.Value*denom + num;
+					UInt64 numTotal = intTotal.Value*denom + num;
 					unsigned intHalf = numTotal/DecimalOverflowX;
 					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
 					IntValue = MirroredInt(intHalf, intTotal.IsPositive);
@@ -2533,21 +2533,21 @@ public:
 			else
 			{
 				MirroredInt intTotal = IntValue - rValue.IntValue;
-				boost::rational<unsigned long long> frac;
+				boost::rational<UInt64> frac;
 				if(IntValue.IsPositive==rValue.IntValue.IsPositive){//Both sides have same sign
 					if(ExtraRep.Value==rValue.ExtraRep.Value)
-						frac = boost::rational<unsigned long long>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
 					else {
-                        unsigned long long lNum = DecimalHalf.Value*rValue.ExtraRep.Value;
-                        unsigned long long rNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+                        UInt64 lNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+                        UInt64 rNum = rValue.DecimalHalf.Value*ExtraRep.Value;
                         if(rNum>lNum){
                             if(IntValue.IsPositive())
     						    --intTotal;
                             else
                                 ++intTotal;
-						    frac = boost::rational<unsigned long long>(rNum-lNum, ExtraRep.Value*rValue.ExtraRep.Value);
+						    frac = boost::rational<UInt64>(rNum-lNum, ExtraRep.Value*rValue.ExtraRep.Value);
 				        } else
-                            frac = boost::rational<unsigned long long>(lNum-rNum, ExtraRep.Value*rValue.ExtraRep.Value);
+                            frac = boost::rational<UInt64>(lNum-rNum, ExtraRep.Value*rValue.ExtraRep.Value);
                     }
                 }
 				else if(ExtraRep.Value==rValue.ExtraRep.Value){
@@ -2555,29 +2555,29 @@ public:
 						IntValue = intTotal; DecimalHalf.Value = 0;
 						ResetDivisor(); return;
 					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-						frac = boost::rational<unsigned long long>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
                         if(IntValue.IsPositive())
 						    --intTotal;
                         else
                             ++intTotal;
 					} else//(4/6)+ -(5/12)
-						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
+						frac = boost::rational<UInt64>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
                 } else {//Left and right values have opposite signs
-				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
-					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+				    UInt64 leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+					UInt64 rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
 				    if(leftNum==rightNum)//4/6 - (-4/6) = 8/6
-						frac = boost::rational<unsigned long long>(leftNum + rightNum, ExtraRep.Value);
+						frac = boost::rational<UInt64>(leftNum + rightNum, ExtraRep.Value);
 					else if(rightNum>leftNum){
-						frac = boost::rational<unsigned long long>(rightNum-leftNum, ExtraRep.Value);
+						frac = boost::rational<UInt64>(rightNum-leftNum, ExtraRep.Value);
                         if(IntValue.IsPositive())//(2/6)- (5/12)
 						    --intTotal;
                         else//(-2/6)+ (11/12)
                             ++intTotal;
 					} else//(4/6) - (-2/6) = 6/6
-						frac = boost::rational<unsigned long long>(leftNum + rightNum, ExtraRep.Value);
+						frac = boost::rational<UInt64>(leftNum + rightNum, ExtraRep.Value);
 				}
-				unsigned long long denom = frac.denominator();
-				unsigned long long num = frac.numerator();
+				UInt64 denom = frac.denominator();
+				UInt64 num = frac.numerator();
 				if(num>denom){ num -= denom;
 					if(IntValue.IsPositive())//4/6 - (-4/6) = 1 2/6
 						++intTotal;//
@@ -2587,18 +2587,18 @@ public:
 				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
 					IntValue = intTotal;//unsigned int 64 max = 18446744073709551615
 					if(num>18446744073){//Catching potential overflow
-						unsigned long long num02 = DecimalOverflowX/denom;
+						UInt64 num02 = DecimalOverflowX/denom;
 						num02 *= num;
 						DecimalHalf.Value = num02;
 					} else {
-						unsigned long long num02 = DecimalOverflowX*num;
+						UInt64 num02 = DecimalOverflowX*num;
 						num02 /= denom;
 						DecimalHalf.Value = num02; 
 					}
 					ResetDivisor();
 				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor or NormalVariant instead
 					//2147483647 + 1073741803/1973741804 =  4238578247490279188/1973741804 + 1073741803/1973741804
-					unsigned long long numTotal = intTotal.Value*denom + num;
+					UInt64 numTotal = intTotal.Value*denom + num;
 					unsigned intHalf = numTotal/DecimalOverflowX;
 					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
 					IntValue = MirroredInt(intHalf, intTotal.IsPositive);
@@ -3316,15 +3316,15 @@ public:
         constexpr auto UIntDivOpV1 = UIntDivOpV1<unsigned int>;
         constexpr auto IntDivOpV1 = IntDivOpV1<signed int>;
         constexpr auto UnsignedIntDivOp = UIntDivOpV1<signed int>;
-        constexpr auto UInt64DivOp = UIntDivOpV1<unsigned long long>;
-        constexpr auto Int64DivOp = IntDivOpV1<signed long long>;
+        constexpr auto UInt64DivOp = UIntDivOpV1<UInt64>;
+        constexpr auto Int64DivOp = IntDivOpV1<Int64>;
 	
         constexpr auto DivByUInt = DivByUIntV1<unsigned int>;
         constexpr auto DivByInt = DivByIntV1<signed int>;
         constexpr auto UnsignedDivByInt = DivByUInt<signed int>;
         constexpr auto DivByUInt64 = DivByUInt<;
         constexpr auto DivByInt64 = BasicDivByInt64;
-        constexpr auto UnsignedDivByInt64 = DivByUInt<signed long long>;
+        constexpr auto UnsignedDivByInt64 = DivByUInt<Int64>;
 		
         constexpr auto DivByUInt8 = BasicDivByUInt8;
         constexpr auto DivByInt8 = BasicDivByInt8;
@@ -3405,14 +3405,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase operator/(const AltDecBase& self, const signed int& Value) { return self.DivideByInt(Value); }
-        friend AltDecBase operator/(const AltDecBase& self, const signed long long& Value) { return self.DivideByInt64(Value); }
+        friend AltDecBase operator/(const AltDecBase& self, const Int64& Value) { return self.DivideByInt64(Value); }
         friend AltDecBase operator/(const AltDecBase& self, const unsigned int& Value) { return self.DivideByUInt(Value); }
-        friend AltDecBase operator/(const AltDecBase& self, const unsigned long long& Value) { return self.DivideByUInt64(Value); }
+        friend AltDecBase operator/(const AltDecBase& self, const UInt64& Value) { return self.DivideByUInt64(Value); }
 		
         friend AltDecBase operator/(const signed int& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
-        friend AltDecBase operator/(const signed long long& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
+        friend AltDecBase operator/(const Int64& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
         friend AltDecBase operator/(const unsigned int& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
-        friend AltDecBase operator/(const unsigned long long& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
+        friend AltDecBase operator/(const UInt64& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).DivideBy(rValue); }
 
         friend AltDecBase operator/(const AltDecBase& self, const signed char& Value) { return self.DivideByInt8(Value); }
         friend AltDecBase operator/(const AltDecBase& self, const signed short& Value) { return self.DivideByInt16(Value); }
@@ -3432,9 +3432,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase& operator/=(AltDecBase& self, const signed int& Value) { return self.IntDivOp(Value); }
-        friend AltDecBase& operator/=(AltDecBase& self, const signed long long& Value) { return self.Int64DivOp(Value); }
+        friend AltDecBase& operator/=(AltDecBase& self, const Int64& Value) { return self.Int64DivOp(Value); }
         friend AltDecBase& operator/=(AltDecBase& self, const unsigned int& Value) { return self.UIntDivOp(Value); }
-        friend AltDecBase& operator/=(AltDecBase& self, const unsigned long long& Value) { return self.UInt64DivOp(Value); }
+        friend AltDecBase& operator/=(AltDecBase& self, const UInt64& Value) { return self.UInt64DivOp(Value); }
 
         friend AltDecBase& operator/=(AltDecBase& self, const signed char& Value) { return self.Int8DivOp(Value); }
         friend AltDecBase& operator/=(AltDecBase& self, const signed short& Value) { return self.Int16DivOp(Value); }
@@ -3548,10 +3548,10 @@ protected:
                             }
                             else
                             {
-                                boost::rational<unsigned int> rSideFrac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue, ExtraRep.Value);
+                                boost::rational<unsigned int> rSideFrac = boost::rational<UInt64>(DecimalHalf.Value*rValue, ExtraRep.Value);
                                 IntValue.Value *= rValue;
-                                unsigned long long divRes = rSideFrac.numerator() / rSideFrac.denominator();
-                                unsigned long long C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
+                                UInt64 divRes = rSideFrac.numerator() / rSideFrac.denominator();
+                                UInt64 C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
                                 if(divRes!=0)
                                     IntValue.Value += (unsigned int)divRes;
                                 DecimalHalf.Value = (unsigned int) C;
@@ -3683,10 +3683,10 @@ protected:
                             }
                             else
                             {
-                                boost::rational<unsigned int> rSideFrac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue, ExtraRep.Value);
+                                boost::rational<unsigned int> rSideFrac = boost::rational<UInt64>(DecimalHalf.Value*rValue, ExtraRep.Value);
                                 IntValue.Value *= rValue;
-                                unsigned long long divRes = rSideFrac.numerator() / rSideFrac.denominator();
-                                unsigned long long C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
+                                UInt64 divRes = rSideFrac.numerator() / rSideFrac.denominator();
+                                UInt64 C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
                                 if(divRes!=0)
                                     IntValue.Value += (unsigned int)divRes;
                                 DecimalHalf.Value = (unsigned int) C;
@@ -3811,10 +3811,10 @@ protected:
                             }
                             else
                             {
-                                boost::rational<unsigned int> rSideFrac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue, ExtraRep.Value);
+                                boost::rational<unsigned int> rSideFrac = boost::rational<UInt64>(DecimalHalf.Value*rValue, ExtraRep.Value);
                                 IntValue.Value *= rValue;
-                                unsigned long long divRes = rSideFrac.numerator() / rSideFrac.denominator();
-                                unsigned long long C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
+                                UInt64 divRes = rSideFrac.numerator() / rSideFrac.denominator();
+                                UInt64 C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
                                 if(divRes!=0)
                                     IntValue.Value += (unsigned int)divRes;
                                 DecimalHalf.Value = (unsigned int) C;
@@ -3966,10 +3966,10 @@ protected:
                             }
                             else
                             {
-                                boost::rational<unsigned int> rSideFrac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue, ExtraRep.Value);
+                                boost::rational<unsigned int> rSideFrac = boost::rational<UInt64>(DecimalHalf.Value*rValue, ExtraRep.Value);
                                 IntValue.Value *= rValue;
-                                unsigned long long divRes = rSideFrac.numerator() / rSideFrac.denominator();
-                                unsigned long long C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
+                                UInt64 divRes = rSideFrac.numerator() / rSideFrac.denominator();
+                                UInt64 C = rSideFrac.numerator() - rSideFrac.denominator() * divRes;
                                 if(divRes!=0)
                                     IntValue.Value += (unsigned int)divRes;
                                 DecimalHalf.Value = (unsigned int) C;
@@ -4102,15 +4102,15 @@ public:
         constexpr auto UIntMultOpV1 = UIntMultOpV1<unsigned int>;
         constexpr auto IntMultOpV1 = IntMultOpV1<signed int>;
         constexpr auto UnsignedIntMultOp = UIntMultOpV1<signed int>;
-        constexpr auto UInt64MultOp = UIntMultOpV1<unsigned long long>;
-        constexpr auto Int64MultOp = IntMultOpV1<signed long long>;
+        constexpr auto UInt64MultOp = UIntMultOpV1<UInt64>;
+        constexpr auto Int64MultOp = IntMultOpV1<Int64>;
 	
         constexpr auto MultByUInt = MultByUIntV1<unsigned int>;
         constexpr auto MultByInt = MultByIntV1<signed int>;
         constexpr auto UnsignedMultByInt = MultByUInt<signed int>;
         constexpr auto MultByUInt64 = MultByUInt<;
         constexpr auto MultByInt64 = BasicMultByInt64;
-        constexpr auto UnsignedMultByInt64 = MultByUInt<signed long long>;
+        constexpr auto UnsignedMultByInt64 = MultByUInt<Int64>;
 		
         constexpr auto MultByUInt8 = BasicMultByUInt8;
         constexpr auto MultByInt8 = BasicMultByInt8;
@@ -4189,14 +4189,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase operator*(const AltDecBase& self, const signed int& Value) { return self.MultByInt(Value); }
-        friend AltDecBase operator*(const AltDecBase& self, const signed long long& Value) { return self.MultByInt64(Value); }
+        friend AltDecBase operator*(const AltDecBase& self, const Int64& Value) { return self.MultByInt64(Value); }
         friend AltDecBase operator*(const AltDecBase& self, const unsigned int& Value) { return self.MultByUInt(Value); }
-        friend AltDecBase operator*(const AltDecBase& self, const unsigned long long& Value) { return self.MultByUInt64(Value); }
+        friend AltDecBase operator*(const AltDecBase& self, const UInt64& Value) { return self.MultByUInt64(Value); }
 		
         friend AltDecBase operator*(const signed int& lValue, const AltDecBase& rValue) { return rValue.MultByInt(lValue); }
-        friend AltDecBase operator*(const signed long long& lValue, const AltDecBase& rValue) { return rValue.MultByInt64(lValue); }
+        friend AltDecBase operator*(const Int64& lValue, const AltDecBase& rValue) { return rValue.MultByInt64(lValue); }
         friend AltDecBase operator*(const unsigned int& lValue, const AltDecBase& rValue) { return rValue.MultByUInt(lValue); }
-        friend AltDecBase operator*(const unsigned long long& lValue, const AltDecBase& rValue) { return rValue.MultByUInt64(lValue); }
+        friend AltDecBase operator*(const UInt64& lValue, const AltDecBase& rValue) { return rValue.MultByUInt64(lValue); }
 
         friend AltDecBase operator*(const AltDecBase& self, const signed char& Value) { return self.MultByInt8(Value); }
         friend AltDecBase operator*(const AltDecBase& self, const signed short& Value) { return self.MultByInt16(Value); }
@@ -4215,9 +4215,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase& operator*=(AltDecBase& self, const signed int& Value) { return self.IntMultOp(Value); }
-        friend AltDecBase& operator*=(AltDecBase& self, const signed long long& Value) { return self.Int64MultOp(Value); }
+        friend AltDecBase& operator*=(AltDecBase& self, const Int64& Value) { return self.Int64MultOp(Value); }
         friend AltDecBase& operator*=(AltDecBase& self, const unsigned int& Value) { return self.UIntMultOp(Value); }
-        friend AltDecBase& operator*=(AltDecBase& self, const unsigned long long& Value) { return self.UInt64MultOp(Value); }
+        friend AltDecBase& operator*=(AltDecBase& self, const UInt64& Value) { return self.UInt64MultOp(Value); }
 
         friend AltDecBase& operator*=(AltDecBase& self, const signed char& Value) { return self.Int8MultOp(Value); }
         friend AltDecBase& operator*=(AltDecBase& self, const signed short& Value) { return self.Int16MultOp(Value); }
@@ -4381,15 +4381,15 @@ public:
         constexpr auto UIntAddOpV1 = UIntAddOpV1<unsigned int>;
         constexpr auto IntAddOpV1 = IntAddOpV1<signed int>;
         constexpr auto UnsignedIntAddOp = UIntAddOpV1<signed int>;
-        constexpr auto UInt64AddOp = UIntAddOpV1<unsigned long long>;
-        constexpr auto Int64AddOp = IntAddOpV1<signed long long>;
+        constexpr auto UInt64AddOp = UIntAddOpV1<UInt64>;
+        constexpr auto Int64AddOp = IntAddOpV1<Int64>;
 	
         constexpr auto AddByUInt = AddByUIntV1<unsigned int>;
         constexpr auto AddByInt = AddByIntV1<signed int>;
         constexpr auto UnsignedAddByInt = AddByUInt<signed int>;
         constexpr auto AddByUInt64 = AddByUInt<;
         constexpr auto AddByInt64 = BasicAddByInt64;
-        constexpr auto UnsignedAddByInt64 = AddByUInt<signed long long>;
+        constexpr auto UnsignedAddByInt64 = AddByUInt<Int64>;
 		
         constexpr auto AddByUInt8 = BasicAddByUInt8;
         constexpr auto AddByInt8 = BasicAddByInt8;
@@ -4465,14 +4465,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase operator+(const AltDecBase& self, const signed int& Value) { return self.AddByInt(Value); }
-        friend AltDecBase operator+(const AltDecBase& self, const signed long long& Value) { return self.AddByInt64(Value); }
+        friend AltDecBase operator+(const AltDecBase& self, const Int64& Value) { return self.AddByInt64(Value); }
         friend AltDecBase operator+(const AltDecBase& self, const unsigned int& Value) { return self.AddByUInt(Value); }
-        friend AltDecBase operator+(const AltDecBase& self, const unsigned long long& Value) { return self.AddByUInt64(Value); }
+        friend AltDecBase operator+(const AltDecBase& self, const UInt64& Value) { return self.AddByUInt64(Value); }
 		
         friend AltDecBase operator+(const signed int& lValue, const AltDecBase& rValue) { return rValue.AddByInt(lValue); }
-        friend AltDecBase operator+(const signed long long& lValue, const AltDecBase& rValue) { return rValue.AddByInt64(lValue); }
+        friend AltDecBase operator+(const Int64& lValue, const AltDecBase& rValue) { return rValue.AddByInt64(lValue); }
         friend AltDecBase operator+(const unsigned int& lValue, const AltDecBase& rValue) { return rValue.AddByUInt(lValue); }
-        friend AltDecBase operator+(const unsigned long long& lValue, const AltDecBase& rValue) { return rValue.AddByUInt64(lValue); }
+        friend AltDecBase operator+(const UInt64& lValue, const AltDecBase& rValue) { return rValue.AddByUInt64(lValue); }
 
         friend AltDecBase operator+(const AltDecBase& self, const signed char& Value) { return self.AddByInt8(Value); }
         friend AltDecBase operator+(const AltDecBase& self, const signed short& Value) { return self.AddByInt16(Value); }
@@ -4491,9 +4491,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase& operator+=(MediumDecV2Base& self, const signed int& Value) { return self.IntAddOp(Value); }
-        friend AltDecBase& operator+=(MediumDecBase& self, const signed long long& Value) { return self.Int64AddOp(Value); }
+        friend AltDecBase& operator+=(MediumDecBase& self, const Int64& Value) { return self.Int64AddOp(Value); }
         friend AltDecBase& operator+=(MediumDecBase& self, const unsigned int& Value) { return self.UIntAddOp(Value); }
-        friend AltDecBase& operator+=(MediumDecBase& self, const unsigned long long& Value) { return self.UInt64AddOp(Value); }
+        friend AltDecBase& operator+=(MediumDecBase& self, const UInt64& Value) { return self.UInt64AddOp(Value); }
 
         friend AltDecBase& operator+=(MediumDecBase& self, const signed char& Value) { return self.Int8AddOp(Value); }
         friend AltDecBase& operator+=(MediumDecBase& self, const signed short& Value) { return self.Int16AddOp(Value); }
@@ -4657,15 +4657,15 @@ public:
         constexpr auto UIntSubOpV1 = UIntSubOpV1<unsigned int>;
         constexpr auto IntSubOpV1 = IntSubOpV1<signed int>;
         constexpr auto UnsignedIntSubOp = UIntSubOpV1<signed int>;
-        constexpr auto UInt64SubOp = UIntSubOpV1<unsigned long long>;
-        constexpr auto Int64SubOp = IntSubOpV1<signed long long>;
+        constexpr auto UInt64SubOp = UIntSubOpV1<UInt64>;
+        constexpr auto Int64SubOp = IntSubOpV1<Int64>;
 	
         constexpr auto SubByUInt = SubByUIntV1<unsigned int>;
         constexpr auto SubByInt = SubByIntV1<signed int>;
         constexpr auto UnsignedSubByInt = SubByUInt<signed int>;
         constexpr auto SubByUInt64 = SubByUInt<;
         constexpr auto SubByInt64 = BasicSubByInt64;
-        constexpr auto UnsignedSubByInt64 = SubByUInt<signed long long>;
+        constexpr auto UnsignedSubByInt64 = SubByUInt<Int64>;
 		
         constexpr auto SubByUInt8 = BasicSubByUInt8;
         constexpr auto SubByInt8 = BasicSubByInt8;
@@ -4741,14 +4741,14 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase operator-(const AltDecBase& self, const signed int& Value) { return self.SubtractByInt(Value); }
-        friend AltDecBase operator-(const AltDecBase& self, const signed long long& Value) { return self.SubtractByInt64(Value); }
+        friend AltDecBase operator-(const AltDecBase& self, const Int64& Value) { return self.SubtractByInt64(Value); }
         friend AltDecBase operator-(const AltDecBase& self, const unsigned int& Value) { return self.SubtractByUInt(Value); }
-        friend AltDecBase operator-(const AltDecBase& self, const unsigned long long& Value) { return self.SubtractByUInt64(Value); }
+        friend AltDecBase operator-(const AltDecBase& self, const UInt64& Value) { return self.SubtractByUInt64(Value); }
 		
         friend AltDecBase operator-(const signed int& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
-        friend AltDecBase operator-(const signed long long& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
+        friend AltDecBase operator-(const Int64& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
         friend AltDecBase operator-(const unsigned int& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
-        friend AltDecBase operator-(const unsigned long long& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
+        friend AltDecBase operator-(const UInt64& lValue, const AltDecBase& rValue) { return ((AltDecBase)lValue).SubtractBy(rValue); }
 
         friend AltDecBase operator-(const AltDecBase& self, const signed char& Value) { return self.SubtractByInt8(Value); }
         friend AltDecBase operator-(const AltDecBase& self, const signed short& Value) { return self.SubtractByInt16(Value); }
@@ -4768,9 +4768,9 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend AltDecBase& operator-=(AltDecBase& self, const signed int& Value) { return self.IntSubOp(Value); }
-        friend AltDecBase& operator-=(AltDecBase& self, const signed long long& Value) { return self.Int64SubOp(Value); }
+        friend AltDecBase& operator-=(AltDecBase& self, const Int64& Value) { return self.Int64SubOp(Value); }
         friend AltDecBase& operator-=(AltDecBase& self, const unsigned int& Value) { return self.UIntSubOp(Value); }
-        friend AltDecBase& operator-=(AltDecBase& self, const unsigned long long& Value) { return self.UInt64SubOp(Value); }
+        friend AltDecBase& operator-=(AltDecBase& self, const UInt64& Value) { return self.UInt64SubOp(Value); }
 
         friend AltDecBase& operator-=(AltDecBase& self, const signed char& Value) { return self.Int8SubOp(Value); }
         friend AltDecBase& operator-=(AltDecBase& self, const signed short& Value) { return self.Int16SubOp(Value); }
@@ -5214,13 +5214,13 @@ public:
 
         constexpr auto BasicUIntPowOfOp = BasicUIntPowOfOpV1<unsigned int>;
         constexpr auto BasicIntPowOfOp = BasicIntPowOfOpV1<signed int>;
-        constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<unsigned long long>;
-        constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<signed long long>;
+        constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<UInt64>;
+        constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<Int64>;
         
         constexpr auto BasicUIntPowOf = BasicUIntPowOfV1<unsigned int>;
         constexpr auto BasicIntPowOf = BasicIntPowOfV1<signed int>;
-        constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<unsigned long long>;
-        constexpr auto BasicInt64PowOf = BasicIntPowOfV1<signed long long>;
+        constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<UInt64>;
+        constexpr auto BasicInt64PowOf = BasicIntPowOfV1<Int64>;
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -5388,8 +5388,8 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
-        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<unsigned long long>;
-        constexpr auto Int64PowOfOp = IntPowOpOfV1<signed long long>;
+        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<UInt64>;
+        constexpr auto Int64PowOfOp = IntPowOpOfV1<Int64>;
         
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
@@ -5402,8 +5402,8 @@ public:
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
         constexpr auto IntPowOf = IntPowOfV1<signed int>;
-        constexpr auto UInt64PowOf = UIntPowOfV1<unsigned long long>;
-        constexpr auto Int64PowOf = IntPowOfV1<signed long long>;
+        constexpr auto UInt64PowOf = UIntPowOfV1<UInt64>;
+        constexpr auto Int64PowOf = IntPowOfV1<Int64>;
 
 	#pragma endregion Pow and Sqrt Functions
 
