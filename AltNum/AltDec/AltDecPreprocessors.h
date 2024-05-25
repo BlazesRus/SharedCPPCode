@@ -130,6 +130,9 @@ AltNum_EnableIndeterminateForms = Enables extra representations for outputing an
 	(Not fully implimented yet)
 	
 AltNum_AllowNegativeZero = Allows zero to keep the negative sign when multiplying(not implimented yet)
+AltNum_EnableEnhancedDivideByZeroForm = 
+	Defines Indeterminate form of IntValue.DecimalHalf as when ExtraRep = 0(disables AltNum_EnableWithinMinMaxRange or Reserves last ExtraRep value)
+	(Not Implimented yet)
 */
 
 #pragma region PreprocessorToggles

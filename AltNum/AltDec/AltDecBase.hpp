@@ -2696,6 +2696,8 @@ protected:
                 else
                     SetAsInfinity();
                 return *this;
+				#elif defined(AltNum_EnableIndeterminateForms)
+					SetAsIndeterminateForm(DivideByZeroRep);//If DecimalHalf.Value is not 0 then increased Int.Value by one unless  
                 #else
                 throw "Target rValue can not be divided by zero";
                 #endif

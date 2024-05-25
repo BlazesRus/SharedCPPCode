@@ -154,17 +154,20 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableIndeterminateForms)
         //Is indeterminate form when DecimalHalf above this value 
 		static unsigned int IndeterminateRep = UndefinedInRangeRep;
-		//When IntValue.Value is this value, then the indeterminate form represents 0 x Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
+		//When IntValue.IsPositive==0, then the indeterminate form represents 0 x -Infinity
 		static unsigned int ZeroTimesInfinityRep = IndeterminateRep+1;//1073741814;
-		//When IntValue.Value is this value, then the indeterminate form represents Infinity / Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
+		//When IntValue.IsPositive==0, then the indeterminate form represents -Infinity / Infinity
 		static unsigned int InfDividedByInfRep = IndeterminateRep+2;
-		//When IntValue.Value is this value, then the indeterminate form represents Infinity - Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
 		static unsigned int InfMinusInfRep = IndeterminateRep+3;
-		//When IntValue.Value is this value, then the indeterminate form represents 0/0
-		static unsigned int ZeroByZeroRep = IndeterminateRep+4;
-		//When IntValue.Value is this value, then the indeterminate form represents 0 to power of 0
+		//When DecimalHalf.Value is this value, then the indeterminate form represents IntValue/0
+		static unsigned int DivideByZeroRep = IndeterminateRep+4;
+		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
 		static unsigned int ZeroToPowerOfZeroRep = IndeterminateRep+5;
-	#endif//Maximum DecimalHalf.Value = 1073741824
+		static unsigned int UnknownIndeterminateRep = IndeterminateRep+10;
+	#endif//Maximum DecimalHalf.Value = 1073741823
     public:
     #pragma endregion Const Representation values
 
@@ -264,6 +267,10 @@ namespace BlazesRusCode
                     return RepType::Nil; break;
 		#endif
                 default:
+		#if defined(AltNum_EnableIndeterminateForms)
+					if(DecimalHalf>IndeterminateRep)
+						return RepType::IndeterminateForm; break;
+		#endif
                     return RepType::NormalType; break;
             }
         }
