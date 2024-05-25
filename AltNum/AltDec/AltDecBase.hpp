@@ -2369,30 +2369,26 @@ public:
 		{
 			if(DecimalHalf==0){//Left side is normal
 				if(IsNegative()){
-					if(rValue.IntValue.Value==0)
+					if(rValue.IntValue.Value==0){
 						//-3 + 5/6 = -2 1/6
 						if(rValue.IsPositive()){
 							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
 							--IntValue;
 						} else//-3 + -5/6 = -3 5/6
 							DecimalHalf.Value = rValue.DecimalHalf;
-					else if(rValue.IsNegative()){//-3 + (-2 5/6) = -5 5/6
+					} else if(rValue.IsNegative()){//-3 + (-2 5/6) = -5 5/6
 						IntValue += rValue.IntValue;
 						DecimalHalf.Value = rValue.DecimalHalf;
 					} else {
-						if(rValue.IntValue>-IntValue)//check for flipping of sign
-						{
-							IntValue += rValue.IntValue - 1;
+						//-3 + (2 5/6) = -0 1/6
+						if(-rValue.IntValue<IntValue)
 							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
-						}
-						else
-						{
-							IntValue += rValue.IntValue;
-							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
-						}
+						else 
+							DecimalHalf.Value = rValue.DecimalHalf;
+						IntValue += rValue.IntValue;
 					}
 				} else {
-					if(rValue.IntValue.Value==0)
+					if(rValue.IntValue.Value==0){
 						//3 + 5/6 = 3 5/6
 						if(rValue.IsPositive())
 							DecimalHalf.Value = rValue.DecimalHalf;
@@ -2400,17 +2396,13 @@ public:
 							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
 							--IntValue;
 						}
-					else if(rValue.IntValue<0){
+					} else if(rValue.IsNegative()){
+						//3 + (-2 5/6) = 0 1/6
+						if(-rValue.IntValue<IntValue)
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+						else 
+							DecimalHalf.Value = rValue.DecimalHalf;
 						IntValue += rValue.IntValue;
-						if(-rValue.IntValue>IntValue)//check for flipping of sign
-						{
-							IntValue += rValue.IntValue;
-							if(IntValue==-1)
-								IntValue = NegativeRep;
-							else
-								++IntValue;
-						}
-						DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
 					} else {
 						IntValue += rValue.IntValue;
 						DecimalHalf.Value = rValue.DecimalHalf;
@@ -2492,42 +2484,8 @@ public:
 			}
 		}
 		
-    #if defined(AltNum_UseIntForDecimalHalf)
-		virtual void BasicMixedAltFracAddOp(AltDec& rValue)
-    #else
-		virtual void BasicMixedAltFracAddOp(AltDec& rValue, const AltDec& altNum)
-    #endif
-		{
-			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
-		#if defined(AltNum_UseIntForDecimalHalf)
-            #if defined(AltNum_EnableMixedPiFractional)
-			RightSideNum *= PiNum;
-		    #else
-			RightSideNum *= ENum;
-		    #endif
-        #else
-			RightSideNum *= altNum;
-        #endif
-            BasicIntMultOp(-rValue.ExtraRep);
-            BasicAddOp(RightSideNum);
-			if(DecimalHalf==0)
-			{
-				if(IntValue!=0)//Set as Zero if both are zero
-				{
-					DecimalHalf = -DecimalHalf;
-					ExtraRep = -rValue.ExtraRep;
-				}
-			}
-			else
-			{
-				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-					DecimalHalf = -DecimalHalf;
-				ExtraRep = -rValue.ExtraRep;
-			}
-		}
-		
 		//Assumes NormalRep - Normal MixedFraction operation
-		virtual void BasicMixedFracSubOp(AltDec& rValue)
+		void BasicMixedFracSubOp(AltDec& rValue)
 		{
 		#if defined(AltNum_UseIntForDecimalHalf)
 			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
