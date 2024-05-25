@@ -2434,7 +2434,7 @@ public:
                             ++intTotal
 					} else//(4/6)+ -(5/12)
 						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
-                } else {
+                } else {//Left and right values have opposite signs
 				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
 					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
 				    if(leftNum==rightNum){
@@ -2446,7 +2446,9 @@ public:
 						    --intTotal;
                         else//(-2/6)+ (11/12)
                             ++intTotal;
-					} else//(4/6)+ -(5/12)
+					} else
+						//(3/4)+ -(1/4) = 2/4
+						//(-3/4) + 1/4 = -2/4
 						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);
 				}
 				unsigned long long denom = frac.denominator();
@@ -2484,94 +2486,133 @@ public:
 			}
 		}
 		
-		//Assumes NormalRep - Normal MixedFraction operation
+		//Assumes MixedFraction operation of same flag category
 		void BasicMixedFracSubOp(AltDec& rValue)
 		{
-		#if defined(AltNum_UseIntForDecimalHalf)
-			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
-		#else
-
-        #endif
-        	BasicMultOp(rValue.ExtraRep);
-			BasicSubOp(RightSideNum);
-			if(DecimalHalf==0)
-			{
-				if(IntValue!=0)//Set as Zero if both are zero
-				{
-            #if defined(AltNum_UseIntForDecimalHalf)
-					DecimalHalf = -DecimalHalf;
-					ExtraRep.Value = rValue.ExtraRep.Value;
-            #else
-					ExtraRep.Value = rValue.ExtraRep.Value;
-            #endif
-                    ExtraRep.SwitchToAlternative();
+			if(DecimalHalf==0){//Left side is normal
+				if(IsNegative()){
+					if(rValue.IntValue.Value==0){
+						if(rValue.IsNegative()){
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+							--IntValue;
+						} else
+							DecimalHalf.Value = rValue.DecimalHalf;
+					} else if(rValue.IsPositive()){
+						IntValue += rValue.IntValue;
+						DecimalHalf.Value = rValue.DecimalHalf;
+					} else {
+						if(-rValue.IntValue<IntValue)
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+						else 
+							DecimalHalf.Value = rValue.DecimalHalf;
+						IntValue -= rValue.IntValue;
+					}
+				} else {
+					if(rValue.IntValue.Value==0){
+						if(rValue.IsNegative())
+							DecimalHalf.Value = rValue.DecimalHalf;
+						else {
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+							--IntValue;
+						}
+					} else if(rValue.IsPositive()){
+						if(-rValue.IntValue<IntValue)
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+						else 
+							DecimalHalf.Value = rValue.DecimalHalf;
+						IntValue -= rValue.IntValue;
+					} else {
+						IntValue -= rValue.IntValue;
+						DecimalHalf.Value = rValue.DecimalHalf;
+					}
 				}
+				ExtraRep = rValue.ExtraRep;     
 			}
+            else if(rValue.DecimalHalf==0)//Right side is normal instead of Fraction
+                IntValue -= rValue.IntValue;
 			else
 			{
-            #if defined(AltNum_UseIntForDecimalHalf)
-                #if defined(AltNum_EnableMirroredSection)
-				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-                #else
-                if(IntValue.Value!=0)
-                #endif
-					DecimalHalf = -DecimalHalf;
-                ExtraRep = rValue.ExtraRep;
-            #else
-
-            #endif
+				MirroredInt intTotal = IntValue - rValue.IntValue;
+				boost::rational<unsigned long long> frac;
+				if(IntValue.IsPositive==rValue.IntValue.IsPositive){//Both sides have same sign
+					if(ExtraRep.Value==rValue.ExtraRep.Value)
+						frac = boost::rational<unsigned long long>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
+					else {
+                        unsigned long long lNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+                        unsigned long long rNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+                        if(rNum>lNum){
+                            if(IntValue.IsPositive())
+    						    --intTotal;
+                            else
+                                ++intTotal;
+						    frac = boost::rational<unsigned long long>(rNum-lNum, ExtraRep.Value*rValue.ExtraRep.Value);
+				        } else
+                            frac = boost::rational<unsigned long long>(lNum-rNum, ExtraRep.Value*rValue.ExtraRep.Value);
+                    }
+                }
+				else if(ExtraRep.Value==rValue.ExtraRep.Value){
+				    if(rValue.DecimalHalf.Value==DecimalHalf.Value){
+						IntValue = intTotal; DecimalHalf.Value = 0;
+						ResetDivisor(); return;
+					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+						frac = boost::rational<unsigned long long>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
+                        if(IntValue.IsPositive())
+						    --intTotal;
+                        else
+                            ++intTotal;
+					} else//(4/6)+ -(5/12)
+						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
+                } else {
+				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+/*				    if(leftNum==rightNum){
+						IntValue = intTotal; DecimalHalf.Value = 0;
+						ResetDivisor(); return;
+					} else if(rightNum>leftNum){
+						frac = boost::rational<unsigned long long>(rightNum-leftNum, ExtraRep.Value);
+                        if(IntValue.IsPositive())//(2/6)+ -(5/12)
+						    --intTotal;
+                        else//(-2/6)+ (11/12)
+                            ++intTotal
+					} else//(4/6)+ -(5/12)
+						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);*/
+				}
+				unsigned long long denom = frac.denominator();
+				unsigned long long num = frac.numerator();
+				if(num>denom){ num -= denom;
+					if(IntValue.IsPositive())
+						++intTotal;
+					else
+						--intTotal;
+				}
+				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
+					IntValue = intTotal;//unsigned int 64 max = 18446744073709551615
+					if(num>18446744073){//Catching potential overflow
+						unsigned long long num02 = DecimalOverflowX/denom;
+						num02 *= num;
+						DecimalHalf.Value = num02;
+					} else {
+						unsigned long long num02 = DecimalOverflowX*num;
+						num02 /= denom;
+						DecimalHalf.Value = num02; 
+					}
+					ResetDivisor();
+				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor or NormalVariant instead
+					//2147483647 + 1073741803/1973741804 =  4238578247490279188/1973741804 + 1073741803/1973741804
+					unsigned long long numTotal = intTotal.Value*denom + num;
+					unsigned intHalf = numTotal/DecimalOverflowX;
+					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
+					IntValue = MirroredInt(intHalf, intTotal.IsPositive);
+					ExtraRep = (unsigned int) denom;
+				} else {
+					IntValue = intTotal;
+					DecimalHalf.Value = num;
+					ExtraRep.Value = denom;
+				}
 			}
 		}
 	
-    #if defined(AltNum_UseIntForDecimalHalf)
-		virtual void BasicMixedAltFracSubOp(AltDec& rValue)
-    #else
-		virtual void BasicMixedAltFracSubOp(AltDec& rValue, const AltDec& altNum)
-    #endif
-		{
-		#if defined(AltNum_UseIntForDecimalHalf)
-			AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
-        #else
 
-        #endif
-		#if defined(AltNum_UseIntForDecimalHalf)
-            #if defined(AltNum_EnableMixedPiFractional)
-			RightSideNum *= PiNum;
-		    #else
-			RightSideNum *= ENum;
-		    #endif
-        #else
-			RightSideNum *= altNum;
-        #endif
-			BasicMultOp(rValue.ExtraRep.Value);
-			BasicSubOp(RightSideNum);
-			if(DecimalHalf==0)
-			{
-				if(IntValue!=0)//Set as Zero if both are zero
-				{
-            #if defined(AltNum_UseIntForDecimalHalf)
-					DecimalHalf = -DecimalHalf;
-					ExtraRep.Value = rValue.ExtraRep.Value;
-            #else
-					ExtraRep.Value = rValue.ExtraRep.Value;
-            #endif
-                    ExtraRep.SwitchToAlternative();
-				}
-			}
-			else
-			{
-            #if defined(AltNum_UseIntForDecimalHalf)
-                #if defined(AltNum_EnableMirroredSection)
-				if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-                #else
-                if(IntValue.Value!=0)
-                #endif
-					DecimalHalf = -DecimalHalf;
-                ExtraRep.SwitchToAlternative();
-            #else
-            #endif
-			}
-		}
     #endif
 #endif
     #pragma endregion Mixed Fraction Operations
