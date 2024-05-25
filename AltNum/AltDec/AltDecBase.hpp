@@ -239,6 +239,14 @@ public:
 		#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedPi;
 		#endif
+		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
+				return RepType::IndeterminateForm;
+		#endif
+		#if defined(AltNum_EnableIndeterminateForms)
+			if(DecimalHalf.Value>IndeterminateThreshold)
+				return RepType::IndeterminateForm;
+		#endif
 		#if defined(AltNum_EnableFractionals)
             if(ExtraRep>InitialExtraRep)
 				return RepType::PiNumByDiv;
@@ -289,6 +297,14 @@ public:
 				return RepType::EPower;
 		#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedE;
+		#endif
+		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
+				return RepType::IndeterminateForm;
+		#endif
+		#if defined(AltNum_EnableIndeterminateForms)
+			if(DecimalHalf.Value>IndeterminateThreshold)
+				return RepType::IndeterminateForm;
 		#endif
 		#if defined(AltNum_EnableFractionals)
             if(ExtraRep>InitialExtraRep)
@@ -407,6 +423,14 @@ public:
 				return RepType::ToPowerOf;
 		#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedFrac;
+		#endif
+		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
+				return RepType::IndeterminateForm;
+		#endif
+		#if defined(AltNum_EnableIndeterminateForms)
+			if(DecimalHalf.Value>IndeterminateThreshold)
+				return RepType::IndeterminateForm;
 		#endif
 		#if defined(AltNum_EnableFractionals)
             if(ExtraRep>InitialExtraRep)
