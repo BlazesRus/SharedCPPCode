@@ -153,26 +153,26 @@ namespace BlazesRusCode
 	#endif
 	#if defined(AltNum_EnableIndeterminateForms)
         //Is indeterminate form when DecimalHalf above this value 
-		static unsigned int IndeterminateRep = UndefinedInRangeRep;
+		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
 		//When IntValue.IsPositive==0, then the indeterminate form represents 0 x -Infinity
-		static unsigned int ZeroTimesInfinityRep = IndeterminateRep+1;//1073741814;
+		static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold+1;//1073741814;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
 		//When IntValue.IsPositive==0, then the indeterminate form represents -Infinity / Infinity
-		static unsigned int InfDividedByInfRep = IndeterminateRep+2;
+		static unsigned int InfDividedByInfRep = IndeterminateThreshold+2;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
-		static unsigned int InfMinusInfRep = IndeterminateRep+3;
+		static unsigned int InfMinusInfRep = IndeterminateThreshold+3;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
-		static unsigned int ZeroToPowerOfZeroRep = IndeterminateRep+4;
+		static unsigned int ZeroToPowerOfZeroRep = IndeterminateThreshold+4;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents IntValue/0
-		static unsigned int DivideByZeroRep = IndeterminateRep+9;
+		static unsigned int DivideByZeroRep = IndeterminateThreshold+9;
 		
-		static unsigned int UnknownIndeterminateRep = IndeterminateRep+10;
+		static unsigned int UnknownIndeterminateRep = IndeterminateThreshold+10;
 	#endif//Maximum DecimalHalf.Value = 1073741823
     public:
     #pragma endregion Const Representation values

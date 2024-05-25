@@ -159,6 +159,13 @@ AltNum_ReserveLastRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Z
 	#if defined(AltNum_ReserveLastRepForDivideByZero)
 		#undef AltNum_ReserveLastRepForDivideByZero
 	#endif
+#elif defined(AltNum_EnableNegativePowerRep)
+	#if defined(AltNum_ReserveLastRepForDivideByZero)
+		#undef AltNum_ReserveLastRepForDivideByZero
+	#endif
+	#if !defined(AltNum_EnableWithinMinMaxRange)&&defined(AltNum_EnableEnhancedDivideByZeroForm)&&!defined(AltNum_ReserveZeroRepForDivideByZero)
+		#define AltNum_ReserveZeroRepForDivideByZero
+	#endif
 #endif
 
 #if defined(AltNum_ReserveZeroRepForDivideByZero)&&defined(AltNum_EnableWithinMinMaxRange)

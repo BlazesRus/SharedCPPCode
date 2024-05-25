@@ -310,7 +310,7 @@ public:
         {
     #if defined(AltNum_EnableApproaching)
 		#if !defined(AltNum_DisableApproachingTop)
-            if (DecimalHalf == ApproachingTopRep)
+            if (DecimalHalf.Value == ApproachingTopRep)
 			#if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingImaginaryMidLeft;
@@ -319,7 +319,7 @@ public:
                     return RepType::ApproachingImaginaryTop;
             else
 		#endif
-			if (DecimalHalf == ApproachingBottomRep)
+			if (DecimalHalf.Value == ApproachingBottomRep)
         #if defined(AltNum_EnableApproachingDivided)
                 if(ExtraRep>InitialExtraRep)
                     return RepType::ApproachingImaginaryMidLeft;
@@ -328,7 +328,7 @@ public:
 					return RepType::ApproachingImaginaryBottom;
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
-            if(DecimalHalf == InfinityRep)
+            if(DecimalHalf.Value == InfinityRep)
                 return RepType::ImaginaryInfinity;
     #endif
 		#if defined(AltNum_EnableWithinMinMaxRange)
@@ -339,8 +339,16 @@ public:
 			if(ExtraRep.IsAlternative())
 				return RepType::MixedI;
 		#endif
+		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
+				return RepType::IndeterminateForm;
+		#endif
+		#if defined(AltNum_EnableIndeterminateForms)
+			if(DecimalHalf.Value>IndeterminateThreshold)
+				return RepType::IndeterminateForm;
+		#endif
 		#if defined(AltNum_EnableFractionals)
-        if(ExtraRep>InitialExtraRep)
+			if(ExtraRep>InitialExtraRep)
 				return RepType::INumByDiv;
 		#endif
             return RepType::INum;
