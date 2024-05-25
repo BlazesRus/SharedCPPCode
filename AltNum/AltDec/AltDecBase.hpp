@@ -749,7 +749,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = Numerator;
-            ExtraRep = MirroredInt(Denom);
+            ExtraRep.Value = Denom; ExtraRep.IsAltRep = 1;
         }
 		
 		#if defined(AltNum_EnablePiRep)
@@ -757,7 +757,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,1);
-            ExtraRep = MirroredInt(Denom);
+            ExtraRep.Value = Denom; ExtraRep.IsAltRep = 1;
         }
 		#endif
 		
@@ -766,7 +766,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,2);
-            ExtraRep = MirroredInt(Denom);
+            ExtraRep.Value = Denom; ExtraRep.IsAltRep = 1;
         }
 		#endif
 		
@@ -775,7 +775,7 @@ public:
         {
             IntValue = WholeNum;
             DecimalHalf = PartialInt(Numerator,3);
-            ExtraRep = MirroredInt(Denom);
+            ExtraRep.Value = Denom; ExtraRep.IsAltRep = 1;
         }
 		#endif
 		
@@ -2363,48 +2363,44 @@ public:
     #pragma region Mixed Fraction Operations
     //To-Do:Need to update this code
     #if defined(AltNum_EnableMixedFractional)
-		//Assumes NormalRep + Normal MixedFraction operation
+	
+		//Assumes MixedFraction operation of same flag category
 		void BasicMixedFracAddOp(AltDec& rValue)
 		{
-			if(DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
-			{
-				if(IntValue<0)
-				{
-					if(rValue.IntValue==NegativeRep)
-					{
-						DecimalHalf = rValue.DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
-					}
-					else if(rValue.IntValue<0)
-					{
+			if(DecimalHalf==0){//Left side is normal
+				if(IsNegative()){
+					if(rValue.IntValue.Value==0)
+						//-3 + 5/6 = -2 1/6
+						if(rValue.IsPositive()){
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+							--IntValue;
+						} else//-3 + -5/6 = -3 5/6
+							DecimalHalf.Value = rValue.DecimalHalf;
+					else if(rValue.IsNegative()){//-3 + (-2 5/6) = -5 5/6
 						IntValue += rValue.IntValue;
-						DecimalHalf = rValue.DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
-					}
-					else//(rValue.IntValue>0)
-					{
+						DecimalHalf.Value = rValue.DecimalHalf;
+					} else {
 						if(rValue.IntValue>-IntValue)//check for flipping of sign
 						{
 							IntValue += rValue.IntValue - 1;
-							DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
 						}
 						else
 						{
 							IntValue += rValue.IntValue;
-							DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
 						}
-						ExtraRep = rValue.ExtraRep;
 					}
-				}
-				else//(IntValue>0)
-				{
-					if(rValue.IntValue==NegativeRep)
-					{
-						DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
-					}
-					else if(rValue.IntValue<0)
-					{
+				} else {
+					if(rValue.IntValue.Value==0)
+						//3 + 5/6 = 3 5/6
+						if(rValue.IsPositive())
+							DecimalHalf.Value = rValue.DecimalHalf;
+						else {//3 + -5/6 = 2 1/6
+							DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+							--IntValue;
+						}
+					else if(rValue.IntValue<0){
 						IntValue += rValue.IntValue;
 						if(-rValue.IntValue>IntValue)//check for flipping of sign
 						{
@@ -2414,36 +2410,55 @@ public:
 							else
 								++IntValue;
 						}
-						DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
-					}
-					else//(rValue.IntValue>0)
-					{
+						DecimalHalf.Value = rValue.ExtraRep - rValue.DecimalHalf;
+					} else {
 						IntValue += rValue.IntValue;
-						DecimalHalf = rValue.DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
+						DecimalHalf.Value = rValue.DecimalHalf;
 					}
-				}     
+				}
+				ExtraRep = rValue.ExtraRep;     
 			}
+            else if(rValue.DecimalHalf==0)//Right side is normal instead of Fraction
+                IntValue += rValue.IntValue;
 			else
 			{
-				AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
-				BasicIntMultOp(rValue.ExtraRep);
-                BasicAddOp(RightSideNum);//self += RightSideNum;
-				if(DecimalHalf==0)
-				{
-					if(IntValue!=0)//Set as Zero if both are zero
-					{
-						DecimalHalf = -DecimalHalf;
-						ExtraRep = rValue.ExtraRep;
+				MirroredInt intTotal = IntValue + rValue.IntValue;
+				if(IntValue.IsPositive==rValue.IntValue.IsPositive){//Both sides have same sign
+					boost::rational<unsigned long long> frac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue.ExtraRep.Value+rValue.DecimalHalf.Value*ExtraRep.Value, ExtraRep.Value*rValue.ExtraRep.Value);
+					unsigned long long denom = frac.denominator();
+					unsigned long long num = frac.numerator();
+					if(num>denom){ num -= denom;
+						if(IntValue.IsPositive())
+							++IntValue;
+						else
+							--IntValue;
+					}
+					if(denom>FractionalMaximum){
+					} else if(denom>MixedFracDivisorLimit){
+					} else {
 					}
 				}
-				else
-				{
-					if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-						DecimalHalf = -DecimalHalf;
-					ExtraRep = rValue.ExtraRep;
+				else if(IntValue.IsPositive()){
 				}
+				else{
+				}
+				//AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
+				//BasicIntMultOp(rValue.ExtraRep);
+    //            BasicAddOp(RightSideNum);//self += RightSideNum;
+				//if(DecimalHalf==0)
+				//{
+				//	if(IntValue!=0)//Set as Zero if both are zero
+				//	{
+				//		DecimalHalf.Value = DecimalHalf;
+				//		ExtraRep = rValue.ExtraRep;
+				//	}
+				//}
+				//else
+				//{
+				//	if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+				//		DecimalHalf.Value = DecimalHalf;
+				//	ExtraRep = rValue.ExtraRep;
+				//}
 			}
 		}
 		
