@@ -105,12 +105,12 @@ protected:
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed int const DecimalOverflow = 1000000000;
+        static unsigned int const DecimalOverflow = 1000000000;
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static signed _int64 const DecimalOverflowX = 1000000000;
+        static unsigned _int64 const DecimalOverflowX = 1000000000;
 
         /// <summary>
         /// The decimal overflow value * -1

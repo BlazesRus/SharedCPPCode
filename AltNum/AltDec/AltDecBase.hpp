@@ -178,7 +178,7 @@ public:
         //Maximum divisor for mixed Fractions
         static const unsigned int MixedFracDivisorLimit = 1073741804;//InfinityRep-1
 		//Fractional Division Maximum at this ExtraRep.Value (maximum of 2^31 since last is used for IsAltRep flag)
-        static const unsigned int FractionalMaximum = 2147483648;
+        static const unsigned int FractionalMaximum = 2147483647;
 	
     #pragma endregion Const Representation values
 
@@ -2466,29 +2466,29 @@ public:
 						--intTotal;
 				}
 				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
-				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor instead
+					IntValue = intTotal;//unsigned int 64 max = 18446744073709551615
+					if(num>18446744073){//Catching potential overflow
+						unsigned long long num02 = DecimalOverflowX/denom;
+						num02 *= num;
+						DecimalHalf.Value = num02;
+					} else {
+						unsigned long long num02 = DecimalOverflowX*num;
+						num02 /= denom;
+						DecimalHalf.Value = num02; 
+					}
+					ResetDivisor();
+				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor or NormalVariant instead
+					//2147483647 + 1073741803/1973741804 =  4238578247490279188/1973741804 + 1073741803/1973741804
+					unsigned long long numTotal = intTotal.Value*denom + num;
+					unsigned intHalf = numTotal/DecimalOverflowX;
+					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
+					IntValue = MirroredInt(intHalf, intTotal.IsPositive);
+					ExtraRep = (unsigned int) denom;
 				} else {
 					IntValue = intTotal;
 					DecimalHalf.Value = num;
 					ExtraRep.Value = denom;
 				}
-				//AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
-				//BasicIntMultOp(rValue.ExtraRep);
-    //            BasicAddOp(RightSideNum);//self += RightSideNum;
-				//if(DecimalHalf==0)
-				//{
-				//	if(IntValue!=0)//Set as Zero if both are zero
-				//	{
-				//		DecimalHalf.Value = DecimalHalf;
-				//		ExtraRep = rValue.ExtraRep;
-				//	}
-				//}
-				//else
-				//{
-				//	if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
-				//		DecimalHalf.Value = DecimalHalf;
-				//	ExtraRep = rValue.ExtraRep;
-				//}
 			}
 		}
 		
