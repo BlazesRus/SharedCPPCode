@@ -177,8 +177,20 @@ public:
     #endif
         //Maximum divisor for mixed Fractions
         static const unsigned int MixedFracDivisorLimit = 1073741804;//InfinityRep-1
-		//Fractional Division Maximum at this ExtraRep.Value (maximum of 2^31 since last is used for IsAltRep flag)
+		
+		//Fractional Division Maximum at this ExtraRep.Value (maximum of 2^31-1 since last bit is used for IsAltRep flag)
+	#if defined(AltNum_ReserveLastRepForDivideByZero)
+		static const unsigned int FractionalMaximum = 2147483646;
+	
+		//Indeterminate form of Divide by zero when ExtraRep = 2147483647
+        static const unsigned int DivideByZeroRep02 = 2147483647;
+	#else
         static const unsigned int FractionalMaximum = 2147483647;
+	#endif
+	#if defined(AltNum_ReserveZeroRepForDivideByZero)
+		//Indeterminate form of Divide by zero when ExtraRep = 2147483647
+        static const unsigned int DivideByZeroRep02 = 0;
+	#endif
 	
     #pragma endregion Const Representation values
 

@@ -134,7 +134,7 @@ AltNum_EnableEnhancedDivideByZeroForm =
 	Auto toggles either AltNum_ReserveZeroRepForDivideByZero or AltNum_ReserveLastRepForDivideByZero
 AltNum_ReserveZeroRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Zero Indeterminate form (Autotoggled if AltNum_EnableEnhancedDivideByZeroForm is set and AltNum_EnableWithinMinMaxRange is not set)
 	(Not Implimented yet)
-AltNum_ReserveLastRepForDivideByZero
+AltNum_ReserveLastRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Zero Indeterminate form
 	(Not Implimented yet)
 */
 
@@ -149,7 +149,19 @@ AltNum_ReserveLastRepForDivideByZero
 	#undef AltNum_EnableWithinMinMaxRange
 #endif
 
-#if defined(AltNum_ReserveZeroRepForDivideByZero)
+#if !defined(AltNum_EnableIndeterminateForms)
+	#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+		#undef AltNum_EnableEnhancedDivideByZeroForm
+	#endif
+	#if defined(AltNum_ReserveZeroRepForDivideByZero)
+		#undef AltNum_ReserveZeroRepForDivideByZero
+	#endif
+	#if defined(AltNum_ReserveLastRepForDivideByZero)
+		#undef AltNum_ReserveLastRepForDivideByZero
+	#endif
+#endif
+
+#if defined(AltNum_ReserveZeroRepForDivideByZero)&&defined(AltNum_EnableWithinMinMaxRange)
 	#undef AltNum_ReserveZeroRepForDivideByZero
 #endif
 
@@ -165,7 +177,12 @@ AltNum_ReserveLastRepForDivideByZero
 	#undef AltNum_ReserveLastRepForDivideByZero
 #endif
 
-#if define(AltNum_EnableEnhancedDivideByZeroForm)
+#if defined(AltNum_ReserveZeroRepForDivideByZero)||defined(AltNum_ReserveLastRepForDivideByZero)
+	#if !defined(AltNum_EnableEnhancedDivideByZeroForm)
+		#define AltNum_EnableEnhancedDivideByZeroForm
+	#endif
+
+#elif define(AltNum_EnableEnhancedDivideByZeroForm)
 	#if !defined(AltNum_EnableWithinMinMaxRange)&&!defined(AltNum_ReserveZeroRepForDivideByZero)
 		#define AltNum_ReserveZeroRepForDivideByZero
 		#if defined(AltNum_ReserveLastRepForDivideByZero)
