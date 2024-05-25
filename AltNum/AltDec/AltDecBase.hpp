@@ -2429,13 +2429,16 @@ public:
 					unsigned long long num = frac.numerator();
 					if(num>denom){ num -= denom;
 						if(IntValue.IsPositive())
-							++IntValue;
+							++intTotal;
 						else
-							--IntValue;
+							--intTotal;
 					}
-					if(denom>FractionalMaximum){
-					} else if(denom>MixedFracDivisorLimit){
+					if(denom>FractionalMaximum){//Storing inside NormalType variant representation
+					} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor instead
 					} else {
+						IntValue = intTotal;
+						DecimalHalf.Value = num;
+						ExtraRep.Value = denom;
 					}
 				}
 				else if(IntValue.IsPositive()){
