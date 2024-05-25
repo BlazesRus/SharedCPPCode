@@ -2423,27 +2423,54 @@ public:
 			else
 			{
 				MirroredInt intTotal = IntValue + rValue.IntValue;
+				boost::rational<unsigned long long> frac;
 				if(IntValue.IsPositive==rValue.IntValue.IsPositive){//Both sides have same sign
-					boost::rational<unsigned long long> frac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue.ExtraRep.Value+rValue.DecimalHalf.Value*ExtraRep.Value, ExtraRep.Value*rValue.ExtraRep.Value);
-					unsigned long long denom = frac.denominator();
-					unsigned long long num = frac.numerator();
-					if(num>denom){ num -= denom;
-						if(IntValue.IsPositive())
-							++intTotal;
-						else
-							--intTotal;
-					}
-					if(denom>FractionalMaximum){//Storing inside NormalType variant representation
-					} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor instead
-					} else {
-						IntValue = intTotal;
-						DecimalHalf.Value = num;
-						ExtraRep.Value = denom;
-					}
+					if(ExtraRep.Value==rValue.ExtraRep.Value)
+						frac = boost::rational<unsigned long long>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
+					else
+						frac = boost::rational<unsigned long long>(DecimalHalf.Value*rValue.ExtraRep.Value+rValue.DecimalHalf.Value*ExtraRep.Value, ExtraRep.Value*rValue.ExtraRep.Value);
 				}
-				else if(IntValue.IsPositive()){
+				else if(ExtraRep.Value==rValue.ExtraRep.Value){
+				    if(rValue.DecimalHalf.Value==DecimalHalf.Value){
+						IntValue = intTotal; DecimalHalf.Value = 0;
+						ResetDivisor(); return;
+					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+						frac = boost::rational<unsigned long long>(rValue.DecimalHalf.Value-DecimalHalf.Value, ExtraRep.Value);
+                        if(IntValue.IsPositive())
+						    --intTotal;
+                        else
+                            ++intTotal
+					} else//(4/6)+ -(5/12)
+						frac = boost::rational<unsigned long long>(DecimalHalf.Value - rValue.DecimalHalf.Value, ExtraRep.Value);
+                } else {
+				    unsigned long long leftNum = DecimalHalf.Value*rValue.ExtraRep.Value;
+					unsigned long long rightNum = rValue.DecimalHalf.Value*ExtraRep.Value;
+				    if(leftNum==rightNum){
+						IntValue = intTotal; DecimalHalf.Value = 0;
+						ResetDivisor(); return;
+					} else if(rightNum>leftNum){
+						frac = boost::rational<unsigned long long>(rightNum-leftNum, ExtraRep.Value);
+                        if(IntValue.IsPositive())//(2/6)+ -(5/12)
+						    --intTotal;
+                        else//(-2/6)+ (11/12)
+                            ++intTotal
+					} else//(4/6)+ -(5/12)
+						frac = boost::rational<unsigned long long>(leftNum - rightNum, ExtraRep.Value);
 				}
-				else{
+				unsigned long long denom = frac.denominator();
+				unsigned long long num = frac.numerator();
+				if(num>denom){ num -= denom;
+					if(IntValue.IsPositive())
+						++intTotal;
+					else
+						--intTotal;
+				}
+				if(denom>FractionalMaximum){//Storing inside NormalType variant representation
+				} else if(denom>MixedFracDivisorLimit){//Storing inside NumByDivisor instead
+				} else {
+					IntValue = intTotal;
+					DecimalHalf.Value = num;
+					ExtraRep.Value = denom;
 				}
 				//AltDec RightSideNum = AltDec(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
 				//BasicIntMultOp(rValue.ExtraRep);
