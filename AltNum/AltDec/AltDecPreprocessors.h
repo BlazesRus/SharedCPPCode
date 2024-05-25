@@ -131,7 +131,10 @@ AltNum_EnableIndeterminateForms = Enables extra representations for outputing an
 	
 AltNum_AllowNegativeZero = Allows zero to keep the negative sign when multiplying(not implimented yet)
 AltNum_EnableEnhancedDivideByZeroForm = 
-	Defines Indeterminate form of IntValue.DecimalHalf as when ExtraRep = 0(disables AltNum_EnableWithinMinMaxRange or Reserves last ExtraRep value)
+	Auto toggles either AltNum_ReserveZeroRepForDivideByZero or AltNum_ReserveLastRepForDivideByZero
+AltNum_ReserveZeroRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Zero Indeterminate form (Autotoggled if AltNum_EnableEnhancedDivideByZeroForm is set and AltNum_EnableWithinMinMaxRange is not set)
+	(Not Implimented yet)
+AltNum_ReserveLastRepForDivideByZero
 	(Not Implimented yet)
 */
 
@@ -146,12 +149,31 @@ AltNum_EnableEnhancedDivideByZeroForm =
 	#undef AltNum_EnableWithinMinMaxRange
 #endif
 
+#if defined(AltNum_ReserveZeroRepForDivideByZero)
+	#undef AltNum_EnableWithinMinMaxRange
+#endif
+
 #if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableFractionals)
 	#undef AltNum_EnableFractionals
 #endif
 
 #if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableMixedFractional)
 	#undef AltNum_EnableMixedFractional
+#endif
+
+#if defined(AltNum_ReserveLastRepForDivideByZero)&&defined(AltNum_ReserveZeroRepForDivideByZero)
+	#undef AltNum_ReserveLastRepForDivideByZero
+#endif
+
+#if define(AltNum_EnableEnhancedDivideByZeroForm)
+	#if !defined(AltNum_EnableWithinMinMaxRange)&&!defined(AltNum_ReserveZeroRepForDivideByZero)
+		#define AltNum_ReserveZeroRepForDivideByZero
+		#if defined(AltNum_ReserveLastRepForDivideByZero)
+			#undef AltNum_ReserveLastRepForDivideByZero
+		#endif
+	#else
+		#define AltNum_ReserveLastRepForDivideByZero
+	#elif
 #endif
 
 #pragma endregion PreprocessorToggles
