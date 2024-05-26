@@ -1425,32 +1425,58 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 			SetAsIndeterminate(InfDividedByZeroRep);
 		#elif defined(AltNum_DefineDivideByZeroAsInfinity)
 			return *this;
+		#elif defined(AltNum_EnableNaN)
+            DecimalHalf = NaNRep;
 		#else
 			throw "Divide by zero is not allowed with current toggles";
 		#endif
 		return *this;
-	} else if(rValue.DecimalHalf.Value==InfinityRep){
-		SetAsZero();
+	} else if(rValue.DecimalHalf.Value==InfinityRep){//Divided by Infinity
+        DecimalHalf = ApproachingBottomRep;
+		IntValue.Value = 0;
+        ExtraRep = InitialExtraRep;
+		if(rValue.DecimalHalf.Flags==3){//Divided by Imaginary infinity
+			SwapNegativeStatus();
+			DecimalHalf.Flags = 3;
+		}
 		return *this;
 	}
-	else
 	#endif
-	switch(DecimalHalf.Flags)
-	{
-#if defined(AltNum_EnablePiRep)
-		case 1:
-			PiRepSwitch(rValue); break;
-#endif
-#if defined(AltNum_EnableERep)
-		case 2:
-			ERepSwitch(rValue); break;
-#endif
-#if defined(AltNum_EnableIRep)//IRep_to_others
-		case 3:
-            IRepSwitch(rValue); break;
-#endif
-		default:
-			NormalRepSwitch(rValue); break;
+	if(IsZero()){
+		if(rValue.IsZero())
+		#if defined(AltNum_EnableIndeterminateForms)
+			SetAsIndeterminate(DividedByZeroRep);
+		#else
+			throw "Divide by zero is not allowed with current toggles";
+		#endif
+		else
+			return *this;
+	} else if(rValue.IsZero()){
+		#if defined(AltNum_EnableIndeterminateForms)
+			SetAsIndeterminate(DividedByZeroRep);
+		#else
+			throw "Divide by zero is not allowed with current toggles";
+		#endif
+	} else if(DecimalHalf<=NaNVariantThreshold&&IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
+		SetAsOneVal();
+	else {
+		switch(DecimalHalf.Flags)
+		{
+	#if defined(AltNum_EnablePiRep)
+			case 1:
+				PiRepSwitch(rValue); break;
+	#endif
+	#if defined(AltNum_EnableERep)
+			case 2:
+				ERepSwitch(rValue); break;
+	#endif
+	#if defined(AltNum_EnableIRep)//IRep_to_others
+			case 3:
+				IRepSwitch(rValue); break;
+	#endif
+			default:
+				NormalRepSwitch(rValue); break;
+		}
 	}
 	return *this;
 }
