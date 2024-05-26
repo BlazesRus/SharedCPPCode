@@ -478,6 +478,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	}
 }
 
+//Both sides have separate Flags
 void CatchAllOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
 	RepType convertedLRep = ConvertToNormalEquivalant(LRep, ConvertedLRep);
@@ -936,9 +937,37 @@ void CatchAllIOperation(const auto& rValue, const RepType& LRep, const RepType& 
 //Same Representation division
 void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
+#if defined(AltNum_EnablePowerOfRepresentation)
+	if(LRep^ToPowerOfFlag){
+		if(RRep^ToPowerOfFlag&&IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+	#if defined(AltNum_EnableNegativePowerRep)
+			ExtraRep -= rValue.ExtraRep;
+	#else
+			if(ExtraRep.Value>rValue.ExtraRep)
+				ExtraRep.Value -= rValue.ExtraRep;
+			else {//Result is negative Exponent
+				signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
+				ResetDivisor();
+				BasicIntPowOpV1(Exp);
+			}
+	#endif
+		} else {
+			auto convertedLVal = ConvertToNormalEquivalant(LRep);
+			auto convertedRVal = rValue.ConvertAsNormalEquivalant(RRep);
+			NormalToNormalOperation(convertedRVal.first, convertedLRep, convertedRVal.second);
+		}
+		return;
+	} else(RRep^ToPowerOfFlag){
+		auto convertedLVal = ConvertToNormalEquivalant(LRep);
+		auto convertedRVal = rValue.ConvertAsNormalEquivalant(RRep);
+		NormalToNormalOperation(convertedRVal.first, convertedLRep, convertedRVal.second);
+		return;
+	}
+#endif
 	RepType convertedLRep = GetRepAsNormalEquivalent(LRep);
-	RepType convertedRRep = GetRepAsNormalEquivalent(RRep);
-	NormalToNormalOperation(rValue, convertedLRep, convertedRRep);
+	RepType convertedRVal = GetRepAsNormalEquivalent(RRep);
+	DecimalHalf.Flags = 0;//Dividing by self removes flag
+	NormalToNormalOperation(rValue, convertedLRep, convertedRVal);//Ignoring flags during division
 }
 
 #if defined(AltNum_EnablePiRep)
