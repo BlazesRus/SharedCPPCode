@@ -230,8 +230,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 	{
         #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
             if(RRep==RepType::InfinityRep){
-                IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
-                ExtraRep = InitialExtraRep;
+                SetAsApproachingBottomVal();
                 return;
             }
         #endif

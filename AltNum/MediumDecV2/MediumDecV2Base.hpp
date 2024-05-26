@@ -480,7 +480,7 @@ public:
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
-        void SetAsApproachingBottom(const int& value=0)
+        void SetAsApproachingBottom(const MirroredInt& value=MirroredInt::Zero)
         {
             IntValue = value; DecimalHalf = ApproachingBottomRep;
         }
@@ -488,49 +488,88 @@ public:
 		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-        void SetAsApproachingTop(const int& value)
+        void SetAsApproachingTop(const MirroredInt& value=MirroredInt::Zero)
         {
             IntValue = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
 		
-		#if defined(AltNum_EnableApproachingPi)
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
-        void SetAsApproachingTopPi(const int& value)
+		//SetAsApproachingBottom without changing sign
+        void SetAsApproachingBottomVal(const unsigned int& value=0)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
+            IntValue.Value = value; DecimalHalf = ApproachingBottomRep;
         }
+
+		#if !defined(AltNum_DisableApproachingTop)
+		//SetAsApproachingTop without changing sign
+        void SetAsApproachingTopVal(const unsigned int& value=0)
+        {
+            IntValue.Value = value; DecimalHalf = ApproachingTopRep;
+        }
+        #endif
 		
-        void SetAsApproachingBottomPi(const int& value)
+		//SetAsApproachingBottom without changing sign or flags
+        void SetAsApproachingBottomValV2(const unsigned int& value=0)
+        {
+            IntValue.Value = value; DecimalHalf.Value = ApproachingBottomRep;
+        }
+
+		#if !defined(AltNum_DisableApproachingTop)
+		//SetAsApproachingTop without changing sign
+        void SetAsApproachingTopValV2(const unsigned int& value=0)
+        {
+            IntValue.Value = value; DecimalHalf.Value = ApproachingTopRep;
+        }
+        #endif
+		
+		#if defined(AltNum_EnablePiRep)
+
+        void SetAsApproachingBottomPi(const MirroredInt& value=MirroredInt::Zero)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
+		
+			#if !defined(AltNum_DisableApproachingTop)
+        void SetAsApproachingTopPi(const MirroredInt& value=MirroredInt::Zero)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+        }
+			#endif
+			
 		#endif
 		
-		#if defined(AltNum_EnableApproachingE)
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
-        void SetAsApproachingTopE(const int& value)
-        {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
-        }
+		#if defined(AltNum_EnableERep)
 		
-        void SetAsApproachingBottomE(const int& value)
+        void SetAsApproachingBottomE(const MirroredInt& value=MirroredInt::Zero)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
         }
+		
+			#if !defined(AltNum_DisableApproachingTop)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
+        void SetAsApproachingTopE(const MirroredInt& value=MirroredInt::Zero)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+        }
+			#endif
+		
 		#endif
 		
-		#if defined(AltNum_EnableApproachingI)
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
-        void SetAsApproachingTopI(const int& value)
-        {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
-        }
+		#if defined(AltNum_EnableIRep)
 		
-        void SetAsApproachingBottomI(const int& value)
+        void SetAsApproachingBottomI(const MirroredInt& value=MirroredInt::Zero)
         {
             IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
         }
+		
+			#if !defined(AltNum_DisableApproachingTop)
+        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
+        void SetAsApproachingTopI(const MirroredInt& value=MirroredInt::Zero)
+        {
+            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+        }
+			#endif
+		
 		#endif
     #endif
     #pragma endregion ApproachingZero Setters
