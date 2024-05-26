@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -895,61 +895,62 @@ public:
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntValue.000...1)
-        void SetAsApproachingBottomDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidRight(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = ApproachingBottomRep;
+            IntValue = value; DecimalHalf = ApproachingMidRightRep;
             ExtraRep = divisor;
         }
 
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
-        void SetAsApproachingTopDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidLeft(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = ApproachingTopRep;
+            IntValue = value; DecimalHalf = ApproachingMidLeftRep;
             ExtraRep = divisor;
         }
 		
 		#if defined(AltNum_EnablePiRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)Pi
-        void SetAsApproachingTopPiDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidRightPi(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,1);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidRightRep,1);
             ExtraRep = divisor;
         }
 		
-        void SetAsApproachingBottomPiDiv(const int& value, const unsigned int& divisor)
+		//OldName:SetAsApproachingMidLeftPi
+        void SetAsApproachingMidLeftPi(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidLeftRep,1);
             ExtraRep = divisor;
         }
 		#endif
 		
 		#if defined(AltNum_EnableERep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
-        void SetAsApproachingTopEDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidRightE(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidRightRep,2);
             ExtraRep = divisor;
         }
 		
-        void SetAsApproachingBottomEDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidLeftE(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidLeftRep,2);
             ExtraRep = divisor;
         }
 		#endif
 		
 		#if defined(AltNum_EnableIRep)
         //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
-        void SetAsApproachingTopIDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidRightI(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidRightRep,3);
             ExtraRep = divisor;
         }
 		
-        void SetAsApproachingBottomIDiv(const int& value, const unsigned int& divisor)
+        void SetAsApproachingMidLeftI(const int& value, const unsigned int& divisor)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+            IntValue = value; DecimalHalf = PartialInt(ApproachingMidLeftRep,3);
             ExtraRep = divisor;
         }
 		#endif

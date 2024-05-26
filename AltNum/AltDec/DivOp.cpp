@@ -101,14 +101,39 @@ void SameRep_WithinMinMaxRange
 #endif
 #pragma endregion AltDecVariantExclusive
 
-void SameRep_ApproachingBottom(const auto& rValue)
+void SameRep_ApproachingBottom(const auto& rValue, const RepType& LRep)
 {
-    //Add Code Here
+    if(IntValue.Value==0)//0.0..01/2.0..01 = ~0.0..01
+		return;
+	else if(rValue.IntValue.Value==0)//2.0..01/0.0..01 = infinity
+#if defined(AltNum_EnableInfinity)
+		SetAsInfinityVal();
+#else
+		CatchAllDivisionV2(rValue, LRep);
+#endif
+	else
+		CatchAllDivisionV2(rValue, LRep);
 }
 
-void SameRep_ApproachingTop(const auto& rValue)
+void SameRep_ApproachingTop(const auto& rValue, const RepType& LRep)
 {
-    //Add Code Here
+#if defined(AltNum_EnableApproachingDivided)
+	//0.9..9/2.9..9 = ~0.9..9/3 (not quite that but close enough)
+    if(IntValue.Value==0){
+		DecimalHalf.Value = ApproachingMidLeftRep;
+		ExtraRep = rValue.IntValue+1;
+	} else if(rValue.IntValue.Value==0){
+		DecimalHalf.Value = ApproachingBottomRep;
+		++IntValue.Value;
+	}
+	//999999999999999.999999999999999/0.999 999 999 999 999 = 1000000000000001
+	//9.999 999 999 999 999/0.999 999 999 999 999 = 10.000000000000009000000000000009000000000000009000000000000009000000000000009000000000000009
+	//5.99999999999999999999999999999999999999999999/0.99999999999999999999999999999999999999999999 = 6.0000000000000000000000000000000000000000000500000000000000000000000000000000000000000005
+	else
+		CatchAllDivisionV2(rValue, LRep);
+#else
+	CatchAllDivisionV2(rValue, LRep);
+#endif
 }
 
 void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
