@@ -188,13 +188,17 @@ namespace BlazesRusCode
         RepType GetPiRepType()
     #endif
         {
-        #if defined(AltNum_EnableApproachingPi)
-            if (DecimalHalf == ApproachingBottomRep)
-                return RepType::ApproachingBottomPi;
-            else if (DecimalHalf == ApproachingTopRep)
-                return RepType::ApproachingTopPi;
-        #endif
-             return RepType::PiNum;
+            switch(DecimalHalf.Value)
+            {
+		#if defined(AltNum_EnableApproaching)
+				case ApproachingBottomRep:
+					return RepType::ApproachingTopE; break;
+				case ApproachingTopRep:
+					return RepType::ApproachingTopE; break;
+		#endif
+				default:
+					return RepType::PiNum;
+			}
         }
 
 #if defined(AltNum_EnableERep)
@@ -207,13 +211,17 @@ namespace BlazesRusCode
         RepType GetERepType()
     #endif
         {
-        #if defined(AltNum_EnableApproachingE)
-            if (DecimalHalf == ApproachingBottomRep)
-                return RepType::ApproachingBottomE;
-            else if (DecimalHalf == ApproachingTopRep)
-                return RepType::ApproachingTopE;
-        #endif
-             return RepType::ENum;
+            switch(DecimalHalf.Value)
+            {
+		#if defined(AltNum_EnableApproaching)
+				case ApproachingBottomRep:
+					return RepType::ApproachingTopE; break;
+				case ApproachingTopRep:
+					return RepType::ApproachingTopE; break;
+		#endif
+				default:
+					return RepType::ENum;
+			}
         }
 #endif
 
@@ -227,17 +235,21 @@ namespace BlazesRusCode
         RepType GetIRepType()
     #endif
         {
+            switch(DecimalHalf.Value)
+            {
         #if defined(AltNum_EnableImaginaryInfinity)
-			if(DecimalHalf == InfinityRep)
-				return RepType::ImaginaryInfinity;
-        #endif
-        #if defined(AltNum_EnableApproachingI)
-			if (DecimalHalf == ApproachingTopRep)
-				return RepType::ApproachingImaginaryTop;
-			else if (DecimalHalf == ApproachingTopRep)
-				return RepType::ApproachingImaginaryBottom;
-        #endif
-            return RepType::INum;
+				case InfinityRep:
+					return RepType::ImaginaryInfinity; break;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+				case ApproachingBottomRep:
+					return RepType::ApproachingImaginaryBottom; break;
+				case ApproachingTopRep:
+					return RepType::ApproachingImaginaryTop; break;
+		#endif
+				default:
+					return RepType::INum;
+			}
         }
 #endif
 
@@ -275,7 +287,7 @@ namespace BlazesRusCode
                 default:
 		#if defined(AltNum_EnableIndeterminateForms)
 					if(DecimalHalf>IndeterminateRep)
-						return RepType::IndeterminateForm; break;
+						return RepType::IndeterminateForm;
 		#endif
                     return RepType::NormalType; break;
             }
