@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -529,7 +529,7 @@ public:
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        virtual void SetAsMaximum()
+        void SetAsMaximum()
         {
             IntValue = MaxIntValue; DecimalHalf = 999999999; ResetDivisor();
         }
@@ -537,7 +537,7 @@ public:
         /// <summary>
         /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        virtual void SetAsMinimum()
+        void SetAsMinimum()
         {
             IntValue = MinIntValue; DecimalHalf = 999999999; ResetDivisor();
         }
@@ -546,13 +546,13 @@ public:
 
     #pragma region PiNum Setters
     #if defined(AltNum_EnablePiRep)
-        virtual void SetPiVal(const MediumDec& Value)
+        void SetPiVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
         }
 
-        virtual void SetPiVal(const MediumDecV2& Value)
+        void SetPiVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
             DecimalHalf = Value.DecimalHalf;
@@ -598,7 +598,7 @@ public:
 
     #pragma region ENum Setters
     #if defined(AltNum_EnableERep)
-        virtual void SetEVal(const MediumDec& Value)
+        void SetEVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -610,7 +610,7 @@ public:
         #endif
         }
 
-        virtual void SetEVal(const MediumDecV2& Value)
+        void SetEVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -641,7 +641,7 @@ protected:
 public:
         constexpr auto SetEVal = SetEValV1<AltDecBase>;
 
-        virtual void SetEValFromInt(const int& Value)
+        void SetEValFromInt(const int& Value)
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
@@ -662,7 +662,7 @@ public:
 
     #pragma region INum Setters
     #if defined(AltNum_EnableIRep)
-        virtual void SetIVal(const MediumDec& Value)
+        void SetIVal(const MediumDec& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -674,7 +674,7 @@ public:
         #endif
         }
 
-        virtual void SetIVal(const MediumDecV2& Value)
+        void SetIVal(const MediumDecV2& Value)
         {
             IntValue = Value.IntValue;
         #if defined(AltNum_UseIntForDecimalHalf)
@@ -705,7 +705,7 @@ protected:
 public:
         constexpr auto SetIVal = SetIValV0<AltDecBase>;
 
-        virtual void SetIValFromInt(const int& Value)
+        void SetIValFromInt(const int& Value)
         {
         #if defined(AltNum_InableMirroredSection)
             if(Value<0)
@@ -918,7 +918,7 @@ public:
         }
 		#endif
     #endif
-    //Separating into separate methods since second parameter not same as previous virtual function
+    //Separating into separate methods since second parameter not same as previous function
     #if defined(AltNum_EnableApproachingDivided)
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
@@ -1089,7 +1089,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDoubleVal(const double& Value)
+        void SetDoubleVal(const double& Value)
         {
 			MediumDec::SetDoubleVal(Value);
 			ResetDivisor();
@@ -1099,7 +1099,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const ldouble& Value)
         {
 			MediumDec::SetDecimalVal(Value);
 			ResetDivisor();
@@ -1109,7 +1109,7 @@ public:
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetBoolVal(const bool& Value)
+        void SetBoolVal(const bool& Value)
         {
 			MediumDec::SetBoolVal(Value);
 			ResetDivisor();
@@ -1119,7 +1119,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        virtual void SetIntVal(const int& Value)
+        void SetIntVal(const int& Value)
         {
 			MediumDec::SetIntVal(Value);
 			ResetDivisor();
@@ -1223,7 +1223,7 @@ public:
 
         void ConvertPiPowerToPiRep();
 
-        virtual void ConvertToPiRep(RepType repType)
+        void ConvertToPiRep(RepType repType)
         {
             switch (repType)
             {
@@ -1284,7 +1284,7 @@ public:
 
         void ConvertEPowerToERep();
 
-        virtual void ConvertToERep(RepType repType)
+        void ConvertToERep(RepType repType)
         {
             switch (repType)
             {
