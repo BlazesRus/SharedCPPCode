@@ -166,10 +166,10 @@ public:
         #pragma region Const Representation values
 
 	#if defined(AltNum_EnableApproachingDivided)
-        //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)/ExtraRep.Value
-        static const unsigned int ApproachingBottomDivRep = 1073741808;
-		//When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)/ExtraRep.Value
-		static const unsigned int ApproachingTopDivRep = 1073741809;
+        //When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value-1
+        static const unsigned int ApproachingMidLeftRep = 1073741808;
+		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1 
+		static const unsigned int ApproachingMidRightRep = 1073741809;
 	#endif
     #if defined(AltNum_EnableWithinMinMaxRange)
         //Undefined but in ranged of IntValue to DecimalHalf when at this ExtraRep.Value(if Extra.IsAltRep==1 then right side range is negative number)
@@ -205,25 +205,18 @@ public:
         RepType GetPiRepType()
     #endif
         {
-    #if defined(AltNum_EnableApproaching)
-		#if !defined(AltNum_DisableApproachingTop)
-            if (DecimalHalf == ApproachingTopRep)
-			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeftPi;
-                else
-			#endif
-                    return RepType::ApproachingTopPi;
-            else
+		#if defined(AltNum_EnableApproaching)
+			if(DecimalHalf.Value==ApproachingBottomRep)
+				return RepType::ApproachingBottomPi;
+			else if(DecimalHalf.Value==ApproachingTopRep)
+				return RepType::ApproachingTopPi;
 		#endif
-			if (DecimalHalf == ApproachingBottomRep)
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeftPi;
-                else
-        #endif
-					return RepType::ApproachingBottomPi;
-    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+			else if(DecimalHalf.Value==ApproachingMidLeftRep)
+				return RepType::ApproachingMidLeftPi;
+			else if(DecimalHalf.Value==ApproachingMidRightRep)
+				return RepType::ApproachingMidRightPi;
+		#endif
 		#if defined(AltNum_EnableWithinMinMaxRange)
 			if(ExtraRep==WithinMinMaxRangeRep)
 				return RepType::WithinMinMaxRangePi;
@@ -233,11 +226,11 @@ public:
 				return RepType::PiPower;
 		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
 			if(ExtraRep.IsAlternative())
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnablePowerOfRepresentation)
 				return RepType::PiPower;
-		#elif defined(AltNum_EnableMixedFractional)
+			#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedPi;
+			#endif
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
@@ -264,25 +257,18 @@ public:
         RepType GetERepType()
     #endif
         {
-    #if defined(AltNum_EnableApproaching)
-		#if !defined(AltNum_DisableApproachingTop)
-            if (DecimalHalf == ApproachingTopRep)
-			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeftE;
-                else
-			#endif
-                    return RepType::ApproachingTopE;
-            else
+		#if defined(AltNum_EnableApproaching)
+			if(DecimalHalf.Value==ApproachingBottomRep)
+				return RepType::ApproachingBottomE;
+			else if(DecimalHalf.Value==ApproachingTopRep)
+				return RepType::ApproachingTopE;
 		#endif
-			if (DecimalHalf == ApproachingBottomRep)
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeftE;
-                else
-        #endif
-					return RepType::ApproachingBottomE;
-    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+			else if(DecimalHalf.Value==ApproachingMidLeftRep)
+				return RepType::ApproachingMidLeftE;
+			else if(DecimalHalf.Value==ApproachingMidRightRep)
+				return RepType::ApproachingMidRightE;
+		#endif
 		#if defined(AltNum_EnableWithinMinMaxRange)
 			if(ExtraRep==WithinMinMaxRangeRep)
 				return RepType::WithinMinMaxRangeE;
@@ -292,11 +278,11 @@ public:
 				return RepType::EPower;
 		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
 			if(ExtraRep.IsAlternative())
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnablePowerOfRepresentation)
 				return RepType::EPower;
-		#elif defined(AltNum_EnableMixedFractional)
+			#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedE;
+			#endif
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
@@ -324,25 +310,18 @@ public:
         RepType GetIRepType()
     #endif
         {
-    #if defined(AltNum_EnableApproaching)
-		#if !defined(AltNum_DisableApproachingTop)
-            if (DecimalHalf.Value == ApproachingTopRep)
-			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingImaginaryMidLeft;
-                else
-			#endif
-                    return RepType::ApproachingImaginaryTop;
-            else
+		#if defined(AltNum_EnableApproaching)
+			if(DecimalHalf.Value==ApproachingBottomRep)
+				return RepType::ApproachingImaginaryBottom;
+			else if(DecimalHalf.Value==ApproachingTopRep)
+				return RepType::ApproachingImaginaryTop;
 		#endif
-			if (DecimalHalf.Value == ApproachingBottomRep)
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingImaginaryMidLeft;
-                else
-        #endif
-					return RepType::ApproachingImaginaryBottom;
-    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+			else if(DecimalHalf.Value==ApproachingMidLeftRep)
+				return RepType::ApproachingImaginaryMidLeft;
+			else if(DecimalHalf.Value==ApproachingMidRightRep)
+				return RepType::ApproachingImaginaryMidRight;
+		#endif
     #if defined(AltNum_EnableImaginaryInfinity)
             if(DecimalHalf.Value == InfinityRep)
                 return RepType::ImaginaryInfinity;
@@ -380,25 +359,18 @@ public:
         RepType GetNormRepType()
     #endif
         {
-    #if defined(AltNum_EnableApproaching)
-		#if !defined(AltNum_DisableApproachingTop)
-            if (DecimalHalf == ApproachingTopRep)
-			#if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeft;
-                else
-			#endif
-                    return RepType::ApproachingTop;
-            else
+		#if defined(AltNum_EnableApproaching)
+			if(DecimalHalf.Value==ApproachingBottomRep)
+				return RepType::ApproachingBottom;
+			else if(DecimalHalf.Value==ApproachingTopRep)
+				return RepType::ApproachingTop;
 		#endif
-			if (DecimalHalf == ApproachingBottomRep)
-        #if defined(AltNum_EnableApproachingDivided)
-                if(ExtraRep>InitialExtraRep)
-                    return RepType::ApproachingMidLeft;
-                else
-        #endif
-					return RepType::ApproachingBottom;
-    #endif
+		#if defined(AltNum_EnableApproachingDivided)
+			else if(DecimalHalf.Value==ApproachingMidLeftRep)
+				return RepType::ApproachingMidLeft;
+			else if(DecimalHalf.Value==ApproachingMidRightRep)
+				return RepType::ApproachingMidRight;
+		#endif
         #if defined(AltNum_EnableInfinityRep)
             if(DecimalHalf == InfinityRep)
                 return RepType::Infinity;
@@ -418,11 +390,11 @@ public:
 				return RepType::ToPowerOf;
 		#elif defined(AltNum_EnablePowerOfRepresentation)||defined(AltNum_EnableMixedFractional)
 			if(ExtraRep.IsAlternative())
-		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+			#if defined(AltNum_EnablePowerOfRepresentation)
 				return RepType::ToPowerOf;
-		#elif defined(AltNum_EnableMixedFractional)
+			#elif defined(AltNum_EnableMixedFractional)
 				return RepType::MixedFrac;
+			#endif
 		#endif
 		#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 			if(ExtraRep==DivideByZeroRep02)//Divide by zero indeterminate form
