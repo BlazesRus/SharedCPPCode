@@ -5071,7 +5071,7 @@ protected:
 						*this /= self;
 					// n must be even now
 					expValue = expValue >> 1; // y = y/2
-					self /= self * self; // Change x to x^-1
+					self *= self; // Change x to x^2
 				}
                 return *this;
             }
@@ -5135,27 +5135,6 @@ protected:
             return *this;
         }
 
-		auto UnsignedNegIntPower(const unsigned int& exp)
-		{
-			ResetDivisor();
-			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-			//Switches from negative to positive if exp is odd number
-			bool IsNegative = IsPositive()?false:exp&1==1?false:true;
-			auto self = AbsOf();
-			IntValue = 1; DecimalHalf = 0;// Initialize result
-			while (expValue > 0)
-			{
-				// If expValue is odd, divide self with result
-				if (exp & 1 == 1)
-					*this /= self;
-				// n must be even now
-				expValue = expValue >> 1; // y = y/2
-				self /= self * self; // Change x to x^-1
-			}
-			if(IsNegative)
-				IntValue.IsPositive = 0;
-		}
-
         /// <summary>
         /// Applies Power of operation (for integer exponents)
         /// without checking for specific representation type
@@ -5189,7 +5168,7 @@ protected:
                             *this /= self;
                         // n must be even now
                         expValue = expValue >> 1; // y = y/2
-                        self /= self * self; // Change x to x^-1
+                        self *= self; // Change x to x^2
                     }
                     if(IsNegative)
                         IntValue.IsPositive = 0;
