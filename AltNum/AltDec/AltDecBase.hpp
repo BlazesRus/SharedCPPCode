@@ -5019,14 +5019,13 @@ public:
 
 protected:
 
-	#if defined(AltNum_EnableIRep)
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// without flipping of negative status and other checks
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto PartialUIntPowOp(const ValueType& expValue)
+        template<IntegerType IntType=unsigned int>
+        auto PartialUIntPowOp(const IntType& expValue)
         {
             if (DecimalHalf.Value == 0 && IntValue.Value == 10)
             {
@@ -5056,12 +5055,12 @@ protected:
         /// without flipping of negative status and other checks
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto PartialIntPowOfOp(const ValueType& expValue)
+        template<IntegerType IntType=signed int>
+        auto PartialIntPowOfOp(const IntType& expValue)
         {
             if (expValue < 0)//Negative Pow
             {
-                ValueType exp = expValue * -1;
+                IntType exp = expValue * -1;
 				//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
 				auto self = AbsOf();
 				IntValue = 1; DecimalHalf = 0;// Initialize result
@@ -5072,7 +5071,7 @@ protected:
 						*this /= self;
 					// n must be even now
 					expValue = expValue >> 1; // y = y/2
-					self = self / self; // Change x to x^-1
+					self /= self * self; // Change x to x^-1
 				}
                 return *this;
             }
@@ -5098,15 +5097,14 @@ protected:
             }
             return *this;
         }
-    #endif
 
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// without checking for specific representation type
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto BasicUIntPowOpV1(const ValueType& expValue)
+        template<IntegerType IntType=unsigned int>
+        auto BasicUIntPowOpV1(const IntType& expValue)
         {
             auto convertedVal = ConvertAsNormTypeV2();
             if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
@@ -5137,19 +5135,40 @@ protected:
             return *this;
         }
 
+		auto UnsignedNegIntPower(const unsigned int& exp)
+		{
+			ResetDivisor();
+			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+			//Switches from negative to positive if exp is odd number
+			bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+			auto self = AbsOf();
+			IntValue = 1; DecimalHalf = 0;// Initialize result
+			while (expValue > 0)
+			{
+				// If expValue is odd, divide self with result
+				if (exp & 1 == 1)
+					*this /= self;
+				// n must be even now
+				expValue = expValue >> 1; // y = y/2
+				self /= self * self; // Change x to x^-1
+			}
+			if(IsNegative)
+				IntValue.IsPositive = 0;
+		}
+
         /// <summary>
         /// Applies Power of operation (for integer exponents)
         /// without checking for specific representation type
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto BasicIntPowOfOpV1(const ValueType& expValue)
+        template<IntegerType IntType=signed int>
+        auto BasicIntPowOfOpV1(const IntType& expValue)
         {
             auto convertedVal = ConvertAsNormTypeV2();
             if (expValue < 0)//Negative Pow
             {
                 auto convertedVal = ConvertAsNormTypeV2();
-                ValueType exp = expValue * -1;
+                IntType exp = expValue * -1;
                 if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntValue == 10 && expValue >= -9)
                 {
                     IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
@@ -5165,12 +5184,12 @@ protected:
                     IntValue = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
-                        // If expValue is odd, multiply self with result
+                        // If expValue is odd, divide self with result
                         if (exp & 1 == 1)
                             *this /= self;
                         // n must be even now
                         expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
+                        self /= self * self; // Change x to x^-1
                     }
                     if(IsNegative)
                         IntValue.IsPositive = 0;
@@ -5209,8 +5228,8 @@ protected:
         /// Applies Power of operation(for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto BasicUIntPowOfV1(const ValueType& expValue)
+        template<IntegerType IntType=signed int>
+        auto BasicUIntPowOfV1(const IntType& expValue)
         {
             auto self = this;
             return self.BasicUIntPowOpV1();
@@ -5220,8 +5239,8 @@ protected:
         /// Applies Power of operation(for integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<typename ValueType>
-        auto BasicIntPowOfV1(const ValueType& expValue)
+        template<IntegerType IntType=signed int>
+        auto BasicIntPowOfV1(const IntType& expValue)
         {
             auto self = this;
             return self.BasicIntPowOpV1();

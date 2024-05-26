@@ -2992,7 +2992,7 @@ protected:
                             *this /= self;
                         // n must be even now
                         expValue = expValue >> 1; // y = y/2
-                        self = self / self; // Change x to x^-1
+                        self /= self * self; // Change x to x^-1
                     }
                     if(IsNegative)
                         IntValue.IsPositive = 0;
