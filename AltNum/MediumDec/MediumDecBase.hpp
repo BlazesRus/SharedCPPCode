@@ -194,6 +194,16 @@ protected:
             return IntValue.Value!=0;
         }
 
+        bool IsAtOneInt()
+        {
+            return IntValue.Value==1;
+        }
+
+        bool IsNotAtOneInt()
+        {
+            return IntValue.Value!=1;
+        }
+
         //Detect if at exactly zero(only overridden with MixedDec)
 		bool IsZero()
 		{

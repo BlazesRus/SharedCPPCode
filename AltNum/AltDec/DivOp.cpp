@@ -590,8 +590,8 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 	{
 		case RepType::PiNum:{
 			switch(RRep){
-				//case RepType::NormalType:{
-				//}; break;
+				case RepType::NormalType:
+					BasicUnsignedDivOp(rValue); break;
 	#pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableFractionals)
 				//case RepType::NumByDiv:{
@@ -660,8 +660,13 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 	#if defined(AltNum_EnableFractionals)
 		case RepType::PiNumByDiv:{
 			switch(RRep){
-				//case RepType::NormalType:{
-				//}; break;
+				case RepType::NormalType:
+					if(rValue.DecimalHalf.Value==0){
+					
+					}
+					else
+						BasicUnsignedDivOp(rValue);
+					break;
 	#pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableFractionals)
 				//case RepType::NumByDiv:{
