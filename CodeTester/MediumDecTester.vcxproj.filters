@@ -116,14 +116,17 @@
     <ClInclude Include="..\AltNum\IntegerConcept.hpp">
       <Filter>Header Files\AltNum\Concepts</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MirroredInt.hpp">
+    <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp">
       <Filter>Header Files\AltNum\IntReplacements</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\FlaggedInt.hpp">
+    <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp">
       <Filter>Header Files\AltNum\IntReplacements</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\PartialInt.hpp">
+    <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp">
       <Filter>Header Files\AltNum\IntReplacements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp">
+      <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

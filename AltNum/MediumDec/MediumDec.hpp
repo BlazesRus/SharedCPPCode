@@ -22,8 +22,8 @@
 #include "..\MediumDecVariantConcept.hpp"
 
 
-#include "..\MirroredInt.hpp"
-#include "..\PartialInt.hpp"
+#include "..\AlternativeInt\MirroredInt.hpp"
+#include "..\AlternativeInt\PartialInt.hpp"
 #include "..\RepType.h"
 
 //"Not used for this variant" comment used as placeholder

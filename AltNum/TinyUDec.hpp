@@ -29,7 +29,7 @@
 
 #include "AltNumModChecker.hpp"
 
-#include "MirroredInt.hpp"
+#include "AlternativeInt\MirroredInt.hpp"
 
 /*
 TinyUDec_IncludeFractionRepresentation

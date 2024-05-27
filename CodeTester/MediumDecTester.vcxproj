@@ -166,13 +166,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
-    <ClInclude Include="..\AltNum\FlaggedInt.hpp" />
     <ClInclude Include="..\AltNum\IntegerConcept.hpp" />
-    <ClInclude Include="..\AltNum\MirroredInt.hpp" />
-    <ClInclude Include="..\AltNum\PartialInt.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
     <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp" />
@@ -186,9 +184,13 @@
     <ClCompile Include="AltDecTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />
+    <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp" />
+    <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp" />
   </ItemGroup>

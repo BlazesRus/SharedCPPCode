@@ -169,10 +169,10 @@
     <ClInclude Include="..\AltNum\AltNumConversions.hpp" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
-    <ClInclude Include="..\AltNum\FlaggedInt.hpp" />
+    <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp" />
     <ClInclude Include="..\AltNum\IntegerConcept.hpp" />
-    <ClInclude Include="..\AltNum\MirroredInt.hpp" />
-    <ClInclude Include="..\AltNum\PartialInt.hpp" />
+    <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />
+    <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
     <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp" />

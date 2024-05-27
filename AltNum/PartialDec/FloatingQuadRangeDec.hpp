@@ -24,7 +24,7 @@ AltNum_PreventModulusOverride
 AltNum_EnableAlternativeModulusResult
 */
 #include "MediumDecPreprocessors.h"
-#include "..\PartialInt.hpp"
+#include "..\AlternativeInt\PartialInt.hpp"
 #include "RepType.h"
 
 namespace BlazesRusCode

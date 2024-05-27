@@ -7,7 +7,7 @@
 #include "..\MediumDecV2\MediumDecV2Base.hpp"
 #include "..\MediumDecV2\MediumDecV2.hpp"
 #if !defined(AltNum_EnableNegativePowerRep)
-	#include "..\FlaggedInt.hpp"
+	#include "..\AlternativeInt\FlaggedInt.hpp"
 #endif
 #include "AltDecPreprocessors.h"
 
