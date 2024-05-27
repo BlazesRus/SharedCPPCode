@@ -207,7 +207,22 @@ protected:
         //Detect if at exactly zero(only overridden with MixedDec)
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue==0;
+            return DecimalHalf==0&&IntValue.Value==0;
+		}
+		
+		bool IsOne()
+		{
+            return DecimalHalf==0&&IntValue==MirroredInt::One;
+		}
+		
+		bool IsNegOne()
+		{
+            return DecimalHalf==0&&IntValue==MirroredInt::NegativeOne;
+		}
+		
+		bool IsOneVal()
+		{
+            return DecimalHalf==0&&IntValue.Value==1;
 		}
 
         /// <summary>
