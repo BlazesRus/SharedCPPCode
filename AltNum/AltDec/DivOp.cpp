@@ -15,8 +15,6 @@ void RightSideOp(const auto& rValue, const RepType& RRep)
 	BasicUnsignedDivOp(RValue);
 }
 
-#pragma region AltDecVariantExclusive
-
 #if defined(AltNum_EnablePiRep)
 
 //Convert right side down to Pi representation and then perform operation
@@ -77,6 +75,8 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 	BasicUnsignedDivOp(RValue);
 }
 #endif
+
+#pragma region AltDecVariantExclusive
 
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
