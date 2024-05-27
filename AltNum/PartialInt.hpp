@@ -18,6 +18,8 @@
 #include "..\DLLAPI.h"
 #endif
 
+#include <compare>
+
 namespace BlazesRusCode
 {
 	struct PartialInt {
@@ -57,6 +59,19 @@ namespace BlazesRusCode
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator UInt64() { return Value; }
+        explicit operator unsigned long long() { return Value; }
+
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed int() { return Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed long long() { return Value; }
+
 	};
 }
