@@ -80,16 +80,82 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
-    //Add Code Here
+/*	//((AltDecBase(IntValue,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
+	//((AltDecBase(IntValue,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntValue,rValue.DecimalHalf)))
+	if (rValue < 0)
+	{
+		rValue *= -1;
+		SwapNegativeStatus();
+	}
+	if (rValue.DecimalHalf == 0)
+	{
+		BasicUIntMultOp(rValue.ExtraRep);
+		int result = ExtraRep * rValue.IntValue;
+		if(ExtraRep == result / rValue.IntValue)//checking for overflow
+		{
+			ExtraRep = result;
+		}
+		else
+			BasicUnsignedDivOp(rValue.IntValue);
+	}
+	else
+	{//CatchAllDivisionV2(rValue, LRep);
+		BasicUIntMultOp(rValue.ExtraRep);
+		BasicUnsignedDivOp(rValue);
+	}
+*/    
+	//Add Code Here
 }
 
 void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 {
-    //Add Code Here
+	if(IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+#if defined(AltNum_EnableNegativePowerRep)
+		ExtraRep -= rValue.ExtraRep;
+#else
+		if(ExtraRep.Value>rValue.ExtraRep)
+			ExtraRep.Value -= rValue.ExtraRep;
+		else {//Result is negative Exponent
+			signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
+			ResetDivisor();
+			BasicIntPowOpV1(Exp);
+		}
+#endif
+	}
+	else
+		CatchAllOp(rValue, LRep, LRep);
 }
 
 void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 {
+/*	int rvDivisor = -rValue.ExtraRep;
+	//=LeftSideNum*rValue.ExtraRep / RightSideNum;
+	AltDecBase LeftSideNum;
+	if (IntValue == NegativeRep)
+		LeftSideNum = AltDecBase(DecimalHalf);
+	else if (IntValue < 0)
+		LeftSideNum = AltDecBase(IntValue * ExtraRep + DecimalHalf);
+	else if (IntValue == 0)
+		LeftSideNum = AltDecBase(-DecimalHalf);
+	else
+		LeftSideNum = AltDecBase(IntValue * ExtraRep - DecimalHalf);
+	LeftSideNum.UIntDivOp(rValue.ExtraRep);
+	if (LeftSideNum.IsZero())
+		SetAsZero();
+	else
+	{
+		DecimalHalf = LeftSideNum.DecimalHalf;
+		if(rValue<0)
+		{
+			IntValue = -LeftSideNum.IntValue;
+			ExtraRep *= rValue.IntValue==NegativeRep ? -rValue.DecimalHalf : -rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+		}
+		else
+		{
+			IntValue = LeftSideNum.IntValue;
+			ExtraRep *= rValue.IntValue==0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+		}
+	}*/
     //Add Code Here
 }
 
