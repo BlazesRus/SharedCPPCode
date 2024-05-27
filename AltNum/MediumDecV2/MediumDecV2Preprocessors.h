@@ -22,11 +22,8 @@ AltNum_DefineDivideByZeroAsInfinity = Sets value as infinity when divide by zero
 AltNum_EnableIndeterminateForms = Enables extra representations for outputing and preserving the indeterminate form such 
 	as 0/0, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
 	(Not fully implimented yet)
-	
-AltNum_EnableInfinityPowers =
-Allows powers of infinity for operations where infinity is somehow more infinite than normal
-      (Not Implemented)
-	
+
+
 AltNum_PiOrEEnabled = At least PiRep or ERep flags enabled  
 AltNum_AltFlagsEnabled = Pi representation, E representation, and/or I representation enabled
 */

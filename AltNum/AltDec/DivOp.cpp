@@ -78,6 +78,7 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 
 #pragma region AltDecVariantExclusive
 
+#if defined(AltNum_EnableFractionals)
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
 /*	//((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
@@ -106,13 +107,24 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 */    
 	//Add Code Here
 }
+#endif
 
-void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+#if defined(AltNum_ApplyPowersToFlaggedSideOnly)
+#if defined(AltNum_EnablePiRep)
+void SameRep_PiPowerOf(const auto& rValue, const RepType& LRep)
 {
-	if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
-#if defined(AltNum_EnableNegativePowerRep)
+	if(DecimalHalf.Flags==1||DecimalHalf.Flags==2){
+		if(ExtraRep.Value>rValue.ExtraRep)
+			ExtraRep.Value -= rValue.ExtraRep;
+		else {//Result is negative Exponent
+			signed int NegExp = rValue.ExtraRep.Value - ExtraRep.Value;
+			DecimalHalf.Flags = 0; ResetDivisor();
+			BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
+		}
+	} else if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+	#if defined(AltNum_EnableNegativePowerRep)
 		ExtraRep -= rValue.ExtraRep;
-#else
+	#else
 		if(ExtraRep.Value>rValue.ExtraRep)
 			ExtraRep.Value -= rValue.ExtraRep;
 		else {//Result is negative Exponent
@@ -120,11 +132,63 @@ void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 			ResetDivisor();
 			BasicIntPowOpV1(Exp);
 		}
-#endif
+	#endif
 	}
 	else
 		CatchAllOp(rValue, LRep, LRep);
 }
+#endif
+
+#if defined(AltNum_EnableERep)
+void SameRep_EPowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(DecimalHalf.Flags==1||DecimalHalf.Flags==2){
+		if(ExtraRep.Value>rValue.ExtraRep)
+			ExtraRep.Value -= rValue.ExtraRep;
+		else {//Result is negative Exponent
+			signed int NegExp = rValue.ExtraRep.Value - ExtraRep.Value;
+			DecimalHalf.Flags = 0; ResetDivisor();
+			BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
+		}
+	} else if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+	#if defined(AltNum_EnableNegativePowerRep)
+		ExtraRep -= rValue.ExtraRep;
+	#else
+		if(ExtraRep.Value>rValue.ExtraRep)
+			ExtraRep.Value -= rValue.ExtraRep;
+		else {//Result is negative Exponent
+			signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
+			ResetDivisor();
+			BasicIntPowOpV1(Exp);
+		}
+	#endif
+	}
+	else
+		CatchAllOp(rValue, LRep, LRep);
+}
+#endif
+#endif
+
+#if defined(AltNum_EnablePowerOfRepresentation)
+void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+	#if defined(AltNum_EnableNegativePowerRep)
+		ExtraRep -= rValue.ExtraRep;
+	#else
+		if(ExtraRep.Value>rValue.ExtraRep)
+			ExtraRep.Value -= rValue.ExtraRep;
+		else {//Result is negative Exponent
+			signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
+			ResetDivisor();
+			BasicIntPowOpV1(Exp);
+		}
+	#endif
+	}
+	else
+		CatchAllOp(rValue, LRep, LRep);
+}
+#endif
 
 void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 {

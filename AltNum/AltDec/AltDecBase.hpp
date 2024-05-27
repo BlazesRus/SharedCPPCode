@@ -40,21 +40,12 @@ protected:
 		/// If ExtraRep.IsAltRep==1, than is representation number is a mixed fraction	
 	#endif
         /// </summary>
-	#if defined(AltNum_EnableNegativePowerRep)
-		signed int ExtraRep;
-	#else
-        FlaggedInt ExtraRep;
-	#endif
+        DivisorType ExtraRep;
 
-	#if defined(AltNum_EnableNegativePowerRep)
-	static const signed int InitialExtraRep = 0;
-	#else
-	static const unsigned int InitialExtraRep = 1;
-	#endif
+		static const unsigned int InitialExtraRep = 1;
 
-	void ResetDivisor(){
-		ExtraRep = InitialExtraRep;
-	}
+		void ResetDivisor(){ ExtraRep = InitialExtraRep; }
+		
         #pragma region DigitStorage
 
 public:
@@ -65,11 +56,7 @@ public:
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         /// <param name="extraVal">ExtraRep flags etc</param>
-	#if defined(AltNum_EnableNegativePowerRep)
-		AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const signed int& extraVal = 0)
-	#else
-        AltDecBase(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const FlaggedInt& extraVal = 1)
-	#endif
+        AltDecBase(const MirroredInt& intVal=MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero, const FlaggedInt& extraVal = InitialExtraRep)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
@@ -1243,13 +1230,29 @@ public:
         #if defined(AltNum_EnablePowerOfRepresentation)
         void ConvertPiPowerToNum();
 
-        template<MediumDecVariant VariantType=AltDecBase>
-        VariantType PiPowerNum(int powerExponent)
+        auto PiPowerNum(int powerExponent)
         {
-	        ResetDivisor();
 	        auto PiSide = PiNum;
 	        PiSide.IntPowOp(powerExponent);
 	        return PiSide;
+        }
+		
+        auto NegativePiPowerNum(unsigned int powerExponent)
+        {
+	        auto PiSide = PiNum;
+			auto result = One;// Initialize result
+			while (expValue > 0)
+			{
+				// If expValue is odd, divide self with result
+				if (exp & 1 == 1)
+					result /= PiSide;
+				// n must be even now
+				expValue = expValue >> 1; // y = y/2
+				PiSide *= PiSide; // Change x to x^2
+			}
+			if(IsNegative)
+				IntValue.IsPositive = 0;
+			return result;
         }
 
         void ConvertPiPowerToPiRep();
@@ -1311,6 +1314,24 @@ public:
 	        auto ESide = ENum;
 	        ESide.IntPowOp(powerExponent);
 	        return ESide;
+        }
+
+        auto NegativeEPowerNum(unsigned int powerExponent)
+        {
+	        auto PiSide = PiNum;
+			auto result = One;// Initialize result
+			while (expValue > 0)
+			{
+				// If expValue is odd, divide self with result
+				if (exp & 1 == 1)
+					result /= PiSide;
+				// n must be even now
+				expValue = expValue >> 1; // y = y/2
+				PiSide *= PiSide; // Change x to x^2
+			}
+			if(IsNegative)
+				IntValue.IsPositive = 0;
+			return result;
         }
 
         void ConvertEPowerToERep();
@@ -5076,190 +5097,6 @@ public:
 		}
 
 protected:
-
-        /// <summary>
-        /// Applies Power of operation (for unsigned integer exponents)
-        /// without flipping of negative status and other checks
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<IntegerType IntType=unsigned int>
-        auto PartialUIntPowOp(const IntType& expValue)
-        {
-            if (DecimalHalf.Value == 0 && IntHalf.Value == 10)
-            {
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ResetDivisor();
-            }
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                auto self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return *this;
-        }
-
-        /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
-        /// without flipping of negative status and other checks
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<IntegerType IntType=signed int>
-        auto PartialIntPowOfOp(const IntType& expValue)
-        {
-            if (expValue < 0)//Negative Pow
-            {
-                IntType exp = expValue * -1;
-				//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-				auto self = AbsOf();
-				IntHalf = 1; DecimalHalf = 0;// Initialize result
-				while (expValue > 0)
-				{
-					// If expValue is odd, multiply self with result
-					if (exp & 1 == 1)
-						*this /= self;
-					// n must be even now
-					expValue = expValue >> 1; // y = y/2
-					self *= self; // Change x to x^2
-				}
-                return *this;
-            }
-            else if (DecimalHalf.Value == 0 && IntHalf.Value == 10)
-            {
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf.Value = 0; ResetDivisor();
-            }
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                auto self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-            }
-            return *this;
-        }
-
-        /// <summary>
-        /// Applies Power of operation (for unsigned integer exponents)
-        /// without checking for specific representation type
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<IntegerType IntType=unsigned int>
-        auto BasicUIntPowOpV1(const IntType& expValue)
-        {
-            auto convertedVal = ConvertAsNormTypeV2();
-            if (convertedVal.DecimalHalf == 0 && convertedVal.IntHalf.Value == 10)
-            {
-                if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ResetDivisor();
-            }
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
-                auto self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-                if(IsNegative)
-                    IntHalf.IsPositive = 0;
-            }
-            return *this;
-        }
-
-        /// <summary>
-        /// Applies Power of operation (for integer exponents)
-        /// without checking for specific representation type
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        template<IntegerType IntType=signed int>
-        auto BasicIntPowOfOpV1(const IntType& expValue)
-        {
-            auto convertedVal = ConvertAsNormTypeV2();
-            if (expValue < 0)//Negative Pow
-            {
-                auto convertedVal = ConvertAsNormTypeV2();
-                IntType exp = expValue * -1;
-                if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntHalf == 10 && expValue >= -9)
-                {
-                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
-                    if(IsNegative()&&exp&1==1)
-                        IsPositive = 1;
-                }
-                else
-                {
-                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    //Switches from negative to positive if exp is odd number
-                    bool IsNegative = IsPositive()?false:exp&1==1?false:true;
-                    auto self = AbsOf();
-                    IntHalf = 1; DecimalHalf = 0;// Initialize result
-                    while (expValue > 0)
-                    {
-                        // If expValue is odd, divide self with result
-                        if (exp & 1 == 1)
-                            *this /= self;
-                        // n must be even now
-                        expValue = expValue >> 1; // y = y/2
-                        self *= self; // Change x to x^2
-                    }
-                    if(IsNegative)
-                        IntHalf.IsPositive = 0;
-                }
-                return *this;
-            }
-            else if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntHalf.Value == 10)
-            {
-                if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
-                DecimalHalf = 0; ResetDivisor();
-            }
-            else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
-                auto self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
-                while (expValue > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if (expValue % 2 == 1)
-                        this *= self;
-                    // n must be even now
-                    expValue = expValue >> 1; // y = y/2
-                    self = self * self; // Change x to x^2
-                }
-                if(IsNegative)
-                    IntHalf.IsPositive = 0;
-            }
-            return *this;
-        }
 
         /// <summary>
         /// Applies Power of operation(for unsigned integer exponents)

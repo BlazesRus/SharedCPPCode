@@ -27,6 +27,14 @@ AltNum_EnableApproachingDivided =
 
 AltNum_DisplayApproachingAsReal =
       Display approaching value as real number with 20 digits in decimal section
+	  
+AltNum_EnableInfinityPowers =
+Allows powers of infinity for operations where infinity is somehow more infinite than normal
+      (Not Implemented)
+AltNum_ApplyPowersToFlaggedSideOnly = representations powers for Pi and e to apply only to Pi/e 
+(IntHalf:4 DecimalHalf:0 DecimalHalf.Flag:1 ExtraRep:2 is equal to 4*Pi^2)
+(Not Implimented yet)
+	  
 //----
 
 AltNum_EnableNaN =
@@ -145,6 +153,16 @@ AltNum_ReserveLastRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Z
 	#undef AltNum_EnableApproachingDivided
 #endif
 
+#if defined(AltNum_ApplyPowersToFlaggedSideOnly)
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)//Turn off the feature if related flags not enabled
+		#if !defined(AltNum_EnablePowerOfRepresentation)
+			#define AltNum_EnablePowerOfRepresentation
+		#endif
+	#else
+		#undef AltNum_ApplyPowersToFlaggedSideOnly
+	#endif
+#endif
+
 #if defined(AltNum_EnableNegativePowerRep)&&defined(AltNum_EnableWithinMinMaxRange)
 	#undef AltNum_EnableWithinMinMaxRange
 #endif
@@ -201,3 +219,9 @@ AltNum_ReserveLastRepForDivideByZero = Reserves 0 ExtraRep value for Divide by Z
 #endif
 
 #pragma endregion PreprocessorToggles
+
+#if defined(AltNum_EnableNegativePowerRep)
+	#define DivisorType signed int
+#else
+	#define DivisorType FlaggedInt
+#endif
