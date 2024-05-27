@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{47e09dff-3b14-4c29-ad54-c0e68da31d30}</ProjectGuid>
-    <RootNamespace>MediumDecTester</RootNamespace>
+    <ProjectGuid>{47e09dff-3b14-4c29-ad54-c0e68da31d33}</ProjectGuid>
+    <RootNamespace>MixedDecTester</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -191,6 +191,29 @@
     <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base.hpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\PowOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AltNum\AltDec\AltDecPreprocessors.h" />
+    <ClCompile Include="..\AltNum\AltDec\AltDecBase.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\AddOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\DivOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\MultOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\PowOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\SubOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec_ConvertToOtherRep.cpp" />
+    <ClCompile Include="..\AltNum\AltDec_PowOp.cpp" />
+    <ClCompile Include="..\AltNum\AltDec\AltDec.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
