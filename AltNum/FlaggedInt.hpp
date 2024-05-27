@@ -18,6 +18,8 @@
 #include "..\DLLAPI.h"
 #endif
 
+#include <compare>
+
 namespace BlazesRusCode
 {
 	struct FlaggedInt {

@@ -5,16 +5,16 @@ using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
 //3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
 inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 {
-	if (IntValue >= 683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
+	if (IntHalf >= 683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
 	{
 		throw "Conversion of Pi multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
-		IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+		IntHalf = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
 	}
 	#if !defined(AltNum_EnableMirroredSection)
-	else if (IntValue <= -683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
+	else if (IntHalf <= -683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
 	{
 		throw "Conversion of Pi multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
-		IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+		IntHalf = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
 	}
 	#endif
     #if !defined(AltNum_UseIntForDecimalHalf)
@@ -25,15 +25,15 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 	if (DecimalHalf == 0)
 	{
 	#if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 	#endif
 		SRep = 3141592654;
 	#if !defined(AltNum_EnableMirroredSection)
-		SRep *= IntValue;
+		SRep *= IntHalf;
 	#else
-		SRep *= IntValue.Value;
+		SRep *= IntHalf.Value;
 	#endif
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
@@ -47,19 +47,19 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 		if (divRes == 0 && IsNegative)
 		{
 			if (DecimalHalf == 0)
-				IntValue = 0;
+				IntHalf = 0;
 			else
-				IntValue = NegativeRep;
+				IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 		else
-			IntValue = (int)divRes;
+			IntHalf = (int)divRes;
 	#else
-		IntValue.Value = (unsigned int)divRes;
+		IntHalf.Value = (unsigned int)divRes;
 	#endif
 	}
-	else if (IntValue == 0)
+	else if (IntHalf == 0)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -71,7 +71,7 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
     #endif
 	}
 	#if !defined(AltNum_EnableMirroredSection)
-	else if (IntValue == NegativeRep)
+	else if (IntHalf == NegativeRep)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -82,22 +82,22 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 		DecimalHalf.Value = (unsigned int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
         #endif
 		if (divRes == 0)
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		else
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 	}
     #endif
 	else
 	{
 	#if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
     #endif
-		SRep = DecimalOverflowX * IntValue + DecimalHalf;
+		SRep = DecimalOverflowX * IntHalf + DecimalHalf;
 		SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 		//X.Y *.V
-		__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+		__int64 Temp03 = (__int64)IntHalf * 141592654ll;//Temp03 holds __int64 version of X *.V
 		__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
 		Temp04 /= MediumDecV2Base::DecimalOverflow;
 		//Temp04 holds __int64 version of .Y * .V
@@ -112,14 +112,14 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 	#if !defined(AltNum_EnableMirroredSection)
 		if (IntHalf == 0 && IsNegative)
 		{
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-IntHalf;
+			IntHalf = (int)-IntHalf;
 		else
-			IntValue = (int)IntHalf;
+			IntHalf = (int)IntHalf;
     #else
-		IntValue.Value = (unsigned int)IntHalf;
+		IntHalf.Value = (unsigned int)IntHalf;
     #endif
 	}
 }
@@ -130,16 +130,16 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertPiToNum()
 //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
 inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
 {
-	if(IntValue>=790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
+	if(IntHalf>=790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
 	{
 		throw "Conversion of e multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
-		IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+		IntHalf = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
 	}
     #if !defined(AltNum_EnableMirroredSection)
-	else if(IntValue<=-790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
+	else if(IntHalf<=-790015084&&DecimalHalf>=351050349)//Exceeding Storage limit of NormalRep
 	{
 		throw "Conversion of e multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
-		IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+		IntHalf = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
 	}
     #endif
     #if !defined(AltNum_UseIntForDecimalHalf)
@@ -149,14 +149,14 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
 	__int64 divRes;
 	if(DecimalHalf==0)
 	{
-		bool IsNegative = IntValue<0;
+		bool IsNegative = IntHalf<0;
 		if(IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 		SRep = 2718281828;
 	#if !defined(AltNum_EnableMirroredSection)			       
-		SRep *= IntValue;
+		SRep *= IntHalf;
     #else
-		SRep *= IntValue.Value;
+		SRep *= IntHalf.Value;
 	#endif
 		divRes = SRep / DecimalOverflowX;
     #if defined(AltNum_UseIntForDecimalHalf)
@@ -168,19 +168,19 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
 		if (divRes == 0 && IsNegative)
 		{
 			if (DecimalHalf == 0)
-				IntValue = 0;
+				IntHalf = 0;
 			else
-				IntValue = NegativeRep;
+				IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 		else
-			IntValue = (int)divRes;
+			IntHalf = (int)divRes;
 	#else
-		IntValue = (unsigned int)divRes;
+		IntHalf = (unsigned int)divRes;
 	#endif
 	}
-	else if(IntValue==0)
+	else if(IntHalf==0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -192,7 +192,7 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
     #endif
 	}
 	#if !defined(AltNum_EnableMirroredSection)
-	else if(IntValue==NegativeRep)
+	else if(IntHalf==NegativeRep)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -203,22 +203,22 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
 		DecimalHalf.Value = (unsigned int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
         #endif
 		if(divRes==0)
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		else
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 	}
     #endif
 	else
 	{
 	#if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue<0;
+		bool IsNegative = IntHalf<0;
 		if(IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
     #endif
-		SRep = DecimalOverflowX * IntValue + DecimalHalf;
+		SRep = DecimalOverflowX * IntHalf + DecimalHalf;
 		SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
 		//X.Y *.V
-		__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+		__int64 Temp03 = (__int64)IntHalf * 718281828ll;//Temp03 holds __int64 version of X *.V
 		__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
 		Temp04 /= MediumDecV2Base::DecimalOverflow;
 		//Temp04 holds __int64 version of .Y * .V
@@ -233,14 +233,14 @@ inline void BlazesRusCode::MediumDecV2Base::ConvertENumToNum()
 	#if !defined(AltNum_EnableMirroredSection)
 		if(IntHalf == 0&&IsNegative)
 		{
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		}
 		else if(IsNegative)
-			IntValue = (int)-IntHalf;
+			IntHalf = (int)-IntHalf;
 		else
-			IntValue = (int)IntHalf;
+			IntHalf = (int)IntHalf;
     #else
-		IntValue.Value = (unsigned int)IntHalf;
+		IntHalf.Value = (unsigned int)IntHalf;
     #endif
 	}
 }

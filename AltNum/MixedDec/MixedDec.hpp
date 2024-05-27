@@ -78,7 +78,7 @@ public:
         //Detect if at exactly zero
 		bool IsZero() const
 		{
-            return DecimalHalf==0&&IntValue==0&&TrailingDigits==0;
+            return DecimalHalf==0&&IntHalf==0&&TrailingDigits==0;
 		}
 
         void SetTrailingDigitAsZero()
@@ -110,7 +110,7 @@ public:
 
         void SetAsZero()
         {
-            IntValue = 0;
+            IntHalf = 0;
             DecimalHalf = 0;
 	#if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = InitialExtraRep;
@@ -166,10 +166,10 @@ public:
 #else if defined(MixedDec_DeriveFromMediumDecV2)
 			//Add code here
 #else
-            if(IntValue<=1)
+            if(IntHalf<=1)
                 return true;
             else
-                return IntValue==2 && DecimalHalf==0 && TrailingDigits==0.0f;
+                return IntHalf==2 && DecimalHalf==0 && TrailingDigits==0.0f;
 #endif
         }
 
@@ -180,10 +180,10 @@ public:
 #else if defined(MixedDec_DeriveFromMediumDecV2)
 			//Add code here
 #else
-            if(IntValue<=0)
+            if(IntHalf<=0)
                 return true;
             else
-                return IntValue==1 && DecimalHalf==0 && TrailingDigits==0.0f;
+                return IntHalf==1 && DecimalHalf==0 && TrailingDigits==0.0f;
 #endif
         }
 
@@ -202,7 +202,7 @@ public:
 		float trailingDigits = 0.0f)
 #endif
         {
-			IntValue = intVal;
+			IntHalf = intVal;
             DecimalHalf = decVal;
 #if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = extraVal;
@@ -217,12 +217,12 @@ public:
 	#if defined(AltNum_EnableMirroredSection)
 			if(rhs<0)
 			{
-				IntValue.Value = -rhs;
-				IntValue.IsPositive = 0;
+				IntHalf.Value = -rhs;
+				IntHalf.IsPositive = 0;
 			}
 			else
 	#endif
-				IntValue = rhs;
+				IntHalf = rhs;
 			DecimalHalf = 0;
 	#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = InitialExtraRep;
@@ -236,7 +236,7 @@ public:
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
 		#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = rhs.ExtraRep;
 		#endif
@@ -249,7 +249,7 @@ public:
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
 		#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = rhs.ExtraRep;
 		#endif
@@ -262,7 +262,7 @@ public:
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
 		#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = rhs.ExtraRep;
 		#endif
@@ -275,7 +275,7 @@ public:
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
 		#if defined(MixedDec_DeriveFromAltDec)
             ExtraRep = rhs.ExtraRep;
 		#endif
@@ -291,7 +291,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetVal(MixedDec Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
 #if defined(MixedDec_DeriveFromAltDec)
 			ExtraRep = Value.extraVal;
@@ -352,16 +352,16 @@ public:
 	#endif
 
 	#if defined(MixedDec_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepType::MixedFrac://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedFrac"; break;
 		#if defined(MixedDec_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepType::MixedPi://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedPi"; break;
 		#elif defined(MixedDec_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepType::MixedE://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedE"; break;
 		#elif defined(MixedDec_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepType::MixedI://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedI"; break;
 		#endif
 	#endif
@@ -371,10 +371,10 @@ public:
 					return "Infinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingValues)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
                     return "ApproachingBottom"; break;
 		#if !defined(MixedDec_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                     return "ApproachingTop"; break;
 		#endif
 		#if defined(MixedDec_EnableApproachingDivided)
@@ -391,7 +391,7 @@ public:
 					return "NaN"; break;
     #endif
 	#if defined(MixedDec_EnableApproachingPi)
-				case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+				case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
 					return "ApproachingTopPi"; break;
 		#if defined(MixedDec_EnableApproachingAlternativeDiv)
 				case RepType::ApproachingMidLeftPi:
@@ -401,7 +401,7 @@ public:
 		#endif
 	#endif
 	#if defined(MixedDec_EnableApproachingE)
-				case RepType::ApproachingTopE://equal to IntValue.9..9 e
+				case RepType::ApproachingTopE://equal to IntHalf.9..9 e
 					return "ApproachingTopE"; break;
 		#if defined(MixedDec_EnableApproachingAlternativeDiv)
 				case RepType::ApproachingMidLeftE:
@@ -415,10 +415,10 @@ public:
 					return "ImaginaryInfinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 					return "ApproachingImaginaryBottom"; break;
 		#if !defined(MixedDec_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 					return "ApproachingImaginaryTop"; break;
 		#endif
 		#if defined(MixedDec_EnableApproachingDivided)
@@ -433,7 +433,7 @@ public:
 	#if defined(MixedDec_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
 				case RepType::UndefinedButInRange:
 					return "UndefinedButInRange"; break;
-		#if defined(MixedDec_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+		#if defined(MixedDec_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
 				case RepType::WithinMinMaxRange:
 					return "WithinMinMaxRange"; break;
 		#endif
@@ -641,7 +641,7 @@ public:
                             return RepType::WithinMinMaxRange;
             #endif
 			            if(DecimalHalf==UndefinedInRangeRep)
-				            //If IntValue equals 0, than equals undefined value with range between negative infinity and positive infinity 
+				            //If IntHalf equals 0, than equals undefined value with range between negative infinity and positive infinity 
                             //Otherwise, indicates either negative or positive infinity (outside range of real number representation)
                             return RepType::UndefinedButInRange;
 		#endif
@@ -680,7 +680,7 @@ public:
     #if defined(MixedDec_EnablePiRep)
         void SetPiVal(const MediumDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             ExtraRep = PiRep;
@@ -696,7 +696,7 @@ public:
 
         void SetPiVal(const MediumDecV2& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -713,7 +713,7 @@ public:
 
         void SetPiVal(const AltDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -730,7 +730,7 @@ public:
         
         void SetPiVal(const MixedDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -749,10 +749,10 @@ public:
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
-                IntValue = MirroredInt(-Value,0);
+                IntHalf = MirroredInt(-Value,0);
             else
         #endif
-                IntValue = Value;
+                IntHalf = Value;
         #if defined(AltNum_UseIntForDecimalHalf)
         #else
             DecimalHalf = PartialInt(0,1);
@@ -769,7 +769,7 @@ public:
     #if defined(AltNum_EnableERep)
         void SetEVal(const MediumDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             ExtraRep = ERep;
@@ -785,7 +785,7 @@ public:
 
         void SetEVal(const MediumDecV2& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -802,7 +802,7 @@ public:
 
         void SetEVal(const AltDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -819,7 +819,7 @@ public:
         
         void SetEVal(const MixedDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -838,10 +838,10 @@ public:
         {
         #if defined(AltNum_EnableMirroredSection)
             if(Value<0)
-                IntValue = MirroredInt(-Value,0);
+                IntHalf = MirroredInt(-Value,0);
             else
         #endif
-                IntValue = Value;
+                IntHalf = Value;
         #if defined(AltNum_UseIntForDecimalHalf)
         #else
             DecimalHalf = PartialInt(0,2);
@@ -858,7 +858,7 @@ public:
     #if defined(AltNum_EnableIRep)
         void SetIVal(const MediumDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             ExtraRep = IRep;
@@ -874,7 +874,7 @@ public:
 
         void SetIVal(const MediumDecV2& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -891,7 +891,7 @@ public:
 
         void SetIVal(const AltDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -908,7 +908,7 @@ public:
         
         void SetIVal(const MixedDec& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
         #if defined(AltNum_UseIntForDecimalHalf)
             DecimalHalf = Value.DecimalHalf;
             #if defined(MixedDec_DeriveFromAltDec)
@@ -927,10 +927,10 @@ public:
         {
         #if defined(AltNum_InableMirroredSection)
             if(Value<0)
-                IntValue = MirroredInt(-Value,0);
+                IntHalf = MirroredInt(-Value,0);
             else
         #endif
-                IntValue = Value;
+                IntHalf = Value;
         #if defined(AltNum_UseIntForDecimalHalf)
         #else
             DecimalHalf = PartialInt(0,2);
@@ -1136,22 +1136,22 @@ public:
         static MixedDec MinimumValue()
         {
 	#if defined(MixedDec_EnableRestrictedFloat)
-            return MixedDec(MinIntValue, 999999999, RestrictedFloat::JustBeforeOne);
+            return MixedDec(MinIntHalf, 999999999, RestrictedFloat::JustBeforeOne);
 	#elif defined(MixedDec_EnableAltFloat)
-            return MixedDec(MinIntValue, 999999999, AltFloat::JustBeforeOne);
+            return MixedDec(MinIntHalf, 999999999, AltFloat::JustBeforeOne);
 	#else
-            return MixedDec(MinIntValue, 999999999, 1.0f - float.Epsilon);
+            return MixedDec(MinIntHalf, 999999999, 1.0f - float.Epsilon);
 	#endif
         }
 
         static MixedDec MaximumValue()
         {
 	#if defined(MixedDec_EnableRestrictedFloat)
-            return MixedDec(MaxIntValue, 999999999, RestrictedFloat::JustBeforeOne);
+            return MixedDec(MaxIntHalf, 999999999, RestrictedFloat::JustBeforeOne);
 	#elif defined(MixedDec_EnableAltFloat)
-            return MixedDec(MaxIntValue, 999999999, AltFloat::JustBeforeOne);
+            return MixedDec(MaxIntHalf, 999999999, AltFloat::JustBeforeOne);
 	#else
-            return MixedDec(MaxIntValue, 999999999, 1.0f - float.Epsilon);
+            return MixedDec(MaxIntHalf, 999999999, 1.0f - float.Epsilon);
 	#endif
         }
 public:
@@ -1544,7 +1544,7 @@ protected:
 	#endif
 	#if defined(MixedDec_EnableMirroredSection)
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
+			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
 				return SignCmp;
 	#endif
 	
@@ -1564,7 +1564,7 @@ protected:
                     throw "Can't compare imaginary number with real number";
 				else if(RRep==RepType:ImaginaryInfinity)
                 {
-					if(that.IntValue==1)
+					if(that.IntHalf==1)
 						return 0<=>1;//Positive Infinity is greater than real number representations
 					else
 						return 1<=>0;
@@ -1679,7 +1679,7 @@ protected:
 					{
 						if(RRep==RepType:Infinity)
 						{
-							if(that.IntValue==1)
+							if(that.IntHalf==1)
 								return 0<=>1;//Positive Infinity is greater than real number representations
 							else
 								return 1<=>0;
@@ -1705,7 +1705,7 @@ protected:
 					{
 						if(RRep==RepType:Infinity)
 						{
-							if(that.IntValue==1)
+							if(that.IntHalf==1)
 								return 0<=>1;//Positive Infinity is greater than real number representations
 							else
 								return 1<=>0;
@@ -1735,7 +1735,7 @@ protected:
 					{
 						if(RRep==RepType:Infinity)
 						{
-							if(that.IntValue==1)
+							if(that.IntHalf==1)
 								return 0<=>1;//Positive Infinity is greater than real number representations
 							else
 								return 1<=>0;
@@ -1764,7 +1764,7 @@ protected:
 	#endif
 					else if(RRep==RepType:Infinity)
                     {
-                        if(that.IntValue==1)
+                        if(that.IntHalf==1)
 							return 0<=>1;//Positive Infinity is greater than real number representations
 						else
 							return 1<=>0;
@@ -1853,14 +1853,14 @@ public:
 			MixedDec lValue = this;
 			//
 			
-			int lVal = lValue.IntValue==NegativeZero?0:lValue.IntValue;
+			int lVal = lValue.IntHalf==NegativeZero?0:lValue.IntHalf;
 		#else	
-			int lVal = IntValue==NegativeZero?0:IntValue;
+			int lVal = IntHalf==NegativeZero?0:IntHalf;
 		#endif
 			int rVal = that;
 			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
 				return IntHalfCmp;
-			//Counting negative zero as same as zero IntValue but with negative DecimalHalf
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
 		#if	defined(MixedDec_EnableAlternativeRepresentations)
 			lVal = lValue.DecimalHalf>0?1:0;
 		#else
@@ -1886,7 +1886,7 @@ public:
 
 		bool operator==(const int& that) const
 		{
-			if (IntValue!=that)
+			if (IntHalf!=that)
 				return false;
 			if (DecimalHalf!=0)
 				return false;
@@ -1919,9 +1919,9 @@ public:
 			if(DecimalHalf.Flags!=0)
 				return false;
 		#endif
-			if (LValue.IntValue!=RValue.IntValue)
+			if (LValue.IntHalf!=RValue.IntHalf)
 				return false;
-			if (LValue.DecimalHalf!=RValue.IntValue)
+			if (LValue.DecimalHalf!=RValue.IntHalf)
 				return false;
 		}
 
@@ -1953,17 +1953,17 @@ public:
 			else if(DecimalHalf.Flags!=0)
 				return false;
 		#endif
-			if (LValue.IntValue!=RValue.IntValue)
+			if (LValue.IntHalf!=RValue.IntHalf)
 				return false;
-			if (LValue.DecimalHalf!=RValue.IntValue)
+			if (LValue.DecimalHalf!=RValue.IntHalf)
 				return false;
 		}
 
 		bool operator==(const MixedDec& that) const
 		{
-			if (IntValue!=that.IntValue)
+			if (IntHalf!=that.IntHalf)
 				return false;
-			if (DecimalHalf!=that.IntValue)
+			if (DecimalHalf!=that.IntHalf)
 				return false;
 			if (TrailingDigits!=that.TrailingDigits)
 				return false;
@@ -2025,7 +2025,7 @@ protected:
         unsigned _int64 TrailingUIntDivOp(const IntType& rValue)
         {
 #if !defined(AltNum_EnableMirroredSection)
-            bool ResIsNegative = IntValue < 0;
+            bool ResIsNegative = IntHalf < 0;
 #endif
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
@@ -2034,12 +2034,12 @@ protected:
             UInt128 TruncatedDigits; 
 #if !defined(AltNum_EnableMirroredSection)
             if(DecimalHalf == 0)
-                SelfRes = ResIsNegative?NegDecimalOverflowX * IntValue:DecimalOverflowX * IntValue;
+                SelfRes = ResIsNegative?NegDecimalOverflowX * IntHalf:DecimalOverflowX * IntHalf;
             else
             {
                 if (ResIsNegative)
                 {
-                    if(IntValue==NegativeRep)
+                    if(IntHalf==NegativeRep)
     #if defined(AltNum_UseIntForDecimalHalf)
                         SelfRes = DecimalHalf;
     #else
@@ -2047,23 +2047,23 @@ protected:
     #endif
                     else
     #if defined(AltNum_UseIntForDecimalHalf)
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                        SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf;
     #else
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf.Value;
+                        SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf.Value;
     #endif
                 }
                 else
     #if defined(AltNum_UseIntForDecimalHalf)
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+                    SelfRes = DecimalOverflowX * IntHalf + DecimalHalf;
     #else
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf.Value;
+                    SelfRes = DecimalOverflowX * IntHalf + DecimalHalf.Value;
     #endif
             }
 #else
     #if defined(AltNum_UseIntForDecimalHalf)
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf;
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf.Value: DecimalOverflowX * IntHalf.Value + DecimalHalf;
     #else
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue.Value: DecimalOverflowX * IntValue.Value + DecimalHalf.Value;
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf.Value: DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
     #endif
 #endif
             Res = SelfRes / rValue;
@@ -2075,16 +2075,16 @@ protected:
 #if !defined(AltNum_EnableMirroredSection)
             if(ResIsNegative)
             {
-                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                IntHalf = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
                 DecimalHalf = (int) DecimalRes;
             }
             else
             {
-                IntValue = (int)IntHalfRes;
+                IntHalf = (int)IntHalfRes;
                 DecimalHalf = DecimalRes;
             }
 #else
-		    IntValue.Value = (unsigned int)IntHalfRes;
+		    IntHalf.Value = (unsigned int)IntHalfRes;
     #if defined(AltNum_UseIntForDecimalHalf)
 			DecimalHalf = DecimalRes;
     #else
@@ -2210,8 +2210,8 @@ public:
             else if(ExtraRep<=1073741823)
                 ExtraRep *= 2;
 			#if defined(AltNum_EnableMirroredSection)
-			else if(DecimalHalf==0&&IntValue.Value^1==0)//Check if even whole number
-				IntValue /= 2;
+			else if(DecimalHalf==0&&IntHalf.Value^1==0)//Check if even whole number
+				IntHalf /= 2;
 			#endif
             else
             {
@@ -2219,10 +2219,10 @@ public:
                 ExtraRep /= 32768;//Divided by 2^16, and then multiplied by 2
             }
 		#else
-            if(IntValue&1==1)//Check if number is odd
+            if(IntHalf&1==1)//Check if number is odd
                 rValue.BasicIntDivOp(2);
             else
-                IntValue /= 2;
+                IntHalf /= 2;
 		#endif
 		//To-Do:Add more code here later(for TrailingDigit part)
         }

@@ -6,66 +6,66 @@
         //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
         void ConvertENumToNum()
         {
-            if (IntValue >= 790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            if (IntHalf >= 790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
             {
                 throw "Conversion of e multiplication into MediumDec format resulted in overflow(setting value to maximum MediumDec value)";
-                IntValue = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
+                IntHalf = 2147483647; DecimalHalf = 999999999;//set value as maximum value(since not truely infinite just bit above storage range)
             }
-            else if (IntValue <= -790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
+            else if (IntHalf <= -790015084 && DecimalHalf >= 351050349)//Exceeding Storage limit of NormalRep
             {
                 throw "Conversion of e multiplication into MediumDec format resulted in underflow(setting value to minimum MediumDec value)";
-                IntValue = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
+                IntHalf = -2147483647; DecimalHalf = 999999999;//set value as minimum value(since not truely infinite just bit above storage range)
         }
             __int64 SRep;
             __int64 divRes;
             if (DecimalHalf == 0)
             {
-                bool IsNegative = IntValue<0;
+                bool IsNegative = IntHalf<0;
                 if (IsNegative)
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 SRep = 2718281828;
-                SRep *= IntValue;
+                SRep *= IntHalf;
                 divRes = SRep / DecimalOverflowX;
                 DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
                 if (divRes == 0 && IsNegative)
                 {
                     if (DecimalHalf == 0)
-                        IntValue = 0;
+                        IntHalf = 0;
                     else
-                        IntValue = NegativeRep;
+                        IntHalf = NegativeRep;
                 }
                 else if (IsNegative)
-                    IntValue = (int)-divRes;
+                    IntHalf = (int)-divRes;
                 else
-                    IntValue = (int)divRes;
+                    IntHalf = (int)divRes;
             }
-            else if (IntValue == 0)
+            else if (IntHalf == 0)
             {
                 SRep = 2718281828;
                 SRep *= DecimalHalf;
                 divRes = SRep / 1000000000000000000;
                 DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
             }
-            else if (IntValue == NegativeRep)
+            else if (IntHalf == NegativeRep)
             {
                 SRep = 2718281828;
                 SRep *= DecimalHalf;
                 divRes = SRep / 1000000000000000000;
                 DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
                 if (divRes == 0)
-                    IntValue = NegativeRep;
+                    IntHalf = NegativeRep;
                 else
-                    IntValue = (int)-divRes;
+                    IntHalf = (int)-divRes;
             }
             else
             {
-                bool IsNegative = IntValue<0;
+                bool IsNegative = IntHalf<0;
                 if (IsNegative)
-                    IntValue *= -1;
-                SRep = DecimalOverflowX * IntValue + DecimalHalf;
+                    IntHalf *= -1;
+                SRep = DecimalOverflowX * IntHalf + DecimalHalf;
                 SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
                 //X.Y *.V
-                __int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+                __int64 Temp03 = (__int64)IntHalf * 718281828ll;//Temp03 holds __int64 version of X *.V
                 __int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
                 Temp04 /= AltDecBase::DecimalOverflow;
                 //Temp04 holds __int64 version of .Y * .V
@@ -75,12 +75,12 @@
                 DecimalHalf = (signed int)IntegerRep;
                 if (IntHalf == 0 && IsNegative)
                 {
-                    IntValue = NegativeRep;
+                    IntHalf = NegativeRep;
                 }
                 else if (IsNegative)
-                    IntValue = (int)-IntHalf;
+                    IntHalf = (int)-IntHalf;
                 else
-                    IntValue = (int)IntHalf;
+                    IntHalf = (int)IntHalf;
             }
             ExtraRep = InitialExtraRep;
 }
@@ -96,52 +96,52 @@
             __int64 divRes;
             if (DecimalHalf == 0)
             {
-                bool IsNegative = IntValue<0;
+                bool IsNegative = IntHalf<0;
                 if (IsNegative)
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 SRep = 2718281828;
-                SRep *= IntValue;
+                SRep *= IntHalf;
                 divRes = SRep / AltDecBase::DecimalOverflowX;
                 DecimalHalf = (int)(SRep - DecimalOverflowX * divRes);
                 if (divRes == 0 && IsNegative)
                 {
                     if (DecimalHalf == 0)
-                        IntValue = 0;
+                        IntHalf = 0;
                     else
-                        IntValue = NegativeRep;
+                        IntHalf = NegativeRep;
                 }
                 else if (IsNegative)
-                    IntValue = (int)-divRes;
+                    IntHalf = (int)-divRes;
                 else
-                    IntValue = (int)divRes;
+                    IntHalf = (int)divRes;
             }
-            else if (IntValue == 0)
+            else if (IntHalf == 0)
             {
                 SRep = 2718281828;
                 SRep *= DecimalHalf;
                 divRes = SRep / 1000000000000000000;
                 DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
             }
-            else if (IntValue == NegativeRep)
+            else if (IntHalf == NegativeRep)
             {
                 SRep = 2718281828;
                 SRep *= DecimalHalf;
                 divRes = SRep / 1000000000000000000;
                 DecimalHalf = (int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
                 if (divRes == 0)
-                    IntValue = NegativeRep;
+                    IntHalf = NegativeRep;
                 else
-                    IntValue = (int)-divRes;
+                    IntHalf = (int)-divRes;
             }
             else
             {
-                bool IsNegative = IntValue<0;
+                bool IsNegative = IntHalf<0;
                 if (IsNegative)
-                    IntValue *= -1;
-                SRep = DecimalOverflowX * IntValue + DecimalHalf;
+                    IntHalf *= -1;
+                SRep = DecimalOverflowX * IntHalf + DecimalHalf;
                 SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
                 //X.Y *.V
-                __int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+                __int64 Temp03 = (__int64)IntHalf * 718281828ll;//Temp03 holds __int64 version of X *.V
                 __int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
                 Temp04 /= AltDecBase::DecimalOverflow;
                 //Temp04 holds __int64 version of .Y * .V
@@ -151,12 +151,12 @@
                 DecimalHalf = (signed int)IntegerRep;
                 if (IntHalf == 0 && IsNegative)
                 {
-                    IntValue = NegativeRep;
+                    IntHalf = NegativeRep;
                 }
                 else if (IsNegative)
-                    IntValue = (int)-IntHalf;
+                    IntHalf = (int)-IntHalf;
                 else
-                    IntValue = (int)IntHalf;
+                    IntHalf = (int)IntHalf;
             }
 }
         #else
@@ -166,24 +166,24 @@
             int divisor = DecimalHalf;
             DecimalHalf = 0;
             ExtraRep = InitialExtraRep;
-            bool IsNegative = IntValue < 0;
+            bool IsNegative = IntHalf < 0;
             if (IsNegative)
-                IntValue *= -1;
+                IntHalf *= -1;
             __int64 SRep = 2718281828ll;
-            SRep *= IntValue;
+            SRep *= IntHalf;
             __int64 divRes = SRep / AltDecBase::DecimalOverflowX;
             DecimalHalf = (int)(SRep - AltDecBase::DecimalOverflowX * divRes);
             if (divRes == 0 && IsNegative)
             {
                 if (DecimalHalf == 0)
-                    IntValue = 0;
+                    IntHalf = 0;
                 else
-                    IntValue = AltDecBase::NegativeRep;
+                    IntHalf = AltDecBase::NegativeRep;
             }
             else if (IsNegative)
-                IntValue = (int)-divRes;
+                IntHalf = (int)-divRes;
             else
-                IntValue = (int)divRes;
+                IntHalf = (int)divRes;
             BasicIntDivOp(divisor);
         }
         #endif
@@ -201,7 +201,7 @@
                     BasicUIntDivOp(-ExtraRep);
                 }
         #else
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 {
                     int divisor = DecimalHalf;
                     DecimalHalf = 0;
@@ -232,14 +232,14 @@
         #if defined(AltNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
                 {
-                    AltDecBase Res = AltDecBase(IntValue, DecimalHalf, ERep);
+                    AltDecBase Res = AltDecBase(IntHalf, DecimalHalf, ERep);
                     Res.BasicUIntDivOp(-ExtraRep);
                     return Res;
                 }
         #else
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 {
-                    AltDecBase Res = AltDecBase(IntValue, 0, ERep);
+                    AltDecBase Res = AltDecBase(IntHalf, 0, ERep);
                     Res.BasicUIntDivOp(DecimalHalf);
                     return Res;
 
@@ -310,10 +310,10 @@
 #endif
 #if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                IntValue = 2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
+                IntHalf = 2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
                 break;
             case RepType::NegativeInfinity:
-                IntValue = -2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
+                IntHalf = -2147483647; DecimalHalf = 999999999; ExtraRep = InitialExtraRep;
                 break;
 #endif
 #if defined(AltNum_EnableApproaching)
@@ -342,7 +342,7 @@
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 ConvertPiByDivToNorm(); break;
     #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 ConvertPiFracToNorm(); break;
     #endif
     #if defined(AltNum_EnablePiPowers)
@@ -357,46 +357,46 @@
             case RepType::ENumByDiv:
                 ConvertEByDivToNorm(); break;
 	#elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://IntHalf/DecimalHalf*e Representation
                 ConvertEFracToNorm(); break;
 	#endif
 
 	#if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
             {
-                AltDecBase Res = IntValue < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
+                AltDecBase Res = IntHalf < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
                 Res /= ExtraRep;
-                if (IntValue != 0 && IntValue != NegativeRep)
-                    Res += IntValue;
-                IntValue = Res.IntValue;
+                if (IntHalf != 0 && IntHalf != NegativeRep)
+                    Res += IntHalf;
+                IntHalf = Res.IntHalf;
                 DecimalHalf = Res.DecimalHalf;
                 ExtraRep = InitialExtraRep;
             }
             break;
 	#endif
 	#if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+            case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             {
-                AltDecBase Res = IntValue < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
+                AltDecBase Res = IntHalf < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
                 Res /= -ExtraRep;
-                if (IntValue != 0 && IntValue != NegativeRep)
-                    Res += IntValue;
+                if (IntHalf != 0 && IntHalf != NegativeRep)
+                    Res += IntHalf;
 				Res *= PiNum;
-                IntValue = Res.IntValue;
+                IntHalf = Res.IntHalf;
                 DecimalHalf = Res.DecimalHalf;
                 ExtraRep = InitialExtraRep;
             }
             break;
 	#endif
 	#if defined(AltNum_EnableMixedEFractional)
-            case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+            case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             {
-                AltDecBase Res = IntValue < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
+                AltDecBase Res = IntHalf < 0 ? AltDecBase(DecimalHalf, 0) : AltDecBase(DecimalHalf, 0);
                 Res /= -ExtraRep;
-                if (IntValue != 0 && IntValue != NegativeRep)
-                    Res += IntValue;
+                if (IntHalf != 0 && IntHalf != NegativeRep)
+                    Res += IntHalf;
 				Res *= ENum;
-                IntValue = Res.IntValue;
+                IntHalf = Res.IntHalf;
                 DecimalHalf = Res.DecimalHalf;
                 ExtraRep = InitialExtraRep;
             }
@@ -407,10 +407,10 @@
     #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
     #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
     #endif
             {
-                if (IntValue == 0 && DecimalHalf != 0)
+                if (IntHalf == 0 && DecimalHalf != 0)
                     ExtraRep = InitialExtraRep;
                 else
                     throw "Can't convert imaginary number into real number unless is zero.";
@@ -481,7 +481,7 @@
                     break;
                 }
                 #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 {
                     int Divisor = DecimalHalf;
                     DecimalHalf = 0;
@@ -580,7 +580,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -595,11 +595,11 @@
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                LValue.IntValue = 2147483647;
+                LValue.IntHalf = 2147483647;
                 LValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                LValue.IntValue = -2147483648;
+                LValue.IntHalf = -2147483648;
                 LValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -611,11 +611,11 @@
 		}
 #endif
 #if !defined(AltNum_EnableIRep)&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
-        if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> that; IntHalfCmp != 0)
+        if (std::strong_ordering IntHalfCmp = LValue.IntHalf <=> that; IntHalfCmp != 0)
             return IntHalfCmp;
         return (std::strong_ordering)LValue.DecimalHalf <=> 0;
 #else
-        if (std::partial_ordering IntHalfCmp = LValue.IntValue <=> that; IntHalfCmp != 0)
+        if (std::partial_ordering IntHalfCmp = LValue.IntHalf <=> that; IntHalfCmp != 0)
             return IntHalfCmp;
         return (std::partial_ordering)LValue.DecimalHalf <=> 0;
 #endif
@@ -637,7 +637,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -647,22 +647,22 @@
             //Don't convert infinity into real number
 		#if defined(AltNum_EnableImaginaryInfinity)
             case RepType::PositiveImaginaryInfinity:
-                LValue.IntValue = 2147483647;
+                LValue.IntHalf = 2147483647;
                 LValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeImaginaryInfinity:
-                LValue.IntValue = -2147483648;
+                LValue.IntHalf = -2147483648;
                 LValue.DecimalHalf = 2147483647;
                 break;
 		#endif
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                LValue.IntValue = 2147483647;
+                LValue.IntHalf = 2147483647;
                 LValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                LValue.IntValue = -2147483648;
+                LValue.IntHalf = -2147483648;
                 LValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -682,7 +682,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -691,22 +691,22 @@
                 break;
 		#if defined(AltNum_EnableImaginaryInfinity)
             case RepType::PositiveImaginaryInfinity:
-                RValue.IntValue = 2147483647;
+                RValue.IntHalf = 2147483647;
                 RValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeImaginaryInfinity:
-                RValue.IntValue = -2147483648;
+                RValue.IntHalf = -2147483648;
                 RValue.DecimalHalf = 2147483647;
                 break;
 		#endif
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                RValue.IntValue = 2147483647;
+                RValue.IntHalf = 2147483647;
                 RValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                RValue.IntValue = -2147483648;
+                RValue.IntHalf = -2147483648;
                 RValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -726,12 +726,12 @@
         }
 #endif
 #if !defined(AltNum_EnableIRep)//&&!defined(AltNum_EnableNaN)&&!defined(AltNum_EnableUndefinedButInRange)&&!defined(AltNum_EnableNil)
-        if (std::strong_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
+        if (std::strong_ordering IntHalfCmp = LValue.IntHalf <=> RValue.IntHalf; IntHalfCmp != 0)
             return IntHalfCmp;
         std::strong_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf;
         return DecimalHalfCmp;
 #else
-        if (std::partial_ordering IntHalfCmp = LValue.IntValue <=> RValue.IntValue; IntHalfCmp != 0)
+        if (std::partial_ordering IntHalfCmp = LValue.IntHalf <=> RValue.IntHalf; IntHalfCmp != 0)
             return IntHalfCmp;
         std::partial_ordering DecimalHalfCmp = LValue.DecimalHalf <=> RValue.DecimalHalf;
         return DecimalHalfCmp;
@@ -752,7 +752,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -766,11 +766,11 @@
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                LValue.IntValue = 2147483647;
+                LValue.IntHalf = 2147483647;
                 LValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                LValue.IntValue = -2147483648;
+                LValue.IntHalf = -2147483648;
                 LValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -781,7 +781,7 @@
                 break;
 		}
 #endif
-        if (LValue.IntValue!=that)
+        if (LValue.IntHalf!=that)
             return false;
         if (LValue.DecimalHalf!=0)
             return false;
@@ -803,7 +803,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -817,11 +817,11 @@
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                LValue.IntValue = 2147483647;
+                LValue.IntHalf = 2147483647;
                 LValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                LValue.IntValue = -2147483648;
+                LValue.IntHalf = -2147483648;
                 LValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -843,7 +843,7 @@
 			#if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(RValue/(ExtraRep*-1))*i Representation
 			#endif
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 		#endif
 		#ifdef AltNum_EnableComplexNumbers
             case RepType::ComplexIRep:
@@ -852,22 +852,22 @@
                 break;
 		#if defined(AltNum_EnableImaginaryInfinity)
             case RepType::PositiveImaginaryInfinity:
-                RValue.IntValue = 2147483647;
+                RValue.IntHalf = 2147483647;
                 RValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeImaginaryInfinity:
-                RValue.IntValue = -2147483648;
+                RValue.IntHalf = -2147483648;
                 RValue.DecimalHalf = 2147483647;
                 break;
 		#endif
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
             case RepType::PositiveInfinity:
-                RValue.IntValue = 2147483647;
+                RValue.IntHalf = 2147483647;
                 RValue.DecimalHalf = 2147483647;
                 break;
             case RepType::NegativeInfinity:
-                RValue.IntValue = -2147483648;
+                RValue.IntHalf = -2147483648;
                 RValue.DecimalHalf = 2147483647;
                 break;
 	#endif
@@ -878,7 +878,7 @@
                 break;
 		}
 #endif
-        if (LValue.IntValue!=RValue.IntValue)
+        if (LValue.IntHalf!=RValue.IntHalf)
             return false;
         if (LValue.DecimalHalf!=RValue.DecimalHalf)
             return false;
@@ -896,7 +896,7 @@ protected:
         template<IntegerType IntType=int>
         bool PartialIntDivOp(const IntType& rValue)
         {
-            bool ResIsNegative = IntValue < 0;
+            bool ResIsNegative = IntHalf < 0;
             signed _int64 SelfRes;
             signed _int64 Res;
             signed _int64 IntHalfRes;
@@ -905,25 +905,25 @@ protected:
             {
                 if (ResIsNegative)
                 {
-                    SelfRes = NegDecimalOverflowX * IntValue;
+                    SelfRes = NegDecimalOverflowX * IntHalf;
                 }
                 else
                 {
-                    SelfRes = DecimalOverflowX * IntValue;
+                    SelfRes = DecimalOverflowX * IntHalf;
                 }
             }
             else
             {
                 if (ResIsNegative)
                 {
-                    if(IntValue==NegativeRep)
+                    if(IntHalf==NegativeRep)
                         SelfRes = DecimalHalf;
                     else
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                        SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf;
                 }
                 else
                 {
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+                    SelfRes = DecimalOverflowX * IntHalf + DecimalHalf;
                 }
             }
             if(rValue<0)
@@ -948,12 +948,12 @@ protected:
             }
             if(ResIsNegative)
             {
-                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                IntHalf = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
                 DecimalHalf = (int) DecimalRes;
             }
             else
             {
-                IntValue = (int)IntHalfRes;
+                IntHalf = (int)IntHalfRes;
                 DecimalHalf = DecimalRes;
             }
             if (IntHalfRes == 0 && DecimalRes == 0)
@@ -965,7 +965,7 @@ protected:
         template<IntegerType IntType=int>
         bool PartialUIntDivOp(const IntType& rValue)
         {
-            bool ResIsNegative = IntValue < 0;
+            bool ResIsNegative = IntHalf < 0;
             signed _int64 SelfRes;
             signed _int64 Res;
             signed _int64 IntHalfRes;
@@ -977,25 +977,25 @@ protected:
             {
                 if (ResIsNegative)
                 {
-                    SelfRes = NegDecimalOverflowX * IntValue;
+                    SelfRes = NegDecimalOverflowX * IntHalf;
                 }
                 else
                 {
-                    SelfRes = DecimalOverflowX * IntValue;
+                    SelfRes = DecimalOverflowX * IntHalf;
                 }
             }
             else
             {
                 if (ResIsNegative)
                 {
-                    if(IntValue==NegativeRep)
+                    if(IntHalf==NegativeRep)
                         SelfRes = DecimalHalf;
                     else
-                        SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                        SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf;
                 }
                 else
                 {
-                    SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
+                    SelfRes = DecimalOverflowX * IntHalf + DecimalHalf;
                 }
             }
             //One has SelfRes of 1000000000
@@ -1008,12 +1008,12 @@ protected:
             DecimalRes = SelfRes - DecimalOverflowX * IntHalfRes;
             if(ResIsNegative)
             {
-                IntValue = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
+                IntHalf = IntHalfRes==0? NegativeRep: (int)(-IntHalfRes);
                 DecimalHalf = (int) DecimalRes;
             }
             else
             {
-                IntValue = (int)IntHalfRes;
+                IntHalf = (int)IntHalfRes;
                 DecimalHalf = DecimalRes;
             }
             if (IntHalfRes == 0 && DecimalRes == 0)
@@ -1031,7 +1031,7 @@ protected:
             if (rValue == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
-                IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return *this;
+                IntHalf < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return *this;
 #else
                 throw "Target value can not be divided by zero";
 #endif
@@ -1049,7 +1049,7 @@ protected:
             if (rValue == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
-                IntValue < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
+                IntHalf < 0 ? SetAsNegativeInfinity() : SetAsInfinity(); return;
 #else
                 throw "Target value can not be divided by zero";
 #endif
@@ -1126,17 +1126,17 @@ protected:
         {
             if (DecimalHalf == 0)
             {
-                IntValue *= rValue;
+                IntHalf *= rValue;
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
+                    if (IntHalf == NegativeRep) { IntHalf = 0; }
+                    else { IntHalf *= -1; }
                 }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
                 if(rValue<0)
                 {
                     SelfIsNegative = !SelfIsNegative;
@@ -1148,12 +1148,12 @@ protected:
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    IntHalf = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    IntHalf = SelfIsNegative ? NegativeRep : 0;
                     DecimalHalf = (signed int)SRep;
                 }
             }
@@ -1171,28 +1171,28 @@ protected:
         {
             if (DecimalHalf == 0)
             {
-                IntValue *= rValue;
+                IntHalf *= rValue;
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
+                    if (IntHalf == NegativeRep) { IntHalf = 0; }
+                    else { IntHalf *= -1; }
                 }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    IntHalf = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    IntHalf = SelfIsNegative ? NegativeRep : 0;
                     DecimalHalf = (signed int)SRep;
                 }
             }
@@ -1207,7 +1207,7 @@ protected:
         template<IntegerType IntType>
         AltDecBase BasicIntMultOp(const IntType& rValue)
         {
-            if (IntValue == 0 && DecimalHalf == 0)
+            if (IntHalf == 0 && DecimalHalf == 0)
                 return *this;
             if (rValue == 0)
                 SetAsZero();
@@ -1224,7 +1224,7 @@ protected:
         template<IntegerType IntType>
         AltDecBase BasicUIntMultOp(const IntType& rValue)
         {
-            if (IntValue == 0 && DecimalHalf == 0)
+            if (IntHalf == 0 && DecimalHalf == 0)
                 return *this;
             if (rValue == 0)
                 SetAsZero();
@@ -1293,8 +1293,8 @@ protected:
         {
             if (rValue == 0)
                 return;
-            if (IntValue == 0)
-                IntValue = (int)rValue;
+            if (IntHalf == 0)
+                IntHalf = (int)rValue;
             else
                 IntHalfAddition(rValue);
             return;
@@ -1316,10 +1316,10 @@ public:
                 NRepSkippingIntAddOp(rValue);
             else
             {
-                bool WasNegative = IntValue < 0;
+                bool WasNegative = IntHalf < 0;
                 IntHalfAddition(rValue);
                 //If flips to other side of negative, invert the decimals
-                if ((IntValue<0)!=WasNegative)
+                if ((IntHalf<0)!=WasNegative)
                     DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
             }
             return *this;
@@ -1357,8 +1357,8 @@ protected:
         {
             if (rValue == 0)
                 return;
-            if (IntValue == 0)
-                IntValue = -(int)rValue;
+            if (IntHalf == 0)
+                IntHalf = -(int)rValue;
             else
                 IntHalfSubtraction(rValue);
             return;
@@ -1388,10 +1388,10 @@ public:
                 NRepSkippingIntSubOp(rValue);
             else
             {
-                bool WasNegative = IntValue < 0;
+                bool WasNegative = IntHalf < 0;
                 IntHalfSubtraction(rValue);
                 //If flips to other side of negative, invert the decimals
-                if ((IntValue<0)!=WasNegative)
+                if ((IntHalf<0)!=WasNegative)
                     DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
             }
             return *this;
@@ -1427,58 +1427,58 @@ public:
         {
             if(DecimalHalf==0)//Avoid needing to convert if Leftside is not decimal format representation
             {
-                if(IntValue<0)
+                if(IntHalf<0)
                 {
-                    if(rValue.IntValue==NegativeRep)
+                    if(rValue.IntHalf==NegativeRep)
                     {
                         DecimalHalf = rValue.DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
                     }
-                    else if(rValue.IntValue<0)
+                    else if(rValue.IntHalf<0)
                     {
-                        IntValue += rValue.IntValue;
+                        IntHalf += rValue.IntHalf;
                         DecimalHalf = rValue.DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
                     }
-                    else//(rValue.IntValue>0)
+                    else//(rValue.IntHalf>0)
                     {
-                        if(rValue.IntValue>-IntValue)//check for flipping of sign
+                        if(rValue.IntHalf>-IntHalf)//check for flipping of sign
                         {
-                            IntValue += rValue.IntValue - 1;
+                            IntHalf += rValue.IntHalf - 1;
                             DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
                         }
                         else
                         {
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                             DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
                         }
                         ExtraRep = rValue.ExtraRep;
                     }
                 }
-                else//(IntValue>0)
+                else//(IntHalf>0)
                 {
-                    if(rValue.IntValue==NegativeRep)
+                    if(rValue.IntHalf==NegativeRep)
                     {
                         DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
                     }
-                    else if(rValue.IntValue<0)
+                    else if(rValue.IntHalf<0)
                     {
-                        IntValue += rValue.IntValue;
-                        if(-rValue.IntValue>IntValue)//check for flipping of sign
+                        IntHalf += rValue.IntHalf;
+                        if(-rValue.IntHalf>IntHalf)//check for flipping of sign
                         {
-                            IntValue += rValue.IntValue;
-                            if(IntValue==-1)
-                                IntValue = NegativeRep;
+                            IntHalf += rValue.IntHalf;
+                            if(IntHalf==-1)
+                                IntHalf = NegativeRep;
                             else
-                                ++IntValue;
+                                ++IntHalf;
                         }
                         DecimalHalf = rValue.ExtraRep - rValue.DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
                     }
-                    else//(rValue.IntValue>0)
+                    else//(rValue.IntHalf>0)
                     {
-                        IntValue += rValue.IntValue;
+                        IntHalf += rValue.IntHalf;
                         DecimalHalf = rValue.DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
                     }
@@ -1486,12 +1486,12 @@ public:
             }
             else
             {
-                AltDecBase RightSideNum = AltDecBase(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
+                AltDecBase RightSideNum = AltDecBase(rValue.IntHalf==0?-rValue.DecimalHalf:rValue.IntHalf*rValue.ExtraRep - rValue.DecimalHalf);
                 BasicIntMultOp(rValue.ExtraRep);
                 BasicAddOp(RightSideNum);//self += RightSideNum;
                 if(DecimalHalf==0)
                 {
-                    if(IntValue!=0)//Set as Zero if both are zero
+                    if(IntHalf!=0)//Set as Zero if both are zero
                     {
                         DecimalHalf = -DecimalHalf;
                         ExtraRep = rValue.ExtraRep;
@@ -1499,7 +1499,7 @@ public:
                 }
                 else
                 {
-                    if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                    if(IntHalf!=0&&IntHalf!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
                         DecimalHalf = -DecimalHalf;
                     ExtraRep = rValue.ExtraRep;
                 }
@@ -1513,7 +1513,7 @@ public:
     #endif
     #if defined(AltNum_MixedPiOrEEnabled)
         {
-            AltDecBase RightSideNum = AltDecBase(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
+            AltDecBase RightSideNum = AltDecBase(rValue.IntHalf==0?-rValue.DecimalHalf:(rValue.IntHalf*-rValue.ExtraRep) - rValue.DecimalHalf);
         #if defined(AltNum_EnableMixedPiFractional)
             RightSideNum *= PiNum;
         #else
@@ -1523,7 +1523,7 @@ public:
             BasicAddOp(RightSideNum);
             if(DecimalHalf==0)
             {
-                if(IntValue!=0)//Set as Zero if both are zero
+                if(IntHalf!=0)//Set as Zero if both are zero
                 {
                     DecimalHalf = -DecimalHalf;
                     ExtraRep = -rValue.ExtraRep;
@@ -1531,7 +1531,7 @@ public:
             }
             else
             {
-                if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                if(IntHalf!=0&&IntHalf!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
                     DecimalHalf = -DecimalHalf;
                 ExtraRep = -rValue.ExtraRep;
             }
@@ -1541,12 +1541,12 @@ public:
         //Assumes NormalRep - Normal MixedFraction operation
         void BasicMixedFracSubOp(AltDecBase& rValue)
         {
-            AltDecBase RightSideNum = AltDecBase(rValue.IntValue==0?-rValue.DecimalHalf:rValue.IntValue*rValue.ExtraRep - rValue.DecimalHalf);
+            AltDecBase RightSideNum = AltDecBase(rValue.IntHalf==0?-rValue.DecimalHalf:rValue.IntHalf*rValue.ExtraRep - rValue.DecimalHalf);
             BasicMultOp(rValue.ExtraRep);
             BasicSubOp(RightSideNum);
             if(DecimalHalf==0)
             {
-                if(IntValue!=0)//Set as Zero if both are zero
+                if(IntHalf!=0)//Set as Zero if both are zero
                 {
                     DecimalHalf = -DecimalHalf;
                     ExtraRep = rValue.ExtraRep;
@@ -1554,7 +1554,7 @@ public:
             }
             else
             {
-                if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                if(IntHalf!=0&&IntHalf!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
                     DecimalHalf = -DecimalHalf;
                 ExtraRep = rValue.ExtraRep;
             }
@@ -1567,7 +1567,7 @@ public:
     #endif
     #if defined(AltNum_MixedPiOrEEnabled)
         {
-            AltDecBase RightSideNum = AltDecBase(rValue.IntValue==0?-rValue.DecimalHalf:(rValue.IntValue*-rValue.ExtraRep) - rValue.DecimalHalf);
+            AltDecBase RightSideNum = AltDecBase(rValue.IntHalf==0?-rValue.DecimalHalf:(rValue.IntHalf*-rValue.ExtraRep) - rValue.DecimalHalf);
         #if defined(AltNum_EnableMixedPiFractional)
             RightSideNum *= PiNum;
         #else
@@ -1577,7 +1577,7 @@ public:
             BasicSubOp(RightSideNum);
             if(DecimalHalf==0)
             {
-                if(IntValue!=0)//Set as Zero if both are zero
+                if(IntHalf!=0)//Set as Zero if both are zero
                 {
                     DecimalHalf = -DecimalHalf;
                     ExtraRep = -rValue.ExtraRep;
@@ -1585,7 +1585,7 @@ public:
             }
             else
             {
-                if(IntValue!=0&&IntValue!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
+                if(IntHalf!=0&&IntHalf!=NegativeRep)//Turn into NumByDiv instead of mixed fraction if
                     DecimalHalf = -DecimalHalf;
                 ExtraRep = -rValue.ExtraRep;
             }
@@ -1595,7 +1595,7 @@ public:
 		//NormalType,PiNum, PiPower, or ENum multiplied with Mixed Fraction representation
 		static AltDecBase MixedFracRtRMult_WithNormal(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = LValue*RValue.IntValue;
+			AltDecBase LeftSide = LValue*RValue.IntHalf;
 			AltDecBase RightSide = LValue/RValue.ExtraRep;
 			RightSide *= -RValue.DecimalHalf;
 			return LeftSide+RightSide;
@@ -1604,13 +1604,13 @@ public:
 		//NumByDiv multiplied with Mixed Fraction representation
 		static AltDecBase MixedFracRtRMult_WithNumByDiv(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			//AltDecBase(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep * RValue.IntValue+(-RValue.DecimalHalf)/RValue.ExtraRep
-			//= RValue.IntValue*(AltDecBase(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDecBase(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep)((-RValue.DecimalHalf)/RValue.ExtraRep)
-			//= (RValue.IntValue*AltDecBase(LValue.IntValue, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDecBase(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf)/(LValue.ExtraRep*RValue.ExtraRep)
-			//= ((RValue.IntValue*AltDecBase(LValue.IntValue, LValue.DecimalHalf))+((AltDecBase(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf)/RValue.ExtraRep))/LValue.ExtraRep
-			AltDecBase NumSide = AltDecBase(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf;
-			NumSide.BasicDivOp(RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*AltDecBase(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
-			AltDecBase additionalVal = AltDecBase(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue;
+			//AltDecBase(LValue.IntHalf, LValue.DecimalHalf)/LValue.ExtraRep * RValue.IntHalf+(-RValue.DecimalHalf)/RValue.ExtraRep
+			//= RValue.IntHalf*(AltDecBase(LValue.IntHalf, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDecBase(LValue.IntHalf, LValue.DecimalHalf)/LValue.ExtraRep)((-RValue.DecimalHalf)/RValue.ExtraRep)
+			//= (RValue.IntHalf*AltDecBase(LValue.IntHalf, LValue.DecimalHalf)/LValue.ExtraRep) + (AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*-RValue.DecimalHalf)/(LValue.ExtraRep*RValue.ExtraRep)
+			//= ((RValue.IntHalf*AltDecBase(LValue.IntHalf, LValue.DecimalHalf))+((AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*-RValue.DecimalHalf)/RValue.ExtraRep))/LValue.ExtraRep
+			AltDecBase NumSide = AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*-RValue.DecimalHalf;
+			NumSide.BasicDivOp(RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntHalf*AltDecBase(LValue.IntHalf, LValue.DecimalHalf))/LValue.ExtraRep
+			AltDecBase additionalVal = AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*RValue.IntHalf;
 			NumSide.BasicAddOp(additionalVal);
 			NumSide.ExtraRep = LValue.ExtraRep;
 			return NumSide;
@@ -1620,9 +1620,9 @@ public:
 		//NumByDiv multiplied with Mixed Pi or E Fraction representation
 		static AltDecBase MixedAltFracRtRMult_WithNumByDiv(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase NumSide = AltDecBase(LValue.IntValue, LValue.DecimalHalf)*-RValue.DecimalHalf;
-			NumSide.BasicDivOp(-RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntValue*AltDecBase(LValue.IntValue, LValue.DecimalHalf))/LValue.ExtraRep
-			AltDecBase additionalVal = AltDecBase(LValue.IntValue, LValue.DecimalHalf)*RValue.IntValue;
+			AltDecBase NumSide = AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*-RValue.DecimalHalf;
+			NumSide.BasicDivOp(-RValue.ExtraRep);//Avoid converting to NumByDiv because need to combine with (RValue.IntHalf*AltDecBase(LValue.IntHalf, LValue.DecimalHalf))/LValue.ExtraRep
+			AltDecBase additionalVal = AltDecBase(LValue.IntHalf, LValue.DecimalHalf)*RValue.IntHalf;
 			NumSide.BasicAddOp(additionalVal);
 		#if (defined(AltNum_EnableMixedPiFractional)&&defined(AltNum_EnableDecimaledPiFractionals))||(defined(AltNum_EnableMixedEFractional)&&defined(AltNum_EnableDecimaledEFractionals))
 			NumSide.ExtraRep = -LValue.ExtraRep;
@@ -1643,7 +1643,7 @@ public:
 		//NormalType or ENum multiplied with Mixed Pi Fraction representation
 		static AltDecBase MixedPiFracRtRMult_WithNormal(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = LValue*RValue.IntValue;
+			AltDecBase LeftSide = LValue*RValue.IntHalf;
 			AltDecBase RightSide = LValue/-RValue.ExtraRep;
 			RightSide *= -RValue.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1654,7 +1654,7 @@ public:
 		//PiNum multiplied with Mixed Pi Fraction representation
 		static AltDecBase MixedPiFracRtRMult_WithPiNum(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = LValue*RValue.IntValue;
+			AltDecBase LeftSide = LValue*RValue.IntHalf;
 			AltDecBase RightSide = LValue/-RValue.ExtraRep;
 			RightSide *= -RValue.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1669,7 +1669,7 @@ public:
 		//PiPower multiplied with Mixed Pi Fraction representation
 		static AltDecBase MixedPiFracRtRMult_WithPiPower(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = LValue*RValue.IntValue;
+			AltDecBase LeftSide = LValue*RValue.IntHalf;
 			AltDecBase RightSide = LValue/-RValue.ExtraRep;
 			RightSide *= -RValue.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1679,7 +1679,7 @@ public:
 
 		static AltDecBase MixedPiFracRtRMult_WithOther(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = LValue*RValue.IntValue;
+			AltDecBase LeftSide = LValue*RValue.IntHalf;
 			AltDecBase RightSide = LValue/-RValue.ExtraRep;
 			RightSide *= -RValue.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1691,7 +1691,7 @@ public:
 		//PiNum, PiPower, ENum, or NormalType multiplied with Mixed Fraction representation
 		static AltDecBase MixedEFracRtRMult_WithNormal(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = self*Value.IntValue;
+			AltDecBase LeftSide = self*Value.IntHalf;
 			AltDecBase RightSide = self/-Value.ExtraRep;
 			RightSide *= -Value.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1701,7 +1701,7 @@ public:
 
 		static AltDecBase MixedEFracRtRMult_WithOther(const AltDecBase& LValue, const AltDecBase& RValue)
 		{
-			AltDecBase LeftSide = self*Value.IntValue;
+			AltDecBase LeftSide = self*Value.IntHalf;
 			AltDecBase RightSide = self/-Value.ExtraRep;
 			RightSide *= -Value.DecimalHalf;
 			AltDecBase Res = LeftSide+RightSide;
@@ -1726,40 +1726,40 @@ protected:
             bool ResIsPositive = true;
             signed _int64 SelfRes;
             signed _int64 ValueRes;
-            if(IntValue<0)
+            if(IntHalf<0)
             {
-                if (IntValue == NegativeRep)
+                if (IntHalf == NegativeRep)
                     SelfRes = DecimalHalf;
                 else
-                    SelfRes = NegDecimalOverflowX*IntValue + DecimalHalf;
+                    SelfRes = NegDecimalOverflowX*IntHalf + DecimalHalf;
                 if (rValue < 0)
                 {
-                    if (rValue.IntValue == NegativeRep)
+                    if (rValue.IntHalf == NegativeRep)
                         ValueRes = rValue.DecimalHalf;
                     else
-                        ValueRes =  NegDecimalOverflowX* rValue.IntValue + rValue.DecimalHalf;
+                        ValueRes =  NegDecimalOverflowX* rValue.IntHalf + rValue.DecimalHalf;
                 }
                 else
                 {
                     ResIsPositive = false;
-                    ValueRes = DecimalOverflowX * rValue.IntValue +rValue.DecimalHalf;
+                    ValueRes = DecimalOverflowX * rValue.IntHalf +rValue.DecimalHalf;
                 }
             }
             else
             {
-                SelfRes = DecimalOverflowX* IntValue+DecimalHalf;
+                SelfRes = DecimalOverflowX* IntHalf+DecimalHalf;
                 if(rValue<0)
                 {
                     ResIsPositive = false;
-                    ValueRes = rValue.IntValue==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntValue +rValue.DecimalHalf;
+                    ValueRes = rValue.IntHalf==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntHalf +rValue.DecimalHalf;
                 }
                 else
-                    ValueRes = DecimalOverflowX* rValue.IntValue +rValue.DecimalHalf;
+                    ValueRes = DecimalOverflowX* rValue.IntHalf +rValue.DecimalHalf;
             }
 
             signed _int64 IntHalfRes = SelfRes / ValueRes;
             signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+            IntHalf = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
             DecimalHalf = DecimalRes;
             if(IntHalfRes==0&&DecimalRes==0)
                 return true;
@@ -1772,25 +1772,25 @@ protected:
             bool ResIsPositive = true;
             signed _int64 SelfRes;
             signed _int64 ValueRes;
-            if (IntValue < 0)
+            if (IntHalf < 0)
             {
-                if (IntValue == NegativeRep)
+                if (IntHalf == NegativeRep)
                     SelfRes = DecimalHalf;
                 else
-                    SelfRes = NegDecimalOverflowX * IntValue + DecimalHalf;
+                    SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf;
                 ResIsPositive = false;
-                ValueRes = DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
+                ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
             }
             else
             {
 
-                SelfRes = DecimalOverflowX * IntValue + DecimalHalf;
-                ValueRes = DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
+                SelfRes = DecimalOverflowX * IntHalf + DecimalHalf;
+                ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
             }
 
             signed _int64 IntHalfRes = SelfRes / ValueRes;
             signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntValue = IntHalfRes == 0 && ResIsPositive == false ? NegativeRep : IntHalfRes;
+            IntHalf = IntHalfRes == 0 && ResIsPositive == false ? NegativeRep : IntHalfRes;
             DecimalHalf = DecimalRes;
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
@@ -1883,13 +1883,13 @@ public:
         {
             if (DecimalHalf == 0)
             {
-                if (IntValue == 1)
+                if (IntHalf == 1)
                 {
-                    IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                    IntHalf = rValue.IntHalf; DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
                 {
-                    IntValue *= rValue.IntValue;
+                    IntHalf *= rValue.IntHalf;
                 }
                 else
                 {
@@ -1897,8 +1897,8 @@ public:
                     bool ResIsNegative = rValue < 0;
                     if(ResIsNegative)
                     {
-                        rRep = rValue.IntValue == NegativeRep ? rValue.DecimalHalf : DecimalOverflowX * -rValue.IntValue + rValue.DecimalHalf;
-                        if(IntValue<0)
+                        rRep = rValue.IntHalf == NegativeRep ? rValue.DecimalHalf : DecimalOverflowX * -rValue.IntHalf + rValue.DecimalHalf;
+                        if(IntHalf<0)
                         {
                             ResIsNegative = false;
                             rRep *= IntHalfAsAbs();
@@ -1906,13 +1906,13 @@ public:
                         else
                         {
                             ResIsNegative = true;
-                            rRep *= IntValue;
+                            rRep *= IntHalf;
                         }
                     }
                     else
                     {
-                        rRep = rValue.IntValue == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
-                        if(IntValue<0)
+                        rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
+                        if(IntHalf<0)
                         {
                             ResIsNegative = true;
                             rRep *= IntHalfAsAbs();
@@ -1920,14 +1920,14 @@ public:
                         else
                         {
                             ResIsNegative = false;
-                            rRep *= IntValue;
+                            rRep *= IntHalf;
                         }
                     }
                     if (rRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = rRep / DecimalOverflowX;
                         rRep -= OverflowVal * DecimalOverflowX;
-                        IntValue = (signed int)ResIsNegative ? OverflowVal * -1 : OverflowVal;
+                        IntHalf = (signed int)ResIsNegative ? OverflowVal * -1 : OverflowVal;
                         DecimalHalf = (signed int)rRep;
                         return *this;
                     }
@@ -1937,7 +1937,7 @@ public:
                         if(DecimalHalf==0)
                         {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -1945,43 +1945,43 @@ public:
                             DecimalHalf = 1;
     #endif
                         }
-                        IntValue = ResIsNegative ? NegativeRep : 0;
+                        IntHalf = ResIsNegative ? NegativeRep : 0;
                         return *this;
                     }
                 }
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 }
-                if (IntValue == 0)
+                if (IntHalf == 0)
                 {
                     __int64 SRep = (__int64)DecimalHalf;
                     SRep *= rValue.DecimalHalf;
                     SRep /= AltDecBase::DecimalOverflowX;
-                    if (rValue.IntValue == 0)
+                    if (rValue.IntHalf == 0)
                     {
                         DecimalHalf = (signed int)SRep;
                         if(SelfIsNegative&&DecimalHalf!=0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
-                    else if (rValue.IntValue == NegativeRep)
+                    else if (rValue.IntHalf == NegativeRep)
                     {
                         DecimalHalf = (signed int)SRep;
                         if(SelfIsNegative==false&&DecimalHalf!=0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                     {
-                        SRep += (__int64)DecimalHalf * rValue.IntValue;
+                        SRep += (__int64)DecimalHalf * rValue.IntHalf;
                         if (SRep >= AltDecBase::DecimalOverflowX)
                         {
                             __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                             SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                            IntValue = SelfIsNegative?-(int)OverflowVal:OverflowVal;
+                            IntHalf = SelfIsNegative?-(int)OverflowVal:OverflowVal;
                             DecimalHalf = (signed int)SRep;
                             return *this;
                         }
@@ -1991,7 +1991,7 @@ public:
                             if(DecimalHalf==0)
                             {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                                IntValue = 0;
+                                IntHalf = 0;
                                 if(ExtraRep>InitialExtraRep)
                                     ExtraRep = InitialExtraRep;
                                 return *this;
@@ -2000,26 +2000,26 @@ public:
     #endif
                             }
                             if(SelfIsNegative)
-                                IntValue = NegativeRep;
+                                IntHalf = NegativeRep;
                             return *this;
                         }
                     }
                 }
                 else if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
                     if (rValue < 0)
                     {
-                        SRep *= -rValue.IntValue;
+                        SRep *= -rValue.IntHalf;
                         SelfIsNegative = !SelfIsNegative;
                     }
                     else
-                        SRep *= rValue.IntValue;
+                        SRep *= rValue.IntHalf;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = (signed int)OverflowVal;
+                        IntHalf = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
                         return *this;
                     }
@@ -2029,7 +2029,7 @@ public:
                             if(DecimalHalf==0)
                             {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                                IntValue = 0;
+                                IntHalf = 0;
                                 if(ExtraRep>InitialExtraRep)
                                     ExtraRep = InitialExtraRep;
                                 return *this;
@@ -2037,20 +2037,20 @@ public:
                                 DecimalHalf = 1;
     #endif
                             }
-                            IntValue = SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                            IntHalf = SelfIsNegative ? AltDecBase::NegativeRep : 0;
                             return *this;
                     }
                 }
-                else if (rValue.IntValue == 0)
+                else if (rValue.IntHalf == 0)
                 {
-                    __int64 SRep = AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
                     SRep /= AltDecBase::DecimalOverflowX;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        IntHalf = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                         return *this;
                     }
@@ -2060,7 +2060,7 @@ public:
                         if(DecimalHalf==0)
                         {
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2068,21 +2068,21 @@ public:
                             DecimalHalf = 1;
     #endif
                         }
-                        IntValue = SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? AltDecBase::NegativeRep : 0;
                         return *this;
                     }
                 }
-                else if (rValue.IntValue == NegativeRep)
+                else if (rValue.IntHalf == NegativeRep)
                 {
                     SelfIsNegative = !SelfIsNegative;
-                    __int64 SRep = AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
                     SRep /= AltDecBase::DecimalOverflowX;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        IntHalf = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                         return *this;
                     }
@@ -2092,7 +2092,7 @@ public:
                         if(DecimalHalf==0)
                         {
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2100,24 +2100,24 @@ public:
                             DecimalHalf = 1;
 #endif
                         }
-                        IntValue = SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? AltDecBase::NegativeRep : 0;
                         return *this;
                     }
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = IntHalf == 0 ? DecimalHalf : AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
                     //X.Y *.V
                     if(rValue<0)
                     {
-                        SRep *= -rValue.IntValue;
+                        SRep *= -rValue.IntHalf;
                         SelfIsNegative = !SelfIsNegative;
                     }
                     else
-                        SRep *= rValue.IntValue;//SRep holds __int64 version of X.Y * Z
+                        SRep *= rValue.IntHalf;//SRep holds __int64 version of X.Y * Z
                     
-                    __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
                     Temp04 /= AltDecBase::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
@@ -2125,17 +2125,17 @@ public:
                     __int64 IntHalf = IntegerRep / AltDecBase::DecimalOverflow;
                     IntegerRep -= IntHalf * (__int64)AltDecBase::DecimalOverflow;
                     if (IntHalf == 0)
-                        IntValue = (signed int)SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = (signed int)SelfIsNegative ? AltDecBase::NegativeRep : 0;
                     else
-                        IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
+                        IntHalf = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+            if(DecimalHalf==0&&IntHalf==0&&ExtraRep>InitialExtraRep)
                 ExtraRep = InitialExtraRep;
 #else
-            if(DecimalHalf==0&&IntValue==0)
+            if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf = 1;
 #endif
             return *this;
@@ -2151,18 +2151,18 @@ public:
         {
             if (DecimalHalf == 0)
             {
-                if (IntValue == 1)
+                if (IntHalf == 1)
                 {
-                    IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                    IntHalf = rValue.IntHalf; DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
                 {
-                    IntValue *= rValue.IntValue;
+                    IntHalf *= rValue.IntHalf;
                 }
                 else
                 {
-                    __int64 rRep = rValue.IntValue == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
-                    bool ResIsNegative = IntValue<0;
+                    __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
+                    bool ResIsNegative = IntHalf<0;
                     if(ResIsNegative)
                     {
                         ResIsNegative = false;
@@ -2171,13 +2171,13 @@ public:
                     else
                     {
                         ResIsNegative = true;
-                        rRep *= IntValue;
+                        rRep *= IntHalf;
                     }
                     if (rRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = rRep / DecimalOverflowX;
                         rRep -= OverflowVal * DecimalOverflowX;
-                        IntValue = (signed int)ResIsNegative ? OverflowVal * -1 : OverflowVal;
+                        IntHalf = (signed int)ResIsNegative ? OverflowVal * -1 : OverflowVal;
                         DecimalHalf = (signed int)rRep;
                         return *this;
                     }
@@ -2187,7 +2187,7 @@ public:
                         if(DecimalHalf==0)
                         {
 #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2195,17 +2195,17 @@ public:
                             DecimalHalf = 1;
 #endif
                         }
-                        IntValue = ResIsNegative ? NegativeRep : 0;
+                        IntHalf = ResIsNegative ? NegativeRep : 0;
                         return *this;
                     }
                 }
             }
-            else if (IntValue == 0)
+            else if (IntHalf == 0)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf;
                 SRep /= AltDecBase::DecimalOverflowX;
-                if (rValue.IntValue == 0)
+                if (rValue.IntHalf == 0)
                 {
                     DecimalHalf = (signed int)SRep;
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
@@ -2219,12 +2219,12 @@ public:
                 }
                 else
                 {
-                    SRep += (__int64)DecimalHalf * rValue.IntValue;
+                    SRep += (__int64)DecimalHalf * rValue.IntHalf;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = OverflowVal;
+                        IntHalf = OverflowVal;
                         DecimalHalf = (signed int)SRep;
                         return *this;
                     }
@@ -2242,17 +2242,17 @@ public:
                     }
                 }
             }
-            else if (IntValue == AltDecBase::NegativeRep)
+            else if (IntHalf == AltDecBase::NegativeRep)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf;
                 SRep /= AltDecBase::DecimalOverflowX;
-                if (rValue.IntValue == 0)
+                if (rValue.IntHalf == 0)
                 {
                     DecimalHalf = (signed int)SRep;
                     if(DecimalHalf==0)
                     {
-                        IntValue = 0;
+                        IntHalf = 0;
                         if(ExtraRep>InitialExtraRep)
                             ExtraRep = InitialExtraRep;
                     }
@@ -2260,12 +2260,12 @@ public:
                 }
                 else
                 {
-                    SRep += (__int64)DecimalHalf * rValue.IntValue;
+                    SRep += (__int64)DecimalHalf * rValue.IntHalf;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = -OverflowVal;
+                        IntHalf = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
                         return *this;
                     }
@@ -2275,7 +2275,7 @@ public:
                         if(DecimalHalf==0)
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2289,20 +2289,20 @@ public:
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 }
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= rValue.IntValue;
+                    __int64 SRep = AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= rValue.IntHalf;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = (signed int)OverflowVal;
+                        IntHalf = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -2311,7 +2311,7 @@ public:
                         if(DecimalHalf==0)
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2319,20 +2319,20 @@ public:
                             DecimalHalf = 1;
                     #endif
                         }
-                        IntValue = SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? AltDecBase::NegativeRep : 0;
                     }
                     return *this;
                 }
-                else if (rValue.IntValue == 0)
+                else if (rValue.IntHalf == 0)
                 {
-                    __int64 SRep = AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
                     SRep /= AltDecBase::DecimalOverflowX;
                     if (SRep >= AltDecBase::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / AltDecBase::DecimalOverflowX;
                         SRep -= OverflowVal * AltDecBase::DecimalOverflowX;
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        IntHalf = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
                     }
                     else
@@ -2341,7 +2341,7 @@ public:
                         if(DecimalHalf==0)
                         {
                     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            IntValue = 0;
+                            IntHalf = 0;
                             if(ExtraRep>InitialExtraRep)
                                 ExtraRep = InitialExtraRep;
                             return *this;
@@ -2349,17 +2349,17 @@ public:
                             DecimalHalf = 1;
                     #endif
                         }
-                        IntValue = SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? AltDecBase::NegativeRep : 0;
                     }
                     return *this;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : AltDecBase::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= rValue.IntValue;//SRep holds __int64 version of X.Y * Z
+                    __int64 SRep = IntHalf == 0 ? DecimalHalf : AltDecBase::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= rValue.IntHalf;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
                     Temp04 /= AltDecBase::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
@@ -2367,17 +2367,17 @@ public:
                     __int64 IntHalf = IntegerRep / AltDecBase::DecimalOverflow;
                     IntegerRep -= IntHalf * (__int64)AltDecBase::DecimalOverflow;
                     if (IntHalf == 0)
-                        IntValue = (signed int)SelfIsNegative ? AltDecBase::NegativeRep : 0;
+                        IntHalf = (signed int)SelfIsNegative ? AltDecBase::NegativeRep : 0;
                     else
-                        IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
+                        IntHalf = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf;
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+            if(DecimalHalf==0&&IntHalf==0&&ExtraRep>InitialExtraRep)
                 ExtraRep = InitialExtraRep;
     #else
-            if(DecimalHalf==0&&IntValue==0)
+            if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf = 1;
     #endif
             return *this;
@@ -2393,7 +2393,7 @@ public:
         {
             AltDecBase& Res =  BasicMultBaseOp(rValue);
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+            if(DecimalHalf==0&&IntHalf==0&&ExtraRep>InitialExtraRep)
                 ExtraRep = InitialExtraRep;
     #endif
             return Res;
@@ -2409,7 +2409,7 @@ public:
         {
             AltDecBase& Res =  BasicUnsignedMultBaseOp(rValue);
     #if defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0&&ExtraRep>InitialExtraRep)
+            if(DecimalHalf==0&&IntHalf==0&&ExtraRep>InitialExtraRep)
                 ExtraRep = InitialExtraRep;
     #endif
             return Res;
@@ -2442,24 +2442,24 @@ public:
         void BasicAddOp(const AltDecBase& rValue)
         {
             //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntHalfAddition(rValue.IntValue);
+            IntHalfAddition(rValue.IntHalf);
             if (rValue.DecimalHalf != 0)
             {
-                if (rValue.IntValue < 0)
+                if (rValue.IntHalf < 0)
                 {
                     if (WasNegative)
                     {
                         DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                     }
                     else
                     {
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                     }
                 }
                 else
@@ -2467,19 +2467,19 @@ public:
                     if (WasNegative)
                     {
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                     }
                     else
                     {
                         DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                     }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
         }
 
@@ -2491,26 +2491,26 @@ public:
         void BasicUnsignedAddOp(const AltDecBase& rValue)
         {
             //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntHalfAddition(rValue.IntValue);
+            IntHalfAddition(rValue.IntHalf);
             if (rValue.DecimalHalf != 0)
             {
                 if (WasNegative)
                 {
                     DecimalHalf -= rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                 }
                 else
                 {
                     DecimalHalf += rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
         }
 #else
@@ -2541,25 +2541,25 @@ public:
         void BasicSubOp(const AltDecBase& rValue)
         {
             //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntHalfSubtraction(rValue.IntValue);
+            IntHalfSubtraction(rValue.IntHalf);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
-                if (rValue.IntValue < 0)
+                if (rValue.IntHalf < 0)
                 {
                     if (WasNegative)//-4.0 - -0.5 = -3.5
                     {
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                     }
                     else//4.3 -  - 1.8
                     {
                         DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                     }
                 }
                 else
@@ -2567,19 +2567,19 @@ public:
                     if (WasNegative)//-4.5 - 5.6
                     {
                         DecimalHalf += rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                     }
                     else//0.995 - 1 = 
                     {
                         DecimalHalf -= rValue.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                     }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
         }
 
@@ -2591,27 +2591,27 @@ public:
         void BasicUnsignedSubOp(const AltDecBase& rValue)
         {
             //NegativeBeforeOperation
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntHalfSubtraction(rValue.IntValue);
+            IntHalfSubtraction(rValue.IntHalf);
             //Now deal with the decimal section
             if(rValue.DecimalHalf!=0)
             {
                 if (WasNegative)//-4.5 - 5.6
                 {
                     DecimalHalf += rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntValue; }
-                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntValue; }
+                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; ++IntHalf; }
+                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; --IntHalf; }
                 }
                 else//0.995 - 1
                 {
                     DecimalHalf -= rValue.DecimalHalf;
-                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntValue; }
-                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntValue; }
+                    if (DecimalHalf < 0) { DecimalHalf += AltDecBase::DecimalOverflow; --IntHalf; }
+                    else if (DecimalHalf >= AltDecBase::DecimalOverflow) { DecimalHalf -= AltDecBase::DecimalOverflow; ++IntHalf; }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
         }
 #else
@@ -2669,7 +2669,7 @@ protected:
             if (rightSideValue == 0)
             {
                 #if defined(AltNum_EnableInfinityRep)
-                if (IntValue < 0)
+                if (IntHalf < 0)
                     SetAsNegativeInfinity();
                 else
                     SetAsInfinity();
@@ -2789,7 +2789,7 @@ protected:
                 case RepType::PositiveInfinity:
                 case RepType::NegativeInfinity:
                     if(rightSideValue<0)
-                        IntValue *= -1;
+                        IntHalf *= -1;
                     return *this;
                     break;
     #endif
@@ -2825,7 +2825,7 @@ protected:
                 break;
     #endif
     #if defined(AltNum_EnableApproaching)
-                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
                 {
                     if (IsAtZeroInt())
                     {
@@ -2838,12 +2838,12 @@ protected:
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 				#endif
         #endif
                 {
@@ -2856,19 +2856,19 @@ protected:
                 case RepType::PositiveImaginaryInfinity:
                 case RepType::NegativeImaginaryInfinity:
                     if(rightSideValue<0)
-                        IntValue *= -1;
+                        IntHalf *= -1;
                     return *this;
                     break;
     #endif
     #if defined(AltNum_EnableApproachingI)
-                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			#endif
         #endif
                 {
@@ -2878,7 +2878,7 @@ protected:
                 break;
     #endif
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 {
                     int divRes;
                     int C;
@@ -2888,27 +2888,27 @@ protected:
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
                         if (C == 0)
                         {
-                            if (IntValue == NegativeRep)
-                                IntValue = divRes;
+                            if (IntHalf == NegativeRep)
+                                IntHalf = divRes;
                             else
-                                IntValue = -divRes;
+                                IntHalf = -divRes;
                             DecimalHalf = 0;
                         }
                         else
                         {
-                            if (IntValue == NegativeRep)
-                                IntValue = DecimalHalf;
+                            if (IntHalf == NegativeRep)
+                                IntHalf = DecimalHalf;
                             else
-                                IntValue = -DecimalHalf;
+                                IntHalf = -DecimalHalf;
                             DecimalHalf = 0;
                             ExtraRep *= rightSideValue;
                         }
                         return *this;
                     }
-                    divRes = IntValue / ExtraRep;
+                    divRes = IntHalf / ExtraRep;
                     if (divRes != 0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if (C == 0)
                         {
                             throw "ToDo: Implement code here";
@@ -2926,11 +2926,11 @@ protected:
                 break;
         #if defined(AltNum_EnableAlternativeMixedFrac)
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedEFractional)
-                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
                     int divRes;
@@ -2969,10 +2969,10 @@ protected:
                         }
                         //return *this;
                     }
-                    divRes = IntValue / ExtraRep;
+                    divRes = IntHalf / ExtraRep;
                     if (divRes != 0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if (C == 0)
                         {
                             throw "ToDo: Implement code here";
@@ -3017,7 +3017,7 @@ protected:
             if (rValue == 0)
             {
                 #if defined(AltNum_EnableInfinityRep)
-                if (IntValue < 0)
+                if (IntHalf < 0)
                     SetAsNegativeInfinity();
                 else
                     SetAsInfinity();
@@ -3111,7 +3111,7 @@ protected:
                 break;
     #endif
     #if defined(AltNum_EnableApproaching)
-                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
                 {
                     if (IsAtZeroInt())
                         return *this;
@@ -3120,12 +3120,12 @@ protected:
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealrValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealrValue if negative)
             #endif
         #endif
                 {
@@ -3141,14 +3141,14 @@ protected:
                     break;
     #endif
     #if defined(AltNum_EnableApproachingI)
-                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealrValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealrValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealrValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealrValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealrValue if negative)
 			#endif
         #endif
                 {
@@ -3158,7 +3158,7 @@ protected:
                 break;
     #endif
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 {
                     int divRes;
                     int C;
@@ -3168,27 +3168,27 @@ protected:
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
                         if (C == 0)
                         {
-                            if (IntValue == NegativeRep)
-                                IntValue = divRes;
+                            if (IntHalf == NegativeRep)
+                                IntHalf = divRes;
                             else
-                                IntValue = -divRes;
+                                IntHalf = -divRes;
                             DecimalHalf = 0;
                         }
                         else
                         {
-                            if (IntValue == NegativeRep)
-                                IntValue = DecimalHalf;
+                            if (IntHalf == NegativeRep)
+                                IntHalf = DecimalHalf;
                             else
-                                IntValue = -DecimalHalf;
+                                IntHalf = -DecimalHalf;
                             DecimalHalf = 0;
                             ExtraRep *= rValue;
                         }
                         return *this;
                     }
-                    divRes = IntValue / ExtraRep;
+                    divRes = IntHalf / ExtraRep;
                     if (divRes != 0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if (C == 0)
                         {
                             throw "ToDo: Implement code here";
@@ -3206,11 +3206,11 @@ protected:
                 break;
         #if defined(AltNum_EnableAlternativeMixedFrac)
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedEFractional)
-                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
                     int divRes;
@@ -3249,10 +3249,10 @@ protected:
                         }
                         //return *this;
                     }
-                    divRes = IntValue / ExtraRep;
+                    divRes = IntHalf / ExtraRep;
                     if (divRes != 0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if (C == 0)
                         {
                             throw "ToDo: Implement code here";
@@ -3381,8 +3381,8 @@ protected:
                 case RepType::IFractional:
                 #endif
                 {
-                    IntValue *= rightSideValue;
-                    if(IntValue==0)
+                    IntHalf *= rightSideValue;
+                    if(IntHalf==0)
                     {
                         DecimalHalf = 0; ExtraRep = InitialExtraRep;
                     }
@@ -3424,17 +3424,17 @@ protected:
                     break;
     #endif
     #if defined(AltNum_EnableApproaching)
-                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-                    if(IntValue==0||IntValue==NegativeRep)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+                    if(IntHalf==0||IntHalf==NegativeRep)
                     {
                         if(rightSideValue<0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                         CatchAllIntMultiplication(rightSideValue, LRep);
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                 {
                     int rValue = rightSideValue;
                     if (rValue < 0)
@@ -3442,19 +3442,19 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if (IntValue == NegativeRep)
-                        IntValue = -rValue;
-                    else if (IntValue == 0)
-                        IntValue = rValue - 1;
-                    else if (IntValue < 0)//-5.9..9 * 100
-                        IntValue = (IntValue - 1) * rValue + 1;
+                    if (IntHalf == NegativeRep)
+                        IntHalf = -rValue;
+                    else if (IntHalf == 0)
+                        IntHalf = rValue - 1;
+                    else if (IntHalf < 0)//-5.9..9 * 100
+                        IntHalf = (IntHalf - 1) * rValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue + 1) * rValue - 1;
+                        IntHalf = (IntHalf + 1) * rValue - 1;
                 }
                 break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
                     int rValue = rightSideValue;
                     if(rValue<0)
@@ -3462,7 +3462,7 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3477,7 +3477,7 @@ protected:
                                 ExtraRep = divRes;
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3501,7 +3501,7 @@ protected:
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
                     int rValue = rightSideValue;
                     if (rValue < 0)
@@ -3509,7 +3509,7 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if (IntValue == 0)
+                    if (IntHalf == 0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep / rightSideValue;
@@ -3518,14 +3518,14 @@ protected:
                             ExtraRep = divRes;
                             if (divRes == 0)
                             {
-                                IntValue = 1;
+                                IntHalf = 1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                             else
                                 ExtraRep = divRes;
                         }
                     }
-                    else if (IntValue == NegativeRep)
+                    else if (IntHalf == NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep / rightSideValue;
@@ -3534,7 +3534,7 @@ protected:
                             ExtraRep = divRes;
                             if (divRes == 0)
                             {
-                                IntValue = -1;
+                                IntHalf = -1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                             else
@@ -3555,19 +3555,19 @@ protected:
                     break;
     #endif
     #if defined(AltNum_EnableApproachingI)
-                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
                 {
-                    if (IntValue == 0 || IntValue == NegativeRep)
+                    if (IntHalf == 0 || IntHalf == NegativeRep)
                     {
                         if (rightSideValue < 0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                         CatchAllIntMultiplication(rightSideValue, LRep);
                 }
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
                 {
                     int rValue = rightSideValue;
                     if (rValue < 0)
@@ -3575,21 +3575,21 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if (IntValue == NegativeRep)
-                        IntValue = -rValue;
-                    else if (IntValue == 0)
+                    if (IntHalf == NegativeRep)
+                        IntHalf = -rValue;
+                    else if (IntHalf == 0)
                     {
-                        IntValue = rValue - 1;
+                        IntHalf = rValue - 1;
                     }
-                    else if (IntValue < 0)//-5.9..9 * 100
-                        IntValue = (IntValue - 1) * rValue + 1;
+                    else if (IntHalf < 0)//-5.9..9 * 100
+                        IntHalf = (IntHalf - 1) * rValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue + 1) * rValue - 1;
+                        IntHalf = (IntHalf + 1) * rValue - 1;
                 }
                 break;
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
                     int rValue = rightSideValue;
                     if(rValue<0)
@@ -3597,7 +3597,7 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3612,7 +3612,7 @@ protected:
                                 ExtraRep = divRes;
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3636,7 +3636,7 @@ protected:
 				}
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
                     int rValue = rightSideValue;
                     if(rValue<0)
@@ -3644,7 +3644,7 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3653,14 +3653,14 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = 1;
+                                IntHalf = 1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                             else
                                 ExtraRep = divRes;
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rValue;
@@ -3669,7 +3669,7 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = -1;
+                                IntHalf = -1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                             else
@@ -3687,7 +3687,7 @@ protected:
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 {
                     int rValue = rightSideValue;
                     if(rValue<0)
@@ -3701,7 +3701,7 @@ protected:
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
-                        if (IntValue < 0)
+                        if (IntHalf < 0)
                             IntHalfSubtraction(increment);
                         else
                             IntHalfAddition(increment);
@@ -3711,11 +3711,11 @@ protected:
                 break;
         #if defined(AltNum_EnableAlternativeMixedFrac)
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedEFractional)
-                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             #elif defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
                     int rValue = rightSideValue;
@@ -3730,7 +3730,7 @@ protected:
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
-                        if (IntValue < 0)
+                        if (IntHalf < 0)
                             IntHalfSubtraction(increment);
                         else
                             IntHalfAddition(increment);
@@ -3796,8 +3796,8 @@ protected:
                 case RepType::IFractional:
                 #endif
                 {
-                    IntValue *= rightSideValue;
-                    if(IntValue==0)
+                    IntHalf *= rightSideValue;
+                    if(IntHalf==0)
                     {
                         DecimalHalf = 0; ExtraRep = InitialExtraRep;
                     }
@@ -3833,26 +3833,26 @@ protected:
                     break;
     #endif
     #if defined(AltNum_EnableApproaching)
-                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-                    if(IntValue!=0&&IntValue!=NegativeRep)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+                    if(IntHalf!=0&&IntHalf!=NegativeRep)
                         CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-                    if(IntValue==NegativeRep)
-                        IntValue = -(int)rightSideValue;
-                    else if(IntValue==0)
-                        IntValue = (int)rightSideValue - 1;
-                    else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*(int)rightSideValue + 1;
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+                    if(IntHalf==NegativeRep)
+                        IntHalf = -(int)rightSideValue;
+                    else if(IntHalf==0)
+                        IntHalf = (int)rightSideValue - 1;
+                    else if(IntHalf<0)//-5.9..9 * 100
+                        IntHalf = (IntHalf-1)*(int)rightSideValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*(int)rightSideValue - 1;
+                        IntHalf = (IntHalf+1)*(int)rightSideValue - 1;
                     break;
                 #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3868,7 +3868,7 @@ protected:
                             }
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3892,9 +3892,9 @@ protected:
                 }
                 break;
                 #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 				{
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3903,12 +3903,12 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = 1;
+                                IntHalf = 1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3917,7 +3917,7 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = -1;
+                                IntHalf = -1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                         }
@@ -3936,31 +3936,31 @@ protected:
                     break;
     #endif
     #if defined(AltNum_EnableApproachingI)
-                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-                    if(IntValue==0||IntValue==NegativeRep)
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
+                    if(IntHalf==0||IntHalf==NegativeRep)
                     {
                         if(rightSideValue<0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                         CatchAllUIntMultiplication(rightSideValue, LRep);
                     break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-                    if(IntValue==NegativeRep)
-                        IntValue = -(int)rightSideValue;
-                    else if(IntValue==0)
-                        IntValue = (int)rightSideValue - 1;
-                    else if(IntValue<0)//-5.9..9 * 100
-                        IntValue = (IntValue-1)*(int)rightSideValue + 1;
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
+                    if(IntHalf==NegativeRep)
+                        IntHalf = -(int)rightSideValue;
+                    else if(IntHalf==0)
+                        IntHalf = (int)rightSideValue - 1;
+                    else if(IntHalf<0)//-5.9..9 * 100
+                        IntHalf = (IntHalf-1)*(int)rightSideValue + 1;
                     else//5.9..9 * 100 = 599.9..9
-                        IntValue = (IntValue+1)*(int)rightSideValue - 1;
+                        IntHalf = (IntHalf+1)*(int)rightSideValue - 1;
                     break;
             #endif
         #if defined(AltNum_EnableApproachingDivided)
-                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
                 {
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.49..9(ExtraRep:2) * 2 = 0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3975,7 +3975,7 @@ protected:
                                 ExtraRep = divRes;
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.49..9(ExtraRep:2) * 2 = -0.9..9 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -3999,9 +3999,9 @@ protected:
                 }
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
                 {
-                    if(IntValue==0)
+                    if(IntHalf==0)
                     {
                         //0.50..1(ExtraRep:2) * 2 = 1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -4010,12 +4010,12 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = 1;
+                                IntHalf = 1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                         }
                     }
-                    else if(IntValue==NegativeRep)
+                    else if(IntHalf==NegativeRep)
                     {
                         //-0.50..1(ExtraRep:2) * 2 = -1.0..1 (ExtraRep:0)
                         int divRes = ExtraRep/rightSideValue;
@@ -4024,7 +4024,7 @@ protected:
                             ExtraRep = divRes;
                             if(divRes == 0)
                             {
-                                IntValue = -1;
+                                IntHalf = -1;
                                 DecimalHalf = ApproachingBottomRep;
                             }
                         }
@@ -4040,7 +4040,7 @@ protected:
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 {
                     DecimalHalf *= rightSideValue;
                     UIntHalfMultiplication(rightSideValue);
@@ -4048,7 +4048,7 @@ protected:
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
-                        if (IntValue < 0)
+                        if (IntHalf < 0)
                             IntHalfSubtraction(increment);
                         else
                             IntHalfAddition(increment);
@@ -4057,11 +4057,11 @@ protected:
                 }
                 break;
         #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
         #elif defined(AltNum_EnableMixedEFractional)
-                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
         #elif defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
         #endif
         #if defined(AltNum_EnableAlternativeMixedFrac)
                 {
@@ -4071,7 +4071,7 @@ protected:
                     if (divRes > 0)
                     {
                         int increment = ExtraRep * divRes;
-                        if (IntValue < 0)
+                        if (IntHalf < 0)
                             IntHalfSubtraction(increment);
                         else
                             IntHalfAddition(increment);
@@ -4192,11 +4192,11 @@ protected:
     #endif
             if(ExtraRep>InitialExtraRep)//Don't convert if mixed fraction
                 ConvertToNormTypeV2();
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             IntHalfAddition(rValue);
             //If flips to other side of negative, invert the decimals
     #if defined(AltNum_EnableMixedFractional)
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
             {
                 if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
                 {
@@ -4211,7 +4211,7 @@ protected:
                     DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
             }
     #else
-            if(WasNegative ^ (IntValue >= 0))
+            if(WasNegative ^ (IntHalf >= 0))
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
     #endif
             return *this;
@@ -4282,11 +4282,11 @@ protected:
     #endif
             if(ExtraRep>InitialExtraRep)//Don't convert if mixed fraction
                 ConvertToNormTypeV2();
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             IntHalfAddition(rValue);
             //If flips to other side of negative, invert the decimals
     #if defined(AltNum_EnableMixedFractional)
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
             {
                 if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
                 {
@@ -4301,7 +4301,7 @@ protected:
                     DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
             }
     #else
-            if ((IntValue<0)!=WasNegative)
+            if ((IntHalf<0)!=WasNegative)
                 DecimalHalf = AltDecBase::DecimalOverflow - DecimalHalf;
     #endif
             return *this;
@@ -4402,18 +4402,18 @@ protected:
             {
     #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingTop:
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
     #if defined(AltNum_EnableImaginaryInfinity)
-                    if (self.IntValue < 0)//NegativeValue / 0.0..1 = Negative Infinity
-                        self.IntValue = -1;
+                    if (self.IntHalf < 0)//NegativeValue / 0.0..1 = Negative Infinity
+                        self.IntHalf = -1;
                     else//PositiveValue / 0.0..1 = Infinity
-                        self.IntValue = 1;
+                        self.IntHalf = 1;
                     self.DecimalHal = InfinityRep;
                     self.ExtraRep = IRep;
     #else
                     throw "Result is Infinity times i";
-                    if (self.IntValue < 0)
+                    if (self.IntHalf < 0)
                         self.SetAsMaximum();
                     else
                         self.SetAsMinimum();
@@ -4430,18 +4430,18 @@ protected:
     #endif
     #if defined(AltNum_EnableApproachingI)
             case RepType::ApproachingImaginaryBottom:
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
     #if defined(AltNum_EnableInfinityRep)
-                    if (self.IntValue < 0)//NegativeValue / 0.0..1 = Negative Infinity
-                        self.IntValue = -1;
+                    if (self.IntHalf < 0)//NegativeValue / 0.0..1 = Negative Infinity
+                        self.IntHalf = -1;
                     else//PositiveValue / 0.0..1 = Infinity
-                        self.IntValue = 1;
+                        self.IntHalf = 1;
                     self.DecimalHalf = AltDecBase::InfinityRep;
                     self.ExtraRep = InitialExtraRep;
     #else
                     throw "Result is Infinity";
-                    if (self.IntValue < 0)
+                    if (self.IntHalf < 0)
                         self.SetAsMaximum();
                     else
                         self.SetAsMinimum();
@@ -4467,7 +4467,7 @@ protected:
     #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
     #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
     #endif
     #endif
     #if defined(AltNum_EnableERep)
@@ -4475,13 +4475,13 @@ protected:
     #if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
     #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
     #endif
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-	        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+	        case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 
-            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 
     #endif
     #if defined(AltNum_EnableNearPi)
@@ -4491,7 +4491,7 @@ protected:
             case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
     #endif
     #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
     #if defined(AltNum_EnableMixedPiFractional)
             case RepType::MixedPi:
     #elif defined(AltNum_EnableMixedEFractional)
@@ -4522,7 +4522,7 @@ protected:
     #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
     #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
     #endif
     #endif
 
@@ -4531,18 +4531,18 @@ protected:
     #if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
     #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
     #endif
     #endif
 
     #if defined(AltNum_EnableApproaching)
-            case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-            case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+            case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+            case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 
-            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 
     #endif
 
@@ -4553,7 +4553,7 @@ protected:
             case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
     #endif
     #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
     #if defined(AltNum_EnableMixedPiFractional)
             case RepType::MixedPi:
     #elif defined(AltNum_EnableMixedEFractional)
@@ -4581,7 +4581,7 @@ protected:
     #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
     #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
     #endif
     #endif
 
@@ -4590,18 +4590,18 @@ protected:
     #if defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
     #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
     #endif
     #endif
 
     #if defined(AltNum_EnableApproaching)
-            case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-            case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+            case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+            case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
     #endif
     #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+            case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 
-            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+            case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 
     #endif
 
@@ -4612,7 +4612,7 @@ protected:
             case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
     #endif
     #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
     #if defined(AltNum_EnableMixedPiFractional)
             case RepType::MixedPi:
     #elif defined(AltNum_EnableMixedEFractional)
@@ -4647,19 +4647,19 @@ protected:
                 break;
             }
             #if defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             {
-                //X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
+                //X / (Y.IntHalf*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.BasicUnsignedDivOp(AltDecBase::AltDecBase::PiNum * Value.IntValue);//self.BasicUnsignedDivOp(AltDecBase::PiNumMultByInt(Value.IntValue))
+                self.BasicUnsignedDivOp(AltDecBase::AltDecBase::PiNum * Value.IntHalf);//self.BasicUnsignedDivOp(AltDecBase::PiNumMultByInt(Value.IntHalf))
                 break;
             }
             #endif
             #if defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
             {
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.BasicUnsignedDivOp(AltDecBase::ENum * Value.IntValue);
+                self.BasicUnsignedDivOp(AltDecBase::ENum * Value.IntHalf);
                 break;
             }
             #endif
@@ -4688,17 +4688,17 @@ protected:
             case RepType::INum:
             {
                 self.BasicUnsignedDivOp(Value);
-                if (self.IntValue == AltDecBase::AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
             }
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -4708,10 +4708,10 @@ protected:
             {
                 Value.ConvertToNormalIRep(RRep);
                 self.BasicUnsignedDivOp(Value);
-                if (self.IntValue == AltDecBase::AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
             }
@@ -4732,7 +4732,7 @@ protected:
             {
             case RepType::NormalType:
                 if (Value.DecimalHalf == 0)
-                    self.ExtraRep *= Value.IntValue;
+                    self.ExtraRep *= Value.IntHalf;
                 else
                     self.BasicDivOp(Value);
                 break;
@@ -4740,7 +4740,7 @@ protected:
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #elif defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #endif
@@ -4755,7 +4755,7 @@ protected:
             default:
                 Value.ConvertToNormType(RRep);
                 if (Value.DecimalHalf == 0)
-                    self.ExtraRep *= Value.IntValue;
+                    self.ExtraRep *= Value.IntHalf;
                 else
                     self.BasicDivOp(Value);
                 break;
@@ -4783,20 +4783,20 @@ protected:
                 break;
 
                 #if defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             {
-                //(XPi) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
+                //(XPi) / (Y.IntHalf*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(Y)
                 self.ExtraRep = InitialExtraRep;
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.BasicInt32DivOpV2(Value.IntValue);
+                self.BasicInt32DivOpV2(Value.IntHalf);
             }
             break;
             #endif
             #if defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
             {
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                AltDecBase rVal = AltDecBase::ENum * Value.IntValue;
+                AltDecBase rVal = AltDecBase::ENum * Value.IntHalf;
                 self.BasicDivOp(rVal);
             }
             break;
@@ -4829,16 +4829,16 @@ protected:
             case RepType::INum:
                 self.BasicDivOp(Value);
                 self.BasicDivOp(AltDecBase::AltDecBase::PiNum);
-                if (self.IntValue == AltDecBase::AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -4848,10 +4848,10 @@ protected:
                 Value.ConvertToNormalIRep(RRep);
                 self.BasicDivOp(Value);
                 self.BasicDivOp(AltDecBase::PiNum);
-                if (self.IntValue == AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
                 #endif
@@ -4871,7 +4871,7 @@ protected:
             case RepType::NormalType:
                 self.BasicDivOp(Value);
                 break;
-            case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+            case RepType::PiNum://(IntHalf.DecimalHalf)*Pi^-ExtraRep representation
                 --self.ExtraRep;
                 self.BasicDivOp(Value);
                 break;
@@ -4882,10 +4882,10 @@ protected:
             {
                 self.BasicDivOp(Value);
                 self.BasicDivOp(PiPowerNum(-self.ExtraRep));
-                if (self.IntValue == AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = IRep;
             }
             break;
@@ -4893,7 +4893,7 @@ protected:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
             #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
             #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -4905,10 +4905,10 @@ protected:
                 self.BasicDivOp(Value);
                 Value = PiPowerNum(-self.ExtraRep);//Reusing Value to store divisor
                 self.BasicDivOp(Value);
-                if (self.IntValue == AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
             }
             break;
@@ -4927,7 +4927,7 @@ protected:
             {
                 case RepType::NormalType:
                     if (Value.DecimalHalf == 0)
-                        self.DecimalHalf *= Value.IntValue;
+                        self.DecimalHalf *= Value.IntHalf;
                     else
                     {
                         //Convert to NumByDiv instead
@@ -4941,7 +4941,7 @@ protected:
                     //ToDo::Add more specific operation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #elif defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #endif
@@ -4989,10 +4989,10 @@ protected:
                 break;
         #endif
         #if defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-                //(Xe) / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+                //(Xe) / (Y.IntHalf*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf*e)/(Y)
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.BasicUnsignedDiv(AltDecBase::PiNumValue() * Value.IntValue);
+                self.BasicUnsignedDiv(AltDecBase::PiNumValue() * Value.IntHalf);
                 break;
         #elif defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
@@ -5002,10 +5002,10 @@ protected:
                 break;
         #endif
         #if defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 self.ExtraRep = InitialExtraRep;
                 self.BasicInt32MultOpV2(Value.DecimalHalf);
-                self.BasicInt32DivOpV2(Value.IntValue);
+                self.BasicInt32DivOpV2(Value.IntHalf);
                 break;
         #elif defined(AltNum_EnableDecimaledEFractionals)
             case RepType::ENumByDiv://(Value/(-ExtraRep))*e Representation
@@ -5020,17 +5020,17 @@ protected:
             case RepType::INum:
                 self.BasicDivOp(Value);
                 self.BasicDivOp(AltDecBase::ENum);
-                if (self.IntValue == AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
         #endif
         #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
         #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
         #endif
         #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -5040,10 +5040,10 @@ protected:
                 Value.ConvertToNormalIRep(RRep);
                 self.BasicDivOp(Value);
                 self.BasicDivOp(AltDecBase::ENum);
-                if (self.IntValue == AltDecBase::NegativeRep)
-                    self.IntValue = 0;
+                if (self.IntHalf == AltDecBase::NegativeRep)
+                    self.IntHalf = 0;
                 else
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : -self.IntValue;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : -self.IntHalf;
                 self.ExtraRep = AltDecBase::IRep;
                 break;
         #endif
@@ -5061,7 +5061,7 @@ protected:
             {
             case RepType::NormalType:
                 if (Value.DecimalHalf == 0)
-                    self.DecimalHalf *= Value.IntValue;
+                    self.DecimalHalf *= Value.IntHalf;
                 else
                 {
                     //Convert to NumByDiv instead
@@ -5075,7 +5075,7 @@ protected:
                 //ToDo::Add more specific DivOperation code later
             case RepType::INum:
                 #if defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #elif defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #endif
@@ -5109,12 +5109,12 @@ protected:
                     #if defined(AltNum_EnableDecimaledPiFractionals)//Becomes NumByDiv instead
                     self.ExtraRep *= -1;
                     if (Value.DecimalHalf == 0)
-                        self.ExtraRep *= Value.IntValue;
+                        self.ExtraRep *= Value.IntHalf;
                     else
                         self.BasicUnsignedDivOp(Value);
                     #else
                     if (Value.DecimalHalf == 0)
-                        self.ExtraRep *= Value.IntValue;
+                        self.ExtraRep *= Value.IntHalf;
                     else
                         self.BasicUnsignedDivOp(Value);
                     self.BasicUnsignedDivOp(PiNum);
@@ -5128,7 +5128,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledEFractionals)//Becomes NumByDiv instead
                     if (Value.DecimalHalf == 0)
                     {
-                        self.ExtraRep *= -Value.IntValue;
+                        self.ExtraRep *= -Value.IntHalf;
                     }
                     else
                     {
@@ -5137,7 +5137,7 @@ protected:
                     }
                 #else
                     if (Value.DecimalHalf == 0)
-                        self.ExtraRep *= Value.IntValue;
+                        self.ExtraRep *= Value.IntHalf;
                     else
                         self.BasicUnsignedDivOp(Value);
                     self.BasicUnsignedDivOp(ENum);
@@ -5148,7 +5148,7 @@ protected:
             #if defined(AltNum_EnableFractionals)
                 case RepType::NumByDiv:
                     if(Value.DecimalHalf==0)
-					    self.ExtraRep *= Value.IntValue;
+					    self.ExtraRep *= Value.IntHalf;
 				    else
 					    self.BasicUnsignedDivOp(Value);
 				    self.BasicInt32MultOpV2(Value.ExtraRep);
@@ -5156,14 +5156,14 @@ protected:
             #endif
             #if defined(AltNum_EnablePiFractional)
                 case RepType::PiFractional:
-				    self.ExtraRep *= Value.IntValue;
+				    self.ExtraRep *= Value.IntHalf;
 				    self.BasicInt32MultOpV2(Value.DecimalHalf);
 				    self.BasicUnsignedDivOp(PiNum);
                     break;
             #endif
             #if defined(AltNum_EnableEFractional)
                 case RepType::EFractional:
-				    self.ExtraRep *= Value.IntValue;
+				    self.ExtraRep *= Value.IntHalf;
 				    self.BasicInt32MultOpV2(Value.DecimalHalf);
 				    self.BasicUnsignedDivOp(ENum);
                     break;
@@ -5172,7 +5172,7 @@ protected:
                     //ToDo::Add more specific DivOperation code later
                 case RepType::INum:
                     #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #elif defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #endif
@@ -5211,18 +5211,18 @@ protected:
                     #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
                     #endif
                     #if defined(AltNum_EnableApproachingI)
-                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
+                    if (self.IntHalf == 0 && self.IntHalf == NegativeRep)
                     {
                         AltDecBase convertedVal = Value.ConvertAsNormalIRep(RRep);
                         if (convertedVal.DecimalHalf == 0)
                         {
-                            self.ExtraRep = convertedVal.IntValue;
+                            self.ExtraRep = convertedVal.IntHalf;
                             self.DecimalHalf = ApproachingImaginaryBottomRep;
                             return;
                         }
@@ -5250,18 +5250,18 @@ protected:
                     #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
                     #endif
             #if defined(AltNum_EnableApproachingI)
-                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
+                    if (self.IntHalf == 0 && self.IntHalf == NegativeRep)
                     {
                         AltDecBase convertedVal = Value.ConvertAsNormalIRep(RRep);
                         if (convertedVal.DecimalHalf == 0)
                         {
-                            self.ExtraRep = convertedVal.IntValue;
+                            self.ExtraRep = convertedVal.IntHalf;
                             self.DecimalHalf = ApproachingImaginaryTopRep;
                             return;
                         }
@@ -5291,18 +5291,18 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
                 #endif
         #if defined(AltNum_EnableApproachingI)
-                if (self.IntValue == 0 && self.IntValue == NegativeRep)
+                if (self.IntHalf == 0 && self.IntHalf == NegativeRep)
                 {
                     AltDecBase convertedVal = Value.ConvertAsNormalIRep(RRep);
                     if (convertedVal.DecimalHalf == 0)
                     {
-                        self.ExtraRep *= convertedVal.IntValue;
+                        self.ExtraRep *= convertedVal.IntHalf;
                         self.DecimalHalf = ApproachingImaginaryBottomRep;
                         return;
                     }
@@ -5330,18 +5330,18 @@ protected:
                     #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
                     #endif
             #if defined(AltNum_EnableApproachingI)
-                    if (self.IntValue == 0 && self.IntValue == NegativeRep)
+                    if (self.IntHalf == 0 && self.IntHalf == NegativeRep)
                     {
                         AltDecBase convertedVal = Value.ConvertAsNormalIRep(RRep);
                         if (convertedVal.DecimalHalf == 0)
                         {
-                            self.ExtraRep *= convertedVal.IntValue;
+                            self.ExtraRep *= convertedVal.IntHalf;
                             self.DecimalHalf = ApproachingImaginaryTopRep;
                             return;
                         }
@@ -5383,18 +5383,18 @@ protected:
         #endif
 
         #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-                    //selfNum*i / (Value.IntValue/Value.DecimalHalf*i)
-                    //selfNum / (Value.IntValue/Value.DecimalHalf)
-                    //(selfNum*Value.DecimalHalf) / Value.IntValue
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+                    //selfNum*i / (Value.IntHalf/Value.DecimalHalf*i)
+                    //selfNum / (Value.IntHalf/Value.DecimalHalf)
+                    //(selfNum*Value.DecimalHalf) / Value.IntHalf
                     self.BasicInt32MultOpV2(Value.DecimalHalf);
-                    self.ExtraRep = Value.IntValue;
+                    self.ExtraRep = Value.IntHalf;
                     break;//Return as NumByDiv
         #elif defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://Value/(-ExtraRep))*i Representation
-                    //(AltDecBase(self.IntValue, self.DecimalHalf)i)/(Value/(-Value.ExtraRep))*i)
-                    //=(AltDecBase(self.IntValue, self.DecimalHalf))/(Value/(-Value.ExtraRep)))
-                    //=(AltDecBase(self.IntValue, self.DecimalHalf)*-Value.ExtraRep)/Value
+                    //(AltDecBase(self.IntHalf, self.DecimalHalf)i)/(Value/(-Value.ExtraRep))*i)
+                    //=(AltDecBase(self.IntHalf, self.DecimalHalf))/(Value/(-Value.ExtraRep)))
+                    //=(AltDecBase(self.IntHalf, self.DecimalHalf)*-Value.ExtraRep)/Value
                     self.BasicUnsignedIntDiv(-Value.ExtraRep);
                     if (Value.DecimalHalf == 0)
                     {
@@ -5440,7 +5440,7 @@ protected:
 				    //if(self.DecimalHalf==0)//Add code here that returns return as MixedFraction
 				    self.SwapNegativeStatus();
 				    self.BasicInt32MultOpV2(-Value.ExtraRep);
-				    self.ExtraRep *= (Value.IntValue*Value.ExtraRep) + Value.DecimalHalf;//ToDo::Check for overflow and perform alternative code on overflow
+				    self.ExtraRep *= (Value.IntHalf*Value.ExtraRep) + Value.DecimalHalf;//ToDo::Check for overflow and perform alternative code on overflow
 			    }
                 break;
                 #endif
@@ -5458,9 +5458,9 @@ protected:
             {
             case RepType::NormalType:
                 if (Value.DecimalHalf == 0)
-                    self.DecimalHalf *= Value.IntValue;
+                    self.DecimalHalf *= Value.IntHalf;
                 else//Convert to INum
-                {//self.IntValue / self.DecimalHalf / Value
+                {//self.IntHalf / self.DecimalHalf / Value
                     self.ExtraRep = IRep;
                     int LSideDivisor = self.DecimalHalf;
                     self.DecimalHalf = 0;
@@ -5471,7 +5471,7 @@ protected:
             default:
                 Value.ConvertToNormType(RRep);
                 if (Value.DecimalHalf == 0)
-                    self.DecimalHalf *= Value.IntValue;
+                    self.DecimalHalf *= Value.IntHalf;
                 else//Convert to INum
                 {
                     self.ExtraRep = IRep;
@@ -5496,7 +5496,7 @@ protected:
                     #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                     #elif defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     #endif
                     #if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
@@ -5512,9 +5512,9 @@ protected:
         #endif
                 default:
                     Value.ConvertToNormType(RRep);
-                    if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
+                    if (Value.DecimalHalf == 0 && (self.IntHalf == 0 || self.IntHalf == NegativeRep))
                     {
-                        self.ExtraRep = Value.IntValue;
+                        self.ExtraRep = Value.IntHalf;
                     }
                     else
                     {
@@ -5536,7 +5536,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -5550,8 +5550,8 @@ protected:
                 break;
             default:
                 Value.ConvertToNormType(RRep);
-                if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
-                    self.ExtraRep = Value.IntValue;
+                if (Value.DecimalHalf == 0 && (self.IntHalf == 0 || self.IntHalf == NegativeRep))
+                    self.ExtraRep = Value.IntHalf;
                 else
                 {
                     self.ConvertToNormalIRep(RepType::ApproachingImaginaryTop);
@@ -5573,7 +5573,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -5586,8 +5586,8 @@ protected:
                 #endif
             default:
                 Value.ConvertToNormType(RRep);
-                if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
-                    self.ExtraRep *= Value.IntValue;
+                if (Value.DecimalHalf == 0 && (self.IntHalf == 0 || self.IntHalf == NegativeRep))
+                    self.ExtraRep *= Value.IntHalf;
                 else
                 {
                     self.ConvertToNormalIRep(RepType::ApproachingImaginaryMidLeft);
@@ -5609,7 +5609,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -5623,8 +5623,8 @@ protected:
                 #endif
             default:
                 Value.ConvertToNormType(RRep);
-                if (Value.DecimalHalf == 0 && (self.IntValue == 0 || self.IntValue == NegativeRep))
-                    self.ExtraRep *= Value.IntValue;
+                if (Value.DecimalHalf == 0 && (self.IntHalf == 0 || self.IntHalf == NegativeRep))
+                    self.ExtraRep *= Value.IntHalf;
                 else
                 {
                     self.ConvertToNormalIRep(RepType::ApproachingImaginaryMidRight);
@@ -5660,8 +5660,8 @@ protected:
                 if (Value.DecimalHalf == 0)
                 {
                     int LeftSideAbs = self.IntHalfAsAbs();
-                    int divRes = LeftSideAbs / Value.IntValue;
-                    int C = LeftSideAbs - Value.IntValue * divRes;
+                    int divRes = LeftSideAbs / Value.IntHalf;
+                    int C = LeftSideAbs - Value.IntHalf * divRes;
                     if (C == 0)
                     {
                         if (divRes == 0)//Convert into non-mixed fractional
@@ -5711,7 +5711,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -5730,13 +5730,13 @@ protected:
                 #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
                 //Any real number / 0.0..1 = Infinity
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
                     self.DecimalHalf = InfinityRep;
-                    if (self.IntValue<0)
-                        self.IntValue = -1;
+                    if (self.IntHalf<0)
+                        self.IntHalf = -1;
                     else
-                        self.IntValue = 1;
+                        self.IntHalf = 1;
                     self.ExtraRep = InitialExtraRep;
                     return;
                 }
@@ -5749,8 +5749,8 @@ protected:
 
             case RepType::ApproachingTop:
             {
-                if (Value.IntValue == 0 && LRep == RepType::NormalType)//1/0.9..9 = 1.0..1
-                {//(For positive left side values);Technically should return self.IntValue + 0.0..self.IntValue
+                if (Value.IntHalf == 0 && LRep == RepType::NormalType)//1/0.9..9 = 1.0..1
+                {//(For positive left side values);Technically should return self.IntHalf + 0.0..self.IntHalf
                     self.DecimalHalf = ApproachingBottomRep;
                     self.ExtraRep = InitialExtraRep;
                     return;
@@ -5825,11 +5825,11 @@ protected:
                 NumByDivisorRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_EnableAlternativeRepFractionals)
                 #if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 PiFractionalRtRDivision(RRep, self, Value); break;
                 #endif
                 #if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 EFractionalRtRDivision(RRep, self, Value); break;
                 #endif
 
@@ -5850,16 +5850,16 @@ protected:
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 INumByDivisorRtRDivision(RRep, self, Value); break;
                 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 IFractionalRtRDivision(RRep, self, Value); break;
                 #endif
                 #endif
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)
                 EFractionalRtRDivision(RRep, self, Value); break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
+            case RepType::MixedPi://(IntHalf<0?(IntHalf + DecimalHalf):(IntHalf -DecimalHalf))/-ExtraRep)
                 MixedPiOrERtRDivision(RRep, self, Value); break;
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
@@ -5904,19 +5904,19 @@ protected:
     #if defined(AltNum_EnableApproaching)
                 {
                     DecimalHalf = ApproachingBottomRep;
-                    if(rightSideValue.IntValue<0)
+                    if(rightSideValue.IntHalf<0)
                     {
-                        if (IntValue<0)
-                            IntValue = 0;
+                        if (IntHalf<0)
+                            IntHalf = 0;
                         else
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                     {
-                        if (IntValue<0)
-                            IntValue = NegativeRep;
+                        if (IntHalf<0)
+                            IntHalf = NegativeRep;
                         else
-                            IntValue = 0;
+                            IntHalf = 0;
                     }
                     ExtraRep = InitialExtraRep;
                 }
@@ -5925,9 +5925,9 @@ protected:
     #endif
                 return *this;
             }
-            if (rightSideValue.IntValue==0&&rightSideValue.DecimalHalf==0)
+            if (rightSideValue.IntHalf==0&&rightSideValue.DecimalHalf==0)
             {
-                if (IntValue < 0)
+                if (IntHalf < 0)
                     SetAsNegativeInfinity();
                 else
                     SetAsInfinity();
@@ -5980,23 +5980,23 @@ protected:
 #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
-                    int rInverted = rightSideValue.IntValue==NegativeRep?0:-rightSideValue.IntValue;
-                    if (IntValue == rightSideValue.IntValue)
+                    int rInverted = rightSideValue.IntHalf==NegativeRep?0:-rightSideValue.IntHalf;
+                    if (IntHalf == rightSideValue.IntHalf)
                     {
-                        IntValue = 1;
+                        IntHalf = 1;
                         DecimalHalf = 0;
                     }
-                    else if (IntValue == rInverted)
+                    else if (IntHalf == rInverted)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == 0 && rightSideValue.IntValue == NegativeRep)
+                    else if (IntHalf == 0 && rightSideValue.IntHalf == NegativeRep)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == NegativeRep && rightSideValue.IntValue == 0)
+                    else if (IntHalf == NegativeRep && rightSideValue.IntHalf == 0)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
                     else
                     {
@@ -6006,18 +6006,18 @@ protected:
                 }
                 case RepType::ApproachingTop:
                 {
-                    int rInverted = rightSideValue.IntValue==NegativeRep?0:-rightSideValue.IntValue;
-                    if (IntValue == rightSideValue.IntValue)
+                    int rInverted = rightSideValue.IntHalf==NegativeRep?0:-rightSideValue.IntHalf;
+                    if (IntHalf == rightSideValue.IntHalf)
                     {
-                        IntValue = 1; DecimalHalf = 0;
+                        IntHalf = 1; DecimalHalf = 0;
                     }
-                    else if (IntValue == rInverted)
+                    else if (IntHalf == rInverted)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == NegativeRep && rightSideValue.IntValue == 0)
+                    else if (IntHalf == NegativeRep && rightSideValue.IntHalf == 0)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
 
                     }
                     else
@@ -6030,18 +6030,18 @@ protected:
                 case RepType::ApproachingMidLeft:
                     if (ExtraRep == rightSideValue.ExtraRep)
                     {// 0.249..9 / 0.249..9 = 1
-                        int InvertedrightSideValue = rightSideValue.IntValue==NegativeRep?0:-(int)rightSideValue.IntValue;
-                        if (IntValue == rightSideValue.IntValue)
+                        int InvertedrightSideValue = rightSideValue.IntHalf==NegativeRep?0:-(int)rightSideValue.IntHalf;
+                        if (IntHalf == rightSideValue.IntHalf)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == InvertedrightSideValue)
+                        else if (IntHalf == InvertedrightSideValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == NegativeRep && rightSideValue.IntValue == 0)
+                        else if (IntHalf == NegativeRep && rightSideValue.IntHalf == 0)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6056,14 +6056,14 @@ protected:
                 case RepType::ApproachingMidRight:
                     if (ExtraRep == rightSideValue.ExtraRep)
                     {//0.50..1 / 0.50..1 = 1
-                        int InvertedrightSideValue = rightSideValue.IntValue==NegativeRep?0:-(int)rightSideValue.IntValue;
-                        if (IntValue == rightSideValue.IntValue)
+                        int InvertedrightSideValue = rightSideValue.IntHalf==NegativeRep?0:-(int)rightSideValue.IntHalf;
+                        if (IntHalf == rightSideValue.IntHalf)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == InvertedrightSideValue)
+                        else if (IntHalf == InvertedrightSideValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6079,10 +6079,10 @@ protected:
 #endif
 
 #if defined(AltNum_EnableFractionals)//Unfinished code
-                case RepType::NumByDiv://(AltDecBase(IntValue,DecimalHalf))/ExtraRep
+                case RepType::NumByDiv://(AltDecBase(IntHalf,DecimalHalf))/ExtraRep
                 {
-                    //((AltDecBase(IntValue,DecimalHalf))/ExtraRep) / (AltDecBase(rightSideValue.IntValue,rightSideValue.DecimalHalf))/rightSideValue.ExtraRep) = 
-                    //((AltDecBase(IntValue,DecimalHalf))* rightSideValue.ExtraRep/ExtraRep) /(AltDecBase(rightSideValue.IntValue,rightSideValue.DecimalHalf)))
+                    //((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rightSideValue.IntHalf,rightSideValue.DecimalHalf))/rightSideValue.ExtraRep) = 
+                    //((AltDecBase(IntHalf,DecimalHalf))* rightSideValue.ExtraRep/ExtraRep) /(AltDecBase(rightSideValue.IntHalf,rightSideValue.DecimalHalf)))
                     AltDecBase rValue = rightSideValue;
                     if(rValue<0)
                     {
@@ -6092,13 +6092,13 @@ protected:
                     if (rValue.DecimalHalf == 0)
                     {
                         BasicUIntMultOp(rValue.ExtraRep);
-                        int result = ExtraRep * rValue.IntValue;
-                        if(ExtraRep == result / rValue.IntValue)//checking for overflow
+                        int result = ExtraRep * rValue.IntHalf;
+                        if(ExtraRep == result / rValue.IntHalf)//checking for overflow
                         {
                             ExtraRep = result;
                         }
                         else
-                            BasicUnsignedDivOp(rValue.IntValue);
+                            BasicUnsignedDivOp(rValue.IntHalf);
                     }
                     else
                     {//CatchAllDivisionV2(rValue, LRep);
@@ -6109,16 +6109,16 @@ protected:
                 break;
 #endif
 #if defined(AltNum_UsingAltFractional)
-                //(Self.IntValue/DecimalHalf)/(rightSideValue.IntValue/rightSideValue.DecimalHalf) =
-                //(IntValue*rightSideValue.DecimalHalf)/(DecimalHalf*rightSideValue.IntValue)
+                //(Self.IntHalf/DecimalHalf)/(rightSideValue.IntHalf/rightSideValue.DecimalHalf) =
+                //(IntHalf*rightSideValue.DecimalHalf)/(DecimalHalf*rightSideValue.IntHalf)
     #if defined(AltNum_EnablePiFractional)
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
     #endif
     #if defined(AltNum_EnableEFractional)
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
     #endif
     #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
     #endif
                 {
                     AltDecBase rValue = rightSideValue;
@@ -6127,19 +6127,19 @@ protected:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    int NumRes = rValue.DecimalHalf * IntValue;
-                    int DenomRes = DecimalHalf * rValue.IntValue;
+                    int NumRes = rValue.DecimalHalf * IntHalf;
+                    int DenomRes = DecimalHalf * rValue.IntHalf;
                     signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     DecimalHalf = 0;
                     if (RemRes == 0)
                     {
-                        IntValue = divRes;
+                        IntHalf = divRes;
                         ExtraRep = InitialExtraRep;
                     }
                     else
                     {
-                        IntValue = NumRes;
+                        IntHalf = NumRes;
                         ExtraRep = DenomRes;
                     }
                 }
@@ -6163,13 +6163,13 @@ protected:
                     if (rValue.DecimalHalf == 0)
                     {
                         BasicUIntMultOp(-rValue.ExtraRep);
-                        int result = ExtraRep * rValue.IntValue;
-                        if(ExtraRep == result / rValue.IntValue)//checking for overflow
+                        int result = ExtraRep * rValue.IntHalf;
+                        if(ExtraRep == result / rValue.IntHalf)//checking for overflow
                         {
                             ExtraRep = result;
                         }
                         else
-                            BasicUnsignedDivOp(rValue.IntValue);
+                            BasicUnsignedDivOp(rValue.IntHalf);
                     }
                     else
                     {
@@ -6182,7 +6182,7 @@ protected:
 
                 //Turn MixedFrac into fractional and then apply	
 #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 {
                     AltDecBase rValue = rightSideValue;
                     if(rValue<0)
@@ -6193,14 +6193,14 @@ protected:
                     int rvDivisor = -rValue.ExtraRep;
                     //=LeftSideNum*rValue.ExtraRep / RightSideNum;
                     AltDecBase LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = AltDecBase(DecimalHalf);
-                    else if (IntValue < 0)
-                        LeftSideNum = AltDecBase(IntValue * ExtraRep + DecimalHalf);
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = AltDecBase(IntHalf * ExtraRep + DecimalHalf);
+                    else if (IntHalf == 0)
                         LeftSideNum = AltDecBase(-DecimalHalf);
                     else
-                        LeftSideNum = AltDecBase(IntValue * ExtraRep - DecimalHalf);
+                        LeftSideNum = AltDecBase(IntHalf * ExtraRep - DecimalHalf);
                     LeftSideNum.UIntDivOp(rValue.ExtraRep);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
@@ -6209,19 +6209,19 @@ protected:
                         DecimalHalf = LeftSideNum.DecimalHalf;
                         if(rValue<0)
                         {
-                            IntValue = -LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue==NegativeRep ? -rValue.DecimalHalf : -rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                            IntHalf = -LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf==NegativeRep ? -rValue.DecimalHalf : -rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                         }
                         else
                         {
-                            IntValue = LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue==0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                            IntHalf = LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf==0 ? -rValue.DecimalHalf : rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                         }
                     }
                 }
                 break;//Result as NumByDiv
     #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+                case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
                 case RepType::MixedE:
     #elif defined(AltNum_EnableMixedIFractional)
@@ -6238,30 +6238,30 @@ protected:
                     //=LeftSideNum*-rValue.ExtraRep / RightSideNum;
                     int rvDivisor = -rValue.ExtraRep;
                     AltDecBase LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = -DecimalHalf;
                     else
-                        LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
+                        LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
                     LeftSideNum.UIntDivOp(rvDivisor);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
                     else//Result as NumByDiv
                     {   //Need to have positive ExtraRep value
-                        //int RightSideNum = rValue.IntValue==0?-DecimalHalf:(rValue.IntValue*-rValue.ExtraRep)-rValue.DecimalHalf;
+                        //int RightSideNum = rValue.IntHalf==0?-DecimalHalf:(rValue.IntHalf*-rValue.ExtraRep)-rValue.DecimalHalf;
                         DecimalHalf = LeftSideNum.DecimalHalf;
                         if(rValue<0)
                         {
-                            IntValue = -LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue == NegativeRep ? DecimalHalf : (-rValue.IntValue * rValue.ExtraRep) + rValue.DecimalHalf;
+                            IntHalf = -LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf == NegativeRep ? DecimalHalf : (-rValue.IntHalf * rValue.ExtraRep) + rValue.DecimalHalf;
                         }
                         else
                         {
-                            IntValue = LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue == 0 ? DecimalHalf : (rValue.IntValue * rValue.ExtraRep) + rValue.DecimalHalf;
+                            IntHalf = LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf == 0 ? DecimalHalf : (rValue.IntHalf * rValue.ExtraRep) + rValue.DecimalHalf;
                         }
                     }
                 }
@@ -6341,19 +6341,19 @@ protected:
     #if defined(AltNum_EnableApproaching)
                 {
                     DecimalHalf = ApproachingBottomRep;
-                    if(rValue.IntValue<0)
+                    if(rValue.IntHalf<0)
                     {
-                        if (IntValue<0)
-                            IntValue = 0;
+                        if (IntHalf<0)
+                            IntHalf = 0;
                         else
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
                     else
                     {
-                        if (IntValue<0)
-                            IntValue = NegativeRep;
+                        if (IntHalf<0)
+                            IntHalf = NegativeRep;
                         else
-                            IntValue = 0;
+                            IntHalf = 0;
                     }
                     ExtraRep = InitialExtraRep;
                 }
@@ -6362,9 +6362,9 @@ protected:
     #endif
                 return *this;
             }
-            if (rValue.IntValue==0&&rValue.DecimalHalf==0)
+            if (rValue.IntHalf==0&&rValue.DecimalHalf==0)
             {
-                if (IntValue < 0)
+                if (IntHalf < 0)
                     SetAsNegativeInfinity();
                 else
                     SetAsInfinity();
@@ -6417,23 +6417,23 @@ protected:
 #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
-                    int rInverted = -rValue.IntValue;
-                    if (IntValue == rValue.IntValue)
+                    int rInverted = -rValue.IntHalf;
+                    if (IntHalf == rValue.IntHalf)
                     {
-                        IntValue = 1;
+                        IntHalf = 1;
                         DecimalHalf = 0;
                     }
-                    else if (IntValue == rInverted)
+                    else if (IntHalf == rInverted)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == 0 && rValue.IntValue == NegativeRep)
+                    else if (IntHalf == 0 && rValue.IntHalf == NegativeRep)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == NegativeRep && rValue.IntValue == 0)
+                    else if (IntHalf == NegativeRep && rValue.IntHalf == 0)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
                     else
                     {
@@ -6443,18 +6443,18 @@ protected:
                 }
                 case RepType::ApproachingTop:
                 {
-                    int rInverted = -rValue.IntValue;
-                    if (IntValue == rValue.IntValue)
+                    int rInverted = -rValue.IntHalf;
+                    if (IntHalf == rValue.IntHalf)
                     {
-                        IntValue = 1; DecimalHalf = 0;
+                        IntHalf = 1; DecimalHalf = 0;
                     }
-                    else if (IntValue == rInverted)
+                    else if (IntHalf == rInverted)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
                     }
-                    else if (IntValue == NegativeRep && rValue.IntValue == 0)
+                    else if (IntHalf == NegativeRep && rValue.IntHalf == 0)
                     {
-                        IntValue = -1; DecimalHalf = 0;
+                        IntHalf = -1; DecimalHalf = 0;
 
                     }
                     else
@@ -6467,18 +6467,18 @@ protected:
                 case RepType::ApproachingMidLeft:
                     if (ExtraRep == rValue.ExtraRep)
                     {// 0.249..9 / 0.249..9 = 1
-                        int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
-                        if (IntValue == rValue.IntValue)
+                        int InvertedrValue = rValue.IntHalf==NegativeRep?0:-(int)rValue.IntHalf;
+                        if (IntHalf == rValue.IntHalf)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == InvertedrValue)
+                        else if (IntHalf == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == NegativeRep && rValue.IntValue == 0)
+                        else if (IntHalf == NegativeRep && rValue.IntHalf == 0)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6493,14 +6493,14 @@ protected:
                 case RepType::ApproachingMidRight:
                     if (ExtraRep == rValue.ExtraRep)
                     {//0.50..1 / 0.50..1 = 1
-                        int InvertedrValue = rValue.IntValue==NegativeRep?0:-(int)rValue.IntValue;
-                        if (IntValue == rValue.IntValue)
+                        int InvertedrValue = rValue.IntHalf==NegativeRep?0:-(int)rValue.IntHalf;
+                        if (IntHalf == rValue.IntHalf)
                         {
-                            IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == InvertedrValue)
+                        else if (IntHalf == InvertedrValue)
                         {
-                            IntValue = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                            IntHalf = -1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
                         else
                         {
@@ -6516,20 +6516,20 @@ protected:
 #endif
 
 #if defined(AltNum_EnableFractionals)//Unfinished code
-                case RepType::NumByDiv://(AltDecBase(IntValue,DecimalHalf))/ExtraRep
+                case RepType::NumByDiv://(AltDecBase(IntHalf,DecimalHalf))/ExtraRep
                 {
-                    //((AltDecBase(IntValue,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
-                    //((AltDecBase(IntValue,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntValue,rValue.DecimalHalf)))
+                    //((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
+                    //((AltDecBase(IntHalf,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntHalf,rValue.DecimalHalf)))
                     if (rValue.DecimalHalf == 0)
                     {
                         BasicUIntMultOp(rValue.ExtraRep);
-                        int result = ExtraRep * rValue.IntValue;
-                        if(ExtraRep == result / rValue.IntValue)//checking for overflow
+                        int result = ExtraRep * rValue.IntHalf;
+                        if(ExtraRep == result / rValue.IntHalf)//checking for overflow
                         {
                             ExtraRep = result;
                         }
                         else
-                            BasicUnsignedDivOp(rValue.IntValue);
+                            BasicUnsignedDivOp(rValue.IntHalf);
                     }
                     else
                     {
@@ -6540,31 +6540,31 @@ protected:
                 break;
 #endif
 #if defined(AltNum_UsingAltFractional)
-                //(Self.IntValue/DecimalHalf)/(rValue.IntValue/rValue.DecimalHalf) =
-                //(IntValue*rValue.DecimalHalf)/(DecimalHalf*rValue.IntValue)
+                //(Self.IntHalf/DecimalHalf)/(rValue.IntHalf/rValue.DecimalHalf) =
+                //(IntHalf*rValue.DecimalHalf)/(DecimalHalf*rValue.IntHalf)
     #if defined(AltNum_EnablePiFractional)
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
     #endif
     #if defined(AltNum_EnableEFractional)
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
     #endif
     #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
     #endif
                 {
-                    int NumRes = rValue.DecimalHalf * IntValue;
-                    int DenomRes = DecimalHalf * rValue.IntValue;
+                    int NumRes = rValue.DecimalHalf * IntHalf;
+                    int DenomRes = DecimalHalf * rValue.IntHalf;
                     signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     DecimalHalf = 0;
                     if (RemRes == 0)
                     {
-                        IntValue = divRes;
+                        IntHalf = divRes;
                         ExtraRep = InitialExtraRep;
                     }
                     else
                     {
-                        IntValue = NumRes;
+                        IntHalf = NumRes;
                         ExtraRep = DenomRes;
                     }
                 }
@@ -6582,13 +6582,13 @@ protected:
                     if (rValue.DecimalHalf == 0)
                     {
                         BasicUIntMultOp(-rValue.ExtraRep);
-                        int result = ExtraRep * rValue.IntValue;
-                        if(ExtraRep == result / rValue.IntValue)//checking for overflow
+                        int result = ExtraRep * rValue.IntHalf;
+                        if(ExtraRep == result / rValue.IntHalf)//checking for overflow
                         {
                             ExtraRep = result;
                         }
                         else
-                            BasicUnsignedDivOp(rValue.IntValue);
+                            BasicUnsignedDivOp(rValue.IntHalf);
                     }
                     else
                     {
@@ -6601,19 +6601,19 @@ protected:
 
                 //Turn MixedFrac into fractional and then apply			
 #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 {
                     int rvDivisor = -rValue.ExtraRep;
                     //=LeftSideNum*rValue.ExtraRep / RightSideNum;
                     AltDecBase LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = AltDecBase(DecimalHalf);
-                    else if (IntValue < 0)
-                        LeftSideNum = AltDecBase(IntValue * ExtraRep + DecimalHalf);
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = AltDecBase(IntHalf * ExtraRep + DecimalHalf);
+                    else if (IntHalf == 0)
                         LeftSideNum = AltDecBase(-DecimalHalf);
                     else
-                        LeftSideNum = AltDecBase(IntValue * ExtraRep - DecimalHalf);
+                        LeftSideNum = AltDecBase(IntHalf * ExtraRep - DecimalHalf);
                     LeftSideNum.UIntDivOp(rValue.ExtraRep);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
@@ -6622,19 +6622,19 @@ protected:
                         DecimalHalf = LeftSideNum.DecimalHalf;
                         if(rValue<0)
                         {
-                            IntValue = -LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue==NegativeRep ? -rValue.DecimalHalf : -rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                            IntHalf = -LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf==NegativeRep ? -rValue.DecimalHalf : -rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                         }
                         else
                         {
-                            IntValue = LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue==0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                            IntHalf = LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf==0 ? -rValue.DecimalHalf : rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                         }
                     }
                 }
                 break;//Result as NumByDiv
     #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+                case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
     #elif defined(AltNum_EnableMixedEFractional)
                 case RepType::MixedE:
     #elif defined(AltNum_EnableMixedIFractional)
@@ -6645,30 +6645,30 @@ protected:
                     //=LeftSideNum*-rValue.ExtraRep / RightSideNum;
                     int rvDivisor = -rValue.ExtraRep;
                     AltDecBase LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = -DecimalHalf;
                     else
-                        LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
+                        LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
                     LeftSideNum.UIntDivOp(rvDivisor);
                     if (LeftSideNum.IsZero())
                         SetAsZero();
                     else//Result as NumByDiv
                     {   //Need to have positive ExtraRep value
-                        //int RightSideNum = rValue.IntValue==0?-DecimalHalf:(rValue.IntValue*-rValue.ExtraRep)-rValue.DecimalHalf;
+                        //int RightSideNum = rValue.IntHalf==0?-DecimalHalf:(rValue.IntHalf*-rValue.ExtraRep)-rValue.DecimalHalf;
                         DecimalHalf = LeftSideNum.DecimalHalf;
                         if(rValue<0)
                         {
-                            IntValue = -LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue == NegativeRep ? DecimalHalf : (-rValue.IntValue * rValue.ExtraRep) + rValue.DecimalHalf;
+                            IntHalf = -LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf == NegativeRep ? DecimalHalf : (-rValue.IntHalf * rValue.ExtraRep) + rValue.DecimalHalf;
                         }
                         else
                         {
-                            IntValue = LeftSideNum.IntValue;
-                            ExtraRep *= rValue.IntValue == 0 ? DecimalHalf : (rValue.IntValue * rValue.ExtraRep) + rValue.DecimalHalf;
+                            IntHalf = LeftSideNum.IntHalf;
+                            ExtraRep *= rValue.IntHalf == 0 ? DecimalHalf : (rValue.IntHalf * rValue.ExtraRep) + rValue.DecimalHalf;
                         }
                     }
                 }
@@ -6798,7 +6798,7 @@ protected:
             #endif
             #endif
             #if defined(AltNum_EnableMixedFractional)
-        case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+        case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
             self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
             break;
             #if defined(AltNum_EnableMixedPiFractional)
@@ -6820,7 +6820,7 @@ protected:
             #if defined(AltNum_EnableDecimaledIFractionals)
         case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
             #else
-        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+        case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
             #endif
             #if defined(AltNum_EnableMixedIFractional)
@@ -6869,7 +6869,7 @@ protected:
                 break;
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -6930,8 +6930,8 @@ protected:
                 self.BasicMultOp(Value);
                 #elif defined(AltNum_EnablePiFractional)
                 if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//If both left and right side values are whole numbers, convert result into PiFractional
-                {//Becoming IntValue/DecimalHalf*Pi Representation
-                    self.IntValue *= Value.IntValue;
+                {//Becoming IntHalf/DecimalHalf*Pi Representation
+                    self.IntHalf *= Value.IntHalf;
                     self.DecimalHalf = Value.ExtraRep;
                     self.ExtraRep = PiByDivisorRep;
                 }
@@ -6947,7 +6947,7 @@ protected:
                 break;
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #if defined(AltNum_EnableMixedPiFractional)
@@ -6976,12 +6976,12 @@ protected:
             case RepType::NormalType:
                 self.BasicMultOp(Value);
                 break;
-            case RepType::PiNum://(IntValue.DecimalHalf)*Pi^-ExtraRep representation
+            case RepType::PiNum://(IntHalf.DecimalHalf)*Pi^-ExtraRep representation
                 --self.ExtraRep;
                 self.BasicMultOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -7008,12 +7008,12 @@ protected:
             {
             case RepType::NormalType:
                 if (Value.DecimalHalf == 0)
-                    self.IntValue *= Value.IntValue;
+                    self.IntHalf *= Value.IntHalf;
                 else
                     self.CatchAllMultiplication(Value, LRep, RRep);
                 break;
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -7064,8 +7064,8 @@ protected:
                 self.BasicMultOp(Value);
                 #else
                 if (self.DecimalHalf == 0 && Value.DecimalHalf == 0)//If both left and right side values are whole numbers, convert result into EFractional
-                {//Becoming IntValue/DecimalHalf*e Representation
-                    self.IntValue *= Value.IntValue;
+                {//Becoming IntHalf/DecimalHalf*e Representation
+                    self.IntHalf *= Value.IntHalf;
                     self.DecimalHalf = Value.ExtraRep;
                     self.ExtraRep = AltDecBase::EByDivisorRep;
                 }
@@ -7089,7 +7089,7 @@ protected:
                 break;
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -7116,12 +7116,12 @@ protected:
             {
             case RepType::NormalType:
                 if (Value.DecimalHalf == 0)
-                    self.IntValue *= Value.IntValue;
+                    self.IntHalf *= Value.IntHalf;
                 else
                     self.CatchAllMultiplication(Value, RepType::EFractional, RRep);
                 break;
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -7150,7 +7150,7 @@ protected:
                 self.BasicMultOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                 self = AltDecBase::MixedFracRtRMult_WithNormal(self, Value);
                 break;
                 #endif
@@ -7189,9 +7189,9 @@ protected:
             {
                 #if defined(AltNum_EnableIRep)
             case RepType::INum:
-                if (self.IntValue = 0 || self.IntValue == AltDecBase::NegativeRep)
+                if (self.IntHalf = 0 || self.IntHalf == AltDecBase::NegativeRep)
                 {
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : 0;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : 0;
                     #if defined(AltNum_EnableImaginaryInfinity)
                     self.DecimalHalf = ApproachingImaginaryBottomRep;
                     #else
@@ -7210,14 +7210,14 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation	
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation	
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
                 #endif
-                if (self.IntValue = 0 || self.IntValue == AltDecBase::NegativeRep)
+                if (self.IntHalf = 0 || self.IntHalf == AltDecBase::NegativeRep)
                 {
-                    self.IntValue = self.IntValue == 0 ? AltDecBase::NegativeRep : 0;
+                    self.IntHalf = self.IntHalf == 0 ? AltDecBase::NegativeRep : 0;
                     #if defined(AltNum_EnableImaginaryInfinity)
                     self.DecimalHalf = ApproachingImaginaryBottomRep;
                     #else
@@ -7481,8 +7481,8 @@ protected:
                 case RepType::NormalType:
                 if(Value.DecimalHalf==0)
                 {
-                self.IntValue *= Value.IntValue;
-                self.DecimalHalf *= Value.IntValue;
+                self.IntHalf *= Value.IntHalf;
+                self.DecimalHalf *= Value.IntHalf;
                 int invertedDecimalHalf = -self.DecimalHalf
                 if(invertedDecimalHalf >= self.ExtraRep)
                 {
@@ -7550,8 +7550,8 @@ protected:
                 case RepType::NormalType:
                 if(Value.DecimalHalf==0)
                 {
-                self.IntValue *= Value.IntValue;
-                self.DecimalHalf *= Value.IntValue;
+                self.IntHalf *= Value.IntHalf;
+                self.DecimalHalf *= Value.IntHalf;
                 if(self.DecimalHalf <= self.ExtraRep)
                 {//(-4 - -3)*1 = -1;
                 int divRes = self.DecimalHalf / self.ExtraRep;
@@ -7564,10 +7564,10 @@ protected:
                 #else
                 self.ExtraRep = ERep;
                 #endif
-                if(self.IntValue<0)
-                self.IntValue -= divRes;
+                if(self.IntHalf<0)
+                self.IntHalf -= divRes;
                 else
-                self.IntValue += divRes;
+                self.IntHalf += divRes;
                 }
                 else
                 {
@@ -7700,7 +7700,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -7719,9 +7719,9 @@ protected:
                 #if defined(AltNum_EnableApproaching)
             case RepType::ApproachingBottom:
             {
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
-                    self.IntValue = self.IntValue < 0 ? NegativeRep : 0;
+                    self.IntHalf = self.IntHalf < 0 ? NegativeRep : 0;
                     self.DecimalHalf = ApproachingBottomRep;
                     self.ExtraRep = InitialExtraRep;
                     return;
@@ -7805,11 +7805,11 @@ protected:
                 NumByDivisorRtRMultiplication(RRep, self, Value); break;
                 #if defined(AltNum_EnableAlternativeRepFractionals)
                 #if defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 PiFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
                 #if defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 EFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
 
@@ -7829,15 +7829,15 @@ protected:
             case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
                 INumByDivisorRtRMultiplication(RRep, self, Value); break;
                 #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 IFractionalRtRMultiplication(RRep, self, Value); break;
                 #endif
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+            case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)
                 MixedFracRtRMultiplication(RRep, self, Value); break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
+            case RepType::MixedPi://(IntHalf<0?(IntHalf + DecimalHalf):(IntHalf -DecimalHalf))/-ExtraRep)
                 MixedPiOrERtRMultiplication(RRep, self, Value); break;
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
@@ -7870,12 +7870,12 @@ public:
         {
             if (IsZero() || rightSideValue == AltDecBase::One)
                 return *this;
-            if (rightSideValue.IntValue==0&&rightSideValue.DecimalHalf==0) { SetAsZero(); return *this; }
+            if (rightSideValue.IntHalf==0&&rightSideValue.DecimalHalf==0) { SetAsZero(); return *this; }
 #if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
             {
                 if(rightSideValue<0)
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 return *this;
             }
 #endif
@@ -7925,48 +7925,48 @@ public:
 #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
                 {
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
                         if(rightSideValue<0)
-                            IntValue = 0;
+                            IntHalf = 0;
                     }
-                    else if (IntValue == 0)
+                    else if (IntHalf == 0)
                     {
                         if(rightSideValue<0)
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                     }
-                    else if (IntValue < 0)
+                    else if (IntHalf < 0)
                     {
                         if(rightSideValue<0)
                         {
-                            if (rightSideValue.IntValue == NegativeRep)//-1.0..1 * -0.0..1
-                                IntValue = 0;
+                            if (rightSideValue.IntHalf == NegativeRep)//-1.0..1 * -0.0..1
+                                IntHalf = 0;
                             else//-1.0..1 * -2.0..1
-                                IntValue *= rightSideValue.IntValue;
+                                IntHalf *= rightSideValue.IntHalf;
                         }
                         else
                         {
-                            if (rightSideValue.IntValue == 0)//-1.0..1 * 0.0..1
-                                IntValue = NegativeRep;
+                            if (rightSideValue.IntHalf == 0)//-1.0..1 * 0.0..1
+                                IntHalf = NegativeRep;
                             else//-1.0..1 * 2.0..1
-                                IntValue *= rightSideValue.IntValue;
+                                IntHalf *= rightSideValue.IntHalf;
                         }
                     }
                     else
                     {
                         if(rightSideValue<0)
                         {
-                            if (rightSideValue.IntValue == NegativeRep)//1.0..1 * -0.0..1
-                                IntValue = NegativeRep;
+                            if (rightSideValue.IntHalf == NegativeRep)//1.0..1 * -0.0..1
+                                IntHalf = NegativeRep;
                             else//1.0..1 * 2.0..1
-                                IntValue *= rightSideValue.IntValue;
+                                IntHalf *= rightSideValue.IntHalf;
                         }
                         else
                         {
-                            if (rightSideValue.IntValue == 0)//1.0..1 * 0.0..1
-                                IntValue = 0;
+                            if (rightSideValue.IntHalf == 0)//1.0..1 * 0.0..1
+                                IntHalf = 0;
                             else//1.0..1 * 2.0..1
-                                IntValue *= rightSideValue.IntValue;
+                                IntHalf *= rightSideValue.IntHalf;
                         }
                     }
                     return *this;
@@ -7981,16 +7981,16 @@ public:
     #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingMidLeft:
                 {
-                    if(rightSideValue.IntValue==NegativeRep)
+                    if(rightSideValue.IntHalf==NegativeRep)
                     {
-                        if (IntValue == 0
+                        if (IntHalf == 0
                         {
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                             ExtraRep *= rightSideValue.ExtraRep;
                         )
-                        else if(IntValue == NegativeRep)
+                        else if(IntHalf == NegativeRep)
                         {
-                            IntValue = 0;
+                            IntHalf = 0;
                             ExtraRep *= rightSideValue.ExtraRep;
                         }
                         else
@@ -7998,13 +7998,13 @@ public:
                             CatchAllMultiplicationV2(rightSideValue, LRep);
                         }
                     }
-                    if (rightSideValue.IntValue == 0)
+                    if (rightSideValue.IntHalf == 0)
                     {
-                        //-0.49..9 * 0.49..9 =  ~-0.249..9 (IntValue:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:4)
-                        //0.49..9 * 0.49..9(IntValue:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:2)
-                        // =  ~0.249..9 (IntValue:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:4)
-                        // 0.249..9 * 0.249..9 = ~0.06249..9(IntValue:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:16)
-                        if (IntValue == 0 || IntValue == NegativeRep)
+                        //-0.49..9 * 0.49..9 =  ~-0.249..9 (IntHalf:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:4)
+                        //0.49..9 * 0.49..9(IntHalf:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:2)
+                        // =  ~0.249..9 (IntHalf:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:4)
+                        // 0.249..9 * 0.249..9 = ~0.06249..9(IntHalf:0 DecimalHalf:ApproachingrightSideValue.Rep ExtraRep:16)
+                        if (IntHalf == 0 || IntHalf == NegativeRep)
                             ExtraRep *= rightSideValue.ExtraRep;
                         else
                         {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
@@ -8013,35 +8013,35 @@ public:
                     }
                     else if(rightSideValue<0)
                     {
-                        bool IsNegative = IntValue<0;
+                        bool IsNegative = IntHalf<0;
                         if (IsNegative)
-                            IntValue = IntValue == NegativeRep:0? -IntValue;
+                            IntHalf = IntHalf == NegativeRep:0? -IntHalf;
                         IsNegative = !IsNegative;
-                        int InvertedrightSideValue = -(int)rightSideValue.IntValue;
-                        int XZ = IntValue * InvertedrightSideValue;
-                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntValue;
+                        int InvertedrightSideValue = -(int)rightSideValue.IntHalf;
+                        int XZ = IntHalf * InvertedrightSideValue;
+                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntHalf;
                         AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * InvertedrightSideValue;
                         AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rightSideValue.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
-                            IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                            IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                         DecimalHalf = XV.DecimalHalf;
                         ExtraRep = XV.ExtraRep;
                     }
                     else
                     {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                        bool IsNegative = IntValue<0;
+                        bool IsNegative = IntHalf<0;
                         if (IsNegative)
-                            IntValue = IntValue == NegativeRep:0 ? -IntValue;
-                        int XZ = IntValue * rightSideValue.IntValue;
-                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntValue;
-                        AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rightSideValue.IntValue;
+                            IntHalf = IntHalf == NegativeRep:0 ? -IntHalf;
+                        int XZ = IntHalf * rightSideValue.IntHalf;
+                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntHalf;
+                        AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rightSideValue.IntHalf;
                         AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rightSideValue.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
-                            IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                            IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                         DecimalHalf = XV.DecimalHalf;
                         ExtraRep = XV.ExtraRep;
                     }
@@ -8050,16 +8050,16 @@ public:
                 }
                 case RepType::ApproachingMidRight:
                 {
-                    if(rightSideValue.IntValue==NegativeRep)
+                    if(rightSideValue.IntHalf==NegativeRep)
                     {
-                        if (IntValue == 0)
+                        if (IntHalf == 0)
                         {
-                            IntValue = NegativeRep;
+                            IntHalf = NegativeRep;
                             ExtraRep *= rightSideValue.ExtraRep;
                         )
-                        else if(IntValue == NegativeRep)
+                        else if(IntHalf == NegativeRep)
                         {
-                            IntValue = 0;
+                            IntHalf = 0;
                             ExtraRep *= rightSideValue.ExtraRep;
                         }
                         else
@@ -8067,46 +8067,46 @@ public:
                             CatchAllMultiplicationV2(rightSideValue, LRep);
                         }
                     }
-                    else if (rightSideValue.IntValue == 0)
+                    else if (rightSideValue.IntHalf == 0)
                     {
-                        if (IntValue == 0 || IntValue == NegativeRep)
+                        if (IntHalf == 0 || IntHalf == NegativeRep)
                             ExtraRep *= rightSideValue.ExtraRep;
                         else
                         {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
                             CatchAllMultiplicationV2(rightSideValue, LRep);
                         }
                     }
-                    else if(rightSideValue.IntValue<0)
+                    else if(rightSideValue.IntHalf<0)
                     {
-                        bool IsNegative = IntValue<0;
+                        bool IsNegative = IntHalf<0;
                         if (IsNegative)
-                            IntValue = IntValue == NegativeRep:0 ? -IntValue;
+                            IntHalf = IntHalf == NegativeRep:0 ? -IntHalf;
                         IsNegative = !IsNegative;
-                        int InvertedrightSideValue = -(int)rightSideValue.IntValue;
-                        int XZ = IntValue * InvertedrightSideValue;
-                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntValue;
+                        int InvertedrightSideValue = -(int)rightSideValue.IntHalf;
+                        int XZ = IntHalf * InvertedrightSideValue;
+                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntHalf;
                         AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * InvertedrightSideValue;
                         AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rightSideValue.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
-                            IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                            IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                         DecimalHalf = XV.DecimalHalf;
                         ExtraRep = XV.ExtraRep;
                     }
                     else
                     {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                        bool IsNegative = IntValue<0;
+                        bool IsNegative = IntHalf<0;
                         if (IsNegative)
-                            IntValue = IntValue == NegativeRep:0 ? -IntValue;
-                        int XZ = IntValue * rightSideValue.IntValue;
-                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntValue;
-                        AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rightSideValue.IntValue;
+                            IntHalf = IntHalf == NegativeRep:0 ? -IntHalf;
+                        int XZ = IntHalf * rightSideValue.IntHalf;
+                        AltDecBase XV = SetAsApproachingMid(0, rightSideValue.ExtraRep) * IntHalf;
+                        AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rightSideValue.IntHalf;
                         AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rightSideValue.ExtraRep);
                         XV += XZ;
                         XV += YZ + YV;
                         if (IsNegative)
-                            IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                            IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                         DecimalHalf = XV.DecimalHalf;
                         ExtraRep = XV.ExtraRep;
                     }
@@ -8117,27 +8117,27 @@ public:
 #endif
 
 #if defined(AltNum_EnableFractionals)//Unfinished code
-                case RepType::NumByDiv://(AltDecBase(IntValue,DecimalHalf))/ExtraRep
+                case RepType::NumByDiv://(AltDecBase(IntHalf,DecimalHalf))/ExtraRep
                 {
-                    //((AltDecBase(IntValue,DecimalHalf))/ExtraRep) * (AltDecBase(rightSideValue.IntValue,rightSideValue.DecimalHalf))/rightSideValue.ExtraRep) = 
-                    //((AltDecBase(IntValue,DecimalHalf))*AltDecBase(rightSideValue.IntValue,rightSideValue.DecimalHalf)))/(ExtraRep*rightSideValue.ExtraRep)
+                    //((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) * (AltDecBase(rightSideValue.IntHalf,rightSideValue.DecimalHalf))/rightSideValue.ExtraRep) = 
+                    //((AltDecBase(IntHalf,DecimalHalf))*AltDecBase(rightSideValue.IntHalf,rightSideValue.DecimalHalf)))/(ExtraRep*rightSideValue.ExtraRep)
                     BasicMultOp(rightSideValue);
                     ExtraRep *= rightSideValue.ExtraRep;
                 }
                 break;
 #endif
-    //(IntValue*rightSideValue.IntValue)*Pi^2/(DecimalHalf*rightSideValue.DecimalHalf)
+    //(IntHalf*rightSideValue.IntHalf)*Pi^2/(DecimalHalf*rightSideValue.DecimalHalf)
     #if defined(AltNum_EnablePiFractional)
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 {//Become either PiNum, NumByDiv, or PiPower
         #if defined(AltNum_EnablePiPowers)//Becoming PiPower
-                    IntValue *= rightSideValue.IntValue;
+                    IntHalf *= rightSideValue.IntHalf;
                     int divisor = DecimalHalf*rightSideValue.DecimalHalf;
                     DecimalHalf = 0;
                     BasicUIntDiv(divisor);
                     ExtraRep = -2;//Pi^2
         #else//Becoming PiNum
-                    IntValue *= rightSideValue.IntValue;
+                    IntHalf *= rightSideValue.IntHalf;
                     DecimalHalf *= rightSideValue.DecimalHalf;
                     int divisor = DecimalHalf;
                     DecimalHalf = 0;
@@ -8149,9 +8149,9 @@ public:
                 break;
     #endif
     #if defined(AltNum_EnableEFractional)
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 {
-                    IntValue *= rightSideValue.IntValue;
+                    IntHalf *= rightSideValue.IntHalf;
                     DecimalHalf *= rightSideValue.DecimalHalf;
                     int divisor = DecimalHalf;
                     DecimalHalf = 0;
@@ -8162,23 +8162,23 @@ public:
                 break;
     #endif
     #if defined(AltNum_EnableIRep)
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 {
-                    //(IntValue/DecimalHalf)i*(rightSideValue.IntValue/rightSideValue.DecimalHalf)i
-                    //==-1*(IntValue/DecimalHalf)*(rightSideValue.IntValue/rightSideValue.DecimalHalf)
-                    int NumRes = -IntValue * rightSideValue.IntValue;
+                    //(IntHalf/DecimalHalf)i*(rightSideValue.IntHalf/rightSideValue.DecimalHalf)i
+                    //==-1*(IntHalf/DecimalHalf)*(rightSideValue.IntHalf/rightSideValue.DecimalHalf)
+                    int NumRes = -IntHalf * rightSideValue.IntHalf;
                     int DenomRes = DecimalHalf * rightSideValue.DecimalHalf;
                     signed int divRes = NumRes / DenomRes;
                     signed int RemRes = NumRes - DenomRes * NumRes;
                     DecimalHalf = 0;
                     if (RemRes == 0)
                     {
-                        IntValue = divRes;
+                        IntHalf = divRes;
                         ExtraRep = InitialExtraRep;
                     }
                     else
                     {
-                        IntValue = NumRes;
+                        IntHalf = NumRes;
                         ExtraRep = DenomRes;
                     }
                 }
@@ -8220,7 +8220,7 @@ public:
                 break;
     #endif
     #if defined(AltNum_EnableMixedFractional) //Turn MixedFrac into fractional and then apply
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 {
                     AltDecBase rValue = rightSideValue;
                     if(rValue<0)
@@ -8228,25 +8228,25 @@ public:
                         rValue *= -1;
                         SwapNegativeStatus();
                     }
-                    //IntValue +- (-DecimalHalf/ExtraRep) = 
+                    //IntHalf +- (-DecimalHalf/ExtraRep) = 
                     int LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * ExtraRep + DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * ExtraRep + DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = -DecimalHalf;
                     else
-                        LeftSideNum = IntValue * ExtraRep - DecimalHalf;
-                    int RightSideNum = rValue.IntValue == 0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                        LeftSideNum = IntHalf * ExtraRep - DecimalHalf;
+                    int RightSideNum = rValue.IntHalf == 0 ? -rValue.DecimalHalf : rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                     //Becomes NumByDiv now
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = ExtraRep * -rValue.ExtraRep;
                 }
                 break;
         #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+                case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 {
                     AltDecBase rValue = rightSideValue;
                     if(rValue<0)
@@ -8255,32 +8255,32 @@ public:
                         SwapNegativeStatus();
                     }
                     int LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = -DecimalHalf;
                     else
-                        LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
+                        LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
                     break;
-                    int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                    int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
 
                     #if defined(AltNum_EnableDecimaledEFractionals)
                     //Becomes PiNumByDiv
                     //And then multiply by Pi
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = ExtraRep * rValue.ExtraRep;
                     #elif defined(AltNum_EnablePiPowers)
                     //Or convert to PiPower (of 2)
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = -2;
                     BasicUnsignedDivOp(ExtraRep * -rValue.ExtraRep);
                     #else
                     //Or convert PiNum and multiply by Pi
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = -2;
                     BasicMultOp(PiNum);
@@ -8299,24 +8299,24 @@ public:
                         SwapNegativeStatus();
                     }
                     int LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = -DecimalHalf;
                     else
-                        LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
-                    int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                        LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
+                    int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
                     #if defined(AltNum_EnableDecimaledEFractionals)
                     //Becomes ENumByDiv
                     //And then multiply by e
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = ExtraRep * rValue.ExtraRep;
                     #else
                     //Or convert ENum and multiply by e
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = -2;
                     BasicMultOp(PiNum);
@@ -8334,18 +8334,18 @@ public:
                         SwapNegativeStatus();
                     }
                     int LeftSideNum;
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                         LeftSideNum = -DecimalHalf;
-                    else if (IntValue < 0)
-                        LeftSideNum = IntValue * ExtraRep - DecimalHalf;
-                    else if (IntValue == 0)
+                    else if (IntHalf < 0)
+                        LeftSideNum = IntHalf * ExtraRep - DecimalHalf;
+                    else if (IntHalf == 0)
                         LeftSideNum = DecimalHalf;
                     else
-                        LeftSideNum = IntValue * ExtraRep + DecimalHalf;
+                        LeftSideNum = IntHalf * ExtraRep + DecimalHalf;
                     break;
-                    int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                    int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
                     //Becomes NumByDiv now
-                    IntValue = LeftSideNum * RightSideNum;
+                    IntHalf = LeftSideNum * RightSideNum;
                     DecimalHalf = 0;
                     ExtraRep = ExtraRep * -rValue.ExtraRep;
                 }
@@ -8405,14 +8405,14 @@ public:
         /// <returns>AltDecBase&</returns>
         AltDecBase& UnsignedMultOp(AltDecBase rValue)
         {
-            if (rValue.IntValue==0&&rValue.DecimalHalf==0) { SetAsZero(); return *this; }
+            if (rValue.IntHalf==0&&rValue.DecimalHalf==0) { SetAsZero(); return *this; }
             if (IsZero() || rValue == AltDecBase::One)
                 return *this;
 #if defined(AltNum_EnableInfinityRep)
             if (DecimalHalf == InfinityRep)
             {
                 if(rValue<0)
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 return *this;
             }
 #endif
@@ -8458,19 +8458,19 @@ public:
     #if defined(AltNum_EnableApproaching)
                     case RepType::ApproachingBottom:
                     {
-                        if (IntValue < 0)
+                        if (IntHalf < 0)
                         {
-                            if (rValue.IntValue == 0)//-1.0..1 * 0.0..1
-                                IntValue = NegativeRep;
+                            if (rValue.IntHalf == 0)//-1.0..1 * 0.0..1
+                                IntHalf = NegativeRep;
                             else//-1.0..1 * 2.0..1
-                                IntValue *= rValue.IntValue;
+                                IntHalf *= rValue.IntHalf;
                         }
-                        else if (IntValue != NegativeRep||IntValue!=0)
+                        else if (IntHalf != NegativeRep||IntHalf!=0)
                         {
-                            if (rValue.IntValue == 0)//1.0..1 * 0.0..1
-                                IntValue = 0;
+                            if (rValue.IntHalf == 0)//1.0..1 * 0.0..1
+                                IntHalf = 0;
                             else//1.0..1 * 2.0..1
-                                IntValue *= rValue.IntValue;
+                                IntHalf *= rValue.IntHalf;
                         }
                         return *this;
                     }
@@ -8484,13 +8484,13 @@ public:
         #if defined(AltNum_EnableApproachingDivided)
                     case RepType::ApproachingMidLeft:
                     {
-                        if (rValue.IntValue == 0)
+                        if (rValue.IntHalf == 0)
                         {
-                            //-0.49..9 * 0.49..9 =  ~-0.249..9 (IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
-                            //0.49..9 * 0.49..9(IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:2)
-                            // =  ~0.249..9 (IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
-                            // 0.249..9 * 0.249..9 = ~0.06249..9(IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:16)
-                            if (IntValue == 0 || IntValue == NegativeRep)
+                            //-0.49..9 * 0.49..9 =  ~-0.249..9 (IntHalf:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
+                            //0.49..9 * 0.49..9(IntHalf:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:2)
+                            // =  ~0.249..9 (IntHalf:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
+                            // 0.249..9 * 0.249..9 = ~0.06249..9(IntHalf:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:16)
+                            if (IntHalf == 0 || IntHalf == NegativeRep)
                                 ExtraRep *= rValue.ExtraRep;
                             else
                             {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
@@ -8499,17 +8499,17 @@ public:
                         }
                         else
                         {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                            bool IsNegative = IntValue<0;
+                            bool IsNegative = IntHalf<0;
                             if (IsNegative)
-                                IntValue = IntValue == NegativeRep:0 ? -IntValue;
-                            int XZ = IntValue * rValue.IntValue;
-                            AltDecBase XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntValue;
-                            AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntValue;
+                                IntHalf = IntHalf == NegativeRep:0 ? -IntHalf;
+                            int XZ = IntHalf * rValue.IntHalf;
+                            AltDecBase XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntHalf;
+                            AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntHalf;
                             AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rValue.ExtraRep);
                             XV += XZ;
                             XV += YZ + YV;
                             if (IsNegative)
-                                IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                                IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                             DecimalHalf = XV.DecimalHalf;
                             ExtraRep = XV.ExtraRep;
                         }
@@ -8518,9 +8518,9 @@ public:
                     }
                     case RepType::ApproachingMidRight:
                     {
-                        if (rValue.IntValue == 0)
+                        if (rValue.IntHalf == 0)
                         {
-                            if (IntValue == 0 || IntValue == NegativeRep)
+                            if (IntHalf == 0 || IntHalf == NegativeRep)
                                 ExtraRep *= rValue.ExtraRep;
                             else
                             {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
@@ -8529,17 +8529,17 @@ public:
                         }
                         else
                         {//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                            bool IsNegative = IntValue<0;
+                            bool IsNegative = IntHalf<0;
                             if (IsNegative)
-                                IntValue = IntValue == NegativeRep:0 ? -IntValue;
-                            int XZ = IntValue * rValue.IntValue;
-                            AltDecBase XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntValue;
-                            AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntValue;
+                                IntHalf = IntHalf == NegativeRep:0 ? -IntHalf;
+                            int XZ = IntHalf * rValue.IntHalf;
+                            AltDecBase XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntHalf;
+                            AltDecBase YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntHalf;
                             AltDecBase YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rValue.ExtraRep);
                             XV += XZ;
                             XV += YZ + YV;
                             if (IsNegative)
-                                IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+                                IntHalf = XV.IntHalf == 0 ? NegativeRep : -XV.IntHalf;
                             DecimalHalf = XV.DecimalHalf;
                             ExtraRep = XV.ExtraRep;
                         }
@@ -8550,27 +8550,27 @@ public:
     #endif
 
     #if defined(AltNum_EnableFractionals)//Unfinished code
-                    case RepType::NumByDiv://(AltDecBase(IntValue,DecimalHalf))/ExtraRep
+                    case RepType::NumByDiv://(AltDecBase(IntHalf,DecimalHalf))/ExtraRep
                     {
-                        //((AltDecBase(IntValue,DecimalHalf))/ExtraRep) * (AltDecBase(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
-                        //((AltDecBase(IntValue,DecimalHalf))*AltDecBase(rValue.IntValue,rValue.DecimalHalf)))/(ExtraRep*rValue.ExtraRep)
+                        //((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) * (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
+                        //((AltDecBase(IntHalf,DecimalHalf))*AltDecBase(rValue.IntHalf,rValue.DecimalHalf)))/(ExtraRep*rValue.ExtraRep)
                         BasicUnsignedMultOp(rValue);
                         ExtraRep *= rValue.ExtraRep;
                     }
                     break;
     #endif
-                    //(IntValue*rValue.IntValue)*Pi^2/(DecimalHalf/rValue.DecimalHalf)
+                    //(IntHalf*rValue.IntHalf)*Pi^2/(DecimalHalf/rValue.DecimalHalf)
         #if defined(AltNum_EnablePiFractional)
-                    case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                    case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                     {
             #if defined(AltNum_EnablePiPowers)//Becoming PiPower
-                        IntValue *= rValue.IntValue;
+                        IntHalf *= rValue.IntHalf;
                         int divisor = DecimalHalf*rValue.DecimalHalf;
                         DecimalHalf = 0;
                         BasicUIntDiv(divisor);
                         ExtraRep = -2;//Pi^2
             #else//Becoming PiNum
-                        IntValue *= rValue.IntValue;
+                        IntHalf *= rValue.IntHalf;
                         DecimalHalf *= rValue.DecimalHalf;
                         int divisor = DecimalHalf;
                         DecimalHalf = 0;
@@ -8582,9 +8582,9 @@ public:
                     break;
         #endif
         #if defined(AltNum_EnableEFractional)
-                    case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                    case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                     {
-                        IntValue *= rValue.IntValue;
+                        IntHalf *= rValue.IntHalf;
                         DecimalHalf *= rValue.DecimalHalf;
                         int divisor = DecimalHalf;
                         DecimalHalf = 0;
@@ -8595,23 +8595,23 @@ public:
                     break;
         #endif
         #if defined(AltNum_EnableIRep)
-                    case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                    case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     {
-                        //(IntValue/DecimalHalf)i*(rValue.IntValue/rValue.DecimalHalf)i
-                        //==-1*(IntValue/DecimalHalf)*(rValue.IntValue/rValue.DecimalHalf)
-                        int NumRes = -IntValue * rValue.IntValue;
+                        //(IntHalf/DecimalHalf)i*(rValue.IntHalf/rValue.DecimalHalf)i
+                        //==-1*(IntHalf/DecimalHalf)*(rValue.IntHalf/rValue.DecimalHalf)
+                        int NumRes = -IntHalf * rValue.IntHalf;
                         int DenomRes = DecimalHalf * rValue.DecimalHalf;
                         signed int divRes = NumRes / DenomRes;
                         signed int RemRes = NumRes - DenomRes * NumRes;
                         DecimalHalf = 0;
                         if (RemRes == 0)
                         {
-                            IntValue = divRes;
+                            IntHalf = divRes;
                             ExtraRep = InitialExtraRep;
                         }
                         else
                         {
-                            IntValue = NumRes;
+                            IntHalf = NumRes;
                             ExtraRep = DenomRes;
                         }
                     }
@@ -8646,55 +8646,55 @@ public:
                     break;
         #endif
         #if defined(AltNum_EnableMixedFractional)//Turn MixedFrac into fractional and then apply
-                    case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+                    case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                     {
-                        //IntValue +- (-DecimalHalf/ExtraRep) = 
+                        //IntHalf +- (-DecimalHalf/ExtraRep) = 
                         int LeftSideNum;
-                        if (IntValue == NegativeRep)
+                        if (IntHalf == NegativeRep)
                             LeftSideNum = DecimalHalf;
-                        else if (IntValue < 0)
-                            LeftSideNum = IntValue * ExtraRep + DecimalHalf;
-                        else if (IntValue == 0)
+                        else if (IntHalf < 0)
+                            LeftSideNum = IntHalf * ExtraRep + DecimalHalf;
+                        else if (IntHalf == 0)
                             LeftSideNum = -DecimalHalf;
                         else
-                            LeftSideNum = IntValue * ExtraRep - DecimalHalf;
-                        int RightSideNum = rValue.IntValue == 0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+                            LeftSideNum = IntHalf * ExtraRep - DecimalHalf;
+                        int RightSideNum = rValue.IntHalf == 0 ? -rValue.DecimalHalf : rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
                         //Becomes NumByDiv now
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = ExtraRep * -rValue.ExtraRep;
                     }
                     break;
             #if defined(AltNum_EnableMixedPiFractional)
-                    case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+                    case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                     {
                         int LeftSideNum;
-                        if (IntValue == NegativeRep)
+                        if (IntHalf == NegativeRep)
                             LeftSideNum = DecimalHalf;
-                        else if (IntValue < 0)
-                            LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                        else if (IntValue == 0)
+                        else if (IntHalf < 0)
+                            LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                        else if (IntHalf == 0)
                             LeftSideNum = -DecimalHalf;
                         else
-                            LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
+                            LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
                         break;
-                        int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                        int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
 
                         #if defined(AltNum_EnableDecimaledEFractionals)
                         //Becomes PiNumByDiv
                         //And then multiply by Pi
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = ExtraRep * rValue.ExtraRep;
                         #elif defined(AltNum_EnablePiPowers)
                         //Or convert to PiPower (of 2)
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = -2;
                         BasicUnsignedDivOp(ExtraRep * -rValue.ExtraRep);
                         #else
                         //Or convert PiNum and multiply by Pi
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = -2;
                         BasicUnsignedMultOp(PiNum);
@@ -8707,24 +8707,24 @@ public:
                     case RepType::MixedE:
                     {
                         int LeftSideNum;
-                        if (IntValue == NegativeRep)
+                        if (IntHalf == NegativeRep)
                             LeftSideNum = DecimalHalf;
-                        else if (IntValue < 0)
-                            LeftSideNum = IntValue * -ExtraRep + DecimalHalf;
-                        else if (IntValue == 0)
+                        else if (IntHalf < 0)
+                            LeftSideNum = IntHalf * -ExtraRep + DecimalHalf;
+                        else if (IntHalf == 0)
                             LeftSideNum = -DecimalHalf;
                         else
-                            LeftSideNum = IntValue * -ExtraRep + -DecimalHalf;
-                        int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                            LeftSideNum = IntHalf * -ExtraRep + -DecimalHalf;
+                        int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
                         #if defined(AltNum_EnableDecimaledEFractionals)
                         //Becomes ENumByDiv
                         //And then multiply by e
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = ExtraRep * rValue.ExtraRep;
                         #else
                         //Or convert ENum and multiply by e
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = -2;
                         BasicUnsignedMultOp(PiNum);
@@ -8736,18 +8736,18 @@ public:
                     case RepType::MixedI:
                     {
                         int LeftSideNum;
-                        if (IntValue == NegativeRep)
+                        if (IntHalf == NegativeRep)
                             LeftSideNum = -DecimalHalf;
-                        else if (IntValue < 0)
-                            LeftSideNum = IntValue * ExtraRep - DecimalHalf;
-                        else if (IntValue == 0)
+                        else if (IntHalf < 0)
+                            LeftSideNum = IntHalf * ExtraRep - DecimalHalf;
+                        else if (IntHalf == 0)
                             LeftSideNum = DecimalHalf;
                         else
-                            LeftSideNum = IntValue * ExtraRep + DecimalHalf;
+                            LeftSideNum = IntHalf * ExtraRep + DecimalHalf;
                         break;
-                        int RightSideNum = rValue.IntValue == 0 ? -DecimalHalf : (rValue.IntValue * -rValue.ExtraRep) - rValue.DecimalHalf;
+                        int RightSideNum = rValue.IntHalf == 0 ? -DecimalHalf : (rValue.IntHalf * -rValue.ExtraRep) - rValue.DecimalHalf;
                         //Becomes NumByDiv now
-                        IntValue = LeftSideNum * RightSideNum;
+                        IntHalf = LeftSideNum * RightSideNum;
                         DecimalHalf = 0;
                         ExtraRep = ExtraRep * -rValue.ExtraRep;
                     }
@@ -8865,11 +8865,11 @@ protected:
 			        self.BasicAddOp(Value);
 			        break;
 	        #if defined(AltNum_EnableMixedFractional)
-		        case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+		        case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
 			        self.BasicMixedFracAddOp(Value);
 			        break;
 		        #if defined(AltNum_EnableMixedPiFractional)
-		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+		        case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
 		        #elif defined(AltNum_EnableMixedEFractional)
 		        case RepType::MixedE:
 		        #endif
@@ -8903,28 +8903,28 @@ protected:
             #if defined(AltNum_EnablePiPowers)//Combine PiPower in certain cases
             #endif
 	        #if defined(AltNum_EnableMixedFractional)
-		        case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+		        case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
 			        self.ConvertToNormType(RepType::PiNum);
 			        self.BasicMixedFracAddOp(Value);
 			        break;
 	        #endif
 	        #if defined(AltNum_EnableMixedPiFractional)
-		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+		        case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
 		        #if defined(AltNum_EnablePiFractional)
     			        if(self.DecimalHalf==0)//Result is PiFractional
     			        {
                             int divisor = -Value.ExtraRep;
-                            if(Value.IntValue!=0)
-                                self.IntValue += Value.IntValue;
-                            if(self.IntValue==0)
+                            if(Value.IntHalf!=0)
+                                self.IntHalf += Value.IntHalf;
+                            if(self.IntHalf==0)
                             {
-                                self.IntValue = -Value.DecimalHalf;
+                                self.IntHalf = -Value.DecimalHalf;
                             }
                             else
                             {
-                                self.IntValue *= divisor;
-                                self.IntValue -= self.DecimalHalf;//adding as negative of the representation
-                                if(self.IntValue==0)//Become zero instead of fractional
+                                self.IntHalf *= divisor;
+                                self.IntHalf -= self.DecimalHalf;//adding as negative of the representation
+                                if(self.IntHalf==0)//Become zero instead of fractional
                                 {
                                     self.ExtraRep = InitialExtraRep; return;
                                 }
@@ -8938,17 +8938,17 @@ protected:
     	                    self.BasicMixedPiFracSubAddOp(Value);
     			        }
 		        #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
-                        if(Value.IntValue!=0)
-                            self.IntHalfSubtraction(Value.IntValue);
-                        if(self.IntValue==0)
+                        if(Value.IntHalf!=0)
+                            self.IntHalfSubtraction(Value.IntHalf);
+                        if(self.IntHalf==0)
                         {
-                            self.IntValue = -Value.DecimalHalf;
+                            self.IntHalf = -Value.DecimalHalf;
                         }
                         else
                         {
-                            self.IntValue *= -Value.ExtraRep;
+                            self.IntHalf *= -Value.ExtraRep;
                             self.IntHalfSubtraction(self.DecimalHalf);//adding as negative of the representation
-                            if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
+                            if(self.IntHalf==0&&self.DecimalHalf==0)//Become zero instead of fractional
                             {
                                 self.ExtraRep = InitialExtraRep; return;
                             }
@@ -8980,13 +8980,13 @@ protected:
 	        switch (RRep)
 	        {
             #if defined(AltNum_EnableMixedFractional)
-		        case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+		        case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
 			        self.ConvertToNormType(RepType::PiNumByDiv);
 			        self.BasicMixedFracAddOp(Value);
 			        break;
 	        #endif
 	        #if defined(AltNum_EnableMixedPiFractional)
-		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+		        case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                     //ToDo:Add more precise AddOperation code here later
                     self.ConvertToNormType(RepType::PiNumByDiv);
 			        self.BasicMixedPiFracAddOp(Value);
@@ -9015,13 +9015,13 @@ protected:
 	        switch (RRep)
 	        {
 	        #if defined(AltNum_EnableMixedFractional)
-		        case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+		        case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
 			        self.ConvertToNormType(RepType::ENum);
 			        self.BasicMixedFracAddOp(Value);
 			        break;
 	        #endif
 	        #if defined(AltNum_EnableMixedPiFractional)
-		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+		        case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
 			        self.ConvertToNormType(RepType::ENum);
 			        self.BasicMixedPiFracAddOp(Value);
 			        break;
@@ -9031,17 +9031,17 @@ protected:
     			        if(self.DecimalHalf==0)//Result is EFractional
     			        {
                             int divisor = -Value.ExtraRep;
-                            if(Value.IntValue!=0)
-                                self.IntValue += Value.IntValue;
-                            if(self.IntValue==0)
+                            if(Value.IntHalf!=0)
+                                self.IntHalf += Value.IntHalf;
+                            if(self.IntHalf==0)
                             {
-                                self.IntValue = -Value.DecimalHalf;
+                                self.IntHalf = -Value.DecimalHalf;
                             }
                             else
                             {
-                                self.IntValue *= divisor;
-                                self.IntValue -= self.DecimalHalf;//adding as negative of the representation
-                                if(self.IntValue==0)//Become zero instead of fractional
+                                self.IntHalf *= divisor;
+                                self.IntHalf -= self.DecimalHalf;//adding as negative of the representation
+                                if(self.IntHalf==0)//Become zero instead of fractional
                                 {
                                     self.ExtraRep = InitialExtraRep; return;
                                 }
@@ -9055,17 +9055,17 @@ protected:
     	                    self.BasicMixedPiFracSubAddOp(Value);
     			        }
                 #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
-                        if(Value.IntValue!=0)
-                            self.IntHalfSubtraction(Value.IntValue);
-                        if(self.IntValue==0)
+                        if(Value.IntHalf!=0)
+                            self.IntHalfSubtraction(Value.IntHalf);
+                        if(self.IntHalf==0)
                         {
-                            self.IntValue = -Value.DecimalHalf;
+                            self.IntHalf = -Value.DecimalHalf;
                         }
                         else
                         {
-                            self.IntValue *= -Value.ExtraRep;
+                            self.IntHalf *= -Value.ExtraRep;
                             self.IntHalfSubtraction(self.DecimalHalf);//adding as negative of the representation
-                            if(self.IntValue==0&&self.DecimalHalf==0)//Become zero instead of fractional
+                            if(self.IntHalf==0&&self.DecimalHalf==0)//Become zero instead of fractional
                             {
                                 self.ExtraRep = InitialExtraRep; return;
                             }
@@ -9144,7 +9144,7 @@ protected:
 	        switch (RRep)
 	        {
         #if defined(AltNum_EnableMixedPiFractional)
-		        case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+		        case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
         #elif defined(AltNum_EnableMixedEFractional)
 		        case RepType::MixedE:
         #endif
@@ -9156,15 +9156,15 @@ protected:
 			        //            break;//Give result as EByDiv
 			        //#else
 			        int LeftSide;
-			        if (self.IntValue == AltDecBase::NegativeRep)
+			        if (self.IntHalf == AltDecBase::NegativeRep)
 				        LeftSide = self.DecimalHalf;
-			        else if (self.IntValue < 0)
-				        LeftSide = self.IntValue * self.ExtraRep + self.DecimalHalf;
-			        else if (self.IntValue == 0)
+			        else if (self.IntHalf < 0)
+				        LeftSide = self.IntHalf * self.ExtraRep + self.DecimalHalf;
+			        else if (self.IntHalf == 0)
 				        LeftSide = -self.DecimalHalf;
 			        else
-				        LeftSide = self.IntValue * self.ExtraRep - self.DecimalHalf;
-			        AltDecBase RightSide = AltDecBase(Value.IntValue == 0 ? -Value.DecimalHalf : (Value.IntValue * -Value.ExtraRep) - Value.DecimalHalf);
+				        LeftSide = self.IntHalf * self.ExtraRep - self.DecimalHalf;
+			        AltDecBase RightSide = AltDecBase(Value.IntHalf == 0 ? -Value.DecimalHalf : (Value.IntHalf * -Value.ExtraRep) - Value.DecimalHalf);
 			        #if defined(AltNum_EnableMixedPiFractional)
 			        RightSide *= AltDecBase::PiNum;
 			        #else
@@ -9174,7 +9174,7 @@ protected:
 			        if (self.ExtraRep == InvertedVDivisor)
 			        {
 				        RightSide.BasicAddOp(LeftSide);
-				        self.IntValue = RightSide.IntValue;
+				        self.IntHalf = RightSide.IntHalf;
 				        self.DecimalHalf = RightSide.DecimalHalf;
 			        }
 			        else
@@ -9183,7 +9183,7 @@ protected:
 				        LeftSide *= InvertedVDivisor;
 				        RightSide *= self.ExtraRep;
 				        RightSide.BasicAddOp(LeftSide);
-				        self.IntValue = RightSide.IntValue;
+				        self.IntHalf = RightSide.IntHalf;
 				        self.DecimalHalf = RightSide.DecimalHalf;
 			        }
 			        break;//Give result as NumByDiv
@@ -9205,25 +9205,25 @@ protected:
                 case RepType::MixedFrac:
 		        {
 			        AltDecBase LeftSide;
-			        if (self.IntValue == AltDecBase::NegativeRep)
+			        if (self.IntHalf == AltDecBase::NegativeRep)
 				        LeftSide = AltDecBase(self.DecimalHalf);
-			        else if (self.IntValue < 0)
-				        LeftSide = AltDecBase(self.IntValue * -self.ExtraRep + self.DecimalHalf);
-			        else if (self.IntValue == 0)
+			        else if (self.IntHalf < 0)
+				        LeftSide = AltDecBase(self.IntHalf * -self.ExtraRep + self.DecimalHalf);
+			        else if (self.IntHalf == 0)
 				        LeftSide = AltDecBase(-self.DecimalHalf);
 			        else
-				        LeftSide = AltDecBase(self.IntValue * -self.ExtraRep + -self.DecimalHalf);
+				        LeftSide = AltDecBase(self.IntHalf * -self.ExtraRep + -self.DecimalHalf);
 			        #if defined(AltNum_EnableMixedPiFractional)
 			        LeftSide *= AltDecBase::PiNum;
 			        #elif defined(AltNum_EnableMixedEFractional)
 			        LeftSide *= AltDecBase::ENum;
 			        #endif
-			        int RightSide = Value.IntValue == 0 ? -Value.DecimalHalf : Value.IntValue * Value.ExtraRep - Value.DecimalHalf;
+			        int RightSide = Value.IntHalf == 0 ? -Value.DecimalHalf : Value.IntHalf * Value.ExtraRep - Value.DecimalHalf;
 			        self.ExtraRep = -self.ExtraRep;
 			        if (Value.ExtraRep == self.ExtraRep)
 			        {
 				        LeftSide.BasicAddOp(RightSide);
-				        self.IntValue = LeftSide.IntValue;
+				        self.IntHalf = LeftSide.IntHalf;
 				        self.DecimalHalf = LeftSide.DecimalHalf;
 			        }
 			        else
@@ -9232,7 +9232,7 @@ protected:
 				        LeftSide *= Value.ExtraRep;
 				        RightSide *= self.ExtraRep;
 				        LeftSide.BasicAddOp(RightSide);
-				        self.IntValue = LeftSide.IntValue;
+				        self.IntHalf = LeftSide.IntHalf;
 				        self.DecimalHalf = LeftSide.DecimalHalf;
 			        }
 			        break;
@@ -9269,7 +9269,7 @@ protected:
 
         static void RepToRepAddition(RepType LRep, RepType RRep, AltDecBase& self, AltDecBase rValue)
         {
-            bool LeftIsNegative = self.IntValue<0;
+            bool LeftIsNegative = self.IntHalf<0;
 #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)//LRep Overrides
             switch (LRep)
             {
@@ -9283,7 +9283,7 @@ protected:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
             #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -9304,7 +9304,7 @@ protected:
                 if (LRep == RepType::ApproachingTop && LeftIsNegative == false)
                 {
                     self.DecimalHalf = 0;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9320,7 +9320,7 @@ protected:
                 if (LRep == RepType::ApproachingBottom && LeftIsNegative == false)
                 {
                     self.DecimalHalf = 0;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9339,7 +9339,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = InitialExtraRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9356,7 +9356,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = InitialExtraRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9376,7 +9376,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = IRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9394,7 +9394,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = IRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9413,7 +9413,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = IRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9430,7 +9430,7 @@ protected:
                 {
                     self.DecimalHalf = 0;
                     self.ExtraRep = IRep;
-                    self.IntValue += rValue.IntValue + 1;
+                    self.IntHalf += rValue.IntHalf + 1;
                     return;
                 }
                 else
@@ -9488,10 +9488,10 @@ protected:
                 #if defined(AltNum_EnableFractionals)
             case RepType::NumByDiv:
                 #if defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 #endif
                 #if defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 #endif
                 #if defined(AltNum_EnableDecimaledPiFractionals)
             case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
@@ -9529,7 +9529,7 @@ protected:
                 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
                 #elif defined(AltNum_EnableFractionals)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 #endif
                 #if defined(AltNum_EnableMixedIFractional)
             case RepType::MixedI:
@@ -9538,11 +9538,11 @@ protected:
                 break;
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 MixedFracAddOp(RRep, self, rValue);
                 break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
                 #endif
@@ -9575,7 +9575,7 @@ public:
         {
             if (IsZero())
             {
-                IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                IntHalf = rValue.IntHalf; DecimalHalf = rValue.DecimalHalf;
                 ExtraRep = rValue.ExtraRep; return *this;
             }
             else if (rValue.IsZero())
@@ -9585,7 +9585,7 @@ public:
                 return *this;
             if (rValue.DecimalHalf == InfinityRep)
             {
-                rValue.IntValue == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
+                rValue.IntHalf == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
                 return *this;
             }
     #endif
@@ -9610,155 +9610,155 @@ public:
 
     #if defined(AltNum_EnableApproaching)
                 case RepType::ApproachingBottom:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
-                        if (rValue.IntValue == 0)//-0.0..1 + 0.0..1 = 0
+                        if (rValue.IntHalf == 0)//-0.0..1 + 0.0..1 = 0
                             SetAsZero();
-                        else if (rValue.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
+                        else if (rValue.IntHalf == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue < 0)//-0.0..1 - 1.0..1 = -1.0..1
+                        else if (rValue.IntHalf < 0)//-0.0..1 - 1.0..1 = -1.0..1
                         {
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                         else//-0.0..1 + 5.0..1 = 5
                         {
                             DecimalHalf = 0;
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                     }
-                    if (IntValue == 0)
+                    if (IntHalf == 0)
                     {
-                        if (rValue.IntValue == 0)//0.0..1 + 0.0..1 = 0.0..1
+                        if (rValue.IntHalf == 0)//0.0..1 + 0.0..1 = 0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue == NegativeRep)//0.0..1 - 0.0..1 = 0
+                        else if (rValue.IntHalf == NegativeRep)//0.0..1 - 0.0..1 = 0
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//0.0..1 - 1.0..1 = -1
+                        else if (rValue.IntHalf < 0)//0.0..1 - 1.0..1 = -1
                         {
                             DecimalHalf = 0;
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                         else//0.0..1 + 5.0..1 = 5.0..1
                         {
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                     }
-                    else if (IntValue < 0)
+                    else if (IntHalf < 0)
                     {
-                        if (rValue.IntValue == 0)//-1.0..1 + 0.0..1  = -1
+                        if (rValue.IntHalf == 0)//-1.0..1 + 0.0..1  = -1
                             DecimalHalf = 0;
-                        else if (rValue.IntValue == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
+                        else if (rValue.IntHalf == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
                         {/*Do Nothing*/
                         }
-                        else if (IntValue == -rValue.IntValue)//-1.01 + 1.01
+                        else if (IntHalf == -rValue.IntHalf)//-1.01 + 1.01
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-1.0..1 - 2.0..1
+                        else if (rValue.IntHalf < 0)//-1.0..1 - 2.0..1
                         {
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                         else//-1.0..1 + 2.0..1 = 1
                         {
                             DecimalHalf = 0;
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                     }
                     else
                     {
-                        if (rValue.IntValue == 0)//1.0..1 + 0.0..1
+                        if (rValue.IntHalf == 0)//1.0..1 + 0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue == NegativeRep)//1.0..1 - 0.0..1
+                        else if (rValue.IntHalf == NegativeRep)//1.0..1 - 0.0..1
                             DecimalHalf = 0;
-                        else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+                        else if (IntHalf == -rValue.IntHalf)//1.0..1 - 1.0..1
                             SetAsZero();
-                        else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+                        else if (rValue.IntHalf < 0)// 1.0..1  - 2.0..1
                         {
                             DecimalHalf = 0;
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                         else//1.0..1 + 1.0..1
                         {
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                     }
                     break;
                 case RepType::ApproachingTop:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
-                        if (rValue.IntValue == 0)//-0.9..9 + 0.9..9 = 0
+                        if (rValue.IntHalf == 0)//-0.9..9 + 0.9..9 = 0
                             SetAsZero();
-                        else if (rValue.IntValue == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
-                            IntValue = -1;
-                        else if (rValue.IntValue < 0)//-0.9..9 - 1.9..9 = -2.9..8
+                        else if (rValue.IntHalf == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
+                            IntHalf = -1;
+                        else if (rValue.IntHalf < 0)//-0.9..9 - 1.9..9 = -2.9..8
                         {
-                            IntValue = rValue.IntValue - 1;
+                            IntHalf = rValue.IntHalf - 1;
                         }
                         else//-0.9..9 + 5.9..9 = 5
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                     }
-                    if (IntValue == 0)
+                    if (IntHalf == 0)
                     {
-                        if (rValue.IntValue == 0)//0.9..9 + 0.9..9 = 1.9..8
-                            IntValue = 1;
-                        else if (rValue.IntValue == NegativeRep)//0.9..9 - 0.9..9 = 0
+                        if (rValue.IntHalf == 0)//0.9..9 + 0.9..9 = 1.9..8
+                            IntHalf = 1;
+                        else if (rValue.IntHalf == NegativeRep)//0.9..9 - 0.9..9 = 0
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//0.9..9 - 1.9..9 = -1
+                        else if (rValue.IntHalf < 0)//0.9..9 - 1.9..9 = -1
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue = rValue.IntValue;
+                            IntHalf = rValue.IntHalf;
                         }
                         else//0.9..9 + 5.9..9 = 6.9..8
                         {
-                            IntValue = rValue.IntValue + 1;
+                            IntHalf = rValue.IntHalf + 1;
                         }
                     }
-                    else if (IntValue < 0)
+                    else if (IntHalf < 0)
                     {
-                        if (rValue.IntValue == 0)//-1.9..9 + 0.9..9  = -1
+                        if (rValue.IntHalf == 0)//-1.9..9 + 0.9..9  = -1
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (rValue.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
-                            IntValue += rValue.IntValue;
-                        else if (IntValue == -rValue.IntValue)//-1.9..9 + 1.9..9
+                        else if (rValue.IntHalf == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
+                            IntHalf += rValue.IntHalf;
+                        else if (IntHalf == -rValue.IntHalf)//-1.9..9 + 1.9..9
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-1.9..9 - 2.9..9
+                        else if (rValue.IntHalf < 0)//-1.9..9 - 2.9..9
                         {
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                         else//-1.9..9 + 2.9..9
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                     }
                     else
                     {
-                        if (rValue.IntValue == 0)//1.9..9 + 0.9..9 = 2.9..8
+                        if (rValue.IntHalf == 0)//1.9..9 + 0.9..9 = 2.9..8
                         {
-                            if (IntValue == -1)
-                                IntValue = NegativeRep;
+                            if (IntHalf == -1)
+                                IntHalf = NegativeRep;
                             else
-                                ++IntValue;
+                                ++IntHalf;
                         }
-                        else if (rValue.IntValue == NegativeRep)//1.9..9 - 0.9..9
+                        else if (rValue.IntHalf == NegativeRep)//1.9..9 - 0.9..9
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
+                        else if (IntHalf == -rValue.IntHalf)//1.9..9 - 1.9..9
                             SetAsZero();
-                        else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
+                        else if (rValue.IntHalf < 0)// 1.9..9  - 2.9..9
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue += rValue.IntValue;
+                            IntHalf += rValue.IntHalf;
                         }
                         else//1.9..9 + 1.9..9 = 3.9..8
                         {
-                            IntValue += rValue.IntValue + 1;
+                            IntHalf += rValue.IntHalf + 1;
                         }
                     }
                     break;
@@ -9785,18 +9785,18 @@ public:
     #endif
     #if defined(AltNum_UsingAltFractional)
         #if defined(AltNum_EnablePiFractional)
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
         #endif
         #if defined(AltNum_EnableEFractional)
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
         #endif
         #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*e Representation
         #endif
                     if (DecimalHalf == rValue.DecimalHalf)
                     {
 
-                        *this += rValue.IntValue;
+                        *this += rValue.IntHalf;
                     }
                     else
                     {
@@ -9834,43 +9834,43 @@ public:
     #if defined(AltNum_EnableMixedFractional)
                     //Ignoring the fact that mixed fraction could be improperly formatted for spend
                     //because should be corrected after every operation
-                case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                     if (ExtraRep == rValue.ExtraRep)
                     {
-                        IntValue += rValue.IntValue;
+                        IntHalf += rValue.IntHalf;
                         DecimalHalf += rValue.DecimalHalf;
                         if (DecimalHalf<0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                     }
                     else
                     {
-                        IntValue *= rValue.ExtraRep;
-                        IntValue += rValue.IntValue * ExtraRep;
+                        IntHalf *= rValue.ExtraRep;
+                        IntHalf += rValue.IntHalf * ExtraRep;
                         DecimalHalf += rValue.DecimalHalf * ExtraRep;
                         if (DecimalHalf<0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                         ExtraRep *= rValue.ExtraRep;
                     }
                     break;
         #if defined(AltNum_EnableAlternativeMixedFrac)
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+                case RepType::MixedPi://IntHalf +- (DecimalHalf*-1)/-ExtraRep
             #elif defined(AltNum_EnableMixedEFractional)
                 case RepType::MixedE:
             #elif defined(AltNum_EnableMixedIFractional)
@@ -9878,33 +9878,33 @@ public:
             #endif
                     if (ExtraRep == rValue.ExtraRep)
                     {
-                        IntValue += rValue.IntValue;
+                        IntHalf += rValue.IntHalf;
                         DecimalHalf += rValue.DecimalHalf;
                         if (DecimalHalf>0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                     }
                     else
                     {
-                        IntValue *= -rValue.ExtraRep;
-                        IntValue += rValue.IntValue * -ExtraRep;
+                        IntHalf *= -rValue.ExtraRep;
+                        IntHalf += rValue.IntHalf * -ExtraRep;
                         DecimalHalf += rValue.DecimalHalf * -ExtraRep;
                         if (DecimalHalf>0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                         ExtraRep *= -rValue.ExtraRep;
                     }
@@ -9917,16 +9917,16 @@ public:
                     break;
         #if defined(AltNum_EnableWithinMinMaxRange)
                 case RepType::WithinMinMaxRange:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
                         //Do nothing?
                     }
-                    else if (rValue.IntValue == NegativeRep)
+                    else if (rValue.IntHalf == NegativeRep)
                     {
-                        IntValue = NegativeRep;
+                        IntHalf = NegativeRep;
                     }
                     else
-                        IntValue += rValue.IntValue;
+                        IntHalf += rValue.IntHalf;
                     if (DecimalHalf == InfinityRep)
                     {
                         //Do Nothing?
@@ -10029,11 +10029,11 @@ protected:
                 self.BasicSubOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 self.BasicMixedFracSubOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
                 #endif
@@ -10062,12 +10062,12 @@ protected:
                 #if defined(AltNum_EnablePiPowers)//Combine PiPower in certain cases
                 #endif
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 self.ConvertToNormType(RepType::PiNum);
                 self.BasicMixedFracSubOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
                 #endif
@@ -10080,17 +10080,17 @@ protected:
                 if (self.DecimalHalf == 0)//Result is PiFractional
                 {
                     int divisor = -Value.ExtraRep;
-                    if (Value.IntValue != 0)
-                        self.IntValue -= Value.IntValue;
-                    if (self.IntValue == 0)
+                    if (Value.IntHalf != 0)
+                        self.IntHalf -= Value.IntHalf;
+                    if (self.IntHalf == 0)
                     {
-                        self.IntValue = Value.DecimalHalf;
+                        self.IntHalf = Value.DecimalHalf;
                     }
                     else
                     {
-                        self.IntValue *= divisor;
-                        self.IntValue += self.DecimalHalf;//adding as negative of the representation
-                        if (self.IntValue == 0)//Become zero instead of fractional
+                        self.IntHalf *= divisor;
+                        self.IntHalf += self.DecimalHalf;//adding as negative of the representation
+                        if (self.IntHalf == 0)//Become zero instead of fractional
                         {
                             self.ExtraRep = InitialExtraRep; return;
                         }
@@ -10104,17 +10104,17 @@ protected:
                     self.BasicMixedPiFracSubOp(Value);
                 }
                 #elif defined(AltNum_EnableDecimaledPiFractionals)//Result is DecimaledPiFractional
-                if (Value.IntValue != 0)
-                    self.IntHalfSubtraction(Value.IntValue);
-                if (self.IntValue == 0)
+                if (Value.IntHalf != 0)
+                    self.IntHalfSubtraction(Value.IntHalf);
+                if (self.IntHalf == 0)
                 {
-                    self.IntValue = Value.DecimalHalf;
+                    self.IntHalf = Value.DecimalHalf;
                 }
                 else
                 {
-                    self.IntValue *= -Value.ExtraRep;
+                    self.IntHalf *= -Value.ExtraRep;
                     self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
-                    if (self.IntValue == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
+                    if (self.IntHalf == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
                     {
                         self.ExtraRep = InitialExtraRep; return;
                     }
@@ -10139,12 +10139,12 @@ protected:
             switch (RRep)
             {
                 #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                 self.ConvertENumToNum();
                 self.BasicMixedFracSubOp(Value);
                 break;
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
                 #endif
@@ -10157,17 +10157,17 @@ protected:
                 if (self.DecimalHalf == 0)//Result is EFractional
                 {
                     int divisor = -Value.ExtraRep;
-                    if (Value.IntValue != 0)
-                        self.IntValue -= Value.IntValue;
-                    if (self.IntValue == 0)
+                    if (Value.IntHalf != 0)
+                        self.IntHalf -= Value.IntHalf;
+                    if (self.IntHalf == 0)
                     {
-                        self.IntValue = Value.DecimalHalf;
+                        self.IntHalf = Value.DecimalHalf;
                     }
                     else
                     {
-                        self.IntValue *= divisor;
-                        self.IntValue += self.DecimalHalf;//adding as negative of the representation
-                        if (self.IntValue == 0)//Become zero instead of fractional
+                        self.IntHalf *= divisor;
+                        self.IntHalf += self.DecimalHalf;//adding as negative of the representation
+                        if (self.IntHalf == 0)//Become zero instead of fractional
                         {
                             self.ExtraRep = InitialExtraRep; return;
                         }
@@ -10181,17 +10181,17 @@ protected:
                     self.BasicMixedEFracSubOp(Value);
                 }
                 #elif defined(AltNum_EnableDecimaledEFractionals)//Result is DecimaledEFractional
-                if (Value.IntValue != 0)
-                    self.IntHalfSubtraction(Value.IntValue);
-                if (self.IntValue == 0)
+                if (Value.IntHalf != 0)
+                    self.IntHalfSubtraction(Value.IntHalf);
+                if (self.IntHalf == 0)
                 {
-                    self.IntValue = Value.DecimalHalf;
+                    self.IntHalf = Value.DecimalHalf;
                 }
                 else
                 {
-                    self.IntValue *= -Value.ExtraRep;
+                    self.IntHalf *= -Value.ExtraRep;
                     self.IntHalfAddition(self.DecimalHalf);//adding as negative of the representation
-                    if (self.IntValue == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
+                    if (self.IntHalf == 0 && self.DecimalHalf == 0)//Become zero instead of fractional
                     {
                         self.ExtraRep = InitialExtraRep; return;
                     }
@@ -10240,7 +10240,7 @@ protected:
             switch (RRep)
             {
                 #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+            case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
                 #elif defined(AltNum_EnableMixedEFractional)
             case RepType::MixedE:
                 #endif
@@ -10252,15 +10252,15 @@ protected:
                 //            break;//Give result as EByDiv
                 //#else
                 AltDecBase LeftSide;
-                if (self.IntValue == AltDecBase::NegativeRep)
+                if (self.IntHalf == AltDecBase::NegativeRep)
                     LeftSide = AltDecBase(self.DecimalHalf);
-                else if (self.IntValue < 0)
-                    LeftSide = AltDecBase(self.IntValue * self.ExtraRep + self.DecimalHalf);
-                else if (self.IntValue == 0)
+                else if (self.IntHalf < 0)
+                    LeftSide = AltDecBase(self.IntHalf * self.ExtraRep + self.DecimalHalf);
+                else if (self.IntHalf == 0)
                     LeftSide = AltDecBase(-self.DecimalHalf);
                 else
-                    LeftSide = AltDecBase(self.IntValue * self.ExtraRep - self.DecimalHalf);
-                AltDecBase RightSide = AltDecBase(Value.IntValue == 0 ? -Value.DecimalHalf : (Value.IntValue * -Value.ExtraRep) - Value.DecimalHalf);
+                    LeftSide = AltDecBase(self.IntHalf * self.ExtraRep - self.DecimalHalf);
+                AltDecBase RightSide = AltDecBase(Value.IntHalf == 0 ? -Value.DecimalHalf : (Value.IntHalf * -Value.ExtraRep) - Value.DecimalHalf);
                 #if defined(AltNum_EnableMixedPiFractional)
                 RightSide *= AltDecBase::PiNum;
                 #else
@@ -10270,7 +10270,7 @@ protected:
                 if (self.ExtraRep == InvertedVDivisor)
                 {
                     LeftSide.BasicSubOp(RightSide);
-                    self.IntValue = LeftSide.IntValue;
+                    self.IntHalf = LeftSide.IntHalf;
                     self.DecimalHalf = LeftSide.DecimalHalf;
                 }
                 else
@@ -10279,7 +10279,7 @@ protected:
                     LeftSide *= InvertedVDivisor;
                     RightSide *= self.ExtraRep;
                     LeftSide.BasicSubOp(RightSide);
-                    self.IntValue = LeftSide.IntValue;
+                    self.IntHalf = LeftSide.IntHalf;
                     self.DecimalHalf = LeftSide.DecimalHalf;
                 }
                 break;//Give result as NumByDiv
@@ -10303,26 +10303,26 @@ protected:
             {
                 //Left side Numerator
                 AltDecBase LeftSide;
-                if (self.IntValue == AltDecBase::NegativeRep)
+                if (self.IntHalf == AltDecBase::NegativeRep)
                     LeftSide = AltDecBase(self.DecimalHalf);
-                else if (self.IntValue < 0)
-                    LeftSide = AltDecBase(self.IntValue * -self.ExtraRep + self.DecimalHalf);
-                else if (self.IntValue == 0)
+                else if (self.IntHalf < 0)
+                    LeftSide = AltDecBase(self.IntHalf * -self.ExtraRep + self.DecimalHalf);
+                else if (self.IntHalf == 0)
                     LeftSide = AltDecBase(-self.DecimalHalf);
                 else
-                    LeftSide = AltDecBase(self.IntValue * -self.ExtraRep + -self.DecimalHalf);
+                    LeftSide = AltDecBase(self.IntHalf * -self.ExtraRep + -self.DecimalHalf);
             #if defined(AltNum_EnableMixedPiFractional)
                 LeftSide *= AltDecBase::PiNum;
             #elif defined(AltNum_EnableMixedEFractional)
                 LeftSide *= AltDecBase::ENum;
             #endif
                 //Right side Numerator
-                int RightSide = Value.IntValue == 0 ? -Value.DecimalHalf : Value.IntValue * Value.ExtraRep - Value.DecimalHalf;
+                int RightSide = Value.IntHalf == 0 ? -Value.DecimalHalf : Value.IntHalf * Value.ExtraRep - Value.DecimalHalf;
                 self.ExtraRep = -self.ExtraRep;
                 if (Value.ExtraRep == self.ExtraRep)
                 {
                     LeftSide.BasicSubOp(RightSide);
-                    self.IntValue = LeftSide.IntValue;
+                    self.IntHalf = LeftSide.IntHalf;
                     self.DecimalHalf = LeftSide.DecimalHalf;
                 }
                 else
@@ -10331,7 +10331,7 @@ protected:
                     LeftSide *= Value.ExtraRep;
                     RightSide *= self.ExtraRep;
                     LeftSide.BasicSubOp(RightSide);
-                    self.IntValue = LeftSide.IntValue;
+                    self.IntHalf = LeftSide.IntHalf;
                     self.DecimalHalf = LeftSide.DecimalHalf;
                 }
                 break;
@@ -10403,7 +10403,7 @@ protected:
 
         static void RepToRepSubtraction(RepType LRep, RepType RRep, AltDecBase& self, AltDecBase Value)
         {
-        	bool LeftIsNegative = self.IntValue<0;
+        	bool LeftIsNegative = self.IntHalf<0;
         #if defined(AltNum_EnableUndefinedButInRange)||defined(AltNum_EnableIRep)//LRep Overrides
             switch(LRep)
             {
@@ -10418,7 +10418,7 @@ protected:
         			#if defined(AltNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
         			#else
-        		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+        		case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
         			#endif
         		#endif
                 #if defined(AltNum_EnableMixedIFractional)
@@ -10440,10 +10440,10 @@ protected:
         			if(LRep==RepType::ApproachingTop&&LeftIsNegative)
         			{
         				self.DecimalHalf = 0;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10459,10 +10459,10 @@ protected:
         			if(LRep==RepType::ApproachingBottom&&LeftIsNegative)
         			{
         				self.DecimalHalf = 0;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10481,10 +10481,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = InitialExtraRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10501,10 +10501,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = InitialExtraRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10524,10 +10524,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = IRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10545,10 +10545,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = IRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
                         return;
         			}
         			else
@@ -10568,10 +10568,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = IRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10588,10 +10588,10 @@ protected:
         			{
         				self.DecimalHalf = 0;
         				self.ExtraRep = IRep;
-                        if(self.IntValue==NegativeRep)
-                            self.IntValue = -1 - Value.GetIntegerPartition();
+                        if(self.IntHalf==NegativeRep)
+                            self.IntHalf = -1 - Value.GetIntegerPartition();
                         else
-                            self.IntValue -= Value.GetIntegerPartition() + 1;
+                            self.IntHalf -= Value.GetIntegerPartition() + 1;
         				return;
         			}
         			else
@@ -10649,10 +10649,10 @@ protected:
         #if defined(AltNum_EnableFractionals)
         		case RepType::NumByDiv:
             #if defined(AltNum_EnablePiFractional)
-        		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+        		case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             #endif
             #if defined(AltNum_EnableEFractional)
-        		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+        		case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
             #endif
             #if defined(AltNum_EnableDecimaledPiFractionals)
         		case RepType::PiNumByDiv://  (Value/(-ExtraRep))*Pi Representation
@@ -10689,7 +10689,7 @@ protected:
             #if defined(AltNum_EnableDecimaledIFractionals)
         		case RepType::INumByDiv://  (Value/(-ExtraRep))*i Representation
             #elif defined(AltNum_EnableFractionals)
-        		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+        		case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
         	#if defined(AltNum_EnableMixedIFractional)
                 case RepType::MixedI:
@@ -10698,11 +10698,11 @@ protected:
                     break;
         #endif
         #if defined(AltNum_EnableMixedFractional)
-        		case RepType::MixedFrac://IntValue +- (-DecimalHalf/ExtraRep)
+        		case RepType::MixedFrac://IntHalf +- (-DecimalHalf/ExtraRep)
                     MixedFracRtRSubtraction(RRep, self, Value);
                     break;
             #if defined(AltNum_EnableMixedPiFractional)
-        		case RepType::MixedPi://(IntValue +- (-DecimalHalf/-ExtraRep))*Pi
+        		case RepType::MixedPi://(IntHalf +- (-DecimalHalf/-ExtraRep))*Pi
             #elif defined(AltNum_EnableMixedEFractional)
         		case RepType::MixedE:
             #endif
@@ -10735,7 +10735,7 @@ public:
         {
             if (IsZero())
             {
-                IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                IntHalf = rValue.IntHalf; DecimalHalf = rValue.DecimalHalf;
                 ExtraRep = rValue.ExtraRep; return *this;
             }
             else if (rValue.IsZero())
@@ -10745,7 +10745,7 @@ public:
                 return *this;
             if (rValue.DecimalHalf == InfinityRep)
             {
-                rValue.IntValue == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
+                rValue.IntHalf == 1 ? SetAsInfinity() : SetAsNegativeInfinity();
                 return *this;
             }
     #endif
@@ -10770,144 +10770,144 @@ public:
 
     #if defined(AltNum_EnableApproachingDivided)
                 case RepType::ApproachingBottom:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
-                        if (rValue.IntValue == 0)//-0.0..1 - 0.0..1
+                        if (rValue.IntHalf == 0)//-0.0..1 - 0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue == NegativeRep)//-0.0..1 + 0.0..1 
+                        else if (rValue.IntHalf == NegativeRep)//-0.0..1 + 0.0..1 
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-0.0..1 + 1.0..1
+                        else if (rValue.IntHalf < 0)//-0.0..1 + 1.0..1
                         {
                             DecimalHalf = 0;
-                            IntValue = -rValue.IntValue;
+                            IntHalf = -rValue.IntHalf;
                         }
                         else//-0.0..1 - 5.0..1
                         {
-                            IntValue = -rValue.IntValue;
+                            IntHalf = -rValue.IntHalf;
                         }
                     }
-                    if (IntValue == 0)
+                    if (IntHalf == 0)
                     {
-                        if (rValue.IntValue == 0)//0.0..1 - 0.0..1 = 0.0..1
+                        if (rValue.IntHalf == 0)//0.0..1 - 0.0..1 = 0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue == NegativeRep)//0.0..1 + 0.0..1 = 0
+                        else if (rValue.IntHalf == NegativeRep)//0.0..1 + 0.0..1 = 0
 
-                        else if (rValue.IntValue < 0)//0.0..1 + 1.0..1
+                        else if (rValue.IntHalf < 0)//0.0..1 + 1.0..1
                         {
-                            IntValue = -rValue.IntValue;
+                            IntHalf = -rValue.IntHalf;
                         }
                         else//0.0..1 - 5.0..1
                         {
                             DecimalHalf = 0;
-                            IntValue = -rValue.IntValue;
+                            IntHalf = -rValue.IntHalf;
                         }
                     }
-                    else if (IntValue < 0)
+                    else if (IntHalf < 0)
                     {
-                        if (rValue.IntValue == 0)//-1.0..1 - 0.0..1  = -1
+                        if (rValue.IntHalf == 0)//-1.0..1 - 0.0..1  = -1
                         {/*Do Nothing*/
                         }
-                        else if (rValue.IntValue == NegativeRep)//-1.0..1 + 0.0..1
+                        else if (rValue.IntHalf == NegativeRep)//-1.0..1 + 0.0..1
                             DecimalHalf = 0;
-                        else if (IntValue == rValue.IntValue)//-1.01 - 1.01
+                        else if (IntHalf == rValue.IntHalf)//-1.01 - 1.01
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-1.0..1 + 2.0..1
+                        else if (rValue.IntHalf < 0)//-1.0..1 + 2.0..1
                         {
                             DecimalHalf = 0;
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                         else//-1.0..1 - 2.0..1 = 1
                         {
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                     }
                     else
                     {
-                        if (rValue.IntValue == 0)//1.0..1 - 0.0..1
+                        if (rValue.IntHalf == 0)//1.0..1 - 0.0..1
                             DecimalHalf = 0;
-                        else if (rValue.IntValue == NegativeRep)//1.0..1 + 0.0..1
+                        else if (rValue.IntHalf == NegativeRep)//1.0..1 + 0.0..1
                         {/*Do Nothing*/
                         }
-                        else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+                        else if (IntHalf == -rValue.IntHalf)//1.0..1 - 1.0..1
                             SetAsZero();
-                        else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+                        else if (rValue.IntHalf < 0)// 1.0..1  - 2.0..1
                         {
                             DecimalHalf = 0;
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                         else//1.0..1 - 1.0..1
                         {
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                     }
                     break;
                 case RepType::ApproachingTop:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
-                        if (rValue.IntValue == 0)//-0.9..9 - 0.9..9 = 0
-                            IntValue = -1;
-                        else if (rValue.IntValue == NegativeRep)//-0.9..9 + 0.9..9
+                        if (rValue.IntHalf == 0)//-0.9..9 - 0.9..9 = 0
+                            IntHalf = -1;
+                        else if (rValue.IntHalf == NegativeRep)//-0.9..9 + 0.9..9
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-0.9..9 + 1.9..9
+                        else if (rValue.IntHalf < 0)//-0.9..9 + 1.9..9
 
                         else//-0.9..9 - 5.9..9 = -6.9..8
-                            IntValue = -rValue.IntValue - 1;
+                            IntHalf = -rValue.IntHalf - 1;
                     }
-                    if (IntValue == 0)
+                    if (IntHalf == 0)
                     {
-                        if (rValue.IntValue == 0)//0.9..9 - 0.9..9
+                        if (rValue.IntHalf == 0)//0.9..9 - 0.9..9
                             SetAsZero();
-                        else if (rValue.IntValue == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
-                            IntValue = 1;
-                        else if (rValue.IntValue < 0)//0.9..9 + 1.9..9 = 1.9..8
-                            IntValue = -rValue.IntValue;
+                        else if (rValue.IntHalf == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
+                            IntHalf = 1;
+                        else if (rValue.IntHalf < 0)//0.9..9 + 1.9..9 = 1.9..8
+                            IntHalf = -rValue.IntHalf;
                         else//0.9..9 - 5.9..9 = -5
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue = -rValue.IntValue;
+                            IntHalf = -rValue.IntHalf;
                         }
                     }
-                    else if (IntValue < 0)
+                    else if (IntHalf < 0)
                     {
-                        if (rValue.IntValue == 0)//-1.9..9 - 0.9..9  = -2.9..8
-                            --IntValue;
-                        else if (rValue.IntValue == NegativeRep)//-1.9..9  + 0.9..9 = -1
+                        if (rValue.IntHalf == 0)//-1.9..9 - 0.9..9  = -2.9..8
+                            --IntHalf;
+                        else if (rValue.IntHalf == NegativeRep)//-1.9..9  + 0.9..9 = -1
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (IntValue == rValue.IntValue)//-1.01 + 1.01
+                        else if (IntHalf == rValue.IntHalf)//-1.01 + 1.01
                             SetAsZero();
-                        else if (rValue.IntValue < 0)//-1.9..9 + 2.9..9
+                        else if (rValue.IntHalf < 0)//-1.9..9 + 2.9..9
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                         else//-1.9..9 - 2.9..9
                         {
-                            IntValue -= rValue.IntValue + 1;
+                            IntHalf -= rValue.IntHalf + 1;
                         }
                     }
                     else
                     {
-                        if (rValue.IntValue == 0)//1.9..9 - 0.9..9 = 2.9..8
+                        if (rValue.IntHalf == 0)//1.9..9 - 0.9..9 = 2.9..8
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
                         }
-                        else if (rValue.IntValue == NegativeRep)//1.9..9 + 0.9..9
-                            ++IntValue;
-                        else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
+                        else if (rValue.IntHalf == NegativeRep)//1.9..9 + 0.9..9
+                            ++IntHalf;
+                        else if (IntHalf == -rValue.IntHalf)//1.9..9 - 1.9..9
                             SetAsZero();
-                        else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
+                        else if (rValue.IntHalf < 0)// 1.9..9  - 2.9..9
                         {
                             DecimalHalf = 0;
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                         else//1.9..9 - 2.9..9
                         {
                             DecimalHalf = 0; ExtraRep = InitialExtraRep;
-                            IntValue -= rValue.IntValue;
+                            IntHalf -= rValue.IntHalf;
                         }
                     }
                     break;
@@ -10931,17 +10931,17 @@ public:
     #endif
     #if defined(AltNum_UsingAltFractional)
         #if defined(AltNum_EnablePiFractional)
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
         #endif
         #if defined(AltNum_EnableEFractional)
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
         #endif
         #if defined(AltNum_EnableIFractional)
-                case RepType::IFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*e Representation
         #endif
                     if (DecimalHalf == rValue.DecimalHalf)
                     {
-                        *this -= rValue.IntValue;
+                        *this -= rValue.IntHalf;
                     }
                     else
                     {
@@ -10979,43 +10979,43 @@ public:
     #if defined(AltNum_EnableMixedFractional)
                     //Ignoring the fact that mixed fraction could be improperly formatted for spend
                     //because should be corrected after every operation
-                case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
                     if (ExtraRep == rValue.ExtraRep)
                     {
-                        IntValue -= rValue.IntValue;
+                        IntHalf -= rValue.IntHalf;
                         DecimalHalf -= rValue.DecimalHalf;
                         if (DecimalHalf < 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                     }
                     else
                     {
-                        IntValue *= rValue.ExtraRep;
-                        IntValue -= rValue.IntValue * ExtraRep;
+                        IntHalf *= rValue.ExtraRep;
+                        IntHalf -= rValue.IntHalf * ExtraRep;
                         DecimalHalf -= rValue.DecimalHalf * ExtraRep;
                         if (DecimalHalf < 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                         ExtraRep *= rValue.ExtraRep;
                     }
                     break;
         #if defined(AltNum_EnableAlternativeMixedFrac)
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (DecimalHalf*-1)/-ExtraRep
+                case RepType::MixedPi://IntHalf +- (DecimalHalf*-1)/-ExtraRep
             #elif defined(AltNum_EnableMixedEFractional)
                 case RepType::MixedE:
             #elif defined(AltNum_EnableMixedIFractional)
@@ -11023,33 +11023,33 @@ public:
             #endif
                     if (ExtraRep == rValue.ExtraRep)
                     {
-                        IntValue -= rValue.IntValue;
+                        IntHalf -= rValue.IntHalf;
                         DecimalHalf -= rValue.DecimalHalf;
                         if (DecimalHalf > 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                     }
                     else
                     {
-                        IntValue *= -rValue.ExtraRep;
-                        IntValue -= rValue.IntValue * -ExtraRep;
+                        IntHalf *= -rValue.ExtraRep;
+                        IntHalf -= rValue.IntHalf * -ExtraRep;
                         DecimalHalf -= rValue.DecimalHalf * -ExtraRep;
                         if (DecimalHalf > 0)//Subtract the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            --IntValue;
+                            --IntHalf;
                         }
                         else//Add the overflow
                         {
                             DecimalHalf += ExtraRep;
-                            ++IntValue;
+                            ++IntHalf;
                         }
                         ExtraRep *= -rValue.ExtraRep;
                     }
@@ -11062,12 +11062,12 @@ public:
                     break;
         #if defined(AltNum_EnableWithinMinMaxRange)
                 case RepType::WithinMinMaxRange:
-                    if (IntValue == NegativeRep)
+                    if (IntHalf == NegativeRep)
                     {
-                        if (rValue.IntValue == NegativeRep)
-                            IntValue = 0;
+                        if (rValue.IntHalf == NegativeRep)
+                            IntHalf = 0;
                     }
-                    else if (rValue.IntValue == NegativeRep)
+                    else if (rValue.IntHalf == NegativeRep)
                     {//+positive infinity to left side
             #if defined(AltNum_EnableNaN)
                         DecimalHalf = UndefinedRep;
@@ -11076,7 +11076,7 @@ public:
             #endif
                     }
                     else
-                        IntValue -= rValue.IntValue;
+                        IntHalf -= rValue.IntHalf;
                     if (DecimalHalf == InfinityRep)
                     {
                         if (rValue.DecimalHalf == InfinityRep)
@@ -11397,7 +11397,7 @@ public:
         AltDecBase BasicIntRemOp(IntType rValue)
         {
             if (DecimalHalf == 0)
-                IntValue %= rValue;
+                IntHalf %= rValue;
             else
             {
                 if (rValue < 0)
@@ -11411,7 +11411,7 @@ public:
                 {
                     divRes = C / DecimalOverflowX;
                     C = C - DecimalOverflowX * divRes;
-                    IntValue = divRes;
+                    IntHalf = divRes;
                     DecimalHalf = C;
                 }
             }
@@ -11477,7 +11477,7 @@ public:
             {
                 if (DecimalHalf == 0)
                 {
-                    IntValue %= rValue.IntValue;
+                    IntHalf %= rValue.IntHalf;
                 }
                 else
                 {
@@ -11485,13 +11485,13 @@ public:
                     __int64 divRes; __int64 C;
                     if (rValue < 0)
                     {
-                        divRes = SRep / -rValue.IntValue;
-                        C = SRep - (-rValue.IntValue * divRes);
+                        divRes = SRep / -rValue.IntHalf;
+                        C = SRep - (-rValue.IntHalf * divRes);
                     }
                     else
                     {
-                        divRes = SRep / rValue.IntValue;
-                        C = SRep - (rValue.IntValue * divRes);
+                        divRes = SRep / rValue.IntHalf;
+                        C = SRep - (rValue.IntHalf * divRes);
                     }
                     if (C == 0)
                         SetAsZero();
@@ -11499,7 +11499,7 @@ public:
                     {
                         divRes = C / DecimalOverflowX;
                         C = C - DecimalOverflowX * divRes;
-                        IntValue = divRes;
+                        IntHalf = divRes;
                         DecimalHalf = C;
                     }
                 }
@@ -11508,7 +11508,7 @@ public:
             {
                 AltDecBase divRes = *this / rValue;
                 AltDecBase C = *this - rValue * divRes;
-                IntValue = C.IntValue; DecimalHalf = C.DecimalHalf;
+                IntHalf = C.IntHalf; DecimalHalf = C.DecimalHalf;
                 ExtraRep = C.ExtraRep;
             }
         }
@@ -11619,19 +11619,19 @@ public:
         template<IntegerType IntType=int>
         friend AltDecBase operator^(AltDecBase self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf ^= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf ^= Value;
                 }
                 else
                 {
-                    self.IntValue ^= Value; self.DecimalHalf ^= Value;
+                    self.IntHalf ^= Value; self.DecimalHalf ^= Value;
                 }
             }
             return self;
@@ -11646,19 +11646,19 @@ public:
         template<IntegerType IntType=int>
         friend AltDecBase operator|(AltDecBase self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf |= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf |= Value;
                 }
                 else
                 {
-                    self.IntValue |= Value; self.DecimalHalf |= Value;
+                    self.IntHalf |= Value; self.DecimalHalf |= Value;
                 }
             }
             return self;
@@ -11673,10 +11673,10 @@ public:
         /// <returns>AltDecBase&</returns>
         AltDecBase& Abs()
         {
-            if (IntValue == NegativeRep)
-                IntValue = 0;
-            else if (IntValue < 0)
-                IntValue *= -1;
+            if (IntHalf == NegativeRep)
+                IntHalf = 0;
+            else if (IntHalf < 0)
+                IntHalf *= -1;
             return *this;
         }
 
@@ -11706,8 +11706,8 @@ public:
                 break;
             case RepType::ApproachingBottom:
             case RepType::ApproachingTop:
-                if (IntValue == NegativeRep)
-                    IntValue = 0;
+                if (IntHalf == NegativeRep)
+                    IntHalf = 0;
                 ExtraRep = InitialExtraRep;
                 return *this;
                 break;
@@ -11744,7 +11744,7 @@ public:
             case 1: Value.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
             default: Value.DecimalHalf = 0; break;
             }
-            if (Value.IntValue == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
+            if (Value.IntHalf == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
             return Value;
         }
         
@@ -11764,10 +11764,10 @@ public:
                 break;
             case RepType::ApproachingBottom:
             case RepType::ApproachingTop:
-                if (IntValue == NegativeRep)
-                    IntValue = 0;
+                if (IntHalf == NegativeRep)
+                    IntHalf = 0;
                 else
-                    ++IntValue;
+                    ++IntHalf;
                 ExtraRep = InitialExtraRep;
                 return *this;
                 break;
@@ -11778,10 +11778,10 @@ public:
             if (DecimalHalf != 0)
             {
                 DecimalHalf = 0;
-                if (IntValue == NegativeRep) { IntValue = 0; }
+                if (IntHalf == NegativeRep) { IntHalf = 0; }
                 else
                 {
-                    ++IntValue;
+                    ++IntHalf;
                 }
             }
             return *this;
@@ -11805,7 +11805,7 @@ public:
                 break;
             //case RepType::ApproachingTop:
             //case RepType::ApproachingBottom:
-            //    return Value.IntValue;
+            //    return Value.IntHalf;
             //    break;
             default:
                 Value.ConvertToNormTypeV2();
@@ -11815,7 +11815,7 @@ public:
             {
                 return Value.GetIntegerPartition();
             }
-            if (Value.IntValue == NegativeRep) { return -1; }
+            if (Value.IntHalf == NegativeRep) { return -1; }
             else
             {
                 return Value.GetIntegerPartition() - 1;
@@ -11844,7 +11844,7 @@ public:
             #if defined(AltNum_EnableDecimaledEFractionals)
                 case RepType::ENumByDiv://(Value/(ExtraRep*-1))*E Representation
             #else
-                case RepType::EFractional://  IntValue/DecimalHalf*E Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*E Representation
             #endif
         #endif
                     ConvertToNormType(repType);
@@ -11857,7 +11857,7 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
                     ConvertToNormalIRepV2();
                     break;
@@ -11873,7 +11873,7 @@ public:
             {
                 return GetIntegerPartition();
             }
-            if (IntValue == NegativeRep) { return 0; }
+            if (IntHalf == NegativeRep) { return 0; }
             else
             {
                 return GetIntegerPartition() + 1;
@@ -11932,26 +11932,26 @@ public:
                 bool AutoSetValue = true;
                 switch (value.GetIntegerPartition())
                 {
-                case 1: value.IntValue = 1; break;
-                case 4: value.IntValue = 2; break;
-                case 9: value.IntValue = 3; break;
-                case 16: value.IntValue = 4; break;
-                case 25: value.IntValue = 5; break;
-                case 36: value.IntValue = 6; break;
-                case 49: value.IntValue = 7; break;
-                case 64: value.IntValue = 8; break;
-                case 81: value.IntValue = 9; break;
-                case 100: value.IntValue = 10; break;
-                case 121: value.IntValue = 11; break;
-                case 144: value.IntValue = 12; break;
-                case 169: value.IntValue = 13; break;
-                case 196: value.IntValue = 14; break;
-                case 225: value.IntValue = 15; break;
-                case 256: value.IntValue = 16; break;
-                case 289: value.IntValue = 17; break;
-                case 324: value.IntValue = 18; break;
-                case 361: value.IntValue = 19; break;
-                case 400: value.IntValue = 20; break;
+                case 1: value.IntHalf = 1; break;
+                case 4: value.IntHalf = 2; break;
+                case 9: value.IntHalf = 3; break;
+                case 16: value.IntHalf = 4; break;
+                case 25: value.IntHalf = 5; break;
+                case 36: value.IntHalf = 6; break;
+                case 49: value.IntHalf = 7; break;
+                case 64: value.IntHalf = 8; break;
+                case 81: value.IntHalf = 9; break;
+                case 100: value.IntHalf = 10; break;
+                case 121: value.IntHalf = 11; break;
+                case 144: value.IntHalf = 12; break;
+                case 169: value.IntHalf = 13; break;
+                case 196: value.IntHalf = 14; break;
+                case 225: value.IntHalf = 15; break;
+                case 256: value.IntHalf = 16; break;
+                case 289: value.IntHalf = 17; break;
+                case 324: value.IntHalf = 18; break;
+                case 361: value.IntHalf = 19; break;
+                case 400: value.IntHalf = 20; break;
                 default:
                     AutoSetValue = false;
                     break;
@@ -12026,20 +12026,20 @@ public:
             if (exponent == 1) { return *this; }//Return self
             else if (exponent == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
             else if (exponent < 0)//Negative Pow
             {
-                if (DecimalHalf == 0 && IntValue == 10 && exponent >= -9)
+                if (DecimalHalf == 0 && IntHalf == 10 && exponent >= -9)
                 {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exponent * -1];
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exponent * -1];
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     int expValue = exponent * -1;
                     AltDecBase self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
                         // If expValue is odd, multiply self with result
@@ -12052,16 +12052,16 @@ public:
                     return this;
                 }
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[exponent];
-            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
+            else if (DecimalHalf == 0 && IntHalf == 10 && ExtraRep == 0)
+                IntHalf = VariableConversionFunctions::PowerOfTens[exponent];
+            else if (DecimalHalf == 0 && IntHalf == -10 && ExtraRep == 0)
+                IntHalf = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 int expValue = exponent;
                 AltDecBase self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -12086,18 +12086,18 @@ public:
             if (exponent == 1) { return *this; }//Return self
             else if (exponent == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
+                IntHalf = 1; DecimalHalf = 0; ExtraRep = InitialExtraRep;
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[exponent];
-            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
+            else if (DecimalHalf == 0 && IntHalf == 10 && ExtraRep == 0)
+                IntHalf = VariableConversionFunctions::PowerOfTens[exponent];
+            else if (DecimalHalf == 0 && IntHalf == -10 && ExtraRep == 0)
+                IntHalf = exponent % 2 ? VariableConversionFunctions::PowerOfTens[exponent] : VariableConversionFunctions::PowerOfTens[exponent] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 int expValue = exponent;
                 AltDecBase self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -12134,8 +12134,8 @@ public:
 #endif
                 else if (expValue < 0)
                     return Zero;
-                else if (IntValue == -1 && expValue % 2 == 0)
-                    IntValue = 1;
+                else if (IntHalf == -1 && expValue % 2 == 0)
+                    IntHalf = 1;
                 else
                     return *this;//Returns infinity
                 return *this;
@@ -12155,8 +12155,8 @@ public:
 #else
                     throw "Infinity to power of Zero returns Undefined value";
 #endif
-                else if (IntValue == -1 && expValue % 2 == 0)
-                    IntValue = 1;
+                else if (IntHalf == -1 && expValue % 2 == 0)
+                    IntHalf = 1;
                 else
                     return *this;//Returns infinity
                 return *this;
@@ -12303,7 +12303,7 @@ public:
              *      - (AltDecBase float) approximation of e^x in AltDecBase precision
              */
              // Check that x is a valid input.
-            assert(-709 <= x.IntValue && x.IntValue <= 709);
+            assert(-709 <= x.IntHalf && x.IntHalf <= 709);
             // When x = 0 we already know e^x = 1.
             if (x.IsZero()) {
                 return AltDecBase::One;
@@ -12369,7 +12369,7 @@ public:
 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 #endif
 #endif
                 ConvertedVal = value.ConvertAsNormalIRep(repType);
@@ -12379,7 +12379,7 @@ public:
                 ConvertedVal = value.ConvertAsNormType(repType);
                 break;
         }
-            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 AltDecBase threshold = AltDecBase::FiveMillionth;
                 AltDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -12429,7 +12429,7 @@ public:
 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 #endif
 #endif
                 ConvertedVal = value.ConvertAsNormalIRep(repType);
@@ -12439,7 +12439,7 @@ public:
                 ConvertedVal = value.ConvertAsNormType(repType);
                 break;
             }
-            if(ConvertedVal.IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if(ConvertedVal.IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 AltDecBase W = (value - 1)/ (value + 1);
                 AltDecBase TotalRes = W;
@@ -12458,7 +12458,7 @@ public:
                 } while (AddRes > AltDecBase::JustAboveZero);
                 return TotalRes * 2;
             }
-            else if (ConvertedVal.IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (ConvertedVal.IntHalf==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 AltDecBase threshold = AltDecBase::FiveMillionth;
                 AltDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -12534,7 +12534,7 @@ public:
 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 #endif
 #endif
                 ConvertedVal = value.ConvertAsNormalIRep(repType);
@@ -12544,7 +12544,7 @@ public:
                 ConvertedVal = value.ConvertAsNormType(repType);
                 break;
             }
-            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
+            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntHalf % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -12553,7 +12553,7 @@ public:
                 }
                 return AltDecBase(9, 0);
             }
-            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 AltDecBase threshold = AltDecBase::FiveBillionth;
                 AltDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -12644,7 +12644,7 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
         #endif
                 ConvertedVal = value.ConvertAsNormalIRep(repType);
@@ -12678,7 +12678,7 @@ public:
 #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 #endif
 #endif
                 ConvertedVal = value.ConvertAsNormalIRep(repType);
@@ -12721,7 +12721,7 @@ public:
             }
 
             //Now calculate other log
-            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
+            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntHalf % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -12730,7 +12730,7 @@ public:
                 }
                 return lnMultLog? AltDecBase(9, 0) / (baseTotalRes*AltDecBase::HalfLN10Mult):AltDecBase(9, 0)/baseTotalRes;
             }
-            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 AltDecBase threshold = AltDecBase::FiveBillionth;
                 AltDecBase base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -12797,7 +12797,7 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
         #endif
                 Value.ConvertToNormalIRep(repType);
@@ -12809,36 +12809,36 @@ public:
             }
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return AltDecBase::Zero; }
-            else if (Value.IntValue == 30 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 30 && Value.DecimalHalf == 0)
             {
                 return PointFive;
             }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
                 return One;
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return AltDecBase::Zero;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
                 return NegativeOne;
             }
@@ -12882,7 +12882,7 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
         #endif
                 Value.ConvertToNormalIRep(repType);
@@ -12894,36 +12894,36 @@ public:
             }
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return One; }
-            else if (Value.IntValue == 60 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 60 && Value.DecimalHalf == 0)
             {
                 return PointFive;
             }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
                 return AltDecBase::Zero;
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return NegativeOne;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
                 return AltDecBase::Zero;
             }
@@ -12979,28 +12979,28 @@ public:
             {
                 case RepType::PiNum://0 to 2Pi range (2Pi == 0Pi)
                 {
-                    if (Value.IntValue < 0)
+                    if (Value.IntHalf < 0)
                     {
-                        if (Value.IntValue == NegativeRep)
+                        if (Value.IntHalf == NegativeRep)
                         {
-                            Value.IntValue = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                            Value.IntHalf = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                         }
                         else
                         {
-                            Value.IntValue *= -1;
-                            Value.IntValue %= 2;
-                            Value.IntValue = 2 - Value.IntValue;
+                            Value.IntHalf *= -1;
+                            Value.IntHalf %= 2;
+                            Value.IntHalf = 2 - Value.IntHalf;
                             if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                         }
                     }
                     else
                     {
-                        Value.IntValue %= 2;
+                        Value.IntHalf %= 2;
                     }
-                    if (Value.DecimalHalf == 0&&(Value.IntValue==0||Value.IntValue==1))//0 and Pi
+                    if (Value.DecimalHalf == 0&&(Value.IntHalf==0||Value.IntHalf==1))//0 and Pi
                         return Zero;
                     if (Value.DecimalHalf == 500000000)//0.5 Pi = 1; 1.5Pi = -1
-                        return Value.IntValue==0?NegativeOne:One;
+                        return Value.IntHalf==0?NegativeOne:One;
                     AltDecBase SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
@@ -13015,35 +13015,35 @@ public:
             #elif defined(AltNum_EnablePiPowers)
                 case RepType::PiPower:
             #else
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             #endif
             #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             #endif
                 {
                     Value.ConvertToPiRep(repType);
-                    if (Value.IntValue < 0)
+                    if (Value.IntHalf < 0)
                     {
-                        if (Value.IntValue == NegativeRep)
+                        if (Value.IntHalf == NegativeRep)
                         {
-                            Value.IntValue = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                            Value.IntHalf = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                         }
                         else
                         {
-                            Value.IntValue *= -1;
-                            Value.IntValue %= 2;
-                            Value.IntValue = 2 - Value.IntValue;
+                            Value.IntHalf *= -1;
+                            Value.IntHalf %= 2;
+                            Value.IntHalf = 2 - Value.IntHalf;
                             if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                         }
                     }
                     else
                     {
-                        Value.IntValue %= 2;
+                        Value.IntHalf %= 2;
                     }
-                    if (Value.DecimalHalf == 0&&(Value.IntValue==0||Value.IntValue==1))//0 and Pi
+                    if (Value.DecimalHalf == 0&&(Value.IntHalf==0||Value.IntHalf==1))//0 and Pi
                         return Zero;
                     if (Value.DecimalHalf == 500000000)//0.5 Pi = 1; 1.5Pi = -1
-                        return Value.IntValue==0?NegativeOne:One;
+                        return Value.IntHalf==0?NegativeOne:One;
                     AltDecBase SinValue = Zero;
                     for (int i = 0; i < 7; ++i)
                     {
@@ -13098,27 +13098,27 @@ public:
 /*
             if (Value.ExtraRep == PiRep)//0 to 2Pi range (2Pi == 0Pi)
             {
-                if (Value.IntValue < 0)
+                if (Value.IntHalf < 0)
                 {
-                    if (Value.IntValue == NegativeRep)
+                    if (Value.IntHalf == NegativeRep)
                     {
-                        Value.IntValue = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                        Value.IntHalf = 1; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                     }
                     else
                     {
-                        Value.IntValue *= -1;
-                        Value.IntValue %= 2;
-                        Value.IntValue = 2 - Value.IntValue;
+                        Value.IntHalf *= -1;
+                        Value.IntHalf %= 2;
+                        Value.IntHalf = 2 - Value.IntHalf;
                         if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                     }
                 }
                 else
                 {
-                    Value.IntValue %= 2;
+                    Value.IntHalf %= 2;
                 }
                 //Cos table listed on https://byjus.com/maths/value-of-cos-180/
                 if (Value.DecimalHalf == 0)//cos(0) = 1;cos(Pi) = -1;
-                    return Value.IntValue == 0?One:NegativeOne;
+                    return Value.IntHalf == 0?One:NegativeOne;
                 if (Value.DecimalHalf == 500000000)//cos(0.5) Pi = 0; cos(1.5Pi) = 0;
                     return Zero;
             }
@@ -13174,7 +13174,7 @@ public:
             #if defined(AltNum_EnableDecimaledIFractionals)
             case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
             #else
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
             #endif
         #endif
                 Value.ConvertToNormalIRep(repType);
@@ -13186,24 +13186,24 @@ public:
             }
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return AltDecBase::Zero; }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
                 return Infinity;
@@ -13211,11 +13211,11 @@ public:
                 return AltDecBase::Maximum;//Positive Infinity
 #endif
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return AltDecBase::Zero;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
                 return AltDecBase::NegativeInfinity;
@@ -13312,7 +13312,7 @@ public:
     /// <param name="Value">The target value to convert into AltDecBase</param>
     inline void AltDecBase::ReadString(std::string Value)
     {
-        IntValue = 0; DecimalHalf = 0;
+        IntHalf = 0; DecimalHalf = 0;
         bool IsNegative = false;
         int PlaceNumber;
         std::string WholeNumberBuffer = "";
@@ -13365,8 +13365,8 @@ public:
         }
         if (IsNegative)
         {
-            if (IntValue == 0) { IntValue = NegativeRep; }
-            else { IntValue *= -1; }
+            if (IntHalf == 0) { IntHalf = NegativeRep; }
+            else { IntHalf *= -1; }
         }
     }
 

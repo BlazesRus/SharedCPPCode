@@ -65,7 +65,7 @@ public:
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         MediumDecV2(const int& intVal, const signed int& decVal = 0)
         {
-            IntValue = intVal;
+            IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
@@ -76,7 +76,7 @@ public:
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
         } const
 
@@ -103,7 +103,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetVal(MediumDecV2 Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
@@ -113,7 +113,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetVal(MediumDec Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
@@ -1393,11 +1393,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                ++IntValue.Value;
-            else if (IntValue == NegativeRep)
-                IntValue = MirroredInt::Zero;
+                ++IntHalf.Value;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
             else
-                ++IntValue.Value;
+                ++IntHalf.Value;
             return *this;
         }
 
@@ -1412,11 +1412,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                --IntValue.Value;
-            else if (IntValue.Value == 0)
-                IntValue = NegativeRep;
+                --IntHalf.Value;
+            else if (IntHalf.Value == 0)
+                IntHalf = NegativeRep;
             else
-                --IntValue.Value;
+                --IntHalf.Value;
             return *this;
         }
 

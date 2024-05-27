@@ -81,9 +81,9 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 
 void SameRep_ApproachingBottom(const auto& rValue, const RepType& LRep)
 {
-    if(IntValue.Value==0)//0.0..01/2.0..01 = ~0.0..01
+    if(IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
-	else if(rValue.IntValue.Value==0)//2.0..01/0.0..01 = infinity
+	else if(rValue.IntHalf.Value==0)//2.0..01/0.0..01 = infinity
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
@@ -201,7 +201,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -288,7 +288,7 @@ void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -327,7 +327,7 @@ void IToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -376,7 +376,7 @@ void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType
 {
 #if defined(AltNum_EnablePowerOfRepresentation)
 	if(LRep^ToPowerOfFlag){
-		if(RRep^ToPowerOfFlag&&IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+		if(RRep^ToPowerOfFlag&&IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
 	#if defined(AltNum_EnableNegativePowerRep)
 			ExtraRep -= rValue.ExtraRep;
 	#else
@@ -731,10 +731,10 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 			} 
 		#endif
 		#if defined(AltNum_EnableInfinityPowers)
-			if(IntValue.Value==1)
+			if(IntHalf.Value==1)
 				SetAsZero();//Techically should maybe be indeterminate but normally can not have even larger infinity anyway
 			else
-				--IntValue.Value;
+				--IntHalf.Value;
 		#elif defined(AltNum_EnableIndeterminateForms)
 			SetAsIndeterminate(InfDividedByInfRep);
 		#else
@@ -742,7 +742,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		#endif
 		} else if(rValue.IsZero())
 		#if defined(AltNum_EnableInfinityPowers)
-			++IntValue.Value;//Make into even larger infinity
+			++IntHalf.Value;//Make into even larger infinity
 		#elif defined(AltNum_EnableIndeterminateForms)
 			SetAsIndeterminate(InfDividedByZeroRep);
 		#elif defined(AltNum_DefineDivideByZeroAsInfinity)
@@ -755,7 +755,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		return *this;
 	} else if(rValue.DecimalHalf.Value==InfinityRep){//Divided by Infinity
         DecimalHalf = ApproachingBottomRep;
-		IntValue.Value = 0;
+		IntHalf.Value = 0;
         ExtraRep = InitialExtraRep;
 		if(rValue.DecimalHalf.Flags==3){//Divided by Imaginary infinity
 			SwapNegativeStatus();
@@ -779,7 +779,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		#else
 			throw "Divide by zero is not allowed with current toggles";
 		#endif
-	} else if(DecimalHalf<=NaNVariantThreshold&&IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
+	} else if(DecimalHalf<=NaNVariantThreshold&&IntHalf==rValue.IntHalf&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
 		SetAsOneVal();
 	else {
 		switch(DecimalHalf.Flags)

@@ -11,12 +11,12 @@ inline void ConvertPiByDivToNumByDiv()
 	if (DecimalHalf == 0)
 	{
 	    #if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 	    #endif
 		SRep = 3141592654;
-		SRep *= IntValue;
+		SRep *= IntHalf;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
@@ -28,16 +28,16 @@ inline void ConvertPiByDivToNumByDiv()
 		if (divRes == 0 && IsNegative)
 		{
 			if (DecimalHalf == 0)
-				IntValue = 0;
+				IntHalf = 0;
 			else
-				IntValue = NegativeRep;
+				IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 		else
-			IntValue = (int)divRes;
+			IntHalf = (int)divRes;
 	}
-	else if (IntValue == 0)
+	else if (IntHalf == 0)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -49,7 +49,7 @@ inline void ConvertPiByDivToNumByDiv()
 	    #endif
 	}
 	    #if !defined(AltNum_EnableMirroredSection)
-	else if (IntValue == NegativeRep)
+	else if (IntHalf == NegativeRep)
 	{
 		SRep = 3141592654;
 		SRep *= DecimalHalf;
@@ -60,22 +60,22 @@ inline void ConvertPiByDivToNumByDiv()
 		DecimalHalf.Value = (unsigned int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
 		    #endif
 		if (divRes == 0)
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		else
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 	}
 	    #endif
 	else
 	{
 	    #if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 	    #endif
-		SRep = DecimalOverflowX * IntValue + DecimalHalf;
+		SRep = DecimalOverflowX * IntHalf + DecimalHalf;
 		SRep *= 3ll;//SRep holds __int64 version of X.Y * Z
 		//X.Y *.V
-		__int64 Temp03 = (__int64)IntValue * 141592654ll;//Temp03 holds __int64 version of X *.V
+		__int64 Temp03 = (__int64)IntHalf * 141592654ll;//Temp03 holds __int64 version of X *.V
 		__int64 Temp04 = (__int64)DecimalHalf * 141592654ll;
 		Temp04 /= FlaggedDec::DecimalOverflow;
 		//Temp04 holds __int64 version of .Y * .V
@@ -90,14 +90,14 @@ inline void ConvertPiByDivToNumByDiv()
 	    #if !defined(AltNum_EnableMirroredSection)
 		if (IntHalf == 0 && IsNegative)
 		{
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-IntHalf;
+			IntHalf = (int)-IntHalf;
 		else
-			IntValue = (int)IntHalf;
+			IntHalf = (int)IntHalf;
 	    #else
-		IntValue.Value = (unsigned int)IntHalf;
+		IntHalf.Value = (unsigned int)IntHalf;
 	    #endif
 	}
 	ExtraRep.Flag = 0;
@@ -169,12 +169,12 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 	if (DecimalHalf == 0)
 	{
 	    #if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 	    #endif
 		SRep = 2718281828;
-		SRep *= IntValue;
+		SRep *= IntHalf;
 		//__int64 divRes = SRep / DecimalOverflowX;
 		//__int64 C = SRep - DecimalOverflowX * divRes;
 		divRes = SRep / DecimalOverflowX;
@@ -186,16 +186,16 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 		if (divRes == 0 && IsNegative)
 		{
 			if (DecimalHalf == 0)
-				IntValue = 0;
+				IntHalf = 0;
 			else
-				IntValue = NegativeRep;
+				IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 		else
-			IntValue = (int)divRes;
+			IntHalf = (int)divRes;
 	}
-	else if (IntValue == 0)
+	else if (IntHalf == 0)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -207,7 +207,7 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 	    #endif
 	}
 	    #if !defined(AltNum_EnableMirroredSection)
-	else if (IntValue == NegativeRep)
+	else if (IntHalf == NegativeRep)
 	{
 		SRep = 2718281828;
 		SRep *= DecimalHalf;
@@ -218,22 +218,22 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 		DecimalHalf.Value = (unsigned int)((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
 		    #endif
 		if (divRes == 0)
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		else
-			IntValue = (int)-divRes;
+			IntHalf = (int)-divRes;
 	}
 	    #endif
 	else
 	{
 	    #if !defined(AltNum_EnableMirroredSection)
-		bool IsNegative = IntValue < 0;
+		bool IsNegative = IntHalf < 0;
 		if (IsNegative)
-			IntValue *= -1;
+			IntHalf *= -1;
 	    #endif
-		SRep = DecimalOverflowX * IntValue + DecimalHalf;
+		SRep = DecimalOverflowX * IntHalf + DecimalHalf;
 		SRep *= 2ll;//SRep holds __int64 version of X.Y * Z
 		//X.Y *.V
-		__int64 Temp03 = (__int64)IntValue * 718281828ll;//Temp03 holds __int64 version of X *.V
+		__int64 Temp03 = (__int64)IntHalf * 718281828ll;//Temp03 holds __int64 version of X *.V
 		__int64 Temp04 = (__int64)DecimalHalf * 718281828ll;
 		Temp04 /= DecimalOverflow;
 		//Temp04 holds __int64 version of .Y * .V
@@ -248,14 +248,14 @@ inline void BlazesRusCode::AltDecBase::ConvertEByDivToNumByDiv()
 	    #if !defined(AltNum_EnableMirroredSection)
 		if (IntHalf == 0 && IsNegative)
 		{
-			IntValue = NegativeRep;
+			IntHalf = NegativeRep;
 		}
 		else if (IsNegative)
-			IntValue = (int)-IntHalf;
+			IntHalf = (int)-IntHalf;
 		else
-			IntValue = (int)IntHalf;
+			IntHalf = (int)IntHalf;
 	    #else
-		IntValue.Value = (unsigned int)IntHalf;
+		IntHalf.Value = (unsigned int)IntHalf;
 	    #endif
 	}
 	ExtraRep.Flag = 0;

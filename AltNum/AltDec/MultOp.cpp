@@ -141,9 +141,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 		#if defined(AltNum_EnableApproachingDivided)
             //To-Do:test if more effective to check via if statement vs try-catch block
 			case RepType::ApproachingMidLeft:
-                if(rValue.IntValue.Value==0)
+                if(rValue.IntHalf.Value==0)
                 {
-                    if(IntValue.Value==0)
+                    if(IntHalf.Value==0)
     				{
     					//0.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~0.1249..9(ExtraRep:8)
                         try{
@@ -157,11 +157,11 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                         //2.249..9(ExtraRep:4) * 0.49..9(ExtraRep:2) = ~1.1249..9(ExtraRep:8)
                         try{
                             unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                            if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+                            unsigned int intHalfRes = IntHalf.Value / rValue.ExtraRep;
+                            if (IntHalf.Value == intHalfRes * rValue)//checking for truncation
 						    {
                                 ExtraRep.Value = result;
-                                IntValue.Value *= intHalfRes;
+                                IntHalf.Value *= intHalfRes;
                             } else
 						        CatchAllOp(rValue);
                         }
@@ -174,9 +174,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					CatchAllOp(rValue);
 				break;
 			case RepType::ApproachingMidRight:
-                if(rValue.IntValue.Value==0)
+                if(rValue.IntHalf.Value==0)
                 {
-                    if(IntValue.Value==0)
+                    if(IntHalf.Value==0)
     				{
     					//0.250..01(ExtraRep:4) * 0.50..01(ExtraRep:2) = ~0.1250..01(ExtraRep:8)
                         try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
@@ -189,11 +189,11 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                     } else {
                         try{
                             unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                            unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                            if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+                            unsigned int intHalfRes = IntHalf.Value / rValue.ExtraRep;
+                            if (IntHalf.Value == intHalfRes * rValue)//checking for truncation
 						    {
                                 ExtraRep.Value = result;
-                                IntValue.Value *= intHalfRes;
+                                IntHalf.Value *= intHalfRes;
                             } else
 						        CatchAllOp(rValue);
                         }
@@ -726,11 +726,11 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				case RepType::NormalType:{
                     if(rValue.DecimalHalf==0){
                         try{
-                            unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
-                            unsigned int result = ExtraRep.Value / rValue.IntValue.Value;
-                            if (ExtraRep.Value == result * rValue.IntValue.Value){
+                            unsigned int intHalfRes = IntHalf.Value * rValue.IntHalf.Value;
+                            unsigned int result = ExtraRep.Value / rValue.IntHalf.Value;
+                            if (ExtraRep.Value == result * rValue.IntHalf.Value){
                                 ExtraRep.Value = result;
-                                IntValue.Value = intHalfRes;
+                                IntHalf.Value = intHalfRes;
                             } else
                                 LeftSidePiOp(rValue);
                         }
@@ -739,19 +739,19 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				}; break;
 				case RepType::NumByDiv:{
                     if(rValue.DecimalHalf==0){
-                        if(rValue.IntValue==1){
+                        if(rValue.IntHalf==1){
                             try{ ExtraRep *= rValue.ExtraRep; }
                             catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
                         }
                         else
                         {
                             try{
-                                unsigned int intHalfRes = IntValue.Value * rValue.IntValue.Value;
+                                unsigned int intHalfRes = IntHalf.Value * rValue.IntHalf.Value;
                                 unsigned int result01 = ExtraRep * rValue.ExtraRep;
-                                unsigned int result02 = result01 / rValue.IntValue.Value;
-                                if (result01 == result02 * rValue.IntValue.Value){
+                                unsigned int result02 = result01 / rValue.IntHalf.Value;
+                                if (result01 == result02 * rValue.IntHalf.Value){
                                     ExtraRep.Value = result02;
-                                    IntValue.Value = intHalfRes;
+                                    IntHalf.Value = intHalfRes;
                                 } else
                                     LeftSidePiOp(rValue);
                             }
@@ -761,9 +761,9 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidLeft:
-					if(rValue.IntValue.Value==0)
+					if(rValue.IntHalf.Value==0)
 					{
-						if(IntValue.Value==0){
+						if(IntHalf.Value==0){
                             try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
                                 unsigned int result = ExtraRep.Value * rValue.ExtraRep;
                                 ExtraRep.Value = result;
@@ -774,11 +774,11 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 						} else {
                             try{
                                 unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+                                unsigned int intHalfRes = IntHalf.Value / rValue.ExtraRep;
+                                if (IntHalf.Value == intHalfRes * rValue)//checking for truncation
     						    {
                                     ExtraRep.Value = result;
-                                    IntValue.Value *= intHalfRes;
+                                    IntHalf.Value *= intHalfRes;
                                 } else
     						        LeftSidePiOp(rValue);
                             }
@@ -800,9 +800,9 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidRight:
-					if(rValue.IntValue.Value==0)
+					if(rValue.IntHalf.Value==0)
 					{
-						if(IntValue.Value==0){
+						if(IntHalf.Value==0){
                             try{//Can also test via if (ExtraRep.Value == result / rValue) to test if overflowed
                                 unsigned int result = ExtraRep.Value * rValue.ExtraRep;
                                 ExtraRep.Value = result;
@@ -813,11 +813,11 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 						} else {
                             try{
                                 unsigned int result = ExtraRep.Value * rValue.ExtraRep;
-                                unsigned int intHalfRes = IntValue.Value / rValue.ExtraRep;
-                                if (IntValue.Value == intHalfRes * rValue)//checking for truncation
+                                unsigned int intHalfRes = IntHalf.Value / rValue.ExtraRep;
+                                if (IntHalf.Value == intHalfRes * rValue)//checking for truncation
     						    {
                                     ExtraRep.Value = result;
-                                    IntValue.Value *= intHalfRes;
+                                    IntHalf.Value *= intHalfRes;
                                 } else
     						        LeftSidePiOp(rValue);
                             }

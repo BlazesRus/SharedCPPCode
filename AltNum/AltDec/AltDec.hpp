@@ -33,7 +33,7 @@ namespace BlazesRusCode
    (values get lost if get too small) (100% accuracy except for some truncated digits lost)
  * Other operations like Ln and Sqrt contained with decent level of accuracy
    (still loses a little accuracy because of truncation etc)
- * Operations and functions will mess up if IntValue overflows/underflows
+ * Operations and functions will mess up if IntHalf overflows/underflows
 */
 
     /// <summary>
@@ -53,7 +53,7 @@ namespace BlazesRusCode
         /// <param name="extraVal">ExtraRep flags etc</param>
         AltDec(const IntHalfType& intVal, const DecimalHalfType& decVal = 0, const MirroredInt& extraVal = 0)
         {
-            IntValue = intVal;
+            IntHalf = intVal;
             DecimalHalf = decVal;
             ExtraRep = extraVal;
         }
@@ -62,7 +62,7 @@ namespace BlazesRusCode
 
         AltDec& operator=(const int& rhs)
         {
-            IntValue = rhs; DecimalHalf = 0;
+            IntHalf = rhs; DecimalHalf = 0;
             ExtraRep = InitialExtraRep;
             return *this;
         } const
@@ -72,7 +72,7 @@ namespace BlazesRusCode
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             ExtraRep = rhs.ExtraRep;
             return *this;
         } const
@@ -107,7 +107,7 @@ namespace BlazesRusCode
                 case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                     return "PiNumByDiv"; break;
             #else
-                case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+                case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                     return "PiFractional"; break;
             #endif
         #endif
@@ -120,7 +120,7 @@ namespace BlazesRusCode
                 case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
                     return "ENumByDiv"; break;
             #else
-                case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+                case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                     return "EFractional"; break;
             #endif
         #endif
@@ -133,7 +133,7 @@ namespace BlazesRusCode
                 case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
                     return "INumByDiv"; break;
             #else
-                case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+                case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                     return "IFractional"; break;
             #endif
         #endif
@@ -143,16 +143,16 @@ namespace BlazesRusCode
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-                case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+                case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                     return "MixedFrac"; break;
         #if defined(AltNum_EnableMixedPiFractional)
-                case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
                     return "MixedPi"; break;
         #elif defined(AltNum_EnableMixedEFractional)
-                case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
                     return "MixedE"; break;
         #elif defined(AltNum_EnableMixedIFractional)
-                case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+                case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
                     return "MixedI"; break;
         #endif
     #endif
@@ -164,10 +164,10 @@ namespace BlazesRusCode
                     return "NegativeInfinity"; break;
     #endif
     #if defined(AltNum_EnableApproaching)
-                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
                     return "ApproachingBottom"; break;
         #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                     return "ApproachingTop"; break;
         #endif
         #if defined(AltNum_EnableApproachingDivided)
@@ -186,11 +186,11 @@ namespace BlazesRusCode
                     return "NaN"; break;
     #endif
     #if defined(AltNum_EnableApproachingPi)
-                case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+                case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
                     return "ApproachingTopPi"; break;
     #endif
     #if defined(AltNum_EnableApproachingE)
-                case RepType::ApproachingTopE://equal to IntValue.9..9 e
+                case RepType::ApproachingTopE://equal to IntHalf.9..9 e
                     return "ApproachingTopE"; break;
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
@@ -200,10 +200,10 @@ namespace BlazesRusCode
                     return "NegativeImaginaryInfinity"; break;
     #endif
     #if defined(AltNum_EnableApproachingI)
-                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
                     return "ApproachingImaginaryBottom"; break;
                     #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
                     return "ApproachingImaginaryTop"; break;
         #endif
         #if defined(AltNum_EnableApproachingDivided)
@@ -218,7 +218,7 @@ namespace BlazesRusCode
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
                 case RepType::UndefinedButInRange:
                     return "UndefinedButInRange"; break;
-        #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+        #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
                 case RepType::WithinMinMaxRange:
                     return "WithinMinMaxRange"; break;
         #endif
@@ -644,24 +644,24 @@ public:
     #endif
     
 #if defined(AltNum_EnableApproaching)
-        static AltDec ApproachingRightRealValue(int IntValue=0)
+        static AltDec ApproachingRightRealValue(int IntHalf=0)
         {
-            return AltDec(IntValue, 999999999);
+            return AltDec(IntHalf, 999999999);
         }
 
-        static AltDec ApproachingLeftRealValue(int IntValue=0)
+        static AltDec ApproachingLeftRealValue(int IntHalf=0)
         {
-            return AltDec(IntValue, 1);
+            return AltDec(IntHalf, 1);
         }
 
-        static AltDec LeftAlmostPointFiveRealValue(int IntValue=0)
+        static AltDec LeftAlmostPointFiveRealValue(int IntHalf=0)
         {
-            return AltDec(IntValue, 499999999);
+            return AltDec(IntHalf, 499999999);
         }
 
-        static AltDec RightAlmostPointFiveRealValue(int IntValue=0)
+        static AltDec RightAlmostPointFiveRealValue(int IntHalf=0)
         {
-            return AltDec(IntValue, 500000001);
+            return AltDec(IntHalf, 500000001);
         }
 #endif
     #pragma endregion ValueDefines
@@ -1879,11 +1879,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                ++IntValue.Value;
-            else if (IntValue == NegativeRep)
-                IntValue = MirroredInt::Zero;
+                ++IntHalf.Value;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
             else
-                ++IntValue.Value;
+                ++IntHalf.Value;
             return *this;
         }
 
@@ -1898,11 +1898,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                --IntValue.Value;
-            else if (IntValue.Value == 0)
-                IntValue = NegativeRep;
+                --IntHalf.Value;
+            else if (IntHalf.Value == 0)
+                IntHalf = NegativeRep;
             else
-                --IntValue.Value;
+                --IntHalf.Value;
             return *this;
         }
 

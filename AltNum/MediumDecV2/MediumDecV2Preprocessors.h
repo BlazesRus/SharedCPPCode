@@ -9,11 +9,11 @@
 
 //--Infinity based preprocessors--
 AltNum_EnableInfinityRep = Enable support of positive/negative infinity representations
-		When DecimalHalf.Value is InfinityRep and IntValue is positive, it represents positive infinity
-		When DecimalHalf.Value is InfinityRep and IntValue is negative, it represents negative infinity
+		When DecimalHalf.Value is InfinityRep and IntHalf is positive, it represents positive infinity
+		When DecimalHalf.Value is InfinityRep and IntHalf is negative, it represents negative infinity
 AltNum_EnableApproaching
-      When DecimalHalf.Value is ApproachingBottomRep, it represents Approaching IntValue from right towards left (IntValue.0..1)
-      When DecimalHalf.Value is ApproachingTopRep, it represents Approaching IntValue from left towards right (IntValue.9..9)
+      When DecimalHalf.Value is ApproachingBottomRep, it represents Approaching IntHalf from right towards left (IntHalf.0..1)
+      When DecimalHalf.Value is ApproachingTopRep, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
 
 MediumDecV2_EnableWithinMinMaxRange = Can't be enabled at as time as MediumDecV2_EnableIRep (Uses flag 3)
 

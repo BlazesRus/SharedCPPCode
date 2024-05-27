@@ -42,7 +42,7 @@ namespace BlazesRusCode
 	#pragma region DigitStorage
 		#pragma options align=bit_packed
 		//Stores whole number section(stores 0-3)
-		unsigned int IntValue:2;
+		unsigned int IntHalf:2;
 		
 		//Stores Digits XXX XXX XXX
 		unsigned int DecimalHalf:30;
@@ -51,7 +51,7 @@ namespace BlazesRusCode
 		//Return IntHalf as unsigned int
         unsigned unsigned int GetIntSection()
         {
-			return IntValue;
+			return IntHalf;
         }
 		
 		//Return DecHalf as unsigned int
@@ -104,7 +104,7 @@ namespace BlazesRusCode
         /// <param name="decVal">The non-whole based half of the representation(and other special statuses)</param>
         FloatingQuadRangeDec(const int& intVal, const int& decVal)
         {
-			IntValue = intVal;
+			IntHalf = intVal;
 			DecHalf = decVal;
         }
 
@@ -122,7 +122,7 @@ namespace BlazesRusCode
 
         FloatingQuadRangeDec& operator=(const unsigned _int64& rhs)
         {
-			IntValue = rhs;
+			IntHalf = rhs;
 			DecimalHalf = 0;
             ExtraRep = 0;
             return *this;
@@ -141,18 +141,18 @@ namespace BlazesRusCode
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt()
         {
-            return IntValue==0;
+            return IntHalf==0;
         }
 
         bool IsNotAtZeroInt()
         {
-            return IntValue!=0;
+            return IntHalf!=0;
         }
 
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue==0;
+            return DecimalHalf==0&&IntHalf==0;
 		}
 
         /// <summary>
@@ -161,14 +161,14 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         void SetVal(const PartialInt& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
             ExtraRep = Value.ExtraRep;
         }
 
         void SetAsZero()
         {
-            IntValue = 0;
+            IntHalf = 0;
             DecimalHalf = 0; ExtraRep = 0;
         }
         
@@ -194,7 +194,7 @@ public:
         /// </summary>
         void SetAsMaximum()
         {
-            IntValue = 18446744073709551615;
+            IntHalf = 18446744073709551615;
 			DecimalHalf = 999999999;
 			ExtraRep = 0;
         }
@@ -542,7 +542,7 @@ public:
         {
             if (Value < 0.0f) { SetAsZero(); }
 			else if (Value >= 18446744073709551616f){//Cap value if too big on initialize (preventing overflow on conversion)
-                IntValue = UInt64Max;
+                IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
@@ -551,7 +551,7 @@ public:
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (float)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
-                IntValue = (unsigned int)WholeValue;
+                IntHalf = (unsigned int)WholeValue;
             }
         }
 
@@ -563,7 +563,7 @@ public:
         {
             if (Value < 0.0) { SetAsZero(); }
 			else if (Value >= 18446744073709551616){//Cap value if too big on initialize (preventing overflow on conversion)
-                IntValue = UInt64Max;
+                IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
@@ -572,7 +572,7 @@ public:
                 UInt64 WholeValue = (UInt64)std::floor(Value);
                 lValue -= (double)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
-                IntValue = (unsigned int)WholeValue;
+                IntHalf = (unsigned int)WholeValue;
             }
         }
 
@@ -584,7 +584,7 @@ public:
         {
             if (Value < 0.0L) { SetAsZero(); }
 			else if (Value >= 18446744073709551616L){//Cap value if too big on initialize (preventing overflow on conversion)
-                IntValue = UInt64Max;
+                IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
@@ -593,7 +593,7 @@ public:
                 signed __int64 WholeValue = (UInt64)std::floor(lValue);
                 lValue -= (ldouble)WholeValue;
                 DecimalHalf = (unsigned int)lValue * 10000000000;
-                IntValue = (unsigned int)WholeValue;
+                IntHalf = (unsigned int)WholeValue;
             }
         }
 
@@ -603,7 +603,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetBoolVal(const bool& Value)
         {
-            IntValue = Value==false ? 0 : 1;
+            IntHalf = Value==false ? 0 : 1;
             DecimalHalf = 0;
         }
 
@@ -613,7 +613,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetIntVal(UInt64& Value)
         {
-			IntValue = Value;
+			IntHalf = Value;
 			DecimalHalf = 0;
         }
 
@@ -670,7 +670,7 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    float Value = lValue.IntValue;
+		    float Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((float)lValue.DecimalHalf * 0.000000001f);
             return Value;
@@ -685,7 +685,7 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    double Value = lValue.IntValue;
+		    double Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((double)lValue.DecimalHalf * 0.000000001);
             return Value;
@@ -700,7 +700,7 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    ldouble Value = lValue.IntValue;
+		    ldouble Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((ldouble)lValue.DecimalHalf * 0.000000001L);
             return Value;
@@ -714,9 +714,9 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep; 
-            return lValue.IntValue; }
+            return lValue.IntHalf; }
 
-        bool toBool() { return IntValue.IsZero() ? false : true; }
+        bool toBool() { return IntHalf.IsZero() ? false : true; }
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
@@ -756,7 +756,7 @@ protected:
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const
 		{
-			if (auto IntHalfCmp = IntValue <=> that; IntHalfCmp != 0)
+			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
@@ -765,7 +765,7 @@ protected:
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicComparison(const FloatingQuadRangeDec& that) const
 		{
-			if (auto IntHalfCmp = IntValue <=> that.IntValue; IntHalfCmp != 0)
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
 			if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
@@ -811,7 +811,7 @@ public:
 
 		bool operator==(const int& that) const
 		{
-			if (IntValue!=that)
+			if (IntHalf!=that)
 				return false;
 			if (DecimalHalf!=0)
 				return false;
@@ -820,9 +820,9 @@ public:
 
 		bool operator==(const FloatingQuadRangeDec& that) const
 		{
-			if (IntValue!=that.IntValue)
+			if (IntHalf!=that.IntHalf)
 				return false;
-			if (DecimalHalf!=that.IntValue)
+			if (DecimalHalf!=that.IntHalf)
 				return false;
 		}
     #pragma endregion Comparison Operators
@@ -837,12 +837,12 @@ protected:
             UInt128 IntHalfRes;
             UInt128 DecimalRes;
             
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntValue: DecimalOverflowX * IntValue + DecimalHalf;
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf: DecimalOverflowX * IntHalf + DecimalHalf;
             Res = SelfRes / rValue;
             
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = (unsigned _int64)(Res - DecimalOverflowX * IntHalfRes);
-		    IntValue = (unsigned _int64)IntHalfRes;
+		    IntHalf = (unsigned _int64)IntHalfRes;
 			DecimalHalf = DecimalRes;
         }
 
@@ -856,7 +856,7 @@ protected:
             else if (IsZero())
                 return;
             PartialUIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
             return *this;
         }
 		
@@ -885,21 +885,21 @@ protected:
         template<IntegerType IntType=unsigned int>
         void PartialUIntMultOpV1(const IntType& Value)
             if (DecimalHalf == 0)
-                IntValue *= rValue;
+                IntHalf *= rValue;
             else
 			{
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue.Value + DecimalHalf;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf.Value + DecimalHalf;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (unsigned int)OverflowVal;
+                    IntHalf = (unsigned int)OverflowVal;
                     DecimalHalf = (unsigned int)SRep;
                 }
                 else
                 {
-					IntValue = 0;
+					IntHalf = 0;
                     DecimalHalf = (unsigned int)SRep;
                 }
             }
@@ -951,7 +951,7 @@ public:
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOp(const IntType& rValue)
         {
-            IntValue += rValue;
+            IntHalf += rValue;
             return *this;
         }
 
@@ -977,7 +977,7 @@ public:
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubOp(const IntType& rValue)
         {
-            IntValue -= rValue;
+            IntHalf -= rValue;
             return *this;
         }
 
@@ -1012,22 +1012,22 @@ public:
 		{
             if (DecimalHalf == 0)
             {
-                if (IntValue == 1)
+                if (IntHalf == 1)
                 {
-                    IntValue = rValue.IntValue; DecimalHalf = rValue.DecimalHalf;
+                    IntHalf = rValue.IntHalf; DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
                 {
-                    IntValue *= rValue.IntValue;
+                    IntHalf *= rValue.IntHalf;
                 }
                 else
                 {
-                    UInt128 rRep = rValue.IntValue == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntValue + rValue.DecimalHalf;
+                    UInt128 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
                     if (rRep >= DecimalOverflowX)
                     {
                         UInt128 OverflowVal = rRep / DecimalOverflowX;
                         rRep -= OverflowVal * DecimalOverflowX;
-                        IntValue = (UInt64)OverflowVal;
+                        IntHalf = (UInt64)OverflowVal;
                         DecimalHalf = (unsigned int)rRep;
                         return *this;
                     }
@@ -1038,17 +1038,17 @@ public:
                         if(DecimalHalf==0)
                             DecimalHalf = 1;
 #endif
-                        IntValue = ResIsNegative ? NegativeRep : 0;
+                        IntHalf = ResIsNegative ? NegativeRep : 0;
                         return *this;
                     }
                 }
             }
-            else if (IntValue == 0)
+            else if (IntHalf == 0)
             {
                 UInt128 SRep = DecimalHalf;
                 SRep *= rValue.DecimalHalf;
                 SRep /= FloatingQuadRangeDec::DecimalOverflowX;
-                if (rValue.IntValue == 0)
+                if (rValue.IntHalf == 0)
                 {
                     DecimalHalf = (unsigned int)SRep;
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
@@ -1059,12 +1059,12 @@ public:
                 }
                 else
                 {
-                    SRep += DecimalHalf * rValue.IntValue;
+                    SRep += DecimalHalf * rValue.IntHalf;
                     if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
                         UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
                         SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
-                        IntValue = (unsigned _int64) OverflowVal;
+                        IntHalf = (unsigned _int64) OverflowVal;
                         DecimalHalf = (unsigned int)SRep;
 						return *this;
                     }
@@ -1083,13 +1083,13 @@ public:
             {
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= rValue.IntValue;
+                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= rValue.IntHalf;
                     if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
                         UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
                         SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
-                        IntValue = (unsigned __int64)OverflowVal;
+                        IntHalf = (unsigned __int64)OverflowVal;
                         DecimalHalf = (unsigned int)SRep;
                     }
                     else
@@ -1102,20 +1102,20 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-                        IntValue = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
                     }
 				    return *this;
                 }
-                else if (rValue.IntValue == 0)
+                else if (rValue.IntHalf == 0)
                 {
-                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    UInt128 SRep = FloatingQuadRangeDec::DecimalOverflowX * IntHalf + DecimalHalf;
                     SRep *= rValue.DecimalHalf;
                     SRep /= FloatingQuadRangeDec::DecimalOverflowX;
                     if (SRep >= FloatingQuadRangeDec::DecimalOverflowX)
                     {
                         UInt128 OverflowVal = SRep / FloatingQuadRangeDec::DecimalOverflowX;
                         SRep -= OverflowVal * FloatingQuadRangeDec::DecimalOverflowX;
-                        IntValue = (UInt64)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        IntHalf = (UInt64)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (unsigned int)SRep;
                     }
                     else
@@ -1128,29 +1128,29 @@ public:
                                 DecimalHalf = 1;
                 #endif
                         }
-                        IntValue = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? FloatingQuadRangeDec::NegativeRep : 0;
                     }
                     return *this;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    UInt128 SRep = IntValue == 0 ? DecimalHalf : FloatingQuadRangeDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= rValue.IntValue;//SRep holds __int64 version of X.Y * Z
+                    UInt128 SRep = IntHalf == 0 ? DecimalHalf : FloatingQuadRangeDec::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= rValue.IntHalf;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    UInt128 Temp03 = (__int64)(rValue.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    UInt128 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
                     UInt128 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
                     Temp04 /= FloatingQuadRangeDec::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     UInt128 IntegerRep = SRep + Temp03 + Temp04;
                     UInt128 IntHalf = IntegerRep / FloatingQuadRangeDec::DecimalOverflow;
                     IntegerRep -= FloatingQuadRangeDec::DecimalOverflowX * IntHalf;
-                    IntValue = (UInt64)IntHalf;
+                    IntHalf = (UInt64)IntHalf;
                     DecimalHalf = (unsigned int)IntegerRep;
                 }
             }
 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntValue==0)
+            if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf = 1;
 #endif
             return *this;
@@ -1169,12 +1169,12 @@ public:
         void BasicAddOp(const FloatingQuadRangeDec& Value)
         {
             //Deal with Int section first
-            IntValue += Value.IntValue;
+            IntHalf += Value.IntHalf;
             if (Value.DecimalHalf != 0)
             {
 				DecimalHalf += Value.DecimalHalf;
 				if (DecimalHalf >= MediumDecBase::DecimalOverflow) {
-					DecimalHalf -= MediumDecBase::DecimalOverflow; ++IntValue; }
+					DecimalHalf -= MediumDecBase::DecimalOverflow; ++IntHalf; }
             }
         }
 		
@@ -1503,7 +1503,7 @@ public:
         /// <returns>FloatingQuadRangeDec &</returns>
         FloatingQuadRangeDec& operator ++()
         {
-            ++IntValue;
+            ++IntHalf;
             return *this;
         }
 
@@ -1513,10 +1513,10 @@ public:
         /// <returns>FloatingQuadRangeDec &</returns>
         FloatingQuadRangeDec& operator --()
         {
-			if(IntValue==0)
+			if(IntHalf==0)
 				throw "Can't reduce number into negative values";
             else
-                --IntValue;
+                --IntHalf;
             return *this;
         }
 
@@ -1600,7 +1600,7 @@ public:
              *      - approximation of e^x in FloatingQuadRangeDec precision
              */
              // Check that x is a valid input.
-            assert(IntValue < 709);
+            assert(IntHalf < 709);
             // When x = 0 we already know e^x = 1.
             if (IsZero()) {
                 return One;
@@ -1662,7 +1662,7 @@ public:
     /// <param name="Value">The value.</param>
     inline void MediumDec::ReadString(std::string Value)
     {
-        IntValue = 0; DecimalHalf = 0;
+        IntHalf = 0; DecimalHalf = 0;
 	#if !defined(AltNum_EnableMirroredSection)
         bool IsNegative = false;
 	#endif
@@ -1685,7 +1685,7 @@ public:
 	#if !defined(AltNum_EnableMirroredSection)
                 IsNegative = true;
 	#else
-				IntValue.IsPositive = 0;
+				IntHalf.IsPositive = 0;
 	#endif
             }
             else if (StringChar == '.')
@@ -1702,7 +1702,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TempInt02;
+                IntHalf += TempInt02;
             }
             PlaceNumber--;
         }
@@ -1724,8 +1724,8 @@ public:
 	#if !defined(AltNum_EnableMirroredSection)
         if (IsNegative)
         {
-            if (IntValue == 0) { IntValue = NegativeRep; }
-            else { IntValue *= -1; }
+            if (IntHalf == 0) { IntHalf = NegativeRep; }
+            else { IntHalf *= -1; }
         }
 	#endif
     }
@@ -1745,13 +1745,13 @@ public:
     std::string MediumDec::ToString()
     {
         std::string Value = "";
-        int CurrentSection = IntValue;
+        int CurrentSection = IntHalf;
         unsigned __int8 CurrentDigit;
         std::string DecBuffer = "";
-        if (IntValue < 0)
+        if (IntHalf < 0)
         {
             Value += "-";
-            if (IntValue == NegativeRep) { CurrentSection = 0; }
+            if (IntHalf == NegativeRep) { CurrentSection = 0; }
             else { CurrentSection *= -1; }
         }
         for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
@@ -1789,12 +1789,12 @@ public:
     std::string MediumDec::ToFullString()
     {
         std::string Value = "";
-        int CurrentSection = IntValue;
+        int CurrentSection = IntHalf;
         unsigned __int8 CurrentDigit;
-        if (IntValue < 0)
+        if (IntHalf < 0)
         {
             Value += "-";
-            if (IntValue == NegativeRep) { CurrentSection = 0; }
+            if (IntHalf == NegativeRep) { CurrentSection = 0; }
             else { CurrentSection *= -1; }
         }
         for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)

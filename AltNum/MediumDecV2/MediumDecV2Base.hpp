@@ -41,7 +41,7 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         MediumDecV2Base(const IntHalfType& intVal, const DecimalHalfType& decVal = 0)
         {
-            IntValue = intVal;
+            IntHalf = intVal;
             DecimalHalf = decVal;
 	#if defined(AltNum_UseBuiltinVirtualTable)
 			VTable = new VirtualTable;
@@ -54,11 +54,11 @@ namespace BlazesRusCode
         {
 			if(rhs<0)
 			{
-				IntValue.Value = -rhs;
-				IntValue.IsPositive = 0;
+				IntHalf.Value = -rhs;
+				IntHalf.IsPositive = 0;
 			}
 			else
-				IntValue = rhs;
+				IntHalf = rhs;
 			DecimalHalf = 0;
             return *this;
         } const
@@ -68,7 +68,7 @@ namespace BlazesRusCode
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
         } const
 
@@ -77,7 +77,7 @@ namespace BlazesRusCode
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
         } const
 
@@ -96,7 +96,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         void SetVal(const MediumDecV2& Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         } const
 
@@ -124,13 +124,13 @@ namespace BlazesRusCode
 	#endif
 	
 	#if defined(AltNum_EnableInfinityRep)
-        //When DecimalHalf.Value equals this value, it represents infinity (sign of IntValue determines if either negative or positive inifity)
+        //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
 		static const unsigned int InfinityRep = 1073741805;
 	#endif
 	#if defined(AltNum_EnableApproaching)
-        //When DecimalHalf.Value equals this value, it represents Approaching IntValue from right towards left (IntValue.0..01)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
         static const unsigned int ApproachingBottomRep = 1073741806;
-        //When DecimalHalf.Value equals this value, it represents Approaching IntValue from left towards right (IntValue.9..9)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
 		static const unsigned int ApproachingTopRep = 1073741807;
 	#endif
     //If DecimalHalf is greator than NaNVariantThreshold, than number is at unknown range or indeterminate form
@@ -156,11 +156,11 @@ namespace BlazesRusCode
 		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
-		//When IntValue.IsPositive==0, then the indeterminate form represents 0 x -Infinity
+		//When IntHalf.IsPositive==0, then the indeterminate form represents 0 x -Infinity
 		static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold+1;//1073741814;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
-		//When IntValue.IsPositive==0, then the indeterminate form represents -Infinity / Infinity
+		//When IntHalf.IsPositive==0, then the indeterminate form represents -Infinity / Infinity
 		static unsigned int InfDividedByInfRep = IndeterminateThreshold+2;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
@@ -169,7 +169,7 @@ namespace BlazesRusCode
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
 		static unsigned int ZeroToPowerOfZeroRep = IndeterminateThreshold+4;
 		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents IntValue/0
+		//When DecimalHalf.Value is this value, then the indeterminate form represents IntHalf/0
 		static unsigned int DivideByZeroRep = IndeterminateThreshold+9;
 		
 		static unsigned int UnknownIndeterminateRep = IndeterminateThreshold+10;
@@ -317,9 +317,9 @@ namespace BlazesRusCode
                     return GetIRepType(); break;
 		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
                 case 3:
-				    //If IntValue==???, then left side range value equals negative infinity
+				    //If IntHalf==???, then left side range value equals negative infinity
 				    //If DecimalHalf.Value==???, then right side range value equals positive infinity
-				    //IntValue represents left side minimum
+				    //IntHalf represents left side minimum
 				    //For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
 				    return RepType::WithinMinMaxRange;
         #endif
@@ -395,14 +395,14 @@ protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetPiValV1(const VariantType& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
         }
 public:
         constexpr auto SetPiVal = SetPiValV1<MediumDecV2Base>;
   
         void SetPiValFromInt(int Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,1);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,1);
         }
     #endif
     #pragma endregion PiNum Setters
@@ -413,14 +413,14 @@ protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetEValV1(const VariantType& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
         }
 public:
         constexpr auto SetEVal = SetEValV1<MediumDecV2Base>;
 		
         void SetEValFromInt(int Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,2);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,2);
         }
     #endif
     #pragma endregion ENum Setters
@@ -431,14 +431,14 @@ protected:
         template<MediumDecVariant VariantType=MediumDecBaseV2>
         void SetIValV1(const VariantType& Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
         }
 public:
         constexpr auto SetIVal = SetEValV1<MediumDecV2Base>;
 		
         void SetIValFromInt(int Value)
         {
-            IntValue = Value.IntValue; DecimalHalf = PartialInt(0,3);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,3);
         }
     #endif
     #pragma endregion INum Setters
@@ -458,18 +458,18 @@ public:
         void SetAsInfinity()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsPositive = 1; DecimalHalf = InfinityRep;
+            IntHalf.IsPositive = 1; DecimalHalf = InfinityRep;
     #else
-            IntValue = 1; DecimalHalf = InfinityRep;
+            IntHalf = 1; DecimalHalf = InfinityRep;
     #endif
         }
 
         void SetAsNegativeInfinity()
         {
 	#if defined(AltNum_EnableMirroredSection)
-            IntValue.IsPositive = 0; DecimalHalf = InfinityRep;
+            IntHalf.IsPositive = 0; DecimalHalf = InfinityRep;
     #else
-            IntValue = -1; DecimalHalf = InfinityRep;
+            IntHalf = -1; DecimalHalf = InfinityRep;
     #endif
         }
 	#endif
@@ -479,46 +479,46 @@ public:
 	#if defined(AltNum_EnableApproaching)
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
-        //Approaching Towards values from right to left side(IntValue.000...1)
+        //Approaching Towards values from right to left side(IntHalf.000...1)
         void SetAsApproachingBottom(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = ApproachingBottomRep;
+            IntHalf = value; DecimalHalf = ApproachingBottomRep;
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)
+        //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)
         void SetAsApproachingTop(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = ApproachingTopRep;
+            IntHalf = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
 		
 		//SetAsApproachingBottom without changing sign
         void SetAsApproachingBottomVal(const unsigned int& value=0)
         {
-            IntValue.Value = value; DecimalHalf = ApproachingBottomRep;
+            IntHalf.Value = value; DecimalHalf = ApproachingBottomRep;
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
 		//SetAsApproachingTop without changing sign
         void SetAsApproachingTopVal(const unsigned int& value=0)
         {
-            IntValue.Value = value; DecimalHalf = ApproachingTopRep;
+            IntHalf.Value = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
 		
 		//SetAsApproachingBottom without changing sign or flags
         void SetAsApproachingBottomValV2(const unsigned int& value=0)
         {
-            IntValue.Value = value; DecimalHalf.Value = ApproachingBottomRep;
+            IntHalf.Value = value; DecimalHalf.Value = ApproachingBottomRep;
         }
 
 		#if !defined(AltNum_DisableApproachingTop)
 		//SetAsApproachingTop without changing sign
         void SetAsApproachingTopValV2(const unsigned int& value=0)
         {
-            IntValue.Value = value; DecimalHalf.Value = ApproachingTopRep;
+            IntHalf.Value = value; DecimalHalf.Value = ApproachingTopRep;
         }
         #endif
 		
@@ -526,13 +526,13 @@ public:
 
         void SetAsApproachingBottomPi(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
 		
 			#if !defined(AltNum_DisableApproachingTop)
         void SetAsApproachingTopPi(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
 			#endif
 			
@@ -542,14 +542,14 @@ public:
 		
         void SetAsApproachingBottomE(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
         }
 		
 			#if !defined(AltNum_DisableApproachingTop)
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)e
+        //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)e
         void SetAsApproachingTopE(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
         }
 			#endif
 		
@@ -559,14 +559,14 @@ public:
 		
         void SetAsApproachingBottomI(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
         }
 		
 			#if !defined(AltNum_DisableApproachingTop)
-        //Approaching Towards (IntValue-1) from Left to right side(IntValue.999...9)i
+        //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)i
         void SetAsApproachingTopI(const MirroredInt& value=MirroredInt::Zero)
         {
-            IntValue = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
         }
 			#endif
 		
@@ -578,12 +578,12 @@ public:
 	#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
-            IntValue = 0; DecimalHalf = NaNRep;
+            IntHalf = 0; DecimalHalf = NaNRep;
         }
 
         void SetAsUndefined()
         {
-            IntValue = 0; DecimalHalf = UndefinedRep;
+            IntHalf = 0; DecimalHalf = UndefinedRep;
         }
 	#endif
     #pragma endregion NaN Setters
@@ -756,13 +756,13 @@ public:
         int toInt() {
             auto self = *this;
             self.ConvertToNormTypeV2();
-            return IntValue.GetValue();
+            return IntHalf.GetValue();
         }
 
         bool toBool() {
             auto self = *this;
             self.ConvertToNormTypeV2();
-            return IntValue.IsZero() ? false : true;
+            return IntHalf.IsZero() ? false : true;
         }
 
         /// <summary>
@@ -851,7 +851,7 @@ public:
 			#endif
             #if defined(AltNum_EnableInfinityRep)
             case RepType::ImaginaryInfinity:
-                IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+                IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
                 DecimalHalf.Value = 999999999; 
                 /*ExtraRep = InitialExtraRep;*/
                 break;
@@ -919,7 +919,7 @@ public:
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
 			case RepType::Infinity:
-				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
 				DecimalHalf = 999999999;
 				break;
 	#endif
@@ -948,7 +948,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
 			case RepType::ImaginaryInfinity:
-				IntValue = IsPositive()?MaxIntValue:MinIntValue; 
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
 				DecimalHalf.Value = 999999999;
 				break;
 		#endif
@@ -1065,7 +1065,7 @@ public:
 				#if defined(AltNum_EnableERep)
 				case RepType::ApproachingBottomE:
 				#endif
-					if(IntValue.Value==0)
+					if(IntHalf.Value==0)
 					{
 						DecimalHalf.Flags = 0;
 						return RepType::ApproachingBottom; 
@@ -1119,24 +1119,24 @@ protected:
 		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
 		{
 	    #if defined(AltNum_EnableMirroredSection)
-			if(IntValue.IsPositive())
-				if(RRep==RepType:Infinity&&that.IntValue.IsPositive())
+			if(IntHalf.IsPositive())
+				if(RRep==RepType:Infinity&&that.IntHalf.IsPositive())
 					return 1<=>1;
 				else
 					return 1<=>0;
 			else
-				if(RRep==RepType:Infinity&&that.IntValue.IsNegative())
+				if(RRep==RepType:Infinity&&that.IntHalf.IsNegative())
 					return 1<=>1;
 				else
 					return 0<=>1;
 		#else
-			if(IntValue==1)
-				if(RRep==RepType:Infinity&&that.IntValue==1)
+			if(IntHalf==1)
+				if(RRep==RepType:Infinity&&that.IntHalf==1)
 					return 1<=>1;
 				else
 					return 1<=>0;
 			else
-				if(RRep==RepType:Infinity&&that.IntValue==-1)
+				if(RRep==RepType:Infinity&&that.IntHalf==-1)
 					return 1<=>1;
 				else
 					return 0<=>1;
@@ -1162,7 +1162,7 @@ protected:
 			}
 	#endif
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntValue.IsPositive <=> that.IntValue.IsPositive; SignCmp != 0)
+			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
 				return SignCmp;
 	
 			RepType LRep = GetRepType();
@@ -1178,7 +1178,7 @@ protected:
                     throw "Can't compare imaginary number with real number";
 				else if(RRep==RepType:ImaginaryInfinity)
                 {
-					if(that.IntValue==1)
+					if(that.IntHalf==1)
 						return 0<=>1;//Positive Infinity is greater than real number representations
 					else
 						return 1<=>0;
@@ -1205,7 +1205,7 @@ protected:
 						return BasicComparisonV2(that);
 					else if(RRep==RepType:Infinity)
                     {
-                        if(that.IntValue==1)
+                        if(that.IntHalf==1)
 							return 0<=>1;//Positive Infinity is greater than real number representations
 						else
 							return 1<=>0;
@@ -1263,7 +1263,7 @@ public:
 
 		bool operator==(const int& that) const
 		{
-			if (IntValue!=that)
+			if (IntHalf!=that)
 				return false;
 			if (DecimalHalf!=0)
 				return false;
@@ -1272,17 +1272,17 @@ public:
 
 		bool operator==(const MediumDec& that) const
 		{
-			if (IntValue!=that.IntValue)
+			if (IntHalf!=that.IntHalf)
 				return false;
-			if (DecimalHalf!=that.IntValue)
+			if (DecimalHalf!=that.IntHalf)
 				return false;
 		}
 
 		bool operator==(const MediumDecV2Base& that) const
 		{
-			if (IntValue!=that.IntValue)
+			if (IntHalf!=that.IntHalf)
 				return false;
-			if (DecimalHalf!=that.IntValue)
+			if (DecimalHalf!=that.IntHalf)
 				return false;
 		}
     #pragma endregion Comparison Operators
@@ -1418,7 +1418,7 @@ protected:
             if (rValue == 0)
             {
                 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_DefineDivideByZeroAsInfinity)
-                if (IntValue < 0)
+                if (IntHalf < 0)
                     SetAsNegativeInfinity();
                 else
                     SetAsInfinity();
@@ -1440,7 +1440,7 @@ protected:
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottomPi://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        case RepType::ApproachingBottomPi://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
                         {
                             if (IsAtZeroInt())
                                 return *this;
@@ -1449,7 +1449,7 @@ protected:
                         }
                         break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTopPi://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        case RepType::ApproachingTopPi://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                         #endif
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1474,7 +1474,7 @@ protected:
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottomE://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        case RepType::ApproachingBottomE://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
                         {
                             if (IsAtZeroInt())
                                 return *this;
@@ -1483,7 +1483,7 @@ protected:
                         }
                         break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTopE://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        case RepType::ApproachingTopE://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                         #endif
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1507,9 +1507,9 @@ protected:
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
                     #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
                     #endif
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1541,7 +1541,7 @@ protected:
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.0...01)
+                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
                         {
                             if (IsAtZeroInt())
                                 return *this;
@@ -1550,7 +1550,7 @@ protected:
                         }
                         break;
                         #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                         #endif
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive
@@ -1638,35 +1638,35 @@ public:
 protected:
 		void UnsignedDivOp_RValueIntSwitch(const auto& rValue)
 		{
-			switch(rValue.IntValue.Value)
+			switch(rValue.IntHalf.Value)
 			{
 				case 2:
-					if(IntValue&1==1)//Check if number is odd
+					if(IntHalf&1==1)//Check if number is odd
 						UnsignedBasicIntDivOp(2);
 					else
-						IntValue.Value /= 2;
+						IntHalf.Value /= 2;
 					break;
 				case 4:
-					if(((IntValue >> 2) << 2) == IntValue)
-						IntValue.Value /= 4;
+					if(((IntHalf >> 2) << 2) == IntHalf)
+						IntHalf.Value /= 4;
 					else
 						UnsignedBasicIntDivOp(4);
 					break;
 				case 8:
-					if(((IntValue >> 3) << 3) == IntValue)
-						IntValue.Value /= 8;
+					if(((IntHalf >> 3) << 3) == IntHalf)
+						IntHalf.Value /= 8;
 					else
 						UnsignedBasicIntDivOp(4);
 					break;
 				case 16:
-					if(((IntValue >> 4) << 4) == IntValue)
-						IntValue.Value /= 16;
+					if(((IntHalf >> 4) << 4) == IntHalf)
+						IntHalf.Value /= 16;
 					else
 						UnsignedBasicIntDivOp(4);
 					break;
 				case 32:
-					if(((IntValue >> 5) << 5) == IntValue)
-						IntValue.Value /= 32;
+					if(((IntHalf >> 5) << 5) == IntHalf)
+						IntHalf.Value /= 32;
 					else
 						UnsignedBasicIntDivOp(4);
 					break;
@@ -1674,7 +1674,7 @@ protected:
 					throw "Target value can not be divided by zero";
 					break;
 				default:
-					UnsignedBasicIntDivOp(rValue.IntValue.Value);
+					UnsignedBasicIntDivOp(rValue.IntHalf.Value);
 					break;
 			}
 		}
@@ -1840,15 +1840,15 @@ protected:
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingBottomPi:
-        					if(IntValue.Value!=0)
+        					if(IntHalf.Value!=0)
         						CatchAllUIntMultiplication(rValue, LRep);
         					break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTopPi:
-        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
-        						IntValue.Value = (int)rValue - 1;
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
-        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+        						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
     					break;
                         #endif
     #pragma region AltDecVariantExclusive
@@ -1875,10 +1875,10 @@ protected:
                         } break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTopE:
-        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
-        						IntValue.Value = (int)rValue - 1;
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
-        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+        						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
     					break;
                         #endif
     #pragma region AltDecVariantExclusive
@@ -1900,15 +1900,15 @@ protected:
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingImaginaryBottom:
-        					if(IntValue.Value!=0)
+        					if(IntHalf.Value!=0)
         						CatchAllUIntMultiplication(rValue, LRep);
                             break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingImaginaryTop:
-        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
-        						IntValue.Value = (int)rValue - 1;
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
-        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+        						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
     					break;
                         #endif
     #pragma region AltDecVariantExclusive
@@ -1935,15 +1935,15 @@ protected:
     #pragma endregion AltDecVariantExclusive
             #if defined(AltNum_EnableApproaching)
                         case RepType::ApproachingBottom:
-        					if(IntValue.Value!=0)
+        					if(IntHalf.Value!=0)
         						CatchAllUIntMultiplication(rValue, LRep);
                             break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTop:
-        					if(IntValue.Value==0)//0.99.9 * 5 = ~4.9..9 
-        						IntValue.Value = (int)rValue - 1;
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
-        						IntValue.Value = (IntValue.Value+1)*(unsigned int)rValue - 1;
+        						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
     					break;
                         #endif
     #pragma region AltDecVariantExclusive
@@ -2187,16 +2187,16 @@ protected:
     #pragma endregion AltDecVariantExclusive
         					if(IsNegative())
         					{
-                                if(rValue>IntValue.Value)
+                                if(rValue>IntHalf.Value)
 								{
-                                    IntValue.IsPositive = 1;
-                                    IntValue.Value = rValue - IntValue.Value;
+                                    IntHalf.IsPositive = 1;
+                                    IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else
-									IntValue.Value -= rValue;
+									IntHalf.Value -= rValue;
                             }
                             else
-                                IntValue.Value += rValue;
+                                IntHalf.Value += rValue;
                         break;
             #endif
             #ifdef AltNum_EnableInfinity
@@ -2427,16 +2427,16 @@ protected:
     #pragma endregion AltDecVariantExclusive
         					if(IsPositive())
         					{
-                                if(rValue>IntValue.Value)
+                                if(rValue>IntHalf.Value)
 								{
-                                    IntValue.IsPositive = 0;
-                                    IntValue.Value = rValue - IntValue.Value;
+                                    IntHalf.IsPositive = 0;
+                                    IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else
-									IntValue.Value -= rValue;
+									IntHalf.Value -= rValue;
                             }
                             else
-                                IntValue.Value += rValue;
+                                IntHalf.Value += rValue;
                             break;
             #endif
             #ifdef AltNum_EnableInfinity
@@ -2670,11 +2670,11 @@ public:
         MediumDecV2Base& operator ++()
         {
             if (DecimalHalf == 0)
-                ++IntValue;
-            else if (IntValue == NegativeRep)
-                IntValue = MirroredInt::Zero;
+                ++IntHalf;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
             else
-                ++IntValue;
+                ++IntHalf;
             return *this;
         }
 
@@ -2685,11 +2685,11 @@ public:
         MediumDecV2Base& operator --()
         {
             if (DecimalHalf == 0)
-                --IntValue;
-            else if (IntValue == 0)
-                IntValue = NegativeRep;
+                --IntHalf;
+            else if (IntHalf == 0)
+                IntHalf = NegativeRep;
             else
-                --IntValue;
+                --IntHalf;
             return *this;
         }
 
@@ -2745,29 +2745,29 @@ public:
             {
                 auto value = this;
                 bool AutoSetValue = true;
-                switch (IntValue.Value)
+                switch (IntHalf.Value)
                 {
-                case 1: value.IntValue = 1; break;
-                case 4: value.IntValue = 2; break;
-                case 9: value.IntValue = 3; break;
-                case 16: value.IntValue = 4; break;
-                case 25: value.IntValue = 5; break;
-                case 36: value.IntValue = 6; break;
-                case 49: value.IntValue = 7; break;
-                case 64: value.IntValue = 8; break;
-                case 81: value.IntValue = 9; break;
-                case 100: value.IntValue = 10; break;
-                case 121: value.IntValue = 11; break;
-                case 144: value.IntValue = 12; break;
-                case 169: value.IntValue = 13; break;
-                case 196: value.IntValue = 14; break;
-                case 225: value.IntValue = 15; break;
-                case 256: value.IntValue = 16; break;
-                case 289: value.IntValue = 17; break;
-                case 324: value.IntValue = 18; break;
-                case 361: value.IntValue = 19; break;
-                case 400: value.IntValue = 20; break;
-                case 1600: value.IntValue = 40; break;
+                case 1: value.IntHalf = 1; break;
+                case 4: value.IntHalf = 2; break;
+                case 9: value.IntHalf = 3; break;
+                case 16: value.IntHalf = 4; break;
+                case 25: value.IntHalf = 5; break;
+                case 36: value.IntHalf = 6; break;
+                case 49: value.IntHalf = 7; break;
+                case 64: value.IntHalf = 8; break;
+                case 81: value.IntHalf = 9; break;
+                case 100: value.IntHalf = 10; break;
+                case 121: value.IntHalf = 11; break;
+                case 144: value.IntHalf = 12; break;
+                case 169: value.IntHalf = 13; break;
+                case 196: value.IntHalf = 14; break;
+                case 225: value.IntHalf = 15; break;
+                case 256: value.IntHalf = 16; break;
+                case 289: value.IntHalf = 17; break;
+                case 324: value.IntHalf = 18; break;
+                case 361: value.IntHalf = 19; break;
+                case 400: value.IntHalf = 20; break;
+                case 1600: value.IntHalf = 40; break;
                 default:
                     AutoSetValue = false;
                     break;
@@ -2846,16 +2846,16 @@ protected:
         template<typename ValueType>
         auto PartialUIntPowOp(const ValueType& expValue)
         {
-            if (DecimalHalf.Value == 0 && IntValue.Value == 10)
+            if (DecimalHalf.Value == 0 && IntHalf.Value == 10)
             {
-                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf.Value = 0;
             }
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 auto self = AbsOf();
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -2882,7 +2882,7 @@ protected:
                 ValueType exp = expValue * -1;
 				//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
 				auto self = AbsOf();
-				IntValue = 1; DecimalHalf = 0;// Initialize result
+				IntHalf = 1; DecimalHalf = 0;// Initialize result
 				while (expValue > 0)
 				{
 					// If expValue is odd, multiply self with result
@@ -2894,16 +2894,16 @@ protected:
 				}
                 return *this;
             }
-            else if (DecimalHalf.Value == 0 && IntValue.Value == 10)
+            else if (DecimalHalf.Value == 0 && IntHalf.Value == 10)
             {
-                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf.Value = 0;
             }
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 auto self = AbsOf();
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -2930,11 +2930,11 @@ protected:
             else if (expValue == 0)
                 SetAsOne(); return *this;
             auto convertedVal = ConvertAsNormTypeV2();
-            if (convertedVal.DecimalHalf == 0 && convertedVal.IntValue.Value == 10)
+            if (convertedVal.DecimalHalf == 0 && convertedVal.IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntValue.IsPositive = 1;
-                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf = 0;
             }
             else
@@ -2942,7 +2942,7 @@ protected:
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 bool IsNegative = IsPositive()?false:exp&1==1?false:true;
                 auto self = AbsOf();
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -2953,7 +2953,7 @@ protected:
                     self = self * self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntValue.IsPositive = 0;
+                    IntHalf.IsPositive = 0;
             }
             return *this;
         }
@@ -2970,9 +2970,9 @@ protected:
             {
                 auto convertedVal = ConvertAsNormTypeV2();
                 ValueType exp = expValue * -1;
-                if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntValue == 10 && expValue >= -9)
+                if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntHalf == 10 && expValue >= -9)
                 {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
                     if(IsNegative()&&exp&1==1)
                         IsPositive = 1;
                 }
@@ -2982,7 +2982,7 @@ protected:
                     //Switches from negative to positive if exp is odd number
                     bool IsNegative = IsPositive()?false:exp&1==1?false:true;
                     auto self = AbsOf();
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
                         // If expValue is odd, multiply self with result
@@ -2993,16 +2993,16 @@ protected:
                         self = self / self; // Change x to x^-1
                     }
                     if(IsNegative)
-                        IntValue.IsPositive = 0;
+                        IntHalf.IsPositive = 0;
                 }
                 return *this;
             }
             auto convertedVal = ConvertAsNormTypeV2();
-            if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntValue.Value == 10)
+            if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntValue.IsPositive = 1;
-                IntValue.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf = 0;
             }
             else
@@ -3010,7 +3010,7 @@ protected:
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 bool IsNegative = IsPositive()?false:exp&1==1?false:true;
                 auto self = AbsOf();
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -3021,7 +3021,7 @@ protected:
                     self = self * self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntValue.IsPositive = 0;
+                    IntHalf.IsPositive = 0;
             }
             return *this;
         }
@@ -3514,17 +3514,17 @@ public:
                 auto self = Value.ConvertAsPiNum(repType);
                 if(Value.IsNegative())
                 {
-                    IntValue.Value %= 2;
-                    IntValue.Value = 2 - IntValue.Value;
+                    IntHalf.Value %= 2;
+                    IntHalf.Value = 2 - IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
                 else
-                    IntValue.Value %= 2;
+                    IntHalf.Value %= 2;
                 if(DecimalHalf==0)//0 or 1 Pi
                     return Zero;
                 else if(DecimalHalf==500000000)
                 {
-                    if(IntValue==0)//)0.5 Pi
+                    if(IntHalf==0)//)0.5 Pi
                         return One;
                     else//1.5 Pi
                         return NegativeOne;
@@ -3555,14 +3555,14 @@ public:
                 auto self = Value.ConvertAsPiNum(repType);
                 if(Value.IsNegative())
                 {
-                    IntValue.Value %= 2;
-                    IntValue.Value = 2 - IntValue.Value;
+                    IntHalf.Value %= 2;
+                    IntHalf.Value = 2 - IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
                 else
-                    IntValue.Value %= 2;
+                    IntHalf.Value %= 2;
                 if(DecimalHalf==0)
-                    if(IntValue==0)//)0
+                    if(IntHalf==0)//)0
                         return One;
                     else//1 Pi
                         return NegativeOne;
@@ -3594,17 +3594,17 @@ public:
                 auto self = Value.ConvertAsPiNum(repType);
                 if(Value.IsNegative())
                 {
-                    IntValue.Value %= 2;
-                    IntValue.Value = 2 - IntValue.Value;
+                    IntHalf.Value %= 2;
+                    IntHalf.Value = 2 - IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
                 else
-                    IntValue.Value %= 2;
+                    IntHalf.Value %= 2;
                 if(DecimalHalf==0)//0 or 1 Pi
 					return Zero;
                 else if(DecimalHalf==500000000)//0.5 Pi or 1.5 Pi
 				{
-					if(IntValue==0)
+					if(IntHalf==0)
 					#if defined(AltNum_EnableInfinityRep)
 						return PositiveInfinity;
 					#else
@@ -3703,14 +3703,14 @@ public:
 			#ifdef AltNum_DisplayApproachingAsReal
             return ConvertToBasicString(RepType::ApproachingBottom);
 			#else
-            return (std::string)IntValue + ".0..01";
+            return (std::string)IntHalf + ".0..01";
 			#endif
             break;
         case RepType::ApproachingTop:
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop);
 			#else
-            return (std::string)IntValue + ".9..9";
+            return (std::string)IntHalf + ".9..9";
 			#endif
             break;
         #endif
@@ -3732,34 +3732,34 @@ public:
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
-        case RepType::ApproachingBottomPi://equal to IntValue.0..01 Pi
+        case RepType::ApproachingBottomPi://equal to IntHalf.0..01 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingBottom)+"π";
 			#else
-            return (std::string)IntValue + ".0..01π";
+            return (std::string)IntHalf + ".0..01π";
 			#endif
             break;
-        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+        case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop)+"π";
 			#else
-            return (std::string)IntValue + ".9..9π";
+            return (std::string)IntHalf + ".9..9π";
 			#endif
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-        case RepType::ApproachingBottomE://equal to IntValue.0..01 e
+        case RepType::ApproachingBottomE://equal to IntHalf.0..01 e
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingBottom)+"e";
 			#else
-            return (std::string)IntValue + ".0..01e";
+            return (std::string)IntHalf + ".0..01e";
 			#endif
             break;
-        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+        case RepType::ApproachingTopE://equal to IntHalf.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop)+"e";
 			#else
-            return (std::string)IntValue + ".9..9e";
+            return (std::string)IntHalf + ".9..9e";
 			#endif
             break;
 	#endif
@@ -3774,14 +3774,14 @@ public:
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingBottom)+"i";
 			#else
-            return (std::string)IntValue + ".0..01i";
+            return (std::string)IntHalf + ".0..01i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
 			#ifdef AltNum_DisplayApproachingAsReal
 			return ConvertToBasicString(RepType::ApproachingTop)+"i";
 			#else
-            return (std::string)IntValue + ".9..9i";
+            return (std::string)IntHalf + ".9..9i";
 			#endif
             break;
     #endif
@@ -3796,9 +3796,9 @@ public:
             return "UndefinedButInRange";
             break;
 		/*
-		#if defined(MediumDecV2_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+		#if defined(MediumDecV2_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
         case WithinMinMaxRange:
-		    return "WithinMinMaxRange of "+VariableConversionFunctions::UnsignedIntToStringConversion((int)IntValue)+" to "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf);
+		    return "WithinMinMaxRange of "+VariableConversionFunctions::UnsignedIntToStringConversion((int)IntHalf)+" to "+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf);
             break;
         #endif
 		*/

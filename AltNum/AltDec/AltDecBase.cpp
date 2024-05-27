@@ -112,7 +112,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
                 break;
         #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
                 break;
@@ -123,7 +123,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
                 break;
         #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
                 break;
@@ -193,13 +193,13 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
                 break;
         #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
                 break;
         #endif
         #if defined(AltNum_EnableApproachingPi)
-            case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+            case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
                 #ifdef AltNum_DisplayApproachingAsReal
                 ConvertToNormType(RepType::ApproachingTop);
                 return BasicToStringOp()+"π";
@@ -209,7 +209,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 break;
         #endif
         #if defined(AltNum_EnableApproachingE)
-            case RepType::ApproachingTopE://equal to IntValue.9..9 e
+            case RepType::ApproachingTopE://equal to IntHalf.9..9 e
                 #ifdef AltNum_DisplayApproachingAsReal
                 ConvertToNormType(RepType::ApproachingTop);
                 return BasicToStringOp()+"e";
@@ -219,22 +219,22 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 break;
         #endif
         #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+            case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
                 break;
             #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+            case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
                 break;
             #elif defined(AltNum_EnableMixedEFractional)
-            case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+            case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
                 break;
             #elif defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+            case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
                 break;
@@ -303,7 +303,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             case UndefinedButInRange:
                 return "UndefinedButInRange";
                 break;
-            #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+            #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
             case WithinMinMaxRange:
                 return "WithinMinMaxRange";
                 break;
@@ -378,7 +378,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
 				break;
 		#elif defined(AltNum_EnableEFractional)
-			case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+			case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
 				return IntHalfAsString()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
 				break;
@@ -389,7 +389,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
 				break;
 		#elif defined(AltNum_EnablePiFractional)
-			case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+			case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
 				return IntHalfAsString()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
 				break;
@@ -457,13 +457,13 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
 				break;
 		#elif defined(AltNum_EnableIFractional)
-			case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+			case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 				return IntHalfAsString() +"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
 				break;
 		#endif
 		#if defined(AltNum_EnableApproachingPi)
-			case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+			case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
 				#ifdef AltNum_DisplayApproachingAsReal
 				ConvertToNormType(RepType::ApproachingTop);
 				return BasicToFullStringOp()+"π";
@@ -473,7 +473,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 		#endif
 		#if defined(AltNum_EnableApproachingE)
-			case RepType::ApproachingTopE://equal to IntValue.9..9 e
+			case RepType::ApproachingTopE://equal to IntHalf.9..9 e
 				#ifdef AltNum_DisplayApproachingAsReal
 				ConvertToNormType(RepType::ApproachingTop);
 				return BasicToFullStringOp()+"e";
@@ -536,22 +536,22 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 		#endif
     #endif
 		#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+			case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
 				break;
 			#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+			case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
 				break;
 			#elif defined(AltNum_EnableMixedEFractional)
-			case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+			case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
 				break;
 			#elif defined(AltNum_EnableMixedIFractional)
-			case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+			case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
 				break;
@@ -567,7 +567,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 			case UndefinedButInRange:
 				return "UndefinedButInRange";
 				break;
-			#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+			#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
 			case WithinMinMaxRange:
 				return "WithinMinMaxRange";
 				break;

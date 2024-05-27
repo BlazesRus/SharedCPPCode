@@ -68,7 +68,7 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 
 void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 {
-	if(IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value)
+	if(IntHalf==rValue.IntHalf&&DecimalHalf.Value==rValue.DecimalHalf.Value)
 	{
 	#if defined(AltNum_EnableNegativePowerRep)
 		if(ExtraRep==rValue.ExtraRep)
@@ -105,10 +105,10 @@ void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 {
 	if(ExtraRep.Value==rValue.ExtraRep.Value)
 	{
-		IntValue -= rValue.IntValue;
+		IntHalf -= rValue.IntHalf;
 		if(rValue.DecimalHalf>DecimalHalf)
 		{
-			--IntValue;
+			--IntHalf;
 			DecimalHalf.Value = ExtraRep - (rValue.DecimalHalf-DecimalHalf);
 		}
 		else
@@ -131,94 +131,94 @@ void SameRep_WithinMinMaxRange
 
 void SameRep_ApproachingBottom(const auto& rValue)
 {
-	if (IntValue.Value == 0)
+	if (IntHalf.Value == 0)
 	{
-		if(IsNegative()&&rValue.IntValue != 0)//-0.0..1 - 5.0..1
-			IntValue = -rValue.IntValue;
-		else if (rValue.IntValue.Value != 0)//0.0..1 - 5.0..1
+		if(IsNegative()&&rValue.IntHalf != 0)//-0.0..1 - 5.0..1
+			IntHalf = -rValue.IntHalf;
+		else if (rValue.IntHalf.Value != 0)//0.0..1 - 5.0..1
 		{
 			DecimalHalf = 0;
-			IntValue = -rValue.IntValue;
+			IntHalf = -rValue.IntHalf;
 		}
 	}
 	else if (IsNegative())
 	{
-		if (IntValue == rValue.IntValue)//-1.01 - 1.01
+		if (IntHalf == rValue.IntHalf)//-1.01 - 1.01
 			SetAsZero();
-		else if(rValue.IntValue != 0)//-1.0..1 - 2.0..1 = 1
+		else if(rValue.IntHalf != 0)//-1.0..1 - 2.0..1 = 1
 		{
-			IntValue -= rValue.IntValue;
+			IntHalf -= rValue.IntHalf;
 		}
 	}
 	else
 	{
-		if (rValue.IntValue == 0)//1.0..1 - 0.0..1
+		if (rValue.IntHalf == 0)//1.0..1 - 0.0..1
 			DecimalHalf = 0;
-		else if (rValue.IntValue == NegativeRep)//1.0..1 + 0.0..1
+		else if (rValue.IntHalf == NegativeRep)//1.0..1 + 0.0..1
 		{/*Do Nothing*/
 		}
-		else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+		else if (IntHalf == -rValue.IntHalf)//1.0..1 - 1.0..1
 			SetAsZero();
-		else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+		else if (rValue.IntHalf < 0)// 1.0..1  - 2.0..1
 		{
 			DecimalHalf = 0;
-			IntValue -= rValue.IntValue;
+			IntHalf -= rValue.IntHalf;
 		}
 		else//1.0..1 - 1.0..1
 		{
-			IntValue -= rValue.IntValue;
+			IntHalf -= rValue.IntHalf;
 		}
 	}
 }
 
 void SameRep_ApproachingTop(const auto& rValue)
 {
-	if (IntValue.Value == 0)
+	if (IntHalf.Value == 0)
 	{
 		if(IsNegative())
 		{
-			if (rValue.IntValue == 0)//-0.9..9 - 0.9..9 = 0
-				IntValue = -1;
-			else if (rValue.IntValue == NegativeRep)//-0.9..9 + 0.9..9
+			if (rValue.IntHalf == 0)//-0.9..9 - 0.9..9 = 0
+				IntHalf = -1;
+			else if (rValue.IntHalf == NegativeRep)//-0.9..9 + 0.9..9
 				SetAsZero();
 			else//-0.9..9 - 5.9..9 = -6.9..8
-				IntValue = -rValue.IntValue - 1;
+				IntHalf = -rValue.IntHalf - 1;
 		}
-		else if (rValue.IntValue == 0)//0.9..9 - 0.9..9
+		else if (rValue.IntHalf == 0)//0.9..9 - 0.9..9
 			SetAsZero();
-		else if (rValue.IntValue == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
-			IntValue = 1;
-		else if (rValue.IntValue < 0)//0.9..9 + 1.9..9 = 1.9..8
-			IntValue = -rValue.IntValue;
+		else if (rValue.IntHalf == NegativeRep)//0.9..9 + 0.9..9 = 1.9..8
+			IntHalf = 1;
+		else if (rValue.IntHalf < 0)//0.9..9 + 1.9..9 = 1.9..8
+			IntHalf = -rValue.IntHalf;
 		else//0.9..9 - 5.9..9 = -5
 		{
 			DecimalHalf = 0; ExtraRep = InitialExtraRep;
-			IntValue = -rValue.IntValue;
+			IntHalf = -rValue.IntHalf;
 		}
 	}
 	else if (IsNegative())
 	{
-		if (rValue.IntValue == 0)//-1.9..9 - 0.9..9  = -2.9..8
-			--IntValue;
-		else if (IntValue == rValue.IntValue)//-1.01 + 1.01
+		if (rValue.IntHalf == 0)//-1.9..9 - 0.9..9  = -2.9..8
+			--IntHalf;
+		else if (IntHalf == rValue.IntHalf)//-1.01 + 1.01
 			SetAsZero();
 		else//-1.9..9 - 2.9..9
 		{
-			IntValue -= rValue.IntValue + 1;
+			IntHalf -= rValue.IntHalf + 1;
 		}
 	}
 	else
 	{
-		if (rValue.IntValue == 0)//1.9..9 - 0.9..9 = 2.9..8
+		if (rValue.IntHalf == 0)//1.9..9 - 0.9..9 = 2.9..8
 		{
 			DecimalHalf = 0; ExtraRep = InitialExtraRep;
 		}
-		else if (IntValue == rValue.IntValue)//1.9..9 - 1.9..9
+		else if (IntHalf == rValue.IntHalf)//1.9..9 - 1.9..9
 			SetAsZero();
 		else//1.9..9 - 2.9..9
 		{
 			DecimalHalf = 0; ExtraRep = InitialExtraRep;
-			IntValue -= rValue.IntValue;
+			IntHalf -= rValue.IntHalf;
 		}
 	}
 }

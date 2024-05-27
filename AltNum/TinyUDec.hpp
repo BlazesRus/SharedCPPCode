@@ -56,7 +56,7 @@ namespace BlazesRusCode
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
         /// </summary>
-        unsigned char IntValue;
+        unsigned char IntHalf;
 
         /// <summary>
         /// Stores decimal section info
@@ -71,17 +71,17 @@ namespace BlazesRusCode
 
         signed int GetIntHalf()
         {
-            return IntValue.GetValue();
+            return IntHalf.GetValue();
         }
 
         void SetIntHalf(unsigned rValue)
         {
-            IntValue = rValue;
+            IntHalf = rValue;
         }
 
         bool IsNegative()
         {
-            return IntValue.IsNegative();
+            return IntHalf.IsNegative();
         }
 
         //Returns DecimalHalf without flag variables
@@ -110,7 +110,7 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         TinyUDec(unsigned char intVal, signed short decVal = 0)
         {
-            IntValue.Value = intVal;
+            IntHalf.Value = intVal;
             DecimalHalf = decVal;
         }
 
@@ -121,7 +121,7 @@ namespace BlazesRusCode
         //Detect if at exactly zero
 		bool IsZero()
 		{
-            return DecimalHalf==0&&IntValue.Value==0;
+            return DecimalHalf==0&&IntHalf.Value==0;
 		}
 
         /// <summary>
@@ -130,13 +130,13 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         void SetVal(TinyUDec Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
         void SetAsZero()
         {
-            IntValue = 0;
+            IntHalf = 0;
             DecimalHalf = 0;
         }
 
@@ -151,7 +151,7 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-            IntValue = 256; DecimalHalf = 9999;
+            IntHalf = 256; DecimalHalf = 9999;
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMinimum()
         {
-            IntValue = 0; DecimalHalf = 0;
+            IntHalf = 0; DecimalHalf = 0;
         }
 	
 	#pragma region PiNum Setters
@@ -190,12 +190,12 @@ namespace BlazesRusCode
 	#if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
-            IntValue = 0; DecimalHalf = NaNRep;
+            IntHalf = 0; DecimalHalf = NaNRep;
         }
 
         void SetAsUndefined()
         {
-            IntValue = 0; DecimalHalf = UndefinedRep;
+            IntHalf = 0; DecimalHalf = UndefinedRep;
         }
 	#endif
 	#pragma endregion NaN Setters
@@ -610,9 +610,9 @@ public:
             if (Value >= 2147483648.0f)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+                    IntHalf = -2147483647;
                 else
-                    IntValue = 2147483647;
+                    IntHalf = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
@@ -621,9 +621,9 @@ public:
                 Value -= (float)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                    IntHalf = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                    IntHalf = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -639,9 +639,9 @@ public:
             if (Value >= 2147483648.0)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+                    IntHalf = -2147483647;
                 else
-                    IntValue = 2147483647;
+                    IntHalf = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
@@ -650,9 +650,9 @@ public:
                 Value -= (double)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                    IntHalf = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                    IntHalf = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -668,9 +668,9 @@ public:
             if (Value >= 2147483648.0L)
             {
                 if (IsNegative)
-                    IntValue = -2147483647;
+                    IntHalf = -2147483647;
                 else
-                    IntValue = 2147483647;
+                    IntHalf = 2147483647;
                 DecimalHalf = 999999999;
             }
             else
@@ -679,9 +679,9 @@ public:
                 Value -= (ldouble)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
-                    IntValue = IsNegative ? -WholeValue: WholeValue;
+                    IntHalf = IsNegative ? -WholeValue: WholeValue;
                 else
-                    IntValue = IsNegative ? NegativeRep : 0;
+                    IntHalf = IsNegative ? NegativeRep : 0;
             }
         }
 
@@ -691,7 +691,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetVal(bool Value)
         {
-            IntValue = Value==false ? 0 : 1;
+            IntHalf = Value==false ? 0 : 1;
             DecimalHalf = 0;
         }
 
@@ -701,7 +701,7 @@ public:
         /// <param name="Value">The value.</param>
         void SetVal(int Value)
         {
-            IntValue = Value; DecimalHalf = 0;
+            IntHalf = Value; DecimalHalf = 0;
         }
 
         /// <summary>
@@ -758,12 +758,12 @@ public:
             float Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0f : (float)IntValue.GetValue();
+                Value = IntHalf == NegativeRep ? 0.0f : (float)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
             }
             else
             {
-                Value = (float)IntValue.GetValue();
+                Value = (float)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
             }
             return Value;
@@ -778,12 +778,12 @@ public:
             double Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0 : (double)IntValue.GetValue();
+                Value = IntHalf == NegativeRep ? 0.0 : (double)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
             }
             else
             {
-                Value = (double)IntValue.GetValue();
+                Value = (double)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
             }
             return Value;
@@ -798,12 +798,12 @@ public:
             ldouble Value;
             if (IsNegative())
             {
-                Value = IntValue == NegativeRep ? 0.0L : (ldouble)IntValue.GetValue();
+                Value = IntHalf == NegativeRep ? 0.0L : (ldouble)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
             }
             else
             {
-                Value = (ldouble)IntValue.GetValue();
+                Value = (ldouble)IntHalf.GetValue();
                 if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
             }
             return Value;
@@ -813,9 +813,9 @@ public:
         /// TinyUDec to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return IntValue.GetValue(); }
+        explicit operator int() { return IntHalf.GetValue(); }
 
-        explicit operator bool() { return IntValue.IsZero() ? false : true; }
+        explicit operator bool() { return IntHalf.IsZero() ? false : true; }
     #pragma endregion From this type to Standard types
 
     #pragma region Pi Conversion
@@ -839,7 +839,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator==(TinyUDec LValue, TinyUDec Value)
         {
-			return (LValue.IntValue.Value == Value.IntValue.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
+			return (LValue.IntHalf.Value == Value.IntHalf.Value && LValue.DecimalHalf == Value.DecimalHalf && LValue.ExtraRep == LValue.ExtraRep);
         }
 
         /// <summary>
@@ -850,7 +850,7 @@ public:
         /// <returns>bool</returns>
         friend bool operator!=(TinyUDec LValue, TinyUDec Value)
         {
-            return (LValue.IntValue.Value != Value.IntValue.Value || LValue.DecimalHalf != Value.DecimalHalf);
+            return (LValue.IntHalf.Value != Value.IntHalf.Value || LValue.DecimalHalf != Value.DecimalHalf);
         }
 
         /// <summary>
@@ -864,16 +864,16 @@ public:
             if (LValue.DecimalHalf == 0)
             {
                 if (Value.DecimalHalf == 0)
-                    return LValue.IntValue < Value.IntValue;
+                    return LValue.IntHalf < Value.IntHalf;
                 else
                 {
-                    if (LValue.IntValue < Value.IntValue)
+                    if (LValue.IntHalf < Value.IntHalf)
                         return LValue.DecimalHalf < Value.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (LValue.IntValue < Value.IntValue)
+            else if (LValue.IntHalf < Value.IntHalf)
                 return LValue.DecimalHalf < Value.DecimalHalf;
             else
                 return false;
@@ -890,16 +890,16 @@ public:
             if (LValue.DecimalHalf == 0)
             {
                 if (Value.DecimalHalf == 0)
-                    return LValue.IntValue <= Value.IntValue;
+                    return LValue.IntHalf <= Value.IntHalf;
                 else
                 {
-                    if (LValue.IntValue <= Value.IntValue)
+                    if (LValue.IntHalf <= Value.IntHalf)
                         return LValue.DecimalHalf <= Value.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (LValue.IntValue <= Value.IntValue)
+            else if (LValue.IntHalf <= Value.IntHalf)
                 return LValue.DecimalHalf <= Value.DecimalHalf;
             else
                 return false;
@@ -916,16 +916,16 @@ public:
             if (LValue.DecimalHalf == 0)
             {
                 if (Value.DecimalHalf == 0)
-                    return LValue.IntValue > Value.IntValue;
+                    return LValue.IntHalf > Value.IntHalf;
                 else
                 {
-                    if (LValue.IntValue > Value.IntValue)
+                    if (LValue.IntHalf > Value.IntHalf)
                         return LValue.DecimalHalf > Value.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (LValue.IntValue > Value.IntValue)
+            else if (LValue.IntHalf > Value.IntHalf)
                 return LValue.DecimalHalf > Value.DecimalHalf;
             else
                 return false;
@@ -942,16 +942,16 @@ public:
             if (LValue.DecimalHalf == 0)
             {
                 if (Value.DecimalHalf == 0)
-                    return LValue.IntValue >= Value.IntValue;
+                    return LValue.IntHalf >= Value.IntHalf;
                 else
                 {
-                    if (LValue.IntValue >= Value.IntValue)
+                    if (LValue.IntHalf >= Value.IntHalf)
                         return LValue.DecimalHalf >= Value.DecimalHalf;
                     else
                         return false;
                 }
             }
-            else if (LValue.IntValue >= Value.IntValue)
+            else if (LValue.IntHalf >= Value.IntHalf)
                 return LValue.DecimalHalf >= Value.DecimalHalf;
             else
                 return false;
@@ -966,7 +966,7 @@ public:
         template<IntegerType IntType=signed int>
         static bool RightSideIntEqualTo(TinyUDec& LValue, IntType& RValue)
         {
-            return (LValue.IntValue == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
+            return (LValue.IntHalf == RValue && LValue.DecimalHalf == 0 && LValue.ExtraRep == 0);
 		}
 		
         /// <summary>
@@ -978,7 +978,7 @@ public:
 	    template<IntegerType IntType=signed int>
         static bool RightSideIntNotEqualTo(TinyUDec& LValue, IntType& RValue)
         {
-            if (LValue.IntValue == RValue)
+            if (LValue.IntHalf == RValue)
                 return false;
             else
                 return true;
@@ -995,17 +995,17 @@ public:
         {
             if (LValue.DecimalHalf == 0)
             {
-                return LValue.IntValue < RValue;
+                return LValue.IntHalf < RValue;
             }
             else
             {
-                if (LValue.IntValue == NegativeRep)
+                if (LValue.IntHalf == NegativeRep)
                 {//-0.5<0
                     if (RValue >= 0)
                         return true;
                 }
-                else if (LValue.IntValue < RValue) { return true; }//5.5 < 6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
+                else if (LValue.IntHalf < RValue) { return true; }//5.5 < 6
+                else if (LValue.IntHalf == RValue) { return LValue.IntHalf < 0 ? true : false; }//-5.5<-5 vs 5.5 > 5
             }
             return false;
 		}
@@ -1021,17 +1021,17 @@ public:
         {
             if (LValue.DecimalHalf == 0)
             {
-                return LValue.IntValue <= RValue;
+                return LValue.IntHalf <= RValue;
             }
             else
             {
-                if (LValue.IntValue == NegativeRep)
+                if (LValue.IntHalf == NegativeRep)
                 {//-0.5<0
                     if (RValue >= 0)
                         return true;
                 }
-                else if (LValue.IntValue < RValue) { return true; }//5.5<=6
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? true : false; }
+                else if (LValue.IntHalf < RValue) { return true; }//5.5<=6
+                else if (LValue.IntHalf == RValue) { return LValue.IntHalf < 0 ? true : false; }
             }
             return false;
 		}
@@ -1047,17 +1047,17 @@ public:
         {
             if (LValue.DecimalHalf == 0)
             {
-                return LValue.IntValue > RValue;
+                return LValue.IntHalf > RValue;
             }
             else
             {
-                if (LValue.IntValue == NegativeRep)
+                if (LValue.IntHalf == NegativeRep)
                 {//-0.5>-1
                     if (RValue <= -1)
                         return true;
                 }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }
+                else if (LValue.IntHalf > RValue) { return true; }
+                else if (LValue.IntHalf == RValue) { return LValue.IntHalf < 0 ? false : true; }
             }
             return false;
 		}
@@ -1073,17 +1073,17 @@ public:
         {
             if (LValue.DecimalHalf == 0)
             {
-                return LValue.IntValue >= RValue;
+                return LValue.IntHalf >= RValue;
             }
             else
             {
-                if (LValue.IntValue == NegativeRep)
+                if (LValue.IntHalf == NegativeRep)
                 {
                     if (RValue <= -1)
                         return true;
                 }
-                else if (LValue.IntValue > RValue) { return true; }
-                else if (LValue.IntValue == RValue) { return LValue.IntValue < 0 ? false : true; }//-5.5<-5 vs 5.5>5
+                else if (LValue.IntHalf > RValue) { return true; }
+                else if (LValue.IntHalf == RValue) { return LValue.IntHalf < 0 ? false : true; }//-5.5<-5 vs 5.5>5
             }
             return false;
 		}
@@ -1138,44 +1138,44 @@ protected:
         {
             if (DecimalHalf == 0)
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
-                    IntValue *= -1;
-                __int64 SRep = DecimalOverflowX * IntValue;
+                    IntHalf *= -1;
+                __int64 SRep = DecimalOverflowX * IntHalf;
                 SRep /= Value;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflow;
                     SRep -= OverflowVal * DecimalOverflow;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
+                    IntHalf = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    IntHalf = SelfIsNegative ? NegativeRep : 0;
                     DecimalHalf = (signed int)SRep;
                 }
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
+                    if (IntHalf == NegativeRep) { IntHalf = 0; }
+                    else { IntHalf *= -1; }
                 }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
                 SRep /= Value;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= DecimalOverflowX * OverflowVal;
-                    IntValue = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
+                    IntHalf = (signed int)(SelfIsNegative ? OverflowVal * -1 : OverflowVal);
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    IntValue = 0;
+                    IntHalf = 0;
                     DecimalHalf = (signed int)SRep;
                 }
             }
@@ -1222,7 +1222,7 @@ protected:
                 SwapNegativeStatus();
             }
             PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
             return *this;
         }
 
@@ -1236,7 +1236,7 @@ protected:
             else if (IsZero())
                 return;
             PartialIntDivOp(Value);
-            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+            if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
             return *this;
         }
 public:
@@ -1277,7 +1277,7 @@ public:
 //                SwapNegativeStatus();
 //            }
 //            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//            if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
 //        }
 //
 //        template<IntegerType IntType=signed int>
@@ -1286,7 +1286,7 @@ public:
 //            if (IsZero())
 //                return;
 //            PartialIntDivOp(Value);
-//            if (IntValue == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
+//            if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
 //        }
 //public:
 //
@@ -1324,41 +1324,41 @@ protected:
 			bool ResIsPositive = true;
 			signed _int64 SelfRes;
 			signed _int64 ValueRes;
-			if(IntValue<0)
+			if(IntHalf<0)
 			{
-                if (IntValue == NegativeRep)
+                if (IntHalf == NegativeRep)
                     SelfRes = DecimalHalf;
                 else
-			        SelfRes = NegDecimalOverflowX*IntValue + DecimalHalf;
+			        SelfRes = NegDecimalOverflowX*IntHalf + DecimalHalf;
                 if (Value < 0)
                 {
-                    if (Value.IntValue == NegativeRep)
+                    if (Value.IntHalf == NegativeRep)
                         ValueRes = Value.DecimalHalf;
                     else
-                        ValueRes =  NegDecimalOverflowX* Value.IntValue + Value.DecimalHalf;
+                        ValueRes =  NegDecimalOverflowX* Value.IntHalf + Value.DecimalHalf;
                 }
 				else
 				{
 				    ResIsPositive = false;
-					ValueRes = DecimalOverflowX * Value.IntValue +Value.DecimalHalf;
+					ValueRes = DecimalOverflowX * Value.IntHalf +Value.DecimalHalf;
 				}
 			}
 			else
 			{
                 
-				SelfRes = DecimalOverflowX* IntValue+DecimalHalf;
+				SelfRes = DecimalOverflowX* IntHalf+DecimalHalf;
 			    if(Value<0)
 				{
 				    ResIsPositive = false;
-					ValueRes = Value.IntValue==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntValue +Value.DecimalHalf;
+					ValueRes = Value.IntHalf==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntHalf +Value.DecimalHalf;
 				}
 				else
-					ValueRes = DecimalOverflowX* Value.IntValue +Value.DecimalHalf;
+					ValueRes = DecimalOverflowX* Value.IntHalf +Value.DecimalHalf;
 			}
 			
 			signed _int64 IntHalfRes = SelfRes / ValueRes;
 			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntValue = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+			IntHalf = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
 			DecimalHalf = DecimalRes;
 			if(IntHalfRes==0&&DecimalRes==0)
 				return true;
@@ -1442,7 +1442,7 @@ public:
             if (Value == 0)
             {
 #if defined(AltNum_EnableInfinityRep)
-                if(IntValue < 0)
+                if(IntHalf < 0)
                     SetAsNegativeInfinity()
                 else
                     SetAsInfinity(); 
@@ -1489,18 +1489,18 @@ public:
 	#if defined(AltNum_EnableIRep)
 	#endif
 	#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-					if(self.IntValue.IsZero())
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+					if(self.IntHalf.IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
 	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
 	    #endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
 					ConvertToNormType(LRep);
@@ -1515,14 +1515,14 @@ public:
 					return;
 					break;
 		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 			#endif
 		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
@@ -1531,36 +1531,36 @@ public:
 	    #endif
     #endif
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+				case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                     int divRes;
                     int C;
-                    if(IntValue.IsZero())//Become NumByDiv
+                    if(IntHalf.IsZero())//Become NumByDiv
                     {
                         divRes = DecimalHalf/ExtraRep;//-4/3
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
                         if(C==0)
                         {
-                            if(IntValue==NegativeRep)
-                                IntValue = divRes;
+                            if(IntHalf==NegativeRep)
+                                IntHalf = divRes;
                             else
-                                IntValue = -divRes;
+                                IntHalf = -divRes;
                             DecimalHalf = 0;
                         }
                         else
                         {
-                            if(IntValue==NegativeRep)
-                                IntValue = DecimalHalf;
+                            if(IntHalf==NegativeRep)
+                                IntHalf = DecimalHalf;
                             else
-                                IntValue = -DecimalHalf;
+                                IntHalf = -DecimalHalf;
                             DecimalHalf = 0;
                             ExtraRep *= Value;
                         }
                         return;
                     }
-                    divRes = IntValue/ExtraRep;
+                    divRes = IntHalf/ExtraRep;
                     if(divRes!=0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if(C==0)
                         {
                             throw "ToDo: Impliment code here"; 
@@ -1576,16 +1576,16 @@ public:
                     }
 					break;
 		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#endif
 		#if defined(AltNum_EnableAlternativeMixedFrac)
                     int divRes;
                     int C;
-                    if(IntValue.IsZero())//Become Fractional
+                    if(IntHalf.IsZero())//Become Fractional
                     {
                         divRes = DecimalHalf/ExtraRep;//-4/-3
                         C = DecimalHalf - ExtraRep * divRes;//-4 - -3
@@ -1619,10 +1619,10 @@ public:
                         }
                         //return;
                     }
-                    divRes = IntValue/ExtraRep;
+                    divRes = IntHalf/ExtraRep;
                     if(divRes!=0)
                     {
-                        C = IntValue - ExtraRep * divRes;
+                        C = IntHalf - ExtraRep * divRes;
                         if(C==0)
                         {
                             throw "ToDo: Impliment code here"; 
@@ -1669,39 +1669,39 @@ public:
 		{
             if (DecimalHalf == 0)
             {
-                if (IntValue == 1)
+                if (IntHalf == 1)
                 {
-                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+                    IntHalf = Value.IntHalf; DecimalHalf = Value.DecimalHalf;
                 }
                 else if (Value.DecimalHalf == 0)
                 {
-                    IntValue *= Value.IntValue;
+                    IntHalf *= Value.IntHalf;
                 }
                 else
                 {
-                    Value.PartialIntMultOp(IntValue);
-                    IntValue = Value.IntValue; DecimalHalf = Value.DecimalHalf;
+                    Value.PartialIntMultOp(IntHalf);
+                    IntHalf = Value.IntHalf; DecimalHalf = Value.DecimalHalf;
                 }
 				return false;
             }
-            else if (IntValue == 0)
+            else if (IntHalf == 0)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
                 SRep /= TinyUDec::DecimalOverflowX;
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
                     DecimalHalf = (signed int)SRep;
 					return DecimalHalf==0?true:false;
                 }
                 else
                 {
-                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    SRep += (__int64)DecimalHalf * Value.IntHalf;
                     if (SRep >= TinyUDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / TinyUDec::DecimalOverflowX;
                         SRep -= OverflowVal * TinyUDec::DecimalOverflowX;
-                        IntValue = OverflowVal;
+                        IntHalf = OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return false;
                     }
@@ -1712,23 +1712,23 @@ public:
                     }
                 }
             }
-            else if (IntValue == TinyUDec::NegativeRep)
+            else if (IntHalf == TinyUDec::NegativeRep)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= Value.DecimalHalf;
                 SRep /= TinyUDec::DecimalOverflowX;
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    SRep += (__int64)DecimalHalf * Value.IntValue;
+                    SRep += (__int64)DecimalHalf * Value.IntHalf;
                     if (SRep >= TinyUDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / TinyUDec::DecimalOverflowX;
                         SRep -= OverflowVal * TinyUDec::DecimalOverflowX;
-                        IntValue = -OverflowVal;
+                        IntHalf = -OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return false;
                     }
@@ -1741,46 +1741,46 @@ public:
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    IntValue *= -1;
+                    IntHalf *= -1;
                 }
-                if (Value.IntValue == 0)
+                if (Value.IntHalf == 0)
                 {
-                    __int64 SRep = TinyUDec::DecimalOverflowX * IntValue + DecimalHalf;
+                    __int64 SRep = TinyUDec::DecimalOverflowX * IntHalf + DecimalHalf;
                     SRep *= Value.DecimalHalf;
                     SRep /= TinyUDec::DecimalOverflowX;
                     if (SRep >= TinyUDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / TinyUDec::DecimalOverflowX;
                         SRep -= OverflowVal * TinyUDec::DecimalOverflowX;
-                        IntValue = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
+                        IntHalf = (signed int)(SelfIsNegative ? -OverflowVal : OverflowVal);
                         DecimalHalf = (signed int)SRep;
 						return false;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? TinyUDec::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? TinyUDec::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
 						return DecimalHalf==0?true:false;
                     }
                 }
                 else if (Value.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = TinyUDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();
+                    __int64 SRep = TinyUDec::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= Value.IntHalf.GetValue();
                     if (SRep >= TinyUDec::DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / TinyUDec::DecimalOverflowX;
                         SRep -= OverflowVal * TinyUDec::DecimalOverflowX;
-                        IntValue = (signed int)OverflowVal;
+                        IntHalf = (signed int)OverflowVal;
                         DecimalHalf = (signed int)SRep;
 						return false;
                     }
                     else
                     {
-                        IntValue = SelfIsNegative ? TinyUDec::NegativeRep : 0;
+                        IntHalf = SelfIsNegative ? TinyUDec::NegativeRep : 0;
                         DecimalHalf = (signed int)SRep;
 						return DecimalHalf==0?true:false;
                     }
@@ -1788,22 +1788,22 @@ public:
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    __int64 SRep = IntValue == 0 ? DecimalHalf : TinyUDec::DecimalOverflowX * IntValue + DecimalHalf;
-                    SRep *= Value.IntValue.GetValue();//SRep holds __int64 version of X.Y * Z
+                    __int64 SRep = IntHalf == 0 ? DecimalHalf : TinyUDec::DecimalOverflowX * IntHalf + DecimalHalf;
+                    SRep *= Value.IntHalf.GetValue();//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntValue);//Temp03 holds __int64 version of X *.V
+                    __int64 Temp03 = (__int64)(Value.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
                     __int64 Temp04 = (__int64)DecimalHalf * (__int64)Value.DecimalHalf;
                     Temp04 /= TinyUDec::DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     __int64 IntegerRep = SRep + Temp03 + Temp04;
                     __int64 IntHalf = IntegerRep / TinyUDec::DecimalOverflow;
                     IntegerRep -= IntHalf * (__int64)TinyUDec::DecimalOverflow;
-                    if (IntHalf == 0) { IntValue = (signed int)SelfIsNegative ? TinyUDec::NegativeRep : 0; }
-                    else { IntValue = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
+                    if (IntHalf == 0) { IntHalf = (signed int)SelfIsNegative ? TinyUDec::NegativeRep : 0; }
+                    else { IntHalf = (signed int)SelfIsNegative ? IntHalf * -1 : IntHalf; }
                     DecimalHalf = (signed int)IntegerRep;
                 }
             }
-            if(DecimalHalf==0&&IntValue==0)
+            if(DecimalHalf==0&&IntHalf==0)
                 return true;
             else
                 return false;
@@ -1817,7 +1817,7 @@ public:
         {//Warning:Modifies Value to make it a positive variable
         //Only checking for zero multiplication in main multiplication method
         //Not checking for special representation variations in this method(closer to TinyUDec operation code)
-            if (Value.IntValue < 0)
+            if (Value.IntHalf < 0)
             {
                 Value.SwapNegativeStatus();
                 SwapNegativeStatus();
@@ -1889,28 +1889,28 @@ public:
         {
             if (DecimalHalf == 0)
             {
-                IntValue *= Value;
+                IntHalf *= Value;
             }
             else
             {
-                bool SelfIsNegative = IntValue < 0;
+                bool SelfIsNegative = IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    if (IntValue == NegativeRep) { IntValue = 0; }
-                    else { IntValue *= -1; }
+                    if (IntHalf == NegativeRep) { IntHalf = 0; }
+                    else { IntHalf *= -1; }
                 }
-                __int64 SRep = IntValue == 0 ? DecimalHalf : DecimalOverflowX * IntValue + DecimalHalf;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
                 SRep *= Value;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    IntHalf = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    IntValue = SelfIsNegative ? NegativeRep : 0;
+                    IntHalf = SelfIsNegative ? NegativeRep : 0;
                     DecimalHalf = (signed int)SRep;
                 }
             }
@@ -1929,7 +1929,7 @@ public:
                 Value *= -1;
                 SwapNegativeStatus();
             }
-            if (IntValue == 0 && DecimalHalf == 0)
+            if (IntHalf == 0 && DecimalHalf == 0)
                 return;
             if (Value == 0)
                 SetAsZero();
@@ -1945,7 +1945,7 @@ public:
         template<IntegerType IntType=signed int>
         void BasicIntMultOpV2(IntType& Value)
         {
-            if (IntValue == 0 && DecimalHalf == 0)
+            if (IntHalf == 0 && DecimalHalf == 0)
                 return;
             if (Value == 0)
                 SetAsZero();
@@ -1989,19 +1989,19 @@ public:
 	#if defined(AltNum_EnableIRep)
 	#endif
 	#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
 					if(self.IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntMultOpV2(Value);
 					break;
 	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
 	    #endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
 					ConvertToNormType(LRep);
@@ -2016,14 +2016,14 @@ public:
 					return;
 					break;
 		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 			#endif
 		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
@@ -2032,26 +2032,26 @@ public:
 	    #endif
     #endif
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
+				case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
 					BasicIntMultOpV2(Value);
 					DecimalHalf *= Value;
 					int divRes = DecimalHalf / -ExtraRep;
 					if(divRes>0)
 					{
 						int increment = ExtraRep * divRes;
-						if(IntValue<0)
-							IntValue -= increment;
+						if(IntHalf<0)
+							IntHalf -= increment;
 						else
-							IntValue += increment;
+							IntHalf += increment;
 						DecimalHalf = DecimalHalf + increment;
 					}
 					break;
 		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
+				case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#endif
 		#if defined(AltNum_EnableAlternativeMixedFrac)
 					BasicIntMultOpV2(Value);
@@ -2060,10 +2060,10 @@ public:
 					if(divRes>0)
 					{
 						int increment = ExtraRep * divRes;
-						if(IntValue<0)
-							IntValue -= increment;
+						if(IntHalf<0)
+							IntHalf -= increment;
 						else
-							IntValue += increment;
+							IntHalf += increment;
 						DecimalHalf = DecimalHalf - increment;
 					}
 					break;
@@ -2139,31 +2139,31 @@ public:
         static TinyUDec& UnsignedMultOp(TinyUDec& self, IntType& Value)
         {
             if (self == Zero) {}
-            else if (Value == 0) { self.IntValue = 0; self.DecimalHalf = 0; }
+            else if (Value == 0) { self.IntHalf = 0; self.DecimalHalf = 0; }
             else if (self.DecimalHalf == 0)
             {
-                self.IntValue *= Value;
+                self.IntHalf *= Value;
             }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 if (SelfIsNegative)
                 {
-                    if (self.IntValue == NegativeRep) { self.IntValue = 0; }
-                    else { self.IntValue *= -1; }
+                    if (self.IntHalf == NegativeRep) { self.IntHalf = 0; }
+                    else { self.IntHalf *= -1; }
                 }
-                __int64 SRep = self.IntValue == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntValue + self.DecimalHalf;
+                __int64 SRep = self.IntHalf == 0 ? self.DecimalHalf : DecimalOverflowX * self.IntHalf + self.DecimalHalf;
                 SRep *= Value;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    self.IntValue = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
+                    self.IntHalf = (signed int)SelfIsNegative ? OverflowVal * -1 : OverflowVal;
                     self.DecimalHalf = (signed int)SRep;
                 }
                 else
                 {
-                    self.IntValue = SelfIsNegative ? NegativeRep : 0;
+                    self.IntHalf = SelfIsNegative ? NegativeRep : 0;
                     self.DecimalHalf = (signed int)SRep;
                 }
             }
@@ -2180,24 +2180,24 @@ public:
         /// <param name="Value">The value.</param>
         void BasicAddOp(TinyUDec& Value)
         {
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntValue += Value.IntValue;
+            IntHalf += Value.IntHalf;
             if (Value.DecimalHalf != 0)
             {
-                if (Value.IntValue < 0)
+                if (Value.IntHalf < 0)
                 {
                     if (WasNegative)
                     {
                         DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntHalf; }
                     }
                     else
                     {
                         DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntHalf; }
                     }
                 }
                 else
@@ -2205,19 +2205,19 @@ public:
                     if (WasNegative)
                     {
                         DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntHalf; }
                     }
                     else
                     {
                         DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntHalf; }
                     }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if(WasNegative ^(IntHalf<0))
                 DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
         }
 
@@ -2251,11 +2251,11 @@ protected:
 	#endif
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormType();
-			bool WasNegative = IntValue < 0;
-			IntValue += value;
+			bool WasNegative = IntHalf < 0;
+			IntHalf += value;
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			if(WasNegative ^ IntHalf >= 0)//(WasNegative && IntHalf >= 0) || (WasNegative == 0 && IntHalf < 0)
 			{
 				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
 				{
@@ -2270,7 +2270,7 @@ protected:
 					DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ IntValue >= 0)
+            if(WasNegative ^ IntHalf >= 0)
 				DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
 	#endif
             return;
@@ -2306,25 +2306,25 @@ public:
         /// <param name="Value">The value.</param>
         void BasicSubOp(TinyUDec& Value)
         {
-            bool WasNegative = IntValue < 0;
+            bool WasNegative = IntHalf < 0;
             //Deal with Int section first
-            IntValue -= Value.IntValue;
+            IntHalf -= Value.IntHalf;
             //Now deal with the decimal section
             if(Value.DecimalHalf!=0)
             {
-                if (Value.IntValue < 0)
+                if (Value.IntHalf < 0)
                 {
                     if (WasNegative)//-4.0 - -0.5 = -3.5
                     {
                         DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntHalf; }
                     }
                     else//4.3 -  - 1.8
                     {
                         DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntHalf; }
                     }
                 }
                 else
@@ -2332,19 +2332,19 @@ public:
                     if (WasNegative)//-4.5 - 5.6
                     {
                         DecimalHalf += Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; ++IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; --IntHalf; }
                     }
                     else//0.995 - 1 = 
                     {
                         DecimalHalf -= Value.DecimalHalf;
-                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntValue; }
-                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntValue; }
+                        if (DecimalHalf < 0) { DecimalHalf += TinyUDec::DecimalOverflow; --IntHalf; }
+                        else if (DecimalHalf >= TinyUDec::DecimalOverflow) { DecimalHalf -= TinyUDec::DecimalOverflow; ++IntHalf; }
                     }
                 }
             }
             //If flips to other side of negative, invert the decimals
-            if(WasNegative ^(IntValue<0))
+            if(WasNegative ^(IntHalf<0))
                 DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
         }
 
@@ -2377,11 +2377,11 @@ public:
 	#endif
 			if(ExtraRep!=0)//Don't convert if mixed fraction
 				ConvertToNormType();
-			bool WasNegative = IntValue < 0;
-			IntValue += value;
+			bool WasNegative = IntHalf < 0;
+			IntHalf += value;
 			//If flips to other side of negative, invert the decimals
 	#if defined(AltNum_EnableMixedFractional)
-			if(WasNegative ^ IntValue >= 0)//(WasNegative && IntValue >= 0) || (WasNegative == 0 && IntValue < 0)
+			if(WasNegative ^ IntHalf >= 0)//(WasNegative && IntHalf >= 0) || (WasNegative == 0 && IntHalf < 0)
 			{
 				if(DecimalHalf<0)//Flip the fractional half of mixed fraction if flips to other side
 				{
@@ -2396,7 +2396,7 @@ public:
 					DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
 			}
 	#else
-            if(WasNegative ^ (IntValue >= 0))
+            if(WasNegative ^ (IntHalf >= 0))
 				DecimalHalf = TinyUDec::DecimalOverflow - DecimalHalf;
 	#endif
             return;
@@ -2731,11 +2731,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                ++IntValue.Value;
-            else if (IntValue == NegativeRep)
-                IntValue = MirroredInt::Zero;
+                ++IntHalf.Value;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
             else
-                ++IntValue.Value;
+                ++IntHalf.Value;
             return *this;
         }
 
@@ -2750,11 +2750,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                --IntValue.Value;
-            else if (IntValue.Value == 0)
-                IntValue = NegativeRep;
+                --IntHalf.Value;
+            else if (IntHalf.Value == 0)
+                IntHalf = NegativeRep;
             else
-                --IntValue.Value;
+                --IntHalf.Value;
             return *this;
         }
 
@@ -2823,19 +2823,19 @@ public:
         template<IntegerType IntType=signed int>
         friend TinyUDec operator^(TinyUDec self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf ^= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf ^= Value;
                 }
                 else
                 {
-                    self.IntValue ^= Value; self.DecimalHalf ^= Value;
+                    self.IntHalf ^= Value; self.DecimalHalf ^= Value;
                 }
             }
             return self;
@@ -2850,19 +2850,19 @@ public:
         template<IntegerType IntType=signed int>
         friend TinyUDec operator|(TinyUDec self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf |= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf |= Value;
                 }
                 else
                 {
-                    self.IntValue |= Value; self.DecimalHalf |= Value;
+                    self.IntHalf |= Value; self.DecimalHalf |= Value;
                 }
             }
             return self;
@@ -2877,10 +2877,10 @@ public:
         /// <returns>TinyUDec&</returns>
         TinyUDec& Abs()
         {
-            if (IntValue == NegativeRep)
-                IntValue.Value = 0;
-            else if (IntValue.Value < 0)
-                IntValue *= -1;
+            if (IntHalf == NegativeRep)
+                IntHalf.Value = 0;
+            else if (IntHalf.Value < 0)
+                IntHalf *= -1;
             return *this;
         }
 
@@ -2934,7 +2934,7 @@ public:
             case 1: Value.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
             default: Value.DecimalHalf = 0; break;
             }
-            if (Value.IntValue == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
+            if (Value.IntHalf == NegativeRep && Value.DecimalHalf == 0) { Value.DecimalHalf = 0; }
             return Value;
         }
         
@@ -2947,10 +2947,10 @@ public:
             if (DecimalHalf != 0)
             {
                 DecimalHalf = 0;
-                if (IntValue == NegativeRep) { IntValue = 0; }
+                if (IntHalf == NegativeRep) { IntHalf = 0; }
                 else
                 {
-                    ++IntValue;
+                    ++IntHalf;
                 }
             }
             return *this;
@@ -2964,12 +2964,12 @@ public:
         {
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue.GetValue();
+                return Value.IntHalf.GetValue();
             }
-            if (Value.IntValue == NegativeRep) { return -1; }
+            if (Value.IntHalf == NegativeRep) { return -1; }
             else
             {
-                return Value.IntValue.GetValue() - 1;
+                return Value.IntHalf.GetValue() - 1;
             }
         }
 
@@ -2981,12 +2981,12 @@ public:
         {
             if (Value.DecimalHalf == 0)
             {
-                return Value.IntValue.GetValue();
+                return Value.IntHalf.GetValue();
             }
-            if (Value.IntValue == NegativeRep) { return 0; }
+            if (Value.IntHalf == NegativeRep) { return 0; }
             else
             {
-                return Value.IntValue.GetValue() + 1;
+                return Value.IntHalf.GetValue() + 1;
             }
         }
         
@@ -3030,28 +3030,28 @@ public:
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
-                switch (value.IntValue.GetValue())
+                switch (value.IntHalf.GetValue())
                 {
-                case 1: value.IntValue = 1; break;
-                case 4: value.IntValue = 2; break;
-                case 9: value.IntValue = 3; break;
-                case 16: value.IntValue = 4; break;
-                case 25: value.IntValue = 5; break;
-                case 36: value.IntValue = 6; break;
-                case 49: value.IntValue = 7; break;
-                case 64: value.IntValue = 8; break;
-                case 81: value.IntValue = 9; break;
-                case 100: value.IntValue = 10; break;
-                case 121: value.IntValue = 11; break;
-                case 144: value.IntValue = 12; break;
-                case 169: value.IntValue = 13; break;
-                case 196: value.IntValue = 14; break;
-                case 225: value.IntValue = 15; break;
-                case 256: value.IntValue = 16; break;
-                case 289: value.IntValue = 17; break;
-                case 324: value.IntValue = 18; break;
-                case 361: value.IntValue = 19; break;
-                case 400: value.IntValue = 20; break;
+                case 1: value.IntHalf = 1; break;
+                case 4: value.IntHalf = 2; break;
+                case 9: value.IntHalf = 3; break;
+                case 16: value.IntHalf = 4; break;
+                case 25: value.IntHalf = 5; break;
+                case 36: value.IntHalf = 6; break;
+                case 49: value.IntHalf = 7; break;
+                case 64: value.IntHalf = 8; break;
+                case 81: value.IntHalf = 9; break;
+                case 100: value.IntHalf = 10; break;
+                case 121: value.IntHalf = 11; break;
+                case 144: value.IntHalf = 12; break;
+                case 169: value.IntHalf = 13; break;
+                case 196: value.IntHalf = 14; break;
+                case 225: value.IntHalf = 15; break;
+                case 256: value.IntHalf = 16; break;
+                case 289: value.IntHalf = 17; break;
+                case 324: value.IntHalf = 18; break;
+                case 361: value.IntHalf = 19; break;
+                case 400: value.IntHalf = 20; break;
                 default:
                     AutoSetValue = false;
                     break;
@@ -3125,20 +3125,20 @@ public:
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntHalf = 1; DecimalHalf = 0; ExtraRep = 0;
             }
             else if (expValue < 0)//Negative Pow
             {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
+                if (DecimalHalf == 0 && IntHalf == 10 && expValue >= -9)
                 {
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expValue * -1];
                 }
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expValue *= -1;
                     TinyUDec self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
                     while (expValue > 0)
                     {
                         // If expValue is odd, multiply self with result
@@ -3151,15 +3151,15 @@ public:
                     return this;
                 }
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && ExtraRep == 0)
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
-            else if (DecimalHalf == 0 && IntValue == -10 && ExtraRep == 0)
-                IntValue = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
+            else if (DecimalHalf == 0 && IntHalf == 10 && ExtraRep == 0)
+                IntHalf = VariableConversionFunctions::PowerOfTens[expValue];
+            else if (DecimalHalf == 0 && IntHalf == -10 && ExtraRep == 0)
+                IntHalf = expValue % 2 ? VariableConversionFunctions::PowerOfTens[expValue] : VariableConversionFunctions::PowerOfTens[expValue] * -1;
             else
             {
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 TinyUDec self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expValue > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -3195,8 +3195,8 @@ public:
 #endif
                 else if (expValue < 0)
                     targetValue.SetAsZero();
-                else if (targetValue.IntValue.Value == -1 && expValue % 2 == 0)
-                    targetValue.IntValue.Value = 1;
+                else if (targetValue.IntHalf.Value == -1 && expValue % 2 == 0)
+                    targetValue.IntHalf.Value = 1;
                 else
                     return targetValue;//Returns infinity
                 return *this;
@@ -3221,14 +3221,14 @@ public:
             if (expValue == 1) { return *this; }//Return self
             else if (expValue == 0)
             {
-                IntValue = 1; DecimalHalf = 0; ExtraRep = 0;
+                IntHalf = 1; DecimalHalf = 0; ExtraRep = 0;
             }
             else if (expValue < 0)//Negative Pow
             {
-                if (DecimalHalf == 0 && IntValue == 10 && expValue >= -9)
+                if (DecimalHalf == 0 && IntHalf == 10 && expValue >= -9)
                 {
                     int expVal = expValue * -1;
-                    IntValue = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[expVal];
                 }
                 else
                 {
@@ -3236,7 +3236,7 @@ public:
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     expVal *= -1;
                     TinyUDec self = *this;
-                    IntValue = 1; DecimalHalf = 0;// Initialize result
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
                     while (expVal > 0)
                     {
                         // If expValue is odd, multiply self with result
@@ -3249,16 +3249,16 @@ public:
                     return this;
                 }
             }
-            else if (DecimalHalf == 0 && IntValue == 10 && targetValue.ExtraRep == 0)
+            else if (DecimalHalf == 0 && IntHalf == 10 && targetValue.ExtraRep == 0)
             {
-                IntValue = VariableConversionFunctions::PowerOfTens[expValue];
+                IntHalf = VariableConversionFunctions::PowerOfTens[expValue];
             }
             else
             {
                 int expVal = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 TinyUDec self = *this;
-                IntValue = 1; DecimalHalf = 0;// Initialize result
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (expVal > 0)
                 {
                     // If expValue is odd, multiply self with result
@@ -3294,8 +3294,8 @@ public:
 #endif
                 else if (expValue < 0)
                     return Zero;
-                else if (value.IntValue.Value == -1 && expValue % 2 == 0)
-                    IntValue.Value = 1;
+                else if (value.IntHalf.Value == -1 && expValue % 2 == 0)
+                    IntHalf.Value = 1;
                 else
                     return;//Returns infinity
                 return *this;
@@ -3436,7 +3436,7 @@ public:
              *      - (TinyUDec float) approximation of e^x in TinyUDec precision
              */
              // Check that x is a valid input.
-            assert(-709 <= x.IntValue && x.IntValue <= 709);
+            assert(-709 <= x.IntHalf && x.IntHalf <= 709);
             // When x = 0 we already know e^x = 1.
             if (x.IsZero()) {
                 return TinyUDec::One;
@@ -3492,7 +3492,7 @@ public:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == TinyUDec::One)
                 return TinyUDec::Zero;
-            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntHalf>=0&&IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 TinyUDec threshold = TinyUDec::FiveMillionth;
                 TinyUDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3532,7 +3532,7 @@ public:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == TinyUDec::One)
                 return TinyUDec::Zero;
-            if(IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if(IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 TinyUDec W = (value - 1)/ (value + 1);
                 TinyUDec TotalRes = W;
@@ -3551,7 +3551,7 @@ public:
                 } while (AddRes > TinyUDec::JustAboveZero);
                 return TotalRes * 2;
             }
-            else if (IntValue==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (IntHalf==1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 TinyUDec threshold = TinyUDec::FiveMillionth;
                 TinyUDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3617,7 +3617,7 @@ public:
         {
             if (value == TinyUDec::One)
                 return TinyUDec::Zero;
-            if (DecimalHalf == 0 && IntValue % 10 == 0)
+            if (DecimalHalf == 0 && IntHalf % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3626,7 +3626,7 @@ public:
                 }
                 return TinyUDec(9, 0);
             }
-            if (IntValue>=0&&IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntHalf>=0&&IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 TinyUDec threshold = TinyUDec::FiveBillionth;
                 TinyUDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3752,7 +3752,7 @@ public:
             }
 
             //Now calculate other log
-            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntValue % 10 == 0)
+            if (ConvertedVal.DecimalHalf == 0 && ConvertedVal.IntHalf % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
@@ -3761,7 +3761,7 @@ public:
                 }
                 return lnMultLog? TinyUDec(9, 0) / (baseTotalRes*TinyUDec::HalfLN10Mult):TinyUDec(9, 0)/baseTotalRes;
             }
-            if (ConvertedVal.IntValue>=0&&ConvertedVal.IntValue<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 TinyUDec threshold = TinyUDec::FiveBillionth;
                 TinyUDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3811,36 +3811,36 @@ public:
         {
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return TinyUDec::Zero; }
-            else if (Value.IntValue == 30 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 30 && Value.DecimalHalf == 0)
             {
                 return PointFive;
             }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
                 return One;
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Zero;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
                 return NegativeOne;
             }
@@ -3867,36 +3867,36 @@ public:
         {
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return One; }
-            else if (Value.IntValue == 60 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 60 && Value.DecimalHalf == 0)
             {
                 return PointFive;
             }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Zero;
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return NegativeOne;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Zero;
             }
@@ -3992,32 +3992,32 @@ public:
         {
             if (Value.IsNegative())
             {
-                if (Value.IntValue == NegativeRep)
+                if (Value.IntHalf == NegativeRep)
                 {
-                    Value.IntValue = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
                 }
                 else
                 {
                     Value.SwapNegativeStatus();
-                    Value.IntValue %= 360;
-                    Value.IntValue = 360 - Value.IntValue;
+                    Value.IntHalf %= 360;
+                    Value.IntHalf = 360 - Value.IntHalf;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntValue %= 360;
+                Value.IntHalf %= 360;
             }
             if (Value == Zero) { return TinyUDec::Zero; }
-            else if (Value.IntValue == 90 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 90 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Maximum;//Positive Infinity
             }
-            else if (Value.IntValue == 180 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 180 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Zero;
             }
-            else if (Value.IntValue == 270 && Value.DecimalHalf == 0)
+            else if (Value.IntHalf == 270 && Value.DecimalHalf == 0)
             {
                 return TinyUDec::Minimum;//Negative Infinity
             }
@@ -4127,7 +4127,7 @@ public:
     /// <param name="Value">The value.</param>
     inline void TinyUDec::ReadString(std::string Value)
     {
-        IntValue = 0; DecimalHalf = 0;
+        IntHalf = 0; DecimalHalf = 0;
         bool IsNegative = false;
         int PlaceNumber;
         std::string WholeNumberBuffer = "";
@@ -4159,7 +4159,7 @@ public:
             TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
             if (StringChar != '0')
             {
-                IntValue += TempInt02;
+                IntHalf += TempInt02;
             }
             PlaceNumber--;
         }
@@ -4180,8 +4180,8 @@ public:
         }
         if (IsNegative)
         {
-            if (IntValue == 0) { IntValue = NegativeRep; }
-            else { IntValue *= -1; }
+            if (IntHalf == 0) { IntHalf = NegativeRep; }
+            else { IntHalf *= -1; }
         }
     }
 
@@ -4199,7 +4199,7 @@ public:
 
 	std::string TinyUDec::BasicToStringOp()
 	{
-        std::string Value = (std::string)IntValue;
+        std::string Value = (std::string)IntHalf;
         if (DecimalHalf != 0)
         {
 			unsigned __int8 CurrentDigit;
@@ -4246,7 +4246,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToStringOp();
 			#else
-            return (std::string)IntValue + ".0..1";
+            return (std::string)IntHalf + ".0..1";
 			#endif
             break;
         case RepType::ApproachingTop:
@@ -4254,7 +4254,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp();
 			#else
-            return (std::string)IntValue + ".9..9";
+            return (std::string)IntHalf + ".9..9";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -4282,8 +4282,8 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            return (std::string)IntValue+"/"
+        case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
@@ -4298,8 +4298,8 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            return (std::string)IntValue+"/"
+        case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
         #endif
@@ -4315,29 +4315,29 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            return (std::string)IntValue+"/"
+        case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
-        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+        case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"π";
 			#else
-            return (std::string)IntValue + ".9..9π";
+            return (std::string)IntHalf + ".9..9π";
 			#endif
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+        case RepType::ApproachingTopE://equal to IntHalf.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"e";
 			#else
-            return (std::string)IntValue + ".9..9e";
+            return (std::string)IntHalf + ".9..9e";
 			#endif
             break;
 	#endif
@@ -4354,7 +4354,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToStringOp()+"i";
 			#else
-            return (std::string)IntValue + ".0..1i";
+            return (std::string)IntHalf + ".0..1i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
@@ -4362,7 +4362,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToStringOp()+"i";
 			#else
-            return (std::string)IntValue + ".9..9i";
+            return (std::string)IntHalf + ".9..9i";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -4376,23 +4376,23 @@ public:
             #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-        case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
-        case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
-        case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
-        case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
@@ -4407,7 +4407,7 @@ public:
         case UndefinedButInRange:
             return "UndefinedButInRange";
             break;
-		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
         case WithinMinMaxRange:
 		    return "WithinMinMaxRange";
             break;
@@ -4426,7 +4426,7 @@ public:
 
 	std::string TinyUDec::BasicToFullStringOp()
 	{
-        std::string Value = (std::string)IntValue;
+        std::string Value = (std::string)IntHalf;
         if (DecimalHalf != 0)
         {
 			unsigned __int8 CurrentDigit;
@@ -4470,7 +4470,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToFullStringOp();
 			#else
-            return (std::string)IntValue + ".0..1";
+            return (std::string)IntHalf + ".0..1";
 			#endif
             break;
         case RepType::ApproachingTop:
@@ -4478,7 +4478,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp();
 			#else
-            return (std::string)IntValue + ".9..9";
+            return (std::string)IntHalf + ".9..9";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -4506,8 +4506,8 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
-            return (std::string)IntValue+"/"
+        case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
@@ -4522,8 +4522,8 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::EFractional://  IntValue/DecimalHalf*e Representation
-            return (std::string)IntValue+"/"
+        case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
         #endif
@@ -4539,29 +4539,29 @@ public:
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::IFractional://  IntValue/DecimalHalf*i Representation
-            return (std::string)IntValue+"/"
+        case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+            return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
-        case RepType::ApproachingTopPi://equal to IntValue.9..9 Pi
+        case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"π";
 			#else
-            return (std::string)IntValue + ".9..9π";
+            return (std::string)IntHalf + ".9..9π";
 			#endif
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-        case RepType::ApproachingTopE://equal to IntValue.9..9 e
+        case RepType::ApproachingTopE://equal to IntHalf.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"e";
 			#else
-            return (std::string)IntValue + ".9..9e";
+            return (std::string)IntHalf + ".9..9e";
 			#endif
             break;
 	#endif
@@ -4578,7 +4578,7 @@ public:
 			ConvertToNormType(RepType::ApproachingBottom);
             return BasicToFullStringOp()+"i";
 			#else
-            return (std::string)IntValue + ".0..1i";
+            return (std::string)IntHalf + ".0..1i";
 			#endif
             break;
         case RepType::ApproachingImaginaryTop:
@@ -4586,7 +4586,7 @@ public:
 			ConvertToNormType(RepType::ApproachingTop);
             return BasicToFullStringOp()+"i";
 			#else
-            return (std::string)IntValue + ".9..9i";
+            return (std::string)IntHalf + ".9..9i";
 			#endif
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
@@ -4600,23 +4600,23 @@ public:
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-        case RepType::MixedFrac://IntValue +- (-DecimalHalf)/ExtraRep
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
-        case RepType::MixedPi://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
-        case RepType::MixedE://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
-        case RepType::MixedI://IntValue +- (-DecimalHalf/-ExtraRep)
-            return (std::string)IntValue+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
+        case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+            return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
@@ -4631,7 +4631,7 @@ public:
         case UndefinedButInRange:
             return "UndefinedButInRange";
             break;
-		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+		#if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
         case WithinMinMaxRange:
 		    return "WithinMinMaxRange";
             break;

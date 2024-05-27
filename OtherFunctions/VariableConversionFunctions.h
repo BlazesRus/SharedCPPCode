@@ -2,9 +2,6 @@
 #ifndef VariableConversionFunctions_IncludeGuard
 #define VariableConversionFunctions_IncludeGuard
 
-#include <string>
-#include <stdint.h>
-
 #ifdef BlazesSharedCode_LocalLayout
     #ifndef DLL_API
         #ifdef UsingBlazesSharedCodeDLL
@@ -18,7 +15,9 @@
 #else
     #include "..\DLLAPI.h"
 #endif
+
 #include <string>
+#include <stdint.h>
 
 namespace BlazesRusCode
 {

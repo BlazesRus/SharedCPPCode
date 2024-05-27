@@ -155,7 +155,7 @@ namespace BlazesRusDebug
         //if (value <= 0) {}else//Error if equal or less than 0
         if (value == MediumDec::One)
             return MediumDec::Zero;
-        else if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+        else if (value.IntHalf < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
         {//This section gives correct answer
             MediumDec threshold = "0.00005";  // set this to whatever threshold you want
             MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -219,7 +219,7 @@ namespace BlazesRusDebug
         //if (value <= 0) {}else//Error if equal or less than 0
         if (value == MediumDec::One)
             return MediumDec::Zero;
-        else if (value.IntValue < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+        else if (value.IntHalf < 2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
         {//This section gives accurate answer
             MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit
             int den = 1;              // Denominator of the nth term
@@ -276,7 +276,7 @@ namespace BlazesRusDebug
         //if (value <= 0) {}else//Error if equal or less than 0
         if (value==MediumDec::One)
             return MediumDec::Zero;
-        if (value.IntValue==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+        if (value.IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
         {
             double fW = (fvalue - 1.0);
             MediumDec W = (value - 1);
@@ -316,7 +316,7 @@ namespace BlazesRusDebug
             } while (AddRes > MediumDec::JustAboveZero);//Total Result should be -0.346573590279972654708616060729088284037750067180127627060340004746696810984847357802931663498209344
             return TotalRes * 2;//Should result in -0.693147180559
         }
-        else if(value.IntValue==1)
+        else if(value.IntHalf==1)
         {
             MediumDec threshold = MediumDec::FiveMillionth;
             MediumDec base = value - 1;        // Base of the numerator; exponent will be explicit

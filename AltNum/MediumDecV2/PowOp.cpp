@@ -24,7 +24,7 @@ inline auto BlazesRusCode::MediumDecVariant::FractionalPow(boost::rational<int>&
 inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(const auto& expValue)
 {
 	boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
-	switch (expValue.IntValue)
+	switch (expValue.IntHalf)
 	{
 	case MirroredInt::Zero:
 		return FractionalPow(Frac);
@@ -33,12 +33,12 @@ inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(const auto& expValue)
 		return One / FractionalPow(Frac);
 		break;
 	default:
-		if (expValue.IntValue < 0){//Negative Exponent
-			auto CalcVal = One / IntPow(expValue.IntValue * -1);
+		if (expValue.IntHalf < 0){//Negative Exponent
+			auto CalcVal = One / IntPow(expValue.IntHalf * -1);
 			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		} else {
-			auto CalcVal = IntPowOp(expValue.IntValue);
+			auto CalcVal = IntPowOp(expValue.IntHalf);
 			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
@@ -49,7 +49,7 @@ inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(const auto& expValue)
 inline auto BlazesRusCode::MediumDecVariant::PowOp(const auto& exponent)
 {
 	if (exponent.DecimalHalf == 0)
-		return IntPowOp(exponent.IntValue);
+		return IntPowOp(exponent.IntHalf);
     else if(IsOne()){
         SetAsOne(); return *this; 
     } else if(exponent.DecimalHalf.Flags==3)
@@ -92,7 +92,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const auto& exponent)
        #if defined(AltNum_EnableERep)
 	        case RepType::ENumByDiv:
        #endif
-			auto targetVal = AltDecBase(exponent.IntValue, exponent.DecimalHalf);
+			auto targetVal = AltDecBase(exponent.IntHalf, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
 			AltDecBase::NthRootOf(exponent.ExtraRep);
             return *this;
@@ -100,15 +100,15 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const auto& exponent)
     #endif
     #if defined(AltNum_EnableApproaching)
 		case RepType::ApproachingBottom:
-            if(exponent.IntValue==0){
-                IntValue.Value = 1;
+            if(exponent.IntHalf==0){
+                IntHalf.Value = 1;
                 DecimalHalf == ApproachingBottomRep;
                 return *this;
             }
             break;
 		case RepType::ApproachingTop:
-            if(exponent.IntValue==0&&DecimalHalf.Value==0){
-                --IntValue.Value;
+            if(exponent.IntHalf==0&&DecimalHalf.Value==0){
+                --IntHalf.Value;
                 DecimalHalf.Value == ApproachingTopRep;
                 return *this;
             }

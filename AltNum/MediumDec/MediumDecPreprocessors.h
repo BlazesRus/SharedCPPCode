@@ -41,10 +41,6 @@ AltNum_UseBuiltinVirtualTable =
 	//#define AltNum_EnableWithinMinMaxRange
 #endif
 
-#include "..\MirroredInt.hpp"
-
-#include "..\PartialInt.hpp"
-
 #if defined(AltNum_EnablePiRep) && defined(AltNum_DisablePiRep)
     #undef AltNum_DisablePiRep
 #endif
@@ -54,7 +50,7 @@ AltNum_UseBuiltinVirtualTable =
 	#define AltNum_EnableInfinityRep
 #endif
 
-#if define(AltNum_EnableImaginaryRep)
+#if defined(AltNum_EnableImaginaryRep)
 	#define AltNum_EnableIRep
 #endif
 
@@ -65,8 +61,12 @@ AltNum_UseBuiltinVirtualTable =
 	#endif
 #endif
 
-//Or use Using UInt64 = unsigned long long;
-#define UInt64 UInt64
+#if !defined(UInt64)
+	//Or use Using UInt64 = unsigned long long;
+	#define UInt64 UInt64
+#endif
 
-//Or use Using Int64 = signed long long;
-#define Int64 Int64
+#if !defined(Int64)
+	//Or use Using Int64 = signed long long;
+	#define Int64 Int64
+#endif

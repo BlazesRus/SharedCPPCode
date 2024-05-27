@@ -17,19 +17,19 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		break;
 	}
 		#if defined(AltNum_EnablePiFractional)
-	case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+	case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
 	{
-		//X / (Y.IntValue*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
+		//X / (Y.IntHalf*Pi / Y.DecimalHalf) = (X*Y.DecimalHalf)/(YPi)
 		self.BasicIntMultOp(Value.DecimalHalf);
-		self.BasicUnsignedDivOp(AltDec::PiNum * Value.IntValue);//self.BasicUnsignedDivOp(PiNumMultByInt(Value.IntValue))
+		self.BasicUnsignedDivOp(AltDec::PiNum * Value.IntHalf);//self.BasicUnsignedDivOp(PiNumMultByInt(Value.IntHalf))
 		break;
 	}
 		#endif
 		#if defined(AltNum_EnableEFractional)
-		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+		case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
 		{
 			self.BasicIntMultOp(Value.DecimalHalf);
-			self.BasicUnsignedDivOp(AltDec::ENum * Value.IntValue);
+			self.BasicUnsignedDivOp(AltDec::ENum * Value.IntHalf);
 			break;
 		}
 		#endif
@@ -58,10 +58,10 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		case RepType::INum:
 		{
 			self.BasicUnsignedDivOp(Value);
-			if (self.IntValue == AltDec::NegativeRep)
-				self.IntValue = 0;
+			if (self.IntHalf == AltDec::NegativeRep)
+				self.IntHalf = 0;
 			else
-				self.IntValue = self.IntValue == 0 ? AltDec::NegativeRep : -self.IntValue;
+				self.IntHalf = self.IntHalf == 0 ? AltDec::NegativeRep : -self.IntHalf;
 			self.ExtraRep = AltDec::IRep;
 			break;
 		}
@@ -69,7 +69,7 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 			#if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 			#else
-		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+		case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 			#endif
 		#endif
 		#if defined(AltNum_EnableMixedIFractional)
@@ -80,10 +80,10 @@ void NormalOp(RepType& RRep, AltDec& self, AltDec& Value)
 		{
 			Value.ConvertToNormalIRep(RRep);
 			self.BasicUnsignedDivOp(Value);
-			if (self.IntValue == AltDec::NegativeRep)
-				self.IntValue = 0;
+			if (self.IntHalf == AltDec::NegativeRep)
+				self.IntHalf = 0;
 			else
-				self.IntValue = self.IntValue == 0 ? AltDec::NegativeRep : -self.IntValue;
+				self.IntHalf = self.IntHalf == 0 ? AltDec::NegativeRep : -self.IntHalf;
 			self.ExtraRep = AltDec::IRep;
 			break;
 		}
@@ -229,18 +229,18 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 /*
 	#if defined(AltNum_EnableApproaching)
 	case RepType::ApproachingTop:
-		if (Value.IntValue == 0)
+		if (Value.IntHalf == 0)
 		{
 		#if defined(AltNum_EnableImaginaryInfinity)
-			if (self.IntValue < 0)//NegativeValue / 0.0..1 = Negative Infinity
-				self.IntValue = -1;
+			if (self.IntHalf < 0)//NegativeValue / 0.0..1 = Negative Infinity
+				self.IntHalf = -1;
 			else//PositiveValue / 0.0..1 = Infinity
-				self.IntValue = 1;
+				self.IntHalf = 1;
 			self.DecimalHal = InfinityRep;
 			self.ExtraRep = IRep;
 		#else
 			throw "Result is Infinity times i";
-			if (self.IntValue < 0)
+			if (self.IntHalf < 0)
 				self.SetAsMaximum();
 			else
 				self.SetAsMinimum();
@@ -257,18 +257,18 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	#endif
 	#if defined(AltNum_EnableApproachingI)
 	case RepType::ApproachingImaginaryBottom:
-		if (Value.IntValue == 0)
+		if (Value.IntHalf == 0)
 		{
 		#if defined(AltNum_EnableInfinityRep)
-			if (self.IntValue < 0)//NegativeValue / 0.0..1 = Negative Infinity
-				self.IntValue = -1;
+			if (self.IntHalf < 0)//NegativeValue / 0.0..1 = Negative Infinity
+				self.IntHalf = -1;
 			else//PositiveValue / 0.0..1 = Infinity
-				self.IntValue = 1;
+				self.IntHalf = 1;
 			self.DecimalHalf = AltDec::InfinityRep;
 			self.ExtraRep = InitialExtraRep;
 		#else
 			throw "Result is Infinity";
-			if (self.IntValue < 0)
+			if (self.IntHalf < 0)
 				self.SetAsMaximum();
 			else
 				self.SetAsMinimum();
@@ -295,7 +295,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 			#if defined(AltNum_EnableDecimaledPiFractionals)
 	case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 			#else
-	case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+	case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
 			#endif
 		#endif
 	#endif
@@ -305,12 +305,12 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 		#if defined(AltNum_EnableDecimaledEFractionals)
 	case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 		#else
-	case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+	case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
 		#endif
 	#endif
 	#if defined(AltNum_EnableApproachingDivided)
-	case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep-ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep+ApproachingLeftRealValue if negative)
-	case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntValue + 1/ExtraRep+ApproachingLeftRealValue if positive: IntValue - 1/ExtraRep-ApproachingLeftRealValue if negative) 
+	case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
+	case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative) 
 	#endif
 	#if defined(AltNum_EnableNearPi)
 	case RepType::NearPi://(Approaching Away from Zero is equal to 0.9999...Pi)
@@ -319,7 +319,7 @@ void LRepImaginaryOverridePt2(RepType& LRep, RepType& RRep, AltDec& self, AltDec
 	case RepType::NearE://(Approaching Away from Zero is equal to 0.9999...e)
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
-	case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)/ExtraRep
+	case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)/ExtraRep
 		#if defined(AltNum_EnableMixedPiFractional)
 	case RepType::MixedPi:
 		#elif defined(AltNum_EnableMixedEFractional)
@@ -353,7 +353,7 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			#if defined(AltNum_EnableDecimaledIFractionals)
 		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 			#else
-		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+		case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 			#endif
 		#endif
         #if defined(AltNum_EnableMixedIFractional)
@@ -372,13 +372,13 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
     #if defined(AltNum_EnableApproaching)
         case RepType::ApproachingBottom:
             //Any real number / 0.0..1 = Infinity
-            if(Value.IntValue==0)
+            if(Value.IntHalf==0)
             {
 				self.DecimalHalf = InfinityRep;
-                if(self.IntValue<0)
-                    self.IntValue = -1;
+                if(self.IntHalf<0)
+                    self.IntHalf = -1;
                 else
-                    self.IntValue = 1;
+                    self.IntHalf = 1;
 				self.ExtraRep = InitialExtraRep;
                 return;
             }
@@ -391,8 +391,8 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 
 		case RepType::ApproachingTop:
 		{
-            if(Value.IntValue==0&&LRep==RepType::NormalType)//1/0.9..9 = 1.0..1
-            {//(For positive left side values)Techically returns self.IntValue + 0.0..self.IntValue
+            if(Value.IntHalf==0&&LRep==RepType::NormalType)//1/0.9..9 = 1.0..1
+            {//(For positive left side values)Techically returns self.IntHalf + 0.0..self.IntHalf
 				self.DecimalHalf = ApproachingBottomRep;
 				self.ExtraRep = InitialExtraRep;
                 return;
@@ -467,11 +467,11 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 			NumByDivOp(RRep, self, Value); break;
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 		#if defined(AltNum_EnablePiRep)&&!defined(AltNum_EnableDecimaledPiFractionals)
-		case RepType::PiFractional://  IntValue/DecimalHalf*Pi Representation
+		case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
 			PiFractionalOp(RRep, self, Value); break;
 		#endif
 		#if defined(AltNum_EnableERep)&&!defined(AltNum_EnableDecimaledEFractionals)
-		case RepType::EFractional://  IntValue/DecimalHalf*e Representation
+		case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
 			EFractionalOp(RRep, self, Value); break;
 		#endif
 
@@ -492,16 +492,16 @@ inline void BlazesRusCode::AltDec::RepToRepDivOp(RepType& LRep, RepType& RRep, A
 		case RepType::INumByDiv://(Value/(-ExtraRep))*i Representation
 			INumByDivOp(RRep, self, Value); break;
         #else
-		case RepType::IFractional://  IntValue/DecimalHalf*i Representation
+		case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
 			IFractionalOp(RRep, self, Value); break;
         #endif
     #endif
 #endif
 #if defined(AltNum_EnableMixedFractional)
-		case RepType::MixedFrac://IntValue +- (DecimalHalf*-1)
+		case RepType::MixedFrac://IntHalf +- (DecimalHalf*-1)
 			EFractionalOp(RRep, self, Value); break;
     #if defined(AltNum_EnableMixedPiFractional)
-		case RepType::MixedPi://(IntValue<0?(IntValue + DecimalHalf):(IntValue -DecimalHalf))/-ExtraRep)
+		case RepType::MixedPi://(IntHalf<0?(IntHalf + DecimalHalf):(IntHalf -DecimalHalf))/-ExtraRep)
 			MixedPiOp(RRep, self, Value); break;
     #elif defined(AltNum_EnableMixedEFractional)
 		case RepType::MixedE:

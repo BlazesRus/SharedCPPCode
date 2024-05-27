@@ -18,9 +18,14 @@
 #include "..\DLLAPI.h"
 #endif
 
+
+#include <compare>
+
+
 namespace BlazesRusCode
 {
 	struct MirroredInt {
+	public:
 		#pragma options align=bit_packed
 		//If value is one then is negative
 		unsigned int IsPositive:1;
@@ -31,18 +36,18 @@ namespace BlazesRusCode
 		MirroredInt(const unsigned int& value=0, const unsigned int& isPositive=1)
 		{
 			Value = value;
-			isPositive = isPositive;
+			IsPositive = isPositive;
 		}
 		
 		MirroredInt(const unsigned int& value=0)
 		{
 			if(value<0)
 			{
-				isPositive = 0;
+				IsPositive = 0;
 				Value = -value;
 			}
 			else
-				isPositive = 1;
+				IsPositive = 1;
 			
 		}
 		
@@ -77,12 +82,12 @@ namespace BlazesRusCode
 		
 		bool IsEven()
 		{
-			return Value^1==0;
+			return (Value^1)==0;
 		}
 		
 		bool IsOdd()
 		{
-			return Value^1==1;
+			return (Value^1)==1;
 		}
 		
         /// <summary>
@@ -90,10 +95,10 @@ namespace BlazesRusCode
         /// </summary>
         void SwapNegativeStatus()
         {
-            Value.IsPositive ^= 1;
+            IsPositive ^= 1;
 		}
 		
-		std::strong_ordering operator<=>(const PartialInt& that) const
+		std::strong_ordering operator<=>(const MirroredInt& that) const
 		{
 			//Comparing if number is negative vs positive
 			if (auto SignCmp = IsPositive <=> that.IsPositive; SignCmp != 0)

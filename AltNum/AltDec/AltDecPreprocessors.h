@@ -16,12 +16,12 @@ AltNum_EnableNegativePowerRep =
 //--Infinity based preprocessors--
 AltNum_EnableApproaching
 	Depreciated Defined Values:
-      When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue from right towards left (IntValue.0..1)
-	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntValue+1 from left towards right (IntValue.9..9)
+      When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntHalf from right towards left (IntHalf.0..1)
+	  When DecimalHalf is -2147483647 and ExtraRep==1, it represents Approaching IntHalf+1 from left towards right (IntHalf.9..9)
 AltNum_EnableApproachingDivided =
-	Enables Approaching IntValue.49..9 and IntValue.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
-	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
-	When ExtraRep is Positive, represents (when IntValue is positive) IntValue + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
+	Enables Approaching IntHalf.49..9 and IntHalf.50..1 and other Approaching values (49..9 = ExtraRep value of 2; 50..1 = ExtraRep value of -2)
+	When ExtraRep is Positive, represents (when IntHalf is positive) IntHalf + (1/ExtraRep + ApproachingBottomValue)(approaching left towards right)
+	When ExtraRep is Positive, represents (when IntHalf is positive) IntHalf + (1/ExtraRep + ApproachingTopValue)(approaching right towards left)
 	(Assumes AltNum_EnableInfinityRep is enabled)
 	(Partially Implimented)
 
@@ -50,7 +50,7 @@ AltNum_EnablePiRep =
 	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If AltNum_UseAltDecBasedRepresentations enabled, then
       Pi*(+- 2147483647.999999999) Representation enabled
-        (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntValue*Pi))
+        (When DecimalHalf is between -1 and -1000000000 (when DecimalHalf is -1000000000 is Equal to IntHalf*Pi))
       Otherwise represents Pi within format of
          If DecimalHalf is positive and ExtraRep is -2147483647,
          then AltDec represents +- 2147483647.999999999 * Pi (Not Fully Implemented)
@@ -61,15 +61,15 @@ AltNum_EnablePiRep =
 AltNum_EnableComplexNum =
       Enable Representation of complex numbers with Imaginary number operations
 	  (Requires ExtraRep.IsNegative not to be used by other values
-If ExtraRep.IsNegative == 1, then represents value as IntValue.DecimalHalf + (ExtraRep.Value i)
-If AltNum_EnableFractionals is disabled and ExtraRep.IsNegative == 0, then represents value as IntValue + (DecimalHalf.(ExtraRep.Value) i)
+If ExtraRep.IsNegative == 1, then represents value as IntHalf.DecimalHalf + (ExtraRep.Value i)
+If AltNum_EnableFractionals is disabled and ExtraRep.IsNegative == 0, then represents value as IntHalf + (DecimalHalf.(ExtraRep.Value) i)
 (Requires AltNum_EnableIRep, Not Implemented)
 
 AltNum_EnableERep =
 	Depreciated Defined Values(Used if AltNum_UseIntForDecimalHalf is enabled):
       If AltNum_UseAltDecBasedRepresentations enabled, then
     e*(+- 2147483647.999999999) Representation enabled
-    (When DecimalHalf is between -1000000001 and -2000000000 (when DecimalHalf is -2000000000 is Equal to IntValue*e))
+    (When DecimalHalf is between -1000000001 and -2000000000 (when DecimalHalf is -2000000000 is Equal to IntHalf*e))
       Otherwise represents e within format of
     If DecimalHalf is positive and ExtraRep is -2147483646, then
        represents +- 2147483647.999999999 * e
@@ -98,7 +98,7 @@ AltNum_EnableAltDecBasedSetValues =
 
 ---Only these switches can be enabled at once(when ExtraRep is Negative):
 AltNum_EnablePowerOfRepresentation =
-      Represents IntValue.DecimalHalf^(ExtraRep.Value)
+      Represents IntHalf.DecimalHalf^(ExtraRep.Value)
 	  If AltNum_EnableNegativePowerRep is enabled, then ExtraRep is Negative is used for negative powers instead
       (Not Implemented)
 AltNum_EnableMixedFractional =
@@ -108,7 +108,7 @@ AltNum_EnableMixedFractional =
 ----===============================================================================================================
 	
 AltNum_EnableImaginaryInfinity = Enables imaginary infinity option (Depreciated--Enabled by default if both infinity and Imaginary numbers are enabled)
-AltNum_DisableApproachingTop = Disables IntValue.9..9 representation
+AltNum_DisableApproachingTop = Disables IntHalf.9..9 representation
 
 AltNum_EnableNil = Enables Nil representation(detection not in code right now)
 

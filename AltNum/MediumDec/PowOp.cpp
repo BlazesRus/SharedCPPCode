@@ -24,7 +24,7 @@ inline auto BlazesRusCode::MediumDecVariant::FractionalPow(boost::rational<int>&
 inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(auto& expValue)
 {
 	boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
-	switch (expValue.IntValue)
+	switch (expValue.IntHalf)
 	{
 	case MirroredInt::Zero:
 		return FractionalPow(Frac);
@@ -33,12 +33,12 @@ inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(auto& expValue)
 		return One / FractionalPow(Frac);
 		break;
 	default:
-		if (expValue.IntValue < 0){//Negative Exponent
-			auto CalcVal = One / IntPow(expValue.IntValue * -1);
+		if (expValue.IntHalf < 0){//Negative Exponent
+			auto CalcVal = One / IntPow(expValue.IntHalf * -1);
 			CalcVal /= FractionalPow(Frac);
 			return CalcVal;
 		} else {
-			auto CalcVal = IntPowOp(expValue.IntValue);
+			auto CalcVal = IntPowOp(expValue.IntHalf);
 			CalcVal *= FractionalPow(Frac);
 			return CalcVal;
 		}
@@ -50,7 +50,7 @@ inline auto BlazesRusCode::MediumDecVariant::BasicPowOp(auto& expValue)
 inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& exponent)
 {
 	if (exponent.DecimalHalf == 0)
-		return IntPowOp(exponent.IntValue);
+		return IntPowOp(exponent.IntHalf);
 #if defined(AltNum_EnableInfinityRep)
 	else if (DecimalHalf == InfinityRep)
 	{
@@ -65,7 +65,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
         {
 	        case RepType::PositiveInfinity:
 	        case RepType::NegativeInfinity:
-                if(exponent.IntValue==1)
+                if(exponent.IntHalf==1)
                     return *this;
                 else
                     return Zero;
@@ -85,10 +85,10 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
     #endif
             default:
             	RepType expType = exponent.GetRepType();
-        		if (exponent.IntValue < 0)
+        		if (exponent.IntHalf < 0)
         			return Zero;
-        		else if (IntValue == -1 && exponent.GetIntegerPartition() % 2 == 0)
-        			IntValue = 1;
+        		else if (IntHalf == -1 && exponent.GetIntegerPartition() % 2 == 0)
+        			IntHalf = 1;
         		else
         			return *this;//Returns infinity
         }
@@ -101,7 +101,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 		#if defined(AltNum_EnableFractionals)
 		case RepType::NumByDiv:
 		{
-			auto targetVal = MediumDecVariant(exponent.IntValue, exponent.DecimalHalf);
+			auto targetVal = MediumDecVariant(exponent.IntHalf, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
 			return MediumDecVariant::NthRoot(targetVal, exponent.ExtraRep);
 			break;
@@ -110,7 +110,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 		#if defined(AltNum_EnableDecimaledPiFractionals)
 		case RepType::PiNumByDiv:
 		{
-			auto targetVal = MediumDecVariant(exponent.IntValue, exponent.DecimalHalf, PiRep);
+			auto targetVal = MediumDecVariant(exponent.IntHalf, exponent.DecimalHalf, PiRep);
 			targetVal = Pow(targetVal);
 			return MediumDecVariant::NthRoot(targetVal, -exponent.ExtraRep);
 			break;
@@ -118,7 +118,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 		#elif defined(AltNum_EnableDecimaledEFractionals)
 		case RepType::ENumByDiv:
 		{
-			auto targetVal = MediumDecVariant(exponent.IntValue, exponent.DecimalHalf, ERep);
+			auto targetVal = MediumDecVariant(exponent.IntHalf, exponent.DecimalHalf, ERep);
 			targetVal = Pow(targetVal);
 			return MediumDecVariant::NthRoot(targetVal, -expValue.ExtraRep);
 			break;
@@ -151,9 +151,9 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 		#endif
 		#if defined(AltNum_EnableApproaching)
 		case RepType::ApproachingBottom:
-			if(exponent.IntValue==0)
+			if(exponent.IntHalf==0)
 				return ApproachingOneFromRightValue();
-			else if(exponent.IntValue==NegativeRep)
+			else if(exponent.IntHalf==NegativeRep)
 				return ApproachingOneFromLeftValue();
 			else
 				//exponent.ConvertToNormType(expType);
@@ -196,7 +196,7 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 	auto expValue = exponent;//Copy the value to allow converting
     expValue.ConvertToNormType(expType);
 	boost::rational<int> Frac = boost::rational<int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
-	switch (expValue.IntValue)
+	switch (expValue.IntHalf)
 	{
 		case 0:
 			return FractionalPow(Frac);
@@ -205,15 +205,15 @@ inline auto BlazesRusCode::MediumDecVariant::PowOp(const MediumDecVariant& expon
 			return One / FractionalPow(Frac);
 			break;
 		default:
-			if (expValue.IntValue < 0)//Negative Exponent 
+			if (expValue.IntHalf < 0)//Negative Exponent 
 			{
-				auto CalcVal = One / IntPow(expValue.IntValue * -1);
+				auto CalcVal = One / IntPow(expValue.IntHalf * -1);
 				CalcVal /= FractionalPow(Frac);
 				return CalcVal;
 			}
 			else
 			{
-				auto CalcVal = IntPowOp(expValue.IntValue);
+				auto CalcVal = IntPowOp(expValue.IntHalf);
 				CalcVal *= FractionalPow(Frac);
 				return CalcVal;
 			}

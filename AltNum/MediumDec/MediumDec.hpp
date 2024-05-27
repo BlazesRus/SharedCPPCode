@@ -48,7 +48,7 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         MediumDec(const IntHalfType& intVal = 0, const DecimalHalfType& decVal = 0)
         {
-            IntValue = intVal;
+            IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
@@ -59,7 +59,7 @@ namespace BlazesRusCode
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-            IntValue = rhs.IntValue; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
         } const
 
@@ -86,7 +86,7 @@ namespace BlazesRusCode
         /// <param name="Value">The right side value.</param>
         void SetVal(MediumDec Value)
         {
-            IntValue = Value.IntValue;
+            IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
@@ -325,12 +325,12 @@ public:
 
         static MediumDec MinimumValue()
         {
-            return MediumDec(MinIntValue, 999999999);
+            return MediumDec(MinIntHalf, 999999999);
         }
 
         static MediumDec MaximumValue()
         {
-            return MediumDec(MaxIntValue, 999999999);
+            return MediumDec(MaxIntHalf, 999999999);
         }
 public:
         static MediumDec AlmostOne;
@@ -577,24 +577,24 @@ public:
     #pragma region Comparison Operators
     std::strong_ordering operator<=>(const MediumDec& that) const
     {
-        int lVal = IntValue==NegativeZero?0:IntValue;
-        int rVal = that.IntValue==NegativeZero?0:that.IntValue;
+        int lVal = IntHalf==NegativeZero?0:IntHalf;
+        int rVal = that.IntHalf==NegativeZero?0:that.IntHalf;
         if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
             return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
-        lVal = IntValue==NegativeZero?0-DecimalHalf:DecimalHalf;
-        rVal = IntValue==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
+        //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+        lVal = IntHalf==NegativeZero?0-DecimalHalf:DecimalHalf;
+        rVal = IntHalf==NegativeZero?0-that.DecimalHalf:that.DecimalHalf;
         if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
     }
 
     std::strong_ordering operator<=>(const int& that) const
     {
-        int lVal = IntValue==NegativeZero?0:IntValue;
+        int lVal = IntHalf==NegativeZero?0:IntHalf;
         int rVal = that;
         if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
             return IntHalfCmp;
-        //Counting negative zero as same as zero IntValue but with negative DecimalHalf
+        //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
         lVal = DecimalHalf>0?1:0;
         if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
             return DecimalHalfCmp;
@@ -602,7 +602,7 @@ public:
 
     bool operator==(const int& that) const
     {
-        if (IntValue!=that)
+        if (IntHalf!=that)
             return false;
         if (DecimalHalf!=0)
             return false;
@@ -611,9 +611,9 @@ public:
 
     bool operator==(const MediumDec& that) const
     {
-        if (IntValue!=that.IntValue)
+        if (IntHalf!=that.IntHalf)
             return false;
-        if (DecimalHalf!=that.IntValue)
+        if (DecimalHalf!=that.IntHalf)
             return false;
     }
     #pragma endregion Comparison Operators
@@ -1732,19 +1732,19 @@ public:
         template<IntegerType IntType=int>
         friend MediumDec operator^(MediumDec self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue ^= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf ^= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf ^= Value;
                 }
                 else
                 {
-                    self.IntValue ^= Value; self.DecimalHalf ^= Value;
+                    self.IntHalf ^= Value; self.DecimalHalf ^= Value;
                 }
             }
             return self;
@@ -1759,19 +1759,19 @@ public:
         template<IntegerType IntType=int>
         friend MediumDec operator|(MediumDec self, IntType Value)
         {
-            if (self.DecimalHalf == 0) { self.IntValue |= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf |= Value; return self; }
             else
             {
-                bool SelfIsNegative = self.IntValue < 0;
+                bool SelfIsNegative = self.IntHalf < 0;
                 bool ValIsNegative = Value < 0;
-                if (SelfIsNegative && self.IntValue == NegativeRep)
+                if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntValue = (0 & Value) * -1;
+                    self.IntHalf = (0 & Value) * -1;
                     self.DecimalHalf |= Value;
                 }
                 else
                 {
-                    self.IntValue |= Value; self.DecimalHalf |= Value;
+                    self.IntHalf |= Value; self.DecimalHalf |= Value;
                 }
             }
             return self;
@@ -1832,11 +1832,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                ++IntValue.Value;
-            else if (IntValue == NegativeRep)
-                IntValue = MirroredInt::Zero;
+                ++IntHalf.Value;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
             else
-                ++IntValue.Value;
+                ++IntHalf.Value;
             return *this;
         }
 
@@ -1851,11 +1851,11 @@ public:
                 return *this;
 #endif
             if (DecimalHalf == 0)
-                --IntValue.Value;
-            else if (IntValue.Value == 0)
-                IntValue = NegativeRep;
+                --IntHalf.Value;
+            else if (IntHalf.Value == 0)
+                IntHalf = NegativeRep;
             else
-                --IntValue.Value;
+                --IntHalf.Value;
             return *this;
         }
 

@@ -35,7 +35,7 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
 	    #if defined(AltNum_EnableDecimaledPiFractionals)
             #define MixedDec_EnableDecimaledPiFractionals//  (Value/(ExtraRep*-1))*Pi Representation
 	    #elif defined(AltNum_EnablePiFractional)
-            #define MixedDec_EnablePiFractional//  IntValue/DecimalHalf*Pi Representation
+            #define MixedDec_EnablePiFractional//  IntHalf/DecimalHalf*Pi Representation
 	    #endif
 	#endif
     #if defined(AltNum_EnableERep)
@@ -43,7 +43,7 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
         #if defined(AltNum_EnableDecimaledEFractionals)
             #define MixedDec_EnableDecimaledEFractional//(Value/(ExtraRep*-1))*e Representation
 	    #elif defined(AltNum_EnableEFractional)
-            #define MixedDec_EnableEFractional//  IntValue/DecimalHalf*e Representation
+            #define MixedDec_EnableEFractional//  IntHalf/DecimalHalf*e Representation
 	    #endif
     #endif
     #if defined(AltNum_EnableIRep)
@@ -51,21 +51,21 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
 	    #if defined(AltNum_EnableDecimaledIFractionals)
             #define MixedDec_EnableDecimaledIFractionals//(Value/(ExtraRep*-1))*i Representation
 	    #elif defined(AltNum_EnableIFractional)
-            #define MixedDec_EnableIFractional//  IntValue/DecimalHalf*i Representation
+            #define MixedDec_EnableIFractional//  IntHalf/DecimalHalf*i Representation
 	    #endif
         #ifdef AltNum_EnableComplexNumbers
             #define MixedDec_EnableComplexNumbers
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-        #define MixedDec_EnableMixedFractional//IntValue +- (-DecimalHalf)/ExtraRep
+        #define MixedDec_EnableMixedFractional//IntHalf +- (-DecimalHalf)/ExtraRep
     #endif
 	#if defined(AltNum_EnableMixedPiFractional)
-        #define MixedDec_EnableMixedPiFractional//IntValue +- (-DecimalHalf/-ExtraRep)
+        #define MixedDec_EnableMixedPiFractional//IntHalf +- (-DecimalHalf/-ExtraRep)
 	#elif defined(AltNum_EnableMixedEFractional)
-        #define MixedDec_EnableMixedEFractional//IntValue +- (-DecimalHalf/-ExtraRep)
+        #define MixedDec_EnableMixedEFractional//IntHalf +- (-DecimalHalf/-ExtraRep)
 	#elif defined(AltNum_EnableMixedIFractional)
-        #define MixedDec_EnableMixedIFractional//IntValue +- (-DecimalHalf/-ExtraRep)
+        #define MixedDec_EnableMixedIFractional//IntHalf +- (-DecimalHalf/-ExtraRep)
 	#endif
     #if defined(AltNum_EnableInfinityRep)
         #define MixedDec_EnableInfinityRep
@@ -83,10 +83,10 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
         #define MixedDec_EnableNaN
     #endif
     #if defined(AltNum_EnableApproachingPi)
-        #define MixedDec_EnableApproachingPi//equal to IntValue.9..9 Pi
+        #define MixedDec_EnableApproachingPi//equal to IntHalf.9..9 Pi
     #endif
     #if defined(AltNum_EnableApproachingE)
-        #define MixedDec_EnableApproachingE//equal to IntValue.9..9 e
+        #define MixedDec_EnableApproachingE//equal to IntHalf.9..9 e
     #endif
     #if defined(AltNum_EnableImaginaryInfinity)
         #define MixedDec_EnableImaginaryInfinityEnableImaginaryInfinity
@@ -96,7 +96,7 @@ MixedDec_EnableApproachingAlternativeDiv = Not implimented yet
     #endif
     #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
         #define MixedDec_EnableUndefinedButInRange
-        #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntValue to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
+        #if defined(AltNum_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
             #define MixedDec_EnableWithinMinMaxRange
         #endif
     #endif

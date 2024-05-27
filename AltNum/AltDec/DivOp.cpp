@@ -80,8 +80,8 @@ void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
-/*	//((AltDecBase(IntValue,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
-	//((AltDecBase(IntValue,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntValue,rValue.DecimalHalf)))
+/*	//((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
+	//((AltDecBase(IntHalf,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntHalf,rValue.DecimalHalf)))
 	if (rValue < 0)
 	{
 		rValue *= -1;
@@ -90,13 +90,13 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 	if (rValue.DecimalHalf == 0)
 	{
 		BasicUIntMultOp(rValue.ExtraRep);
-		int result = ExtraRep * rValue.IntValue;
-		if(ExtraRep == result / rValue.IntValue)//checking for overflow
+		int result = ExtraRep * rValue.IntHalf;
+		if(ExtraRep == result / rValue.IntHalf)//checking for overflow
 		{
 			ExtraRep = result;
 		}
 		else
-			BasicUnsignedDivOp(rValue.IntValue);
+			BasicUnsignedDivOp(rValue.IntHalf);
 	}
 	else
 	{//CatchAllDivisionV2(rValue, LRep);
@@ -109,7 +109,7 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 
 void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 {
-	if(IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+	if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
 #if defined(AltNum_EnableNegativePowerRep)
 		ExtraRep -= rValue.ExtraRep;
 #else
@@ -131,14 +131,14 @@ void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 /*	int rvDivisor = -rValue.ExtraRep;
 	//=LeftSideNum*rValue.ExtraRep / RightSideNum;
 	AltDecBase LeftSideNum;
-	if (IntValue == NegativeRep)
+	if (IntHalf == NegativeRep)
 		LeftSideNum = AltDecBase(DecimalHalf);
-	else if (IntValue < 0)
-		LeftSideNum = AltDecBase(IntValue * ExtraRep + DecimalHalf);
-	else if (IntValue == 0)
+	else if (IntHalf < 0)
+		LeftSideNum = AltDecBase(IntHalf * ExtraRep + DecimalHalf);
+	else if (IntHalf == 0)
 		LeftSideNum = AltDecBase(-DecimalHalf);
 	else
-		LeftSideNum = AltDecBase(IntValue * ExtraRep - DecimalHalf);
+		LeftSideNum = AltDecBase(IntHalf * ExtraRep - DecimalHalf);
 	LeftSideNum.UIntDivOp(rValue.ExtraRep);
 	if (LeftSideNum.IsZero())
 		SetAsZero();
@@ -147,13 +147,13 @@ void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 		DecimalHalf = LeftSideNum.DecimalHalf;
 		if(rValue<0)
 		{
-			IntValue = -LeftSideNum.IntValue;
-			ExtraRep *= rValue.IntValue==NegativeRep ? -rValue.DecimalHalf : -rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+			IntHalf = -LeftSideNum.IntHalf;
+			ExtraRep *= rValue.IntHalf==NegativeRep ? -rValue.DecimalHalf : -rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
 		}
 		else
 		{
-			IntValue = LeftSideNum.IntValue;
-			ExtraRep *= rValue.IntValue==0 ? -rValue.DecimalHalf : rValue.IntValue * rValue.ExtraRep - rValue.DecimalHalf;
+			IntHalf = LeftSideNum.IntHalf;
+			ExtraRep *= rValue.IntHalf==0 ? -rValue.DecimalHalf : rValue.IntHalf * rValue.ExtraRep - rValue.DecimalHalf;
 		}
 	}*/
     //Add Code Here
@@ -169,9 +169,9 @@ void SameRep_WithinMinMaxRange
 
 void SameRep_ApproachingBottom(const auto& rValue, const RepType& LRep)
 {
-    if(IntValue.Value==0)//0.0..01/2.0..01 = ~0.0..01
+    if(IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
-	else if(rValue.IntValue.Value==0)//2.0..01/0.0..01 = infinity
+	else if(rValue.IntHalf.Value==0)//2.0..01/0.0..01 = infinity
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
@@ -185,12 +185,12 @@ void SameRep_ApproachingTop(const auto& rValue, const RepType& LRep)
 {
 #if defined(AltNum_EnableApproachingDivided)
 	//0.9..9/2.9..9 = ~0.9..9/3 (not quite that but close enough)
-    if(IntValue.Value==0){
+    if(IntHalf.Value==0){
 		DecimalHalf.Value = ApproachingMidLeftRep;
-		ExtraRep = rValue.IntValue+1;
-	} else if(rValue.IntValue.Value==0){
+		ExtraRep = rValue.IntHalf+1;
+	} else if(rValue.IntHalf.Value==0){
 		DecimalHalf.Value = ApproachingBottomRep;
-		++IntValue.Value;
+		++IntHalf.Value;
 	}
 	//999999999999999.999999999999999/0.999 999 999 999 999 = 1000000000000001
 	//9.999 999 999 999 999/0.999 999 999 999 999 = 10.000000000000009000000000000009000000000000009000000000000009000000000000009000000000000009
@@ -232,9 +232,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 #pragma region AltDecVariantExclusive
 		#if defined(AltNum_EnableApproachingDivided)
 			case RepType::ApproachingMidLeft:
-                if(rValue.IntValue.Value==0)
+                if(rValue.IntHalf.Value==0)
                 {
-                    if(IntValue.Value==0)
+                    if(IntHalf.Value==0)
 				    {
 					    //0.249..9(ExtraRep:4) / 0.49..9(ExtraRep:2) = ~0.49..9(ExtraRep:2)
                         unsigned int result = ExtraRep.Value / rValue.ExtraRep;
@@ -248,7 +248,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                         if (ExtraRep.Value == result * rValue)//checking for truncation
 						{
                             ExtraRep.Value = result;
-                            IntValue.Value *= rValue.ExtraRep;
+                            IntHalf.Value *= rValue.ExtraRep;
                         } else
 						    CatchAllOp(rValue);
                     }
@@ -257,9 +257,9 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
 					CatchAllOp(rValue);
 				break;
 			case RepType::ApproachingMidRight:
-                if(rValue.IntValue.Value==0)
+                if(rValue.IntHalf.Value==0)
                 {
-                    if(IntValue.Value==0)
+                    if(IntHalf.Value==0)
 				    {
                         unsigned int result = ExtraRep.Value / rValue.ExtraRep;
                         if (ExtraRep.Value == result * rValue)//checking for truncation
@@ -271,7 +271,7 @@ void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepT
                         if (ExtraRep.Value == result * rValue)//checking for truncation
 						{
                             ExtraRep.Value = result;
-                            IntValue.Value *= rValue.ExtraRep;
+                            IntHalf.Value *= rValue.ExtraRep;
                         } else
 						    CatchAllOp(rValue);
                     }
@@ -581,7 +581,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -812,7 +812,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				case RepType::NormalType:{
 					if(rValue.DecimalHalf==0)
                     {
-                        try{ ExtraRep *= rValue.IntValue; }
+                        try{ ExtraRep *= rValue.IntHalf; }
                         catch (std::overflow_error& e){ LeftSidePiOp(rValue); }
                     }
 					else
@@ -822,9 +822,9 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidLeft:
-                    if(rValue.IntValue.Value==0)
+                    if(rValue.IntHalf.Value==0)
                     {
-                        if(IntValue.Value==0)
+                        if(IntHalf.Value==0)
     				    {
                             unsigned int result = ExtraRep.Value / rValue.ExtraRep;
                             if (ExtraRep.Value == result * rValue)//checking for truncation
@@ -836,7 +836,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
                             if (ExtraRep.Value == result * rValue)//checking for truncation
     						{
                                 ExtraRep.Value = result;
-                                IntValue.Value *= rValue.ExtraRep;
+                                IntHalf.Value *= rValue.ExtraRep;
                             } else
     						    LeftSidePiOp(rValue);
                         }
@@ -852,7 +852,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 			switch(RRep){
 				case RepType::NormalType:{
 					if(rValue.DecimalHalf==0)
-						ExtraRep *= rValue.IntValue
+						ExtraRep *= rValue.IntHalf
 					else
 						LeftSidePiOp(rValue);
 				}; break;
@@ -860,9 +860,9 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 					LeftSidePiOp(rValue);
 				}; break;
 				case RepType::ApproachingMidRight:
-                    if(rValue.IntValue.Value==0)
+                    if(rValue.IntHalf.Value==0)
                     {
-                        if(IntValue.Value==0)
+                        if(IntHalf.Value==0)
     				    {
                             unsigned int result = ExtraRep.Value / rValue.ExtraRep;
                             if (ExtraRep.Value == result * rValue)//checking for truncation
@@ -874,7 +874,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
                             if (ExtraRep.Value == result * rValue)//checking for truncation
     						{
                                 ExtraRep.Value = result;
-                                IntValue.Value *= rValue.ExtraRep;
+                                IntHalf.Value *= rValue.ExtraRep;
                             } else
     						    LeftSidePiOp(rValue);
                         }
@@ -906,7 +906,7 @@ void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -963,7 +963,7 @@ void IToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 {
 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_EnableApproaching)
     if(RRep==RepType::InfinityRep){
-        IntValue.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
+        IntHalf.Value = 0; DecimalHalf.Value = ApproachingBottomRep;
         ExtraRep = InitialExtraRep;
         return;
     }
@@ -1034,7 +1034,7 @@ void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType
 {
 #if defined(AltNum_EnablePowerOfRepresentation)
 	if(LRep^ToPowerOfFlag){
-		if(RRep^ToPowerOfFlag&&IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
+		if(RRep^ToPowerOfFlag&&IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
 	#if defined(AltNum_EnableNegativePowerRep)
 			ExtraRep -= rValue.ExtraRep;
 	#else
@@ -1533,10 +1533,10 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 			} 
 		#endif
 		#if defined(AltNum_EnableInfinityPowers)
-			if(IntValue.Value==1)
+			if(IntHalf.Value==1)
 				SetAsZero();//Techically should maybe be indeterminate but normally can not have even larger infinity anyway
 			else
-				--IntValue.Value;
+				--IntHalf.Value;
 		#elif defined(AltNum_EnableIndeterminateForms)
 			SetAsIndeterminate(InfDividedByInfRep);
 		#else
@@ -1544,7 +1544,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		#endif
 		} else if(rValue.IsZero())
 		#if defined(AltNum_EnableInfinityPowers)
-			++IntValue.Value;//Make into even larger infinity
+			++IntHalf.Value;//Make into even larger infinity
 		#elif defined(AltNum_EnableIndeterminateForms)
 			SetAsIndeterminate(InfDividedByZeroRep);
 		#elif defined(AltNum_DefineDivideByZeroAsInfinity)
@@ -1557,7 +1557,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		return *this;
 	} else if(rValue.DecimalHalf.Value==InfinityRep){//Divided by Infinity
         DecimalHalf = ApproachingBottomRep;
-		IntValue.Value = 0;
+		IntHalf.Value = 0;
         ExtraRep = InitialExtraRep;
 		if(rValue.DecimalHalf.Flags==3){//Divided by Imaginary infinity
 			SwapNegativeStatus();
@@ -1581,7 +1581,7 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		#else
 			throw "Divide by zero is not allowed with current toggles";
 		#endif
-	} else if(DecimalHalf<=NaNVariantThreshold&&IntValue==rValue.IntValue&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
+	} else if(DecimalHalf<=NaNVariantThreshold&&IntHalf==rValue.IntHalf&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
 		SetAsOneVal();
 	else {
 		switch(DecimalHalf.Flags)
