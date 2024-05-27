@@ -28,21 +28,21 @@
 
 //"Not used for this variant" comment used as placeholder
 // between unused regions to help with code compare between variants and keep structure similar
-//Use  template<MediumDecVariant VariantType=MediumDecBase>
+//Use  template<MediumDecVariant VariantType=MediumDec>
 //to template functions for reuse with VariantTypes
 
 namespace BlazesRusCode
 {
-    class MediumDecBase;
+    class MediumDec;
 	/// <summary>
 	/// long double (Extended precision double)
 	/// </summary>
 	using ldouble = long double;
 	
 	// Forward declare VTable instances.
-	//extern AltNum_VTable MediumDecBase_vtable;
+	//extern AltNum_VTable MediumDec_vtable;
 
-/*---Accuracy Tests(with MediumDecBase based settings):
+/*---Accuracy Tests(with MediumDec based settings):
  * 100% accuracy for all integer value multiplication operations.
  * 100% accuracy for addition/subtraction operations
  * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
@@ -58,7 +58,7 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDecBase
+    class DLL_API MediumDec
     {
 protected:
 #if defined(AltNum_UseBuiltinVirtualTable)
@@ -147,17 +147,17 @@ protected:
         PartialInt DecimalHalf;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDecBase(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
+        MediumDec(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
-        MediumDecBase& operator=(const MediumDecBase& rhs)
+        MediumDec& operator=(const MediumDec& rhs)
         {
             // Check for self-assignment
             if (this == &rhs)      // Same object?

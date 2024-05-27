@@ -1,5 +1,5 @@
-#include "MediumDecBase.hpp"
-using MediumDecVariant = BlazesRusCode::MediumDecBase;
+#include "MediumDec.hpp"
+using MediumDecVariant = BlazesRusCode::MediumDec;
 
 /// <summary>
 /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
