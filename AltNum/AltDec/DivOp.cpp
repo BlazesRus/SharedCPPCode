@@ -109,66 +109,6 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 }
 #endif
 
-#if defined(AltNum_ApplyPowersToFlaggedSideOnly)
-#if defined(AltNum_EnablePiRep)
-void SameRep_PiPowerOf(const auto& rValue, const RepType& LRep)
-{
-	if(DecimalHalf.Flags==1||DecimalHalf.Flags==2){
-		if(ExtraRep.Value>rValue.ExtraRep)
-			ExtraRep.Value -= rValue.ExtraRep;
-		else {//Result is negative Exponent
-			signed int NegExp = rValue.ExtraRep.Value - ExtraRep.Value;
-			DecimalHalf.Flags = 0; ResetDivisor();
-			BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
-		}
-	} else if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
-	#if defined(AltNum_EnableNegativePowerRep)
-		ExtraRep -= rValue.ExtraRep;
-	#else
-		if(ExtraRep.Value>rValue.ExtraRep)
-			ExtraRep.Value -= rValue.ExtraRep;
-		else {//Result is negative Exponent
-			signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
-			ResetDivisor();
-			BasicIntPowOpV1(Exp);
-		}
-	#endif
-	}
-	else
-		CatchAllOp(rValue, LRep, LRep);
-}
-#endif
-
-#if defined(AltNum_EnableERep)
-void SameRep_EPowerOf(const auto& rValue, const RepType& LRep)
-{
-	if(DecimalHalf.Flags==1||DecimalHalf.Flags==2){
-		if(ExtraRep.Value>rValue.ExtraRep)
-			ExtraRep.Value -= rValue.ExtraRep;
-		else {//Result is negative Exponent
-			signed int NegExp = rValue.ExtraRep.Value - ExtraRep.Value;
-			DecimalHalf.Flags = 0; ResetDivisor();
-			BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
-		}
-	} else if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
-	#if defined(AltNum_EnableNegativePowerRep)
-		ExtraRep -= rValue.ExtraRep;
-	#else
-		if(ExtraRep.Value>rValue.ExtraRep)
-			ExtraRep.Value -= rValue.ExtraRep;
-		else {//Result is negative Exponent
-			signed int Exp = (signed int)ExtraRep.Value - (signed int)rValue.ExtraRep.Value;
-			ResetDivisor();
-			BasicIntPowOpV1(Exp);
-		}
-	#endif
-	}
-	else
-		CatchAllOp(rValue, LRep, LRep);
-}
-#endif
-#endif
-
 #if defined(AltNum_EnablePowerOfRepresentation)
 void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 {
@@ -661,7 +601,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+		#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 				//case RepType::ToPowerOf:{
 				//}; break;
 		#endif
@@ -689,7 +629,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 			}
 		} break;
 #pragma region AltDecVariantExclusive
-	#if defined(AltNum_EnablePowerOfRepresentation)
+	#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 		case RepType::PiPower:{
 			switch(RRep){
 				//case RepType::NormalType:{
@@ -736,7 +676,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+		#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 				//case RepType::ToPowerOf:{
 				//}; break;
 		#endif
@@ -809,7 +749,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+		#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 				//case RepType::ToPowerOf:{
 				//}; break;
 		#endif
@@ -844,7 +784,7 @@ void PiToNormalOperation(const auto& rValue, const RepType& LRep, const RepType&
 				//case RepType::NumByDiv:{
 				//}; break;
 		#endif
-		#if defined(AltNum_EnablePowerOfRepresentation)
+		#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 				//case RepType::ToPowerOf:{
 				//}; break;
 		#endif
@@ -980,7 +920,7 @@ void EToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& 
 		case RepType::ENum:{
 		} break;
 #pragma region AltDecVariantExclusive
-	#if defined(AltNum_EnablePowerOfRepresentation)
+	#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 		case RepType::EPower:{
 		} break;
 	#endif
@@ -1096,7 +1036,7 @@ void CatchAllIOperation(const auto& rValue, const RepType& LRep, const RepType& 
 //Same Representation division
 void CatchAllAltOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
-#if defined(AltNum_EnablePowerOfRepresentation)
+#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 	if(LRep^ToPowerOfFlag){
 		if(RRep^ToPowerOfFlag&&IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
 	#if defined(AltNum_EnableNegativePowerRep)
@@ -1150,7 +1090,7 @@ void PiRepSwitch(const auto& rValue)
 					case RepType::PiNum:{
 					} break;
     #pragma region AltDecVariantExclusive
-				#if defined(AltNum_EnablePowerOfRepresentation)
+				#if defined(AltNum_EnablePowerOfRepresentation)&&!defined(AltNum_ApplyPowersToFlaggedSideOnly)
 					case RepType::PiPower:{
 					} break;
 				#endif
@@ -1647,6 +1587,25 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 		#endif
 	} else if(DecimalHalf<=NaNVariantThreshold&&IntHalf==rValue.IntHalf&&DecimalHalf.Value==rValue.DecimalHalf.Value&&ExtraRep==rValue.ExtraRep)
 		SetAsOneVal();
+#if defined(AltNum_ApplyPowersToFlaggedSideOnly)
+	else if(ExtraRep.IsAlternative()&&DecimalHalf.Flags!=0){
+		if(DecimalHalf.Flags==rValue.DecimalHalf.Flags&&rValue.ExtraRep.IsAlternative()){
+			if(ExtraRep.Value>rValue.ExtraRep)
+				ExtraRep.Value -= rValue.ExtraRep;
+			else {//Result is negative Exponent
+				unsigned int NegExp = rValue.ExtraRep.Value - ExtraRep.Value;
+				DecimalHalf.Flags = 0; ResetDivisor();
+				if(DecimalHalf.Flags==1)
+					BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
+				else
+					BasicUnsignedMultOp(NegativePiPowerNum(NegExp));
+			}
+		} else {
+			auto RValue = rValue.ConvertAsNormType(RRep);
+			BasicUnsignedDivOp(RValue);
+		}
+	}
+#endif
 	else {
 		switch(DecimalHalf.Flags)
 		{
