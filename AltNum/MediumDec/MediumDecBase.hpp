@@ -67,12 +67,12 @@ protected:
 			return *((void***)obj);
 		}
 #endif
-#if !defined(AltNum_DisableDefaultStringFormatOption)
+/*#if !defined(AltNum_DisableDefaultStringFormatOption)
         enum class DefaultStringFormatEnum : int
         {
 
         };
-#endif
+#endif*/
 		//BitFlag 01(1) = PiRep
 		RepTypeUnderlayer PiFlag = 1;
 		//BitFlag 02(2) = ERep
@@ -121,6 +121,7 @@ protected:
 	
 		//Minimum IntHalf that can be stored inside IntHalf field
         static MirroredInt const MinIntHalf;
+
 	public:
 
         /// <summary>
@@ -183,43 +184,43 @@ protected:
         } const
 
         //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt()
+        bool IsAtZeroInt() const
         {
             return IntHalf.Value==0;
         }
 
-        bool IsNotAtZeroInt()
+        bool IsNotAtZeroInt() const
         {
             return IntHalf.Value!=0;
         }
 
-        bool IsAtOneInt()
+        bool IsAtOneInt() const
         {
             return IntHalf.Value==1;
         }
 
-        bool IsNotAtOneInt()
+        bool IsNotAtOneInt() const
         {
             return IntHalf.Value!=1;
         }
 
         //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero()
+		bool IsZero() const
 		{
             return DecimalHalf==0&&IntHalf.Value==0;
 		}
 		
-		bool IsOne()
+		bool IsOne() const
 		{
             return DecimalHalf==0&&IntHalf==MirroredInt::One;
 		}
 		
-		bool IsNegOne()
+		bool IsNegOne() const
 		{
             return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne;
 		}
 		
-		bool IsOneVal()
+		bool IsOneVal() const
 		{
             return DecimalHalf==0&&IntHalf.Value==1;
 		}
@@ -2854,7 +2855,7 @@ public:
                 throw "Can't display result of negative square root without imaginary number support";
             else if (DecimalHalf == 0)
             {
-                auto value = this;
+                auto value = *this;
                 bool AutoSetValue = true;
                 switch (IntHalf.Value)
                 {
@@ -2884,11 +2885,11 @@ public:
                     break;
                 }
                 if(AutoSetValue)
-                    return value;//Techically both positive and negative numbers of same equal the result
+                    return value;//Technically both positive and negative numbers of same equal the result
             }
 
             auto number = this;
-            auto start = 0, end = number;
+            auto start = Zero, end = number;
             auto mid;
 
             // variable to store the answer 

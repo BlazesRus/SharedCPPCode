@@ -24,7 +24,7 @@
 
 namespace BlazesRusCode
 {
-	struct MirroredInt {
+	class MirroredInt {
 	public:
 		#pragma options align=bit_packed
 		//If value is one then is negative
@@ -32,70 +32,63 @@ namespace BlazesRusCode
 		//Stores non-signed part of value
 		unsigned int Value:31;
 		#pragma options align=reset
-		
+
 		MirroredInt(const unsigned int& value=0, const unsigned int& isPositive=1)
 		{
 			Value = value;
 			IsPositive = isPositive;
 		}
+
+   //     MirroredInt(const signed int& val=0)
+   //     {
+			//if(value<0)
+			//{
+			//	IsPositive = 0;
+			//	Value = -val;
+			//}
+			//else
+   //         {
+			//	IsPositive = 1;
+   //             Value = val;
+   //     }
 		
-		MirroredInt(const unsigned int& value=0)
-		{
-			if(value<0)
-			{
-				IsPositive = 0;
-				Value = -value;
-			}
-			else
-				IsPositive = 1;
-			
-		}
-		
-		bool IsNegative()
+		bool IsNegative() const
 		{
 			return IsPositive!=1;
 		}
 		
         //Is at either zero or negative zero
-        bool IsAtZeroInt()
+		bool IsAtZeroInt() const
         {
 			return Value==0;
         }
 
         //Is at neither zero or negative zero
-        bool IsNotAtZeroInt()
+		bool IsNotAtZeroInt() const
         {
 			return Value!=0;
         }
 		
         //Is at either zero or negative one
-        bool IsAtOneInt()
+		bool IsAtOneInt() const
         {
 			return Value==0;
         }
 
         //Is at neither zero or negative one
-        bool IsNotAtOneInt()
+		bool IsNotAtOneInt() const
         {
 			return Value!=0;
         }
 		
-		bool IsEven()
+		bool IsEven() const
 		{
 			return (Value^1)==0;
 		}
 		
-		bool IsOdd()
+		bool IsOdd() const
 		{
 			return (Value^1)==1;
-		}
-		
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-            IsPositive ^= 1;
 		}
 		
 		std::strong_ordering operator<=>(const MirroredInt& that) const
@@ -107,12 +100,44 @@ namespace BlazesRusCode
 				return ValueCmp;
 		}
 		
-		bool operator==(const unsigned int& that) const
+		bool operator==(const MirroredInt& that) const
+		{
+			if (Value!=that.Value)
+				return false;
+			if (IsPositive!=that.IsPositive)
+				return false;
+			return true;
+		}
+
+		/*
+        bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
 				return false;
 			return true;
 		}
+        */
+
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned int() { return Value; }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned long long() { return Value; }
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus()
+        {
+            IsPositive ^= 1;
+		}
+		
 		
 	protected:
         /// <summary>
@@ -177,6 +202,7 @@ namespace BlazesRusCode
         {
             return MirroredInt(0,1);
         }
+
 	public:
         static MirroredInt Maximum;
 		
@@ -194,6 +220,7 @@ namespace BlazesRusCode
 	};
 	
 	MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();
+    MirroredInt MirroredInt::Zero = MirroredInt::ZeroValue();
 	MirroredInt MirroredInt::Maximum = MirroredInt::MaximumValue();
 	MirroredInt MirroredInt::Minimum = MirroredInt::MinimumValue();
 	

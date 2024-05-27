@@ -22,7 +22,7 @@
 
 namespace BlazesRusCode
 {
-	struct PartialInt {
+	class PartialInt {
 		#pragma options align=bit_packed
 		//Stores Digits XXX XXX XXX
 		unsigned int Value:30;
@@ -36,12 +36,66 @@ namespace BlazesRusCode
 			Flags = flags;
 		}
 		
+		bool IsNegative() const
+		{
+			return IsPositive!=1;
+		}
+		
+        //Is at either zero or negative zero
+		bool IsAtZeroInt() const
+        {
+			return Value==0;
+        }
+
+        //Is at neither zero or negative zero
+		bool IsNotAtZeroInt() const
+        {
+			return Value!=0;
+        }
+		
+        //Is at either zero or negative one
+		bool IsAtOneInt() const
+        {
+			return Value==0;
+        }
+
+        //Is at neither zero or negative one
+		bool IsNotAtOneInt() const
+        {
+			return Value!=0;
+        }
+		
+		bool IsEven() const
+		{
+			return (Value^1)==0;
+		}
+		
+		bool IsOdd() const
+		{
+			return (Value^1)==1;
+		}
+
 		std::strong_ordering operator<=>(const PartialInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
 		}
 		
+		bool operator==(const PartialInt& that) const
+		{
+			if (Value!=that.Value)
+				return false;
+            if(Flags!=that.Flags)
+                return false;
+			return true;
+		}
+
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
 		bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
@@ -73,5 +127,21 @@ namespace BlazesRusCode
         /// <returns>The result of the operator.</returns>
         explicit operator signed long long() { return Value; }
 
+protected:
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>MirroredInt</returns>
+        static MirroredInt ZeroValue()
+        {
+            return MirroredInt(0,1);
+        }
+public:
+
+		static MirroredInt Zero;
+
 	};
+
+	MirroredInt MirroredInt::Zero = MirroredInt::ZeroValue();
+
 }
