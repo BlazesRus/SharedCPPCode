@@ -68,7 +68,7 @@ namespace BlazesRusCode
 		
 		//Forcing bits to be packed https://www.ibm.com/docs/en/xcfbg/121.141?topic=modes-alignment-bit-fields
 		#pragma options align=bit_packed
-        unsigned int IsPositive:1;
+        unsigned int Sign:1;
 		//Numerator Value
 		//If AltFloat_ExtendedRange is enabled, Value can fill to max of int 32 with denominator of 2147483648.
 		#if defined(AltFloat_ExtendedRange)
@@ -91,11 +91,11 @@ namespace BlazesRusCode
         /// <summary>
         /// Initializes a new instance of the <see cref="AltFloat"/> class.
         /// </summary>
-        AltFloat(const unsigned int& signifNum=0, const signed char& exp=ZeroRep, const unsigned int& isPositive=1)
+        AltFloat(const unsigned int& signifNum=0, const signed char& exp=ZeroRep, const unsigned int& isNegative=0)
         {
             SignifNum = signifNum;
             Exp = exp;
-			IsPositive = isPositive;
+			Sign = isNegative;
         }
 
         AltFloat(const AltFloat&) = default;
@@ -104,12 +104,12 @@ namespace BlazesRusCode
 
 		bool IsNegative()
 		{
-			return IsPositive==0;
+			return Sign==PositiveSign;
 		}
 
 		bool IsPositive()
 		{
-			return IsPositive==1;
+			return Sign==NegativeSign;
 		}
 	
         /// <summary>
@@ -117,7 +117,7 @@ namespace BlazesRusCode
         /// </summary>
         void SwapNegativeStatus()
         {
-			IsPositive ~= 1;
+			Sign ~= 1;
         }
 
         //Detect if at exactly zero
@@ -129,7 +129,7 @@ namespace BlazesRusCode
         //Detect if at exactly one
 		bool IsOne()
 		{
-            return SignifNum==0&&Exp==0&&IsPositive==1;
+            return SignifNum==0&&Exp==0&&Sign==PositiveSign;
 		}
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace BlazesRusCode
         {
             SignifNum = Value.SignifNum;
             Exp = Value.Exp;
-			IsPositive = Value.IsPositive;
+			Sign = Value.Sign;
         }
 
         void SetAsZero()
@@ -149,21 +149,21 @@ namespace BlazesRusCode
 			//Otherwise, treat Exp -128 as for special values and zero so that formula for exact value is exact to formula except if Exp is -128
             SignifNum = 0;
             Exp = ZeroRep;
-			IsPositive = 1;
+			Sign = 1;
         }
 
         void SetAsOne()
         {
             SignifNum = 0;
             Exp = 0;
-			IsPositive = 1;
+			Sign = 1;
         }
 
         void SetAsNegativeOne()
         {
             SignifNum = 0;
             Exp = 0;
-			IsPositive = 0;
+			Sign = 0;
         }
 
     #pragma region Const Representation values
@@ -221,14 +221,14 @@ namespace BlazesRusCode
         /// </summary>
         void SetAsMaximum()
         {
-			IsPositive;
+			Sign;
     #if !defined(AltFloat_ExtendedRange)
             SignifNum = 8388607;
     #else
 			SignifNum = 2147483647;
     #endif
 			Exp = 127;
-			IsPositive = 0;
+			Sign = 0;
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace BlazesRusCode
 			SignifNum = 2147483647;
     #endif
 			Exp = 127;
-			IsPositive = 0;
+			Sign = 0;
         }
 
     #pragma region ApproachingZero Setters
@@ -255,7 +255,7 @@ namespace BlazesRusCode
         {
             SignifNum = 0;
 			Exp = -127;
-			IsPositive = 1;
+			Sign = 1;
         }
 		
         /// <summary>
@@ -514,7 +514,7 @@ public:
 				Value /= denom;
 				SignifNum = Value;
 				Exp = highestPower;
-                IsPositive = 1;
+                Sign = 1;
             }
         }
 
@@ -528,8 +528,8 @@ public:
                 SetAsNegativeOne();
             else
             {
-                bool IsPositive = Value>=0;
-                unsigned int RemainingVal = IsPositive?Value:-Value;
+                bool Sign = Value>=0;
+                unsigned int RemainingVal = Sign?Value:-Value;
 				bool bitAtPosition;
 				signed int powerAtPos = 0;
 				signed int highestPower = 0;
@@ -550,7 +550,7 @@ public:
 				Value /= denom;
 				SignifNum = Value;
 				Exp = highestPower;
-                IsPositive = IsPositive?1:0;
+                Sign = Sign?1:0;
             }
         }
 		
@@ -593,7 +593,7 @@ public:
 				//return Value.IsNegative()?-Value.GetIntegerHalf():Value.GetIntegerHalf();
 				SignifNum = Value.GetIntegerHalf();
 				Exp = highestPower;
-                IsPositive = Value.IsNegative()?0:1;
+                Sign = Value.IsNegative()?0:1;
             }
 		}
 
@@ -864,8 +864,8 @@ public:
     {
 		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
 		
-		//Comparing if number is negative vs positive
-        if (auto SignCmp = IsPositive <=> that.IsPositive; SignCmp != 0)
+		//Comparing if number is negative vs positive(inverted comparison so that Sign of zero is positive)
+        if (auto SignCmp = that.Sign <=> Sign; SignCmp != 0)
 			return SignCmp;
 		//The Smaller Exp is the closer to zero(-128 is exactly at zero)
         if (auto ExpCmp = Exp <=> that.Exp; ExpCmp != 0)
@@ -877,7 +877,7 @@ public:
     bool operator==(const AltFloat& that) const
     {
 		//"2^Exp + SignifNum*(2^(Exp - DenomMaxExp))"
-        if (IsPositive!=that.IsPositive)
+        if (Sign!=that.Sign)
             return false;
 		if (SignifNum!=that.SignifNum)
             return false;
@@ -911,7 +911,7 @@ public:
 		
 		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
 		{//Negative Exponent values for AltFloat and positive Exponent values for RestrictedFloat
-			IsPositive = 0;
+			Sign = 0;
 			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
 				Exponent.Value = 1;
 				SignifNum = 0;

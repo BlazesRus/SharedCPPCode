@@ -1723,7 +1723,7 @@ protected:
         /// <param name="rValue.">The rValue</param
         bool PartialDivOp(const AltDecBase& rValue)
         {
-            bool ResIsPositive = true;
+            bool ResSign = true;
             signed _int64 SelfRes;
             signed _int64 ValueRes;
             if(IntHalf<0)
@@ -1741,7 +1741,7 @@ protected:
                 }
                 else
                 {
-                    ResIsPositive = false;
+                    ResSign = false;
                     ValueRes = DecimalOverflowX * rValue.IntHalf +rValue.DecimalHalf;
                 }
             }
@@ -1750,7 +1750,7 @@ protected:
                 SelfRes = DecimalOverflowX* IntHalf+DecimalHalf;
                 if(rValue<0)
                 {
-                    ResIsPositive = false;
+                    ResSign = false;
                     ValueRes = rValue.IntHalf==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntHalf +rValue.DecimalHalf;
                 }
                 else
@@ -1759,7 +1759,7 @@ protected:
 
             signed _int64 IntHalfRes = SelfRes / ValueRes;
             signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntHalf = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+            IntHalf = IntHalfRes==0&&ResSign==false?NegativeRep:IntHalfRes;
             DecimalHalf = DecimalRes;
             if(IntHalfRes==0&&DecimalRes==0)
                 return true;
@@ -1769,7 +1769,7 @@ protected:
 
         bool UnsignedPartialDivOp(const AltDecBase& rValue)
         {
-            bool ResIsPositive = true;
+            bool ResSign = true;
             signed _int64 SelfRes;
             signed _int64 ValueRes;
             if (IntHalf < 0)
@@ -1778,7 +1778,7 @@ protected:
                     SelfRes = DecimalHalf;
                 else
                     SelfRes = NegDecimalOverflowX * IntHalf + DecimalHalf;
-                ResIsPositive = false;
+                ResSign = false;
                 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
             }
             else
@@ -1790,7 +1790,7 @@ protected:
 
             signed _int64 IntHalfRes = SelfRes / ValueRes;
             signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntHalf = IntHalfRes == 0 && ResIsPositive == false ? NegativeRep : IntHalfRes;
+            IntHalf = IntHalfRes == 0 && ResSign == false ? NegativeRep : IntHalfRes;
             DecimalHalf = DecimalRes;
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;

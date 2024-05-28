@@ -1660,7 +1660,7 @@ public:
 	#if !defined(AltNum_EnableMirroredSection)
                 IsNegative = true;
 	#else
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 	#endif
             }
             else if (StringChar == '.')

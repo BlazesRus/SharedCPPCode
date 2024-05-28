@@ -85,7 +85,7 @@ namespace BlazesRusCode
 			if(rhs<0)
 			{
 				IntHalf.Value = -rhs;
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 			}
 			else
 				IntHalf = rhs;
@@ -186,11 +186,11 @@ namespace BlazesRusCode
 		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
-		//When IntHalf.IsPositive==0, then the indeterminate form represents 0 x -Infinity
+		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents 0 x -Infinity
 		static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold+1;//1073741814;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
-		//When IntHalf.IsPositive==0, then the indeterminate form represents -Infinity / Infinity
+		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents -Infinity / Infinity
 		static unsigned int InfDividedByInfRep = IndeterminateThreshold+2;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
@@ -485,23 +485,31 @@ public:
     //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
     // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
     #if defined(AltNum_EnableInfinityRep)
+	
         void SetAsInfinity()
         {
-	#if defined(AltNum_EnableMirroredSection)
-            IntHalf.IsPositive = 1; DecimalHalf = InfinityRep;
-    #else
             IntHalf = 1; DecimalHalf = InfinityRep;
-    #endif
         }
 
         void SetAsNegativeInfinity()
         {
-	#if defined(AltNum_EnableMirroredSection)
-            IntHalf.IsPositive = 0; DecimalHalf = InfinityRep;
-    #else
-            IntHalf = -1; DecimalHalf = InfinityRep;
-    #endif
+            IntHalf = MirroredInt(1,MirroredInt::NegativeSign); DecimalHalf = InfinityRep;
         }
+		
+    #if defined(AltNum_EnableIRep)
+	
+        void SetAsImaginaryInfinity()
+        {
+            IntHalf = 1; DecimalHalf = PartialInt(InfinityRep,3);
+        }
+
+        void SetAsNegativeImaginaryInfinity()
+        {
+            IntHalf = MirroredInt(1,MirroredInt::NegativeSign); DecimalHalf = PartialInt(InfinityRep,3);
+        }
+		
+	#endif
+		
 	#endif
     #pragma endregion Infinity Setters
 
@@ -1148,28 +1156,23 @@ protected:
 		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
 		{
-	    #if defined(AltNum_EnableMirroredSection)
 			if(IntHalf.IsPositive())
 				if(RRep==RepType:Infinity&&that.IntHalf.IsPositive())
-					return 1<=>1;
+					return 0<=>0;
 				else
-					return 1<=>0;
+        #if defined(AltNum_UseInvertedSign)
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+		#else
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+		#endif
 			else
 				if(RRep==RepType:Infinity&&that.IntHalf.IsNegative())
-					return 1<=>1;
+					return 0<=>0;
 				else
-					return 0<=>1;
+		#if defined(AltNum_UseInvertedSign)
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
 		#else
-			if(IntHalf==1)
-				if(RRep==RepType:Infinity&&that.IntHalf==1)
-					return 1<=>1;
-				else
-					return 1<=>0;
-			else
-				if(RRep==RepType:Infinity&&that.IntHalf==-1)
-					return 1<=>1;
-				else
-					return 0<=>1;
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
 		#endif
 		}
 	#endif
@@ -1192,9 +1195,13 @@ protected:
 			}
 	#endif
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
+    #if defined(AltNum_UseInvertedSign)
+			auto SignCmp = Sign <=> that.Sign;
+    #else   //(inverted comparison so sign of zero==positive)
+            auto SignCmp = that.Sign <=> Sign;
+    #endif
+	        if (SignCmp != 0)
 				return SignCmp;
-	
 			RepType LRep = GetRepType();
 			RepType RRep = that.GetRepType();
     #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
@@ -1206,12 +1213,35 @@ protected:
             {
                 if(RValue.Flags!=3)
                     throw "Can't compare imaginary number with real number";
-				else if(RRep==RepType:ImaginaryInfinity)
+				else if(LRep==RepType:ImaginaryInfinity){
+					if(RRep==RepType:ImaginaryInfinity)
+						return SignCmp;
+					else{
+			#if defined(AltNum_UseInvertedSign)
+						if(IsPositive())//+Inf i vs Any non-inf imaginary
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else//-Inf i vs Any non-inf imaginary
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#else//Inverted order compared to if sign of positive == 1
+						if(IsPositive())
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+						else
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#endif
+					}
+				} else if(RRep==RepType:ImaginaryInfinity)
                 {
-					if(that.IntHalf==1)
-						return 0<=>1;//Positive Infinity is greater than real number representations
-					else
-						return 1<=>0;
+			#if defined(AltNum_UseInvertedSign)
+						if(that.IsPositive())//Any non-inf imaginary vs +Inf i
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+						else//Any non-inf imaginary vs -Inf i
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#else
+						if(that.IsPositive())
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#endif
                 }
                 else
 			    	return BasicComparisonV2(rSide);
@@ -1235,10 +1265,17 @@ protected:
 						return BasicComparisonV2(that);
 					else if(RRep==RepType:Infinity)
                     {
-                        if(that.IntHalf==1)
-							return 0<=>1;//Positive Infinity is greater than real number representations
+			#if defined(AltNum_UseInvertedSign)
+                        if(that.IntHalf.IsPositive())
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;//Positive Infinity is greater than real number representations
 						else
-							return 1<=>0;
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#else
+                        if(that.IntHalf.IsPositive())
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#endid
                     }
                     else
 					{
@@ -2219,7 +2256,7 @@ protected:
         					{
                                 if(rValue>IntHalf.Value)
 								{
-                                    IntHalf.IsPositive = 1;
+                                    IntHalf.Sign = 1;
                                     IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else
@@ -2459,7 +2496,7 @@ protected:
         					{
                                 if(rValue>IntHalf.Value)
 								{
-                                    IntHalf.IsPositive = 0;
+                                    IntHalf.Sign = 0;
                                     IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else
@@ -2689,7 +2726,7 @@ public:
         /// <returns>MediumDecVariant</returns>
         MediumDecV2Base operator- ()
         {
-			auto self = this;
+			auto self = *this;
             self.SwapNegativeStatus(); return self;
         } const
 
@@ -2958,7 +2995,7 @@ protected:
             if (convertedVal.DecimalHalf == 0 && convertedVal.IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
+                    IntHalf.Sign = 1;
                 IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf = 0; ResetDivisor();
             }
@@ -2978,7 +3015,7 @@ protected:
                     self *= self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntHalf.IsPositive = 0;
+                    IntHalf.Sign = 0;
             }
             return *this;
         }
@@ -3000,7 +3037,7 @@ protected:
                 {
                     IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
                     if(IsNegative()&&exp&1==1)
-                        IsPositive = 1;
+                        Sign = 1;
                 }
                 else
                 {
@@ -3019,14 +3056,14 @@ protected:
                         self *= self; // Change x to x^2
                     }
                     if(IsNegative)
-                        IntHalf.IsPositive = 0;
+                        IntHalf.Sign = 0;
                 }
                 return *this;
             }
             else if (convertedVal.DecimalHalf.Value == 0 && convertedVal.IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
+                    IntHalf.Sign = 1;
                 IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 DecimalHalf = 0; ResetDivisor();
             }
@@ -3046,7 +3083,7 @@ protected:
                     self = self * self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntHalf.IsPositive = 0;
+                    IntHalf.Sign = 0;
             }
             return *this;
         }

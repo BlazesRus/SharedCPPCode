@@ -268,7 +268,7 @@ public:
 		
 		void SetTrailingDigitFromRem(const _int64& TruncatedDigits)
 		{//Negative Exponent values for RestrictedFloat and positive Exponent values for RestrictedFloat
-			IsPositive = 1;
+			Sign = 1;
 			if(TruncatedDigits==SubExp1Range){//Exactly 0.5 Remainder
 				Exponent.Value = 1;
 				SignifNum = 0;

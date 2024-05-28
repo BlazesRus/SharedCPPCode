@@ -29,43 +29,74 @@ namespace BlazesRusCode
 	class MirroredInt {
 	public:
 		#pragma options align=bit_packed
-		//If value is one then is negative
-		unsigned int IsPositive:1;
+    #if defined(AltNum_UseInvertedSign)
+		//If Sign is one, then the sign is positive.
+        //Otherwise, the sign is negative
+    #else
+		//If Sign is one, then the sign is negative.
+        //Otherwise, the sign is positive
+    #endif
+		unsigned int Sign:1;
 		//Stores non-signed part of value
 		unsigned int Value:31;
 		#pragma options align=reset
 
-		MirroredInt(const unsigned int& value=0, const unsigned int& isPositive=1)
+    #if defined(AltNum_UseInvertedSign)
+        static const unsigned int NegativeSign = 0;
+        static const unsigned int PositiveSign = 1;
+    #else
+        static const unsigned int NegativeSign = 1;
+        static const unsigned int PositiveSign = 0;
+    #endif
+
+		MirroredInt(const unsigned int& value=0, const unsigned int& sign=PositiveSign)
 		{
 			Value = value;
-			IsPositive = isPositive;
+			Sign = sign;
 		}
 
 		bool IsNegative() const
 		{
-			return IsPositive!=1;
+			return Sign==NegativeSign;
 		}
 
 		bool IsPositive() const
 		{
-			return IsPositive==1;
+			return Sign==PositiveSign;
 		}
+
+        void SetAsPositive()
+        {
+			Sign = PositiveSign;
+        }
+
+        void SetAsNegative()
+        {
+			Sign = NegativeSign;
+        }
 
         void SetSignedValue(const signed int& val=0)
         {
 			if(val<0){
-				IsPositive = 0;
+				Sign = PositiveSign;
 				Value = -val;
             } else {
-                IsPositive = 1;
+                Sign = NegativeSign;
                 Value = val;
             }
         }
 
-        void SetValue(const unsigned int& value=0, const unsigned int& isPositive=1)
+    #if defined(AltNum_UseInvertedSign)
+		//If Sign is one, then the sign is positive.
+        //Otherwise, the sign is negative
+    #else
+		//If Sign is one, then the sign is negative.
+        //Otherwise, the sign is positive
+    #endif
+        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign)
         {
 			Value = value;
-			IsPositive = isPositive;
+			Sign = sign;
         }
 
         //Set as zero without changing sign(including negative zero)
@@ -77,7 +108,7 @@ namespace BlazesRusCode
         //Return value as real number(negative zero counts as zero)
         int GetValue()
         {
-            if(IsPositive==1)
+            if(IsPositive())
                 return (signed int)Value;
             else
                 return -((signed int)Value);
@@ -85,12 +116,17 @@ namespace BlazesRusCode
 
         void SetAsZero()
         {
-			Value = 0; IsPositive = 1;
+			Value = 0; Sign = PositiveSign;
         }
 
         void SetAsNegativeZero()
         {
-			Value = 0; IsPositive = 0;
+			Value = 0; Sign = NegativeSign;
+        }
+
+        void SetAsZeroVal()
+        {
+			Value = 0;
         }
 		
         //Is at either zero or negative zero
@@ -130,7 +166,7 @@ namespace BlazesRusCode
         //Returns copy of value as Absolute value
         MirroredInt Abs() const
         {
-            if(IsPositive==1)
+            if(IsPositive())
                 return *this;
             else
                 return MirroredInt(Value);
@@ -139,7 +175,12 @@ namespace BlazesRusCode
 		std::strong_ordering operator<=>(const MirroredInt& that) const
 		{
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IsPositive <=> that.IsPositive; SignCmp != 0)
+    #if defined(AltNum_UseInvertedSign)
+			auto SignCmp = Sign <=> that.Sign;
+    #else   //(inverted comparison so sign of zero==positive)
+            auto SignCmp = that.Sign <=> Sign;
+    #endif
+	        if (SignCmp != 0)
 				return SignCmp;
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
@@ -149,19 +190,60 @@ namespace BlazesRusCode
 		{
 			if (Value!=that.Value)
 				return false;
-			if (IsPositive!=that.IsPositive)
+			if (Sign!=that.Sign)
 				return false;
 			return true;
 		}
 
-		/*
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			//Comparing if number is negative vs positive
+    #if defined(AltNum_UseInvertedSign)
+			auto SignCmp = Sign <=> PositiveSign;
+    #else   //(inverted comparison so sign of zero==positive)
+            auto SignCmp = PositiveSign <=> Sign;
+    #endif
+	        if (SignCmp != 0)
+				return SignCmp;
+			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
+		std::strong_ordering operator<=>(const signed int& that) const
+		{
+            if(that<0){
+    			//Comparing if number is negative vs positive
+        #if defined(AltNum_UseInvertedSign)
+    			auto SignCmp = Sign <=> NegativeSign;
+        #else   //(inverted comparison so sign of zero==positive)
+                auto SignCmp = NegativeSign <=> Sign;
+        #endif
+    	        if (SignCmp != 0)
+    				return SignCmp;
+    			if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
+    				return ValueCmp;
+            } else {
+    			//Comparing if number is negative vs positive
+        #if defined(AltNum_UseInvertedSign)
+    			auto SignCmp = Sign <=> PositiveSign;
+        #else   //(inverted comparison so sign of zero==positive)
+                auto SignCmp = PositiveSign <=> Sign;
+        #endif
+    	        if (SignCmp != 0)
+    				return SignCmp;
+    			if (auto ValueCmp = Value <=> (unsigned int)(-that); ValueCmp != 0)
+    				return ValueCmp;
+            }
+		}
+
         bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
 				return false;
+			if (Sign!=PositiveSign)
+				return false;
 			return true;
 		}
-        */
 
         /// <summary>
         /// to int explicit conversion
@@ -180,7 +262,7 @@ namespace BlazesRusCode
         /// </summary>
         void SwapNegativeStatus()
         {
-            IsPositive ^= 1;
+            Sign ^= 1;
 		}
 		
 	protected:
@@ -191,7 +273,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt MaximumValue()
         {
-            return MirroredInt(2147483647,1);
+            return MirroredInt(2147483647,PositiveSign);
         }
 	
         /// <summary>
@@ -200,7 +282,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt MinimumValue()
         {
-            return MirroredInt(2147483647,0);
+            return MirroredInt(2147483647,NegativeSign);
         }
 		
         /// <summary>
@@ -209,7 +291,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt NegativeOneValue()
         {
-            return MirroredInt(1,0);
+            return MirroredInt(1,NegativeSign);
         }
 		
         /// <summary>
@@ -218,7 +300,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt OneValue()
         {
-            return MirroredInt(1,1);
+            return MirroredInt(1);
         }
 		
         /// <summary>
@@ -227,7 +309,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt TwoValue()
         {
-            return MirroredInt(2,1);
+            return MirroredInt(2);
         }
 		
         /// <summary>
@@ -236,7 +318,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt NegativeZeroValue()
         {
-            return MirroredInt(0,0);
+            return MirroredInt(0,NegativeSign);
         }
 		
         /// <summary>
@@ -245,7 +327,7 @@ namespace BlazesRusCode
         /// <returns>MirroredInt</returns>
         static MirroredInt ZeroValue()
         {
-            return MirroredInt(0,1);
+            return MirroredInt();
         }
 
 	public:
@@ -316,19 +398,19 @@ namespace BlazesRusCode
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void AddOp(const MirroredInt& rValue){
-            if(IsPositive==1){
-				if(rValue.IsPositive==1)
+            if(IsPositive()){
+				if(rValue.IsPositive())
 					Value += rValue.Value;
 				else if(rValue.Value>Value){//Becoming negative
-					IsPositive = 0;
+					Sign = NegativeSign;
 					Value = rValue.Value - Value;
 				} else
 					Value -= rValue.Value;
             } else {
-				if(rValue.IsPositive==0)
+				if(rValue.IsNegative())
 					Value += rValue.Value;
 				else if(rValue.Value>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue.Value - Value - 1;
 				} else
 					Value -= rValue.Value;
@@ -337,11 +419,11 @@ namespace BlazesRusCode
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void UIntAddOp(const unsigned int& rValue){
-            if(IsPositive==1)
+            if(IsPositive())
 				Value += rValue;
             else {
 				if(rValue>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue - Value - 1;
 				} else
 					Value -= rValue;
@@ -350,13 +432,13 @@ namespace BlazesRusCode
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void IntAddOp(const signed int& rValue){
-            if(IsPositive==1){
+            if(IsPositive()){
 				if(rValue>=0)
 					Value += rValue;
 				else {
                     auto negRValue = -rValue;
                     if(negRValue>Value){//Becoming negative
-    					IsPositive = 0;
+    					Sign = NegativeSign;
     					Value = negRValue - Value;
     				} else
     					Value += rValue;
@@ -365,7 +447,7 @@ namespace BlazesRusCode
 				if(rValue<0)
 					Value -= rValue;
 				else if(rValue>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue - Value - 1;
 				} else
 					Value -= rValue;
@@ -374,19 +456,19 @@ namespace BlazesRusCode
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void SubOp(const MirroredInt& rValue){
-            if(IsPositive==1){
-				if(rValue.IsPositive==0)
+            if(IsPositive()){
+				if(rValue.IsNegative())
 					Value += rValue.Value;
 				else if(rValue.Value>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue.Value - Value - 1;
 				} else
 					Value -= rValue.Value;
             } else {
-				if(rValue.IsPositive==1)
+				if(rValue.IsPositive())
 					Value += rValue.Value;
 				else if(rValue.Value>Value){//Becoming negative
-					IsPositive = 0;
+					Sign = NegativeSign;
 					Value = rValue.Value - Value;
 				} else
 					Value -= rValue.Value;
@@ -395,9 +477,9 @@ namespace BlazesRusCode
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void UIntSubOp(const unsigned int& rValue){
-            if(IsPositive==1){
+            if(IsPositive()){
 				if(rValue>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue - Value - 1;
 				} else
 					Value -= rValue;
@@ -407,11 +489,11 @@ namespace BlazesRusCode
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void IntSubOp(const signed int& rValue){
-            if(IsPositive==1){
+            if(IsPositive()){
 				if(rValue<0)
 					Value -= rValue;
 				else if(rValue>Value){//Becoming positive
-					IsPositive = 1;
+					Sign = PositiveSign;
 					Value = rValue - Value - 1;
 				} else
 					Value -= rValue;
@@ -421,7 +503,7 @@ namespace BlazesRusCode
 				else {
                     auto negRValue = -rValue;
                     if(negRValue>Value){//Becoming negative
-    					IsPositive = 0;
+    					Sign = NegativeSign;
     					Value = negRValue - Value;
     				} else
     					Value += rValue;
@@ -431,19 +513,19 @@ namespace BlazesRusCode
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingAddOp(const MirroredInt& rValue){
-            if(IsPositive==1){
-				if(rValue.IsPositive==1)
+            if(IsPositive()){
+				if(rValue.IsPositive())
 					Value += rValue.Value;
                 else if (rValue.Value > Value) {//Becoming negative
-                    IsPositive = 0;
+                    Sign = NegativeSign;
                     Value = rValue.Value - Value;
                 } else
 					Value -= rValue.Value;
             } else {
-				if(rValue.IsPositive==0)
+				if(rValue.IsNegative())
 					Value += rValue.Value;
                 else if (rValue.Value >= Value) {//Becoming positive
-                    IsPositive = 1;
+                    Sign = PositiveSign;
                     Value = rValue.Value - Value;//Skipping negative zero
                 } else
 					Value -= rValue.Value;
@@ -453,19 +535,19 @@ namespace BlazesRusCode
 		
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingSubOp(const MirroredInt& rValue){
-            if(IsPositive==1){
-				if(rValue.IsPositive==0)
+            if(IsPositive()){
+				if(rValue.IsNegative())
 					Value += rValue.Value;
                 else if (rValue.Value >= Value) {//Becoming positive
-                    IsPositive = 1;
+                    Sign = PositiveSign;
                     Value = rValue.Value - Value;//Skipping negative zero
                 } else
 					Value -= rValue.Value;
             } else {
-				if(rValue.IsPositive==1)
+				if(rValue.IsPositive())
 					Value += rValue.Value;
                 else if (rValue.Value > Value) {//Becoming negative
-                    IsPositive = 0;
+                    Sign = NegativeSign;
                     Value = rValue.Value - Value;
                 } else
 					Value -= rValue.Value;

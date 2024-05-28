@@ -56,38 +56,38 @@ namespace BlazesRusCode
 			IsAltRep = 0;
 		}
 		
-        //Is at either zero or negative zero
-        bool IsAtZeroInt()
+        //Is at zero value
+        bool IsAtZero()
         {
 			return Value==0;
         }
 
-        //Is at neither zero or negative zero
-        bool IsNotAtZeroInt()
+        //Is not at zero value
+        bool IsNotAtZero()
         {
 			return Value!=0;
         }
 		
-        //Is at either zero or negative one
-        bool IsAtOneInt()
+        //Is at one value
+        bool IsAtOne()
         {
-			return Value==0;
+			return Value==1;
         }
 
         //Is at neither zero or negative one
-        bool IsNotAtOneInt()
+        bool IsNotOne()
         {
-			return Value!=0;
+			return Value!=1;
         }
 		
 		bool IsEven()
 		{
-			return Value^1==0;
+			return (Value&1)==0;
 		}
 		
 		bool IsOdd()
 		{
-			return Value^1==1;
+			return (Value&1)==1;
 		}
 		
 		std::strong_ordering operator<=>(const FlaggedInt& that) const
@@ -103,6 +103,12 @@ namespace BlazesRusCode
 			return true;
 		}
 		
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
 		bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
@@ -188,6 +194,7 @@ namespace BlazesRusCode
         }
 		
 	public:
+
         static FlaggedInt Maximum;
 		
         static FlaggedInt AltMaximum;
@@ -197,6 +204,170 @@ namespace BlazesRusCode
         static FlaggedInt Two;
 		
 		static FlaggedInt Zero;
+
+ 		friend FlaggedInt& operator/=(FlaggedInt& lValue, const FlaggedInt& rValue){
+			lValue.Value /= rValue.Value; return lValue;
+        }
+
+        friend FlaggedInt& operator/=(FlaggedInt& lValue, const unsigned int& rValue){
+            lValue.Value /= rValue; return lValue;
+        }
+
+		friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed int& rValue){
+			lValue.Value /= rValue; return lValue;
+        }
+		
+		friend FlaggedInt operator/(const FlaggedInt& lValue, const FlaggedInt& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value /= rValue.Value; return newVal;
+        }
+
+		friend FlaggedInt operator/(const FlaggedInt& lValue, const unsigned int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value /= rValue; return newVal;
+        }
+		
+		friend FlaggedInt operator/(const FlaggedInt& lValue, const signed int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value /= rValue; return newVal;
+        }
+
+        friend FlaggedInt& operator*=(FlaggedInt& lValue, const FlaggedInt& rValue){
+            lValue.Value *= rValue.Value; return lValue;
+        }
+
+        friend FlaggedInt& operator*=(FlaggedInt& lValue, const unsigned int& rValue){
+            lValue.Value *= rValue; return lValue;
+        }
+
+        friend FlaggedInt& operator*=(FlaggedInt& lValue, const signed int& rValue){
+            lValue.Value *= rValue; return lValue;
+        }
+		
+		friend FlaggedInt operator*(const FlaggedInt& lValue, const FlaggedInt& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value *= rValue.Value; return newVal;
+        }
+
+		friend FlaggedInt operator*(const FlaggedInt& lValue, const unsigned int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value *= rValue; return newVal;
+        }
+		
+		friend FlaggedInt operator*(const FlaggedInt& lValue, const signed int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value *= rValue; return newVal;
+        }
+
+		friend FlaggedInt& operator+=(FlaggedInt& lValue, const FlaggedInt& rValue){
+			lValue.Value += rValue.Value; return lValue;
+        }
+		
+		friend FlaggedInt& operator+=(FlaggedInt& lValue, const unsigned int& rValue){
+			lValue.Value += rValue; return lValue;
+        }
+
+		friend FlaggedInt& operator+=(FlaggedInt& lValue, const signed int& rValue){
+			lValue.Value += rValue; return lValue;
+        }
+
+		friend FlaggedInt operator+(const FlaggedInt& lValue, const FlaggedInt& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value += rValue.Value; return newVal;
+        }
+
+		friend FlaggedInt operator+(const FlaggedInt& lValue, const unsigned int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value += rValue; return newVal;
+        }
+		
+		friend FlaggedInt operator+(const FlaggedInt& lValue, const signed int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value += rValue; return newVal;
+        }
+
+		friend FlaggedInt& operator-=(FlaggedInt& lValue, const FlaggedInt& rValue){
+            lValue.Value -= rValue.Value; return lValue;
+        }
+
+		friend FlaggedInt& operator-=(FlaggedInt& lValue, const unsigned int& rValue){
+            lValue.Value -= rValue; return lValue;
+        }
+
+		friend FlaggedInt& operator-=(FlaggedInt& lValue, const signed int& rValue){
+            lValue.Value -= rValue; return lValue;
+        }
+		
+		friend FlaggedInt operator-(const FlaggedInt& lValue, const FlaggedInt& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value -= rValue.Value; return newVal;
+        }
+
+		friend FlaggedInt operator-(const FlaggedInt& lValue, const unsigned int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value -= rValue; return newVal;
+        }
+		
+		friend FlaggedInt operator-(const FlaggedInt& lValue, const signed int& rValue){
+            FlaggedInt newVal = lValue;
+			newVal.Value -= rValue; return newVal;
+        }
+
+    #pragma region Other Operators
+
+        /// <summary>
+        /// ++FlaggedInt Operator
+        /// </summary>
+        /// <returns>FlaggedInt &</returns>
+        FlaggedInt& operator ++()
+        {
+            Value += 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// ++FlaggedInt Operator
+        /// </summary>
+        /// <returns>FlaggedInt &</returns>
+        FlaggedInt& operator --()
+        {
+            Value -= 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// FlaggedInt++ Operator
+        /// </summary>
+        /// <returns>MediumDecVariant</returns>
+        FlaggedInt operator ++(int)
+        {
+            FlaggedInt tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// FlaggedInt-- Operator
+        /// </summary>
+        /// <returns>MediumDecVariant</returns>
+        FlaggedInt operator --(int)
+        {
+            FlaggedInt tmp(*this);
+            --* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// FlaggedInt* Operator
+        /// </summary>
+        /// <returns>FlaggedInt &</returns>
+        FlaggedInt& operator *()
+        {
+            return *this;
+        }
+		
+    #pragma endregion Other Operators
+
 	};
 	
 	FlaggedInt FlaggedInt::Maximum = FlaggedInt::MaximumValue();

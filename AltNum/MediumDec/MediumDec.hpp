@@ -237,7 +237,7 @@ protected:
         /// </summary>
         void SwapNegativeStatus()
         {
-            IntHalf.IsPositive ^= 1;
+            IntHalf.Sign ^= 1;
         }
 
         void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
@@ -813,7 +813,7 @@ public:
         {
 			if(Value<0)
 			{
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 				IntHalf.Value = -Value;
 			}
 			else
@@ -1093,67 +1093,22 @@ protected:
 		template<MediumDecVariant VariantType=MediumDec>
 		std::strong_ordering BasicComparisonV1(const VariantType& that) const
 		{
-			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
-				return SignCmp;
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
-			int lVal; int rVal;
-			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-				return IntHalfCmp;
 			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
 			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
-		
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-		template<MediumDecVariant VariantType=MediumDec>
-		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-
-			if (auto IntHalfCmp = lVal <=> rVal; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-	
-		//Compare only as if in NormalType representation mode
-        constexpr auto BasicComparison = MediumDec::BasicComparisonV1<MediumDec>;
-		
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-        constexpr auto BasicComparisonV2 = MediumDec::BasicComparisonWithoutSignCheck<MediumDec>;
 		
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const
 		{
-			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
-				return SignCmp;
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			int lVal;
-			if (auto IntHalfCmp = lVal <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			lVal = DecimalHalf.Value>0?1:0;
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-		std::strong_ordering BasicIntComparisonV2(const int& that) const
-		{
 			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			int lVal = DecimalHalf.Value>0?1:0;
+			unsigned int lVal = DecimalHalf.Value>0?1:0;
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
@@ -1161,8 +1116,14 @@ protected:
 public:
 
 		std::strong_ordering operator<=>(const MediumDec& that) const
-		{
-			return BasicComparison(that);
+		{//return BasicComparison(that);
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
 		}
 
 		std::strong_ordering operator<=>(const int& that) const
@@ -1186,6 +1147,7 @@ public:
 			if (DecimalHalf!=that.IntHalf)
 				return false;
 		}
+
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer division operations
@@ -1483,7 +1445,7 @@ protected:
 					//-2.XX + 3.XX = 0.XX
 					if(invertedrValue>(IntType)IntHalf.Value)//Flips to other side of flag
 					{
-						IntHalf.IsPositive = 0;
+						IntHalf.Sign = 0;
 						IntHalf.Value = rValue - IntHalf.Value + 1;
 						if(DecimalHalf!=0)//Invert the decimal section
 							DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1506,7 +1468,7 @@ protected:
 						IntHalf -= -rValue;
 					else//Flips to other side of flag
 					{
-						IntHalf.IsPositive = 1;
+						IntHalf.Sign = 1;
 						IntHalf.Value = rValue - IntHalf.Value - 1;
 						if(DecimalHalf!=0)//Invert the decimal section
 							DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1535,7 +1497,7 @@ protected:
 					IntHalf -= -rValue;
 				else//Flips to other side of flag
 				{
-					IntHalf.IsPositive = 1;
+					IntHalf.Sign = 1;
 					IntHalf.Value = rValue - IntHalf.Value - 1;
 					if(DecimalHalf!=0)//Invert the decimal section
 						DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1653,7 +1615,7 @@ protected:
 						//-2.XX - -3.XX = 0.XX
 						if(invertedrValue>invertedValue)//Flips to other side of flag
 						{
-							IntHalf.IsPositive = 1;
+							IntHalf.Sign = 1;
 							IntHalf.Value = invertedrValue - IntHalf.Value - 1;
 							if(DecimalHalf!=0)//Invert the decimal section
 								DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1673,7 +1635,7 @@ protected:
 						//2.XX - 3.XX = -0.XX
 						if(rValue>IntHalf.Value)//Flips to other side of flag
 						{
-							IntHalf.IsPositive = 0;
+							IntHalf.Sign = 0;
 							IntHalf.Value = rValue - IntHalf.Value - 1;
 							if(DecimalHalf!=0)//Invert the decimal section
 								DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1702,7 +1664,7 @@ protected:
 						//-2.XX - -3.XX = 0.XX
 						if(invertedrValue>invertedValue)//Flips to other side of flag
 						{
-							IntHalf.IsPositive = 1;
+							IntHalf.Sign = 1;
 							IntHalf.Value = invertedrValue - IntHalf.Value - 1;
 							if(DecimalHalf!=0)//Invert the decimal section
 								DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -1722,7 +1684,7 @@ protected:
 						//2.XX - 3.XX = -0.XX
 						if(rValue>IntHalf.Value)//Flips to other side of flag
 						{
-							IntHalf.IsPositive = 0;
+							IntHalf.Sign = 0;
 							IntHalf.Value = rValue - IntHalf.Value - 1;
 							if(DecimalHalf!=0)//Invert the decimal section
 								DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
@@ -2994,7 +2956,7 @@ public:
         auto& AbsOf()
         {
             if (IntHalf.IsNegative())
-                IntHalf.IsPositive = 1;
+                IntHalf.Sign = 1;
             return *this;
         }
 
@@ -3244,7 +3206,7 @@ protected:
             else if (DecimalHalf == 0 && IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
+                    IntHalf.Sign = 1;
                 IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
             }
             else
@@ -3263,7 +3225,7 @@ protected:
                     self = self * self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntHalf.IsPositive = 0;
+                    IntHalf.Sign = 0;
             }
             return *this;
         }
@@ -3287,7 +3249,7 @@ protected:
                 {
                     IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
                     if(IsNegative()&&exp&1==1)
-                        IsPositive = 1;
+                        Sign = 1;
                 }
                 else
                 {
@@ -3306,13 +3268,13 @@ protected:
                         self = self * self; //  Change x to x^2
                     }
                     if(IsNegative)
-                        IntHalf.IsPositive = 0;
+                        IntHalf.Sign = 0;
                 }
             }
             else if (DecimalHalf == 0 && IntHalf.Value == 10)
             {
                 if(IsNegative()&&exp&1==1)
-                    IntHalf.IsPositive = 1;
+                    IntHalf.Sign = 1;
                 IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
             }
             else
@@ -3332,7 +3294,7 @@ protected:
                     self = self * self; // Change x to x^2
                 }
                 if(IsNegative)
-                    IntHalf.IsPositive = 0;
+                    IntHalf.Sign = 0;
             }
             return *this;
         }
@@ -3379,7 +3341,7 @@ public:
 				self *= self; // Change x to x^2
 			}
 			if(IsNegative)
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 		}
 
         /// <summary>
@@ -4293,7 +4255,7 @@ public:
                 else { WholeNumberBuffer += StringChar; }
             }
             else if (StringChar == '-')
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
             else if (StringChar == '.')
                 ReadingDecimal = true;
             else if(StringChar!=' ')

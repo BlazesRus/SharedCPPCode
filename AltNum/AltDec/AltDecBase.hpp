@@ -71,7 +71,7 @@ public:
 			if(rhs<0)
 			{
 				IntHalf.Value = -rhs;
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 			}
 			else
 	#endif
@@ -1251,7 +1251,7 @@ public:
 				PiSide *= PiSide; // Change x to x^2
 			}
 			if(IsNegative)
-				IntValue.IsPositive = 0;
+				IntValue.Sign = 0;
 			return result;
         }
 
@@ -1330,7 +1330,7 @@ public:
 				PiSide *= PiSide; // Change x to x^2
 			}
 			if(IsNegative)
-				IntValue.IsPositive = 0;
+				IntValue.Sign = 0;
 			return result;
         }
 
@@ -1965,7 +1965,7 @@ protected:
 	#endif
 	#if defined(AltNum_EnableMirroredSection)
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
+			if (auto SignCmp = IntHalf.Sign <=> that.IntHalf.Sign; SignCmp != 0)
 				return SignCmp;
 	#endif
 			RepType LRep = GetRepType();
@@ -2512,7 +2512,7 @@ public:
 			{
 				MirroredInt intTotal = IntHalf + rValue.IntHalf;
 				boost::rational<UInt64> frac;
-				if(IntHalf.IsPositive==rValue.IntHalf.IsPositive){//Both sides have same sign
+				if(IntHalf.Sign==rValue.IntHalf.Sign){//Both sides have same sign
 					if(ExtraRep.Value==rValue.ExtraRep.Value)
 						frac = boost::rational<UInt64>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
 					else
@@ -2572,7 +2572,7 @@ public:
 					UInt64 numTotal = intTotal.Value*denom + num;
 					unsigned intHalf = numTotal/DecimalOverflowX;
 					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
-					IntHalf = MirroredInt(intHalf, intTotal.IsPositive);
+					IntHalf = MirroredInt(intHalf, intTotal.Sign);
 					ExtraRep = (unsigned int) denom;
 				} else {
 					IntHalf = intTotal;
@@ -2630,7 +2630,7 @@ public:
 			{
 				MirroredInt intTotal = IntHalf - rValue.IntHalf;
 				boost::rational<UInt64> frac;
-				if(IntHalf.IsPositive==rValue.IntHalf.IsPositive){//Both sides have same sign
+				if(IntHalf.Sign==rValue.IntHalf.Sign){//Both sides have same sign
 					if(ExtraRep.Value==rValue.ExtraRep.Value)
 						frac = boost::rational<UInt64>(DecimalHalf.Value+rValue.DecimalHalf.Value, ExtraRep.Value);
 					else {
@@ -2697,7 +2697,7 @@ public:
 					UInt64 numTotal = intTotal.Value*denom + num;
 					unsigned intHalf = numTotal/DecimalOverflowX;
 					DecimalHalf.Value = (unsigned int)(numTotal - DecimalOverflowX * intHalf);
-					IntHalf = MirroredInt(intHalf, intTotal.IsPositive);
+					IntHalf = MirroredInt(intHalf, intTotal.Sign);
 					ExtraRep = (unsigned int) denom;
 				} else {
 					IntHalf = intTotal;
@@ -4411,7 +4411,7 @@ protected:
         					{
                                 if(rValue>IntHalf.Value)
 								{
-                                    IntHalf.IsPositive = 1;
+                                    IntHalf.Sign = 1;
                                     IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else
@@ -4647,7 +4647,7 @@ protected:
                                 ExtraRep.SwitchToAlternative();
                                 if(IsPositive()){
                                     DecimalHalf.Value = ExtraRep.Value - IntHalf.Value; 
-                                    IntHalf.Value = rValue; IntHalf.IsPositive = 0;
+                                    IntHalf.Value = rValue; IntHalf.Sign = 0;
                                 }
                                 else {
                                     DecimalHalf.Value = IntHalf; 
@@ -4687,7 +4687,7 @@ protected:
         					{
                                 if(rValue>IntHalf.Value)
 								{
-                                    IntHalf.IsPositive = 0;
+                                    IntHalf.Sign = 0;
                                     IntHalf.Value = rValue - IntHalf.Value;
 								}
 								else

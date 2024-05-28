@@ -1321,7 +1321,7 @@ protected:
         //Return true if divide into zero
         bool PartialDivOp(TinyUDec& Value)
         {
-			bool ResIsPositive = true;
+			bool ResSign = true;
 			signed _int64 SelfRes;
 			signed _int64 ValueRes;
 			if(IntHalf<0)
@@ -1339,7 +1339,7 @@ protected:
                 }
 				else
 				{
-				    ResIsPositive = false;
+				    ResSign = false;
 					ValueRes = DecimalOverflowX * Value.IntHalf +Value.DecimalHalf;
 				}
 			}
@@ -1349,7 +1349,7 @@ protected:
 				SelfRes = DecimalOverflowX* IntHalf+DecimalHalf;
 			    if(Value<0)
 				{
-				    ResIsPositive = false;
+				    ResSign = false;
 					ValueRes = Value.IntHalf==NegativeRep ? DecimalHalf: NegDecimalOverflowX*IntHalf +Value.DecimalHalf;
 				}
 				else
@@ -1358,7 +1358,7 @@ protected:
 			
 			signed _int64 IntHalfRes = SelfRes / ValueRes;
 			signed _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntHalf = IntHalfRes==0&&ResIsPositive==false?NegativeRep:IntHalfRes;
+			IntHalf = IntHalfRes==0&&ResSign==false?NegativeRep:IntHalfRes;
 			DecimalHalf = DecimalRes;
 			if(IntHalfRes==0&&DecimalRes==0)
 				return true;

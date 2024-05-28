@@ -218,7 +218,7 @@ public:
 			if(rhs<0)
 			{
 				IntHalf.Value = -rhs;
-				IntHalf.IsPositive = 0;
+				IntHalf.Sign = 0;
 			}
 			else
 	#endif
@@ -1544,7 +1544,7 @@ protected:
 	#endif
 	#if defined(MixedDec_EnableMirroredSection)
 			//Comparing if number is negative vs positive
-			if (auto SignCmp = IntHalf.IsPositive <=> that.IntHalf.IsPositive; SignCmp != 0)
+			if (auto SignCmp = IntHalf.Sign <=> that.IntHalf.Sign; SignCmp != 0)
 				return SignCmp;
 	#endif
 	
@@ -1593,9 +1593,9 @@ protected:
 						//Add code here
 					}
 				#else
-					if(ExtraRep.IsPositive==0)//Left side is to power of ExtraRep.Value
+					if(ExtraRep.Sign==NegativeSign)//Left side is to power of ExtraRep.Value
 					{
-						if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+						if(that.ExtraRep.Sign)//Right side is to power of ExtraRep.Value
 						{
 							//Add Code here
 						}
@@ -1604,15 +1604,15 @@ protected:
 							//Add code here
 						}
 					}
-					else if(that.ExtraRep.IsPositive)//Right side is to power of ExtraRep.Value
+					else if(that.ExtraRep.Sign)//Right side is to power of ExtraRep.Value
 					{
 						//Add code here
 					}
 				#endif
 			#elif defined(MixedDec_EnableMixedFractional)
-					if(ExtraRep.IsPositive==0)//Left side is a mixed Fraction
+					if(ExtraRep.Sign==NegativeSign)//Left side is a mixed Fraction
 					{
-						if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+						if(that.ExtraRep.Sign)//Right side is a mixed Fraction
 						{
 							//Add Code here
 						}
@@ -1621,7 +1621,7 @@ protected:
 							//Add code here
 						}
 					}
-					else if(that.ExtraRep.IsPositive)//Right side is a mixed Fraction
+					else if(that.ExtraRep.Sign)//Right side is a mixed Fraction
 					{
 						//Add code here
 					}
