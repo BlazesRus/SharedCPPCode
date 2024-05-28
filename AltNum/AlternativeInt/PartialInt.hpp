@@ -36,11 +36,6 @@ namespace BlazesRusCode
 			Flags = flags;
 		}
 		
-		bool IsNegative() const
-		{
-			return IsPositive!=1;
-		}
-		
         //Is at either zero or negative zero
 		bool IsAtZeroInt() const
         {

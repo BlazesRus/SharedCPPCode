@@ -19,7 +19,7 @@
 #include <compare>//used for C++20 feature of spaceship operator
 #include "..\AltNumModResult.hpp"
 #include "..\IntegerConcept.hpp"
-#include "..\MediumDecVariantConcept.hpp"
+//#include "..\MediumDecVariantConcept.hpp"
 
 
 #include "..\AlternativeInt\MirroredInt.hpp"
@@ -67,34 +67,6 @@ protected:
 			return *((void***)obj);
 		}
 #endif
-
-		//BitFlag 01(1) = PiRep
-		RepTypeUnderlayer PiFlag = 1;
-		//BitFlag 02(2) = ERep
-		RepTypeUnderlayer EFlag = 2;
-		//BitFlag 03(4) = IRep
-		RepTypeUnderlayer IFlag = 4;
-		//BitFlag 04(8) = Fractional Rep
-		RepTypeUnderlayer FractionalFlag = 8;
-		//If BitFlag#7 and BitFlag#4 is set and BitFlag#6 isn't set,
-		//then Approaching From Top side;
-		//If BitFlag#7 is set and BitFlag#6 isn't set,
-		//then Approaching From Bottom side;
-		RepTypeUnderlayer ApproachFromRFlag = 8;
-		//BitFlag 05 (16) = Power of flag
-		RepTypeUnderlayer ToPowerOfFlag = 16;
-		//If BitFlag#7 is set,
-		//then Approaching but divided by ExtraRep
-		RepTypeUnderlayer DividedByFlag = 16;
-		//BitFlag 06 (32)= Mixed Fraction flag
-		RepTypeUnderlayer MixedFracFlag = 32;
-		//If BitFlag#7 is set and BitFlag#06 is set,
-		//then Is Infinity Type
-		RepTypeUnderlayer InfinityFlag = 32;
-		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
-		RepTypeUnderlayer InfTypeFlag = 64;
-		//Bitflag 08= Undefined/NaN/Nil
-		RepTypeUnderlayer UndefinedBit = 128;
 
         /// <summary>
         /// The decimal overflow

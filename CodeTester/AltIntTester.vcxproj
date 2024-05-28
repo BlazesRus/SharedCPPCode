@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{47e09dff-3b14-4c29-ad54-c0e68da31d30}</ProjectGuid>
-    <RootNamespace>MediumDecTester</RootNamespace>
+    <ProjectGuid>{47e09dff-3b14-4c29-ad54-c0e68da31d35}</ProjectGuid>
+    <RootNamespace>AltIntTester</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <LanguageStandard>stdcpp20</LanguageStandard>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,7 +103,6 @@
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -138,7 +138,6 @@
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -181,7 +180,7 @@
     <ClInclude Include="..\OtherFunctions\VariableConversionFunctions.h" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
-    <ClCompile Include="MediumDecTests.cpp" />
+    <ClCompile Include="AltIntTester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />

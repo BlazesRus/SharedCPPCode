@@ -127,7 +127,7 @@ namespace BlazesRusCode
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator UInt64() { return Value; }
+        explicit operator unsigned long long() { return Value; }
 		
         /// <summary>
         /// to int explicit conversion
@@ -139,7 +139,7 @@ namespace BlazesRusCode
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator Int64() { return (Int64) Value; }
+        explicit operator signed long long() { return (signed long long) Value; }
 		
 	protected:
         /// <summary>
