@@ -25,6 +25,8 @@
 #include "..\AlternativeInt\MirroredInt.hpp"
 #include "..\AlternativeInt\PartialInt.hpp"
 
+using MirroredInt = BlazesRusCode::MirroredInt;
+using PartialInt = BlazesRusCode::PartialInt;
 
 //"Not used for this variant" comment used as placeholder
 // between unused regions to help with code compare between variants and keep structure similar

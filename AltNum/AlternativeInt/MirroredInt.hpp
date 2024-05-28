@@ -20,10 +20,12 @@
 
 
 #include <compare>
-
+#include "..\IntegerConcept.hpp"
 
 namespace BlazesRusCode
 {
+    class MirroredInt;
+
 	class MirroredInt {
 	public:
 		#pragma options align=bit_packed
@@ -39,23 +41,57 @@ namespace BlazesRusCode
 			IsPositive = isPositive;
 		}
 
-   //     MirroredInt(const signed int& val=0)
-   //     {
-			//if(value<0)
-			//{
-			//	IsPositive = 0;
-			//	Value = -val;
-			//}
-			//else
-   //         {
-			//	IsPositive = 1;
-   //             Value = val;
-   //     }
-		
 		bool IsNegative() const
 		{
 			return IsPositive!=1;
 		}
+
+		bool IsPositive() const
+		{
+			return IsPositive==1;
+		}
+
+        void SetSignedValue(const signed int& val=0)
+        {
+			if(val<0){
+				IsPositive = 0;
+				Value = -val;
+            } else {
+                IsPositive = 1;
+                Value = val;
+            }
+        }
+
+        void SetValue(const unsigned int& value=0, const unsigned int& isPositive=1)
+        {
+			Value = value;
+			IsPositive = isPositive;
+        }
+
+        //Set as zero without changing sign(including negative zero)
+        void SetAsZeroVal()
+        {
+			Value = 0;
+        }
+
+        //Return value as real number(negative zero counts as zero)
+        int GetValue()
+        {
+            if(IsPositive==1)
+                return (signed int)Value;
+            else
+                return -((signed int)Value);
+        }
+
+        void SetAsZero()
+        {
+			Value = 0; IsPositive = 1;
+        }
+
+        void SetAsNegativeZero()
+        {
+			Value = 0; IsPositive = 0;
+        }
 		
         //Is at either zero or negative zero
 		bool IsAtZeroInt() const
@@ -72,24 +108,33 @@ namespace BlazesRusCode
         //Is at either zero or negative one
 		bool IsAtOneInt() const
         {
-			return Value==0;
+			return Value==1;
         }
 
         //Is at neither zero or negative one
 		bool IsNotAtOneInt() const
         {
-			return Value!=0;
+			return Value!=1;
         }
 		
 		bool IsEven() const
 		{
-			return (Value^1)==0;
+			return (Value&1)==0;
 		}
 		
 		bool IsOdd() const
 		{
-			return (Value^1)==1;
+			return (Value&1)==1;
 		}
+
+        //Returns copy of value as Absolute value
+        MirroredInt Abs() const
+        {
+            if(IsPositive==1)
+                return *this;
+            else
+                return MirroredInt(Value);
+        }
 		
 		std::strong_ordering operator<=>(const MirroredInt& that) const
 		{
@@ -138,8 +183,8 @@ namespace BlazesRusCode
             IsPositive ^= 1;
 		}
 		
-		
 	protected:
+
         /// <summary>
         /// Returns maximum stored value(2147483647)
         /// </summary>
@@ -204,6 +249,7 @@ namespace BlazesRusCode
         }
 
 	public:
+
         static MirroredInt Maximum;
 		
         static MirroredInt Minimum;
@@ -217,6 +263,127 @@ namespace BlazesRusCode
         static MirroredInt NegativeZero;
 		
 		static MirroredInt Zero;
+
+        //Division operation
+        void DivOp(const MirroredInt& rValue) {
+			if(rValue.IsNegative()){
+                SwapNegativeStatus();
+                Value /= rValue.Value;
+            }
+            else
+                Value /= rValue.Value;
+        }
+
+        template<IntegerType IntType=unsigned int>
+        void UIntDivOp(const IntType& rValue)
+        {
+            Value /= rValue;
+        }
+
+        template<IntegerType IntType=signed int>
+        void IntDivOpV1(const IntType& rValue)
+        {
+            if(rValue<0){
+                SwapNegativeStatus();
+                Value /= (unsigned int) -rValue;
+            }
+            else
+                Value /= rValue;
+        }
+
+        //Multiplication operation
+        void MultOpV1(const MirroredInt& rValue) {
+			if(rValue.IsNegative()){
+                SwapNegativeStatus();
+                Value *= rValue.Value;
+            }
+            else
+                Value *= rValue.Value;
+        }
+
+        template<IntegerType IntType=unsigned int>
+        void UIntMultOpV1(const IntType& rValue)
+        {
+            Value *= rValue;
+        }
+
+        template<IntegerType IntType=signed int>
+        void IntMultOpV1(const IntType& rValue)
+        {
+            if(rValue<0){
+                SwapNegativeStatus();
+                Value *= (unsigned int) -rValue;
+            }
+            else
+                Value *= rValue;
+        }
+
+        //Default Negative zero including Addition operation(When DecimalHalf.Value!=0)
+        void AddOp(const MirroredInt& rValue){
+            if(IsPositive==1){
+				if(rValue.IsPositive==1)
+					Value += rValue.Value;
+				else if(rValue.Value>Value){//Becoming negative
+					IsPositive = 0;
+					Value = rValue.Value - Value;
+				} else
+					Value -= rValue.Value;
+            } else {
+				if(rValue.IsPositive==0)
+					Value += rValue.Value;
+				else if(rValue.Value>Value){//Becoming positive
+					IsPositive = 1;
+					//Exclude negative zero version(When DecimalHalf.Value==0):
+					//Value = rValue.Value - Value;
+					Value = rValue.Value - Value - 1;
+				} else
+					Value -= rValue.Value;
+            }
+        }
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingAddOp(const MirroredInt& rValue){
+            if(IsPositive==1){
+				if(rValue.IsPositive==1)
+					Value += rValue.Value;
+                else if (rValue.Value > Value) {//Becoming negative
+                    IsPositive = 0;
+                    Value = rValue.Value - Value;
+                } else
+					Value -= rValue.Value;
+            } else {
+				if(rValue.IsPositive==0)
+					Value += rValue.Value;
+                else if (rValue.Value >= Value) {//Becoming positive
+                    IsPositive = 1;
+                    Value = rValue.Value - Value;//Skipping negative zero
+                } else
+					Value -= rValue.Value;
+            }
+        }
+
+		
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingSubOp(const MirroredInt& rValue){
+            if(IsPositive==1){
+				if(rValue.IsPositive==0)
+					Value += rValue.Value;
+                else if (rValue.Value >= Value) {//Becoming positive
+                    IsPositive = 1;
+                    Value = rValue.Value - Value;//Skipping negative zero
+                } else
+					Value -= rValue.Value;
+            } else {
+				if(rValue.IsPositive==1)
+					Value += rValue.Value;
+                else if (rValue.Value > Value) {//Becoming negative
+                    IsPositive = 0;
+                    Value = rValue.Value - Value;
+                } else
+					Value -= rValue.Value;
+            }
+        }
+
 	};
 	
 	MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();

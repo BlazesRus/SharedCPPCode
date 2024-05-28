@@ -22,7 +22,7 @@
 
 namespace BlazesRusCode
 {
-	class PartialInt {
+	struct PartialInt {public:
 		#pragma options align=bit_packed
 		//Stores Digits XXX XXX XXX
 		unsigned int Value:30;
@@ -127,16 +127,16 @@ protected:
         /// Returns the value at zero
         /// </summary>
         /// <returns>MirroredInt</returns>
-        static MirroredInt ZeroValue()
+        static PartialInt ZeroValue()
         {
-            return MirroredInt(0,1);
+            return PartialInt(0,1);
         }
 public:
 
-		static MirroredInt Zero;
+		static PartialInt Zero;
 
 	};
 
-	MirroredInt MirroredInt::Zero = MirroredInt::ZeroValue();
+	PartialInt PartialInt::Zero = PartialInt::ZeroValue();
 
 }

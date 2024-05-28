@@ -66,7 +66,7 @@
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp">
       <Filter>Source Files\OtherFunctions</Filter>
     </ClCompile>
-    <ClCompile Include="AltDecTests.cpp">
+    <ClCompile Include="AltIntTester.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,19 +83,7 @@
     <ClInclude Include="..\OtherFunctions\StringFunctions.h">
       <Filter>Header Files\OtherFunctions</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
-    </ClInclude>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
     <ClInclude Include="..\AltNum\AltNumDebug.hpp">
@@ -110,9 +98,6 @@
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp">
       <Filter>Header Files\AltNum</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp">
-      <Filter>Header Files\AltNum\Concepts</Filter>
-    </ClInclude>
     <ClInclude Include="..\AltNum\IntegerConcept.hpp">
       <Filter>Header Files\AltNum\Concepts</Filter>
     </ClInclude>
@@ -124,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp">
       <Filter>Header Files\AltNum\IntReplacements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

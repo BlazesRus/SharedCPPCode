@@ -22,7 +22,7 @@
 
 namespace BlazesRusCode
 {
-	struct FlaggedInt {
+	struct FlaggedInt {public:
 		#pragma options align=bit_packed
 		//Is either mixed fraction or power of representation if this value is one 
 		unsigned int IsAltRep:1;

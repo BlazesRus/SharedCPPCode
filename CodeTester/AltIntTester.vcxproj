@@ -105,6 +105,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +123,7 @@
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +140,7 @@
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,14 +168,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
     <ClInclude Include="..\AltNum\IntegerConcept.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
-    <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tsl\ordered_map.h" />
@@ -189,9 +190,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
-    <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
-    <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
