@@ -771,6 +771,21 @@ namespace BlazesRusCode
 		
     #pragma endregion Other Operators
 
+#pragma region StringOperations
+
+		/// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator std::string()
+		{
+            if(IsNegative())
+                return "-"+VariableConversionFunctions::UIntToStringConversion(Value);
+            else
+                return VariableConversionFunctions::UIntToStringConversion(Value);
+		}
+
+#pragma endregion StringOperations
 
 	};
 	

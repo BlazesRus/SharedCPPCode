@@ -345,6 +345,19 @@ public:
 		
     #pragma endregion Other Operators
 
+#pragma region StringOperations
+
+		/// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator std::string()
+		{
+            return VariableConversionFunctions::UIntToStringConversion(Value);
+		}
+
+#pragma endregion StringOperations
+
 	};
 
 	PartialInt PartialInt::Zero = PartialInt::ZeroValue();
