@@ -384,6 +384,111 @@ namespace BlazesRusCode
             }
         }
 
+    #if defined(MirroredInt_EnableOverrides)
+
+ 		friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
+			if(rValue.IsNegative()){
+                SwapNegativeStatus();
+                Value /= rValue.Value;
+            }
+            else
+                Value /= rValue;
+            return lValue;
+        }
+		
+		friend MirroredInt& operator/=(MirroredInt& lValue, const signed int& rValue){
+            if(rValue<0){
+                SwapNegativeStatus();
+                Value /= (unsigned int) -rValue;
+            }
+            else
+                Value /= rValue;
+            return lValue;
+        }
+
+        friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned int& rValue){
+            Value /= rValue;
+            return lValue;
+        }
+		
+		friend MirroredInt operator/(const MirroredInt& lValue, const MirroredInt& rValue){
+            MirroredInt newVal = lValue;
+			newVal /= rValue; return newVal;
+        }
+
+		friend MirroredInt operator/(const MirroredInt& lValue, const unsigned int& rValue){
+            MirroredInt newVal = lValue;
+			newVal /= rValue; return newVal;
+        }
+		
+		friend MirroredInt operator/(const MirroredInt& lValue, const signed int& rValue){
+            MirroredInt newVal = lValue;
+			newVal /= rValue; return newVal;
+        }
+
+        friend MirroredInt& operator*=(MirroredInt& lValue, const MirroredInt& rValue){
+            if(rValue<0){
+                SwapNegativeStatus();
+                lValue.Value *= (unsigned int) -rValue;
+            }
+            else
+                lValue.Value *= rValue;
+            return *this;
+        }
+
+        friend MirroredInt& operator*=(MirroredInt& lValue, const signed int& rValue){
+            if(rValue<0){
+                SwapNegativeStatus();
+                lValue.Value *= (unsigned int) -rValue;
+            }
+            else
+                lValue.Value *= rValue;
+            return lValue;
+        }
+
+        friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned int& rValue){
+            lValue.Value *= rValue;
+            return lValue;
+        }
+		
+		friend MirroredInt operator*(const MirroredInt& lValue, const MirroredInt& rValue){
+            MirroredInt newVal = lValue;
+			newVal *= rValue; return newVal;
+        }
+
+		friend MirroredInt operator*(const MirroredInt& lValue, const unsigned int& rValue){
+            MirroredInt newVal = lValue;
+			newVal *= rValue; return newVal;
+        }
+		
+		friend MirroredInt operator*(const MirroredInt& lValue, const signed int& rValue){
+            MirroredInt newVal = lValue;
+			newVal *= rValue; return newVal;
+        }
+
+        //Including negative zero by default use NRepSkippingAddOp when DecimalHalf==0
+		friend MirroredInt& operator+=(MirroredInt& lValue, const MirroredInt& rValue){
+			lValue.AddOp(rValue); return lValue;
+        }
+		
+		friend MirroredInt operator+(const MirroredInt& lValue, const MirroredInt& rValue){
+            MirroredInt newVal = *this;
+			newVal += rValue; return newVal;
+        }
+
+		friend MirroredInt operator+(const MirroredInt& lValue, const unsigned int& rValue){
+            MirroredInt newVal = *this;
+			newVal *= rValue; return newVal;
+        }
+		
+		friend MirroredInt operator+(const MirroredInt& lValue, const signed int& rValue){
+            MirroredInt newVal = *this;
+			newVal *= rValue; return newVal;
+        }
+
+    #endif
+
+
 	};
 	
 	MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();
