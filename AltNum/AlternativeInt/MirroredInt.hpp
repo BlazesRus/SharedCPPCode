@@ -172,6 +172,46 @@ namespace BlazesRusCode
                 return MirroredInt(Value);
         }
 		
+		std::strong_ordering SignComparison(const MirroredInt& that) const
+		{
+			//Comparing if number is negative vs positive
+    #if defined(AltNum_UseInvertedSign)
+			auto SignCmp = Sign <=> that.Sign;
+    #else   //(inverted comparison so sign of zero==positive)
+            auto SignCmp = that.Sign <=> Sign;
+    #endif
+            return SignCmp;
+        }
+/*
+        //Comparison between left side positive infinity and right side real number
+		std::strong_ordering LeftSidePosInfinityComparison(const MirroredInt& that) const
+		{
+
+            
+        }
+
+        //Comparison between left side negative infinity and right side real number
+		std::strong_ordering LeftSideNegInfinityComparison(const MirroredInt& that) const
+		{
+
+            
+        }
+
+        //Comparison between left side real number and right side positive infinity
+		std::strong_ordering RightSidePosInfinityComparison(const MirroredInt& that) const
+		{
+
+            
+        }
+
+        //Comparison between left side real number and right side negative infinity
+		std::strong_ordering RightSideNegInfinityComparison(const MirroredInt& that) const
+		{
+
+            
+        }
+*/
+
 		std::strong_ordering operator<=>(const MirroredInt& that) const
 		{
 			//Comparing if number is negative vs positive
