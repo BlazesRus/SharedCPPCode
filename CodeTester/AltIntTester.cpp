@@ -21,7 +21,7 @@ int main()
     MirroredInt test01 = 5;
     PartialInt test02 = 4;
     FlaggedInt test03 = 3;
-    test01 *= 10;//Result is zero instead of 50(need to fix code)
+    test01 *= 10;
     ++test02;
     test03 *= ++test03;
     //Need to fix debug output

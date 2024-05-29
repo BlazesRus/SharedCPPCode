@@ -183,28 +183,24 @@ namespace BlazesRusCode
 		std::strong_ordering LeftSidePosInfinityComparison(const MirroredInt& that) const
 		{
 
-            
         }
 
         //Comparison between left side negative infinity and right side real number
 		std::strong_ordering LeftSideNegInfinityComparison(const MirroredInt& that) const
 		{
 
-            
         }
 
         //Comparison between left side real number and right side positive infinity
 		std::strong_ordering RightSidePosInfinityComparison(const MirroredInt& that) const
 		{
 
-            
         }
 
         //Comparison between left side real number and right side negative infinity
 		std::strong_ordering RightSideNegInfinityComparison(const MirroredInt& that) const
 		{
 
-            
         }
 */
 
