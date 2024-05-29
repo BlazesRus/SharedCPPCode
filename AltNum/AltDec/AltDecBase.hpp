@@ -4,12 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#include "..\MediumDecV2\MediumDecV2Base.hpp"
-#include "..\MediumDecV2\MediumDecV2.hpp"
-#if !defined(AltNum_EnableNegativePowerRep)
-	#include "..\AlternativeInt\FlaggedInt.hpp"
-#endif
-#include "AltDecPreprocessors.h"
+#include "PartialAltDec.hpp"
 
 namespace BlazesRusCode
 {
@@ -21,35 +16,11 @@ namespace BlazesRusCode
     /// plus support for fractal operations, and optionally other representations like Pi,e, and imaginary numbers.
     /// (12 bytes worth of Variable Storage inside class for each instance)
     /// </summary>
-    class DLL_API AltDecBase: public virtual MediumDecBaseV2
+    class DLL_API AltDecBase: public MediumDecBaseV2
     {
-protected:
-        #pragma region DigitStorage
-
-        /// <summary>
-        /// Multiplied by Pi, e, or i if DecimalHalf.Flags!=0
-        /// If ExtraRep is zero and DecimalHalf.Value<999999999, then AltDecBase represents +- 2147483647.999999999
-	#if defined(AltNum_EnableFractionals)
-		/// If ExtraRep is greator than zero, then AltDecBase represents +- 2147483647.999999999
-	#endif
-	#if defined(AltNum_EnableNegativePowerRep)
-		/// If ExtraRep is not zero, than representation number to the power of ExtraRep
-	#elif defined(AltNum_EnablePowerOfRepresentation)
-		/// If ExtraRep.IsAltRep==1, than is representation number to the power of ExtraRep	
-	#elif defined(AltNum_EnableMixedFractional)
-		/// If ExtraRep.IsAltRep==1, than is representation number is a mixed fraction	
-	#endif
-        /// </summary>
-        DivisorType ExtraRep;
-
-		static const unsigned int InitialExtraRep = 1;
-
-		void ResetDivisor(){ ExtraRep = InitialExtraRep; }
-		
-        #pragma region DigitStorage
-
 public:
         #pragma region class_constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
@@ -67,16 +38,10 @@ public:
 
         AltDecBase& operator=(const int& rhs)
         {
-	#if defined(AltNum_EnableMirroredSection)
-			if(rhs<0)
-			{
-				IntHalf.Value = -rhs;
-				IntHalf.Sign = 0;
-			}
-			else
-	#endif
-				IntHalf = rhs;
-			DecimalHalf = 0;
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntHalf = rhs.IntHalf; DecimalHalf = 0;
             ResetDivisor();
             return *this;
         } const

@@ -4,44 +4,12 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-#ifndef DLL_API
-#ifdef UsingBlazesSharedCodeDLL
-#define DLL_API __declspec(dllimport)
-#elif defined(BLAZESSharedCode_LIBRARY)
-#define DLL_API __declspec(dllexport)
-#else
-#define DLL_API
-#endif
-#endif
-#else
-#include "..\DLLAPI.h"
-#endif
-
-#include <string>
-#include <cmath>
-#include "..\OtherFunctions\VariableConversionFunctions.h"
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#if defined(AltNum_UseOldDivisionCode)
-	#include <boost/multiprecision/cpp_int.hpp>
-#endif
-
-#include "AltNumModChecker.hpp"
-
-#include "..\MediumDec\MediumDecBase.hpp"
-
-/*
-AltNum_PreventModulusOverride
-AltNum_EnableAlternativeModulusResult
-*/
+#include "MediumDecV2Base.hpp"
 
 namespace BlazesRusCode
 {
 
     class MediumDecBase;
-    //AltNumBase will be changed to instead derive from MediumDecV2Base
-    // while storing most of flags inside of bitfield instead of ExtraRep
 
     /// <summary>
     /// Same representation range as MediumDec except
@@ -53,9 +21,7 @@ namespace BlazesRusCode
     class DLL_API MediumDecV2 : public virtual MediumDecV2Base
     {
 public:
-
-		//Performs remainder/Mod operation then saves division result
-		class DLL_API ModResult : public AltNumModChecker<MediumDecV2>{};
+		using ModResult = MediumDecV2Base::ModResult;
 
 	#pragma region class_constructors
         /// <summary>

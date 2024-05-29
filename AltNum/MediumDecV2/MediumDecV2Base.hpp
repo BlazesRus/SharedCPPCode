@@ -4,8 +4,10 @@
 // ***********************************************************************
 #pragma once
 
-#include "..\MediumDec\MediumDecBase.hpp"
-#include "..\MediumDec\MediumDec.hpp"
+
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
+#include "PartialMediumDecV2.hpp"
+
 #if defined(AltNum_UseBuiltinVirtualTable)
 	#include "..\VirtualTableBase.hpp"
 #endif
@@ -22,6 +24,10 @@ namespace BlazesRusCode
 	/// </summary>
     class DLL_API MediumDecV2Base : public MediumDecBase
     {
+public:
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModChecker<PartialMediumDecV2>{};
+		
 	#if defined(AltNum_UseBuiltinVirtualTable)
 	protected:
 		struct VirtualTable {
