@@ -5,7 +5,15 @@
 #include <sstream>
 #include <iomanip>
 
-#include "..\MediumDec\MediumDec.hpp"
+#include "..\AltNum\AlternativeInt\PartialInt.hpp"
+#include "..\AltNum\AlternativeInt\MirroredInt.hpp"
+#include "..\AltNum\AlternativeInt\FlaggedInt.hpp"
+
+using MirroredInt = BlazesRusCode::MirroredInt;
+using PartialInt = BlazesRusCode::PartialInt;
+using FlaggedInt = BlazesRusCode::FlaggedInt;
+
+#include "..\AltNum\MediumDec\MediumDec.hpp"
 using MediumDecVariant = BlazesRusCode::MediumDec;
 
 #include <Windows.h>
