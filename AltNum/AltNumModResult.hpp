@@ -15,16 +15,17 @@ namespace BlazesRusCode
     {//based on https://embeddedgurus.com/stack-overflow/2011/02/efficient-c-tip-13-use-the-modulus-operator-with-caution/
     public:
 		//Division result
-        VarType divRes = VarType::Zero;
-		//Returns result from modulus
-        VarType modRes = VarType::Zero;
+        VarType divRes;
 		
-		VarType GetResult()
+		//Returns result from modulus
+        VarType modRes;
+		
+		auto GetResult()
 		{
 			return modRes;
 		}
 		
-		VarType ReturnDivisionResult()
+		auto ReturnDivisionResult()
 		{
 			return divResult;
 		}
@@ -34,13 +35,24 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-		AltNumModResult(VarType LValue, VarType RValue)
+		AltNumModResult(const auto& LValue, const auto& RValue)
 		{
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;
 		}
 
-        AltNumModResult(const MediumDecBase&) = default;
+        /// <summary>
+        /// Modulus Operation
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        friend AltNumModResult operator%(const auto& LValue, const auto& RValue)
+		{
+            divRes = LValue / RValue;
+            modRes = LValue - RValue * divRes;
+			return *this;
+		}
 
     #pragma region ConvertToOtherTypes
 	
@@ -77,19 +89,6 @@ namespace BlazesRusCode
         } const
 	
     #pragma endregion ConvertToOtherTypes
-	
-        /// <summary>
-        /// Modulus Operation
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
-        friend AltNumModResult operator%(const VarType& LValue, const VarType& RValue)
-		{
-            divRes = LValue / RValue;
-            modRes = LValue - RValue * divRes;
-			return *this;
-		}
 	
     };
 }

@@ -221,6 +221,23 @@ public:
 			return BasicIntComparison(that);
 		}
 
+		bool operator==(const MediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return false;
+			if (DecimalHalf!=that.IntHalf)
+				return false;
+		}
+
+		bool operator!=(const MediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return true;
+			if (DecimalHalf!=that.IntHalf)
+				return true;
+            return false;
+		}
+
 		bool operator==(const int& that) const
 		{
 			if (IntHalf!=that)
@@ -230,13 +247,16 @@ public:
 			return true;
 		}
 
-		bool operator==(const MediumDec& that) const
+		bool operator!=(const int& that) const
 		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.IntHalf)
-				return false;
+			if (IntHalf!=that)
+				return true;
+			if (DecimalHalf!=0)
+				return true;
+			return false;
 		}
+
+
 
     #pragma endregion Comparison Operators
 
@@ -256,6 +276,70 @@ public:
     #pragma endregion Floating Operator Overrides
 
     #pragma region Other Operators
+
+/*
+        /// <summary>
+        /// ++MediumDec Operator
+        /// </summary>
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator ++()
+        {
+            if (DecimalHalf == 0)
+                ++IntHalf;
+            else if (IntHalf == NegativeRep)
+                IntHalf = MirroredInt::Zero;
+            else
+                ++IntHalf;
+            return *this;
+        }
+
+        /// <summary>
+        /// ++MediumDec Operator
+        /// </summary>
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator --()
+        {
+            if (DecimalHalf == 0)
+                --IntHalf;
+            else if (IntHalf == 0)
+                IntHalf = NegativeRep;
+            else
+                --IntHalf;
+            return *this;
+        }
+
+        /// <summary>
+        /// MediumDec Variant++ Operator
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        MediumDec operator ++(int)
+        {
+            MediumDec tmp(*this);
+            ++* this;
+            return tmp;
+        }
+
+        /// <summary>
+        /// MediumDec Variant-- Operator
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        MediumDec operator --(int)
+        {
+            MediumDec tmp(*this);
+            --* this;
+            return tmp;
+        }
+*/
+
+        /// <summary>
+        /// MediumDec Variant* Operator
+        /// </summary>
+        /// <returns>MediumDec &</returns>
+        MediumDec& operator *()
+        {
+            return *this;
+        }
+
     #pragma endregion Other Operators
 
 	#pragma region Math Etc Functions

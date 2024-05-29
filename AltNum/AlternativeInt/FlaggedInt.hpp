@@ -102,6 +102,8 @@ namespace BlazesRusCode
 		{
 			if (Value!=that.Value)
 				return false;
+            if(IsAltRep!=that.IsAltRep)
+                return false;
 			return true;
 		}
 		

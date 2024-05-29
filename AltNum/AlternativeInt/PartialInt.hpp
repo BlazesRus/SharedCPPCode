@@ -121,6 +121,15 @@ namespace BlazesRusCode
 			return true;
 		}
 
+		bool operator!=(const PartialInt& that) const
+		{
+			if (Value!=that.Value)
+				return true;
+            if(Flags!=that.Flags)
+                return true;
+			return false;
+		}
+
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
 			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
