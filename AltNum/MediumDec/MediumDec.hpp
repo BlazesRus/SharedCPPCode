@@ -27,11 +27,6 @@
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 
-//"Not used for this variant" comment used as placeholder
-// between unused regions to help with code compare between variants and keep structure similar
-//Use  template<MediumDecVariant VariantType=MediumDec>
-//to template functions for reuse with VariantTypes
-
 namespace BlazesRusCode
 {
     class MediumDec;
@@ -39,9 +34,6 @@ namespace BlazesRusCode
 	/// long double (Extended precision double)
 	/// </summary>
 	using ldouble = long double;
-	
-	// Forward declare VTable instances.
-	//extern AltNum_VTable MediumDec_vtable;
 
 /*---Accuracy Tests(with MediumDec based settings):
  * 100% accuracy for all integer value multiplication operations.
@@ -136,7 +128,14 @@ protected:
             DecimalHalf = decVal;
         }
 
-        MediumDec(const MediumDec&) = default;
+        MediumDec& operator=(const MediumDec& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        } const
 
         MediumDec& operator=(const int& rhs)
         {
@@ -148,14 +147,53 @@ protected:
             return *this;
         } const
 
-        MediumDec& operator=(const MediumDec& rhs)
+#if !defined(AltNum_PreventModulusOverride)
+        //Reduced version of MediumDec result for modulus results
+        class DLL_API PartialMediumDec
         {
-            // Check for self-assignment
-            if (this == &rhs)      // Same object?
-                return *this;        // Yes, so skip assignment, and just return *this.
-            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
-            return *this;
-        } const
+public:
+            /// <summary>
+            /// Stores whole half of number(Including positive/negative status)
+    		/// (in the case of infinity is used to determine if positive vs negative infinity)
+            /// </summary>
+            MirroredInt IntHalf;
+    
+            /// <summary>
+            /// Stores decimal section info and other special info
+            /// </summary>
+            PartialInt DecimalHalf;
+    
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MediumDec"/> class.
+            /// </summary>
+            /// <param name="intVal">The whole number based half of the representation</param>
+            /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+            PartialMediumDec(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
+            {
+                IntHalf = intVal;
+                DecimalHalf = decVal;
+            }
+    
+            PartialMediumDec& operator=(const MediumDec& rhs)
+            {
+                // Check for self-assignment
+                if (this == &rhs)      // Same object?
+                    return *this;        // Yes, so skip assignment, and just return *this.
+                IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+                return *this;
+            } const
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDec(const bool& Value)
+        {
+            this->SetBoolVal(Value);
+        }
+#endif
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const
@@ -199,12 +237,14 @@ protected:
             return DecimalHalf==0&&IntHalf.Value==1;
 		}
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
+        void SetVal(MediumDec Value)
+        {
+            IntHalf = Value.IntHalf;
+            DecimalHalf = Value.DecimalHalf;
+        }
+
         template<MediumDecVariant VariantType=MediumDec>
-        void SetVal(VariantType Value)
+        void SetVariantValue(MediumDec Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
@@ -251,16 +291,6 @@ protected:
     #pragma endregion Const Representation values
 
     #pragma region RepType
-/*
-        /// <summary>
-        /// Returns representation type data that is stored in value
-        /// </summary>
-        virtual RepType const GetRepType()
-        {
-            return RepType::UnknownType;//Virtual code replaced inside main class(Not actually used inside MediumDec class)
-        }
-*/
-
     #pragma endregion RepType
 
 public:
@@ -285,48 +315,6 @@ public:
         }
 	
     #pragma endregion RangeLimits
-
-	#pragma region PiNum Setters
-	//Not used for this variant(Used in MediumDecV2 and others)
-	#pragma endregion PiNum Setters
-
-	#pragma region ENum Setters
-	//Not used for this variant(Used in MediumDecV2 and others)
-	#pragma endregion ENum Setters
-
-    #pragma region INum Setters
-    //Not used for this variant(Used in MediumDecV2 and others)
-    #pragma endregion INum Setters
-
-	#pragma region Fractional Setters
-	//Not used for this variant(Used in AltDecBase and others)
-	#pragma endregion Fractional Setters
-        
-	#pragma region MixedFrac Setters
-	//Not used for this variant(Used in AltDecBase and others)
-	#pragma endregion MixedFrac Setters
-		
-	#pragma region Infinity Setters
-	//Not used for this variant(Used in MediumDecV2 and others)
-	#pragma endregion Infinity Setters
-	
-	#pragma region ApproachingZero Setters
-	//Not used for this variant(Used in MediumDecV2 and others)
-	#pragma endregion ApproachingZero Setters
-
-	#pragma region NaN Setters
-	#if defined(AltNum_EnableNaN)
-        void SetAsNaN()
-        {
-            IntHalf = 0; DecimalHalf = NaNRep;
-        }
-
-        void SetAsUndefined()
-        {
-            IntHalf = 0; DecimalHalf = UndefinedRep;
-        }
-	#endif
-	#pragma endregion NaN Setters
 
     #pragma region ValueDefines
     protected:
@@ -1030,60 +1018,8 @@ public:
         explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
-
-    #pragma region Pi Conversion
-	//Not used for this variant
-    #pragma endregion Pi Conversion
-
-    #pragma region E Conversion
-	//Not used for this variant
-    #pragma endregion E Conversion
 	
     #pragma region Other RepType Conversion
-    //Functions only used in variants of MediumDec
-
-/*      //To-Do: Test cost of making virtual vs alternative means of making sure uses updated code after derivation    
-
-        virtual void ConvertToNormType(const RepType& repType){}
-
-protected:
-		//Returns value as normal type representation
-        template<MediumDecVariant VariantType=MediumDec>
-        VariantType ConvertAsNormTypeV1(const RepType& repType)
-        {
-            VariantType Res = *this;
-            Res.ConvertToNormType(repType);
-            return Res;
-        }
-*/
-		
-public:
-/*
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormType = MediumDec::ConvertAsNormTypeV1<MediumDec>;
-
-        //Converts value to normal type representation
-        void ConvertToNormTypeV2()
-        {
-            RepType repType = GetRepType();
-            ConvertToNormType(repType);
-        }
-*/
-
-protected:
-		////Returns value as normal type representation
-  //      template<MediumDecVariant VariantType=MediumDec>
-  //      VariantType AutoConvertAsNormType()
-  //      {
-  //          VariantType Res = *this;
-  //          Res.ConvertToNormTypeV2();
-  //          return Res;
-  //      }
-public:
-/*
-		//Returns value as normal type representation
-        constexpr auto ConvertAsNormTypeV2 = MediumDec::AutoConvertAsNormType<MediumDec>;
-*/
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
@@ -4302,39 +4238,11 @@ public:
 
     std::string MediumDec::ToString()
     {
-        std::string Value = "";
-        unsigned int CurrentSection = IntHalf.Value;
-        unsigned __int8 CurrentDigit;
-        if (IsNegative())
-            Value += "-";
-        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
-        {
-            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-        }
+        std::string Value = std::string(IntHalf);
         if (DecimalHalf != 0)
         {
             Value += ".";
-            CurrentSection = DecimalHalf;
-            for (__int8 Index = 8; Index >= 0; --Index)
-            {
-                CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-                CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-                if (CurrentDigit != 0)
-                {
-                    if(!DecBuffer.empty())
-                    {
-                        Value += DecBuffer;
-                        DecBuffer.clear();
-                    }
-                    Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-                }
-                else
-                {
-                    DecBuffer += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-                }
-            }
+            Value += std::string(DecimalHalf)
         }
         return Value;
     }
