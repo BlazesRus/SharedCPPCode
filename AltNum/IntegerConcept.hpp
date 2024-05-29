@@ -1,3 +1,5 @@
+#pragma once
+
 namespace BlazesRusCode
 {
     //Integer type (concept)

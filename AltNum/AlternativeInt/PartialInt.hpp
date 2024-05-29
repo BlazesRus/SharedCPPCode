@@ -19,6 +19,8 @@
 #endif
 
 #include <compare>
+#include "..\IntegerConcept.hpp"
+#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 
 namespace BlazesRusCode
 {
@@ -117,12 +119,6 @@ namespace BlazesRusCode
             if(Flags!=that.Flags)
                 return false;
 			return true;
-		}
-
-		std::strong_ordering operator<=>(const unsigned int& that) const
-		{
-			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
-				return ValueCmp;
 		}
 
 		std::strong_ordering operator<=>(const unsigned int& that) const

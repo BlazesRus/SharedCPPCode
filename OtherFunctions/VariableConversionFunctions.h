@@ -261,7 +261,7 @@ namespace BlazesRusCode
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std.string</returns>
         template<typename IntType>
-        static std::string SignedIntToStringConversion(IntType IntegerHalf)
+        static constexpr std::string SignedIntToStringConversion(IntType IntegerHalf)
         {
             if (IntegerHalf == 0)
                 return "0";
@@ -274,7 +274,7 @@ namespace BlazesRusCode
             }
             unsigned __int8 CurrentDigit;
             int PowResult;
-            for (int i = NumberOfPlaces(IntegerHalf); i >= 0; i--)
+            for (int i = NumberOfPlaces(IntegerHalf); i >= 0; --i)
             {
                 if (i == 0)
                     TempString += DigitAsChar(IntegerHalf);
@@ -295,14 +295,14 @@ namespace BlazesRusCode
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std::string</returns>
         template<typename IntType>
-        static std::string UnsignedIntToStringConversion(IntType IntegerHalf)
+        static constexpr std::string UnsignedIntToStringConversion(IntType IntegerHalf)
         {
             if (IntegerHalf == 0)
                 return "0";
             std::string TempString = "";
             unsigned __int8 CurrentDigit;
             int PowResult;
-            for (int i = NumberOfPlaces(IntegerHalf); i >= 0; i--)
+            for (int i = NumberOfPlaces(IntegerHalf); i >= 0; --i)
             {
                 if (i == 0)
                     TempString += DigitAsChar(IntegerHalf);
@@ -322,20 +322,21 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std::string</returns>
-        static std::string UnsignedByteToStringConversion(unsigned __int8 IntegerHalf);
+        static constexpr auto UnsignedByteToStringConversion = UnsignedIntToStringConversion<unsigned __int8>;
 
         /// <summary>
         /// Converts int into String
         /// </summary>
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std.string</returns>
-        static std::string IntToStringConversion(int IntegerHalf);
+        static constexpr auto IntToStringConversion = SignedIntToStringConversion<signed int>;
+
         /// <summary>
         /// Converts unsigned int into String
         /// </summary>
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std.string</returns>
-        static std::string IntToStringConversion(unsigned int IntegerHalf);
+        static constexpr auto UIntToStringConversion = UnsignedIntToStringConversion<unsigned int>;
 
         /// <summary>
         /// Converts unsigned int64 into String
@@ -343,6 +344,13 @@ namespace BlazesRusCode
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std.string</returns>
         static std::string XIntToStringConversion(size_t IntegerHalf);
+
+        /// <summary>
+        /// Converts unsigned int64 into String
+        /// </summary>
+        /// <param name="IntegerHalf">The integer half.</param>
+        /// <returns>std.string</returns>
+        static std::string Int64ToStringConversion(size_t IntegerHalf);
 
         //************************************
         //FloatToDouble code from https://github.com/PIlin/nanopb/blob/master/example_avr_double/double_conversion.c

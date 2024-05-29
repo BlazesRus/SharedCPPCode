@@ -21,6 +21,7 @@
 
 #include <compare>
 #include "..\IntegerConcept.hpp"
+#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 
 namespace BlazesRusCode
 {
@@ -122,11 +123,6 @@ namespace BlazesRusCode
         void SetAsNegativeZero()
         {
 			Value = 0; Sign = NegativeSign;
-        }
-
-        void SetAsZeroVal()
-        {
-			Value = 0;
         }
 		
         //Is at either zero or negative zero

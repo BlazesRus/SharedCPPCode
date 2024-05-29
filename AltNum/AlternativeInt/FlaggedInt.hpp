@@ -19,6 +19,8 @@
 #endif
 
 #include <compare>
+#include "..\IntegerConcept.hpp"
+#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 
 namespace BlazesRusCode
 {

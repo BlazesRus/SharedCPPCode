@@ -540,64 +540,6 @@ std::string VariableConversionFunctions::DoubleToStringConversion(double TempVal
     return TempString;
 }
 
-////************************************
-//// Method:    IntToStringConversion
-//// FullName:  VariableConversionFunctions::IntToStringConversion
-//// Access:    public static
-//// Returns:   std::string
-//// Qualifier:
-//// Parameter: int TempValue
-////************************************
-std::string VariableConversionFunctions::IntToStringConversion(int IntegerHalf)
-{
-    if (IntegerHalf == 0)
-        return "0";
-    string TempString = "";
-    bool IsNegative = (IntegerHalf < 0) ? true : false;
-    if(IsNegative)
-    {
-        TempString += "-";
-        IntegerHalf *= -1;
-    }
-    unsigned __int8 CurrentDigit;
-    int PowResult;
-    for (int i = NumberOfPlaces(IntegerHalf); i >= 0; i--)
-    {
-        if (i == 0)
-            TempString += DigitAsChar(IntegerHalf);
-        else
-        {
-            PowResult = VariableConversionFunctions::PowerOfTens[i];
-            CurrentDigit = floor(IntegerHalf / PowResult);
-            IntegerHalf -= CurrentDigit * PowResult;
-            TempString += DigitAsChar(CurrentDigit);
-        }
-    }
-    return TempString;
-}
-
-std::string VariableConversionFunctions::IntToStringConversion(unsigned int IntegerHalf)
-{
-    if (IntegerHalf == 0)
-        return "0";
-    string TempString = "";
-    unsigned __int8 CurrentDigit;
-    int PowResult;
-    for (int i = NumberOfPlaces(IntegerHalf); i >= 0; i--)
-    {
-        if (i == 0)
-            TempString += DigitAsChar(IntegerHalf);
-        else
-        {
-            PowResult = VariableConversionFunctions::PowerOfTens[i];
-            CurrentDigit = floor(IntegerHalf / PowResult);
-            IntegerHalf -= CurrentDigit * PowResult;
-            TempString += DigitAsChar(CurrentDigit);
-        }
-    }
-    return TempString;
-}
-
 std::string VariableConversionFunctions::XIntToStringConversion(size_t IntegerHalf)
 {
     if (IntegerHalf == 0)
@@ -620,7 +562,35 @@ std::string VariableConversionFunctions::XIntToStringConversion(size_t IntegerHa
     return TempString;
 }
 
-std::string BlazesRusCode::VariableConversionFunctions::UnsignedByteToStringConversion(unsigned __int8 IntegerHalf)
+std::string VariableConversionFunctions::Int64ToStringConversion(size_t IntegerHalf)
+{
+	if (IntegerHalf == 0)
+		return "0";
+	std::string TempString = "";
+	bool IsNegative = (IntegerHalf < 0) ? true : false;
+	if (IsNegative)
+	{
+		TempString += "-";
+		IntegerHalf *= -1;
+	}
+	unsigned __int8 CurrentDigit;
+	size_t PowResult;
+	for (int i = NumberOfPlaces(IntegerHalf); i >= 0; --i)
+	{
+		if (i == 0)
+			TempString += DigitAsChar(IntegerHalf);
+		else
+		{
+			PowResult = VariableConversionFunctions::PowerOfTens64Bit[i];//IntPow(10, i);
+			CurrentDigit = floor(IntegerHalf / PowResult);
+			IntegerHalf -= CurrentDigit * PowResult;//(size_t) floor(CurrentDigit*pow(10, i));
+			TempString += DigitAsChar(CurrentDigit);
+		}
+	}
+	return TempString;
+}
+
+/*std::string BlazesRusCode::VariableConversionFunctions::UnsignedByteToStringConversion(unsigned __int8 IntegerHalf)
 {
     if (IntegerHalf == 0)
         return "0";
@@ -640,7 +610,7 @@ std::string BlazesRusCode::VariableConversionFunctions::UnsignedByteToStringConv
         }
     }
     return TempString;
-}
+}*/
 
 //************************************
 // Method:    BoolAsString
