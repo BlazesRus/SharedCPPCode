@@ -35,21 +35,10 @@ namespace BlazesRusCode
 	/// </summary>
 	using ldouble = long double;
 
-/*---Accuracy Tests(with MediumDec based settings):
- * 100% accuracy for all integer value multiplication operations.
- * 100% accuracy for addition/subtraction operations
- * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
-   (values get lost if get too small) (100% accuracy except for some truncated digits lost)
- * Other operations like Ln and Sqrt contained with decent level of accuracy
-   (still loses a little accuracy because of truncation etc)
- * Operations and functions will mess up if IntHalf overflows/underflows
-*/
-
     /// <summary>
     /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
-    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
+    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy except for truncated digits
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
-    /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API MediumDec : virtual public AltNumBase
     {
@@ -104,7 +93,7 @@ protected:
 		//Return IntHalf as signed int
         signed int GetIntHalf()
         {
-			return IntHalf.IsNegative()?((signed int)IntHalf.Value)*-1:(signed int)IntHalf.Value;
+			return (signed int)IntHalf;
         }
 
         bool IsNegative()
@@ -128,6 +117,17 @@ protected:
             DecimalHalf = decVal;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+        {
+            IntHalf = intVal;
+            DecimalHalf = decVal;
+        }
+
         MediumDec& operator=(const MediumDec& rhs)
         {
             // Check for self-assignment
@@ -145,24 +145,26 @@ protected:
 				IntHalf = MirroredInt(rhs,1);
 			DecimalHalf = 0;
             return *this;
-        } const
+        }
 
-#if !defined(AltNum_PreventModulusOverride)
+        #if !defined(AltNum_PreventModulusOverride)
+        class PartialMediumDec;
+
         //Reduced version of MediumDec result for modulus results
-        class DLL_API PartialMediumDec
+        class DLL_API PartialMediumDec : virtual public AltNumBase
         {
-public:
+        public:
             /// <summary>
             /// Stores whole half of number(Including positive/negative status)
-    		/// (in the case of infinity is used to determine if positive vs negative infinity)
+            /// (in the case of infinity is used to determine if positive vs negative infinity)
             /// </summary>
             MirroredInt IntHalf;
-    
+
             /// <summary>
             /// Stores decimal section info and other special info
             /// </summary>
             PartialInt DecimalHalf;
-    
+
             /// <summary>
             /// Initializes a new instance of the <see cref="MediumDec"/> class.
             /// </summary>
@@ -173,26 +175,23 @@ public:
                 IntHalf = intVal;
                 DecimalHalf = decVal;
             }
-    
-            PartialMediumDec& operator=(const MediumDec& rhs)
+
+            PartialMediumDec& operator=(const PartialMediumDec& rhs)
             {
                 // Check for self-assignment
                 if (this == &rhs)      // Same object?
                     return *this;        // Yes, so skip assignment, and just return *this.
                 IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
                 return *this;
-            } const
+            }
 
-        }
+        };
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDec(const bool& Value)
+        MediumDec& operator=(const PartialMediumDec& rhs)
         {
-            this->SetBoolVal(Value);
-        }
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        } const
 #endif
 
         //Is at either zero or negative zero IntHalf of AltNum
@@ -243,7 +242,7 @@ public:
             DecimalHalf = Value.DecimalHalf;
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumDecVariant VariantType=PartialMediumDec>
         void SetVariantValue(MediumDec Value)
         {
             IntHalf = Value.IntHalf;

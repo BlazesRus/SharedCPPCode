@@ -60,6 +60,17 @@ namespace BlazesRusCode
 			Sign = sign;
 		}
 
+		MirroredInt(const signed int& value)
+		{
+			if(value<0){
+				Sign = PositiveSign;
+				Value = -value;
+            } else {
+                Sign = NegativeSign;
+                Value = value;
+            }
+		}
+
 		bool IsNegative() const
 		{
 			return Sign==NegativeSign;
@@ -164,7 +175,7 @@ namespace BlazesRusCode
 		}
 
         //Returns copy of value as Absolute value
-        MirroredInt Abs() const
+        auto Abs() const
         {
             if(IsPositive())
                 return *this;
@@ -292,6 +303,18 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned long long() { return Value; }
+
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed int() { return GetValue(); }
+		
+        /// <summary>
+        /// to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed long long() { return GetValue(); }
 
         /// <summary>
         /// Swaps the negative status.

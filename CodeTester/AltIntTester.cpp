@@ -12,7 +12,7 @@
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 using FlaggedInt = BlazesRusCode::FlaggedInt;
-#include <Windows.h>
+#include <Windows.h>//Windows.h detects some errors?
 
 int main()
 {
