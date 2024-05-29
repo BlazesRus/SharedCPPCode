@@ -82,6 +82,16 @@ public:
             return *this;
         }
 
+        /// <summary>
+        /// Creates class from derivated class into this class
+        /// (subscript operator)
+        /// </summary>
+        template<MediumDecVariant VariantType>
+        auto operator()(VariantType variantValue) const
+        {
+            MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            return newSelf;
+        }
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const

@@ -110,6 +110,18 @@ namespace BlazesRusCode
             return *this;
         }
 
+        /// <summary>
+        /// Creates class from derivated class into this class
+        /// (subscript operator)
+        /// </summary>
+        template<MediumDecVariant VariantType>
+        auto operator()(VariantType variantValue) const
+        {
+            PartialMediumDec newSelf = PartialMediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            return newSelf;
+        }
+
+
 #pragma endregion class_constructors
 
         bool IsNegative() const
@@ -143,6 +155,8 @@ protected:
 			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
+
+public:
 
 		std::strong_ordering operator<=>(const MediumDec& that) const
 		{//return BasicComparison(that);
