@@ -110,5 +110,11 @@
     <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp">
       <Filter>Header Files\AltNum\IntReplacements</Filter>
     </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp">
+      <Filter>Header Files\AltNum\MediumDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDec\PartialMediumDec.hpp">
+      <Filter>Header Files\AltNum\MediumDec</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
