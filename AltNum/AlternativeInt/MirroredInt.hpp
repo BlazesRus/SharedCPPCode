@@ -27,7 +27,11 @@ namespace BlazesRusCode
 {
     class MirroredInt;
 
-	class MirroredInt {
+    /// <summary>
+    /// Integer alternative with magnitude and sign field
+	/// </summary>
+	class MirroredInt
+    {
 	public:
 		#pragma options align=bit_packed
     #if defined(AltNum_UseInvertedSign)

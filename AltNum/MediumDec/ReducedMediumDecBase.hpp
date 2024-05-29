@@ -35,16 +35,6 @@ namespace BlazesRusCode
 	/// long double (Extended precision double)
 	/// </summary>
 	using ldouble = long double;
-	
-/*---Accuracy Tests(with MediumDec based settings):
- * 100% accuracy for all integer value multiplication operations.
- * 100% accuracy for addition/subtraction operations
- * Partial but still high accuracy for non-integer representation variations of multiplication and division because of truncation
-   (values get lost if get too small) (100% accuracy except for some truncated digits lost)
- * Other operations like Ln and Sqrt contained with decent level of accuracy
-   (still loses a little accuracy because of truncation etc)
- * Operations and functions will mess up if IntHalf overflows/underflows
-*/
 
     /// <summary>
     /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
@@ -1179,7 +1169,7 @@ public:
 
     #pragma region Trigonomic Functions
     #pragma endregion Trigonomic Functions
-    }
+    };
     #pragma region ValueDefine Source
 
 	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
