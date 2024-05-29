@@ -23,7 +23,7 @@
 #include <cmath>
 #include <cfloat>
 #include "..\OtherFunctions\VariableConversionFunctions.h"
-#include "IntegerConcept.hpp"
+#include "Concepts\IntegerConcept.hpp"
 using VariableConversionFunctions = BlazesRusCode::VariableConversionFunctions;
 
 namespace BlazesFloatingCode

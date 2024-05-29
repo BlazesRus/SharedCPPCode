@@ -170,12 +170,12 @@
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
     <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp" />
-    <ClInclude Include="..\AltNum\IntegerConcept.hpp" />
+    <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
     <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />
     <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
-    <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp" />
+    <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tsl\ordered_map.h" />

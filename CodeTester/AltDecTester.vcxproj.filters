@@ -110,10 +110,10 @@
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp">
       <Filter>Header Files\AltNum</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDecVariantConcept.hpp">
+    <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp">
       <Filter>Header Files\AltNum\Concepts</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\IntegerConcept.hpp">
+    <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp">
       <Filter>Header Files\AltNum\Concepts</Filter>
     </ClInclude>
     <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp">

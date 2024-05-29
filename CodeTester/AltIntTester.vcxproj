@@ -171,7 +171,7 @@
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
-    <ClInclude Include="..\AltNum\IntegerConcept.hpp" />
+    <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
   </ItemGroup>

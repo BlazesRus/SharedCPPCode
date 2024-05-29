@@ -25,6 +25,7 @@ int main()
     ++test02;
     test03 *= ++test03;
     //Need to fix debug output
+    //Outputting to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
     streamObj << "Test01 result:"<<(std::string)test01<< "Test02 result:"<<(std::string)test02<< "Test03 result:"<<(std::string)test03<<std::endl;
-    ::OutputDebugStringA(streamObj.str().c_str());//Outputting to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
+    ::OutputDebugStringA(streamObj.str().c_str());
 }

@@ -24,7 +24,7 @@
 
 #include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
 
-#include "..\IntegerConcept.hpp"
+#include "..\Concepts\IntegerConcept.hpp"
 #include "..\MediumDec\MediumDec.hpp"
 #include "..\PartialDec\PartialDec.hpp"//Used to keep all digits while dividing my two
 

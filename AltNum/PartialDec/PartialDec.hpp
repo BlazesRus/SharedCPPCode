@@ -16,8 +16,8 @@
 #include <cstddef>
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
-#include "..\IntegerConcept.hpp"
-#include "..\MediumDecVariantConcept.hpp"
+#include "..\Concepts\IntegerConcept.hpp"
+#include "..\Concepts\MediumDecVariantConcept.hpp"
 #include <boost/multiprecision/cpp_int.hpp>//Need to use the int 128 in order to fit all inside during multiplication
 
 /*

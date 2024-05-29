@@ -5,11 +5,10 @@
 #pragma once
 
 #include "MediumDecPreprocessors.h"
-#include "AltNumBase.h"//Virtual Structure for the class to make sure can override virtually
+#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
 
 #include <string>
 #include <cmath>
-#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 
 #include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
 
@@ -18,8 +17,8 @@
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
 #include "..\AltNumModResult.hpp"
-#include "..\IntegerConcept.hpp"
-#include "..\MediumDecVariantConcept.hpp"
+#include "..\Concepts\IntegerConcept.hpp"
+#include "..\Concepts\MediumDecVariantConcept.hpp"
 
 
 #include "..\AlternativeInt\MirroredInt.hpp"
@@ -60,7 +59,7 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDec
+    class DLL_API MediumDec : virtual public AltNumBase
     {
 protected:
 #if defined(AltNum_UseBuiltinVirtualTable)
