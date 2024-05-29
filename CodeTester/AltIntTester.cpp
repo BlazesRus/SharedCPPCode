@@ -19,12 +19,12 @@ int main()
     std::ostringstream streamObj;
     streamObj << std::fixed << std::setprecision(99);
     MirroredInt test01 = 5;
-    //test01 += 1;
     PartialInt test02 = 4;
     FlaggedInt test03 = 3;
-    test01 *= 10;
+    test01 *= 10;//Result is zero instead of 50(need to fix code)
     ++test02;
     test03 *= ++test03;
+    //Need to fix debug output
     streamObj << "Test01 result:"<<(std::string)test01<< "Test02 result:"<<(std::string)test02<< "Test03 result:"<<(std::string)test03<<std::endl;
     ::OutputDebugStringA(streamObj.str().c_str());//Outputting to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
 }

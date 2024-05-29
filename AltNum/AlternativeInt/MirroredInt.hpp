@@ -623,11 +623,11 @@ namespace BlazesRusCode
         }
 
         friend MirroredInt& operator*=(MirroredInt& lValue, const signed int& rValue){
-            lValue.IntDivOp(rValue); return lValue;
+            lValue.IntMultOp(rValue); return lValue;
         }
 
         friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned int& rValue){
-            lValue.UIntDivOp(rValue); return lValue;
+            lValue.UIntMultOp(rValue); return lValue;
         }
 		
 		friend MirroredInt operator*(const MirroredInt& lValue, const MirroredInt& rValue){
