@@ -164,15 +164,16 @@ protected:
 		{
 			if (IntHalf!=that.IntHalf)
 				return false;
-			if (DecimalHalf!=that.IntHalf)
+			if (DecimalHalf!=that.DecimalHalf)
 				return false;
+            return true;
 		}
 
 		bool operator!=(const PartialMediumDec& that) const
 		{
 			if (IntHalf!=that.IntHalf)
 				return true;
-			if (DecimalHalf!=that.IntHalf)
+			if (DecimalHalf!=that.DecimalHalf)
 				return true;
             return false;
 		}
