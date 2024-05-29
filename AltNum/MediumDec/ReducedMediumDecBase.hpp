@@ -24,9 +24,11 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDec : public PartialMediumDec
+    class DLL_API MediumDec : protected PartialMediumDec
     {
 public:
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModResult<PartialMediumDec>{};
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
@@ -61,7 +63,7 @@ public:
 
         MediumDec& operator=(const signed int& rhs)
         {
-            IntHalf = rhs; DecimalHalf = rhs.DecimalHalf;
+            IntHalf = rhs; DecimalHalf = 0;
             return *this;
         }
 
@@ -69,10 +71,9 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const PartialMediumDec& Value)
+        MediumDec(const PartialMediumDec& rhs)
         {
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
-            return *this;
         }
 
         MediumDec& operator=(const PartialMediumDec& rhs)
@@ -81,7 +82,162 @@ public:
             return *this;
         }
 
+
+        //Is at either zero or negative zero IntHalf of AltNum
+        bool IsAtZeroInt() const
+        {
+            return IntHalf.Value==0;
+        }
+
+        bool IsNotAtZeroInt() const
+        {
+            return IntHalf.Value!=0;
+        }
+
+        bool IsAtOneInt() const
+        {
+            return IntHalf.Value==1;
+        }
+
+        bool IsNotAtOneInt() const
+        {
+            return IntHalf.Value!=1;
+        }
+
+        //Detect if at exactly zero(only overridden with MixedDec)
+		bool IsZero() const
+		{
+            return DecimalHalf==0&&IntHalf.Value==0;
+		}
+		
+		bool IsOne() const
+		{
+            return DecimalHalf==0&&IntHalf==MirroredInt::One;
+		}
+		
+		bool IsNegOne() const
+		{
+            return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne;
+		}
+		
+		bool IsOneVal() const
+		{
+            return DecimalHalf==0&&IntHalf.Value==1;
+		}
+
+        void SetVal(MediumDec Value)
+        {
+            IntHalf = Value.IntHalf;
+            DecimalHalf = Value.DecimalHalf;
+        }
+
+        template<MediumDecVariant VariantType=MediumDec>
+        void SetVariantValue(MediumDec Value)
+        {
+            IntHalf = Value.IntHalf;
+            DecimalHalf = Value.DecimalHalf;
+        }
+
+		//Set value as exactly zero
+        void SetAsZero()
+        {
+            IntHalf = 0;
+            DecimalHalf = 0;
+        }
+
+		//Set value as exactly one
+        void SetAsOne()
+        {
+            IntHalf = 1;
+            DecimalHalf = 0;
+        }
+		
+		//Set as +-1 while keeping current sign
+        void SetAsOneVal()
+        {
+            IntHalf.Value = 1;
+            DecimalHalf = 0;
+        }
+		
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus()
+        {
+            IntHalf.Sign ^= 1;
+        }
+
+        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
+        {
+            IntHalf = 0;
+            DecimalHalf = 0;
+        }
+
+    #pragma region Const Representation values
+    #pragma endregion Const Representation values
+    
+    #pragma region RepType
+    #pragma endregion RepType
+
+    #pragma region RangeLimits
+
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMaximum()
+        {
+            IntHalf = MaxIntHalf;
+			DecimalHalf = 999999999;
+        }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMinimum()
+        {
+            IntHalf = MinIntHalf;
+			DecimalHalf = 999999999;
+        }
+	
+    #pragma endregion RangeLimits
+
     #pragma region Comparison Operators
+	
+public:
+
+		std::strong_ordering operator<=>(const MediumDec& that) const
+		{//return BasicComparison(that);
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+
+		std::strong_ordering operator<=>(const int& that) const
+		{
+			return BasicIntComparison(that);
+		}
+
+		bool operator==(const int& that) const
+		{
+			if (IntHalf!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator==(const MediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return false;
+			if (DecimalHalf!=that.IntHalf)
+				return false;
+		}
+
     #pragma endregion Comparison Operators
 
 	#pragma region Other addition operations

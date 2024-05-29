@@ -18,8 +18,8 @@ namespace BlazesRusCode
     //Reduced version of AltDec result for modulus result and other stuff
     class DLL_API PartialAltDec : public MediumDecBaseV2
     {
-        #pragma region DigitStorage
-    protected:
+public:
+#pragma region DigitStorage
 
         /// <summary>
         /// Multiplied by Pi, e, or i if DecimalHalf.Flags!=0
@@ -41,10 +41,9 @@ namespace BlazesRusCode
 
 		void ResetDivisor(){ ExtraRep = InitialExtraRep; }
 
-        #pragma endregion DigitStorage
+#pragma endregion DigitStorage
 
-public:
-        #pragma region class_constructors
+#pragma region class_constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialAltDec"/> class.
@@ -87,7 +86,7 @@ public:
             return *this;
         }
 
-        #pragma endregion class_constructors
+#pragma endregion class_constructors
 
         /// <summary>
         /// Sets the value.

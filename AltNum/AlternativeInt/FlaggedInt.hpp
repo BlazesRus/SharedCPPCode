@@ -113,16 +113,31 @@ namespace BlazesRusCode
 
 		bool operator==(const unsigned int& that) const
 		{
-			if (Value!=that)
-				return false;
-			return true;
+			if (Value==that)
+				return true;
 		}
-		
-		bool operator==(const signed int& that) const
+
+		bool operator!=(const unsigned int& that) const
 		{
 			if (Value!=that)
-				return false;
+				return true;
 			return true;
+		}
+
+		bool operator==(const signed int& that) const
+		{
+			if (that < 0)
+				return false;
+			else if (Value==(unsigned int)that)
+				return false;
+		}
+
+		bool operator!=(const signed int& that) const
+		{
+			if (that < 0)
+				return false;
+			else if (Value!=(unsigned int)that)
+				return true;
 		}
 		
         /// <summary>

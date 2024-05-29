@@ -34,7 +34,9 @@ namespace BlazesRusCode
     //Reduced version of MediumDec result for modulus result and other stuff
     class DLL_API PartialMediumDec : public AltNumBase
     {
-    protected:
+    public:
+ #pragma region DigitStorage
+
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
@@ -45,6 +47,8 @@ namespace BlazesRusCode
         /// Stores decimal section info and other special info
         /// </summary>
         PartialInt DecimalHalf;
+
+#pragma endregion DigitStorage
 
 		//Maximum IntHalf that can be stored inside IntHalf field
         static const MirroredInt MaxIntHalf;
@@ -67,7 +71,7 @@ namespace BlazesRusCode
         /// </summary>
         static MirroredInt const NegativeRep;
 
-public:
+#pragma region class_constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialMediumDec"/> class.
@@ -105,6 +109,44 @@ public:
             IntHalf = rhs; DecimalHalf = 0;
             return *this;
         }
+
+#pragma endregion class_constructors
+
+        bool IsNegative() const
+        {
+            return IntHalf.IsNegative();
+        }
+
+#pragma region Comparison Operators
+
+protected:
+		//Compare only as if in NormalType representation mode
+		template<MediumDecVariant VariantType=PartialMediumDec>
+		std::strong_ordering BasicComparisonV1(const VariantType& that) const
+		{
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+		
+		//Compare only as if in NormalType representation mode
+		std::strong_ordering BasicIntComparison(const int& that) const
+		{
+			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = DecimalHalf.Value>0?1:0;
+			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+
+#pragma endregion Comparison Operators
+
+
     };
 
 	auto PartialMediumDec::NegativeRep = MirroredInt::NegativeZero;

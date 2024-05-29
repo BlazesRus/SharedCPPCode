@@ -53,50 +53,18 @@ protected:
 #endif
         
 
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static unsigned int const DecimalOverflow = 1000000000;
 
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static unsigned _int64 const DecimalOverflowX = 1000000000;
 
         /// <summary>
         /// The decimal overflow value * -1
         /// </summary>
 		static signed _int64 const NegDecimalOverflowX = -1000000000;
 		
-		//Maximum IntHalf that can be stored inside IntHalf field
-        static MirroredInt const MaxIntHalf;
-	
-		//Minimum IntHalf that can be stored inside IntHalf field
-        static MirroredInt const MinIntHalf;
 
 	public:
 
-        /// <summary>
-        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
-        /// </summary>
-        static MirroredInt const NegativeRep;
 
-        /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-		/// (in the case of infinity is used to determine if positive vs negative infinity)
-        /// </summary>
-        MirroredInt IntHalf;
 
-		//Return IntHalf as signed int
-        signed int GetIntHalf()
-        {
-			return IntHalf.IsNegative()?((signed int)IntHalf.Value)*-1:(signed int)IntHalf.Value;
-        }
-
-        bool IsNegative()
-        {
-            return IntHalf.IsNegative();
-        }
 
         /// <summary>
         /// Stores decimal section info and other special info
@@ -171,133 +139,8 @@ public:
 
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDec(const bool& Value)
-        {
-            this->SetBoolVal(Value);
-        }
+
 #endif
-
-        //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt() const
-        {
-            return IntHalf.Value==0;
-        }
-
-        bool IsNotAtZeroInt() const
-        {
-            return IntHalf.Value!=0;
-        }
-
-        bool IsAtOneInt() const
-        {
-            return IntHalf.Value==1;
-        }
-
-        bool IsNotAtOneInt() const
-        {
-            return IntHalf.Value!=1;
-        }
-
-        //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==0;
-		}
-		
-		bool IsOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::One;
-		}
-		
-		bool IsNegOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne;
-		}
-		
-		bool IsOneVal() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==1;
-		}
-
-        void SetVal(MediumDec Value)
-        {
-            IntHalf = Value.IntHalf;
-            DecimalHalf = Value.DecimalHalf;
-        }
-
-        template<MediumDecVariant VariantType=MediumDec>
-        void SetVariantValue(MediumDec Value)
-        {
-            IntHalf = Value.IntHalf;
-            DecimalHalf = Value.DecimalHalf;
-        }
-
-		//Set value as exactly zero
-        void SetAsZero()
-        {
-            IntHalf = 0;
-            DecimalHalf = 0;
-        }
-
-		//Set value as exactly one
-        void SetAsOne()
-        {
-            IntHalf = 1;
-            DecimalHalf = 0;
-        }
-		
-		//Set as +-1 while keeping current sign
-        void SetAsOneVal()
-        {
-            IntHalf.Value = 1;
-            DecimalHalf = 0;
-        }
-		
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-            IntHalf.Sign ^= 1;
-        }
-
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
-        {
-            IntHalf = 0;
-            DecimalHalf = 0;
-        }
-
-    #pragma region Const Representation values
-    #pragma endregion Const Representation values
-    
-    #pragma region RepType
-    #pragma endregion RepType
-
-    #pragma region RangeLimits
-
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum()
-        {
-            IntHalf = MaxIntHalf;
-			DecimalHalf = 999999999;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
-        {
-            IntHalf = MinIntHalf;
-			DecimalHalf = 999999999;
-        }
-	
-    #pragma endregion RangeLimits
 
     #pragma region ValueDefines
     protected:
@@ -1006,65 +849,7 @@ public:
     #pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
-protected:
-		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=MediumDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = DecimalHalf.Value>0?1:0;
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-	
-public:
 
-		std::strong_ordering operator<=>(const MediumDec& that) const
-		{//return BasicComparison(that);
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-
-		std::strong_ordering operator<=>(const int& that) const
-		{
-			return BasicIntComparison(that);
-		}
-
-		bool operator==(const int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
-
-		bool operator==(const MediumDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.IntHalf)
-				return false;
-		}
 
     #pragma endregion Comparison Operators
 
@@ -1171,10 +956,6 @@ public:
     #pragma endregion Trigonomic Functions
     };
     #pragma region ValueDefine Source
-
-	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
-	MirroredInt MediumDec::MaxIntHalf = MirroredInt::Maximum;
-	MirroredInt MediumDec::MinIntHalf = MirroredInt::Minimum;
 
     #pragma endregion ValueDefine Source
 
