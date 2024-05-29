@@ -24,7 +24,7 @@ namespace BlazesRusCode
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
     /// (12 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
-    class DLL_API MediumDec : virtual public PartialMediumDec
+    class DLL_API MediumDec : public PartialMediumDec
     {
 public:
 
@@ -62,6 +62,22 @@ public:
         MediumDec& operator=(const signed int& rhs)
         {
             IntHalf = rhs; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDec(const PartialMediumDec& Value)
+        {
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        }
+
+        MediumDec& operator=(const PartialMediumDec& rhs)
+        {
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
         }
 

@@ -40,7 +40,7 @@ namespace BlazesRusCode
     /// Represents +- 2147483647.999999999 with 100% consistency of accuracy except for truncated digits
     /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
 	/// </summary>
-    class DLL_API MediumDec : virtual public AltNumBase
+    class DLL_API MediumDec : public PartialMediumDec
     {
 protected:
 #if defined(AltNum_UseBuiltinVirtualTable)
@@ -147,52 +147,21 @@ protected:
             return *this;
         }
 
-        #if !defined(AltNum_PreventModulusOverride)
-        class PartialMediumDec;
-
-        //Reduced version of MediumDec result for modulus results
-        class DLL_API PartialMediumDec : virtual public AltNumBase
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDec(const PartialMediumDec& Value)
         {
-        public:
-            /// <summary>
-            /// Stores whole half of number(Including positive/negative status)
-            /// (in the case of infinity is used to determine if positive vs negative infinity)
-            /// </summary>
-            MirroredInt IntHalf;
-
-            /// <summary>
-            /// Stores decimal section info and other special info
-            /// </summary>
-            PartialInt DecimalHalf;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MediumDec"/> class.
-            /// </summary>
-            /// <param name="intVal">The whole number based half of the representation</param>
-            /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-            PartialMediumDec(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
-            {
-                IntHalf = intVal;
-                DecimalHalf = decVal;
-            }
-
-            PartialMediumDec& operator=(const PartialMediumDec& rhs)
-            {
-                // Check for self-assignment
-                if (this == &rhs)      // Same object?
-                    return *this;        // Yes, so skip assignment, and just return *this.
-                IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
-                return *this;
-            }
-
-        };
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        }
 
         MediumDec& operator=(const PartialMediumDec& rhs)
         {
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
-        } const
-#endif
+        }
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const

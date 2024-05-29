@@ -32,10 +32,9 @@ namespace BlazesRusCode
     class PartialMediumDec;
 
     //Reduced version of MediumDec result for modulus result and other stuff
-    class DLL_API PartialMediumDec : virtual public AltNumBase
+    class DLL_API PartialMediumDec : public AltNumBase
     {
-protected:
-
+    protected:
         /// <summary>
         /// Stores whole half of number(Including positive/negative status)
 		/// (in the case of infinity is used to determine if positive vs negative infinity)
@@ -46,6 +45,27 @@ protected:
         /// Stores decimal section info and other special info
         /// </summary>
         PartialInt DecimalHalf;
+
+		//Maximum IntHalf that can be stored inside IntHalf field
+        static const MirroredInt MaxIntHalf;
+
+		//Minimum IntHalf that can be stored inside IntHalf field
+        static const MirroredInt MinIntHalf;
+
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static unsigned int const DecimalOverflow = 1000000000;
+
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static unsigned _int64 const DecimalOverflowX = 1000000000;
+
+        /// <summary>
+        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// </summary>
+        static MirroredInt const NegativeRep;
 
 public:
 
@@ -86,4 +106,8 @@ public:
             return *this;
         }
     };
+
+	auto PartialMediumDec::NegativeRep = MirroredInt::NegativeZero;
+	auto PartialMediumDec::MaxIntHalf = MirroredInt::Maximum;
+	auto PartialMediumDec::MinIntHalf = MirroredInt::Minimum;
 }
