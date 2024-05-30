@@ -37,9 +37,8 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
 		AltNumModResult(const auto& lValue, const auto& rValue)
 		{
-			//Making use of subscript operator to load derived class
-			VarType LValue = VarType(lValue);
-			VarType RValue = VarType(rValue);
+			VarType LValue = (VarType)lValue;
+			VarType RValue = (VarType) rValue;
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;
 		}

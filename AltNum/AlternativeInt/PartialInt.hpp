@@ -32,6 +32,8 @@ namespace BlazesRusCode
 		unsigned int Flags:2;
 		#pragma options align=reset
 		
+        static const unsigned int MaximumInt = 1073741823;
+
 		PartialInt(unsigned int value=0, unsigned int flags=0)
 		{
 			Value = value;
@@ -196,7 +198,7 @@ protected:
         /// <returns>MirroredInt</returns>
         static PartialInt ZeroValue()
         {
-            return PartialInt(0,1);
+            return PartialInt();
         }
 
 public:

@@ -26,9 +26,6 @@ namespace BlazesRusCode
     class DLL_API MediumDec : protected PartialMediumDec
     {
 public:
-		//Performs remainder/Mod operation then saves division result
-		class DLL_API ModResult : public AltNumModResult<PartialMediumDec>{};
-
 #pragma region class_constructors
 
         /// <summary>
@@ -83,18 +80,32 @@ public:
             return *this;
         }
 
-        /// <summary>
-        /// Creates class from derived class into this class
-        /// (subscript operator)
-        /// </summary>
-        template<MediumDecVariant VariantType>
-        auto operator()(VariantType variantValue) const
-        {
-            MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
-            return newSelf;
-        }
+  //      /// <summary>
+  //      /// Creates class from derived class into this class
+  //      /// (parenthesis operator)
+  //      /// </summary>
+  //      template<MediumDecVariant VariantType>
+  //      auto operator()(VariantType variantValue) const
+  //      {
+  //          MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+  //          return newSelf;
+  //      }
+		//
+  //      /// <summary>
+  //      /// Creates class from derived class into this class
+  //      /// (subscript operator of [])
+  //      /// </summary>
+  //      template<MediumDecVariant VariantType>
+  //      auto operator[](VariantType variantValue) const
+  //      {
+  //          PartialMediumDec newSelf = PartialMediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+  //          return newSelf;
+  //      }
 
 #pragma endregion class_constructors
+
+		//Performs remainder/Mod operation then saves division result
+		class DLL_API ModResult : public AltNumModResult<PartialMediumDec>{};
 
         ///// <summary>
         ///// The decimal overflow value * -1

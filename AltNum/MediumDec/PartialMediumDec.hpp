@@ -118,7 +118,7 @@ namespace BlazesRusCode
 
         /// <summary>
         /// Creates class from derived class into this class
-        /// (subscript operator of ())
+        /// (parenthesis operator of ())
         /// </summary>
         template<MediumDecVariant VariantType>
         auto operator()(VariantType variantValue) const
