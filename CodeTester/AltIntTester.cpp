@@ -26,7 +26,7 @@ int main()
     test01 *= 10;
     ++test02;
     test03 *= ++test03;
-    MediumDec test04.;
+    MediumDec test04 = 5;
     //Need to fix debug output
     //Outputting to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
 

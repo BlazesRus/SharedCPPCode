@@ -19,16 +19,17 @@ namespace BlazesRusCode
 	using ldouble = long double;
 
     /// <summary>
-    /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
-    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
-    /// plus support for some fractal operations, and other representations like Pi(and optionally things like e or imaginary numbers)
-    /// (12 bytes worth of Variable Storage inside class for each instance)
+    /// Alternative Non-Integer number representation with focus on accuracy to 9th digit
+    /// Represents +- 2147483647.999999999 with 100% accuracy 
+    /// except for truncation during division and multiplication after 9th digit
 	/// </summary>
     class DLL_API MediumDec : protected PartialMediumDec
     {
 public:
 		//Performs remainder/Mod operation then saves division result
 		class DLL_API ModResult : public AltNumModResult<PartialMediumDec>{};
+
+#pragma region class_constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
@@ -83,133 +84,46 @@ public:
         }
 
         /// <summary>
-        /// Creates class from derivated class into this class
+        /// Creates class from derived class into this class
         /// (subscript operator)
         /// </summary>
         template<MediumDecVariant VariantType>
-        auto operator()(VariantType variantValue) const
+        auto operator[](VariantType variantValue) const
         {
             MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
             return newSelf;
         }
 
-        //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt() const
-        {
-            return IntHalf.Value==0;
-        }
+#pragma endregion class_constructors
 
-        bool IsNotAtZeroInt() const
-        {
-            return IntHalf.Value!=0;
-        }
+    #pragma region Check_if_value
 
-        bool IsAtOneInt() const
-        {
-            return IntHalf.Value==1;
-        }
+        ///// <summary>
+        ///// The decimal overflow value * -1
+        ///// </summary>
+		//static signed _int64 const NegDecimalOverflowX = -1000000000;
 
-        bool IsNotAtOneInt() const
-        {
-            return IntHalf.Value!=1;
-        }
-
-        //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==0;
-		}
-		
-		bool IsOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::One;
-		}
-		
-		bool IsNegOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne;
-		}
-		
-		bool IsOneVal() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==1;
-		}
-
-        void SetVal(MediumDec Value)
+        void SetValue(MediumDec Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
         template<MediumDecVariant VariantType=MediumDec>
-        void SetVariantValue(MediumDec Value)
+        void SetVariantValue(VariantType Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
-		//Set value as exactly zero
-        void SetAsZero()
-        {
-            IntHalf = 0;
-            DecimalHalf = 0;
-        }
+    #pragma region Check_if_value
 
-		//Set value as exactly one
-        void SetAsOne()
-        {
-            IntHalf = 1;
-            DecimalHalf = 0;
-        }
-		
-		//Set as +-1 while keeping current sign
-        void SetAsOneVal()
-        {
-            IntHalf.Value = 1;
-            DecimalHalf = 0;
-        }
-		
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        {
-            IntHalf.Sign ^= 1;
-        }
-
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
-        {
-            IntHalf = 0;
-            DecimalHalf = 0;
-        }
 
     #pragma region Const Representation values
     #pragma endregion Const Representation values
     
     #pragma region RepType
     #pragma endregion RepType
-
-    #pragma region RangeLimits
-
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum()
-        {
-            IntHalf = MaxIntHalf;
-			DecimalHalf = 999999999;
-        }
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum()
-        {
-            IntHalf = MinIntHalf;
-			DecimalHalf = 999999999;
-        }
-	
-    #pragma endregion RangeLimits
 
     #pragma region Comparison Operators
 	
@@ -266,8 +180,6 @@ public:
 				return true;
 			return false;
 		}
-
-
 
     #pragma endregion Comparison Operators
 
