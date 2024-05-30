@@ -513,7 +513,7 @@ public:
         explicit operator std::string() { return ToString(); }
     #pragma endregion String Commands
 
-    #pragma region NormalRep Integer division operations
+    #pragma region NormalRep Integer Division Operations
 protected:
 
         template<IntegerType IntType=unsigned int>
@@ -667,8 +667,116 @@ public:
         void BasicDivideByUInt16() { BasicDivideByUIntV1<unsigned short>; }
         void BasicDivideByInt16() { BasicDivideByIntV1<signed short>; }
 
-    #pragma endregion NormalRep Integer division operations
+    #pragma endregion NormalRep Integer Division Operations
+
+	#pragma region NormalRep AltNum Division Operations
+protected:
+
+		/// <summary>
+        /// Basic unsigned division operation(main code block)
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rValue</param>
+        bool UnsignedPartialDivOp(const auto& rValue)
+        {
+            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + (unsigned _int64)DecimalHalf;
+            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + (unsigned _int64)rValue.DecimalHalf;	
+
+            unsigned _int64 IntHalfRes = SelfRes / ValueRes;
+            unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
+			IntHalf.Value = (unsigned int) IntHalfRes;
+            DecimalHalf.Value = DecimalRes;
+            if (IntHalfRes == 0 && DecimalRes == 0)
+                return true;
+            else
+                return false;
+        }
 		
+public:
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        void BasicUnsignedDivOp(const auto& rValue)
+		{
+			if(DecimalHalf==0)
+			{
+                if (rValue.DecimalHalf == 0)
+                    UnsignedBasicIntDivOp(rValue.IntHalf.Value);
+                #if !defined(AltNum_DisableDivideDownToNothingPrevention)
+                else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
+                    DecimalHalf.Value = 1;
+                #else
+                else
+                    UnsignedPartialDivOp(Value);
+                #endif
+			}
+            #if !defined(AltNum_DisableDivideDownToNothingPrevention)
+			else if (UnsignedPartialDivOp(Value))
+			    DecimalHalf.Value = 1;
+            #else
+            else
+                UnsignedPartialDivOp(Value);
+            #endif
+		}
+
+        auto& BasicUnsignedDivOperation(const auto& rValue)
+		{
+			BasicUnsignedDivOp(rValue); return *this;
+		}
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        void BasicDivOp(const auto& Value)
+        {
+            if(Value.IsNegative())
+            {
+                SwapNegativeStatus();
+                BasicUnsignedDivOp(-Value);
+            }
+            else
+                BasicUnsignedDivOp(Value);
+        }
+
+        auto& BasicDivOperation(const auto& rValue)
+		{
+			BasicDivOp(rValue); return *this;
+		}
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicUnsignedDivision(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicUnsignedDivOp(rValue);
+        }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicDivision(const auto& rValue)
+        {
+            auto self = *this;
+            return self.BasicDivOp(rValue);
+        }
+
+	#pragma endregion NormalRep AltNum Division Operations
+
     #pragma region NormalRep Integer Multiplication Operations
 protected:
 		/// <summary>
@@ -829,114 +937,6 @@ public:
         void BasicMultiplyByInt16() { BasicMultiplyByIntV1<signed short>; }
 		
     #pragma endregion NormalRep Integer Multiplication Operations
-
-	#pragma region NormalRep AltNum division operations
-protected:
-
-		/// <summary>
-        /// Basic unsigned division operation(main code block)
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const auto& rValue)
-        {
-            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + (unsigned _int64)DecimalHalf;
-            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + (unsigned _int64)rValue.DecimalHalf;	
-
-            unsigned _int64 IntHalfRes = SelfRes / ValueRes;
-            unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntHalf.Value = (unsigned int) IntHalfRes;
-            DecimalHalf.Value = DecimalRes;
-            if (IntHalfRes == 0 && DecimalRes == 0)
-                return true;
-            else
-                return false;
-        }
-		
-public:
-
-		/// <summary>
-        /// Basic unsigned division operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        void BasicUnsignedDivOp(const auto& rValue)
-		{
-			if(DecimalHalf==0)
-			{
-                if (rValue.DecimalHalf == 0)
-                    UnsignedBasicIntDivOp(rValue.IntHalf.Value);
-                #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-                else if (UnsignedPartialDivOp(Value))//Prevent Dividing into nothing
-                    DecimalHalf.Value = 1;
-                #else
-                else
-                    UnsignedPartialDivOp(Value);
-                #endif
-			}
-            #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-			else if (UnsignedPartialDivOp(Value))
-			    DecimalHalf.Value = 1;
-            #else
-            else
-                UnsignedPartialDivOp(Value);
-            #endif
-		}
-
-        auto& BasicUnsignedDivOperation(const auto& rValue)
-		{
-			BasicUnsignedDivOp(rValue); return *this;
-		}
-
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
-        void BasicDivOp(const auto& Value)
-        {
-            if(Value.IsNegative())
-            {
-                SwapNegativeStatus();
-                BasicUnsignedDivOp(-Value);
-            }
-            else
-                BasicUnsignedDivOp(Value);
-        }
-
-        auto& BasicDivOperation(const auto& rValue)
-		{
-			BasicDivOp(rValue); return *this;
-		}
-
-		/// <summary>
-        /// Basic unsigned division operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
-        auto BasicUnsignedDivision(const auto& rValue)
-        {
-            auto self = *this;
-            return self.BasicUnsignedDivOp(rValue);
-        }
-
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
-        auto BasicDivision(const auto& rValue)
-        {
-            auto self = *this;
-            return self.BasicDivOp(rValue);
-        }
-
-	#pragma endregion NormalRep AltNum division operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
 	
@@ -1157,7 +1157,7 @@ public:
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
-	#pragma region Other division operations
+	#pragma region Other Division Operations
 
         /// <summary>
         /// Simplified division by 2 operation(to reduce cost of operations)
@@ -1362,7 +1362,7 @@ public:
         friend PartialMediumDec& operator/=(PartialMediumDec& self, const unsigned char& rValue) { return self.BasicUInt8DivOperation(rValue); }
         friend PartialMediumDec& operator/=(PartialMediumDec& self, const unsigned short& rValue) { return self.BasicUInt16DivOperation(rValue); }
 
-	#pragma endregion Other division operations	
+	#pragma endregion Other Division Operations	
 
 	#pragma region Other multiplication operations
 		
