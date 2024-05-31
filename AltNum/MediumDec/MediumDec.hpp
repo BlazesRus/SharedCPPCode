@@ -5,6 +5,7 @@
 #pragma once
 
 #include "MediumDecBase.hpp"
+#include "..\AltNumModResult.hpp"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
@@ -80,17 +81,6 @@ public:
             return *this;
         }
 
-  //      /// <summary>
-  //      /// Creates class from derived class into this class
-  //      /// (parenthesis operator)
-  //      /// </summary>
-  //      template<MediumDecVariant VariantType>
-  //      auto operator()(VariantType variantValue) const
-  //      {
-  //          MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
-  //          return newSelf;
-  //      }
-
         /// <summary>
         /// Creates class from derived class into this class
         /// (subscript operator of [])
@@ -107,19 +97,14 @@ public:
 		//Performs remainder/Mod operation then saves division result
 		class DLL_API ModResult : public AltNumModResult<MediumDecBase>{};
 
-        ///// <summary>
-        ///// The decimal overflow value * -1
-        ///// </summary>
-		//static signed _int64 const NegDecimalOverflowX = -1000000000;
-
         void SetValue(MediumDec Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
-        void SetVariantValue(VariantType Value)
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void SetValueFromVariant(VariantType Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;

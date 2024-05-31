@@ -5,7 +5,7 @@
 #pragma once
 
 #include "MediumDecPreprocessors.h"
-#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
+//#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
 
 #include <string>
 #include <cmath>
@@ -16,8 +16,6 @@
 #include <cstddef>
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
-#include "..\AltNumModResult.hpp"
-#include "..\Concepts\IntegerConcept.hpp"
 #include "..\Concepts\MediumDecVariantConcept.hpp"
 
 
@@ -118,17 +116,6 @@ namespace BlazesRusCode
 
         /// <summary>
         /// Creates class from derived class into this class
-        /// (parenthesis operator of ())
-        /// </summary>
-        template<MediumDecVariant VariantType>
-        auto operator()(VariantType variantValue) const
-        {
-            MediumDecBase newSelf = MediumDecBase(variantValue.IntHalf, variantValue.DecimalHalf);
-            return newSelf;
-        }
-
-        /// <summary>
-        /// Creates class from derived class into this class
         /// (subscript operator of [])
         /// </summary>
         template<MediumDecVariant VariantType>
@@ -143,17 +130,13 @@ namespace BlazesRusCode
     #pragma region Negative_Status
 
         bool IsNegative() const
-        {
-            return IntHalf.IsNegative();
-        }
+        { return IntHalf.IsNegative(); }
 
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
         void SwapNegativeStatus()
-        {
-            IntHalf.Sign ^= 1;
-        }
+        { IntHalf.Sign ^= 1; }
 
     #pragma endregion Negative_Status
 
@@ -162,68 +145,47 @@ namespace BlazesRusCode
 
 		//Set value as exactly zero
         void SetAsZero()
-        {
-            IntHalf = 0; DecimalHalf = 0;
-        }
+        { IntHalf = 0; DecimalHalf = 0; }
 
 		//Set value as exactly one
         void SetAsOne()
-        {
-            IntHalf = 1; DecimalHalf = 0;
-        }
+        { IntHalf = 1; DecimalHalf = 0; }
 		
 		//Set as +-1 while keeping current sign
         void SetAsOneVal()
-        {
-            IntHalf.Value = 1; DecimalHalf = 0;
-        }
+        { IntHalf.Value = 1; DecimalHalf = 0; }
 
         void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
-        {
-            IntHalf = 0; DecimalHalf = 0;
-        }
+        { IntHalf = 0; DecimalHalf = 0; }
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const
-        {
-            return IntHalf.Value==0;
-        }
+        { return IntHalf.Value==0; }
 
         bool IsNotAtZeroInt() const
-        {
-            return IntHalf.Value!=0;
-        }
+        { return IntHalf.Value!=0; }
 
         bool IsAtOneInt() const
-        {
-            return IntHalf.Value==1;
-        }
+        { return IntHalf.Value==1; }
 
         bool IsNotAtOneInt() const
-        {
-            return IntHalf.Value!=1;
-        }
+        { return IntHalf.Value!=1; }
 
         //Detect if at exactly zero(only overridden with MixedDec)
 		bool IsZero() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==0;
-		}
+		{ return DecimalHalf==0&&IntHalf.Value==0; }
 		
 		bool IsOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::One;
-		}
+        { return DecimalHalf==0&&IntHalf==MirroredInt::One; }
 		
 		bool IsNegOne() const
-		{
-            return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne;
-		}
+        { return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne; }
 		
 		bool IsOneVal() const
-		{
-            return DecimalHalf==0&&IntHalf.Value==1;
-		}
+		{ return DecimalHalf==0&&IntHalf.Value==1; }
+
+		bool IsOneVariantVal() const
+		{ return DecimalHalf.Value==0&&IntHalf.Value==1; }
 
     #pragma endregion Check_if_value
 
@@ -233,19 +195,13 @@ namespace BlazesRusCode
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
         void SetAsMaximum()
-        {
-            IntHalf = MaxIntHalf;
-			DecimalHalf = 999999999;
-        }
+        { IntHalf = MaxIntHalf; DecimalHalf = 999999999; }
 
         /// <summary>
         /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
         /// </summary>
         void SetAsMinimum()
-        {
-            IntHalf = MinIntHalf;
-			DecimalHalf = 999999999;
-        }
+        { IntHalf = MinIntHalf; DecimalHalf = 999999999; }
 	
     #pragma endregion RangeLimits
 
