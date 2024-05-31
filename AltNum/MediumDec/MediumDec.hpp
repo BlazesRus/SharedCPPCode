@@ -23,7 +23,7 @@ namespace BlazesRusCode
     /// Represents +- 2147483647.999999999 with 100% accuracy 
     /// except for truncation during division and multiplication after 9th digit
 	/// </summary>
-    class DLL_API MediumDec : protected PartialMediumDec
+    class DLL_API MediumDec : public PartialMediumDec
     {
 public:
 #pragma region class_constructors
@@ -90,17 +90,17 @@ public:
   //          MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
   //          return newSelf;
   //      }
-		//
-  //      /// <summary>
-  //      /// Creates class from derived class into this class
-  //      /// (subscript operator of [])
-  //      /// </summary>
-  //      template<MediumDecVariant VariantType>
-  //      auto operator[](VariantType variantValue) const
-  //      {
-  //          PartialMediumDec newSelf = PartialMediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
-  //          return newSelf;
-  //      }
+
+        /// <summary>
+        /// Creates class from derived class into this class
+        /// (subscript operator of [])
+        /// </summary>
+        template<MediumDecVariant VariantType>
+        auto operator[](VariantType variantValue) const
+        {
+            auto newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            return newSelf;
+        }
 
 #pragma endregion class_constructors
 
@@ -131,8 +131,6 @@ public:
     
     #pragma region RepType
     #pragma endregion RepType
-
-    #pragma region Comparison Operators
 
     #pragma region ValueDefines
     private:
@@ -290,13 +288,6 @@ public:
         {
             return MediumDec(0, 868588964);
         }
-        
-    #if defined(AltNum_EnableNil)
-        static MediumDec NilValue()
-        {
-            return MediumDec(NilRep, NilRep);
-        }
-    #endif
 
         static MediumDec MinimumValue()
         {
@@ -435,12 +426,6 @@ public:
         /// </summary>
         static MediumDec HalfLN10Mult;
 
-    #if defined(AltNum_EnableNil)
-        /// <summary>
-        /// Nil Value as proposed by https://docs.google.com/document/d/19n-E8Mu-0MWCcNt0pQnFi2Osq-qdMDW6aCBweMKiEb4/edit
-        /// </summary>
-        static MediumDec Nil;
-    #endif
 public:
     #pragma endregion ValueDefines
 
@@ -450,16 +435,6 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
-
-        /// <summary>
-        /// Gets the value from string.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDec</returns>
-        auto GetValueFromString(std::string Value)
-        {
-
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -490,160 +465,35 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
-        virtual std::string ToString();
+        std::string ToString();
 
         /// <summary>
         /// Converts to string with digits filled in even when empty
         /// </summary>
         /// <returns>std.string</returns>
-        virtual std::string ToFullString();
+        std::string ToFullString();
 
         /// <summary>
         /// Implements the operator std::string operator.
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator std::string() { return ToString(); }
+
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
-		//To-Do: Add more exact conversion from floating point format to MediumDec variant
-	
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        virtual void SetFloatVal(const float& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			float lValue = Value;
-            bool IsNegative = Value < 0.0f;
-            if (IsNegative) { lValue *= -1.0f; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0f)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                lValue -= (float)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDoubleVal(const double& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			double lValue = Value;
-            bool IsNegative = Value < 0.0;
-            if (IsNegative) { lValue *= -1.0; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                lValue -= (double)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDecimalVal(const ldouble& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			ldouble lValue = Value;
-            bool IsNegative = Value < 0.0L;
-            if (IsNegative) { lValue *= -1.0L; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (lValue >= 2147483648.0L)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(lValue);
-                lValue -= (ldouble)WholeValue;
-                DecimalHalf = (signed int)lValue * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
-
-        /// <summary>
-        /// Sets the value(false equals zero; otherwise is true).
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        virtual void SetBoolVal(const bool& Value)
-        {
-            IntHalf = Value==false ? 0 : 1;
-            DecimalHalf = 0;
-        }
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        virtual void SetIntVal(const int& Value)
-        {
-			if(Value<0)
-			{
-				IntHalf.Sign = 0;
-				IntHalf.Value = -Value;
-			}
-			else
-				IntHalf = Value;
-			DecimalHalf = 0;
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const float& Value)
-        {
-            this->SetFloatVal(Value);
-        }
+        MediumDec(const float& Value){ this->SetFloatVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const double& Value)
-        {
-            this->SetDoubleVal(Value);
-        }
+        MediumDec(const double& Value){ this->SetDoubleVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
@@ -663,146 +513,22 @@ public:
             this->SetBoolVal(Value);
         }
 
-#if defined(AltNum_EnableMediumDecdSetValues)
-        MediumDec(const MediumDec& Value)
-        {
-            this->SetVal(Value);
-        }
-#endif
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-protected://Adding more exact conversion from floating point to MediumDec variant later
+		//Adding more exact conversion from floating point to MediumDec variant later (after I get the class and variants working again)
 
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void float toFloatV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            float Value;
-            if (IntHalf.IsNegative())
-            {
-                Value = (float)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-            }
-            else
-            {
-                Value = (float)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0f;//Placeholder
-	#endif
-        }
-
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void double toDoubleV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-		    double Value;
-            if (IntHalf < 0)
-            {
-                Value = (double)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-            }
-            else
-            {
-                Value = (double)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0;//Placeholder
-	#endif
-        }
-
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        void ldouble toDecimalV1()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            ldouble Value;
-            if (IntHalf < 0)
-            {
-                Value = (ldouble)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            else
-            {
-                Value = (ldouble)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0L;//Placeholder
-	#endif
-        }
-
-public:
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        float toFloat()
-        {
-            return toFloatV1;
-        }
-
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        double toDouble()
-        {
-            return toDoubleV1();
-        }
-
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        double toDecimal()
-        {
-            return toDecimalV1;
-        }
-		
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toInt() { return IntHalf; }
+        int toInt() { return (signed int) IntHalf; }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toUInt() { return (unsigned int) IntHalf; }
 
         bool toBool() { return IntHalf.IsZero() ? false : true; }
 
@@ -810,19 +536,19 @@ public:
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator float() { return toFloatV1(); }
+        explicit operator float() { return toFloat(); }
 		
         /// <summary>
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator double() { return toDoubleV1(); }
+        explicit operator double() { return toDouble(); }
 		
         /// <summary>
         /// MediumDec Variant to decimal explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble() { return toDecimalV1(); }
+        explicit operator ldouble() { return toDecimal(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -838,35 +564,10 @@ public:
 
     #pragma endregion ConvertToOtherTypes
 	
-    #pragma region Other RepType Conversion
-    #pragma endregion Other RepType Conversion
+    //#pragma region Other RepType Conversion
+    //#pragma endregion Other RepType Conversion
 	
     #pragma region Comparison Operators
-protected:
-		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=MediumDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = DecimalHalf.Value>0?1:0;
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-	
 public:
 
 		std::strong_ordering operator<=>(const MediumDec& that) const
@@ -885,6 +586,24 @@ public:
 			return BasicIntComparison(that);
 		}
 
+		bool operator==(const MediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return false;
+			if (DecimalHalf!=that.DecimalHalf)
+				return false;
+            return true;
+		}
+
+		bool operator!=(const MediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return true;
+			if (DecimalHalf!=that.DecimalHalf)
+				return true;
+            return false;
+		}
+
 		bool operator==(const int& that) const
 		{
 			if (IntHalf!=that)
@@ -894,12 +613,13 @@ public:
 			return true;
 		}
 
-		bool operator==(const MediumDec& that) const
+		bool operator!=(const int& that) const
 		{
-			if (IntHalf!=that.IntHalf)
+			if (IntHalf!=that)
 				return false;
-			if (DecimalHalf!=that.IntHalf)
+			if (DecimalHalf!=0)
 				return false;
+			return true;
 		}
 
     #pragma endregion Comparison Operators
@@ -937,7 +657,7 @@ public:
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
         /// <returns>MediumDec</returns>
-        friend MediumDec operator/(const MediumDec& self, const MediumDec& rValue) { return self.DivideBy(rValue); }
+        friend MediumDec operator/(const MediumDec& self, const MediumDec& rValue) { return self.BasicDivideBy(rValue); }
 		
         /// <summary>
         /// /= operation
@@ -1434,7 +1154,7 @@ public:
         auto& AbsOf()
         {
             if (IntHalf.IsNegative())
-                IntHalf.Sign = 1;
+                IntHalf.Sign = MirroredInt::PositiveSign;
             return *this;
         }
 
@@ -1455,7 +1175,7 @@ public:
         /// <returns>MediumDec&</returns>
         auto& FloorOf()
         {
-            DecimalHalf = 0;
+            DecimalHalf.Value = 0;
             return *this;
         }
 
@@ -2701,16 +2421,12 @@ public:
 
     #pragma endregion Trigonomic Functions
     };
-
     #pragma region ValueDefine Source
-
-	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
-	MirroredInt MediumDec::MaxIntHalf = MirroredInt::Maximum;
-	MirroredInt MediumDec::MinIntHalf = MirroredInt::Minimum;
 
     #pragma endregion ValueDefine Source
 
     #pragma region String Function Source
+
     /// <summary>
     /// Reads the string.
     /// </summary>
@@ -2765,18 +2481,6 @@ public:
                 PlaceNumber--;
             }
         }
-    }
-
-    /// <summary>
-    /// Gets the value from string.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    /// <returns>MediumDec</returns>
-    inline MediumDec MediumDec::GetValueFromString(const std::string& Value)
-    {
-        MediumDec NewSelf = Zero;
-        NewSelf.ReadString(Value);
-        return NewSelf;
     }
 
     std::string MediumDec::ToString()
