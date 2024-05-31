@@ -151,12 +151,21 @@ namespace BlazesRusCode
 			return true;
 		}
 
+		std::strong_ordering operator<=>(const signed int& that) const
+		{
+			if (that < 0){
+				if (auto ValueCmp = Value <=> 0; ValueCmp != 0)
+					return ValueCmp;
+			} else if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
 		bool operator==(const signed int& that) const
 		{
 			if (that < 0)
 				return false;
 			else if (Value==(unsigned int)that)
-				return false;
+				return true;
 		}
 
 		bool operator!=(const signed int& that) const

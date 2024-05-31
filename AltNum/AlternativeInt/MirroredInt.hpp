@@ -174,6 +174,11 @@ namespace BlazesRusCode
 			return (Value&1)==1;
 		}
 
+		bool IsZero() const
+        {
+			return Value==0&&Sign==PositiveSign;
+        }
+
         //Returns copy of value as Absolute value
         auto Abs() const
         {

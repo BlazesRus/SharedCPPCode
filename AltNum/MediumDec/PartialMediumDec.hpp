@@ -249,89 +249,6 @@ namespace BlazesRusCode
 	
     #pragma endregion RangeLimits
 
-    #pragma region Comparison Operators
-
-protected:
-		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=PartialMediumDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = DecimalHalf.Value>0?1:0;
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-
-public:
-
-		std::strong_ordering operator<=>(const PartialMediumDec& that) const
-		{//return BasicComparison(that);
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-
-		std::strong_ordering operator<=>(const int& that) const
-		{
-			return BasicIntComparison(that);
-		}
-
-		bool operator==(const PartialMediumDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.DecimalHalf)
-				return false;
-            return true;
-		}
-
-		bool operator!=(const PartialMediumDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return true;
-			if (DecimalHalf!=that.DecimalHalf)
-				return true;
-            return false;
-		}
-
-		bool operator==(const int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
-
-		bool operator!=(const int& that) const
-		{
-			if (IntHalf!=that)
-				return true;
-			if (DecimalHalf!=0)
-				return true;
-			return false;
-		}
-
-    #pragma endregion Comparison Operators
-
     #pragma region ValueSetters
 
         /// <summary>
@@ -467,7 +384,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
-        PartialMediumDec GetValueFromString(std::string Value);
+        auto GetValueFromString(std::string Value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -511,7 +428,290 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator std::string() { return ToString(); }
+
     #pragma endregion String Commands
+
+    #pragma region ConvertFromOtherTypes
+
+        /// <summary>
+        /// Sets the value(false equals zero; otherwise is true).
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetBoolVal(const bool& Value)
+        {
+            IntHalf = Value==false ? 0 : 1;
+            DecimalHalf = 0;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetIntVal(const int& Value)
+        {
+			if(Value<0)
+			{
+				IntHalf.Sign = 0;
+				IntHalf.Value = -Value;
+			}
+			else
+				IntHalf = Value;
+			DecimalHalf = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        PartialMediumDec(const float& Value){ this->SetFloatVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        PartialMediumDec(const double& Value){ this->SetDoubleVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        PartialMediumDec(const ldouble& Value){ this->SetDecimalVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        PartialMediumDec(const bool& Value){ this->SetBoolVal(Value); }
+
+    #pragma endregion ConvertFromOtherTypes
+
+    #pragma region ConvertToOtherTypes
+
+        //To-Do: Add more exact conversion from floating point format to MediumDec variant
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        float toFloat()
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+            float Value;
+            if (IntHalf.IsNegative())
+            {
+                Value = (float)-IntHalf.Value;
+                if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
+            }
+            else
+            {
+                Value = (float)IntHalf.Value;
+                if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
+            }
+            return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntHalf.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0f;//Placeholder
+	#endif
+        }
+
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        double toDouble()
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+		    double Value;
+            if (IntHalf < 0)
+            {
+                Value = (double)-IntHalf.Value;
+                if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
+            }
+            else
+            {
+                Value = (double)IntHalf.Value;
+                if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
+            }
+            return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntHalf.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0;//Placeholder
+	#endif
+        }
+
+        /// <summary>
+        /// MediumDec Variant to long double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        ldouble toDecimal()
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+            ldouble Value;
+            if (IntHalf < 0)
+            {
+                Value = (ldouble)-IntHalf.Value;
+                if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
+            }
+            else
+            {
+                Value = (ldouble)IntHalf.Value;
+                if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
+            }
+            return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			if(IntHalf.Value==0)//Exponent is negative
+			{
+				//To-Do:Add code here
+			}
+			else
+			{
+				//To-Do:Add code here
+			}
+			return 0.0L;//Placeholder
+	#endif
+        }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toInt() { return (signed int) IntHalf; }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toUInt() { return (unsigned int) IntHalf; }
+
+        bool toBool() { return IntHalf.IsZero() ? false : true; }
+
+        /// <summary>
+        /// MediumDec Variant to float explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator float() { return toFloat(); }
+		
+        /// <summary>
+        /// MediumDec Variant to double explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator double() { return toDouble(); }
+		
+        /// <summary>
+        /// MediumDec Variant to decimal explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator ldouble() { return toDecimal(); }
+
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator int() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to bool explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator bool() { return toBool(); }
+
+    #pragma endregion ConvertToOtherTypes
+
+    #pragma region Comparison Operators
+protected:
+		//Compare only as if in NormalType representation mode
+		template<MediumDecVariant VariantType=PartialMediumDec>
+		std::strong_ordering BasicComparisonV1(const VariantType& that) const
+		{
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+		
+		//Compare only as if in NormalType representation mode
+		std::strong_ordering BasicIntComparison(const int& that) const
+		{
+			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = DecimalHalf.Value>0?1:0;
+			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+
+public:
+
+		std::strong_ordering operator<=>(const PartialMediumDec& that) const
+		{//return BasicComparison(that);
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+				return IntHalfCmp;
+			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+				return DecimalHalfCmp;
+		}
+
+		std::strong_ordering operator<=>(const int& that) const
+		{
+			return BasicIntComparison(that);
+		}
+
+		bool operator==(const PartialMediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return false;
+			if (DecimalHalf!=that.DecimalHalf)
+				return false;
+            return true;
+		}
+
+		bool operator!=(const PartialMediumDec& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return true;
+			if (DecimalHalf!=that.DecimalHalf)
+				return true;
+            return false;
+		}
+
+		bool operator==(const int& that) const
+		{
+			if (IntHalf!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator!=(const int& that) const
+		{
+			if (IntHalf!=that)
+				return true;
+			if (DecimalHalf!=0)
+				return true;
+			return false;
+		}
+
+    #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer Division Operations
 protected:
@@ -1523,7 +1723,7 @@ public:
     /// <returns>MediumDec</returns>
     inline auto PartialMediumDec::GetValueFromString(const std::string& Value)
     {
-        MediumDec NewSelf = Zero;
+        auto NewSelf = Zero;
         NewSelf.ReadString(Value);
         return NewSelf;
     }
