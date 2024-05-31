@@ -405,10 +405,6 @@ namespace BlazesRusCode
             this->ReadString(Value);
         }
 
-//private:
-        //std::string BasicToStringOp();
-		
-		//std::string BasicToFullStringOp();
 public:
 
         /// <summary>
@@ -432,6 +428,99 @@ public:
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetFloatVal(const float& Value)
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+			float lValue = Value;
+            bool IsNegative = Value < 0.0f;
+            if (IsNegative) { lValue *= -1.0f; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (Value >= 2147483648.0f)
+            {
+                if (IsNegative)
+					IntHalf = MirroredInt(2147483647,0);
+                else
+                    IntHalf = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(Value);
+                lValue -= (float)WholeValue;
+                DecimalHalf = (signed int)Value * 10000000000;
+                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
+            }
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetDoubleVal(const double& Value)
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+			double lValue = Value;
+            bool IsNegative = Value < 0.0;
+            if (IsNegative) { lValue *= -1.0; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (Value >= 2147483648.0)
+            {
+                if (IsNegative)
+					IntHalf = MirroredInt(2147483647,0);
+                else
+                    IntHalf = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(Value);
+                lValue -= (double)WholeValue;
+                DecimalHalf = (signed int)Value * 10000000000;
+                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
+            }
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        void SetDecimalVal(const ldouble& Value)
+        {
+	#if defined(AltNum_UseLegacyFloatingConversion)
+			ldouble lValue = Value;
+            bool IsNegative = Value < 0.0L;
+            if (IsNegative) { lValue *= -1.0L; }
+            //Cap value if too big on initialize (preventing overflow on conversion)
+            if (lValue >= 2147483648.0L)
+            {
+                if (IsNegative)
+					IntHalf = MirroredInt(2147483647,0);
+                else
+                    IntHalf = 2147483647;
+                DecimalHalf = 999999999;
+            }
+            else
+            {
+                signed __int64 WholeValue = (signed __int64)std::floor(lValue);
+                lValue -= (ldouble)WholeValue;
+                DecimalHalf = (signed int)lValue * 10000000000;
+                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
+            }
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+			//To-Do:Add code here
+	#endif
+        }
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).

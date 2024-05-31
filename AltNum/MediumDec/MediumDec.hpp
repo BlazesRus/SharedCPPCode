@@ -430,6 +430,7 @@ public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
+
         /// <summary>
         /// Reads the string.
         /// </summary>
@@ -455,10 +456,6 @@ public:
             this->ReadString(Value);
         }
 
-//private:
-        //std::string BasicToStringOp();
-		
-		//std::string BasicToFullStringOp();
 public:
 
         /// <summary>
@@ -499,19 +496,13 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const ldouble& Value)
-        {
-            this->SetDecimalVal(Value);
-        }
+        MediumDec(const ldouble& Value){ this->SetDecimalVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const bool& Value)
-        {
-            this->SetBoolVal(Value);
-        }
+        MediumDec(const bool& Value){ this->SetBoolVal(Value); }
 
     #pragma endregion ConvertFromOtherTypes
 
