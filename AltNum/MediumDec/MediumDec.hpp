@@ -134,19 +134,6 @@ public:
 
     #pragma region ValueDefines
     private:
-	#if defined(AltNum_EnableNaN)
-        static MediumDec NaNValue()
-        {
-            MediumDec NewSelf = MediumDec(0, NaNRep);
-            return NewSelf;
-        }
-		
-        static MediumDec UndefinedValue()
-        {
-            MediumDec NewSelf = MediumDec(0, UndefinedRep);
-            return NewSelf;
-        }
-	#endif
         
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
@@ -436,6 +423,18 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
+
+        /// <summary>
+        /// Gets the value from string.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        MediumDec GetValueFromString(std::string Value)
+        {
+            auto NewSelf = MediumDec();
+            NewSelf.ReadString(Value);
+            return NewSelf;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal

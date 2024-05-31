@@ -1805,18 +1805,6 @@ public:
         }
     }
 
-    /// <summary>
-    /// Gets the value from string.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    /// <returns>MediumDec</returns>
-    inline auto PartialMediumDec::GetValueFromString(const std::string& Value)
-    {
-        auto NewSelf = Zero;
-        NewSelf.ReadString(Value);
-        return NewSelf;
-    }
-
     std::string PartialMediumDec::ToString()
     {
         std::string Value = std::string(IntHalf);
