@@ -29,10 +29,10 @@ using PartialInt = BlazesRusCode::PartialInt;
 
 namespace BlazesRusCode
 {
-    class PartialMediumDec;
+    class MediumDecBase;
 
     //Reduced version of MediumDec result for modulus result and other stuff
-    class DLL_API PartialMediumDec : public AltNumBase//AltNumBase is used as base class to identify as MediumDec variant
+    class DLL_API MediumDecBase : public AltNumBase//AltNumBase is used as base class to identify as MediumDec variant
     {
     public:
     #pragma region DigitStorage
@@ -80,28 +80,28 @@ namespace BlazesRusCode
     #pragma region class_constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PartialMediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        PartialMediumDec(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+        MediumDecBase(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PartialMediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        PartialMediumDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+        MediumDecBase(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
-        PartialMediumDec& operator=(const PartialMediumDec& rhs)
+        MediumDecBase& operator=(const MediumDecBase& rhs)
         {
             // Check for self-assignment
             if (this == &rhs)      // Same object?
@@ -110,7 +110,7 @@ namespace BlazesRusCode
             return *this;
         }
 
-        PartialMediumDec& operator=(const signed int& rhs)
+        MediumDecBase& operator=(const signed int& rhs)
         {
             IntHalf = rhs; DecimalHalf = 0;
             return *this;
@@ -123,7 +123,7 @@ namespace BlazesRusCode
         template<MediumDecVariant VariantType>
         auto operator()(VariantType variantValue) const
         {
-            PartialMediumDec newSelf = PartialMediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            MediumDecBase newSelf = MediumDecBase(variantValue.IntHalf, variantValue.DecimalHalf);
             return newSelf;
         }
 
@@ -134,7 +134,7 @@ namespace BlazesRusCode
         template<MediumDecVariant VariantType>
         auto operator[](VariantType variantValue) const
         {
-            PartialMediumDec newSelf = PartialMediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            MediumDecBase newSelf = MediumDecBase(variantValue.IntHalf, variantValue.DecimalHalf);
             return newSelf;
         }
 
@@ -390,7 +390,7 @@ namespace BlazesRusCode
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        PartialMediumDec(const char* strVal)
+        MediumDecBase(const char* strVal)
         {
             std::string Value = strVal;
             this->ReadString(Value);
@@ -400,7 +400,7 @@ namespace BlazesRusCode
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        PartialMediumDec(const std::string& Value)
+        MediumDecBase(const std::string& Value)
         {
             this->ReadString(Value);
         }
@@ -552,25 +552,25 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        PartialMediumDec(const float& Value){ this->SetFloatVal(Value); }
+        MediumDecBase(const float& Value){ this->SetFloatVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        PartialMediumDec(const double& Value){ this->SetDoubleVal(Value); }
+        MediumDecBase(const double& Value){ this->SetDoubleVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        PartialMediumDec(const ldouble& Value){ this->SetDecimalVal(Value); }
+        MediumDecBase(const ldouble& Value){ this->SetDecimalVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        PartialMediumDec(const bool& Value){ this->SetBoolVal(Value); }
+        MediumDecBase(const bool& Value){ this->SetBoolVal(Value); }
 
     #pragma endregion ConvertFromOtherTypes
 
@@ -723,7 +723,7 @@ public:
     #pragma region Comparison Operators
 protected:
 		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=PartialMediumDec>
+		template<MediumDecVariant VariantType=MediumDecBase>
 		std::strong_ordering BasicComparisonV1(const VariantType& that) const
 		{
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
@@ -748,7 +748,7 @@ protected:
 
 public:
 
-		std::strong_ordering operator<=>(const PartialMediumDec& that) const
+		std::strong_ordering operator<=>(const MediumDecBase& that) const
 		{//return BasicComparison(that);
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
@@ -764,7 +764,7 @@ public:
 			return BasicIntComparison(that);
 		}
 
-		bool operator==(const PartialMediumDec& that) const
+		bool operator==(const MediumDecBase& that) const
 		{
 			if (IntHalf!=that.IntHalf)
 				return false;
@@ -773,7 +773,7 @@ public:
             return true;
 		}
 
-		bool operator!=(const PartialMediumDec& that) const
+		bool operator!=(const MediumDecBase& that) const
 		{
 			if (IntHalf!=that.IntHalf)
 				return true;
@@ -934,14 +934,14 @@ public:
         void BasicUInt16DivOp() { BasicUIntDivOpV1<unsigned long long>; }
         void BasicInt16DivOp() { BasicIntDivOpV1<signed long long>; }
 
-        PartialMediumDec& BasicUIntDivOperation() { BasicUIntDivOperationV1<unsigned int>; }
-        PartialMediumDec& BasicIntDivOperation() { BasicIntDivOperationV1<signed int>; }
-        PartialMediumDec& BasicUInt64DivOperation() { BasicUIntDivOperationV1<unsigned long long>; }
-        PartialMediumDec& BasicInt64DivOperation() { BasicIntDivOperationV1<signed long long>; }
-        PartialMediumDec& BasicUInt8DivOperation() { BasicUIntDivOperationV1<unsigned char>; }
-        PartialMediumDec& BasicInt8DivOperation() { BasicIntDivOperationV1<signed char>; }
-        PartialMediumDec& BasicUInt16DivOperation() { BasicUIntDivOperationV1<unsigned short>; }
-        PartialMediumDec& BasicInt16DivOperation() { BasicIntDivOperationV1<signed short>; }
+        MediumDecBase& BasicUIntDivOperation() { BasicUIntDivOperationV1<unsigned int>; }
+        MediumDecBase& BasicIntDivOperation() { BasicIntDivOperationV1<signed int>; }
+        MediumDecBase& BasicUInt64DivOperation() { BasicUIntDivOperationV1<unsigned long long>; }
+        MediumDecBase& BasicInt64DivOperation() { BasicIntDivOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt8DivOperation() { BasicUIntDivOperationV1<unsigned char>; }
+        MediumDecBase& BasicInt8DivOperation() { BasicIntDivOperationV1<signed char>; }
+        MediumDecBase& BasicUInt16DivOperation() { BasicUIntDivOperationV1<unsigned short>; }
+        MediumDecBase& BasicInt16DivOperation() { BasicIntDivOperationV1<signed short>; }
 
         void BasicDivideByUInt() { BasicDivideByUIntV1<unsigned int>; }
         void BasicDivideByInt() { BasicDivideByIntV1<signed int>; }
@@ -1203,14 +1203,14 @@ public:
         void BasicUInt16MultOp() { BasicUIntMultOpV1<unsigned long long>; }
         void BasicInt16MultOp() { BasicIntMultOpV1<signed long long>; }
 
-        PartialMediumDec& BasicUIntMultOperation() { BasicUIntMultOperationV1<unsigned int>; }
-        PartialMediumDec& BasicIntMultOperation() { BasicIntMultOperationV1<signed int>; }
-        PartialMediumDec& BasicUInt64MultOperation() { BasicUIntMultOperationV1<unsigned long long>; }
-        PartialMediumDec& BasicInt64MultOperation() { BasicIntMultOperationV1<signed long long>; }
-        PartialMediumDec& BasicUInt8MultOperation() { BasicUIntMultOperationV1<unsigned char>; }
-        PartialMediumDec& BasicInt8MultOperation() { BasicIntMultOperationV1<signed char>; }
-        PartialMediumDec& BasicUInt16MultOperation() { BasicUIntMultOperationV1<unsigned short>; }
-        PartialMediumDec& BasicInt16MultOperation() { BasicIntMultOperationV1<signed short>; }
+        MediumDecBase& BasicUIntMultOperation() { BasicUIntMultOperationV1<unsigned int>; }
+        MediumDecBase& BasicIntMultOperation() { BasicIntMultOperationV1<signed int>; }
+        MediumDecBase& BasicUInt64MultOperation() { BasicUIntMultOperationV1<unsigned long long>; }
+        MediumDecBase& BasicInt64MultOperation() { BasicIntMultOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt8MultOperation() { BasicUIntMultOperationV1<unsigned char>; }
+        MediumDecBase& BasicInt8MultOperation() { BasicIntMultOperationV1<signed char>; }
+        MediumDecBase& BasicUInt16MultOperation() { BasicUIntMultOperationV1<unsigned short>; }
+        MediumDecBase& BasicInt16MultOperation() { BasicIntMultOperationV1<signed short>; }
 
         void BasicMultiplyByUInt() { BasicMultiplyByUIntV1<unsigned int>; }
         void BasicMultiplyByInt() { BasicMultiplyByIntV1<signed int>; }
@@ -1453,7 +1453,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        /// <returns>PartialMediumDec&</returns>
+        /// <returns>MediumDecBase&</returns>
         void DivideByTwo()
         {
             if(DecimalHalf==0&&IntHalf&1==1)//Check if number is odd
@@ -1467,7 +1467,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        /// <returns>PartialMediumDec&</returns>
+        /// <returns>MediumDecBase&</returns>
         void DivideByFour()
         {
             //Checking if divisible by 4 based on
@@ -1597,59 +1597,59 @@ public:
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const PartialMediumDec& rValue) { return self.DivideBy(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase operator/(const MediumDecBase& self, const MediumDecBase& rValue) { return self.DivideBy(rValue); }
 		
         /// <summary>
         /// /= operation
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const PartialMediumDec& rValue) { return self.DivOperation(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase& operator/=(MediumDecBase& self, const MediumDecBase& rValue) { return self.DivOperation(rValue); }
 		
         /// <summary>
-        /// Division operation between PartialMediumDec and Integer rValue.
+        /// Division operation between MediumDecBase and Integer rValue.
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const signed int& rValue) { return self.BasicDivideByInt(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const signed long long& rValue) { return self.BasicDivideByInt64(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const unsigned int& rValue) { return self.BasicDivideByUInt(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const unsigned long long& rValue) { return self.BasicDivideByUInt64(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase operator/(const MediumDecBase& self, const signed int& rValue) { return self.BasicDivideByInt(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const signed long long& rValue) { return self.BasicDivideByInt64(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const unsigned int& rValue) { return self.BasicDivideByUInt(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const unsigned long long& rValue) { return self.BasicDivideByUInt64(rValue); }
 		
-        friend PartialMediumDec operator/(const signed int& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const signed long long& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const unsigned int& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const unsigned long long& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const signed int& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const signed long long& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const unsigned int& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const unsigned long long& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
 
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const signed char& rValue) { return self.BasicDivideByInt8(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const signed short& rValue) { return self.BasicDivideByInt16(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const unsigned char& rValue) { return self.BasicDivideByUInt8(rValue); }
-        friend PartialMediumDec operator/(const PartialMediumDec& self, const unsigned short& rValue) { return self.BasicDivideByUInt16(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const signed char& rValue) { return self.BasicDivideByInt8(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const signed short& rValue) { return self.BasicDivideByInt16(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const unsigned char& rValue) { return self.BasicDivideByUInt8(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& self, const unsigned short& rValue) { return self.BasicDivideByUInt16(rValue); }
 
-        friend PartialMediumDec operator/(const signed char& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const signed short& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const unsigned char& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
-        friend PartialMediumDec operator/(const unsigned short& lrValue, const PartialMediumDec& rValue) { return ((PartialMediumDec)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const signed char& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const signed short& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const unsigned char& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
+        friend MediumDecBase operator/(const unsigned short& lrValue, const MediumDecBase& rValue) { return ((MediumDecBase)lrValue).DivideBy(rValue); }
 
 
         /// <summary>
-        /// *= operation between PartialMediumDec and Integer rValue.
+        /// *= operation between MediumDecBase and Integer rValue.
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const signed int& rValue) { return self.BasicIntDivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const Int64& rValue) { return self.BasicInt64DivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const unsigned int& rValue) { return self.BasicUIntDivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const UInt64& rValue) { return self.BasicUInt64DivOperation(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase& operator/=(MediumDecBase& self, const signed int& rValue) { return self.BasicIntDivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const Int64& rValue) { return self.BasicInt64DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const unsigned int& rValue) { return self.BasicUIntDivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const UInt64& rValue) { return self.BasicUInt64DivOperation(rValue); }
 
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const signed char& rValue) { return self.BasicInt8DivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const signed short& rValue) { return self.BasicInt16DivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const unsigned char& rValue) { return self.BasicUInt8DivOperation(rValue); }
-        friend PartialMediumDec& operator/=(PartialMediumDec& self, const unsigned short& rValue) { return self.BasicUInt16DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const signed char& rValue) { return self.BasicInt8DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const signed short& rValue) { return self.BasicInt16DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const unsigned char& rValue) { return self.BasicUInt8DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& self, const unsigned short& rValue) { return self.BasicUInt16DivOperation(rValue); }
 
 	#pragma endregion Other Division Operations	
 
@@ -1684,66 +1684,66 @@ public:
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec operator*(const PartialMediumDec& self, const PartialMediumDec& rValue) { return self.MultipleBy(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase operator*(const MediumDecBase& self, const MediumDecBase& rValue) { return self.MultipleBy(rValue); }
 
         /// <summary>
         /// *= operation
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec& operator*=(PartialMediumDec& self, const PartialMediumDec& rValue) { return self.MultOperation(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase& operator*=(MediumDecBase& self, const MediumDecBase& rValue) { return self.MultOperation(rValue); }
 		
         /// <summary>
-        /// Multiplication operation between PartialMediumDec and Integer rValue.
+        /// Multiplication operation between MediumDecBase and Integer rValue.
         /// </summary>
         /// <param name="self">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const signed int& rValue) { return lValue.BasicMultiplyByInt(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByInt64(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const unsigned int& rValue) { return lValue.BasicMultiplyByUInt(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicMultiplyByInt(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByInt64(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicMultiplyByUInt(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
 		
-        friend PartialMediumDec operator*(const signed int& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByInt(lrValue); }
-        friend PartialMediumDec operator*(const unsigned long long& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByInt64(lrValue); }
-        friend PartialMediumDec operator*(const unsigned int& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByUInt(lrValue); }
-        friend PartialMediumDec operator*(const unsigned long long& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByUInt64(lrValue); }
+        friend MediumDecBase operator*(const signed int& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt(lrValue); }
+        friend MediumDecBase operator*(const unsigned long long& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt64(lrValue); }
+        friend MediumDecBase operator*(const unsigned int& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt(lrValue); }
+        friend MediumDecBase operator*(const unsigned long long& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt64(lrValue); }
 
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const signed char& rValue) { return lValue.BasicMultiplyByInt8(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const signed short& rValue) { return lValue.BasicMultiplyByInt16(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const unsigned char& rValue) { return lValue.BasicMultiplyByUInt8(rValue); }
-        friend PartialMediumDec operator*(const PartialMediumDec& lValue, const unsigned short& rValue) { return lValue.BasicMultiplyByUInt16(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicMultiplyByInt8(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicMultiplyByInt16(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned char& rValue) { return lValue.BasicMultiplyByUInt8(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned short& rValue) { return lValue.BasicMultiplyByUInt16(rValue); }
 
-        friend PartialMediumDec operator*(const signed char& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByInt8(lrValue); }
-        friend PartialMediumDec operator*(const signed short& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByInt16(lrValue); }
-        friend PartialMediumDec operator*(const unsigned char& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByUInt8(lrValue); }
-        friend PartialMediumDec operator*(const unsigned short& lrValue, const PartialMediumDec& rValue) { return rValue.BasicMultiplyByUInt16(lrValue); }
+        friend MediumDecBase operator*(const signed char& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt8(lrValue); }
+        friend MediumDecBase operator*(const signed short& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt16(lrValue); }
+        friend MediumDecBase operator*(const unsigned char& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt8(lrValue); }
+        friend MediumDecBase operator*(const unsigned short& lrValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt16(lrValue); }
 
         /// <summary>
-        /// *= operation between PartialMediumDec and Integer rValue.
+        /// *= operation between MediumDecBase and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side rValue</param>
         /// <param name="rValue">The right side rValue.</param>
-        /// <returns>PartialMediumDec</returns>
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const signed int& rValue) { return lValue.BasicIntMultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const signed long long& rValue) { return lValue.BasicInt64MultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const unsigned int& rValue) { return lValue.BasicUIntMultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
+        /// <returns>MediumDecBase</returns>
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicIntMultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicInt64MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicUIntMultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
 
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const signed char& rValue) { return lValue.BasicInt8MultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const signed short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const unsigned char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
-        friend PartialMediumDec& operator*=(PartialMediumDec& lValue, const unsigned short& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicInt8MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned short& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
 
 	#pragma endregion Other multiplication operations
     };
     #pragma region ValueDefine Source
 
-	auto PartialMediumDec::NegativeRep = MirroredInt::NegativeZero;
-	auto PartialMediumDec::MaxIntHalf = MirroredInt::Maximum;
-	auto PartialMediumDec::MinIntHalf = MirroredInt::Minimum;
+	auto MediumDecBase::NegativeRep = MirroredInt::NegativeZero;
+	auto MediumDecBase::MaxIntHalf = MirroredInt::Maximum;
+	auto MediumDecBase::MinIntHalf = MirroredInt::Minimum;
 
     #pragma endregion ValueDefine Source
 
@@ -1753,7 +1753,7 @@ public:
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void PartialMediumDec::ReadString(const std::string& Value)
+    inline void MediumDecBase::ReadString(const std::string& Value)
     {
         IntHalf = 0; DecimalHalf = 0;
         int PlaceNumber;
@@ -1805,7 +1805,7 @@ public:
         }
     }
 
-    std::string PartialMediumDec::ToString()
+    std::string MediumDecBase::ToString()
     {
         std::string Value = std::string(IntHalf);
         if (DecimalHalf != 0)
@@ -1816,7 +1816,7 @@ public:
         return Value;
     }
 
-    std::string PartialMediumDec::ToFullString()
+    std::string MediumDecBase::ToFullString()
     {
         std::string Value = std::string(IntHalf);
         if (DecimalHalf != 0)

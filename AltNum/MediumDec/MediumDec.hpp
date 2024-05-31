@@ -4,7 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#include "PartialMediumDec.hpp"
+#include "MediumDecBase.hpp"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
@@ -23,7 +23,7 @@ namespace BlazesRusCode
     /// Represents +- 2147483647.999999999 with 100% accuracy 
     /// except for truncation during division and multiplication after 9th digit
 	/// </summary>
-    class DLL_API MediumDec : public PartialMediumDec
+    class DLL_API MediumDec : public MediumDecBase
     {
 public:
 #pragma region class_constructors
@@ -69,12 +69,12 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const PartialMediumDec& rhs)
+        MediumDec(const MediumDecBase& rhs)
         {
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
         }
 
-        MediumDec& operator=(const PartialMediumDec& rhs)
+        MediumDec& operator=(const MediumDecBase& rhs)
         {
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
@@ -105,7 +105,7 @@ public:
 #pragma endregion class_constructors
 
 		//Performs remainder/Mod operation then saves division result
-		class DLL_API ModResult : public AltNumModResult<PartialMediumDec>{};
+		class DLL_API ModResult : public AltNumModResult<MediumDecBase>{};
 
         ///// <summary>
         ///// The decimal overflow value * -1

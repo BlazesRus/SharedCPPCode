@@ -125,7 +125,7 @@
     <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\PartialMediumDec.hpp">
+    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
   </ItemGroup>
