@@ -555,9 +555,6 @@ public:
 
     #pragma endregion ConvertToOtherTypes
 	
-    //#pragma region Other RepType Conversion
-    //#pragma endregion Other RepType Conversion
-	
     #pragma region Comparison Operators
 public:
 
@@ -607,10 +604,10 @@ public:
 		bool operator!=(const int& that) const
 		{
 			if (IntHalf!=that)
-				return false;
+				return true;
 			if (DecimalHalf!=0)
-				return false;
-			return true;
+				return true;
+			return false;
 		}
 
     #pragma endregion Comparison Operators
