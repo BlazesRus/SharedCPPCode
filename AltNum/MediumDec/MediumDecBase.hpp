@@ -1927,10 +1927,43 @@ public:
 				IntHalf += rValue.IntValue;
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){
+					if(rValue.IsPositive()){
+						if(DecimalHalf.Value==rValue.DecimalHalf.Value){
+							if(IntValue.Value==0)
+								SetAsZero();
+							else
+								DecimalHalf.Value = 0;
+						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+							++IntHalf;
+							if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
+								DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+							} else//-1.6 + .7 = -0.9
+								DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+						} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
+							DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10 
+						else
+							DecimalHalf.Value -= rValue.DecimalHalf.Value;
+					} else {
+					}
 //                    DecimalHalf -= rValue.DecimalHalf;
 //                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; ++IntValue; }
 //                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; --IntValue; }
                 } else {
+					if(rValue.IsPositive()){
+						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
+						if(decResult==PartialInt::DecimalOverflow){//Potentially set to zero if lands on exactly 0 Int
+						} else if(decResult>PartialInt::DecimalOverflow){
+							if(signBeforeOp!=IntHalf.Sign)
+								DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
+							else
+								DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
+						}
+						else if(signBeforeOp!=IntHalf.Sign)
+							DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
+						else
+							DecimalHalf.Value = decResult;
+					} else {
+					}
 //                    DecimalHalf += rValue.DecimalHalf;
 //                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; --IntValue; }
 //                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; ++IntValue; }
@@ -1953,7 +1986,7 @@ public:
 				BasicUIntSubOpV1(rValue.IntHalf);
 			else {
 				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue.IntValue;
+				IntHalf.UnsignedSubOp(rValue.IntValue);
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){
 
@@ -1981,9 +2014,13 @@ public:
 				IntHalf -= rValue.IntValue;
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){
-
+					if(rValue.IsPositive()){
+					} else {
+					}
                 } else {
-
+					if(rValue.IsPositive()){
+					} else {
+					}
                 }
 
 				//If flips to other side of negative, invert the decimals
