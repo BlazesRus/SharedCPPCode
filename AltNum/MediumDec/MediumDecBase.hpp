@@ -2017,18 +2017,22 @@ public:
 						DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
 					} else//-5.2 - 5.2 = -10.4
 						DecimalHalf.Value = decResult;
-                } else {//5.XX - -B == 5.xx + B
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
-						++IntHalf;
+                } else {//5.XX - B
+					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
 						if(IntValue.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){//5.4 - -5.7 = 11.1
-						++IntHalf;
-						DecimalHalf.Value = DecimalHalf.Value + rValue.DecimalHalf - PartialInt::DecimalOverflow;
-					} else//5.4 - -5.3 = 10.7 
-						DecimalHalf.Value += rValue.DecimalHalf;
+					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+						--IntHalf;
+						if(signBeforeOp!=IntHalf.Sign)//5.4 - 5.7 = -0.3
+							DecimalHalf.Value = rValue.DecimalHalf - DecimalHalf.Value;
+						else//5.4 - 3.6 = 1.8
+							DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+					} else if(signBeforeOp!=IntHalf.Sign)//5.3 - 7.2 = -1.9
+						DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
+					else//5.4 - 5.3 = 0.1 
+						DecimalHalf.Value -= rValue.DecimalHalf;
                 }
 			}
 		}
@@ -2078,6 +2082,22 @@ public:
 					}
                 } else {
 					if(rValue.IsPositive()){
+						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
+							if(IntValue.Value==0)
+								SetAsZero();
+							else
+								DecimalHalf.Value = 0;
+						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+							--IntHalf;
+							if(signBeforeOp!=IntHalf.Sign)//5.4 - 5.7 = -0.3
+								DecimalHalf.Value = rValue.DecimalHalf - DecimalHalf.Value;
+							else//5.4 - 3.6 = 1.8
+								DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+						} else if(signBeforeOp!=IntHalf.Sign)//5.3 - 7.2 = -1.9
+							DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
+						else//5.4 - 5.3 = 0.1 
+							DecimalHalf.Value -= rValue.DecimalHalf;
+					} else {
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
 							++IntHalf;
 							if(IntValue.Value==0)
@@ -2089,18 +2109,6 @@ public:
 							DecimalHalf.Value = DecimalHalf.Value + rValue.DecimalHalf - PartialInt::DecimalOverflow;
 						} else//5.4 - -5.3 = 10.7 
 							DecimalHalf.Value += rValue.DecimalHalf;
-					} else {
-						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
-						if(decResult==PartialInt::DecimalOverflow){
-
-							if(IntValue.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						else if(decResult>PartialInt::DecimalOverflow){
-
-						} else
-
 					}
                 }
 			}
