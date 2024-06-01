@@ -576,6 +576,31 @@ namespace BlazesRusCode
         }
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingUnsignedAddOp(const MirroredInt& rValue){
+            if(IsPositive())
+				Value += rValue.Value;
+            else {
+                if (rValue.Value >= Value) {//Becoming positive
+                    Sign = PositiveSign;
+                    Value = rValue.Value - Value;//Skipping negative zero
+                } else
+					Value -= rValue.Value;
+            }
+        }
+		
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingUnsignedSubOp(const MirroredInt& rValue){
+            if(IsPositive()){
+                if (rValue.Value >= Value) {//Becoming positive
+                    Sign = PositiveSign;
+                    Value = rValue.Value - Value;//Skipping negative zero
+                } else
+					Value -= rValue.Value;
+            } else
+				Value += rValue.Value;
+        }
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingAddOp(const MirroredInt& rValue){
             if(IsPositive()){
 				if(rValue.IsPositive())

@@ -883,14 +883,14 @@ public:
         void BasicUInt16DivOp() { BasicUIntDivOpV1<unsigned long long>; }
         void BasicInt16DivOp() { BasicIntDivOpV1<signed long long>; }
 
-        MediumDecBase& BasicUIntDivOperation() { BasicUIntDivOperationV1<unsigned int>; }
-        MediumDecBase& BasicIntDivOperation() { BasicIntDivOperationV1<signed int>; }
-        MediumDecBase& BasicUInt64DivOperation() { BasicUIntDivOperationV1<unsigned long long>; }
-        MediumDecBase& BasicInt64DivOperation() { BasicIntDivOperationV1<signed long long>; }
-        MediumDecBase& BasicUInt8DivOperation() { BasicUIntDivOperationV1<unsigned char>; }
-        MediumDecBase& BasicInt8DivOperation() { BasicIntDivOperationV1<signed char>; }
-        MediumDecBase& BasicUInt16DivOperation() { BasicUIntDivOperationV1<unsigned short>; }
-        MediumDecBase& BasicInt16DivOperation() { BasicIntDivOperationV1<signed short>; }
+        auto& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
+        auto& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
+        auto& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
+        auto& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
+        auto& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
+        auto& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
+        auto& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
+        auto& BasicInt16DivOperation() { return BasicIntDivOperationV1<signed short>; }
 
         auto BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
         auto BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
@@ -1612,6 +1612,249 @@ public:
         friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned short& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
 
 	#pragma endregion Other multiplication operations
+
+	#pragma region NormalRep Integer Addition Operations
+protected:
+		
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntAddOpV1(const IntType& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				NRepSkippingUnsignedAddOp(rValue);
+			else {
+				int signBeforeOp = IntHalf.Sign;
+				IntHalf.UIntAddOp((unsigned int)rValue);
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntAddOperationV1(const IntType& rValue)
+        { BasicUIntAddOpV1(Value); return *this; }
+
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        void BasicIntAddOpV1(const IntType& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				IntHalf.NRepSkippingAddOp(rValue);
+			else {
+				int signBeforeOp = IntHalf.Sign;
+				IntHalf += rValue;
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        template<IntegerType IntType=signed int>
+        auto& BasicIntAddOperationV1(const IntType& rValue)
+        { BasicIntAddOpV1(rValue); return *this; }
+
+		/// <summary>
+        /// Basic addition operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        auto BasicAddByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicAddByUIntV1(rValue); }
+
+		/// <summary>
+        /// Basic addition operation between MediumDec variant and Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto BasicAddByIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicAddByIntV1(rValue); }
+
+public:
+
+        void BasicUIntAddOp(const unsigned int& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				NRepSkippingUnsignedAddOp(rValue);
+			else {
+				int signBeforeOp = IntHalf.Sign;
+				IntHalf.UIntAddOp(rValue);
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        void BasicIntAddOp() { BasicIntAddOpV1<signed int>; }
+        void BasicUInt64AddOp() { BasicUIntAddOpV1<unsigned long long>; }
+        void BasicInt64AddOp() { BasicIntAddOpV1<signed long long>; }
+
+        void UnsignedBasicIntAddOp() { BasicUIntAddOpV1<signed int>; }
+        void UnsignedBasicInt64AddOp() { BasicUIntAddOpV1<signed long long>; }
+
+        void BasicUInt8AddOp() { BasicUIntAddOpV1<unsigned char>; }
+        void BasicInt8AddOp() { BasicIntAddOpV1<signed char>; }
+        void BasicUInt16AddOp() { BasicUIntAddOpV1<unsigned short>; }
+        void BasicInt16AddOp() { BasicIntAddOpV1<signed short>; }
+
+        auto& BasicUIntAddOperation(const unsigned int& rValue)
+        { BasicUIntAddOpV1(Value); return *this; }
+
+        auto& BasicIntAddOperation() { return BasicIntAddOperationV1<signed int>; }
+        auto& BasicUInt64AddOperation() { return BasicUIntAddOperationV1<unsigned long long>; }
+        auto& BasicInt64AddOperation() { return BasicIntAddOperationV1<signed long long>; }
+        auto& BasicUInt8AddOperation() { return BasicUIntAddOperationV1<unsigned char>; }
+        auto& BasicInt8AddOperation() { return BasicIntAddOperationV1<signed char>; }
+        auto& BasicUInt16AddOperation() { return BasicUIntAddOperationV1<unsigned short>; }
+        auto& BasicInt16AddOperation() { return BasicIntAddOperationV1<signed short>; }
+
+        auto BasicAddByUInt() { return BasicAddByUIntV1<unsigned int>; }
+        auto BasicAddByInt() { return BasicAddByIntV1<signed int>; }
+        auto BasicAddByUInt64() { return BasicAddByUIntV1<unsigned long long>; }
+        auto BasicAddByInt64() { return BasicAddByIntV1<signed long long>; }
+
+        auto UnsignedBasicAddByInt() { return BasicAddByUIntV1<signed int>; }
+        auto UnsignedBasicAddByInt64() { return BasicAddByUIntV1<signed long long>; }
+
+        auto BasicAddByUInt8() { return BasicAddByUIntV1<unsigned char>; }
+        auto BasicAddByInt8() { return BasicAddByIntV1<signed char>; }
+        auto BasicAddByUInt16() { return BasicAddByUIntV1<unsigned short>; }
+        auto BasicAddByInt16() { return BasicAddByIntV1<signed short>; }
+    	
+	#pragma endregion NormalRep Integer Addition Operations
+
+	#pragma region NormalRep Integer Subtraction Operations
+protected:
+		
+        /// <summary>
+        /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntSubOpV1(const IntType& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				NRepSkippingUnsignedSubOp(rValue);
+			else {
+				int signBeforeOp = IntHalf.Sign;
+				IntHalf.UIntSubOp((unsigned int)rValue);
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntSubOperationV1(const IntType& rValue)
+        { BasicUIntSubOpV1(Value); return *this; }
+
+        /// <summary>
+        /// Basic Subtraction operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        void BasicIntSubOpV1(const IntType& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				IntHalf.NRepSkippingSubOp(rValue);
+			else {
+				unsigned int signBeforeOp = IntHalf.Sign;
+				IntHalf += rValue;
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        template<IntegerType IntType=signed int>
+        auto& BasicIntSubOperationV1(const IntType& rValue)
+        { BasicIntSubOpV1(rValue); return *this; }
+
+		/// <summary>
+        /// Basic Subtraction operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        auto BasicSubByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicSubByUIntV1(rValue); }
+
+		/// <summary>
+        /// Basic Subtraction operation between MediumDec variant and Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto BasicSubByIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicSubByIntV1(rValue); }
+
+public:
+
+        void BasicUIntSubOp(const unsigned int& rValue)
+        {
+			if(DecimalHalf.Value==0)
+				NRepSkippingUnsignedSubOp(rValue);
+			else {
+				unsigned int signBeforeOp = IntHalf.Sign;
+				IntHalf.UIntSubOp(rValue);
+				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
+			}
+        }
+
+        void BasicIntSubOp() { BasicIntSubOpV1<signed int>; }
+        void BasicUInt64SubOp() { BasicUIntSubOpV1<unsigned long long>; }
+        void BasicInt64SubOp() { BasicIntSubOpV1<signed long long>; }
+
+        void UnsignedBasicIntSubOp() { BasicUIntSubOpV1<signed int>; }
+        void UnsignedBasicInt64SubOp() { BasicUIntSubOpV1<signed long long>; }
+
+        void BasicUInt8SubOp() { BasicUIntSubOpV1<unsigned char>; }
+        void BasicInt8SubOp() { BasicIntSubOpV1<signed char>; }
+        void BasicUInt16SubOp() { BasicUIntSubOpV1<unsigned short>; }
+        void BasicInt16SubOp() { BasicIntSubOpV1<signed short>; }
+
+        auto& BasicUIntSubOperation(const unsigned int& rValue)
+        { BasicUIntSubOpV1(Value); return *this; }
+
+        auto& BasicIntSubOperation() { return BasicIntSubOperationV1<signed int>; }
+        auto& BasicUInt64SubOperation() { return BasicUIntSubOperationV1<unsigned long long>; }
+        auto& BasicInt64SubOperation() { return BasicIntSubOperationV1<signed long long>; }
+        auto& BasicUInt8SubOperation() { return BasicUIntSubOperationV1<unsigned char>; }
+        auto& BasicInt8SubOperation() { return BasicIntSubOperationV1<signed char>; }
+        auto& BasicUInt16SubOperation() { return BasicUIntSubOperationV1<unsigned short>; }
+        auto& BasicInt16SubOperation() { return BasicIntSubOperationV1<signed short>; }
+
+        auto BasicSubByUInt() { return BasicSubByUIntV1<unsigned int>; }
+        auto BasicSubByInt() { return BasicSubByIntV1<signed int>; }
+        auto BasicSubByUInt64() { return BasicSubByUIntV1<unsigned long long>; }
+        auto BasicSubByInt64() { return BasicSubByIntV1<signed long long>; }
+
+        auto UnsignedBasicSubByInt() { return BasicSubByUIntV1<signed int>; }
+        auto UnsignedBasicSubByInt64() { return BasicSubByUIntV1<signed long long>; }
+
+        auto BasicSubByUInt8() { return BasicSubByUIntV1<unsigned char>; }
+        auto BasicSubByInt8() { return BasicSubByIntV1<signed char>; }
+        auto BasicSubByUInt16() { return BasicSubByUIntV1<unsigned short>; }
+        auto BasicSubByInt16() { return BasicSubByIntV1<signed short>; }
+    	
+	#pragma endregion NormalRep Integer Subtraction Operations
+
     };
     #pragma region ValueDefine Source
 
