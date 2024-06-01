@@ -100,8 +100,8 @@ namespace BlazesRusCode
         /// Power of Tens array limited to unsigned int8 range
         /// </summary>
         static unsigned __int8 UBytePowerOfTens[3];
-        static int PowerOfTens[10];
-        static __int64 PowerOfTens64Bit[19];
+        static unsigned int PowerOfTens[10];
+        static unsigned __int64 PowerOfTens64Bit[19];
 
         /// <summary>
         /// Outputs the number of digits found inside Integer Value type
