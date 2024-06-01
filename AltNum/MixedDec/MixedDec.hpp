@@ -1347,7 +1347,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const long double& Value)
         {
 			//To-Do:Add more precise floating extraction code here later
 			#if defined(MixedDec_DeriveFromAltDec)
@@ -1405,7 +1405,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MixedDec(const ldouble& Value)
+        MixedDec(const long double& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -1445,7 +1445,7 @@ public:
         /// MediumDec to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble() { return toDecimal(); }
+        explicit operator long double() { return toDecimal(); }
 		
         /// <summary>
         /// MediumDec to int explicit conversion

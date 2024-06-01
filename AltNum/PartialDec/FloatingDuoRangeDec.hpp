@@ -75,7 +75,7 @@ namespace BlazesRusCode
         /// <summary>
         /// long double (Extended precision double)
         /// </summary>
-        using ldouble = long double;
+        using long double = long double;
 
         bool IsNegative()
         {
@@ -555,7 +555,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const long double& Value)
         {
             if (Value < 0.0L) { SetAsZero(); }
 			else if (Value >= 18446744073709551616L){//Cap value if too big on initialize (preventing overflow on conversion)
@@ -566,7 +566,7 @@ public:
             {
 				auto lValue = Value;
                 signed __int64 WholeValue = (UInt64)std::floor(lValue);
-                lValue -= (ldouble)WholeValue;
+                lValue -= (long double)WholeValue;
                 DecimalHalf = (unsigned int)lValue * 10000000000;
                 IntHalf = (unsigned int)WholeValue;
             }
@@ -614,7 +614,7 @@ public:
         /// Initializes a new instance of the <see cref="FloatingDuoRangeDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        FloatingDuoRangeDec(const ldouble& Value)
+        FloatingDuoRangeDec(const long double& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -670,14 +670,14 @@ public:
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        void ldouble toDecimal()
+        void long double toDecimal()
         {
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    ldouble Value = lValue.IntHalf;
+		    long double Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
-               Value += ((ldouble)lValue.DecimalHalf * 0.000000001L);
+               Value += ((long double)lValue.DecimalHalf * 0.000000001L);
             return Value;
         }
 		
@@ -709,7 +709,7 @@ public:
         /// MediumDec Variant to decimal explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble() { return toDecimalV1(); }
+        explicit operator long double() { return toDecimalV1(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -1406,15 +1406,15 @@ public:
         friend FloatingDuoRangeDec operator*(FloatingDuoRangeDec self, double Value) { return self * (FloatingDuoRangeDec)Value; }
         friend FloatingDuoRangeDec operator/(FloatingDuoRangeDec self, double Value) { return self / (FloatingDuoRangeDec)Value; }
 
-        friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, ldouble Value) { return self + (FloatingDuoRangeDec)Value; }
-        friend FloatingDuoRangeDec operator-(FloatingDuoRangeDec self, ldouble Value) { return self - (FloatingDuoRangeDec)Value; }
-        friend FloatingDuoRangeDec operator*(FloatingDuoRangeDec self, ldouble Value) { return self * (FloatingDuoRangeDec)Value; }
-        friend FloatingDuoRangeDec operator/(FloatingDuoRangeDec self, ldouble Value) { return self / (FloatingDuoRangeDec)Value; }
+        friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, long double Value) { return self + (FloatingDuoRangeDec)Value; }
+        friend FloatingDuoRangeDec operator-(FloatingDuoRangeDec self, long double Value) { return self - (FloatingDuoRangeDec)Value; }
+        friend FloatingDuoRangeDec operator*(FloatingDuoRangeDec self, long double Value) { return self * (FloatingDuoRangeDec)Value; }
+        friend FloatingDuoRangeDec operator/(FloatingDuoRangeDec self, long double Value) { return self / (FloatingDuoRangeDec)Value; }
 
-        friend FloatingDuoRangeDec operator+(ldouble Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value + self; }
-        friend FloatingDuoRangeDec operator-(ldouble Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value - self; }
-        friend FloatingDuoRangeDec operator*(ldouble Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value * self; }
-        friend FloatingDuoRangeDec operator/(ldouble Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value / self; }
+        friend FloatingDuoRangeDec operator+(long double Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value + self; }
+        friend FloatingDuoRangeDec operator-(long double Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value - self; }
+        friend FloatingDuoRangeDec operator*(long double Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value * self; }
+        friend FloatingDuoRangeDec operator/(long double Value, FloatingDuoRangeDec self) { return (FloatingDuoRangeDec)Value / self; }
 
 
         friend FloatingDuoRangeDec operator+(FloatingDuoRangeDec self, unsigned char Value) { return IntAddOp(self, Value); }

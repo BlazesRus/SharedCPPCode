@@ -1319,15 +1319,15 @@ public:
         friend MediumDecV2 operator*(const MediumDecV2& self, const double& Value) { return self * (MediumDecV2)Value; }
         friend MediumDecV2 operator/(const MediumDecV2& self, const double& Value) { return self / (MediumDecV2)Value; }
 
-        friend MediumDecV2 operator+(const MediumDecV2& self, const ldouble& Value) { return self + (MediumDecV2)Value; }
-        friend MediumDecV2 operator-(const MediumDecV2& self, const ldouble& Value) { return self - (MediumDecV2)Value; }
-        friend MediumDecV2 operator*(const MediumDecV2& self, const ldouble& Value) { return self * (MediumDecV2)Value; }
-        friend MediumDecV2 operator/(const MediumDecV2& self, const ldouble& Value) { return self / (MediumDecV2)Value; }
+        friend MediumDecV2 operator+(const MediumDecV2& self, const long double& Value) { return self + (MediumDecV2)Value; }
+        friend MediumDecV2 operator-(const MediumDecV2& self, const long double& Value) { return self - (MediumDecV2)Value; }
+        friend MediumDecV2 operator*(const MediumDecV2& self, const long double& Value) { return self * (MediumDecV2)Value; }
+        friend MediumDecV2 operator/(const MediumDecV2& self, const long double& Value) { return self / (MediumDecV2)Value; }
 
-        friend MediumDecV2 operator+(const ldouble& Value, const MediumDecV2& self) { return (MediumDecV2)Value + self; }
-        friend MediumDecV2 operator-(const ldouble& Value, const MediumDecV2& self) { return (MediumDecV2)Value - self; }
-        friend MediumDecV2 operator*(const ldouble& Value, const MediumDecV2& self) { return (MediumDecV2)Value * self; }
-        friend MediumDecV2 operator/(const ldouble& Value, const MediumDecV2& self) { return (MediumDecV2)Value / self; }
+        friend MediumDecV2 operator+(const long double& Value, const MediumDecV2& self) { return (MediumDecV2)Value + self; }
+        friend MediumDecV2 operator-(const long double& Value, const MediumDecV2& self) { return (MediumDecV2)Value - self; }
+        friend MediumDecV2 operator*(const long double& Value, const MediumDecV2& self) { return (MediumDecV2)Value * self; }
+        friend MediumDecV2 operator/(const long double& Value, const MediumDecV2& self) { return (MediumDecV2)Value / self; }
 
     #pragma endregion Floating Operator Overrides
 

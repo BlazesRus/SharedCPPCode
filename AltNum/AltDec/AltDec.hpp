@@ -1839,15 +1839,15 @@ public:
         friend AltDec operator*(const AltDec& self, const double& Value) { return self * (AltDec)Value; }
         friend AltDec operator/(const AltDec& self, const double& Value) { return self / (AltDec)Value; }
 
-        friend AltDec operator+(const AltDec& self, const ldouble& Value) { return self + (AltDec)Value; }
-        friend AltDec operator-(const AltDec& self, const ldouble& Value) { return self - (AltDec)Value; }
-        friend AltDec operator*(const AltDec& self, const ldouble& Value) { return self * (AltDec)Value; }
-        friend AltDec operator/(const AltDec& self, const ldouble& Value) { return self / (AltDec)Value; }
+        friend AltDec operator+(const AltDec& self, const long double& Value) { return self + (AltDec)Value; }
+        friend AltDec operator-(const AltDec& self, const long double& Value) { return self - (AltDec)Value; }
+        friend AltDec operator*(const AltDec& self, const long double& Value) { return self * (AltDec)Value; }
+        friend AltDec operator/(const AltDec& self, const long double& Value) { return self / (AltDec)Value; }
 
-        friend AltDec operator+(const ldouble& Value, const AltDec& self) { return (AltDec)Value + self; }
-        friend AltDec operator-(const ldouble& Value, const AltDec& self) { return (AltDec)Value - self; }
-        friend AltDec operator*(const ldouble& Value, const AltDec& self) { return (AltDec)Value * self; }
-        friend AltDec operator/(const ldouble& Value, const AltDec& self) { return (AltDec)Value / self; }
+        friend AltDec operator+(const long double& Value, const AltDec& self) { return (AltDec)Value + self; }
+        friend AltDec operator-(const long double& Value, const AltDec& self) { return (AltDec)Value - self; }
+        friend AltDec operator*(const long double& Value, const AltDec& self) { return (AltDec)Value * self; }
+        friend AltDec operator/(const long double& Value, const AltDec& self) { return (AltDec)Value / self; }
 
     #pragma endregion Floating Operator Overrides
 	

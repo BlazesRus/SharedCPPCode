@@ -468,7 +468,7 @@ public:
             //To-Do Add code here
         }
 
-        void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const long double& Value)
         {
             //To-Do Add code here
         }
@@ -617,7 +617,7 @@ public:
             this->SetDoubleVal(Value);
         }
 
-        AltFloat(const ldouble& Value)
+        AltFloat(const long double& Value)
         {
             this->SetDecimalVal(Value);
         }

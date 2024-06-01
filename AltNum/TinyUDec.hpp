@@ -660,7 +660,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(ldouble Value)
+        void SetVal(long double Value)
         {
             bool IsNegative = Value < 0.0L;
             if (IsNegative) { Value *= -1.0L; }
@@ -676,7 +676,7 @@ public:
             else
             {
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                Value -= (ldouble)WholeValue;
+                Value -= (long double)WholeValue;
                 DecimalHalf = (signed int)Value * 10000000000;
                 if(DecimalHalf!=0)
                     IntHalf = IsNegative ? -WholeValue: WholeValue;
@@ -726,7 +726,7 @@ public:
         /// Initializes a new instance of the <see cref="TinyUDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        TinyUDec(ldouble Value)
+        TinyUDec(long double Value)
         {
             this->SetVal(Value);
         }
@@ -793,18 +793,18 @@ public:
         /// TinyUDec to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble()
+        explicit operator long double()
         {
-            ldouble Value;
+            long double Value;
             if (IsNegative())
             {
-                Value = IntHalf == NegativeRep ? 0.0L : (ldouble)IntHalf.GetValue();
-                if (DecimalHalf != 0) { Value -= ((ldouble)DecimalHalf * 0.000000001L); }
+                Value = IntHalf == NegativeRep ? 0.0L : (long double)IntHalf.GetValue();
+                if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
             }
             else
             {
-                Value = (ldouble)IntHalf.GetValue();
-                if (DecimalHalf != 0) { Value += ((ldouble)DecimalHalf * 0.000000001L); }
+                Value = (long double)IntHalf.GetValue();
+                if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
             }
             return Value;
         }
@@ -2654,15 +2654,15 @@ public:
         friend TinyUDec operator*(TinyUDec self, double Value) { return self * (TinyUDec)Value; }
         friend TinyUDec operator/(TinyUDec self, double Value) { return self / (TinyUDec)Value; }
 
-        friend TinyUDec operator+(TinyUDec self, ldouble Value) { return self + (TinyUDec)Value; }
-        friend TinyUDec operator-(TinyUDec self, ldouble Value) { return self - (TinyUDec)Value; }
-        friend TinyUDec operator*(TinyUDec self, ldouble Value) { return self * (TinyUDec)Value; }
-        friend TinyUDec operator/(TinyUDec self, ldouble Value) { return self / (TinyUDec)Value; }
+        friend TinyUDec operator+(TinyUDec self, long double Value) { return self + (TinyUDec)Value; }
+        friend TinyUDec operator-(TinyUDec self, long double Value) { return self - (TinyUDec)Value; }
+        friend TinyUDec operator*(TinyUDec self, long double Value) { return self * (TinyUDec)Value; }
+        friend TinyUDec operator/(TinyUDec self, long double Value) { return self / (TinyUDec)Value; }
 
-        friend TinyUDec operator+(ldouble Value, TinyUDec self) { return (TinyUDec)Value + self; }
-        friend TinyUDec operator-(ldouble Value, TinyUDec self) { return (TinyUDec)Value - self; }
-        friend TinyUDec operator*(ldouble Value, TinyUDec self) { return (TinyUDec)Value * self; }
-        friend TinyUDec operator/(ldouble Value, TinyUDec self) { return (TinyUDec)Value / self; }
+        friend TinyUDec operator+(long double Value, TinyUDec self) { return (TinyUDec)Value + self; }
+        friend TinyUDec operator-(long double Value, TinyUDec self) { return (TinyUDec)Value - self; }
+        friend TinyUDec operator*(long double Value, TinyUDec self) { return (TinyUDec)Value * self; }
+        friend TinyUDec operator/(long double Value, TinyUDec self) { return (TinyUDec)Value / self; }
 
 
         friend TinyUDec operator+(TinyUDec self, unsigned char Value) { return IntAddOp(self, Value); }

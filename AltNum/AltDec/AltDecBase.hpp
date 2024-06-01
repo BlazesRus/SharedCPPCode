@@ -1082,7 +1082,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDecimalVal(const ldouble& Value)
+        void SetDecimalVal(const long double& Value)
         {
 			MediumDec::SetDecimalVal(Value);
 			ResetDivisor();
@@ -1130,7 +1130,7 @@ public:
         /// Initializes a new instance of the <see cref="AltDecBase"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        AltDecBase(const ldouble& Value)
+        AltDecBase(const long double& Value)
         {
             this->SetDecimalVal(Value);
         }
@@ -1171,7 +1171,7 @@ public:
         /// MediumDec Variant to decimal explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble() { return toDecimal(); }
+        explicit operator long double() { return toDecimal(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -4861,15 +4861,15 @@ public:
         friend AltDecBase operator*(const AltDecBase& self, const double& Value) { return self * (AltDecBase)Value; }
         friend AltDecBase operator/(const AltDecBase& self, const double& Value) { return self / (AltDecBase)Value; }
 
-        friend AltDecBase operator+(const AltDecBase& self, const ldouble& Value) { return self + (AltDecBase)Value; }
-        friend AltDecBase operator-(const AltDecBase& self, const ldouble& Value) { return self - (AltDecBase)Value; }
-        friend AltDecBase operator*(const AltDecBase& self, const ldouble& Value) { return self * (AltDecBase)Value; }
-        friend AltDecBase operator/(const AltDecBase& self, const ldouble& Value) { return self / (AltDecBase)Value; }
+        friend AltDecBase operator+(const AltDecBase& self, const long double& Value) { return self + (AltDecBase)Value; }
+        friend AltDecBase operator-(const AltDecBase& self, const long double& Value) { return self - (AltDecBase)Value; }
+        friend AltDecBase operator*(const AltDecBase& self, const long double& Value) { return self * (AltDecBase)Value; }
+        friend AltDecBase operator/(const AltDecBase& self, const long double& Value) { return self / (AltDecBase)Value; }
 
-        friend AltDecBase operator+(const ldouble& Value, const AltDecBase& self) { return (AltDecBase)Value + self; }
-        friend AltDecBase operator-(const ldouble& Value, const AltDecBase& self) { return (AltDecBase)Value - self; }
-        friend AltDecBase operator*(const ldouble& Value, const AltDecBase& self) { return (AltDecBase)Value * self; }
-        friend AltDecBase operator/(const ldouble& Value, const AltDecBase& self) { return (AltDecBase)Value / self; }
+        friend AltDecBase operator+(const long double& Value, const AltDecBase& self) { return (AltDecBase)Value + self; }
+        friend AltDecBase operator-(const long double& Value, const AltDecBase& self) { return (AltDecBase)Value - self; }
+        friend AltDecBase operator*(const long double& Value, const AltDecBase& self) { return (AltDecBase)Value * self; }
+        friend AltDecBase operator/(const long double& Value, const AltDecBase& self) { return (AltDecBase)Value / self; }
 
     #pragma endregion Floating Operator Overrides
 

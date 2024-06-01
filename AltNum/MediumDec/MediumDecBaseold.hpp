@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -2393,22 +2393,1298 @@ public:
 
     #pragma endregion Other Operators
 
+// Static versions of functions for Full versions
+	#pragma region Math Etc Functions
+
+        /// <summary>
+        /// Forces Number into non-negative
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        auto& AbsOf()
+        {
+            if (IntHalf.IsNegative())
+                IntHalf.IsPositive = 1;
+            return *this;
+        }
+
+        /// <summary>
+        /// Forces Number into non-negative
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Abs(const auto tValue&)
+        {
+            auto self = tValue;
+            return self.Abs();
+        }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        auto& FloorOf()
+        {
+            DecimalHalf = 0;
+            return *this;
+        }
+
+        /// <summary>
+        /// Returns floored value with all fractional digits after specified precision cut off.
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Floor(const auto tValue&, const int precision&)
+        {
+            auto self = tValue;
+            switch (precision)
+            {
+            case 9: break;
+            case 8: self.DecimalHalf /= 10; Value.DecimalHalf *= 10; break;
+            case 7: self.DecimalHalf /= 100; Value.DecimalHalf *= 100; break;
+            case 6: self.DecimalHalf /= 1000; Value.DecimalHalf *= 1000; break;
+            case 5: self.DecimalHalf /= 10000; Value.DecimalHalf *= 10000; break;
+            case 4: self.DecimalHalf /= 100000; Value.DecimalHalf *= 100000; break;
+            case 3: self.DecimalHalf /= 1000000; Value.DecimalHalf *= 1000000; break;
+            case 2: self.DecimalHalf /= 10000000; Value.DecimalHalf *= 10000000; break;
+            case 1: self.DecimalHalf /= 100000000; Value.DecimalHalf *= 100000000; break;
+            default: self.DecimalHalf = 0; break;
+            }
+            if (self.IntHalf == NegativeRep && Value.DecimalHalf == 0) { self.IntHalf = 0; }
+            return self;
+        }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        auto& CeilOf()
+        {
+            if (DecimalHalf != 0)
+            {
+                DecimalHalf = 0;
+                if (IntHalf == NegativeRep) { IntHalf = 0; }
+                else
+                {
+                    ++IntHalf;
+                }
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        static int FloorInt(const auto& tValue)
+        {
+            if (tValue.DecimalHalf == 0)
+            {
+                return tValue.IntHalf.Value;
+            }
+            if (tValue.IntHalf == NegativeRep) { return -1; }
+            else
+            {
+                return tValue.IntHalf.Value - 1;
+            }
+        }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        static int CeilInt(const auto& tValue)
+        {
+            if (tValue.DecimalHalf == 0)
+            {
+                return self.IntHalf.Value;
+            }
+            if (tValue.IntHalf == NegativeRep) { return 0; }
+            else
+            {
+                return tValue.IntHalf.Value + 1;
+            }
+        }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Ceil(const auto& tValue)
+        {
+            auto self = tValue;
+            return self.Ceil();
+        }
+
+        /// <summary>
+        /// Cuts off the decimal point from number
+        /// </summary>
+        /// <returns>MediumDecBase &</returns>
+        auto& Trunc()
+        {
+            DecimalHalf = 0;
+            return *this;
+        }
+
+        /// <summary>
+        /// Cuts off the decimal point from number
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Trunc(const auto& Value)
+        {
+            auto self = tValue;
+            return self.Trunc();
+        }
+
+	#pragma endregion Math Etc Functions
+
+	#pragma region Pow and Sqrt Functions
+
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        auto SqrtOf(const int& precision=7)
+        { 
+            if(IsNegative())
+                throw "Can't display result of negative square root without imaginary number support";
+            else if (DecimalHalf == 0)
+            {
+                auto value = *this;
+                bool AutoSetValue = true;
+                switch (IntHalf.Value)
+                {
+                case 1: value.IntHalf = 1; break;
+                case 4: value.IntHalf = 2; break;
+                case 9: value.IntHalf = 3; break;
+                case 16: value.IntHalf = 4; break;
+                case 25: value.IntHalf = 5; break;
+                case 36: value.IntHalf = 6; break;
+                case 49: value.IntHalf = 7; break;
+                case 64: value.IntHalf = 8; break;
+                case 81: value.IntHalf = 9; break;
+                case 100: value.IntHalf = 10; break;
+                case 121: value.IntHalf = 11; break;
+                case 144: value.IntHalf = 12; break;
+                case 169: value.IntHalf = 13; break;
+                case 196: value.IntHalf = 14; break;
+                case 225: value.IntHalf = 15; break;
+                case 256: value.IntHalf = 16; break;
+                case 289: value.IntHalf = 17; break;
+                case 324: value.IntHalf = 18; break;
+                case 361: value.IntHalf = 19; break;
+                case 400: value.IntHalf = 20; break;
+                case 1600: value.IntHalf = 40; break;
+                default:
+                    AutoSetValue = false;
+                    break;
+                }
+                if(AutoSetValue)
+                    return value;//Technically both positive and negative numbers of same equal the result
+            }
+
+            auto number = this;
+            auto start = Zero, end = number;
+            auto mid;
+
+            // variable to store the answer 
+            auto ans;
+
+            // for computing integral part 
+            // of square root of number 
+            while (start <= end) {
+                mid = (start + end) / 2;
+                if (mid * mid == number) {
+                    ans = mid;
+                    break;
+                }
+
+                // incrementing start if integral 
+                // part lies on right side of the mid 
+                if (mid * mid < number) {
+                    start = mid + 1;
+                    ans = mid;
+                }
+
+                // decrementing end if integral part 
+                // lies on the left side of the mid 
+                else {
+                    end = mid - 1;
+                }
+            }
+
+            // For computing the fractional part 
+            // of square root up to given precision 
+            auto increment = "0.1";
+            for (int i = 0; i < precision; ++i) {
+                while (ans * ans <= number) {
+                    ans += increment;
+                }
+
+                // loop terminates when ans * ans > number 
+                ans = ans - increment;
+                increment = increment / 10;
+            }
+            return ans;
+        }
+		
+		/// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+		static auto Sqrt(const auto& value, const int& precision=7)
+		{
+			return value.SqrtOf(precision);
+		}
+
+protected:
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto UIntPowOpV1(const ValueType& expValue)
+        {
+            if (expValue == 1) { return *this; }//Return self
+            else if (expValue == 0)
+            {
+                IntHalf = 1; DecimalHalf = 0;
+            }
+            else if (DecimalHalf == 0 && IntHalf.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+            }
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                auto self = AbsOf();
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue % 2 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntHalf.IsPositive = 0;
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto IntPowOfOpV1(const ValueType& expValue)
+        {
+            if (expValue == 1) { return *this; }//Return self
+            else if (expValue == 0)
+            {
+                IntHalf = 1; DecimalHalf = 0;
+            }
+            else if (expValue < 0)//Negative Pow
+            {
+                ValueType exp = expValue * -1;
+                if (DecimalHalf == 0 && IntHalf == 10 && expValue >= -9)
+                {
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
+                    if(IsNegative()&&exp&1==1)
+                        IsPositive = 1;
+                }
+                else
+                {
+                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                    //Switches from negative to positive if exp is odd number
+                    bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                    auto self = AbsOf();//Prevent needing to flip the sign
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
+                    while (expValue > 0)
+                    {
+                        // If expValue is odd, multiply self with result
+                        if (exp & 1 == 1)
+                            *this /= self;
+                        // n must be even now
+                        expValue = expValue >> 1; // y = y/2
+                        self = self * self; //  Change x to x^2
+                    }
+                    if(IsNegative)
+                        IntHalf.IsPositive = 0;
+                }
+            }
+            else if (DecimalHalf == 0 && IntHalf.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+            }
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                //Switches from negative to positive if exp is odd number
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                auto self = AbsOf();
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
+                while (expValue > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if (expValue & 1 == 1)
+                        this *= self;
+                    // n must be even now
+                    expValue = expValue >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntHalf.IsPositive = 0;
+            }
+            return *this;
+        }
+		
+        /// <summary>
+        /// Applies Power of operation(for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto UIntPowOfV1(const ValueType& expValue)
+        {
+            auto self = this;
+            return self.UIntPowOpV1();
+		}
+		
+        /// <summary>
+        /// Applies Power of operation(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<typename ValueType>
+        auto IntPowOfV1(const ValueType& expValue)
+        {
+            auto self = this;
+            return self.IntPowOpV1();
+		}
+
+public:
+
+		auto UnsignedNegIntPower(const unsigned int& exp)
+		{
+			ResetDivisor();
+			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+			//Switches from negative to positive if exp is odd number
+			bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+			auto self = AbsOf();
+			IntHalf = 1; DecimalHalf = 0;// Initialize result
+			while (expValue > 0)
+			{
+				// If expValue is odd, divide self with result
+				if (exp & 1 == 1)
+					*this /= self;
+				// n must be even now
+				expValue = expValue >> 1; // y = y/2
+				self *= self; // Change x to x^2
+			}
+			if(IsNegative)
+				IntHalf.IsPositive = 0;
+		}
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto UIntPowOfOp = UIntPowOfOpV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
+        constexpr auto UInt64PowOfOp = UIntPowOfOpV1<UInt64>;
+        constexpr auto Int64PowOfOp = IntPowOpOfV1<Int64>;
+        
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto UIntPowOf = UIntPowOfV1<unsigned int>;
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        constexpr auto IntPowOf = IntPowOfV1<signed int>;
+        constexpr auto UInt64PowOf = UIntPowOfV1<UInt64>;
+        constexpr auto Int64PowOf = IntPowOfV1<Int64>;
+
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="nValue">The nth root value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        /// <returns>auto</returns>
+        auto NthRootOf(const int& n, const auto& precision = auto::JustAboveZero)
+        {
+            auto xPre = ((this - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            int nMinus1 = n - 1;
+
+            // initializing difference between two 
+            // roots by INT_MAX 
+            auto delX = auto(2147483647, 0);
+
+            //  xK denotes current value of x 
+            auto xK;
+
+            //  loop until we reach desired accuracy
+            do
+            {
+                //  calculating current value from previous
+                // value by newton's method
+                xK = (xPre * nMinus1 + this / auto::Pow(xPre, nMinus1)) / n;
+                delX = auto::Abs(xK - xPre);
+                xPre = xK;
+            } while (delX > precision);
+            return xK;
+        }
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expNum">The numerator of the exponent value.</param>
+        /// <param name="expDenom">The denominator of the exponent value.</param>
+        static auto FractionalPow(const auto& value, const int& expNum, const int& expDenom);
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="Frac">The exponent value to raise the value to power of.</param>
+        static auto FractionalPow(const auto& value, const boost::rational<int>& Frac);
+
+        void BasicPowOp(const auto& expValue);
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        auto PowOp(const auto& expValue);
+
+        static auto PowOp(const auto& targetValue, auto& expValue)
+        {
+            return targetValue.PowOp(expValue);
+        }
+
+        /// <summary>
+        /// Applies Power of operation
+        /// </summary>
+        /// <param name="targetValue">The target value.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static auto Pow(const auto& targetValue, auto expValue)
+        {
+            return PowOp(targetValue, expValue);
+        }
+
+	#pragma endregion Pow and Sqrt Functions
+
+	#pragma region Log Functions
+protected:
+
+public:
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        auto ExpOf()
+        {
+            /*
+             * Evaluates f(x) = e^x for any x in the interval [-709, 709].
+             * If x < -709 or x > 709, raises an assertion error. Implemented
+             * using the truncated Taylor series of e^x with ceil(|x| * e) * 12
+             * terms. Achieves at least 14 and at most 16 digits of precision
+             * over the entire interval.
+             * Performance - There are exactly 36 * ceil(|x| * e) + 5
+             * operations; 69,413 in the worst case (x = 709 or -709):
+             * - (12 * ceil(|x| * e)) + 2 multiplications
+             * - (12 * ceil(|x| * e)) + 1 divisions
+             * - (12 * ceil(|x| * e)) additions
+             * - 1 rounding
+             * - 1 absolute value
+             * Accuracy - Over a sample of 10,000 linearly spaced points in
+             * [-709, 709] we have the following error statistics:
+             * - Max relative error = 8.39803e-15
+             * - Min relative error = 0.0
+             * - Avg relative error = 0.0
+             * - Med relative error = 1.90746e-15
+             * - Var relative error = 0.0
+             * - 0.88 percent of the values have less than 15 digits of precision
+             * Args:
+             *      - x: power of e to evaluate
+             * Returns:
+             *      - approximation of e^x in MediumDecBase precision
+             */
+             // Check that x is a valid input.
+            assert(IntHalf.Value < 709);
+
+            // When x = 0 we already know e^x = 1.
+            if (IsZero()) {
+                return One;
+            }
+            // Normalize x to a non-negative value to take advantage of
+            // reciprocal symmetry. But keep track of the original sign
+            // in case we need to return the reciprocal of e^x later.
+            auto x0 = *this;
+            x0.Abs();
+            // First term of Taylor expansion of e^x at a = 0 is 1.
+            // tn is the variable we we will return for e^x, and its
+            // value at any time is the sum of all currently evaluated
+            // Taylor terms thus far.
+            auto tn = One;
+            // Chose a truncation point for the Taylor series using the
+            // heuristic bound 12 * ceil(|x| e), then work down from there
+            // using Horner's method.
+            int n = CeilInt(x0 * E) * 12;
+            for (int i = n; i > 0; --i) {
+                tn = tn * (x0 / i) + One;
+            }
+            // If the original input x is less than 0, we want the reciprocal
+            // of the e^x we calculated.
+            if (x < 0) {
+                tn = One / tn;
+            }
+            return tn;
+        }
+
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Exp(const auto& x)
+        {
+			return x.ExpOf();
+        }
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        auto NthRootOf(const int& n, const auto& Precision = FiveBillionth)
+        {
+            int nMinus1 = n - 1;
+            auto x[2] = { (One / n) * ((*this*nMinus1) + (*this / PowOf(nMinus1))), targetValue };
+            while (Abs(x[0] - x[1]) > Precision)
+            {
+                x[1] = x[0];
+                x[0] = (One / n) * ((x[1]*nMinus1) + (targetValue / x[1].PowOf(nMinus1)));
+            }
+            return x[0];
+        }
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+        static auto NthRoot(const auto& value, const int& n, const auto& Precision = FiveBillionth)
+        {
+            return value.NthRootOf(n, Precision);
+        }
+
+protected:
+
+		auto LnRef_Part02()
+		{	
+            //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+			auto TotalRes = (this - 1) / (this + 1);
+			auto LastPow = TotalRes;
+			auto WSquared = TotalRes * TotalRes;
+			auto AddRes;
+			int WPow = 3;
+			do
+			{
+				LastPow *= WSquared;
+				AddRes = LastPow / WPow;
+				TotalRes += AddRes; WPow += 2;
+			} while (AddRes > JustAboveZero);
+			return TotalRes;
+		}
+
+public:
+
+		/// <summary>
+		/// Natural log (Equivalent to Log_E(value))
+		/// </summary>
+		/// <returns>BlazesRusCode::MediumDecBase</returns>
+		auto NaturalLogOf()
+		{
+			if(IntHalf.IsNegative)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from natural log";
+			if (IsOne())
+				return Zero;
+            if(IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                auto W = (value - 1)/ (value + 1);
+                auto TotalRes = -W;
+                auto LastPow = W;
+                auto WSquared = W * W;
+                int WPow = 3;
+                auto AddRes;
+
+                do
+                {
+                    LastPow *= WSquared;
+                    AddRes = LastPow / WPow;
+                    TotalRes -= AddRes;
+                    WPow += 2;
+                } while (AddRes > MediumDecBase::JustAboveZero);
+                return TotalRes * 2;
+            }
+            else if (IntHalf==1)//Threshold between 1 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {
+                //This section gives accurate answer(for values between 1 and 2)
+                auto threshold = MediumDecBase::FiveMillionth;
+                auto base = value - 1;        // Base of the numerator; exponent will be explicit
+                int den = 2;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                auto term = base;       // First term
+                auto prev;          // Previous sum
+                auto result = term;     // Kick it off
+
+                do
+                {
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                    ++den;
+                } while (MediumDecBase::Abs(prev - result) > threshold);
+
+                return result;
+            }
+			else
+                //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+                //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+				return LnRef_Part02() * 2;
+		}
+	
+        /// <summary>
+        /// Natural log (Equivalent to Log_E(value))
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>BlazesRusCode::MediumDecBase</returns>
+        static auto Ln(const auto& value)
+        {
+			return value.NaturalLogOf();
+        }
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+		auto Log10Of()
+		{
+			if(IntHalf.IsNegative)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log base 10";
+			if (IsOne())
+				return Zero;
+            if (DecimalHalf == 0 && IntHalf.Value % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (IntHalf.Value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                        return MediumDecBase(index, 0);
+                }
+                return MediumDecBase(9, 0);
+            }
+            if (IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {//This section gives accurate answer for values between 1 & 2
+                auto threshold = FiveBillionth;
+                auto base = this - 1;        // Base of the numerator; exponent will be explicit
+                int den = 1;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                auto term = base;       // First term
+                auto prev = 0;          // Previous sum
+                auto result = term;     // Kick it off
+
+                while (Abs(prev - result) > threshold) {
+                    den++;
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                }
+                return result*LN10Mult;// result/MediumDecBase::LN10;//Using Multiplication instead of division for speed improvement
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                return LnRef_Part02() * HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+            }
+		}
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Log10(const auto& value)
+        {
+			return value.Log10Of();
+        }
+		
+protected:
+
+    template<IntegerType IntType=unsigned int>
+    static auto Log10_IntPart02(const IntType& value)
+    {	//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+        auto TotalRes = MediumDecBase(value - 1) / MediumDecBase(value + 1);
+        auto LastPow = TotalRes;
+        auto WSquared = TotalRes * TotalRes;
+        auto AddRes;
+        int WPow = 3;
+        do
+        {
+            LastPow *= WSquared;
+            AddRes = LastPow / WPow;
+            TotalRes += AddRes; WPow += 2;
+        } while (AddRes > MediumDecBase::JustAboveZero);
+        return TotalRes * MediumDecBase::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+    }
+	
+public:
+
+        /// <summary>
+        /// Log Base 10 of Value(integer value variant)
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+		template<IntegerType IntType=unsigned int>
+        static auto Log10OfInt(const IntType& value)
+        {
+			if(value<0)//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log base 10";
+            else if (value == 1)
+                return MediumDecBase::Zero;
+            else if (value % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                        return MediumDecBase(index, 0);
+                }
+                return MediumDecBase(9, 0);
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                return Log10_IntPart02(value);
+            }
+        }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOf(const auto& baseVal)
+        {
+            if (IsOne())
+                return Zero;
+            return Log10Of() / baseVal.Log10Of();
+        }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Log(const auto& value, const auto& baseVal)
+        {
+            return value.LogOf(baseVal);
+        }
+
+protected:
+
+        bool LogOfInt_BaseCalculation(const int& baseVal, auto& baseTotalRes)
+        {
+            bool lnMultLog = true;
+            if (baseVal % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    {
+                        baseTotalRes = MediumDecBase(index, 0);
+                        break;
+                    }
+                }
+                baseTotalRes = MediumDecBase(9, 0); 
+                return false;
+            }
+            else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                baseTotalRes = MediumDecBase((baseVal - 1), 0) / MediumDecBase((baseVal + 1), 0);
+                auto baseLastPow = baseTotalRes;
+                auto baseWSquared = baseTotalRes * baseTotalRes;
+                auto baseAddRes;
+                int baseWPow = 3;
+                do
+                {
+                    baseLastPow *= baseWSquared;
+                    baseAddRes = baseLastPow / baseWPow;
+                    baseTotalRes += baseAddRes; baseWPow += 2;
+                } while (baseAddRes > JustAboveZero);
+            }
+            return true;
+        }
+
+        bool LogOf_BaseCalculation(const auto& baseVal, auto& baseTotalRes)
+        {
+            if (baseVal.DecimalHalf==0&&baseVal.IntHalf.Value % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    {
+                        baseTotalRes = MediumDecBase(index, 0);
+                        break;
+                    }
+                }
+                baseTotalRes = MediumDecBase(9, 0); 
+                return false;
+            }
+            else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                baseTotalRes = MediumDecBase((baseVal - 1), 0) / MediumDecBase((baseVal + 1), 0);
+                auto baseLastPow = baseTotalRes;
+                auto baseWSquared = baseTotalRes * baseTotalRes;
+                auto baseAddRes;
+                int baseWPow = 3;
+                do
+                {
+                    baseLastPow *= baseWSquared;
+                    baseAddRes = baseLastPow / baseWPow;
+                    baseTotalRes += baseAddRes; baseWPow += 2;
+                } while (baseAddRes > JustAboveZero);
+            }
+            return true;
+        }
+
+        auto LogOf_Section02(const bool& lnMultLog, const auto& baseTotalRes, const auto& threshold)
+        {
+            //Now calculate other log
+			if(IsNegative())//Returns imaginary number if value is less than 0
+				throw "MediumDec does not support returning imaginary number result from log";
+            if (DecimalHalf == 0 && IntHalf % 10 == 0)
+            {
+                if(lnMultLog)
+                {
+                    for (int index = 1; index < 9; ++index)
+                    {
+                        if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                            return MediumDecBase(index, 0) / (baseTotalRes * HalfLN10Mult);
+                    }
+                    return MediumDecBase(9, 0) / (baseTotalRes*HalfLN10Mult);
+                }
+                else
+                {
+                    for (int index = 1; index < 9; ++index)
+                    {
+                        if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                            return MediumDecBase(index, 0)/ baseTotalRes;
+                    }
+                    return MediumDecBase(9, 0)/baseTotalRes;
+                }
+            }
+            if (IntHalf.Value<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {//This section gives accurate answer for values between 1 & 2
+                auto base = this - 1;        // Base of the numerator; exponent will be explicit
+                int den = 1;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                auto term = base;       // First term
+                auto prev = Zero;          // Previous sum
+                auto result = term;     // Kick it off
+
+                while (Abs(prev - result) > threshold) {
+                    ++den;
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                }
+                if(lnMultLog)
+                    return result/baseTotalRes;
+                else
+                    return (result*2)/ baseTotalRes;
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                auto W = (this - 1) / (this + 1);
+                auto TotalRes = W;
+                auto AddRes;
+                int WPow = 3;
+                do
+                {
+                    AddRes = Pow(W, WPow) / WPow;
+                    TotalRes += AddRes; WPow += 2;
+                } while (AddRes > JustAboveZero);
+                if(lnMultLog)
+                    return TotalRes/baseTotalRes;
+                else
+                    return (TotalRes * HalfLN10Mult)/ baseTotalRes;
+            }
+        }
+
+public:
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfInt(const int& baseVal, const auto& threshold = FiveBillionth)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOfInt_BaseCalculation(baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes, threshold);
+        }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>MediumDecBase</returns>
+        auto LogOfV2(const auto& baseVal, const auto& threshold = FiveBillionth)
+        {
+            //Calculate Base log first
+            auto baseTotalRes;
+            bool lnMultLog = LogOf_BaseCalculation(baseTotalRes);
+            return LogOf_Section02(lnMultLog, baseTotalRes, threshold);
+        }
+
+	#pragma endregion Log Functions
+
+    #pragma region Trigonomic Functions
+
+       /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Sin(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            for (int i = 1; i < 7; ++i)
+            {
+                SinValue += Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+            }
+            return SinValue;
+        }
+
+        /// <summary>
+        /// Get Cos from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Cos(const auto& Value)
+        {
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
+            {
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return CosValue;
+        }
+
+        /// <summary>
+        /// Get Tan from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Tan(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
+            {
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return SinValue / CosValue;
+        }
+
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto ATan(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            //Angle as Radian
+            for (int i = 1; i < 7; ++i)
+            { // That's Taylor series!!
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return CosValue / SinValue;
+        }
+
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto ArcTan2(const auto& y, const auto& x)
+        {
+            auto coeff_1 = PiNum / 4;
+            auto coeff_2 = coeff_1 * 3;
+            auto abs_y = Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            auto r;
+            auto angle;
+            if (x.IsPositive())
+            {
+                r = (x - abs_y) / (x + abs_y);
+                angle = coeff_1 - coeff_1 * r;
+            }
+            else
+            {
+                r = (x + abs_y) / (abs_y - x);
+                angle = coeff_2 - coeff_1 * r;
+            }
+            if (y.IsNegative())
+                return -angle;// negate if in quad III or IV
+            else
+                return angle;
+        }
+
+        /// <summary>
+        /// Get Sin from Value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto SinFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                    case 180://Pi Radians
+                        return Zero;
+                        break;
+                    case 90://0.5 Pi Radians
+                        return One;
+                        break;
+                    case 270://1.5 Pi Radians
+                        return NegativeOne;
+                        break;
+                    case 30://0.1666666666 Pi Radians
+                    case 150://0.833333333 Pi Radians
+                        return PointFive;
+                    case 210:
+                    case 330:
+                        return NegPointFive;
+                    default:
+                        //Angle as Radian
+                        auto Radius = Pi * Value / 180;
+                        return Sin(Radius);
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = Pi * Value / 180;
+                return Sin(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Cos() from Value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns></returns>
+        static auto CosFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                        return One;
+                        break;
+                    case 60:
+                        return PointFive;
+                        break;
+                    case 90://0.5 Pi Radians
+                    case 270://1.5 Pi Radians
+                        return Zero;
+                        break;
+                    case 180://Pi Radians
+                        return NegativeOne;
+                        break;
+                    case 120:
+                    case 240:
+                        return NegPointFive;
+                    default:
+                        //Angle as Radian
+                        auto Radius = Pi * Value / 180;
+                        return Cos(Radius)
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = Pi * Value / 180;
+                return Cos(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto TanFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                    case 180://Pi Radians
+                        return Zero;
+                        break;
+                    case 90://0.5 Pi Radians
+                        return Maximum;//Positive Infinity
+                        break;
+                    case 270://1.5 Pi Radians
+                        return Minimum;//Negative Infinity
+                        break;
+                    default:
+                        return Tan(Pi * Value / 180);
+                        break;
+                }
+            }
+            else
+                return Tan(Pi * Value / 180);
+        }
+
+    #pragma endregion Trigonomic Functions
     };
+
     #pragma region ValueDefine Source
 
-	auto MediumDecBase::NegativeRep = MirroredInt::NegativeZero;
-	auto MediumDecBase::MaxIntHalf = MirroredInt::Maximum;
-	auto MediumDecBase::MinIntHalf = MirroredInt::Minimum;
+	MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
+	MirroredInt MediumDec::MaxIntHalf = MirroredInt::Maximum;
+	MirroredInt MediumDec::MinIntHalf = MirroredInt::Minimum;
 
     #pragma endregion ValueDefine Source
 
     #pragma region String Function Source
-
     /// <summary>
     /// Reads the string.
     /// </summary>
     /// <param name="Value">The value.</param>
-    inline void MediumDecBase::ReadString(const std::string& Value)
+    inline void MediumDec::ReadString(const std::string& Value)
     {
         IntHalf = 0; DecimalHalf = 0;
         int PlaceNumber;
@@ -2426,7 +3702,7 @@ public:
                 else { WholeNumberBuffer += StringChar; }
             }
             else if (StringChar == '-')
-				IntHalf.Sign = 0;
+				IntHalf.IsPositive = 0;
             else if (StringChar == '.')
                 ReadingDecimal = true;
             else if(StringChar!=' ')
@@ -2460,20 +3736,70 @@ public:
         }
     }
 
-    std::string MediumDecBase::ToString()
+    /// <summary>
+    /// Gets the value from string.
+    /// </summary>
+    /// <param name="Value">The value.</param>
+    /// <returns>MediumDec</returns>
+    inline MediumDec MediumDec::GetValueFromString(const std::string& Value)
     {
-        std::string Value = std::string(IntHalf);
+        MediumDec NewSelf = Zero;
+        NewSelf.ReadString(Value);
+        return NewSelf;
+    }
+
+    std::string MediumDec::ToString()
+    {
+        std::string Value = "";
+        unsigned int CurrentSection = IntHalf.Value;
+        unsigned __int8 CurrentDigit;
+        if (IsNegative())
+            Value += "-";
+        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
+        {
+            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+        }
         if (DecimalHalf != 0)
         {
             Value += ".";
-            Value += std::string(DecimalHalf)
+            CurrentSection = DecimalHalf;
+            for (__int8 Index = 8; Index >= 0; --Index)
+            {
+                CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+                CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+                if (CurrentDigit != 0)
+                {
+                    if(!DecBuffer.empty())
+                    {
+                        Value += DecBuffer;
+                        DecBuffer.clear();
+                    }
+                    Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+                }
+                else
+                {
+                    DecBuffer += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+                }
+            }
         }
         return Value;
     }
 
-    std::string MediumDecBase::ToFullString()
+    std::string MediumDec::ToFullString()
     {
-        std::string Value = std::string(IntHalf);
+        std::string Value = "";
+        unsigned int CurrentSection = IntHalf.Value;
+        unsigned __int8 CurrentDigit;
+        if (IsNegative())
+            Value += "-";
+        for (__int8 Index = VariableConversionFunctions::NumberOfPlaces(CurrentSection); Index >= 0; Index--)
+        {
+            CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+            CurrentSection -= (signed int)(CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+        }
         if (DecimalHalf != 0)
         {
             Value += ".";
@@ -2498,5 +3824,4 @@ public:
         return Value;
     }
     #pragma endregion String Function Source
-
 }

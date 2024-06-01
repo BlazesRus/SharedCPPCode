@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -480,7 +480,7 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
-        MediumDec(const ldouble& Value){ this->SetDecimalVal(Value); }
+        MediumDec(const long double& Value){ this->SetDecimalVal(Value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
@@ -523,7 +523,7 @@ public:
         /// MediumDec Variant to decimal explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator ldouble() { return toDecimal(); }
+        explicit operator long double() { return toDecimal(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -1245,15 +1245,15 @@ public:
         friend MediumDec operator*(const MediumDec& self, const double& Value) { return self * (MediumDec)Value; }
         friend MediumDec operator/(const MediumDec& self, const double& Value) { return self / (MediumDec)Value; }
 
-        friend MediumDec operator+(const MediumDec& self, const ldouble& Value) { return self + (MediumDec)Value; }
-        friend MediumDec operator-(const MediumDec& self, const ldouble& Value) { return self - (MediumDec)Value; }
-        friend MediumDec operator*(const MediumDec& self, const ldouble& Value) { return self * (MediumDec)Value; }
-        friend MediumDec operator/(const MediumDec& self, const ldouble& Value) { return self / (MediumDec)Value; }
+        friend MediumDec operator+(const MediumDec& self, const long double& Value) { return self + (MediumDec)Value; }
+        friend MediumDec operator-(const MediumDec& self, const long double& Value) { return self - (MediumDec)Value; }
+        friend MediumDec operator*(const MediumDec& self, const long double& Value) { return self * (MediumDec)Value; }
+        friend MediumDec operator/(const MediumDec& self, const long double& Value) { return self / (MediumDec)Value; }
 
-        friend MediumDec operator+(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value + self; }
-        friend MediumDec operator-(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value - self; }
-        friend MediumDec operator*(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value * self; }
-        friend MediumDec operator/(const ldouble& Value, const MediumDec& self) { return (MediumDec)Value / self; }
+        friend MediumDec operator+(const long double& Value, const MediumDec& self) { return (MediumDec)Value + self; }
+        friend MediumDec operator-(const long double& Value, const MediumDec& self) { return (MediumDec)Value - self; }
+        friend MediumDec operator*(const long double& Value, const MediumDec& self) { return (MediumDec)Value * self; }
+        friend MediumDec operator/(const long double& Value, const MediumDec& self) { return (MediumDec)Value / self; }
 
     #pragma endregion Floating Operator Overrides
 
