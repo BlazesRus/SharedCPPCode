@@ -544,12 +544,12 @@ public:
 
 		std::strong_ordering operator<=>(const MediumDec& that) const
 		{//return BasicComparison(that);
-			if (MediumDec IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
 			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
 			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
 			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (MediumDec DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
 				return DecimalHalfCmp;
 		}
 
@@ -836,20 +836,20 @@ public:
         friend MediumDec operator*(const MediumDec& lValue, const unsigned int& rValue) { return lValue.BasicMultiplyByUInt(rValue); }
         friend MediumDec operator*(const MediumDec& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
 		
-        friend MediumDec operator*(const signed int& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByInt(rValue); }
-        friend MediumDec operator*(const unsigned long long& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByInt64(rValue); }
-        friend MediumDec operator*(const unsigned int& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByUInt(rValue); }
-        friend MediumDec operator*(const unsigned long long& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByUInt64(rValue); }
+        friend MediumDec operator*(const signed int& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByInt(rValue); }
+        friend MediumDec operator*(const unsigned long long& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByInt64(rValue); }
+        friend MediumDec operator*(const unsigned int& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByUInt(rValue); }
+        friend MediumDec operator*(const unsigned long long& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
 
         friend MediumDec operator*(const MediumDec& lValue, const signed char& rValue) { return lValue.BasicMultiplyByInt8(rValue); }
         friend MediumDec operator*(const MediumDec& lValue, const signed short& rValue) { return lValue.BasicMultiplyByInt16(rValue); }
         friend MediumDec operator*(const MediumDec& lValue, const unsigned char& rValue) { return lValue.BasicMultiplyByUInt8(rValue); }
         friend MediumDec operator*(const MediumDec& lValue, const unsigned short& rValue) { return lValue.BasicMultiplyByUInt16(rValue); }
 
-        friend MediumDec operator*(const signed char& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByInt8(rValue); }
-        friend MediumDec operator*(const signed short& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByInt16(rValue); }
-        friend MediumDec operator*(const unsigned char& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByUInt8(rValue); }
-        friend MediumDec operator*(const unsigned short& lValue, const MediumDec& rValue) { return rValue.BasicMultiplyByUInt16(rValue); }
+        friend MediumDec operator*(const signed char& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByInt8(rValue); }
+        friend MediumDec operator*(const signed short& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByInt16(rValue); }
+        friend MediumDec operator*(const unsigned char& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByUInt8(rValue); }
+        friend MediumDec operator*(const unsigned short& lValue, const MediumDec& rValue) { return lValue.BasicMultiplyByUInt16(rValue); }
 
         /// <summary>
         /// *= operation between MediumDec and Integer rValue.
@@ -1068,20 +1068,20 @@ public:
         friend MediumDec operator+(const MediumDec& lValue, const unsigned int& rValue) { return lValue.BasicAddByUInt(rValue); }
         friend MediumDec operator+(const MediumDec& lValue, const unsigned long long& rValue) { return lValue.BasicAddByUInt64(rValue); }
 		
-        friend MediumDec operator+(const signed int& lValue, const MediumDec& rValue) { return rValue.BasicAddByInt(lrValue); }
-        friend MediumDec operator+(const unsigned long long& lValue, const MediumDec& rValue) { return rValue.BasicAddByInt64(lrValue); }
-        friend MediumDec operator+(const unsigned int& lValue, const MediumDec& rValue) { return rValue.BasicAddByUInt(lrValue); }
-        friend MediumDec operator+(const unsigned long long& lValue, const MediumDec& rValue) { return rValue.BasicAddByUInt64(lrValue); }
+        friend MediumDec operator+(const signed int& lValue, const MediumDec& rValue) { return lValue.BasicAddByInt(lrValue); }
+        friend MediumDec operator+(const unsigned long long& lValue, const MediumDec& rValue) { return lValue.BasicAddByInt64(lrValue); }
+        friend MediumDec operator+(const unsigned int& lValue, const MediumDec& rValue) { return lValue.BasicAddByUInt(lrValue); }
+        friend MediumDec operator+(const unsigned long long& lValue, const MediumDec& rValue) { return lValue.BasicAddByUInt64(lrValue); }
 
         friend MediumDec operator+(const MediumDec& lValue, const signed char& rValue) { return lValue.BasicAddByInt8(rValue); }
         friend MediumDec operator+(const MediumDec& lValue, const signed short& rValue) { return lValue.BasicAddByInt16(rValue); }
         friend MediumDec operator+(const MediumDec& lValue, const unsigned char& rValue) { return lValue.BasicAddByUInt8(rValue); }
         friend MediumDec operator+(const MediumDec& lValue, const unsigned short& rValue) { return lValue.BasicAddByUInt16(rValue); }
 
-        friend MediumDec operator+(const signed char& lValue, const MediumDec& rValue) { return rValue.BasicAddByInt8(lrValue); }
-        friend MediumDec operator+(const signed short& lValue, const MediumDec& rValue) { return rValue.BasicAddByInt16(lrValue); }
-        friend MediumDec operator+(const unsigned char& lValue, const MediumDec& rValue) { return rValue.BasicAddByUInt8(lrValue); }
-        friend MediumDec operator+(const unsigned short& lValue, const MediumDec& rValue) { return rValue.BasicAddByUInt16(lrValue); }
+        friend MediumDec operator+(const signed char& lValue, const MediumDec& rValue) { return lValue.BasicAddByInt8(lrValue); }
+        friend MediumDec operator+(const signed short& lValue, const MediumDec& rValue) { return lValue.BasicAddByInt16(lrValue); }
+        friend MediumDec operator+(const unsigned char& lValue, const MediumDec& rValue) { return lValue.BasicAddByUInt8(lrValue); }
+        friend MediumDec operator+(const unsigned short& lValue, const MediumDec& rValue) { return lValue.BasicAddByUInt16(lrValue); }
 
         /// <summary>
         /// += operation between MediumDec variant and Integer rValue.
