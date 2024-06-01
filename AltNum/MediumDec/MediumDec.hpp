@@ -619,7 +619,56 @@ public:
         MediumDec& BasicUInt16DivOperation() { BasicUIntDivOperationV1<unsigned short>; }
         MediumDec& BasicInt16DivOperation() { BasicIntDivOperationV1<signed short>; }
 
+        auto BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
+        auto BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
+        auto BasicDivideByUInt64() { return BasicDivideByUIntV1<unsigned long long>; }
+        auto BasicDivideByInt64() { return BasicDivideByIntV1<signed long long>; }
+
+        auto UnsignedBasicDivideByInt() { return BasicDivideByUIntV1<signed int>; }
+        auto UnsignedBasicDivideByInt64() { return BasicDivideByUIntV1<signed long long>; }
+
+        auto BasicDivideByUInt8() { return BasicDivideByUIntV1<unsigned char>; }
+        auto BasicDivideByInt8() { return BasicDivideByIntV1<signed char>; }
+        auto BasicDivideByUInt16() { return BasicDivideByUIntV1<unsigned short>; }
+        auto BasicDivideByInt16() { return BasicDivideByIntV1<signed short>; }
+
     #pragma endregion NormalRep Integer Division Operations
+
+	#pragma region NormalRep AltNum Division Operations
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicUnsignedDivOperation(const auto& rValue)
+		{ BasicUnsignedDivOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicDivOperation(const auto& rValue)
+		{ BasicDivOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicDivideByUnsigned(const auto& rValue)
+        { auto self = *this; return self.BasicUnsignedDivOperation(rValue); }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicMultiplication(const auto& rValue)
+        { auto self = *this; return self.BasicDivOperation(rValue); }
+
+	#pragma endregion NormalRep AltNum Division Operations
 
 	#pragma region Other Division Operations
 
@@ -707,7 +756,56 @@ public:
         MediumDec& BasicUInt16MultOperation() { BasicUIntMultOperationV1<unsigned short>; }
         MediumDec& BasicInt16MultOperation() { BasicIntMultOperationV1<signed short>; }
 
+        auto BasicMultiplyByUInt() { return BasicMultiplyByUIntV1<unsigned int>; }
+        auto BasicMultiplyByInt() { return BasicMultiplyByIntV1<signed int>; }
+        auto BasicMultiplyByUInt64() { return BasicMultiplyByUIntV1<unsigned long long>; }
+        auto BasicMultiplyByInt64() { return BasicMultiplyByIntV1<signed long long>; }
+
+        auto UnsignedBasicMultiplyByInt() { return BasicMultiplyByUIntV1<signed int>; }
+        auto UnsignedBasicMultiplyByInt64() { return BasicMultiplyByUIntV1<signed long long>; }
+
+        auto BasicMultiplyByUInt8() { return BasicMultiplyByUIntV1<unsigned char>; }
+        auto BasicMultiplyByInt8() { return BasicMultiplyByIntV1<signed char>; }
+        auto BasicMultiplyByUInt16() { return BasicMultiplyByUIntV1<unsigned short>; }
+        auto BasicMultiplyByInt16() { return BasicMultiplyByIntV1<signed short>; }
+
     #pragma endregion NormalRep Integer Multiplication Operations
+
+	#pragma region NormalRep AltNum Multiplication Operations
+
+		/// <summary>
+        /// Basic unsigned multiplication operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicUnsignedMultOperation(const auto& rValue)
+        { BasicUnsignedMultOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic multiplication operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicMultOperation(const auto& rValue)
+		{ BasicMultOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic unsigned multiplication operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto& BasicUnsignedMultOperation(const auto& rValue)
+        { BasicUnsignedMultOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic multiplication operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        auto BasicMultiplication(const auto& rValue)
+        { auto self = *this; return self.BasicMultOp(rValue); }
+
+	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region Other multiplication operations
 
