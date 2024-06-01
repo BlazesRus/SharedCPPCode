@@ -1869,9 +1869,8 @@ public:
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf.UnsignedAddOp(rValue.IntValue);
-				
                 if (signBeforeOp==MirroredInt::NegativeSign){
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){
+					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
 						if(IntValue.Value==0)
 							SetAsZero();
 						else
@@ -1886,9 +1885,6 @@ public:
 						DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10 
 					else
 						DecimalHalf.Value -= rValue.DecimalHalf.Value;
-//                    DecimalHalf -= rValue.DecimalHalf;
-//                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; ++IntValue; }
-//                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; --IntValue; }
                 } else {
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 					if(decResult==PartialInt::DecimalOverflow){//5.4 + 4.6
@@ -1897,7 +1893,8 @@ public:
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
-					} else if(decResult>PartialInt::DecimalOverflow){
+					} else if(decResult>PartialInt::DecimalOverflow){//5.4 + 4.7
+						++IntHalf;
 						if(signBeforeOp!=IntHalf.Sign)
 							DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
 						else
@@ -1907,14 +1904,7 @@ public:
 						DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
 					else
 						DecimalHalf.Value = decResult;
-//                    DecimalHalf += rValue.DecimalHalf;
-//                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; --IntValue; }
-//                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; ++IntValue; }
                 }
-				
-				////If flips to other side of negative, invert the decimals
-				//if(signBeforeOp!=IntHalf.Sign)
-				//	DecimalHalf = DecimalOverflow - DecimalHalf;
 			}
 		}
 	
@@ -1950,39 +1940,31 @@ public:
 							DecimalHalf.Value -= rValue.DecimalHalf.Value;
 					} else {
 						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
-						if(decResult==PartialInt::DecimalOverflow){//-10.6 + - 5.4
+						if(decResult==PartialInt::DecimalOverflow){//-5.4 + - 5.6
 							--IntHalf;
 							if(IntValue.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
-						} else if(decResult>PartialInt::DecimalOverflow){
-							if(signBeforeOp!=IntHalf.Sign)
-
-							else
-
-						}
-						else if(signBeforeOp!=IntHalf.Sign)
-
-						else
-
+						else if(decResult>PartialInt::DecimalOverflow){//-5.4 - 5.7 = -11.1 
+							--IntHalf;
+							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
+						} else//-5.2 - 5.2 = -10.4
+							DecimalHalf.Value = decResult;
 					}
-//                    DecimalHalf -= rValue.DecimalHalf;
-//                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; ++IntValue; }
-//                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; --IntValue; }
                 } else {
 					if(rValue.IsPositive()){
-						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
-						if(decResult==PartialInt::DecimalOverflow){//Potentially set to zero if lands on exactly 0 Int
-						} else if(decResult>PartialInt::DecimalOverflow){
-							if(signBeforeOp!=IntHalf.Sign)
-								DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
+						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+						if(decResult==PartialInt::DecimalOverflow){//5.5 + 4.5 = 10
+							++IntHalf;
+							if(IntValue.Value==0)
+								SetAsZero();
 							else
-								DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
-						}
-						else if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
-						else
+								DecimalHalf.Value = 0;
+						} else if(decResult>PartialInt::DecimalOverflow){//5.5 + 4.6 = 
+							++IntHalf;
+							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow; 
+						} else//5.4 + 5.3 = 10.7
 							DecimalHalf.Value = decResult;
 					} else {
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -5.5
@@ -1991,19 +1973,16 @@ public:
 							else
 								DecimalHalf.Value = 0;
 						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-
-							if(signBeforeOp!=IntHalf.Sign)
-
-							} else
-
-						} else if(signBeforeOp!=IntHalf.Sign)
-
-						else
-
+							--IntHalf;
+							if(signBeforeOp!=IntHalf.Sign){//4.3 - 5.4 = -1.1
+								DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+							} else//4.3 - 2.4 = 1.9
+								DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+						} else if(signBeforeOp!=IntHalf.Sign)//5.4 + - 6.3 = -0.9
+							DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4 
+						else//4.4 + -2.3 = 2.1
+							DecimalHalf.Value -= rValue.DecimalHalf;
 					}
-//                    DecimalHalf += rValue.DecimalHalf;
-//                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; --IntValue; }
-//                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; ++IntValue; }
                 }
 
 				//If flips to other side of negative, invert the decimals
@@ -2027,38 +2006,30 @@ public:
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){//-5 - B 
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
-					if(decResult==PartialInt::DecimalOverflow){
-					} else if(decResult>PartialInt::DecimalOverflow){
-						if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
-						else
-							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
-					}
-					else if(signBeforeOp!=IntHalf.Sign)
-						DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
-					else
-						DecimalHalf.Value = decResult;
-                } else {//5.XX - B
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){
+					if(decResult==PartialInt::DecimalOverflow){//-5.4 - 5.6
+						--IntHalf;
 						if(IntValue.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-
-						if(signBeforeOp!=IntHalf.Sign)
-
-						} else
-
-					} else if(signBeforeOp!=IntHalf.Sign)
-
-					else
-
+					else if(decResult>PartialInt::DecimalOverflow){//-5.4 - 5.7 = -11.1 
+						--IntHalf;
+						DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
+					} else//-5.2 - 5.2 = -10.4
+						DecimalHalf.Value = decResult;
+                } else {//5.XX - -B == 5.xx + B
+					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
+						++IntHalf;
+						if(IntValue.Value==0)
+							SetAsZero();
+						else
+							DecimalHalf.Value = 0;
+					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){//5.4 - -5.7 = 11.1
+						++IntHalf;
+						DecimalHalf.Value = DecimalHalf.Value + rValue.DecimalHalf - PartialInt::DecimalOverflow;
+					} else//5.4 - -5.3 = 10.7 
+						DecimalHalf.Value += rValue.DecimalHalf;
                 }
-
-				//If flips to other side of negative, invert the decimals
-				if(signBeforeOp!=IntHalf.Sign)
-					DecimalHalf = DecimalOverflow - DecimalHalf;
 			}
 		}
 		
@@ -2090,192 +2061,6 @@ public:
 					DecimalHalf = DecimalOverflow - DecimalHalf;
 			}
 		}
-	
-		//Alternative code versions
-	
-        /// <summary>
-        /// Basic addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        void BasicUnsignedAddOpV2(const auto& rValue)
-        {
-			if(rValue.DecimalHalf==0)
-				BasicUIntAddOpV1(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntValue;
-				unsigned int decimalBuffer = signBeforeOp!=IntHalf.Sign ? DecimalOverflow - DecimalHalf.Value : DecimalHalf.Value;
-				if(IsPositive()){
-					decimalBuffer += rValue.DecimalHalf.Value;
-					if(decimalBuffer>=DecimalOverflow){
-						decimalBuffer -= DecimalOverflow;
-						++IntValue;
-					if(signBeforeOp!=IntHalf.Sign)
-						DecimalHalf = DecimalOverflow - decimalBuffer;
-					else
-						DecimalHalf = decimalBuffer;
-				}
-				else {//Negative value + positive value
-					if(decimalBuffer==rValue.DecimalHalf){
-						if(IntValue.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf>decimalBuffer){
-						++IntHalf;
-						decimalBuffer = DecimalHalf - decimalBuffer;
-						if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf = DecimalOverflow - decimalBuffer;
-						else
-							DecimalHalf = decimalBuffer;
-				}
-			}
-        }
-		
-        /// <summary>
-        /// Basic addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        void BasicAddOpV2(const auto& rValue)
-        {
-			if(rValue.DecimalHalf==0)
-				BasicIntAddOpV1(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntValue;
-				unsigned int decimalBuffer = signBeforeOp!=IntHalf.Sign ? DecimalOverflow - DecimalHalf.Value : DecimalHalf.Value;
-				if(IsPositive()){
-					if(rValue.IsPositive()){//Positive + Positive value
-						decimalBuffer += rValue.DecimalHalf.Value;
-						if(decimalBuffer>=DecimalOverflow){
-							decimalBuffer -= DecimalOverflow;
-							++IntValue;
-						if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf.Value = DecimalOverflow - decimalBuffer;
-						else
-							DecimalHalf.Value = decimalBuffer;
-					} else {//Positive + Negative value
-						if(decimalBuffer==rValue.DecimalHalf){
-							if(IntValue==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf>decimalBuffer){
-							--IntHalf;
-							decimalBuffer = DecimalHalf - decimalBuffer;
-							if(signBeforeOp!=IntHalf.Sign)
-								DecimalHalf.Value = DecimalOverflow - decimalBuffer;
-							else
-								DecimalHalf.Value = decimalBuffer;
-						} else
-							DecimalHalf.Value = decimalBuffer - rValue.DecimalHalf.Value;
-					}
-				}
-				else {//Negative value + positive value
-					if(rValue.IsPositive()){
-						if(decimalBuffer==rValue.DecimalHalf){
-							if(IntValue==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf>decimalBuffer){
-							++IntHalf;
-							decimalBuffer = DecimalHalf - decimalBuffer;
-							if(signBeforeOp!=IntHalf.Sign)
-								DecimalHalf.Value = DecimalOverflow - decimalBuffer;
-							else
-								DecimalHalf.Value = decimalBuffer;
-						} else
-							DecimalHalf.Value = decimalBuffer - rValue.DecimalHalf.Value;
-					} else {//Negative value plus negative value
-						decimalBuffer += rValue.DecimalHalf.Value;
-						if(decimalBuffer>=DecimalOverflow){
-							decimalBuffer -= DecimalOverflow;
-							--IntValue;
-						if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf.Value = DecimalOverflow - decimalBuffer;
-						else
-							DecimalHalf.Value = decimalBuffer;
-					}
-				}
-			}
-        }
-		
-        /// <summary>
-        /// Basic addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        void BasicUnsignedSubOpV2(const auto& rValue)
-        {
-			if(rValue.DecimalHalf==0)
-				BasicUIntSubOpV1(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue.IntValue;
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntValue;
-				unsigned int decimalBuffer = signBeforeOp!=IntHalf.Sign ? DecimalOverflow - DecimalHalf.Value : DecimalHalf.Value;
-				if(IsPositive()){//Positive - positive value
-					if(decimalBuffer==rValue.DecimalHalf){
-						if(IntValue.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf.Value>decimalBuffer){
-						--IntHalf;
-						if(signBeforeOp!=IntHalf.Sign)//(0.4 - 0.6 == -0.2) == (4 - 6 == -2)/10
-							DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-						else//1.4 - 0.6 == 0.8 
-							DecimalHalf.Value -= rValue.DecimalHalf.Value;
-					} else//1.4 - 0.2
-						DecimalHalf.Value -= rValue.DecimalHalf.Value;
-				}
-				else {//Negative value - positive value
-					decimalBuffer -= rValue.DecimalHalf.Value;
-					if(decimalBuffer>=DecimalOverflow){
-						decimalBuffer -= DecimalOverflow;
-						--IntValue;
-					if(signBeforeOp!=IntHalf.Sign)
-						DecimalHalf.Value = DecimalOverflow - decimalBuffer;
-					else
-						DecimalHalf.Value = decimalBuffer;
-				}
-			}
-        }
-		
-        /// <summary>
-        /// Basic subtraction Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
-        void BasicSubOpV2(const auto& rValue)
-        {
-			if(rValue.DecimalHalf==0)
-				BasicUIntSubOpV1(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue.IntValue;
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntValue;
-				unsigned int decimalBuffer = signBeforeOp!=IntHalf.Sign ? DecimalOverflow - DecimalHalf.Value : DecimalHalf.Value;
-				if(IsPositive()){
-					if(rValue.IsPositive()){//Positive - positive value
-
-					} else {//Positive - Negative value
-
-					}
-				}
-				else {//Negative value + positive value
-					if(rValue.IsPositive()){
-
-					} else {//Negative value plus negative value
-
-					}
-			}
-        }
 		
         //Basic addition operation
         auto& BasicAddOperation(const auto& rValue)
