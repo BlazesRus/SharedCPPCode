@@ -1871,12 +1871,19 @@ public:
 				IntHalf.UnsignedAddOp(rValue.IntValue);
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//Potentially set to zero if lands on exactly 0 Int
-					}
-					else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-					}
-					else if(signBeforeOp!=IntHalf.Sign)//1.6 - 2.2 = -0.6
-						DecimalHalf.Value = PartialInt::DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf;//10 - 6 + 2
+					if(DecimalHalf.Value==rValue.DecimalHalf.Value){
+						if(IntValue.Value==0)
+							SetAsZero();
+						else
+							DecimalHalf.Value = 0;
+					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+						++IntHalf;
+						if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
+							DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+						} else//-1.6 + .7 = -0.9
+							DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+					} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
+						DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10 
 					else
 						DecimalHalf.Value -= rValue.DecimalHalf.Value;
 //                    DecimalHalf -= rValue.DecimalHalf;
@@ -1886,6 +1893,10 @@ public:
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 					if(decResult==PartialInt::DecimalOverflow){//Potentially set to zero if lands on exactly 0 Int
 					} else if(decResult>PartialInt::DecimalOverflow){
+						if(signBeforeOp!=IntHalf.Sign)
+							DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
+						else
+							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
 					}
 					else if(signBeforeOp!=IntHalf.Sign)
 						DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
