@@ -755,7 +755,7 @@ public:
 protected:
 
         template<IntegerType IntType=unsigned int>
-        void PartialUIntDivOpV1(const IntType& lValue)
+        void PartialUIntDivOpV1(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
@@ -848,7 +848,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicDivideByUIntV1(const IntType& lValue)
+        auto BasicDivideByUIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicUIntDivOpV1(rValue);
@@ -862,7 +862,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
-        auto BasicDivideByIntV1(const IntType& lValue)
+        auto BasicDivideByIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicIntDivOpV1(rValue);
@@ -883,14 +883,14 @@ public:
         void BasicUInt16DivOp() { BasicUIntDivOpV1<unsigned long long>; }
         void BasicInt16DivOp() { BasicIntDivOpV1<signed long long>; }
 
-        auto& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
-        auto& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
-        auto& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
-        auto& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
-        auto& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
-        auto& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
-        auto& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
-        auto& BasicInt16DivOperation() { return BasicIntDivOperationV1<signed short>; }
+        MediumDecBase& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
+        MediumDecBase& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
+        MediumDecBase& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
+        MediumDecBase& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
+        MediumDecBase& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
+        MediumDecBase& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
+        MediumDecBase& BasicInt16DivOperation() { return BasicIntDivOperationV1<signed short>; }
 
         auto BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
         auto BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
@@ -916,7 +916,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const auto& lValue)
+        bool UnsignedPartialDivOp(const auto& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + (unsigned _int64)DecimalHalf;
             unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + (unsigned _int64)rValue.DecimalHalf;	
@@ -938,41 +938,41 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void BasicUnsignedDivOp(const auto& lValue)
+        void BasicUnsignedDivOp(const auto& rValue)
 		{
 			if(DecimalHalf==0)
 			{
 				if(rValue.DecimalHalf==0)
 				{
-					switch(rValue.IntHalf.rValue)
+					switch(rValue.IntHalf.Value)
 					{
 						case 2:
-							if(IntHalf&1==1)//Check if number is odd
+							if((IntHalf.Value&1)==1)//Check if number is odd
 								UnsignedBasicIntDivOp(2);
 							else
-								IntHalf.rValue /= 2;
+								IntHalf.Value /= 2;
 							break;
 						case 4:
-							if(((IntHalf >> 2) << 2) == IntHalf)
-								IntHalf.rValue /= 4;
+							if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
+								IntHalf.Value /= 4;
 							else
 								UnsignedBasicIntDivOp(4);
 							break;
 						case 8:
-							if(((IntHalf >> 3) << 3) == IntHalf)
-								IntHalf.rValue /= 8;
+							if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
+								IntHalf.Value /= 8;
 							else
 								UnsignedBasicIntDivOp(4);
 							break;
 						case 16:
-							if(((IntHalf >> 4) << 4) == IntHalf)
-								IntHalf.rValue /= 16;
+							if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
+								IntHalf.Value /= 16;
 							else
 								UnsignedBasicIntDivOp(4);
 							break;
 						case 32:
-							if(((IntHalf >> 5) << 5) == IntHalf)
-								IntHalf.rValue /= 32;
+							if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
+								IntHalf.Value /= 32;
 							else
 								UnsignedBasicIntDivOp(4);
 							break;
@@ -980,7 +980,7 @@ public:
                             throw "Target rValue can not be divided by zero";
                             break;
 						default:
-							UnsignedBasicIntDivOp(rValue.IntHalf.rValue);
+							UnsignedBasicIntDivOp(rValue.IntHalf.Value);
 							break;
 					}
 				}
@@ -1006,7 +1006,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& BasicUnsignedDivOperation(const auto& lValue)
+        auto& BasicUnsignedDivOperation(const auto& rValue)
 		{ BasicUnsignedDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -1030,7 +1030,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& BasicDivOperation(const auto& lValue)
+        auto& BasicDivOperation(const auto& rValue)
 		{ BasicDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -1038,7 +1038,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto BasicDivideByUnsigned(const auto& lValue)
+        auto BasicDivideByUnsigned(const auto& rValue)
         { auto lValue = *this; return lValue.BasicUnsignedDivOperation(rValue); }
 
 		/// <summary>
@@ -1046,7 +1046,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        auto BasicDivideBy(const auto& lValue)
+        auto BasicDivideBy(const auto& rValue)
         { auto lValue = *this; return lValue.BasicDivOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Division Operations
@@ -1156,7 +1156,7 @@ protected:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDec</returns>
         template<IntegerType IntType=int>
-        void PartialUIntMultOpV1(const IntType& lValue)
+        void PartialUIntMultOpV1(const IntType& rValue)
         {
             if (DecimalHalf == 0)
                 IntHalf.Value *= rValue;
@@ -1249,7 +1249,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
-        auto BasicMultiplyByUIntV1(const IntType& lValue)
+        auto BasicMultiplyByUIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicUIntMultOpV1(rValue);
@@ -1263,7 +1263,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
-        auto BasicMultiplyByIntV1(const IntType& lValue)
+        auto BasicMultiplyByIntV1(const IntType& rValue)
         {
             auto self = *this;
             return self.BasicIntMultOpV1(rValue);
@@ -1316,13 +1316,13 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& BasicUnsignedMultOp(const auto& lValue)
+        auto& BasicUnsignedMultOp(const auto& rValue)
 		{
             if (DecimalHalf == 0)
             {
                 if (IntHalf.Value == 1)
                 {
-					if(IntHalf.IsNegative()
+					if(IntHalf.IsNegative())
 						IntHalf = -rValue.IntHalf;
 					else
 						IntHalf = rValue.IntHalf;
@@ -1487,7 +1487,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& BasicUnsignedMultOperation(const auto& lValue)
+        auto& BasicUnsignedMultOperation(const auto& rValue)
         { BasicUnsignedMultOp(rValue); return *this; }
 
         void BasicMultOp(const auto& Value)
@@ -1506,7 +1506,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& BasicMultOperation(const auto& lValue)
+        auto& BasicMultOperation(const auto& rValue)
 		{ BasicMultOp(rValue); return *this; }
 
 		/// <summary>
@@ -1514,7 +1514,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto BasicMultiplyByUnsigned(const auto& lValue)
+        auto BasicMultiplyByUnsigned(const auto& rValue)
         { auto lValue = *this; return lValue.BasicUnsignedMultOperation(rValue); }
 
 		/// <summary>
@@ -1522,7 +1522,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        auto BasicMultiplyBy(const auto& lValue)
+        auto BasicMultiplyBy(const auto& rValue)
         { auto lValue = *this; return lValue.BasicMultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
@@ -1637,7 +1637,7 @@ protected:
 
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOperationV1(const IntType& rValue)
-        { BasicUIntAddOpV1(Value); return *this; }
+        { BasicUIntAddOpV1(rValue); return *this; }
 
         /// <summary>
         /// Basic addition operation between MediumDec Variant and Integer value 
@@ -1654,7 +1654,7 @@ protected:
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf += rValue;
 				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
 			}
         }
 
@@ -1670,7 +1670,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
         auto BasicAddByUIntV1(const IntType& rValue)
-        { auto self = *this; return self.BasicAddByUIntV1(rValue); }
+        { auto self = *this; return self.BasicUIntAddOpV1(rValue); }
 
 		/// <summary>
         /// Basic addition operation between MediumDec variant and Integer value 
@@ -1680,7 +1680,7 @@ protected:
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=signed int>
         auto BasicAddByIntV1(const IntType& rValue)
-        { auto self = *this; return self.BasicAddByIntV1(rValue); }
+        { auto self = *this; return self.BasicIntAddOpV1(rValue); }
 
 public:
 
@@ -1711,13 +1711,13 @@ public:
         auto& BasicUIntAddOperation(const unsigned int& rValue)
         { BasicUIntAddOpV1(Value); return *this; }
 
-        auto& BasicIntAddOperation() { return BasicIntAddOperationV1<signed int>; }
-        auto& BasicUInt64AddOperation() { return BasicUIntAddOperationV1<unsigned long long>; }
-        auto& BasicInt64AddOperation() { return BasicIntAddOperationV1<signed long long>; }
-        auto& BasicUInt8AddOperation() { return BasicUIntAddOperationV1<unsigned char>; }
-        auto& BasicInt8AddOperation() { return BasicIntAddOperationV1<signed char>; }
-        auto& BasicUInt16AddOperation() { return BasicUIntAddOperationV1<unsigned short>; }
-        auto& BasicInt16AddOperation() { return BasicIntAddOperationV1<signed short>; }
+        MediumDecBase& BasicIntAddOperation() { return BasicIntAddOperationV1<signed int>; }
+        MediumDecBase& BasicUInt64AddOperation() { return BasicUIntAddOperationV1<unsigned long long>; }
+        MediumDecBase& BasicInt64AddOperation() { return BasicIntAddOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt8AddOperation() { return BasicUIntAddOperationV1<unsigned char>; }
+        MediumDecBase& BasicInt8AddOperation() { return BasicIntAddOperationV1<signed char>; }
+        MediumDecBase& BasicUInt16AddOperation() { return BasicUIntAddOperationV1<unsigned short>; }
+        MediumDecBase& BasicInt16AddOperation() { return BasicIntAddOperationV1<signed short>; }
 
         auto BasicAddByUInt() { return BasicAddByUIntV1<unsigned int>; }
         auto BasicAddByInt() { return BasicAddByIntV1<signed int>; }
@@ -1775,7 +1775,7 @@ protected:
 				unsigned int signBeforeOp = IntHalf.Sign;
 				IntHalf += rValue;
 				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf = MediumDec::DecimalOverflow - DecimalHalf;
+					DecimalHalf = PartialInt::DecimalOverflow - DecimalHalf;
 			}
         }
 
@@ -1829,16 +1829,16 @@ public:
         void BasicUInt16SubOp() { BasicUIntSubOpV1<unsigned short>; }
         void BasicInt16SubOp() { BasicIntSubOpV1<signed short>; }
 
-        auto& BasicUIntSubOperation(const unsigned int& rValue)
+        MediumDecBase& BasicUIntSubOperation(const unsigned int& rValue)
         { BasicUIntSubOpV1(Value); return *this; }
 
-        auto& BasicIntSubOperation() { return BasicIntSubOperationV1<signed int>; }
-        auto& BasicUInt64SubOperation() { return BasicUIntSubOperationV1<unsigned long long>; }
-        auto& BasicInt64SubOperation() { return BasicIntSubOperationV1<signed long long>; }
-        auto& BasicUInt8SubOperation() { return BasicUIntSubOperationV1<unsigned char>; }
-        auto& BasicInt8SubOperation() { return BasicIntSubOperationV1<signed char>; }
-        auto& BasicUInt16SubOperation() { return BasicUIntSubOperationV1<unsigned short>; }
-        auto& BasicInt16SubOperation() { return BasicIntSubOperationV1<signed short>; }
+        MediumDecBase& BasicIntSubOperation() { return BasicIntSubOperationV1<signed int>; }
+        MediumDecBase& BasicUInt64SubOperation() { return BasicUIntSubOperationV1<unsigned long long>; }
+        MediumDecBase& BasicInt64SubOperation() { return BasicIntSubOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt8SubOperation() { return BasicUIntSubOperationV1<unsigned char>; }
+        MediumDecBase& BasicInt8SubOperation() { return BasicIntSubOperationV1<signed char>; }
+        MediumDecBase& BasicUInt16SubOperation() { return BasicUIntSubOperationV1<unsigned short>; }
+        MediumDecBase& BasicInt16SubOperation() { return BasicIntSubOperationV1<signed short>; }
 
         auto BasicSubByUInt() { return BasicSubByUIntV1<unsigned int>; }
         auto BasicSubByInt() { return BasicSubByIntV1<signed int>; }
@@ -1871,7 +1871,7 @@ public:
 				IntHalf.UnsignedAddOp(rValue.IntValue);
                 if (signBeforeOp==MirroredInt::NegativeSign){
 					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
-						if(IntValue.Value==0)
+						if(IntHalf.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
@@ -1889,16 +1889,13 @@ public:
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 					if(decResult==PartialInt::DecimalOverflow){//5.4 + 4.6
 						++IntHalf;
-						if(IntValue.Value==0)
+						if(IntHalf.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
 					} else if(decResult>PartialInt::DecimalOverflow){//5.4 + 4.7
 						++IntHalf;
-						if(signBeforeOp!=IntHalf.Sign)
-							DecimalHalf.Value = PartialInt::DecimalOverflow - (decResult - PartialInt::DecimalOverflow);
-						else
-							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
+						DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
 					}
 					else if(signBeforeOp!=IntHalf.Sign)
 						DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
@@ -1924,7 +1921,7 @@ public:
                 if (signBeforeOp==MirroredInt::NegativeSign){
 					if(rValue.IsPositive()){
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -1942,7 +1939,7 @@ public:
 						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 						if(decResult==PartialInt::DecimalOverflow){//-5.4 + - 5.6
 							--IntHalf;
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -1957,7 +1954,7 @@ public:
 						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
 						if(decResult==PartialInt::DecimalOverflow){//5.5 + 4.5 = 10
 							++IntHalf;
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -1968,7 +1965,7 @@ public:
 							DecimalHalf.Value = decResult;
 					} else {
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -5.5
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -2008,7 +2005,7 @@ public:
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 					if(decResult==PartialInt::DecimalOverflow){//-5.4 - 5.6
 						--IntHalf;
-						if(IntValue.Value==0)
+						if(IntHalf.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
@@ -2019,7 +2016,7 @@ public:
 						DecimalHalf.Value = decResult;
                 } else {//5.XX - B
 					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
-						if(IntValue.Value==0)
+						if(IntHalf.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
@@ -2054,7 +2051,7 @@ public:
 						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
 						if(decResult==PartialInt::DecimalOverflow){//-5.4 - 5.6
 							--IntHalf;
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -2065,7 +2062,7 @@ public:
 							DecimalHalf.Value = decResult;
 					} else {
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//-5.4 - -4.4
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -2083,7 +2080,7 @@ public:
                 } else {
 					if(rValue.IsPositive()){
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -2100,7 +2097,7 @@ public:
 					} else {
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
 							++IntHalf;
-							if(IntValue.Value==0)
+							if(IntHalf.Value==0)
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
@@ -2127,7 +2124,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto BasicAddByUnsigned(const auto& lValue)
+        auto BasicAddByUnsigned(const auto& rValue)
         { auto lValue = *this; return lValue.BasicUnsignedAddOperation(rValue); }
 
 		/// <summary>
@@ -2135,7 +2132,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        auto BasicAddBy(const auto& lValue)
+        auto BasicAddBy(const auto& rValue)
         { auto lValue = *this; return lValue.BasicAddOperation(rValue); }
 
         //Basic subtraction operation
@@ -2151,7 +2148,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto BasicSubtractByUnsigned(const auto& lValue)
+        auto BasicSubtractByUnsigned(const auto& rValue)
         { auto lValue = *this; return lValue.BasicUnsignedSubOperation(rValue); }
 
 		/// <summary>
@@ -2159,7 +2156,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        auto BasicSubtractBy(const auto& lValue)
+        auto BasicSubtractBy(const auto& rValue)
         { auto lValue = *this; return lValue.BasicSubOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Addition/Subtraction Operations
