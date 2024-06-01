@@ -477,12 +477,12 @@ namespace BlazesRusCode
             return AltDec(2, 302585093);
         }
 
-        static AltDec LN10MultValue()
+        static AltDec TenthLN10Value()
         {
             return AltDec(0, 434294482);
         }
 
-        static AltDec HalfLN10MultValue()
+        static AltDec FifthLN10Value()
         {
             return AltDec(0, 868588964);
         }
@@ -629,12 +629,12 @@ public:
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static AltDec LN10Mult;
+        static AltDec TenthLN10;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static AltDec HalfLN10Mult;
+        static AltDec FifthLN10;
 
     #if defined(AltNum_EnableNil)
         /// <summary>

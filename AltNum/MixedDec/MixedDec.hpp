@@ -1116,12 +1116,12 @@ public:
             return MixedDec(2, 302585093);
         }
 
-        static MixedDec LN10MultValue()
+        static MixedDec TenthLN10Value()
         {
             return MixedDec(0, 434294482);
         }
 
-        static MixedDec HalfLN10MultValue()
+        static MixedDec FifthLN10Value()
         {
             return MixedDec(0, 868588964);
         }
@@ -1280,12 +1280,12 @@ public:
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MixedDec LN10Mult;
+        static MixedDec TenthLN10;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MixedDec HalfLN10Mult;
+        static MixedDec FifthLN10;
 
     #if defined(AltNum_EnableNil)
         /// <summary>

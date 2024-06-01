@@ -347,12 +347,12 @@ namespace BlazesRusCode
             return TinyUDec(2, 302585093);
         }
 
-        static TinyUDec LN10MultValue()
+        static TinyUDec TenthLN10Value()
         {
             return TinyUDec(0, 434294482);
         }
 
-        static TinyUDec HalfLN10MultValue()
+        static TinyUDec FifthLN10Value()
         {
             return TinyUDec(0, 868588964);
         }
@@ -499,12 +499,12 @@ public:
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static TinyUDec LN10Mult;
+        static TinyUDec TenthLN10;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static TinyUDec HalfLN10Mult;
+        static TinyUDec FifthLN10;
 
     #if defined(AltNum_EnableNil)
         /// <summary>
@@ -3604,7 +3604,7 @@ protected:
             AddRes = LastPow / WPow;
             TotalRes += AddRes; WPow += 2;
         } while (AddRes > TinyUDec::JustAboveZero);
-        return TotalRes * TinyUDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+        return TotalRes * TinyUDec::FifthLN10;//Gives more accurate answer than attempting to divide by Ln10
     }
 public:
 
@@ -3646,7 +3646,7 @@ public:
                     else
                         result -= term / den;
                 }
-                return result*TinyUDec::LN10Mult;// result/TinyUDec::LN10;//Using Multiplication instead of division for speed improvement
+                return result*TinyUDec::TenthLN10;// result/TinyUDec::LN10;//Using Multiplication instead of division for speed improvement
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
@@ -3669,7 +3669,7 @@ protected:
             AddRes = LastPow / WPow;
             TotalRes += AddRes; WPow += 2;
         } while (AddRes > TinyUDec::JustAboveZero);
-        return TotalRes * TinyUDec::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+        return TotalRes * TinyUDec::FifthLN10;//Gives more accurate answer than attempting to divide by Ln10
     }
 public:
 
@@ -3757,9 +3757,9 @@ public:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? TinyUDec(index, 0) / (baseTotalRes * TinyUDec::HalfLN10Mult): TinyUDec(index, 0)/ baseTotalRes;
+                        return lnMultLog ? TinyUDec(index, 0) / (baseTotalRes * TinyUDec::FifthLN10): TinyUDec(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? TinyUDec(9, 0) / (baseTotalRes*TinyUDec::HalfLN10Mult):TinyUDec(9, 0)/baseTotalRes;
+                return lnMultLog? TinyUDec(9, 0) / (baseTotalRes*TinyUDec::FifthLN10):TinyUDec(9, 0)/baseTotalRes;
             }
             if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -3794,7 +3794,7 @@ public:
                     AddRes = TinyUDec::Pow(W, WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > TinyUDec::JustAboveZero);
-                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * TinyUDec::HalfLN10Mult)/ baseTotalRes;
+                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * TinyUDec::FifthLN10)/ baseTotalRes;
             }
             //return Log10(Value) / Log10(BaseVal);
         }
@@ -4101,8 +4101,8 @@ public:
     TinyUDec TinyUDec::Maximum = MaximumValue();
     TinyUDec TinyUDec::E = ENumValue();
     TinyUDec TinyUDec::LN10 = LN10Value();
-    TinyUDec TinyUDec::LN10Mult = LN10MultValue();
-    TinyUDec TinyUDec::HalfLN10Mult = HalfLN10MultValue();
+    TinyUDec TinyUDec::TenthLN10 = TenthLN10Value();
+    TinyUDec TinyUDec::FifthLN10 = FifthLN10Value();
     TinyUDec TinyUDec::TenMillionth = TenMillionthValue();
     TinyUDec TinyUDec::FiveMillionth = FiveMillionthValue();
     TinyUDec TinyUDec::FiveBillionth = FiveBillionthValue();

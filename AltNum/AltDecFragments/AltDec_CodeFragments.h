@@ -12511,7 +12511,7 @@ protected:
             AddRes = LastPow / WPow;
             TotalRes += AddRes; WPow += 2;
         } while (AddRes > AltDecBase::JustAboveZero);
-        return TotalRes * AltDecBase::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+        return TotalRes * AltDecBase::FifthLN10;//Gives more accurate answer than attempting to divide by Ln10
     }
 public:
 
@@ -12573,7 +12573,7 @@ public:
                     else
                         result -= term / den;
                 }
-                return result*AltDecBase::LN10Mult;// result/AltDecBase::LN10;//Using Multiplication instead of division for speed improvement
+                return result*AltDecBase::TenthLN10;// result/AltDecBase::LN10;//Using Multiplication instead of division for speed improvement
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
@@ -12596,7 +12596,7 @@ protected:
             AddRes = LastPow / WPow;
             TotalRes += AddRes; WPow += 2;
         } while (AddRes > AltDecBase::JustAboveZero);
-        return TotalRes * AltDecBase::HalfLN10Mult;//Gives more accurate answer than attempting to divide by Ln10
+        return TotalRes * AltDecBase::FifthLN10;//Gives more accurate answer than attempting to divide by Ln10
     }
 public:
 
@@ -12726,9 +12726,9 @@ public:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? AltDecBase(index, 0) / (baseTotalRes * AltDecBase::HalfLN10Mult): AltDecBase(index, 0)/ baseTotalRes;
+                        return lnMultLog ? AltDecBase(index, 0) / (baseTotalRes * AltDecBase::FifthLN10): AltDecBase(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? AltDecBase(9, 0) / (baseTotalRes*AltDecBase::HalfLN10Mult):AltDecBase(9, 0)/baseTotalRes;
+                return lnMultLog? AltDecBase(9, 0) / (baseTotalRes*AltDecBase::FifthLN10):AltDecBase(9, 0)/baseTotalRes;
             }
             if (ConvertedVal.IntHalf>=0&&ConvertedVal.IntHalf<2)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -12763,7 +12763,7 @@ public:
                     AddRes = W.IntPow(WPow) / WPow;
                     TotalRes += AddRes; WPow += 2;
                 } while (AddRes > AltDecBase::JustAboveZero);
-                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * AltDecBase::HalfLN10Mult)/ baseTotalRes;
+                return lnMultLog? TotalRes/baseTotalRes:(TotalRes * AltDecBase::FifthLN10)/ baseTotalRes;
             }
             //return Log10(Value) / Log10(BaseVal);
         }

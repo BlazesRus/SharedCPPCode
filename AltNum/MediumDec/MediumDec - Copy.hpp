@@ -610,27 +610,27 @@ public:
             BasicIntDivOpV1(Value); return *this;
         }
 
-        MediumDec& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
-        MediumDec& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
-        MediumDec& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
-        MediumDec& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
-        MediumDec& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
-        MediumDec& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
-        MediumDec& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
-        MediumDec& BasicInt16DivOperation() { return BasicIntDivOperationV1<signed short>; }
+        auto& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
+        auto& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
+        auto& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
+        auto& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
+        auto& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
+        auto& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
+        auto& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
+        auto& BasicInt16DivOperation() { return BasicIntDivOperationV1<signed short>; }
 
-        MediumDec BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
-        MediumDec BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
-        MediumDec BasicDivideByUInt64() { return BasicDivideByUIntV1<unsigned long long>; }
-        MediumDec BasicDivideByInt64() { return BasicDivideByIntV1<signed long long>; }
+        auto BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
+        auto BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
+        auto BasicDivideByUInt64() { return BasicDivideByUIntV1<unsigned long long>; }
+        auto BasicDivideByInt64() { return BasicDivideByIntV1<signed long long>; }
 
-        MediumDec UnsignedBasicDivideByInt() { return BasicDivideByUIntV1<signed int>; }
-        MediumDec UnsignedBasicDivideByInt64() { return BasicDivideByUIntV1<signed long long>; }
+        auto UnsignedBasicDivideByInt() { return BasicDivideByUIntV1<signed int>; }
+        auto UnsignedBasicDivideByInt64() { return BasicDivideByUIntV1<signed long long>; }
 
-        MediumDec BasicDivideByUInt8() { return BasicDivideByUIntV1<unsigned char>; }
-        MediumDec BasicDivideByInt8() { return BasicDivideByIntV1<signed char>; }
-        MediumDec BasicDivideByUInt16() { return BasicDivideByUIntV1<unsigned short>; }
-        MediumDec BasicDivideByInt16() { return BasicDivideByIntV1<signed short>; }
+        auto BasicDivideByUInt8() { return BasicDivideByUIntV1<unsigned char>; }
+        auto BasicDivideByInt8() { return BasicDivideByIntV1<signed char>; }
+        auto BasicDivideByUInt16() { return BasicDivideByUIntV1<unsigned short>; }
+        auto BasicDivideByInt16() { return BasicDivideByIntV1<signed short>; }
 
     #pragma endregion NormalRep Integer Division Operations
 

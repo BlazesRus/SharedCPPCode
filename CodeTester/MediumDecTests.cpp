@@ -14,7 +14,7 @@ using PartialInt = BlazesRusCode::PartialInt;
 using FlaggedInt = BlazesRusCode::FlaggedInt;
 
 #include "..\AltNum\MediumDec\MediumDec.hpp"
-using MediumDecVariant = BlazesRusCode::MediumDec;
+using MediumDecVariant = BlazesRusCode::MediumDecBase;
 
 #include <Windows.h>
 

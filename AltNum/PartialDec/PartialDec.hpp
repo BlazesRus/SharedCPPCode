@@ -320,12 +320,12 @@ public:
             return PartialDec(2, 302585093);
         }
 
-        static PartialDec LN10MultValue()
+        static PartialDec TenthLN10Value()
         {
             return PartialDec(0, 434294482);
         }
 
-        static PartialDec HalfLN10MultValue()
+        static PartialDec FifthLN10Value()
         {
             return PartialDec(0, 868588964);
         }
@@ -448,12 +448,12 @@ public:
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static PartialDec LN10Mult;
+        static PartialDec TenthLN10;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static PartialDec HalfLN10Mult;
+        static PartialDec FifthLN10;
     #pragma endregion ValueDefines
 
     #pragma region String Commands

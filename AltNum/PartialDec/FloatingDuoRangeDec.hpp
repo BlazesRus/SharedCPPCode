@@ -309,12 +309,12 @@ public:
             return FloatingDuoRangeDec(2, 302585093);
         }
 
-        static FloatingDuoRangeDec LN10MultValue()
+        static FloatingDuoRangeDec TenthLN10Value()
         {
             return FloatingDuoRangeDec(0, 434294482);
         }
 
-        static FloatingDuoRangeDec HalfLN10MultValue()
+        static FloatingDuoRangeDec FifthLN10Value()
         {
             return FloatingDuoRangeDec(0, 868588964);
         }
@@ -437,12 +437,12 @@ public:
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static FloatingDuoRangeDec LN10Mult;
+        static FloatingDuoRangeDec TenthLN10;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static FloatingDuoRangeDec HalfLN10Mult;
+        static FloatingDuoRangeDec FifthLN10;
     #pragma endregion ValueDefines
 
     #pragma region String Commands
