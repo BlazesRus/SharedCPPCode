@@ -1866,23 +1866,27 @@ public:
         {
 			if(rValue.DecimalHalf==0)
 				BasicUIntAddOpV1(rValue.IntHalf);
-			else {
+			else 
+            {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf.UnsignedAddOp(rValue.IntValue);
-                if (signBeforeOp==MirroredInt::NegativeSign){
+                if (signBeforeOp==MirroredInt::NegativeSign)
+                {
 					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
 						if(IntHalf.Value==0)
 							SetAsZero();
 						else
 							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+					}
+                    else if(rValue.DecimalHalf.Value>DecimalHalf.Value)
+                    {
 						++IntHalf;
 						if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
 							DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-						} else//-1.6 + .7 = -0.9
+                        else//-1.6 + .7 = -0.9
 							DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
 					} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
-						DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10 
+						DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
 					else
 						DecimalHalf.Value -= rValue.DecimalHalf.Value;
                 } else {
@@ -1929,7 +1933,7 @@ public:
 							++IntHalf;
 							if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
 								DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-							} else//-1.6 + .7 = -0.9
+							else//-1.6 + .7 = -0.9
 								DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
 						} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
 							DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10 
@@ -1958,9 +1962,9 @@ public:
 								SetAsZero();
 							else
 								DecimalHalf.Value = 0;
-						} else if(decResult>PartialInt::DecimalOverflow){//5.5 + 4.6 = 
+						} else if(decResult>PartialInt::DecimalOverflow){//5.5 + 4.6 = 10.1
 							++IntHalf;
-							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow; 
+							DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
 						} else//5.4 + 5.3 = 10.7
 							DecimalHalf.Value = decResult;
 					} else {
@@ -1976,15 +1980,11 @@ public:
 							else//4.3 - 2.4 = 1.9
 								DecimalHalf.Value = PartialInt::DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
 						} else if(signBeforeOp!=IntHalf.Sign)//5.4 + - 6.3 = -0.9
-							DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4 
+							DecimalHalf.Value = PartialInt::DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4
 						else//4.4 + -2.3 = 2.1
 							DecimalHalf.Value -= rValue.DecimalHalf;
 					}
                 }
-
-				//If flips to other side of negative, invert the decimals
-				if(signBeforeOp!=IntHalf.Sign)
-					DecimalHalf = DecimalOverflow - DecimalHalf;
 			}
 		}
 	
@@ -2003,13 +2003,13 @@ public:
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){//-5 - B 
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
-					if(decResult==PartialInt::DecimalOverflow){//-5.4 - 5.6
-						--IntHalf;
-						if(IntHalf.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					else if(decResult>PartialInt::DecimalOverflow){//-5.4 - 5.7 = -11.1 
+                    if (decResult == PartialInt::DecimalOverflow){//-5.4 - 5.6
+                        --IntHalf;
+                        if (IntHalf.Value == 0)
+                            SetAsZero();
+                        else
+                            DecimalHalf.Value = 0;
+                    } else if (decResult > PartialInt::DecimalOverflow) {//-5.4 - 5.7 = -11.1 
 						--IntHalf;
 						DecimalHalf.Value = decResult - PartialInt::DecimalOverflow;
 					} else//-5.2 - 5.2 = -10.4
