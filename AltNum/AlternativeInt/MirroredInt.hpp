@@ -461,6 +461,19 @@ namespace BlazesRusCode
         }
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+        void UnsignedAddOp(const MirroredInt& rValue){
+            if(IsPositive())
+				Value += rValue.Value;
+            else {
+				if(rValue.Value>Value){//Becoming positive
+					Sign = PositiveSign;
+					Value = rValue.Value - Value - 1;
+				} else
+					Value -= rValue.Value;
+            }
+        }
+
+        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void AddOp(const MirroredInt& rValue){
             if(IsPositive()){
 				if(rValue.IsPositive())
@@ -516,6 +529,18 @@ namespace BlazesRusCode
 				} else
 					Value -= rValue;
             }
+        }
+
+        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+        void UnsignedSubOp(const MirroredInt& rValue){
+            if(IsPositive()){
+				if(rValue.Value>Value){//Becoming positive
+					Sign = PositiveSign;
+					Value = rValue.Value - Value - 1;
+				} else
+					Value -= rValue.Value;
+            } else
+					Value += rValue.Value;
         }
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)

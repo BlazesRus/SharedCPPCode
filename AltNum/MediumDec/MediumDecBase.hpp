@@ -1868,21 +1868,37 @@ public:
 				BasicUIntAddOpV1(rValue.IntHalf);
 			else {
 				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntValue;
+				IntHalf.UnsignedAddOp(rValue.IntValue);
 				
                 if (signBeforeOp==MirroredInt::NegativeSign){
+					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//Potentially set to zero if lands on exactly 0 Int
+					}
+					else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+					}
+					else if(signBeforeOp!=IntHalf.Sign)//1.6 - 2.2 = -0.6
+						DecimalHalf.Value = PartialInt::DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf;//10 - 6 + 2
+					else
+						DecimalHalf.Value -= rValue.DecimalHalf.Value;
 //                    DecimalHalf -= rValue.DecimalHalf;
 //                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; ++IntValue; }
 //                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; --IntValue; }
                 } else {
+					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf;
+					if(decResult==PartialInt::DecimalOverflow){//Potentially set to zero if lands on exactly 0 Int
+					} else if(decResult>PartialInt::DecimalOverflow){
+					}
+					else if(signBeforeOp!=IntHalf.Sign)
+						DecimalHalf.Value = PartialInt::DecimalOverflow - decResult;
+					else
+						DecimalHalf.Value = decResult;
 //                    DecimalHalf += rValue.DecimalHalf;
 //                    if (DecimalHalf < 0) { DecimalHalf += MediumDecV2Base::DecimalOverflow; --IntValue; }
 //                    else if (DecimalHalf >= MediumDecV2Base::DecimalOverflow) { DecimalHalf -= MediumDecV2Base::DecimalOverflow; ++IntValue; }
                 }
 				
-				//If flips to other side of negative, invert the decimals
-				if(signBeforeOp!=IntHalf.Sign)
-					DecimalHalf = DecimalOverflow - DecimalHalf;
+				////If flips to other side of negative, invert the decimals
+				//if(signBeforeOp!=IntHalf.Sign)
+				//	DecimalHalf = DecimalOverflow - DecimalHalf;
 			}
 		}
 	
