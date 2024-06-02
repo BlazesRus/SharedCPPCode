@@ -25,12 +25,10 @@
 namespace BlazesRusCode
 {
 	struct FlaggedInt {public:
-		#pragma options align=bit_packed
 		//Is either mixed fraction or power of representation if this value is one 
 		unsigned int IsAltRep:1;
 		//Stores non-signed part of value
 		unsigned int Value:31;
-		#pragma options align=reset
 		
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0)
 		{

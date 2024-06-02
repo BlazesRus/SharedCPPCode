@@ -33,7 +33,6 @@ namespace BlazesRusCode
 	class MirroredInt
     {
 	public:
-		#pragma options align=bit_packed
     #if defined(AltNum_UseInvertedSign)
 		//If Sign is one, then the sign is positive.
         //Otherwise, the sign is negative
@@ -44,7 +43,6 @@ namespace BlazesRusCode
 		unsigned int Sign:1;
 		//Stores non-signed part of value
 		unsigned int Value:31;
-		#pragma options align=reset
 
     #if defined(AltNum_UseInvertedSign)
         static const unsigned int NegativeSign = 0;

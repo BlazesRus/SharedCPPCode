@@ -25,12 +25,10 @@
 namespace BlazesRusCode
 {
 	struct PartialInt {public:
-		#pragma options align=bit_packed
 		//Stores Digits XXX XXX XXX
 		unsigned int Value:30;
 		//Can store up to 4 Flag states including normal state at 0
 		unsigned int Flags:2;
-		#pragma options align=reset
 		
         static const unsigned int MaximumInt = 1073741823;
 
