@@ -62,11 +62,11 @@ AltNum_UseBuiltinVirtualTable =
 #endif
 
 #if !defined(UInt64)
-	//Or use Using UInt64 = unsigned long long;
+	//Or use Using UInt64 = unsigned __int64;
 	#define UInt64 UInt64
 #endif
 
 #if !defined(Int64)
-	//Or use Using Int64 = signed long long;
+	//Or use Using Int64 = signed __int64;
 	#define Int64 Int64
 #endif

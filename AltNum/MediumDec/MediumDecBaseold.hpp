@@ -785,11 +785,11 @@ protected:
 public:
         void PartialUIntDivOp() { PartialUIntDivOpV1<unsigned int>; }
         void PartialIntDivOp() { PartialIntDivOpV1<signed int>; }
-        void PartialUInt64DivOp() { PartialUIntDivOpV1<unsigned long long>; }
-        void PartialInt64DivOp() { PartialIntDivOpV1<signed long long>; }
+        void PartialUInt64DivOp() { PartialUIntDivOpV1<unsigned __int64>; }
+        void PartialInt64DivOp() { PartialIntDivOpV1<signed __int64>; }
 
         void UnsignedPartialIntDivOp() { PartialUIntDivOpV1<signed int>; }
-        void UnsignedPartialInt64DivOp() { PartialUIntDivOpV1<signed long long>; }
+        void UnsignedPartialInt64DivOp() { PartialUIntDivOpV1<signed __int64>; }
 
 protected:
 
@@ -872,21 +872,21 @@ public:
 
         void BasicUIntDivOp() { BasicUIntDivOpV1<unsigned int>; }
         void BasicIntDivOp() { BasicIntDivOpV1<signed int>; }
-        void BasicUInt64DivOp() { BasicUIntDivOpV1<unsigned long long>; }
-        void BasicInt64DivOp() { BasicIntDivOpV1<signed long long>; }
+        void BasicUInt64DivOp() { BasicUIntDivOpV1<unsigned __int64>; }
+        void BasicInt64DivOp() { BasicIntDivOpV1<signed __int64>; }
 
         void UnsignedBasicIntDivOp() { BasicUIntDivOpV1<signed int>; }
-        void UnsignedBasicInt64DivOp() { BasicUIntDivOpV1<signed long long>; }
+        void UnsignedBasicInt64DivOp() { BasicUIntDivOpV1<signed __int64>; }
 
         void BasicUInt8DivOp() { BasicUIntDivOpV1<unsigned int>; }
         void BasicInt8DivOp() { BasicIntDivOpV1<signed int>; }
-        void BasicUInt16DivOp() { BasicUIntDivOpV1<unsigned long long>; }
-        void BasicInt16DivOp() { BasicIntDivOpV1<signed long long>; }
+        void BasicUInt16DivOp() { BasicUIntDivOpV1<unsigned __int64>; }
+        void BasicInt16DivOp() { BasicIntDivOpV1<signed __int64>; }
 
         MediumDecBase& BasicUIntDivOperation() { return BasicUIntDivOperationV1<unsigned int>; }
         MediumDecBase& BasicIntDivOperation() { return BasicIntDivOperationV1<signed int>; }
-        MediumDecBase& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned long long>; }
-        MediumDecBase& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt64DivOperation() { return BasicUIntDivOperationV1<unsigned __int64>; }
+        MediumDecBase& BasicInt64DivOperation() { return BasicIntDivOperationV1<signed __int64>; }
         MediumDecBase& BasicUInt8DivOperation() { return BasicUIntDivOperationV1<unsigned char>; }
         MediumDecBase& BasicInt8DivOperation() { return BasicIntDivOperationV1<signed char>; }
         MediumDecBase& BasicUInt16DivOperation() { return BasicUIntDivOperationV1<unsigned short>; }
@@ -894,11 +894,11 @@ public:
 
         MediumDecBase BasicDivideByUInt() { return BasicDivideByUIntV1<unsigned int>; }
         MediumDecBase BasicDivideByInt() { return BasicDivideByIntV1<signed int>; }
-        MediumDecBase BasicDivideByUInt64() { return BasicDivideByUIntV1<unsigned long long>; }
-        MediumDecBase BasicDivideByInt64() { return BasicDivideByIntV1<signed long long>; }
+        MediumDecBase BasicDivideByUInt64() { return BasicDivideByUIntV1<unsigned __int64>; }
+        MediumDecBase BasicDivideByInt64() { return BasicDivideByIntV1<signed __int64>; }
 
         MediumDecBase UnsignedBasicDivideByInt() { return BasicDivideByUIntV1<signed int>; }
-        MediumDecBase UnsignedBasicDivideByInt64() { return BasicDivideByUIntV1<signed long long>; }
+        MediumDecBase UnsignedBasicDivideByInt64() { return BasicDivideByUIntV1<signed __int64>; }
 
         MediumDecBase BasicDivideByUInt8() { return BasicDivideByUIntV1<unsigned char>; }
         MediumDecBase BasicDivideByInt8() { return BasicDivideByIntV1<signed char>; }
@@ -1109,14 +1109,14 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase operator/(const MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicDivideByInt(rValue); }
-        friend MediumDecBase operator/(const MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicDivideByInt64(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicDivideByInt64(rValue); }
         friend MediumDecBase operator/(const MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicDivideByUInt(rValue); }
-        friend MediumDecBase operator/(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicDivideByUInt64(rValue); }
+        friend MediumDecBase operator/(const MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicDivideByUInt64(rValue); }
 		
         friend MediumDecBase operator/(const signed int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
-        friend MediumDecBase operator/(const signed long long& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
+        friend MediumDecBase operator/(const signed __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
         friend MediumDecBase operator/(const unsigned int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
-        friend MediumDecBase operator/(const unsigned long long& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
+        friend MediumDecBase operator/(const unsigned __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicDivideBy(rValue); }
 
         friend MediumDecBase operator/(const MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicDivideByInt8(rValue); }
         friend MediumDecBase operator/(const MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicDivideByInt16(rValue); }
@@ -1136,9 +1136,9 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase& operator/=(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicIntDivOperation(rValue); }
-        friend MediumDecBase& operator/=(MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicInt64DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicInt64DivOperation(rValue); }
         friend MediumDecBase& operator/=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicUIntDivOperation(rValue); }
-        friend MediumDecBase& operator/=(MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64DivOperation(rValue); }
+        friend MediumDecBase& operator/=(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64DivOperation(rValue); }
 
         friend MediumDecBase& operator/=(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicInt8DivOperation(rValue); }
         friend MediumDecBase& operator/=(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicInt16DivOperation(rValue); }
@@ -1196,11 +1196,11 @@ public:
 		
         void PartialUIntMultOp() { PartialUIntMultOpV1<unsigned int>; }
         void PartialIntMultOp() { PartialIntMultOpV1<signed int>; }
-        void PartialUInt64MultOp() { PartialUIntMultOpV1<unsigned long long>; }
-        void PartialInt64MultOp() { PartialIntMultOpV1<signed long long>; }
+        void PartialUInt64MultOp() { PartialUIntMultOpV1<unsigned __int64>; }
+        void PartialInt64MultOp() { PartialIntMultOpV1<signed __int64>; }
 
         void UnsignedPartialIntMultOp() { PartialUIntMultOpV1<signed int>; }
-        void UnsignedPartialInt64MultOp() { PartialUIntMultOpV1<signed long long>; }
+        void UnsignedPartialInt64MultOp() { PartialUIntMultOpV1<signed __int64>; }
 		
 protected:
         template<IntegerType IntType=signed int>
@@ -1273,11 +1273,11 @@ public:
 
         void BasicUIntMultOp() { BasicUIntMultOpV1<unsigned int>; }
         void BasicIntMultOp() { BasicIntMultOpV1<signed int>; }
-        void BasicUInt64MultOp() { BasicUIntMultOpV1<unsigned long long>; }
-        void BasicInt64MultOp() { BasicIntMultOpV1<signed long long>; }
+        void BasicUInt64MultOp() { BasicUIntMultOpV1<unsigned __int64>; }
+        void BasicInt64MultOp() { BasicIntMultOpV1<signed __int64>; }
 
         void UnsignedBasicIntMultOp() { BasicUIntMultOpV1<signed int>; }
-        void UnsignedBasicInt64MultOp() { BasicUIntMultOpV1<signed long long>; }
+        void UnsignedBasicInt64MultOp() { BasicUIntMultOpV1<signed __int64>; }
 
         void BasicUInt8MultOp() { BasicUIntMultOpV1<unsigned char>; }
         void BasicInt8MultOp() { BasicIntMultOpV1<signed char>; }
@@ -1286,8 +1286,8 @@ public:
 
         MediumDecBase& BasicUIntMultOperation() { BasicUIntMultOperationV1<unsigned int>; }
         MediumDecBase& BasicIntMultOperation() { BasicIntMultOperationV1<signed int>; }
-        MediumDecBase& BasicUInt64MultOperation() { BasicUIntMultOperationV1<unsigned long long>; }
-        MediumDecBase& BasicInt64MultOperation() { BasicIntMultOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt64MultOperation() { BasicUIntMultOperationV1<unsigned __int64>; }
+        MediumDecBase& BasicInt64MultOperation() { BasicIntMultOperationV1<signed __int64>; }
         MediumDecBase& BasicUInt8MultOperation() { BasicUIntMultOperationV1<unsigned char>; }
         MediumDecBase& BasicInt8MultOperation() { BasicIntMultOperationV1<signed char>; }
         MediumDecBase& BasicUInt16MultOperation() { BasicUIntMultOperationV1<unsigned short>; }
@@ -1295,11 +1295,11 @@ public:
 
         MediumDecBase BasicMultiplyByUInt() { return BasicMultiplyByUIntV1<unsigned int>; }
         MediumDecBase BasicMultiplyByInt() { return BasicMultiplyByIntV1<signed int>; }
-        MediumDecBase BasicMultiplyByUInt64() { return BasicMultiplyByUIntV1<unsigned long long>; }
-        MediumDecBase BasicMultiplyByInt64() { return BasicMultiplyByIntV1<signed long long>; }
+        MediumDecBase BasicMultiplyByUInt64() { return BasicMultiplyByUIntV1<unsigned __int64>; }
+        MediumDecBase BasicMultiplyByInt64() { return BasicMultiplyByIntV1<signed __int64>; }
 
         MediumDecBase UnsignedBasicMultiplyByInt() { return BasicMultiplyByUIntV1<signed int>; }
-        MediumDecBase UnsignedBasicMultiplyByInt64() { return BasicMultiplyByUIntV1<signed long long>; }
+        MediumDecBase UnsignedBasicMultiplyByInt64() { return BasicMultiplyByUIntV1<signed __int64>; }
 
         MediumDecBase BasicMultiplyByUInt8() { return BasicMultiplyByUIntV1<unsigned char>; }
         MediumDecBase BasicMultiplyByInt8() { return BasicMultiplyByIntV1<signed char>; }
@@ -1576,14 +1576,14 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase operator*(const MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicMultiplyByInt(rValue); }
-        friend MediumDecBase operator*(const MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicMultiplyByInt64(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicMultiplyByInt64(rValue); }
         friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicMultiplyByUInt(rValue); }
-        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
+        friend MediumDecBase operator*(const MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicMultiplyByUInt64(rValue); }
 		
         friend MediumDecBase operator*(const signed int& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt(rValue); }
-        friend MediumDecBase operator*(const unsigned long long& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt64(rValue); }
+        friend MediumDecBase operator*(const unsigned __int64& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByInt64(rValue); }
         friend MediumDecBase operator*(const unsigned int& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt(rValue); }
-        friend MediumDecBase operator*(const unsigned long long& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt64(rValue); }
+        friend MediumDecBase operator*(const unsigned __int64& lValue, const MediumDecBase& rValue) { return rValue.BasicMultiplyByUInt64(rValue); }
 
         friend MediumDecBase operator*(const MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicMultiplyByInt8(rValue); }
         friend MediumDecBase operator*(const MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicMultiplyByInt16(rValue); }
@@ -1602,9 +1602,9 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicIntMultOperation(rValue); }
-        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicInt64MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicInt64MultOperation(rValue); }
         friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicUIntMultOperation(rValue); }
-        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
+        friend MediumDecBase& operator*=(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
 
         friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicInt8MultOperation(rValue); }
         friend MediumDecBase& operator*=(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
@@ -1697,11 +1697,11 @@ public:
         }
 
         void BasicIntAddOp() { BasicIntAddOpV1<signed int>; }
-        void BasicUInt64AddOp() { BasicUIntAddOpV1<unsigned long long>; }
-        void BasicInt64AddOp() { BasicIntAddOpV1<signed long long>; }
+        void BasicUInt64AddOp() { BasicUIntAddOpV1<unsigned __int64>; }
+        void BasicInt64AddOp() { BasicIntAddOpV1<signed __int64>; }
 
         void UnsignedBasicIntAddOp() { BasicUIntAddOpV1<signed int>; }
-        void UnsignedBasicInt64AddOp() { BasicUIntAddOpV1<signed long long>; }
+        void UnsignedBasicInt64AddOp() { BasicUIntAddOpV1<signed __int64>; }
 
         void BasicUInt8AddOp() { BasicUIntAddOpV1<unsigned char>; }
         void BasicInt8AddOp() { BasicIntAddOpV1<signed char>; }
@@ -1712,8 +1712,8 @@ public:
         { BasicUIntAddOp(rValue); return *this; }
 
         MediumDecBase& BasicIntAddOperation() { return BasicIntAddOperationV1<signed int>; }
-        MediumDecBase& BasicUInt64AddOperation() { return BasicUIntAddOperationV1<unsigned long long>; }
-        MediumDecBase& BasicInt64AddOperation() { return BasicIntAddOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt64AddOperation() { return BasicUIntAddOperationV1<unsigned __int64>; }
+        MediumDecBase& BasicInt64AddOperation() { return BasicIntAddOperationV1<signed __int64>; }
         MediumDecBase& BasicUInt8AddOperation() { return BasicUIntAddOperationV1<unsigned char>; }
         MediumDecBase& BasicInt8AddOperation() { return BasicIntAddOperationV1<signed char>; }
         MediumDecBase& BasicUInt16AddOperation() { return BasicUIntAddOperationV1<unsigned short>; }
@@ -1721,11 +1721,11 @@ public:
 
         MediumDecBase BasicAddByUInt() { return BasicAddByUIntV1<unsigned int>; }
         MediumDecBase BasicAddByInt() { return BasicAddByIntV1<signed int>; }
-        MediumDecBase BasicAddByUInt64() { return BasicAddByUIntV1<unsigned long long>; }
-        MediumDecBase BasicAddByInt64() { return BasicAddByIntV1<signed long long>; }
+        MediumDecBase BasicAddByUInt64() { return BasicAddByUIntV1<unsigned __int64>; }
+        MediumDecBase BasicAddByInt64() { return BasicAddByIntV1<signed __int64>; }
 
         MediumDecBase UnsignedBasicAddByInt() { return BasicAddByUIntV1<signed int>; }
-        MediumDecBase UnsignedBasicAddByInt64() { return BasicAddByUIntV1<signed long long>; }
+        MediumDecBase UnsignedBasicAddByInt64() { return BasicAddByUIntV1<signed __int64>; }
 
         MediumDecBase BasicAddByUInt8() { return BasicAddByUIntV1<unsigned char>; }
         MediumDecBase BasicAddByInt8() { return BasicAddByIntV1<signed char>; }
@@ -1818,11 +1818,11 @@ public:
         }
 
         void BasicIntSubOp() { BasicIntSubOpV1<signed int>; }
-        void BasicUInt64SubOp() { BasicUIntSubOpV1<unsigned long long>; }
-        void BasicInt64SubOp() { BasicIntSubOpV1<signed long long>; }
+        void BasicUInt64SubOp() { BasicUIntSubOpV1<unsigned __int64>; }
+        void BasicInt64SubOp() { BasicIntSubOpV1<signed __int64>; }
 
         void UnsignedBasicIntSubOp() { BasicUIntSubOpV1<signed int>; }
-        void UnsignedBasicInt64SubOp() { BasicUIntSubOpV1<signed long long>; }
+        void UnsignedBasicInt64SubOp() { BasicUIntSubOpV1<signed __int64>; }
 
         void BasicUInt8SubOp() { BasicUIntSubOpV1<unsigned char>; }
         void BasicInt8SubOp() { BasicIntSubOpV1<signed char>; }
@@ -1833,8 +1833,8 @@ public:
         { BasicUIntSubOpV1(rValue); return *this; }
 
         MediumDecBase& BasicIntSubOperation() { return BasicIntSubOperationV1<signed int>; }
-        MediumDecBase& BasicUInt64SubOperation() { return BasicUIntSubOperationV1<unsigned long long>; }
-        MediumDecBase& BasicInt64SubOperation() { return BasicIntSubOperationV1<signed long long>; }
+        MediumDecBase& BasicUInt64SubOperation() { return BasicUIntSubOperationV1<unsigned __int64>; }
+        MediumDecBase& BasicInt64SubOperation() { return BasicIntSubOperationV1<signed __int64>; }
         MediumDecBase& BasicUInt8SubOperation() { return BasicUIntSubOperationV1<unsigned char>; }
         MediumDecBase& BasicInt8SubOperation() { return BasicIntSubOperationV1<signed char>; }
         MediumDecBase& BasicUInt16SubOperation() { return BasicUIntSubOperationV1<unsigned short>; }
@@ -1842,11 +1842,11 @@ public:
 
         MediumDecBase BasicSubByUInt() { return BasicSubByUIntV1<unsigned int>; }
         MediumDecBase BasicSubByInt() { return BasicSubByIntV1<signed int>; }
-        MediumDecBase BasicSubByUInt64() { return BasicSubByUIntV1<unsigned long long>; }
-        MediumDecBase BasicSubByInt64() { return BasicSubByIntV1<signed long long>; }
+        MediumDecBase BasicSubByUInt64() { return BasicSubByUIntV1<unsigned __int64>; }
+        MediumDecBase BasicSubByInt64() { return BasicSubByIntV1<signed __int64>; }
 
         MediumDecBase UnsignedBasicSubByInt() { return BasicSubByUIntV1<signed int>; }
-        MediumDecBase UnsignedBasicSubByInt64() { return BasicSubByUIntV1<signed long long>; }
+        MediumDecBase UnsignedBasicSubByInt64() { return BasicSubByUIntV1<signed __int64>; }
 
         MediumDecBase BasicSubByUInt8() { return BasicSubByUIntV1<unsigned char>; }
         MediumDecBase BasicSubByInt8() { return BasicSubByIntV1<signed char>; }
@@ -2186,14 +2186,14 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase operator+(const MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicAddByInt(rValue); }
-        friend MediumDecBase operator+(const MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicAddByInt64(rValue); }
+        friend MediumDecBase operator+(const MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicAddByInt64(rValue); }
         friend MediumDecBase operator+(const MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicAddByUInt(rValue); }
-        friend MediumDecBase operator+(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicAddByUInt64(rValue); }
+        friend MediumDecBase operator+(const MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicAddByUInt64(rValue); }
 		
         friend MediumDecBase operator+(const signed int& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByInt(rValue); }
-        friend MediumDecBase operator+(const unsigned long long& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByInt64(rValue); }
+        friend MediumDecBase operator+(const unsigned __int64& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByInt64(rValue); }
         friend MediumDecBase operator+(const unsigned int& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByUInt(rValue); }
-        friend MediumDecBase operator+(const unsigned long long& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByUInt64(rValue); }
+        friend MediumDecBase operator+(const unsigned __int64& lValue, const MediumDecBase& rValue) { return rValue.BasicAddByUInt64(rValue); }
 
         friend MediumDecBase operator+(const MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicAddByInt8(rValue); }
         friend MediumDecBase operator+(const MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicAddByInt16(rValue); }
@@ -2212,9 +2212,9 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase& operator+=(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicIntAddOperation(rValue); }
-        friend MediumDecBase& operator+=(MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicInt64AddOperation(rValue); }
+        friend MediumDecBase& operator+=(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicInt64AddOperation(rValue); }
         friend MediumDecBase& operator+=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicUIntAddOperation(rValue); }
-        friend MediumDecBase& operator+=(MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64AddOperation(rValue); }
+        friend MediumDecBase& operator+=(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64AddOperation(rValue); }
 
         friend MediumDecBase& operator+=(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicInt8AddOperation(rValue); }
         friend MediumDecBase& operator+=(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicInt16AddOperation(rValue); }
@@ -2248,14 +2248,14 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase operator-(const MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicSubtractByInt(rValue); }
-        friend MediumDecBase operator-(const MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicSubtractByInt64(rValue); }
+        friend MediumDecBase operator-(const MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicSubtractByInt64(rValue); }
         friend MediumDecBase operator-(const MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicSubtractByUInt(rValue); }
-        friend MediumDecBase operator-(const MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicSubtractByUInt64(rValue); }
+        friend MediumDecBase operator-(const MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicSubtractByUInt64(rValue); }
 		
         friend MediumDecBase operator-(const signed int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
-        friend MediumDecBase operator-(const signed long long& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
+        friend MediumDecBase operator-(const signed __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
         friend MediumDecBase operator-(const unsigned int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
-        friend MediumDecBase operator-(const unsigned long long& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
+        friend MediumDecBase operator-(const unsigned __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)rValue).BasicSubtractBy(rValue); }
 
         friend MediumDecBase operator-(const MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicSubtractByInt8(rValue); }
         friend MediumDecBase operator-(const MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicSubtractByInt16(rValue); }
@@ -2274,9 +2274,9 @@ public:
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
         friend MediumDecBase& operator-=(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicIntSubOperation(rValue); }
-        friend MediumDecBase& operator-=(MediumDecBase& lValue, const signed long long& rValue) { return lValue.BasicInt64SubOperation(rValue); }
+        friend MediumDecBase& operator-=(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicInt64SubOperation(rValue); }
         friend MediumDecBase& operator-=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicUIntSubOperation(rValue); }
-        friend MediumDecBase& operator-=(MediumDecBase& lValue, const unsigned long long& rValue) { return lValue.BasicUInt64SubOperation(rValue); }
+        friend MediumDecBase& operator-=(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64SubOperation(rValue); }
 
         friend MediumDecBase& operator-=(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicInt8SubOperation(rValue); }
         friend MediumDecBase& operator-=(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicInt16SubOperation(rValue); }

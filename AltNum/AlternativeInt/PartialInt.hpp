@@ -186,7 +186,7 @@ namespace BlazesRusCode
         /// to signed int 64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator unsigned long long() { return Value; }
+        explicit operator unsigned __int64() { return (signed __int64) Value; }
 
         /// <summary>
         /// to signed int explicit conversion
@@ -198,7 +198,7 @@ namespace BlazesRusCode
         /// to signed int 64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator signed long long() { return (signed long long)Value; }
+        explicit operator signed __int64() { return (signed __int64)Value; }
 
 protected:
         /// <summary>

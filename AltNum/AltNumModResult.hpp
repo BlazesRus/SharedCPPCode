@@ -27,7 +27,7 @@ namespace BlazesRusCode
 		
 		auto ReturnDivisionResult()
 		{
-			return divResult;
+			return divRes;
 		}
 		
 		/// <summary>
@@ -59,19 +59,19 @@ namespace BlazesRusCode
     #pragma region ConvertToOtherTypes
 	
         /// <summary>
-        /// Calculates if remainder is zero. (implicit conversion operation)
+        /// Calculates if remainder is zero. (explicit conversion operation)
         /// </summary>
         /// <returns>True if the remainder is equal to zero</returns>
-        implicit operator bool(){ return modRes==0; }
+        explicit operator bool(){ return modRes==0; }
 		
-        /// <summary>
-        /// Calculates if remainder is zero.
-        /// </summary>
-        /// <returns>True if the remainder is equal to zero</returns>
-		bool operator! () 
-		{
-			return modRes==0;
-		} const
+  //      /// <summary>
+  //      /// Calculates if remainder is zero.
+  //      /// </summary>
+  //      /// <returns>True if the remainder is equal to zero</returns>
+		//bool operator! () 
+		//{
+		//	return modRes==0;
+		//} const
 		
         /// <summary>
         /// Returns modulus operation result value (explicit conversion operation)
@@ -79,16 +79,16 @@ namespace BlazesRusCode
         /// <returns>The result of the operator.</returns>
         explicit operator VarType(){ return modRes; }
 		
-        /// <summary>
-        /// Unary + Operator (Returns modulus operation result value)
-		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <returns>MediumDecBase</returns>
-        VarType operator+ ()
-        {
-			return modRes;
-        } const
+  //      /// <summary>
+  //      /// Unary + Operator (Returns modulus operation result value)
+		///// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
+  //      /// </summary>
+  //      /// <param name="self">The self.</param>
+  //      /// <returns>MediumDecBase</returns>
+  //      VarType operator+ ()
+  //      {
+		//	return modRes;
+  //      } const
 	
     #pragma endregion ConvertToOtherTypes
 	

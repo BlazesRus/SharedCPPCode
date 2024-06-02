@@ -58,7 +58,7 @@ namespace MediumDecCode
     /// <param name="n">The n value to apply with root.</param>
     /// <param name="precision">Precision level (smaller = more precise)</param>
     /// <returns></returns>
-    static MediumDec NthRootV2(MediumDec value, int n, MediumDec precision = 0.0000000000001)
+    static MediumDec NthRootV2(MediumDec value, int n, MediumDec precision = MediumDec::OneMillionth)
     {
         MediumDec x;
         MediumDec dx;
@@ -78,7 +78,7 @@ namespace MediumDecCode
     /// <param name="nValue">The nth value.</param>
     /// <param name="precision">Precision level (smaller = more precise)</param>
     /// <returns>MediumDec</returns>
-    MediumDec NthRootV3(MediumDec value, int n, MediumDec precision = 0.0000000000001)
+    MediumDec NthRootV3(MediumDec value, int n, MediumDec precision = MediumDec::OneMillionth)
     {
         // initially guessing a random number between 
         // 0 and 9 

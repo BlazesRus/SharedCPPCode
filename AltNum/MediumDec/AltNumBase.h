@@ -21,7 +21,7 @@
 namespace BlazesRusCode
 {
 	//Base class for AltDec and MediumDec identify class as MediumDec variant
-    virtual class DLL_API AltNumBase
+    class DLL_API AltNumBase
     {
 	
     };

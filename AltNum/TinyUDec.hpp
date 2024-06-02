@@ -3306,9 +3306,9 @@ public:
         }
 
         TinyUDec PowConstOp(TinyUDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        TinyUDec PowConstOp(TinyUDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+        TinyUDec PowConstOp(TinyUDec& targetValue, const __int64& expValue) { return IntPowConstOp(targetValue, expValue); }
         TinyUDec PowConst(TinyUDec& targetValue, const int& expValue) { return IntPowConstOp(targetValue, expValue); }
-        TinyUDec PowConst(TinyUDec& targetValue, const long long& expValue) { return IntPowConstOp(targetValue, expValue); }
+        TinyUDec PowConst(TinyUDec& targetValue, const __int64& expValue) { return IntPowConstOp(targetValue, expValue); }
 
 
         /// <summary>

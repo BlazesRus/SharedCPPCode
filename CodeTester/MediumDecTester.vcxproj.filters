@@ -92,9 +92,6 @@
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp">
-      <Filter>Header Files\AltNum\MediumDec</Filter>
-    </ClInclude>
     <ClInclude Include="..\AltNum\AltNumDebug.hpp">
       <Filter>Header Files\AltNum</Filter>
     </ClInclude>
