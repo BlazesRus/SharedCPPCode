@@ -1289,15 +1289,15 @@ public:
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicDivideByInt(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicDivideByInt64(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicDivideByUInt(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicDivideByUInt64(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed int& rValue) { return lValue.BasicIntDivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntDivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64DivOperation(rValue); }
 
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicDivideByInt8(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicDivideByInt16(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned char& rValue) { return lValue.BasicDivideByUInt8(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned short& rValue) { return lValue.BasicDivideByUInt16(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicUInt16DivOperation(rValue); }
 		
         friend MediumDecBase operator/(const signed int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicDivideBy(rValue); }
         friend MediumDecBase operator/(const signed __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicDivideBy(rValue); }
@@ -1351,7 +1351,7 @@ protected:
             if(Value<0)
             {
                 SwapNegativeStatus();
-                PartialUIntMultOp(-Value);
+                PartialUIntMultOpV1(-Value);
             }
             else
                 PartialUIntMultOp(Value);
@@ -1753,18 +1753,20 @@ public:
         /// <param name="self">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         friend MediumDecBase operator*(MediumDecBase lValue, const signed int& rValue) { return lValue.BasicIntMultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicIntMultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64MultOperation(rValue); }
         friend MediumDecBase operator*(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntMultOperation(rValue); }
         friend MediumDecBase operator*(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt8MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
+		
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
 		
         friend MediumDecBase operator*(signed int lValue, MediumDecBase rValue)  { return rValue.BasicIntMultOperation(lValue); }
         friend MediumDecBase operator*(signed __int64 lValue, MediumDecBase& rValue)  { return rValue.BasicInt64MultOperation(lValue); }
         friend MediumDecBase operator*(unsigned int lValue, MediumDecBase& rValue)  { return rValue.BasicUIntMultOperation(lValue); }
         friend MediumDecBase operator*(unsigned __int64 lValue, MediumDecBase& rValue)  { return rValue.BasicUInt64MultOperation(lValue); }
+		
         friend MediumDecBase operator*(signed char lValue, MediumDecBase& rValue)  { return rValue.BasicInt8MultOperation(lValue); }
         friend MediumDecBase operator*(signed short lValue, MediumDecBase& rValue)  { return rValue.BasicInt16MultOperation(lValue); }
         friend MediumDecBase operator*(unsigned char lValue, MediumDecBase& rValue)  { return rValue.BasicUInt8MultOperation(lValue); }
@@ -1909,11 +1911,11 @@ public:
         MediumDecBase& BasicIntAddOperation(const signed int& rValue) { return BasicIntAddOperationV1(rValue); }
         MediumDecBase& BasicUInt64AddOperation(const unsigned __int64& rValue) { return BasicUIntAddOperationV1(rValue); }
         MediumDecBase& BasicInt64AddOperation(const signed __int64& rValue) { return BasicIntAddOperationV1(rValue); }
+		
         MediumDecBase& BasicUInt8AddOperation(const unsigned char& rValue) { return BasicUIntAddOperationV1(rValue); }
         MediumDecBase& BasicInt8AddOperation(const signed char& rValue) { return BasicIntAddOperationV1(rValue); }
         MediumDecBase& BasicUInt16AddOperation(const unsigned short& rValue) { return BasicUIntAddOperationV1(rValue); }
         MediumDecBase& BasicInt16AddOperation(const signed short& rValue) { return BasicIntAddOperationV1(rValue); }
-
         MediumDecBase BasicAddByUInt(const unsigned int& rValue) { return BasicAddByUIntV1(rValue); }
         MediumDecBase BasicAddByInt(const signed int& rValue) { return BasicAddByIntV1(rValue); }
         MediumDecBase BasicAddByUInt64(const unsigned __int64& rValue) { return BasicAddByUIntV1(rValue); }
@@ -2476,18 +2478,20 @@ public:
         /// <param name="self">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         friend MediumDecBase operator+(MediumDecBase lValue, const signed int& rValue) { return lValue.BasicIntAddOperation(rValue); }
-        friend MediumDecBase operator+(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicIntAddOperation(rValue); }
+        friend MediumDecBase operator+(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64AddOperation(rValue); }
         friend MediumDecBase operator+(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntAddOperation(rValue); }
         friend MediumDecBase operator+(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64AddOperation(rValue); }
-        friend MediumDecBase operator+(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicUInt8AddOperation(rValue); }
-        friend MediumDecBase operator+(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt8AddOperation(rValue); }
-        friend MediumDecBase operator+(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt16AddOperation(rValue); }
-        friend MediumDecBase operator+(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicInt16AddOperation(rValue); }
+		
+        friend MediumDecBase operator+(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8AddOperation(rValue); }
+        friend MediumDecBase operator+(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16AddOperation(rValue); }
+        friend MediumDecBase operator+(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8AddOperation(rValue); }
+        friend MediumDecBase operator+(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicUInt16AddOperation(rValue); }
 		
         friend MediumDecBase operator+(const signed int& lValue, MediumDecBase rValue)  { return rValue.BasicIntAddOperation(lValue); }
         friend MediumDecBase operator+(const signed __int64& lValue, MediumDecBase rValue)  { return rValue.BasicInt64AddOperation(lValue); }
         friend MediumDecBase operator+(const unsigned int& lValue, MediumDecBase rValue)  { return rValue.BasicUIntAddOperation(lValue); }
         friend MediumDecBase operator+(const unsigned __int64& lValue, MediumDecBase rValue)  { return rValue.BasicUInt64AddOperation(lValue); }
+		
         friend MediumDecBase operator+(const signed char& lValue, MediumDecBase rValue)  { return rValue.BasicInt8AddOperation(lValue); }
         friend MediumDecBase operator+(const signed short& lValue, MediumDecBase rValue)  { return rValue.BasicInt16AddOperation(lValue); }
         friend MediumDecBase operator+(const unsigned char& lValue, MediumDecBase rValue)  { return rValue.BasicUInt8AddOperation(lValue); }
@@ -2539,6 +2543,7 @@ public:
         friend MediumDecBase operator-(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64SubOperation(rValue); }
         friend MediumDecBase operator-(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntSubOperation(rValue); }
         friend MediumDecBase operator-(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64SubOperation(rValue); }
+		
         friend MediumDecBase operator-(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8SubOperation(rValue); }
         friend MediumDecBase operator-(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16SubOperation(rValue); }
         friend MediumDecBase operator-(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8SubOperation(rValue); }
@@ -2548,6 +2553,7 @@ public:
         friend MediumDecBase operator-(const signed __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
         friend MediumDecBase operator-(const unsigned int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
         friend MediumDecBase operator-(const unsigned __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
+		
         friend MediumDecBase operator-(const signed char& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
         friend MediumDecBase operator-(const signed short& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
         friend MediumDecBase operator-(const unsigned char& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicSubtractBy(rValue); }
@@ -2647,7 +2653,8 @@ public:
         friend MediumDecBase operator*(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value * self; }
         friend MediumDecBase operator/(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value / self; }
 
-    #pragma endregion Floating Operator Overrides*/
+    #pragma endregion Floating Operator Overrides
+    */
 
 
     #pragma region Other Operators
@@ -2721,13 +2728,13 @@ public:
         /// Forces Number into non-negative
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        void AbsOf(){ IntHalf.Abs(); return *this; }
+        void AbsOf(){ IntHalf.Abs(); }
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        void FloorOf(const int precision& = 0)
+        void FloorOf(const int& precision = 0)
         {
             switch (precision)
             {
@@ -2768,7 +2775,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        int FloorInt()
+        int FloorIntOf()
         {
             if (DecimalHalf == 0)
             {
@@ -2785,7 +2792,7 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        int CeilInt()
+        int CeilIntOf()
         {
             if (DecimalHalf == 0)
             {
@@ -2802,7 +2809,7 @@ public:
         /// Cuts off the decimal point from number
         /// </summary>
         /// <returns>MediumDecBase &</returns>
-        auto& Trunc()
+        auto& TruncOf()
         {
             DecimalHalf = 0;
             if (IntHalf == NegativeRep)
@@ -2813,17 +2820,19 @@ public:
 	#pragma endregion Math Etc Functions
 
 	#pragma region Pow and Sqrt Functions
+protected:
 
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        auto SqrtOf(const int& precision=7)
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType SqrtOfV1(const int& precision=7)
         { 
             if(IsNegative())
                 throw "Can't display result of negative square root without imaginary number support";
             else if (DecimalHalf == 0)
             {
-                auto value = *this;
+                VariantType value = *this;
                 bool AutoSetValue = true;
                 switch (IntHalf.Value)
                 {
@@ -2856,17 +2865,18 @@ public:
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
-            auto number = this;
-            auto start = Zero, end = number;
-            auto mid;
+            VariantType number = *this;
+            VariantType start = VariantType(), end = number;
+            VariantType mid;
 
             // variable to store the answer 
-            auto ans;
+            VariantType ans;
 
             // for computing integral part 
             // of square root of number 
             while (start <= end) {
-                mid = (start + end) / 2;
+                mid = (start + end);
+                mid.DivideByTwo();
                 if (mid * mid == number) {
                     ans = mid;
                     break;
@@ -2888,7 +2898,7 @@ public:
 
             // For computing the fractional part 
             // of square root up to given precision 
-            auto increment = "0.1";
+            VariantType increment = VariantType(0,100000000);//0.1
             for (int i = 0; i < precision; ++i) {
                 while (ans * ans <= number) {
                     ans += increment;
@@ -2901,6 +2911,23 @@ public:
             return ans;
         }
 
+public:
+
+    /// <summary>
+    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+    /// </summary>
+    MediumDecBase SqrtOf(const int& precision = 7) {
+        return SqrtOfV1(precision);
+    }
+
+    /// <summary>
+    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+    /// </summary>
+    static auto Sqrt(const auto& value, const int& precision = 7)
+    {
+        return value.SqrtOf(precision);
+    }
+
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
@@ -2910,18 +2937,18 @@ public:
     #pragma region Trigonomic Functions
 
 /*
-       /// <summary>
+        /// <summary>
         /// Calculate Sine from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Sin(const auto& Value)
+        auto SinOf()
         {
             auto SinValue = One  / VariableConversionFunctions::Fact(1);
             for (int i = 1; i < 7; ++i)
             {
-                SinValue += Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                SinValue += Pow(*this, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
             }
             return SinValue;
         }
@@ -2932,12 +2959,12 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Cos(const auto& Value)
+        auto CosOf()
         {
             auto CosValue = One / VariableConversionFunctions::Fact(0);
             for (int i = 1; i < 7; ++i)
             {
-                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue;
         }
@@ -2948,14 +2975,14 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Tan(const auto& Value)
+        auto TanOf()
         {
             auto SinValue = One  / VariableConversionFunctions::Fact(1);
             auto CosValue = One / VariableConversionFunctions::Fact(0);
             for (int i = 1; i < 7; ++i)
             {
-                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
-                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                SinValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return SinValue / CosValue;
         }
@@ -2966,18 +2993,27 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
-        static auto ATan(const auto& Value)
+        auto ATanOf()
         {
             auto SinValue = One  / VariableConversionFunctions::Fact(1);
             auto CosValue = One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
             for (int i = 1; i < 7; ++i)
             { // That's Taylor series!!
-                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+                SinValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
             }
             return CosValue / SinValue;
         }
+
+        /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Sin(const auto& Value){ return SinOf(Value); }
+            
 
         /// <summary>
         /// atan2 calculation with self normalization
