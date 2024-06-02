@@ -2715,5 +2715,474 @@ public:
 
     #pragma endregion Other Operators
 
+	#pragma region Math Etc Functions
+
+        /// <summary>
+        /// Forces Number into non-negative
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        void AbsOf(){ IntHalf.Abs(); return *this; }
+
+        /// <summary>
+        /// Returns floored value with all fractional digits after specified precision cut off.
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        void FloorOf(const int precision& = 0)
+        {
+            switch (precision)
+            {
+            case 9: break;
+            case 8: DecimalHalf /= 10; DecimalHalf *= 10; break;
+            case 7: DecimalHalf /= 100; DecimalHalf *= 100; break;
+            case 6: DecimalHalf /= 1000; DecimalHalf *= 1000; break;
+            case 5: DecimalHalf /= 10000; DecimalHalf *= 10000; break;
+            case 4: DecimalHalf /= 100000; DecimalHalf *= 100000; break;
+            case 3: DecimalHalf /= 1000000; DecimalHalf *= 1000000; break;
+            case 2: DecimalHalf /= 10000000; DecimalHalf *= 10000000; break;
+            case 1: DecimalHalf /= 100000000; DecimalHalf *= 100000000; break;
+            default: DecimalHalf = 0; break;
+            }
+            if(IntHalf==MirroredInt::NegativeZero&&DecimalHalf==0)
+                IntHalf = 0;
+        }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        auto& CeilOf()
+        {
+            if (DecimalHalf != 0)
+            {
+                DecimalHalf = 0;
+                if (IntHalf == NegativeRep) { IntHalf = 0; }
+                else
+                {
+                    ++IntHalf;
+                }
+            }
+            return *this;
+        }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        int FloorInt()
+        {
+            if (DecimalHalf == 0)
+            {
+                return (int)IntHalf;
+            }
+            if (IntHalf == NegativeRep) { return -1; }
+            else
+            {
+                return (int)IntHalf - 1;
+            }
+        }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        int CeilInt()
+        {
+            if (DecimalHalf == 0)
+            {
+                return (int)IntHalf;
+            }
+            if (IntHalf == NegativeRep) { return 0; }
+            else
+            {
+                return (int)IntHalf + 1;
+            }
+        }
+
+        /// <summary>
+        /// Cuts off the decimal point from number
+        /// </summary>
+        /// <returns>MediumDecBase &</returns>
+        auto& Trunc()
+        {
+            DecimalHalf = 0;
+            if (IntHalf == NegativeRep)
+                IntHalf = 0;
+            return *this;
+        }
+
+	#pragma endregion Math Etc Functions
+
+	#pragma region Pow and Sqrt Functions
+
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        auto SqrtOf(const int& precision=7)
+        { 
+            if(IsNegative())
+                throw "Can't display result of negative square root without imaginary number support";
+            else if (DecimalHalf == 0)
+            {
+                auto value = *this;
+                bool AutoSetValue = true;
+                switch (IntHalf.Value)
+                {
+                case 1: value.IntHalf = 1; break;
+                case 4: value.IntHalf = 2; break;
+                case 9: value.IntHalf = 3; break;
+                case 16: value.IntHalf = 4; break;
+                case 25: value.IntHalf = 5; break;
+                case 36: value.IntHalf = 6; break;
+                case 49: value.IntHalf = 7; break;
+                case 64: value.IntHalf = 8; break;
+                case 81: value.IntHalf = 9; break;
+                case 100: value.IntHalf = 10; break;
+                case 121: value.IntHalf = 11; break;
+                case 144: value.IntHalf = 12; break;
+                case 169: value.IntHalf = 13; break;
+                case 196: value.IntHalf = 14; break;
+                case 225: value.IntHalf = 15; break;
+                case 256: value.IntHalf = 16; break;
+                case 289: value.IntHalf = 17; break;
+                case 324: value.IntHalf = 18; break;
+                case 361: value.IntHalf = 19; break;
+                case 400: value.IntHalf = 20; break;
+                case 1600: value.IntHalf = 40; break;
+                default:
+                    AutoSetValue = false;
+                    break;
+                }
+                if(AutoSetValue)
+                    return value;//Technically both positive and negative numbers of same equal the result
+            }
+
+            auto number = this;
+            auto start = Zero, end = number;
+            auto mid;
+
+            // variable to store the answer 
+            auto ans;
+
+            // for computing integral part 
+            // of square root of number 
+            while (start <= end) {
+                mid = (start + end) / 2;
+                if (mid * mid == number) {
+                    ans = mid;
+                    break;
+                }
+
+                // incrementing start if integral 
+                // part lies on right side of the mid 
+                if (mid * mid < number) {
+                    start = mid + 1;
+                    ans = mid;
+                }
+
+                // decrementing end if integral part 
+                // lies on the left side of the mid 
+                else {
+                    end = mid - 1;
+                }
+            }
+
+            // For computing the fractional part 
+            // of square root up to given precision 
+            auto increment = "0.1";
+            for (int i = 0; i < precision; ++i) {
+                while (ans * ans <= number) {
+                    ans += increment;
+                }
+
+                // loop terminates when ans * ans > number 
+                ans = ans - increment;
+                increment = increment / 10;
+            }
+            return ans;
+        }
+
+	#pragma endregion Pow and Sqrt Functions
+
+	#pragma region Log Functions
+
+	#pragma endregion Log Functions
+
+    #pragma region Trigonomic Functions
+
+/*
+       /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Sin(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            for (int i = 1; i < 7; ++i)
+            {
+                SinValue += Pow(Value, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+            }
+            return SinValue;
+        }
+
+        /// <summary>
+        /// Get Cos from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Cos(const auto& Value)
+        {
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
+            {
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return CosValue;
+        }
+
+        /// <summary>
+        /// Get Tan from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Tan(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            for (int i = 1; i < 7; ++i)
+            {
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return SinValue / CosValue;
+        }
+
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto ATan(const auto& Value)
+        {
+            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            //Angle as Radian
+            for (int i = 1; i < 7; ++i)
+            { // That's Taylor series!!
+                SinValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+                CosValue += Pow(Value, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            }
+            return CosValue / SinValue;
+        }
+
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto ArcTan2(const auto& y, const auto& x)
+        {
+            auto coeff_1 = PiNum / 4;
+            auto coeff_2 = coeff_1 * 3;
+            auto abs_y = Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            auto r;
+            auto angle;
+            if (x.IsPositive())
+            {
+                r = (x - abs_y) / (x + abs_y);
+                angle = coeff_1 - coeff_1 * r;
+            }
+            else
+            {
+                r = (x + abs_y) / (abs_y - x);
+                angle = coeff_2 - coeff_1 * r;
+            }
+            if (y.IsNegative())
+                return -angle;// negate if in quad III or IV
+            else
+                return angle;
+        }
+
+        /// <summary>
+        /// Get Sin from Value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto SinFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                    case 180://Pi Radians
+                        return Zero;
+                        break;
+                    case 90://0.5 Pi Radians
+                        return One;
+                        break;
+                    case 270://1.5 Pi Radians
+                        return NegativeOne;
+                        break;
+                    case 30://0.1666666666 Pi Radians
+                    case 150://0.833333333 Pi Radians
+                        return PointFive;
+                    case 210:
+                    case 330:
+                        return NegPointFive;
+                    default:
+                        //Angle as Radian
+                        auto Radius = PiNum * Value / 180;
+                        return Sin(Radius);
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = PiNum * Value / 180;
+                return Sin(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Cos() from Value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns></returns>
+        static auto CosFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                        return One;
+                        break;
+                    case 60:
+                        return PointFive;
+                        break;
+                    case 90://0.5 Pi Radians
+                    case 270://1.5 Pi Radians
+                        return Zero;
+                        break;
+                    case 180://Pi Radians
+                        return NegativeOne;
+                        break;
+                    case 120:
+                    case 240:
+                        return NegPointFive;
+                    default:
+                        //Angle as Radian
+                        auto Radius = Pi * Value / 180;
+                        return Cos(Radius)
+                        break;
+                }
+            }
+            else
+            {
+                //Angle as Radian
+                auto Radius = PiNum * Value / 180;
+                return Cos(Radius);
+            }
+        }
+
+        /// <summary>
+        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto TanFromAngle(auto Value)
+        {
+            if (Value.IsNegative())
+            {
+                if (Value.IntHalf.Value == 0)
+                {
+                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                }
+                else
+                {
+                    Value.SwapNegativeStatus();
+                    Value.IntHalf.Value %= 360;
+                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                }
+            }
+            else
+            {
+                Value.IntHalf.Value %= 360;
+            }
+            if(Value.DecimalHalf==0)
+            {
+                switch(Value.IntHalf.Value)
+                {
+                    case 0:
+                    case 180://Pi Radians
+                        return Zero;
+                        break;
+                    case 90://0.5 Pi Radians
+                        return Maximum;//Positive Infinity
+                        break;
+                    case 270://1.5 Pi Radians
+                        return Minimum;//Negative Infinity
+                        break;
+                    default:
+                        return Tan(PiNum * Value / 180);
+                        break;
+                }
+            }
+            else
+                return Tan(PiNum * Value / 180);
+        }
+*/
+
+    #pragma endregion Trigonomic Functions
     };
 }

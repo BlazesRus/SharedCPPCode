@@ -1383,5 +1383,66 @@ public:
 
     #pragma endregion Other Operators
 
+	#pragma region Math Etc Functions
+
+        /// <summary>
+        /// Creates copy of variable with Abs applied
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Abs(MediumDec tValue)
+        { return tValue.AbsOf(); }
+
+        /// <summary>
+        /// Returns floored value with all fractional digits after specified precision cut off.
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        static auto FloorOf(MediumDec tValue, const int precision& = 0)
+        { return tValue.FloorOf(precision); }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        static int FloorInt(const MediumDec& tValue)
+        { return tValue.FloorInt(); }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        static int CeilInt(const MediumDec& tValue)
+        { return tValue.CeilInt(); }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Ceil(MediumDec tValue)
+        { return tValue.Ceil(); }
+
+        /// <summary>
+        /// Cuts off the decimal point from number
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDecBase</returns>
+        static auto Trunc(MediumDec tValue)
+        { return tValue.Trunc(); }
+
+	#pragma endregion Math Etc Functions
+
+	#pragma region Pow and Sqrt Functions
+
+	#pragma endregion Pow and Sqrt Functions
+
+	#pragma region Log Functions
+
+	#pragma endregion Log Functions
+
+    #pragma region Trigonomic Functions
+
+    #pragma endregion Trigonomic Functions
+
     };
 }
