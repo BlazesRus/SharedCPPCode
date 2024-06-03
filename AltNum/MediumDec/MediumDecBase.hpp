@@ -2951,7 +2951,7 @@ public:
 
     #pragma endregion Other Operators
 
-	#pragma region Math Etc Functions
+	#pragma region Truncation Functions
 
         /// <summary>
         /// Forces Number into non-negative
@@ -2998,55 +2998,106 @@ public:
         {
             switch (precision)
             {
-            case 9: break;
-            case 8: DecimalHalf /= 10; DecimalHalf *= 10; break;
-            case 7: DecimalHalf /= 100; DecimalHalf *= 100; break;
-            case 6: DecimalHalf /= 1000; DecimalHalf *= 1000; break;
-            case 5: DecimalHalf /= 10000; DecimalHalf *= 10000; break;
-            case 4: DecimalHalf /= 100000; DecimalHalf *= 100000; break;
-            case 3: DecimalHalf /= 1000000; DecimalHalf *= 1000000; break;
-            case 2: DecimalHalf /= 10000000; DecimalHalf *= 10000000; break;
-            case 1: DecimalHalf /= 100000000; DecimalHalf *= 100000000; break;
-            default: DecimalHalf = 0; break;
+            case 8: DecimalHalf.Value /= 10; DecimalHalf.Value *= 10; break;
+            case 7: DecimalHalf.Value /= 100; DecimalHalf.Value *= 100; break;
+            case 6: DecimalHalf.Value /= 1000; DecimalHalf.Value *= 1000; break;
+            case 5: DecimalHalf.Value /= 10000; DecimalHalf.Value *= 10000; break;
+            case 4: DecimalHalf.Value /= 100000; DecimalHalf.Value *= 100000; break;
+            case 3: DecimalHalf.Value /= 1000000; DecimalHalf.Value *= 1000000; break;
+            case 2: DecimalHalf.Value /= 10000000; DecimalHalf.Value *= 10000000; break;
+            case 1: DecimalHalf.Value /= 100000000; DecimalHalf.Value *= 100000000; break;
+			case 0:
+				DecimalHalf = 0;
+            default:
+				break;
             }
             if(IntHalf==MirroredInt::NegativeZero&&DecimalHalf==0)
                 IntHalf = 0;
         }
 
+protected:
+
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        auto& CeilOf()
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType& CeilOfV1()
         {
             if (DecimalHalf != 0)
+				return VariantType(IntValue+1);
+            else
+				return *this;
+        }
+		
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>VariantType&</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType CeilV1(const VariantType& tValue)
+        {
+			if(tValue.IntHalf==MirroredInt::NegativeZero)
+				return VariantType::One;
+            else if (tValue.DecimalHalf != 0)
+				return VariantType(tValue.IntValue+1);
+            else
+				return *this;
+        }
+		
+        /// <summary>
+        /// Returns floored value with all fractional digits after specified precision cut off.
+        /// </summary>
+        /// <param name="Value">The target value to apply on.</param>
+        /// <param name="precision">The precision.</param>
+        static VariantType FloorV1(VariantType tValue, const int& precision = 0)
+        {
+			unsigned int decimalRes = DecimalHalf.Value;
+            switch (precision)
             {
-                DecimalHalf = 0;
-                if (IntHalf == NegativeRep) { IntHalf = 0; }
-                else
-                {
-                    ++IntHalf;
-                }
+            case 8: decimalRes /= 10; decimalRes *= 10; break;
+            case 7: decimalRes /= 100; decimalRes *= 100; break;
+            case 6: decimalRes /= 1000; decimalRes *= 1000; break;
+            case 5: decimalRes /= 10000; decimalRes *= 10000; break;
+            case 4: decimalRes /= 100000; decimalRes *= 100000; break;
+            case 3: decimalRes /= 1000000; decimalRes *= 1000000; break;
+            case 2: decimalRes /= 10000000; decimalRes *= 10000000; break;
+            case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
+            default: decimalRes = 0; break;
             }
-            return *this;
+			if(decimalRes==0&&IntValue==MirroredInt::NegativeZero)
+				return VariantType();
+			else
+				return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
+            return Value;
+        }
+		
+		
+public:
+
+		MediumDecBase CeilOf() { return CeilOfV1(); }
+		
+		static MediumDecBase Ceil(const MediumDecBase& tValue) { return CeilV1(tValue); }
+
+        /// <summary>
+        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+        signed int FloorIntOf()
+        {
+            if (DecimalHalf == 0)
+                return (int)IntHalf;
+            else if (IntHalf == MirroredInt::NegativeZero)
+				return -1;
+            else
+                return (int)IntHalf - 1;
         }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        int FloorIntOf()
-        {
-            if (DecimalHalf == 0)
-            {
-                return (int)IntHalf;
-            }
-            if (IntHalf == NegativeRep) { return -1; }
-            else
-            {
-                return (int)IntHalf - 1;
-            }
-        }
+		static signed int FloorInt(const MediumDecBase& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
@@ -3055,15 +3106,18 @@ public:
         int CeilIntOf()
         {
             if (DecimalHalf == 0)
-            {
                 return (int)IntHalf;
-            }
-            if (IntHalf == NegativeRep) { return 0; }
+            else if (IntHalf == MirroredInt::NegativeZero)
+				return 0;
             else
-            {
                 return (int)IntHalf + 1;
-            }
         }
+
+        /// <summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// </summary>
+        /// <returns>MediumDecBase&</returns>
+		static signed int CeilInt(const MediumDecBase& tValue) { return tValue.CeilIntOf(); }
 
         /// <summary>
         /// Cuts off the decimal point from number
@@ -3077,7 +3131,14 @@ public:
             return *this;
         }
 
-	#pragma endregion Math Etc Functions
+		static MediumDecBase Trunc(MediumDecBase tValue) { return tValue.TruncOf(); }
+
+protected:
+
+
+public:
+
+	#pragma endregion Truncation Functions
 
 	#pragma region Pow and Sqrt Functions
 protected:
