@@ -1,4 +1,567 @@
-﻿    #pragma region String Commands
+﻿// ***********************************************************************
+// Code Created by James Michael Armstrong (https://github.com/BlazesRus)
+// Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
+// ***********************************************************************
+#pragma once
+
+#include "MediumDecPreprocessors.h"
+//#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
+
+#include <string>
+#include <cmath>
+
+#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
+
+#include <type_traits>
+#include <cstddef>
+#include <concepts>//C++20 feature
+#include <compare>//used for C++20 feature of spaceship operator
+#include "..\Concepts\MediumDecVariantConcept.hpp"
+
+
+#include "..\AlternativeInt\MirroredInt.hpp"
+#include "..\AlternativeInt\PartialInt.hpp"
+
+using MirroredInt = BlazesRusCode::MirroredInt;
+using PartialInt = BlazesRusCode::PartialInt;
+
+namespace BlazesRusCode
+{
+    class MediumDecBase;
+
+    //Reduced version of MediumDec result for modulus result and other stuff
+    class DLL_API MediumDecBase : public AltNumBase//AltNumBase is used as base class to identify as MediumDec variant
+    {
+    public:
+    #pragma region DigitStorage
+
+        /// <summary>
+        /// Stores whole half of number(Including positive/negative status)
+		/// (in the case of infinity is used to determine if positive vs negative infinity)
+        /// </summary>
+        MirroredInt IntHalf;
+
+        /// <summary>
+        /// Stores decimal section info and other special info
+        /// </summary>
+        PartialInt DecimalHalf;
+
+		//Return IntHalf as signed int
+        signed int GetIntHalf()
+        {
+			return (signed int)IntHalf;
+        }
+
+    #pragma endregion DigitStorage
+
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static unsigned int const DecimalOverflow = 1000000000;
+
+        /// <summary>
+        /// The decimal overflow
+        /// </summary>
+        static unsigned _int64 const DecimalOverflowX = 1000000000;
+
+        /// <summary>
+        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// </summary>
+        static MirroredInt const NegativeRep;
+
+    #pragma region class_constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDecBase(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+        {
+            IntHalf = intVal;
+            DecimalHalf = decVal;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecBase"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDecBase(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+        {
+            IntHalf = intVal;
+            DecimalHalf = decVal;
+        }
+
+        MediumDecBase& operator=(const MediumDecBase& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+            return *this;
+        }
+
+        MediumDecBase& operator=(const signed int& rhs)
+        {
+            IntHalf = rhs; DecimalHalf = 0;
+            return *this;
+        }
+
+        /// <summary>
+        /// Creates class from derived class into this class
+        /// (subscript operator of [])
+        /// </summary>
+        template<MediumDecVariant VariantType>
+        MediumDecBase operator[](VariantType variantValue) const
+        {
+            MediumDecBase newSelf = MediumDecBase(variantValue.IntHalf, variantValue.DecimalHalf);
+            return newSelf;
+        }
+
+    #pragma endregion class_constructors
+
+    #pragma region Negative_Status
+
+        bool IsPositive() const
+        { return IntHalf.IsPositive(); }
+
+        bool IsNegative() const
+        { return IntHalf.IsNegative(); }
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus()
+        { IntHalf.Sign ^= 1; }
+
+        /// <summary>
+        /// Negative Unary Operator(Flips negative status)
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        MediumDecBase operator-() const
+        { MediumDecBase self = *this; self.SwapNegativeStatus(); return self; }
+
+    #pragma endregion Negative_Status
+
+
+    #pragma region Check_if_value
+
+		//Set value as exactly zero
+        void SetAsZero()
+        { IntHalf = 0; DecimalHalf = 0; }
+
+		//Set value as exactly one
+        void SetAsOne()
+        { IntHalf = 1; DecimalHalf = 0; }
+		
+		//Set as +-1 while keeping current sign
+        void SetAsOneVal()
+        { IntHalf.Value = 1; DecimalHalf = 0; }
+
+        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
+        { IntHalf = 0; DecimalHalf = 0; }
+
+        //Is at either zero or negative zero IntHalf of AltNum
+        bool IsAtZeroInt() const
+        { return IntHalf.Value==0; }
+
+        bool IsNotAtZeroInt() const
+        { return IntHalf.Value!=0; }
+
+        bool IsAtOneInt() const
+        { return IntHalf.Value==1; }
+
+        bool IsNotAtOneInt() const
+        { return IntHalf.Value!=1; }
+
+        //Detect if at exactly zero(only overridden with MixedDec)
+		bool IsZero() const
+		{ return DecimalHalf==0&&IntHalf.Value==0; }
+		
+		bool IsOne() const
+        { return DecimalHalf==0&&IntHalf==MirroredInt::One; }
+		
+		bool IsNegOne() const
+        { return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne; }
+		
+		bool IsOneVal() const
+		{ return DecimalHalf==0&&IntHalf.Value==1; }
+
+		bool IsOneVariantVal() const
+		{ return DecimalHalf.Value==0&&IntHalf.Value==1; }
+
+    #pragma endregion Check_if_value
+
+    #pragma region RangeLimits
+
+        /// <summary>
+        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMaximum()
+        { IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999; }
+
+        /// <summary>
+        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// </summary>
+        void SetAsMinimum()
+        { IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999; }
+	
+    #pragma endregion RangeLimits
+
+    #pragma region ValueSetters
+
+        /// <summary>
+        /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        void  SetValueToPiNum()
+        {
+            IntHalf = 3; DecimalHalf = 141592654;
+        }
+
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        void  SetValueToHundredMilPiNum()
+        {
+            IntHalf = 314159265; DecimalHalf = 358979324;
+        }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        void  SetValueToTenMilPiNum()
+        {
+            IntHalf = 31415926; DecimalHalf = 535897932;
+        }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        void  SetValueToOneMilPiNum()
+        {
+            IntHalf = 3141592; DecimalHalf = 653589793;
+        }
+
+        //10xPi(Rounded to 9th decimal digit)
+        void  SetValueToTenPiNum()
+        {
+            IntHalf = 31; DecimalHalf = 415926536;
+        }
+
+        /// <summary>
+        /// Euler's number rounded to 9th digit(2.718281828)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        void  SetValueToENum()
+        {
+            IntHalf = 2; DecimalHalf = 718281828;
+        }
+        
+        //Sets value to value at 0.5
+        void  SetValueToPoint5()
+        {
+            IntHalf = 0; DecimalHalf = 500000000;
+        }
+
+        void  SetValueToJustAboveZero()
+        {
+            IntHalf = 0; DecimalHalf = 1;
+        }
+
+        /// <summary>
+        /// Sets the value at .000001000
+        /// </summary>
+        void  SetValueToOneMillionth()
+        {
+            IntHalf = 0; DecimalHalf = 1000;
+        }
+
+        /// <summary>
+        /// Sets the value at "0.005"
+        /// </summary>
+        /// <returns>MediumDec</returns>
+        void  SetValueToFiveThousandth()
+        {
+            IntHalf = 0; DecimalHalf = 5000000;
+        }
+
+        /// <summary>
+        /// Sets the value at "0.000005"
+        /// </summary>
+        void  SetValueToFiveMillionth()
+        {
+            IntHalf = 0; DecimalHalf = 5000;
+        }
+
+        //0e-7
+        void  SetValueToTenMillionth()
+        {
+            IntHalf = 0; DecimalHalf = 100;
+        }
+
+        /// <summary>
+        /// Sets the value to .000000010
+        /// </summary>
+        void  SetValueToOneHundredMillionth()
+        {
+            IntHalf = 0; DecimalHalf = 10;
+        }
+
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        void  SetValueToLN10()
+        {
+            IntHalf = 2; DecimalHalf = 302585093;
+        }
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        void  SetValueToTenthLN10()
+        {
+            IntHalf = 0; DecimalHalf = 434294482;
+        }
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        void  SetValueToFifthLN10()
+        {
+            IntHalf = 0; DecimalHalf = 868588964;
+        }
+
+    #pragma endregion ValueSetters
+
+    #pragma region ValueDefines
+    private://Each class needs to define it's own
+        
+        static MediumDecBase AlmostOneValue()
+        { return MediumDecBase(0, 999999999); }
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PiNumValue()
+        { return MediumDecBase(3, 141592654); }
+
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase HundredMilPiNumVal()
+        { return MediumDecBase(314159265, 358979324); }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase TenMilPiNumVal()
+        { return MediumDecBase(31415926, 535897932); }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase OneMilPiNumVal()
+        { return MediumDecBase(3141592, 653589793);}
+
+        //10xPi(Rounded to 9th decimal digit)
+        static MediumDecBase TenPiNumVal()
+        { return MediumDecBase(31, 415926536); }
+        
+        static MediumDecBase ENumValue()
+        { return MediumDecBase(2, 718281828); }
+        
+        static MediumDecBase ZeroValue()
+        { return MediumDecBase(); }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneValue()
+        { return MediumDecBase(1); }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase TwoValue()
+        { return MediumDecBase(MirroredInt::Two);}
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase NegativeOneValue()
+        { return MediumDecBase(MirroredInt::NegativeOne);}
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Point5Value()
+        { return MediumDecBase(0, 500000000); }
+
+        static MediumDecBase JustAboveZeroValue()
+        { return MediumDecBase(0, 1); }
+
+        static MediumDecBase OneMillionthValue()
+        { return MediumDecBase(0, 1000); }
+
+        static MediumDecBase FiveThousandthValue()
+        { return MediumDecBase(0, 5000000); }
+
+        static MediumDecBase FiveMillionthValue()
+        { return MediumDecBase(0, 5000);}
+
+        static MediumDecBase TenMillionthValue()
+        { return MediumDecBase(0, 100); }
+
+        static MediumDecBase OneHundredMillionthValue()
+        { return MediumDecBase(0, 10); }
+
+        static MediumDecBase FiveBillionthValue()
+        { return MediumDecBase(0, 5); }
+
+        static MediumDecBase LN10Value()
+        { return MediumDecBase(2, 302585093); }
+
+        static MediumDecBase TenthLN10Value()
+        { return MediumDecBase(0, 434294482); }
+
+        static MediumDecBase FifthLN10Value()
+        { return MediumDecBase(0, 868588964); }
+
+        static MediumDecBase MinimumValue()
+        { return MediumDecBase(MirroredInt::Maximum, 999999999); }
+
+        static MediumDecBase MaximumValue()
+        { return MediumDecBase(MirroredInt::Minimum, 999999999); }
+
+        static MediumDecBase AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PiNum;
+        
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase ENum;
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Pi;
+      
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase E;
+
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Zero;
+        
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase One;
+
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase JustAboveZero;
+
+        /// <summary>
+        /// Returns the value at .000000005
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase FiveBillionth;
+
+        /// <summary>
+        /// Returns the value at .000001000
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.005"
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase FiveThousandth;
+
+        /// <summary>
+        /// Returns the value at .000000010
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneGMillionth;
+
+        //0e-7
+        static MediumDecBase TenMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.000005"
+        /// </summary>
+        static MediumDecBase FiveMillionth;
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase NegativeOne;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
+        /// </summary>
+        static MediumDecBase Minimum;
+        
+        /// <summary>
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
+        /// </summary>
+        static MediumDecBase Maximum;
+        
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        static MediumDecBase LN10;
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecBase TenthLN10;
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecBase FifthLN10;
+
+public:
+    #pragma endregion ValueDefines
+
+    #pragma region String Commands
 
         /// <summary>
         /// Reads the string.
@@ -955,15 +1518,15 @@ public:
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         /// <returns>MediumDecBase</returns>
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed int& rValue) { return lValue.BasicDivideByInt(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.BasicDivideByInt64(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.BasicDivideByUInt(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.BasicDivideByUInt64(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed int& rValue) { return lValue.BasicIntDivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntDivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64DivOperation(rValue); }
 
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed char& rValue) { return lValue.BasicDivideByInt8(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const signed short& rValue) { return lValue.BasicDivideByInt16(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned char& rValue) { return lValue.BasicDivideByUInt8(rValue); }
-        friend MediumDecBase operator/(MediumDecBase& lValue, const unsigned short& rValue) { return lValue.BasicDivideByUInt16(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8DivOperation(rValue); }
+        friend MediumDecBase operator/(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicUInt16DivOperation(rValue); }
 		
         friend MediumDecBase operator/(const signed int& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicDivideBy(rValue); }
         friend MediumDecBase operator/(const signed __int64& lValue, const MediumDecBase& rValue) { return ((MediumDecBase)lValue).BasicDivideBy(rValue); }
@@ -1017,7 +1580,7 @@ protected:
             if(Value<0)
             {
                 SwapNegativeStatus();
-                PartialUIntMultOp(-Value);
+                PartialUIntMultOpV1(-Value);
             }
             else
                 PartialUIntMultOp(Value);
@@ -1419,18 +1982,20 @@ public:
         /// <param name="self">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         friend MediumDecBase operator*(MediumDecBase lValue, const signed int& rValue) { return lValue.BasicIntMultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicIntMultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed __int64& rValue) { return lValue.BasicInt64MultOperation(rValue); }
         friend MediumDecBase operator*(MediumDecBase lValue, const unsigned int& rValue) { return lValue.BasicUIntMultOperation(rValue); }
         friend MediumDecBase operator*(MediumDecBase lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt8MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
-        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
+		
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed char& rValue) { return lValue.BasicInt8MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const signed short& rValue) { return lValue.BasicInt16MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned char& rValue) { return lValue.BasicUInt8MultOperation(rValue); }
+        friend MediumDecBase operator*(MediumDecBase lValue, const unsigned short& rValue) { return lValue.BasicUInt16MultOperation(rValue); }
 		
         friend MediumDecBase operator*(signed int lValue, MediumDecBase rValue)  { return rValue.BasicIntMultOperation(lValue); }
         friend MediumDecBase operator*(signed __int64 lValue, MediumDecBase& rValue)  { return rValue.BasicInt64MultOperation(lValue); }
         friend MediumDecBase operator*(unsigned int lValue, MediumDecBase& rValue)  { return rValue.BasicUIntMultOperation(lValue); }
         friend MediumDecBase operator*(unsigned __int64 lValue, MediumDecBase& rValue)  { return rValue.BasicUInt64MultOperation(lValue); }
+		
         friend MediumDecBase operator*(signed char lValue, MediumDecBase& rValue)  { return rValue.BasicInt8MultOperation(lValue); }
         friend MediumDecBase operator*(signed short lValue, MediumDecBase& rValue)  { return rValue.BasicInt16MultOperation(lValue); }
         friend MediumDecBase operator*(unsigned char lValue, MediumDecBase& rValue)  { return rValue.BasicUInt8MultOperation(lValue); }
