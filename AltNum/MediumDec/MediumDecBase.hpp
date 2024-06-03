@@ -3157,6 +3157,314 @@ public:
         return value.SqrtOf(precision);
     }
 
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=unsigned int>
+        void UIntPowOfOperationV1(const IntType& expValue)
+        {
+            if (expValue == 1) { return; }//Return self
+            else if (expValue == 0)
+            {
+                IntHalf = 1; DecimalHalf = 0;
+            }
+            else if (DecimalHalf == 0 && IntHalf.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+            }
+            else
+            {
+				IntType exp = expValue;
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                VariantType self = AbsOf();
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
+                while (exp > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if ((exp&1) == 1)
+                        this *= self;
+                    // n must be even now
+                    exp = exp >> 1; // y = y/2
+                    self = self * self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntHalf.IsPositive = 0;
+            }
+        }
+
+        /// <summary>
+        /// Applies Power of operation on references(for integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
+        void IntPowOfOperationV1(const IntType& expValue)
+        {
+            if (expValue == 1) { return; }//Return self
+            else if (expValue == 0)
+            {
+                IntHalf = 1; DecimalHalf = 0;
+            }
+            else if (expValue < 0)//Negative Pow
+            {
+                IntType exp = expValue * -1;
+                if (DecimalHalf == 0 && IntHalf == 10 && expValue >= -9)
+                {
+                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
+                    if(IsNegative()&&exp&1==1)
+                        IsPositive = 1;
+                }
+                else
+                {
+                    //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                    //Switches from negative to positive if exp is odd number
+                    bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
+                    VariantType self = AbsOf();//Prevent needing to flip the sign
+                    IntHalf = 1; DecimalHalf = 0;// Initialize result
+                    while (exp > 0)
+                    {
+                        // If expValue is odd, multiply self with result
+                        if (exp & 1 == 1)
+                            *this /= self;
+                        // n must be even now
+                        exp = exp >> 1; // y = y/2
+                        self *= self; //  Change x to x^2
+                    }
+                    if(IsNegative)
+                        IntHalf.IsPositive = 0;
+                }
+            }
+            else if (DecimalHalf == 0 && IntHalf.Value == 10)
+            {
+                if(IsNegative()&&exp&1==1)
+                    IntHalf.IsPositive = 1;
+                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+            }
+            else
+            {
+                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+                //Switches from negative to positive if exp is odd number
+				IntType exp = expValue;
+                bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
+                VariantType self = AbsOf();
+                IntHalf = 1; DecimalHalf = 0;// Initialize result
+                while (exp > 0)
+                {
+                    // If expValue is odd, multiply self with result
+                    if ((exp & 1) == 1)
+                        *this *= self;
+                    // n must be even now
+                    exp = exp >> 1; // y = y/2
+                    self *= self; // Change x to x^2
+                }
+                if(IsNegative)
+                    IntHalf.IsPositive = 0;
+            }
+        }
+
+		template<MediumDecVariant VariantType=MediumDecBase>
+		VariantType UnsignedNegIntPowerV1(const unsigned int& expValue)
+		{
+			ResetDivisor();
+			unsigned int exp = expValue;
+			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+			//Switches from negative to positive if exp is odd number
+			bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
+			VariantType self = AbsOf();
+			IntHalf = 1; DecimalHalf = 0;// Initialize result
+			while (exp > 0)
+			{
+				// If expValue is odd, divide self with result
+				if ((exp & 1) == 1)
+					*this /= self;
+				// n must be even now
+				exp = exp >> 1; // y = y/2
+				self *= self; // Change x to x^2
+			}
+			if(IsNegative)
+				IntHalf.IsPositive = 0;
+		}
+
+public:
+
+        MediumDecBase UnsignedNegIntPower(const unsigned int& expValue)
+		{ return UnsignedNegIntPowerV1(expValue); }
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+		/// (Modifies owner object) 
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDecBase UIntPowOfOp(const unsigned int& expValue)
+		{ UIntPowOfOperationV1(expValue); return *this; }
+        MediumDecBase UInt64PowOfOp(const unsigned __int64& expValue)
+		{ IntPowOfOperationV1(expValue); return *this; }
+
+        /// <summary>
+        /// Applies Power of operation (for signed integer exponents)
+		/// (Modifies owner object) 
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDecBase IntPowOfOp(const signed int& expValue)
+		{ IntPowOfOperationV1(expValue); return *this; }
+        MediumDecBase Int64PowOfOp(const signed __int64& expValue)
+		{ IntPowOfOperationV1(expValue); return *this; }
+		
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+		/// (Doesn't modify owner object) 
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDecBase UIntPowOf(const unsigned int& expValue)
+		{ MediumDecBase result = *this; return result.UIntPowOfOp(expValue); }
+        MediumDecBase UInt64PowOf(const unsigned __int64& expValue)
+		{ MediumDecBase result = *this; return result.UInt64PowOfOp(expValue); }
+
+        /// <summary>
+        /// Applies Power of operation (for signed integer exponents)
+		/// (Doesn't modify owner object) 
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDecBase IntPowOf(const signed int& expValue)
+		{ MediumDecBase result = *this; return result.IntPowOfOp(expValue); }
+        MediumDecBase Int64PowOf(const signed __int64& expValue)
+		{ MediumDecBase result = *this; return result.Int64PowOfOp(expValue); }
+
+protected:
+
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="nValue">The nth root value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        /// <returns>auto</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType NthRootOfV1(const int& n, const MediumDecVariant& precision = VariantType::JustAboveZero)
+        {
+            VariantType xPre = ((*this - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            int nMinus1 = n - 1;
+
+            // initializing difference between two 
+            // roots by INT_MAX 
+            VariantType delX = VariantType(2147483647);
+
+            //  xK denotes current value of x 
+            VariantType xK;
+
+            //  loop until we reach desired accuracy
+            do
+            {
+                //  calculating current value from previous
+                // value by newton's method
+                xK = (xPre * nMinus1 + *this / VariantType::Pow(xPre, nMinus1)) / n;
+                delX = VariantType::Abs(xK - xPre);
+                xPre = xK;
+            } while (delX > precision);
+            return xK;
+        }
+		
+public:
+
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="nValue">The nth root value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        /// <returns>auto</returns>
+        MediumDecBase NthRootOf(const MediumDecBase& rValue){ return NthRootOfV1(n, precision); }
+
+protected:
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="Frac">The exponent value to raise the value to power of.</param>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType FractionalPowV1(const auto& value, const boost::rational<unsigned int>& Frac)
+		{
+			VariantType targetVal = IntPow(Frac.numerator());
+			VariantType CalcVal = MediumDecVariant::NthRoot(targetVal, Frac.denominator());
+			return CalcVal;
+		}
+
+        /// <summary>
+        /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <param name="expNum">The numerator of the exponent value.</param>
+        /// <param name="expDenom">The denominator of the exponent value.</param>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType FractionalPowV2(const VariantType& value, const signed int& expNum, const unsigned int& expDenom)
+		{
+			auto targetVal = IntPowOp(expNum);
+			auto CalcVal = MediumDecVariant::NthRoot(targetVal, expDenom);
+			return CalcVal;
+		}
+
+        /// <summary>
+        /// Calculate to power of unsigned expValue
+		/// (Doesn't modify owner object)
+        /// </summary>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType BasicUnsignedPowOfV1(const auto& expValue)
+		{
+			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
+			if(expValue.IntHalf.Value==0)
+				return FractionalPowV1(Frac);
+			else {
+				VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+				CalcVal *= FractionalPowV1(Frac);
+				return CalcVal;
+			}
+		}
+
+        /// <summary>
+        /// Calculate to power of expValue
+		/// (Doesn't modify owner object)
+        /// </summary>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType BasicPowOfV1(const auto& expValue)
+		{
+			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
+			if (expValue.IntHalf.IsNegative()){//Negative Exponent
+				if(expValue.IntHalf.Value==0)
+					return VariantType::One/FractionalPowV1(Frac);
+				else {
+					VariantType CalcVal = One / UIntPowOf(expValue.IntHalf.Value);
+					CalcVal /= FractionalPowV1(Frac);
+					return CalcVal;
+				}
+			} else {
+				if(expValue.IntHalf.Value==0)
+					return FractionalPowV1(Frac);
+				else {
+					VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+					CalcVal *= FractionalPowV1(Frac);
+					return CalcVal;
+				}
+			}
+		}
+
+public:
+
+        /// <summary>
+        /// Calculate to power of expValue
+		/// (Doesn't modify owner object)
+        /// </summary>
+        MediumDecBase BasicUnsignedPowOf(const auto& expValue)
+		{ return BasicUnsignedPowOfV1(expValue); }
+
+        /// <summary>
+        /// Calculate to power of expValue
+		/// (Doesn't modify owner object)
+        /// </summary>
+        MediumDecBase BasicPowOf(const auto& expValue)
+		{ return BasicPowOfV1(expValue); }
+
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
