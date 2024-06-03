@@ -519,7 +519,7 @@ namespace BlazesRusCode
 				if(rValue>=0)
 					Value += rValue;
 				else {
-                    auto negRValue = -rValue;
+                    unsigned int negRValue = (unsigned int) (-rValue);
                     if(negRValue>Value){//Becoming negative
     					Sign = NegativeSign;
     					Value = negRValue - Value;
@@ -527,13 +527,14 @@ namespace BlazesRusCode
     					Value += rValue;
                 }
             } else {
-				if(rValue<0)
-					Value -= rValue;
-				else if(rValue>Value){//Becoming positive
+                unsigned int RValue = (unsigned int)rValue;//Fix for C4018 warning
+				if(RValue <0)
+					Value -= RValue;
+				else if(RValue>Value){//Becoming positive
 					Sign = PositiveSign;
-					Value = rValue - Value - 1;
+					Value = RValue - Value - 1;
 				} else
-					Value -= rValue;
+					Value -= RValue;
             }
         }
 
