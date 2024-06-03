@@ -3877,4 +3877,32 @@ public:
 
     #pragma endregion Trigonomic Functions
     };
+	
+    #pragma region ValueDefine Source
+#if defined(AltNum_EnableApproaching)
+    MediumDecBase MediumDecBase::AlmostOne = ApproachingRightRealValue();
+#endif
+    MediumDecBase MediumDecBase::Pi = PiNumValue();
+    MediumDecBase MediumDecBase::One = OneValue();
+    MediumDecBase MediumDecBase::Two = TwoValue();
+    MediumDecBase MediumDecBase::NegativeOne = NegativeOneValue();
+    MediumDecBase MediumDecBase::Zero = ZeroValue();
+    MediumDecBase MediumDecBase::PointFive = Point5Value();
+    MediumDecBase MediumDecBase::JustAboveZero = JustAboveZeroValue();
+    MediumDecBase MediumDecBase::OneMillionth = OneMillionthValue();
+    MediumDecBase MediumDecBase::FiveThousandth = FiveThousandthValue();
+    MediumDecBase MediumDecBase::Minimum = MinimumValue();
+    MediumDecBase MediumDecBase::Maximum = MaximumValue();
+    MediumDecBase MediumDecBase::E = ENumValue();
+    MediumDecBase MediumDecBase::LN10 = LN10Value();
+    MediumDecBase MediumDecBase::LN10Mult = LN10MultValue();
+    MediumDecBase MediumDecBase::HalfLN10Mult = HalfLN10MultValue();
+    MediumDecBase MediumDecBase::TenMillionth = TenMillionthValue();
+    MediumDecBase MediumDecBase::FiveMillionth = FiveMillionthValue();
+    MediumDecBase MediumDecBase::FiveBillionth = FiveBillionthValue();
+    MediumDecBase MediumDecBase::OneGMillionth = OneHundredMillionthValue();
+	
+    MediumDecBase MediumDecBase::PiNum = PiNumValue();
+    MediumDecBase MediumDecBase::ENum = ENumValue();
+    #pragma endregion ValueDefine Source
 }
