@@ -3133,11 +3133,6 @@ public:
 
 		static MediumDecBase Trunc(MediumDecBase tValue) { return tValue.TruncOf(); }
 
-protected:
-
-
-public:
-
 	#pragma endregion Truncation Functions
 
 	#pragma region Pow and Sqrt Functions
@@ -3587,6 +3582,80 @@ public:
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
+protected:	
+	
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>VariantType</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType Exp(const VariantType& x)
+        {
+            /*
+             * Evaluates f(x) = e^x for any x in the interval [-709, 709].
+             * If x < -709 or x > 709, raises an assertion error. Implemented
+             * using the truncated Taylor series of e^x with ceil(|x| * e) * 12
+             * terms. Achieves at least 14 and at most 16 digits of precision
+             * over the entire interval.
+             * Performance - There are exactly 36 * ceil(|x| * e) + 5
+             * operations; 69,413 in the worst case (x = 709 or -709):
+             * - (12 * ceil(|x| * e)) + 2 multiplications
+             * - (12 * ceil(|x| * e)) + 1 divisions
+             * - (12 * ceil(|x| * e)) additions
+             * - 1 rounding
+             * - 1 absolute value
+             * Accuracy - Over a sample of 10,000 linearly spaced points in
+             * [-709, 709] we have the following error statistics:
+             * - Max relative error = 8.39803e-15
+             * - Min relative error = 0.0
+             * - Avg relative error = 0.0
+             * - Med relative error = 1.90746e-15
+             * - Var relative error = 0.0
+             * - 0.88 percent of the values have less than 15 digits of precision
+             * Args:
+             *      - x: power of e to evaluate
+             * Returns:
+             *      - approximation of e^x in VariantType precision
+             */
+             // Check that x is a valid input.
+            assert(x.IntHalf.Value < 709);
+            // When x = 0 we already know e^x = 1.
+            if (x.IsZero()) {
+                return VariantType::One;
+            }
+            // Normalize x to a non-negative value to take advantage of
+            // reciprocal symmetry. But keep track of the original sign
+            // in case we need to return the reciprocal of e^x later.
+            VariantType x0 = VariantType::Abs(x);
+            // First term of Taylor expansion of e^x at a = 0 is 1.
+            // tn is the variable we we will return for e^x, and its
+            // value at any time is the sum of all currently evaluated
+            // Taylor terms thus far.
+            VariantType tn = VariantType::One;
+            // Chose a truncation point for the Taylor series using the
+            // heuristic bound 12 * ceil(|x| e), then work down from there
+            // using Horner's method.
+            int n = VariantType::CeilInt(x0 * VariantType::E) * 12;
+            for (int i = n; i > 0; --i) {
+                tn = tn * (x0 / i) + VariantType::One;
+            }
+            // If the original input x is less than 0, we want the reciprocal
+            // of the e^x we calculated.
+            if (x.IsNegative()) {
+                tn = VariantType::One / tn;
+            }
+            return tn;
+        }
+		
+public:
+
+        /// <summary>
+        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
+        /// </summary>
+        /// <param name="x">The value to apply the exponential function to.</param>
+        /// <returns>VariantType</returns>
+        static VariantType Exp(const VariantType& x) { return ExpV1(x); }
 
 	#pragma endregion Log Functions
 
