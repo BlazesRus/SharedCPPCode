@@ -1253,10 +1253,17 @@ public:
 		}
 
         friend MediumDec& operator%=(MediumDecV2& lValue, const MediumDecV2& rValue)
-		{ 
-            MediumDec divRes = lValue / rValue;
-            lValue -= rValue * divRes;
-			return lValue;
+		{
+            if(lValue.DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0){
+                if(rValue.IsNegative()){
+                    lValue.SwapNegativeStatus();
+                lValue.IntHalf.Value %= rValue.IntHalf.Value;
+            }
+            else {   
+                MediumDec divRes = lValue / rValue;
+                lValue -= rValue * divRes;
+            }
+            return lValue;
 		}
 
         /// <summary>
