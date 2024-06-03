@@ -332,6 +332,235 @@ namespace BlazesRusCode
 
     #pragma endregion ValueSetters
 
+    #pragma region ValueDefines
+    private://Each class needs to define it's own
+        
+        static MediumDecBase AlmostOneValue()
+        { return MediumDecBase(0, 999999999); }
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PiNumValue()
+        { return MediumDecBase(3, 141592654); }
+
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase HundredMilPiNumVal()
+        { return MediumDecBase(314159265, 358979324); }
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase TenMilPiNumVal()
+        { return MediumDecBase(31415926, 535897932); }
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecBase OneMilPiNumVal()
+        { return MediumDecBase(3141592, 653589793);}
+
+        //10xPi(Rounded to 9th decimal digit)
+        static MediumDecBase TenPiNumVal()
+        { return MediumDecBase(31, 415926536); }
+        
+        static MediumDecBase ENumValue()
+        { return MediumDecBase(2, 718281828); }
+        
+        static MediumDecBase ZeroValue()
+        { return MediumDecBase(); }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneValue()
+        { return MediumDecBase(1); }
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase TwoValue()
+        { return MediumDecBase(MirroredInt::Two);}
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase NegativeOneValue()
+        { return MediumDecBase(MirroredInt::NegativeOne);}
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Point5Value()
+        { return MediumDecBase(0, 500000000); }
+
+        static MediumDecBase JustAboveZeroValue()
+        { return MediumDecBase(0, 1); }
+
+        static MediumDecBase OneMillionthValue()
+        { return MediumDecBase(0, 1000); }
+
+        static MediumDecBase FiveThousandthValue()
+        { return MediumDecBase(0, 5000000); }
+
+        static MediumDecBase FiveMillionthValue()
+        { return MediumDecBase(0, 5000);}
+
+        static MediumDecBase TenMillionthValue()
+        { return MediumDecBase(0, 100); }
+
+        static MediumDecBase OneHundredMillionthValue()
+        { return MediumDecBase(0, 10); }
+
+        static MediumDecBase FiveBillionthValue()
+        { return MediumDecBase(0, 5); }
+
+        static MediumDecBase LN10Value()
+        { return MediumDecBase(2, 302585093); }
+
+        static MediumDecBase TenthLN10Value()
+        { return MediumDecBase(0, 434294482); }
+
+        static MediumDecBase FifthLN10Value()
+        { return MediumDecBase(0, 868588964); }
+
+        static MediumDecBase MinimumValue()
+        { return MediumDecBase(MirroredInt::Maximum, 999999999); }
+
+        static MediumDecBase MaximumValue()
+        { return MediumDecBase(MirroredInt::Minimum, 999999999); }
+
+        static MediumDecBase AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PiNum;
+        
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase ENum;
+        
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Pi;
+      
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase E;
+
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Zero;
+        
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase One;
+
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase JustAboveZero;
+
+        /// <summary>
+        /// Returns the value at .000000005
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase FiveBillionth;
+
+        /// <summary>
+        /// Returns the value at .000001000
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.005"
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase FiveThousandth;
+
+        /// <summary>
+        /// Returns the value at .000000010
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase OneGMillionth;
+
+        //0e-7
+        static MediumDecBase TenMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.000005"
+        /// </summary>
+        static MediumDecBase FiveMillionth;
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase NegativeOne;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
+        /// </summary>
+        static MediumDecBase Minimum;
+        
+        /// <summary>
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
+        /// </summary>
+        static MediumDecBase Maximum;
+        
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        static MediumDecBase LN10;
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecBase TenthLN10;
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecBase FifthLN10;
+
+public:
+    #pragma endregion ValueDefines
+
     #pragma region String Commands
 
         /// <summary>

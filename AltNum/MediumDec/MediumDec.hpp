@@ -122,158 +122,104 @@ public:
         }
 
     #pragma region ValueDefines
-    private:
+    private://Each class needs to define it's own
         
+        static MediumDec AlmostOneValue()
+        { return MediumDec(0, 999999999); }
+
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec PiNumValue()
-        {
-            return MediumDec(3, 141592654);
-        }
+        { return MediumDec(3, 141592654); }
 
         //100,000,000xPi(Rounded to 9th decimal digit)
         static MediumDec HundredMilPiNumVal()
-        {
-            return MediumDec(314159265, 358979324);
-        }
+        { return MediumDec(314159265, 358979324); }
 
         //10,000,000xPi(Rounded to 9th decimal digit)
         static MediumDec TenMilPiNumVal()
-        {
-            return MediumDec(31415926, 535897932);
-        }
+        { return MediumDec(31415926, 535897932); }
 
         //1,000,000xPi(Rounded to 9th decimal digit)
         static MediumDec OneMilPiNumVal()
-        {
-            return MediumDec(3141592, 653589793);
-        }
+        { return MediumDec(3141592, 653589793);}
 
         //10xPi(Rounded to 9th decimal digit)
         static MediumDec TenPiNumVal()
-        {
-            return MediumDec(31, 415926536);
-        }
+        { return MediumDec(31, 415926536); }
         
         static MediumDec ENumValue()
-        {
-            return MediumDec(2, 718281828);
-        }
+        { return MediumDec(2, 718281828); }
         
         static MediumDec ZeroValue()
-        {
-            return MediumDec();
-        }
+        { return MediumDec(); }
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec OneValue()
-        {
-            MediumDec NewSelf = MediumDec(1);
-            return NewSelf;
-        }
+        { return MediumDec(1); }
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec TwoValue()
-        {
-            MediumDec NewSelf = MediumDec(2);
-            return NewSelf;
-        }
+        { return MediumDec(MirroredInt::Two);}
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec NegativeOneValue()
-        {
-            MediumDec NewSelf = MediumDec(MirroredInt(1,0));
-            return NewSelf;
-        }
+        { return MediumDec(MirroredInt::NegativeOne);}
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDec</returns>
         static MediumDec Point5Value()
-        {
-            MediumDec NewSelf = MediumDec(0, 500000000);
-            return NewSelf;
-        }
+        { return MediumDec(0, 500000000); }
 
         static MediumDec JustAboveZeroValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 1);
-            return NewSelf;
-        }
+        { return MediumDec(0, 1); }
 
         static MediumDec OneMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 1000);
-            return NewSelf;
-        }
+        { return MediumDec(0, 1000); }
 
         static MediumDec FiveThousandthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5000000);
-            return NewSelf;
-        }
+        { return MediumDec(0, 5000000); }
 
         static MediumDec FiveMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5000);
-            return NewSelf;
-        }
+        { return MediumDec(0, 5000);}
 
         static MediumDec TenMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 100);
-            return NewSelf;
-        }
+        { return MediumDec(0, 100); }
 
         static MediumDec OneHundredMillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 10);
-            return NewSelf;
-        }
+        { return MediumDec(0, 10); }
 
         static MediumDec FiveBillionthValue()
-        {
-            MediumDec NewSelf = MediumDec(0, 5);
-            return NewSelf;
-        }
+        { return MediumDec(0, 5); }
 
         static MediumDec LN10Value()
-        {
-            return MediumDec(2, 302585093);
-        }
+        { return MediumDec(2, 302585093); }
 
         static MediumDec TenthLN10Value()
-        {
-            return MediumDec(0, 434294482);
-        }
+        { return MediumDec(0, 434294482); }
 
         static MediumDec FifthLN10Value()
-        {
-            return MediumDec(0, 868588964);
-        }
+        { return MediumDec(0, 868588964); }
 
         static MediumDec MinimumValue()
-        {
-            return MediumDec(MirroredInt::Maximum, 999999999);
-        }
+        { return MediumDec(MirroredInt::Maximum, 999999999); }
 
         static MediumDec MaximumValue()
-        {
-            return MediumDec(MirroredInt::Minimum, 999999999);
-        }
+        { return MediumDec(MirroredInt::Minimum, 999999999); }
 
 public:
         static MediumDec AlmostOne;
@@ -402,7 +348,6 @@ public:
         /// </summary>
         static MediumDec FifthLN10;
 
-public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
@@ -1208,10 +1153,10 @@ public:
         friend MediumDec operator+(MediumDec lValue, const signed __int64& rValue) { return lValue.BasicIntAddOperation(rValue); }
         friend MediumDec operator+(MediumDec lValue, const unsigned int& rValue) { return lValue.BasicUIntAddOperation(rValue); }
         friend MediumDec operator+(MediumDec lValue, const unsigned __int64& rValue) { return lValue.BasicUInt64AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const signed char& rValue) { return lValue.BasicUInt8AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const signed short& rValue) { return lValue.BasicInt8AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned char& rValue) { return lValue.BasicUInt16AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned short& rValue) { return lValue.BasicInt16AddOperation(rValue); }
+        friend MediumDec operator+(MediumDec lValue, const signed char& rValue) { return lValue.BasicInt8AddOperation(rValue); }
+        friend MediumDec operator+(MediumDec lValue, const signed short& rValue) { return lValue.BasicInt16AddOperation(rValue); }
+        friend MediumDec operator+(MediumDec lValue, const unsigned char& rValue) { return lValue.BasicUInt8AddOperation(rValue); }
+        friend MediumDec operator+(MediumDec lValue, const unsigned short& rValue) { return lValue.BasicUInt16AddOperation(rValue); }
 		
         friend MediumDec operator+(const signed int& lValue, MediumDec rValue)  { return rValue.BasicIntAddOperation(lValue); }
         friend MediumDec operator+(const signed __int64& lValue, MediumDec rValue)  { return rValue.BasicInt64AddOperation(lValue); }
@@ -1391,28 +1336,14 @@ public:
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
         static auto Abs(MediumDec tValue)
-        { return tValue.AbsOf(); }
+        { tValue.AbsOf(); return tValue; }
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        static auto FloorOf(MediumDec tValue, const int precision& = 0)
+        static auto Floor(MediumDec tValue, const int& precision = 0)
         { return tValue.FloorOf(precision); }
-
-        /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
-        /// </summary>
-        /// <returns>MediumDecBase&</returns>
-        static int FloorInt(const MediumDec& tValue)
-        { return tValue.FloorInt(); }
-
-        /// <summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
-        /// </summary>
-        /// <returns>MediumDecBase&</returns>
-        static int CeilInt(const MediumDec& tValue)
-        { return tValue.CeilInt(); }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
@@ -1420,7 +1351,7 @@ public:
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
         static auto Ceil(MediumDec tValue)
-        { return tValue.Ceil(); }
+        { return tValue.CeilOf(); }
 
         /// <summary>
         /// Cuts off the decimal point from number
@@ -1428,11 +1359,26 @@ public:
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
         static auto Trunc(MediumDec tValue)
-        { return tValue.Trunc(); }
+        { return tValue.TruncOf(); }
 
 	#pragma endregion Math Etc Functions
 
 	#pragma region Pow and Sqrt Functions
+
+    /// <summary>
+    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+    /// </summary>
+    MediumDecBase SqrtOf(const int& precision = 7) {
+        return SqrtOfV1(precision);
+    }
+
+    /// <summary>
+    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+    /// </summary>
+    static auto Sqrt(const auto& value, const int& precision = 7)
+    {
+        return value.SqrtOf(precision);
+    }
 
 	#pragma endregion Pow and Sqrt Functions
 
