@@ -10,7 +10,7 @@ namespace BlazesRusCode
     /// Performs remainder/Mod operation then saves division result
     /// C = A - B * (A / B)
     /// </summary>
-    template<typename VarType>
+    template<MediumDecVariant VarType>
     class AltNumModResult
     {//based on https://embeddedgurus.com/stack-overflow/2011/02/efficient-c-tip-13-use-the-modulus-operator-with-caution/
     public:
@@ -35,10 +35,11 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-		AltNumModResult(const auto& lValue, const auto& rValue)
+        template<MediumDecVariant DerivedType>
+		AltNumModResult(const DerivedType& lValue, const DerivedType& rValue)
 		{
-			VarType LValue = (VarType)lValue;
-			VarType RValue = (VarType) rValue;
+            VarType LValue = VarType[lValue];
+			VarType RValue = VarType[rValue];
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;
 		}
@@ -49,7 +50,8 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        friend AltNumModResult operator%(const auto& LValue, const auto& RValue)
+        template<MediumDecVariant DerivedType>
+        friend AltNumModResult operator%(const DerivedType& LValue, const DerivedType& RValue)
 		{
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;

@@ -185,6 +185,12 @@ namespace BlazesRusCode
             else
                 return MirroredInt(Value);
         }
+
+        void ApplyAbs()
+        {
+            if (IsNegative())
+                Sign = PositiveSign;
+        }
 		
 		std::strong_ordering SignComparison(const MirroredInt& that) const
 		{
