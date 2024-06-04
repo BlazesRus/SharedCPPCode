@@ -578,57 +578,7 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void ReadString(const std::string& Value)
-        {
-            IntHalf = 0; DecimalHalf = 0;
-            int PlaceNumber;
-            std::string WholeNumberBuffer = "";
-            std::string DecimalBuffer = "";
-
-            bool ReadingDecimal = false;
-            int TempInt;
-            int TempInt02;
-            for (char const& StringChar : Value)
-            {
-                if (VariableConversionFunctions::IsDigit(StringChar))
-                {
-                    if (ReadingDecimal) { DecimalBuffer += StringChar; }
-                    else { WholeNumberBuffer += StringChar; }
-                }
-                else if (StringChar == '-')
-                    IntHalf.Sign = 0;
-                else if (StringChar == '.')
-                    ReadingDecimal = true;
-                else if (StringChar != ' ')
-                    break;//Stop Extracting after encounter non-number character such as i
-            }
-            PlaceNumber = WholeNumberBuffer.length() - 1;
-            for (char const& StringChar : WholeNumberBuffer)
-            {
-                TempInt = VariableConversionFunctions::CharAsInt(StringChar);
-                TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-                if (StringChar != '0')
-                {
-                    IntHalf.Value += TempInt02;
-                }
-                PlaceNumber--;
-            }
-            PlaceNumber = 8;
-            for (char const& StringChar : DecimalBuffer)
-            {
-                //Limit stored decimal numbers to the amount it can store
-                if (PlaceNumber > -1)
-                {
-                    TempInt = VariableConversionFunctions::CharAsInt(StringChar);
-                    TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-                    if (StringChar != '0')
-                    {
-                        DecimalHalf += TempInt02;
-                    }
-                    PlaceNumber--;
-                }
-            }
-        }
+        void ReadString(const std::string& Value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -655,48 +605,13 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
-        std::string ToString()
-        {
-            std::string Value = std::string(IntHalf);
-            if (DecimalHalf != 0)
-            {
-                Value += ".";
-                Value += std::string(DecimalHalf);
-            }
-            return Value;
-        }
+        std::string ToString();
 
         /// <summary>
         /// Converts to string with digits filled in even when empty
         /// </summary>
         /// <returns>std.string</returns>
-        std::string ToFullString()
-        {
-            std::string Value = std::string(IntHalf);
-            if (DecimalHalf != 0)
-            {
-                unsigned __int8 CurrentDigit;
-                Value += ".";
-                bool HasDigitsUsed = false;
-                unsigned int CurrentSection = DecimalHalf.Value;
-                for (__int8 Index = 8; Index >= 0; --Index)
-                {
-                    if (CurrentSection > 0)
-                    {
-                        CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-                        CurrentSection -= (CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-                        Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-                    }
-                    else
-                        Value += "0";
-                }
-            }
-            else
-            {
-                Value += ".000000000";
-            }
-            return Value;
-        }
+        std::string ToFullString();
 
         /// <summary>
         /// Implements the operator std::string operator.
@@ -712,130 +627,37 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetFloatVal(const float& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			float lValue = Value;
-            bool IsNegative = Value < 0.0f;
-            if (IsNegative) { lValue *= -1.0f; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0f)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                lValue -= (float)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
+        void SetFloatVal(const float& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDoubleVal(const double& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			double lValue = Value;
-            bool IsNegative = Value < 0.0;
-            if (IsNegative) { lValue *= -1.0; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (Value >= 2147483648.0)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(Value);
-                lValue -= (double)WholeValue;
-                DecimalHalf = (signed int)Value * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
+        void SetDoubleVal(const double& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetDecimalVal(const long double& Value)
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-			long double lValue = Value;
-            bool IsNegative = Value < 0.0L;
-            if (IsNegative) { lValue *= -1.0L; }
-            //Cap value if too big on initialize (preventing overflow on conversion)
-            if (lValue >= 2147483648.0L)
-            {
-                if (IsNegative)
-					IntHalf = MirroredInt(2147483647,0);
-                else
-                    IntHalf = 2147483647;
-                DecimalHalf = 999999999;
-            }
-            else
-            {
-                signed __int64 WholeValue = (signed __int64)std::floor(lValue);
-                lValue -= (long double)WholeValue;
-                DecimalHalf = (signed int)lValue * 10000000000;
-                IntHalf = MirroredInt((unsigned int)WholeValue,IsNegative?0:1);
-            }
-	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			//To-Do:Add code here
-	#endif
-        }
+        void SetDecimalVal(const long double& Value);
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetBoolVal(const bool& Value)
-        {
-            IntHalf = Value==false ? 0 : 1;
-            DecimalHalf = 0;
-        }
+        void SetBoolVal(const bool& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetIntVal(const int& Value)
-        {
-			if(Value<0)
-			{
-				IntHalf.Sign = MirroredInt::NegativeSign;
-				IntHalf.Value = -Value;
-			}
-			else
-				IntHalf = Value;
-			DecimalHalf = 0;
-        }
+        void SetIntVal(const int& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetUIntVal(const unsigned int& Value)
-        {
-			IntHalf = Value;
-			DecimalHalf = 0;
-        }
+        void SetUIntVal(const unsigned int& Value);
 
 /*
         /// <summary>
