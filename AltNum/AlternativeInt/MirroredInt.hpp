@@ -120,7 +120,7 @@ namespace BlazesRusCode
         }
 
         //Return value as real number(negative zero counts as zero)
-        int GetValue()
+        int GetValue() const
         {
             if(IsPositive())
                 return (signed int)Value;
