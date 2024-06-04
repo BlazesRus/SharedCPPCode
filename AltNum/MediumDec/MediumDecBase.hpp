@@ -881,111 +881,33 @@ public:
         /// MediumDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        float toFloat()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            float Value;
-            if (IntHalf.IsNegative())
-            {
-                Value = (float)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-            }
-            else
-            {
-                Value = (float)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0f;//Placeholder
-	#endif
-        }
+        float toFloat() const;
 
         /// <summary>
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        double toDouble()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-		    double Value;
-            if (IntHalf < 0)
-            {
-                Value = (double)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-            }
-            else
-            {
-                Value = (double)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0;//Placeholder
-	#endif
-        }
+        double toDouble() const;
 
         /// <summary>
         /// MediumDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        long double toDecimal()
-        {
-	#if defined(AltNum_UseLegacyFloatingConversion)
-            long double Value;
-            if (IntHalf < 0)
-            {
-                Value = (long double)-IntHalf.Value;
-                if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
-            }
-            else
-            {
-                Value = (long double)IntHalf.Value;
-                if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
-            }
-            return Value;
-	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-			if(IntHalf.Value==0)//Exponent is negative
-			{
-				//To-Do:Add code here
-			}
-			else
-			{
-				//To-Do:Add code here
-			}
-			return 0.0L;//Placeholder
-	#endif
-        }
+        long double toDecimal() const;
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toInt() { return (signed int) IntHalf; }
+        int toInt() const { return IntHalf.GetValue(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toUInt() { return (unsigned int) IntHalf; }
+        int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
 
-        bool toBool() { return IntHalf.IsZero() ? false : true; }
+        bool toBool() const { return IntHalf.IsZero() ? false : true; }
 
 /*
         /// <summary>
@@ -1073,15 +995,7 @@ protected:
 		}
 		
 		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = DecimalHalf.Value>0?1:0;
-			if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
+		std::strong_ordering BasicIntComparison(const int& that) const;
 
 public:
 
@@ -1462,13 +1376,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>MediumDecBase&</returns>
-        void DivideByTwo()
-        {
-            if(DecimalHalf==0&&(IntHalf.Value&1)==1)//Check if number is odd
-                UnsignedIntDivOp(2);
-            else
-                IntHalf /= 2;
-        }
+        void DivideByTwo();
 
         /// <summary>
         /// Simplified division by 4 operation(to reduce cost of operations)
@@ -1476,16 +1384,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>MediumDecBase&</returns>
-        void DivideByFour()
-        {
-            //Checking if divisible by 4 based on
-            //https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
-            //checking if divible by 8 equals (((n >> 3) << 3) == n)
-            if(DecimalHalf==0&&(((IntHalf.Value >> 2) << 2) == IntHalf.Value))//Check if number can be perfectly divided by 4
-                IntHalf /= 4;
-            else
-                UnsignedIntDivOp(4);
-        }
+        void DivideByFour();
 
         /// <summary>
         /// /= operation
@@ -1936,10 +1835,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>void</returns>
-        void MultipleByTwo()
-        {
-	        UnsignedIntMultOp(2);
-        }
+        void MultipleByTwo();
 
         /// <summary>
         /// Simplified multiplication by 4 operation(to reduce cost of operations)
@@ -1947,10 +1843,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>void</returns>
-        void MultipleByFour()
-        {
-	        UnsignedIntMultOp(4);
-        }
+        void MultipleByFour();
 
         /// <summary>
         /// *= operation
@@ -2213,17 +2106,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UnsignedIntegerSubtraction(const MirroredInt& rValue)
-        {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUnsignedSubOp(rValue);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf.UIntSubOp(rValue.Value);
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
-        }
+        void UnsignedIntegerSubtraction(const MirroredInt& rValue);
 
         /// <summary>
         /// Basic Subtraction operation between MediumDec Variant and MirroredInt
@@ -2231,17 +2114,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void IntegerSubtraction(const MirroredInt& rValue)
-        {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingSubOp(rValue);
-			else {
-				unsigned int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue;
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
-        }
+        void IntegerSubtraction(const MirroredInt& rValue);
 
         /// <summary>
         /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value 
@@ -2249,17 +2122,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UIntSubOp(const unsigned int& rValue)
-        {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUnsignedSubOp(rValue);
-			else {
-				unsigned int signBeforeOp = IntHalf.Sign;
-				IntHalf.UIntSubOp(rValue);
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf = DecimalOverflow - DecimalHalf;
-			}
-        }
+        void UIntSubOp(const unsigned int& rValue);
 
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
@@ -2273,8 +2136,7 @@ public:
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
 
-        MediumDecBase& UIntSubOperation(const unsigned int& rValue)
-        { UIntSubOp(rValue); return *this; }
+        MediumDecBase& UIntSubOperation(const unsigned int& rValue);
 
         MediumDecBase& IntSubOperation(const signed int& rValue) { return IntSubOperationV1(rValue); }
         MediumDecBase& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
@@ -2872,7 +2734,7 @@ public:
         {
             if (DecimalHalf == 0)
                 ++IntHalf;
-            else if (IntHalf == NegativeRep)
+            else if (IntHalf == MirroredInt::NegativeZero)
                 IntHalf = MirroredInt::Zero;
             else
                 ++IntHalf;
@@ -2887,8 +2749,8 @@ public:
         {
             if (DecimalHalf == 0)
                 --IntHalf;
-            else if (IntHalf == 0)
-                IntHalf = NegativeRep;
+            else if (IntHalf == MirroredInt::Zero)
+                IntHalf = MirroredInt::NegativeZero;
             else
                 --IntHalf;
             return *this;
@@ -2959,10 +2821,7 @@ public:
         /// Forces Number into non-negative
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        static MediumDecBase Abs(const MediumDecBase& tValue) {
-            MediumDecBase result = tValue; result.ApplyAbs();
-            return result;
-        }
+        static MediumDecBase Abs(const MediumDecBase& tValue);
 
 
 
@@ -2970,26 +2829,7 @@ public:
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        void FloorOf(const int& precision = 0)
-        {
-            switch (precision)
-            {
-            case 8: DecimalHalf.Value /= 10; DecimalHalf.Value *= 10; break;
-            case 7: DecimalHalf.Value /= 100; DecimalHalf.Value *= 100; break;
-            case 6: DecimalHalf.Value /= 1000; DecimalHalf.Value *= 1000; break;
-            case 5: DecimalHalf.Value /= 10000; DecimalHalf.Value *= 10000; break;
-            case 4: DecimalHalf.Value /= 100000; DecimalHalf.Value *= 100000; break;
-            case 3: DecimalHalf.Value /= 1000000; DecimalHalf.Value *= 1000000; break;
-            case 2: DecimalHalf.Value /= 10000000; DecimalHalf.Value *= 10000000; break;
-            case 1: DecimalHalf.Value /= 100000000; DecimalHalf.Value *= 100000000; break;
-			case 0:
-				DecimalHalf = 0;
-            default:
-				break;
-            }
-            if(IntHalf==MirroredInt::NegativeZero&&DecimalHalf==0)
-                IntHalf = 0;
-        }
+        void FloorOf(const int& precision = 0);
 
 protected:
 
@@ -3060,15 +2900,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        signed int FloorIntOf() const
-        {
-            if (DecimalHalf == 0)
-                return GetIntHalf();
-            else if (IntHalf == MirroredInt::NegativeZero)
-				return -1;
-            else
-                return GetIntHalf() - 1;
-        }
+        signed int FloorIntOf() const;
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
@@ -3080,15 +2912,7 @@ public:
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
-        int CeilIntOf() const
-        {
-            if (DecimalHalf == 0)
-                return GetIntHalf();
-            else if (IntHalf == MirroredInt::NegativeZero)
-				return 0;
-            else
-                return GetIntHalf() + 1;
-        }
+        int CeilIntOf() const;
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
@@ -3100,13 +2924,7 @@ public:
         /// Cuts off the decimal point from number
         /// </summary>
         /// <returns>MediumDecBase &</returns>
-        auto& TruncOf()
-        {
-            DecimalHalf = 0;
-            if (IntHalf == NegativeRep)
-                IntHalf = 0;
-            return *this;
-        }
+        MediumDecBase TruncOf();
 
 		static MediumDecBase Trunc(MediumDecBase tValue) { return tValue.TruncOf(); }
 
@@ -3292,7 +3110,7 @@ protected:
                     while (exp > 0)
                     {
                         // If expValue is odd, multiply self with result
-                        if (exp & 1 == 1)
+                        if ((exp & 1) == 1)
                             UnsignedDivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
