@@ -4018,10 +4018,11 @@ protected:
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
 			unsigned int expTotal;
-            for (int i = 1; i < 7; ++i)
+			bool AddToResult = false;
+            for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
 				expTotal = 2 * i + 1;
-				if((i&1)==0){
+				if(AddToResult)
 					SinValue += UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
 				else
 					SinValue -= UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
@@ -4040,10 +4041,11 @@ protected:
         {
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
 			unsigned int expTotal;
-            for (int i = 1; i < 7; ++i)
+			bool AddToResult = false;
+            for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
 				expTotal = 2 * i;
-				if((i&1)==0)
+				if(AddToResult)
 					CosValue += UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
 				else
 					CosValue -= UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
@@ -4063,10 +4065,11 @@ protected:
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
 			unsigned int sinExp; unsigned int cosExp;
-            for (int i = 1; i < 7; ++i)
+			bool AddToResult = false;
+            for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
 				sinExp = 2 * i + 1; cosExp = 2 * i;
-				if((i&1)==0){
+				if(AddToResult){
 					SinValue += UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
 					CosValue += UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
 				} else{
@@ -4090,10 +4093,11 @@ protected:
             VariantType CosValue = One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
 			unsigned int sinExp; unsigned int cosExp;
-            for (int i = 1; i < 7; ++i)
+			bool AddToResult = false;
+            for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
 				sinExp = 2 * i + 1; cosExp = 2 * i;
-				if((i&1)==0){
+				if(AddToResult){
 					SinValue += UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
 					CosValue += UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
 				} else{
