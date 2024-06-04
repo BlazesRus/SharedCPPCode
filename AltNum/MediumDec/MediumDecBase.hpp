@@ -3480,6 +3480,29 @@ protected:
             return xK;
         }
 		
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// Does not modify owner object
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType NthRootOfV2(const unsigned int& n, const auto& Precision = FiveBillionth) const
+        {
+			if(n==0)
+				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
+            unsigned int nMinus1 = n - 1;
+			VariantType OneByN = VariantType::One.DivideByUInt(n);
+            VariantType x[2] = { OneByN *VariantType::MultiplyByUInt(nMinus1)+DivideByUnsigned(UIntPowOf(nMinus1)), *this };
+            while (Abs(x[0] - x[1]) > Precision)
+            {
+                x[1] = x[0];
+                x[0] = OneByN * ((x[1].MultiplyByUInt(nMinus1)) + targetValue.DivideBy(x[1].UIntPowOf(nMinus1)));
+            }
+            return x[0];
+        }
+		
 public:
 
         /// <summary>
@@ -3489,6 +3512,16 @@ public:
         /// <param name="precision">Precision level (smaller = more precise)</param>
         /// <returns>auto</returns>
         MediumDecBase NthRootOf(const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero){ return NthRootOfV1(n, precision); }
+
+        /// <summary>
+        /// Get the (n)th Root
+        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
+        /// </summary>
+        /// <param name="n">The n value to apply with root.</param>
+        /// <returns></returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType NthRootV2(const VariantType& targetValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth)
+        { return targetValue.NthRootOfV1(n, Precision); }
 
 protected:
 
@@ -3949,7 +3982,7 @@ public:
 	
     #pragma region ValueDefine Source
 #if defined(AltNum_EnableApproaching)
-    MediumDecBase MediumDecBase::AlmostOne = ApproachingRightRealValue();
+    MediumDecBase MediumDecBase::AlmostOne = AlmostOneValue();
 #endif
     MediumDecBase MediumDecBase::Pi = PiNumValue();
     MediumDecBase MediumDecBase::One = OneValue();
