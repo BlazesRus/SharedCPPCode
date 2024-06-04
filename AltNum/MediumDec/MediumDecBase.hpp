@@ -3681,6 +3681,77 @@ protected:
             return tn;
         }
 		
+        /// <summary>
+        /// Natural log (Equivalent to Log_E(value))
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <returns>BlazesRusCode::MediumDec</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType LnV1(const VariantType& value)
+        {
+            //if (value <= 0) {}else//Error if equal or less than 0
+            if (value == VariantType::One)
+                return VariantType::Zero;
+            if(IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                VariantType TotalRes = (value - 1)/ (value + 1);
+                VariantType WSquared = TotalRes * TotalRes;
+                VariantType LastPow = -TotalRes;
+                int WPow = 3;
+                VariantType AddRes;
+
+                do
+                {
+                    LastPow *= WSquared;
+                    AddRes = LastPow / WPow;
+                    TotalRes -= AddRes;
+                    WPow += 2;
+                } while (AddRes > VariantType::JustAboveZero);
+                return TotalRes * 2;
+            }
+            else if (IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {//This section gives accurate answer(for values between 1 and 2)
+                VariantType threshold = VariantType::FiveMillionth;
+                VariantType base = value - 1;        // Base of the numerator; exponent will be explicit
+                int den = 2;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                VariantType term = base;       // First term
+                VariantType prev;          // Previous sum
+                VariantType result = term;     // Kick it off
+
+                do
+                {
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                    ++den;
+                } while (VariantType::Abs(prev - result) > threshold);
+
+                return result;
+            }
+            else
+            {
+                //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+                //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+                VariantType TotalRes = (value - 1) / (value + 1);
+                VariantType LastPow = TotalRes;
+                VariantType WSquared = TotalRes * TotalRes;
+                VariantType AddRes;
+                int WPow = 3;
+                do
+                {
+                    LastPow *= WSquared;
+                    AddRes = LastPow / WPow;
+                    TotalRes += AddRes; WPow += 2;
+                } while (AddRes > VariantType::JustAboveZero);
+                return TotalRes * 2;
+            }
+        }
+		
 public:
 
         /// <summary>
@@ -3689,6 +3760,14 @@ public:
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>VariantType</returns>
         static VariantType Exp(const VariantType& x) { return ExpV1(x); }
+		
+        /// <summary>
+        /// Natural log (Equivalent to Log_E(value))
+        /// </summary>
+        /// <param name="value">The target value.</param>
+        /// <returns>MediumDecBase</returns>
+        static VariantType Ln(const VariantType& value)
+        { return LnV1(value); }
 
 	#pragma endregion Log Functions
 
