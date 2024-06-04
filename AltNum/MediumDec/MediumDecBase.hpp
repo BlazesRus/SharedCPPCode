@@ -317,7 +317,7 @@ namespace BlazesRusCode
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        void  SetValueToTenthLN10()
+        void  SetValueToLN10Div()
         {
             IntHalf = 0; DecimalHalf = 434294482;
         }
@@ -325,7 +325,7 @@ namespace BlazesRusCode
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        void  SetValueToFifthLN10()
+        void  SetValueToTwiceLN10Div()
         {
             IntHalf = 0; DecimalHalf = 868588964;
         }
@@ -420,10 +420,10 @@ namespace BlazesRusCode
         static MediumDecBase LN10Value()
         { return MediumDecBase(2, 302585093); }
 
-        static MediumDecBase TenthLN10Value()
+        static MediumDecBase LN10DivValue()
         { return MediumDecBase(0, 434294482); }
 
-        static MediumDecBase FifthLN10Value()
+        static MediumDecBase TwiceLN10DivValue()
         { return MediumDecBase(0, 868588964); }
 
         static MediumDecBase MinimumValue()
@@ -551,12 +551,12 @@ namespace BlazesRusCode
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDecBase TenthLN10;
+        static MediumDecBase LN10Div;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static MediumDecBase FifthLN10;
+        static MediumDecBase TwiceLN10Div;
 
 public:
     #pragma endregion ValueDefines
@@ -3681,35 +3681,68 @@ protected:
             return tn;
         }
 		
+		//Common log calculations for when value is between 0 and one
+		template<MediumDecVariant VariantType=MediumDecBase>
+		VariantType LogZeroRangePart02(onst VariantType& AccuracyLevel=VariantType::JustAboveZero)
+		{
+			VariantType TotalRes = (*this - 1)/ (*this + 1);
+			VariantType WSquared = TotalRes * TotalRes;
+			VariantType LastPow = -TotalRes;
+			int WPow = 3;
+			VariantType AddRes;
+
+			do
+			{
+				LastPow *= WSquared;
+				AddRes = LastPow / WPow;
+				TotalRes -= AddRes;
+				WPow += 2;
+			} while (AddRes > VariantType::JustAboveZero);
+			return TotalRes;
+		}
+		
+		//Common log calculations for when value is greater than one
+		template<MediumDecVariant VariantType=MediumDecBase>
+		VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero)
+		{
+			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+			VariantType TotalRes = (*this - 1) / (*this + 1);
+			VariantType LastPow = TotalRes;
+			VariantType WSquared = TotalRes * TotalRes;
+			VariantType AddRes;
+			int WPow = 3;
+			do
+			{
+				LastPow *= WSquared;
+				AddRes = LastPow / WPow;
+				TotalRes += AddRes; WPow += 2;
+			} while (AddRes > AccuracyLevel);
+			return TotalRes;
+		}
+		
+		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
+		static VariantType LogGreaterRangeIntPart02(const IntType& value, const VariantType& AccuracyLevel=VariantType::JustAboveZero)
+		{
+			VariantType tValue = VariantType(value);
+			return tValue.LogGreaterRangePart02(AccuracyLevel);
+		}
+		
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>BlazesRusCode::MediumDec</returns>
+        /// <returns>MediumDec variant</returns>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType LnV1(const VariantType& value)
-        {
+        {//Negative values for natural log return value of LnV1(-value) * i
             //if (value <= 0) {}else//Error if equal or less than 0
             if (value == VariantType::One)
                 return VariantType::Zero;
-            if(IntHalf==0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if(IntHalf==MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                VariantType TotalRes = (value - 1)/ (value + 1);
-                VariantType WSquared = TotalRes * TotalRes;
-                VariantType LastPow = -TotalRes;
-                int WPow = 3;
-                VariantType AddRes;
-
-                do
-                {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes -= AddRes;
-                    WPow += 2;
-                } while (AddRes > VariantType::JustAboveZero);
-                return TotalRes * 2;
+				return value.LogZeroRangePart02().MultiplyByTwo();
             }
-            else if (IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+			else if (IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 VariantType threshold = VariantType::FiveMillionth;
                 VariantType base = value - 1;        // Base of the numerator; exponent will be explicit
@@ -3736,19 +3769,180 @@ protected:
             else
             {
                 //Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-                //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-                VariantType TotalRes = (value - 1) / (value + 1);
-                VariantType LastPow = TotalRes;
-                VariantType WSquared = TotalRes * TotalRes;
-                VariantType AddRes;
-                int WPow = 3;
-                do
+                return value.LogGreaterRangePart02().MultiplyByTwo();
+            }
+        }
+		
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType Log10V1(const VariantType& value)
+        {
+            if (value == VariantType::One)
+                return VariantType::Zero;
+            if (DecimalHalf == 0 && IntHalf % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
                 {
-                    LastPow *= WSquared;
-                    AddRes = LastPow / WPow;
-                    TotalRes += AddRes; WPow += 2;
-                } while (AddRes > VariantType::JustAboveZero);
-                return TotalRes * 2;
+                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                        return VariantType(index, 0);
+                }
+                return VariantType(9, 0);
+            }
+            if(IntHalf==MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+				return value.LogZeroRangePart02().MultiplyByUnsigned(VariantType::LN10Div);
+            }
+            else if (IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {//This section gives accurate answer for values between 1 & 2
+                VariantType threshold = VariantType::FiveBillionth;
+                VariantType base = value - 1;        // Base of the numerator; exponent will be explicit
+                int den = 1;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                VariantType term = base;       // First term
+                VariantType prev = 0;          // Previous sum
+                VariantType result = term;     // Kick it off
+
+                while (VariantType::Abs(prev - result) > threshold) {
+                    den++;
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                }
+                return result*VariantType::LN10Div;// result/VariantType::LN10;//Using Multiplication instead of division for speed improvement
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                return value.LogGreaterRangePart02().MultiplyByUnsigned(VariantType::LN10Div);
+            }
+        }
+		
+        /// <summary>
+        /// Log Base 10 of Value(integer value variant)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
+        static VariantType Log10OfIntV1(const IntType& value)
+        {
+            if (value == 1)
+                return VariantType::Zero;
+            if (value % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                        return VariantType(index);
+                }
+                return VariantType(9);
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                return LogGreaterRangeIntPart02(value).MultiplyByUnsigned(VariantType::TwiceLn10Div);
+            }
+        }
+		
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDec Variant</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType LogV1(const VariantType& value, const VariantType& baseVal)
+        {
+            if (value == VariantType::One)
+                return VariantType::Zero;
+            return Log10V1(value) / Log10V1(baseVal);
+        }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>VariantType</returns>
+		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
+        static VariantType LogOfIntV1(const VariantType& value, const IntType& baseVal)
+        {
+            //Calculate Base log first
+            VariantType baseTotalRes;
+            bool lnMultLog = true;
+            if (baseVal % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    {
+                        baseTotalRes = VariantType(index, 0);
+                        break;
+                    }
+                }
+                baseTotalRes = VariantType(9, 0); lnMultLog = false;
+            }
+            else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                baseTotalRes = LogGreaterRangeIntPart02(baseVal);
+            }
+            //Now calculate other log
+            if (value.DecimalHalf == 0 && value.IntHalf % 10 == 0)
+            {
+                for (int index = 1; index < 9; ++index)
+                {
+                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                        return lnMultLog ? VariantType(index, 0) / (baseTotalRes * VariantType::TwiceLN10Div): VariantType(index, 0)/ baseTotalRes;
+                }
+                return lnMultLog? VariantType(9, 0) / (baseTotalRes*VariantType::TwiceLN10Div):VariantType(9, 0)/baseTotalRes;
+            }
+			if(Value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
+			{
+                VariantType TotalRes = value.LogZeroRangePart02();
+				if(lnMultLog)
+					return TotalRes.DivideByUnsigned(baseTotalRes);
+				else
+					return (TotalRes.MultiplyByUnsigned(VariantType::TwiceLN10Div)).DivideByUnsigned(baseTotalRes);
+			}
+            else if (Value.IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            {//This section gives accurate answer for values between 1 & 2
+                VariantType threshold = VariantType::FiveBillionth;
+                VariantType base = value - 1;        // Base of the numerator; exponent will be explicit
+                int den = 1;              // Denominator of the nth term
+                bool posSign = true;             // Used to swap the sign of each term
+                VariantType term = base;       // First term
+                VariantType prev = 0;          // Previous sum
+                VariantType result = term;     // Kick it off
+
+                while (VariantType::Abs(prev - result) > threshold) {
+                    den++;
+                    posSign = !posSign;
+                    term *= base;
+                    prev = result;
+                    if (posSign)
+                        result += term / den;
+                    else
+                        result -= term / den;
+                }
+				if(lnMultLog)
+					return result/baseTotalRes;
+				else
+					return (result.MultiplyByTwo())/ baseTotalRes;
+            }
+            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            {
+                VariantType TotalRes = value.LogGreaterRangePart02();
+				if(lnMultLog)
+					return TotalRes.DivideByUnsigned(baseTotalRes);
+				else
+					return (TotalRes.MultiplyByUnsigned(VariantType::TwiceLN10Div)).DivideByUnsigned(baseTotalRes);
             }
         }
 		
@@ -3768,6 +3962,45 @@ public:
         /// <returns>MediumDecBase</returns>
         static VariantType Ln(const VariantType& value)
         { return LnV1(value); }
+
+        /// <summary>
+        /// Log Base 10 of Value
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static MediumDecBase Log10(const MediumDecBase& value)
+        { return Log10V1(value); }
+
+        /// <summary>
+        /// Log Base 10 of Value(integer value variant)
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <returns>MediumDec</returns>
+        static VariantType Log10OfInt(const unsigned int& value)
+        { return Log10OfIntV1(value); }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="baseVal">The base of Log</param>
+        /// <returns>MediumDec Variant</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType Log(const VariantType& value, const VariantType& baseVal)
+        { return LogV1(value, baseVal); }
+
+        /// <summary>
+        /// Log with Base of BaseVal of Value
+        /// Based on http://home.windstream.net/okrebs/page57.html
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        /// <param name="BaseVal">The base of Log</param>
+        /// <returns>VariantType</returns>
+		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
+        static VariantType LogOfInt(const VariantType& value, const IntType& baseVal)
+        { return LogOfIntV1(value, baseVal); }
 
 	#pragma endregion Log Functions
 
@@ -4076,8 +4309,8 @@ public:
     MediumDecBase MediumDecBase::Maximum = MaximumValue();
     MediumDecBase MediumDecBase::E = ENumValue();
     MediumDecBase MediumDecBase::LN10 = LN10Value();
-    MediumDecBase MediumDecBase::LN10Mult = LN10MultValue();
-    MediumDecBase MediumDecBase::HalfLN10Mult = HalfLN10MultValue();
+    MediumDecBase MediumDecBase::LN10Div = LN10DivValue();
+    MediumDecBase MediumDecBase::HalfLN10Div = HalfLN10DivValue();
     MediumDecBase MediumDecBase::TenMillionth = TenMillionthValue();
     MediumDecBase MediumDecBase::FiveMillionth = FiveMillionthValue();
     MediumDecBase MediumDecBase::FiveBillionth = FiveBillionthValue();
