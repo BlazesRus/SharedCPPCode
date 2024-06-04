@@ -4005,20 +4005,26 @@ public:
 	#pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
+protected:
 
-/*
         /// <summary>
         /// Calculate Sine from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        auto SinOf()
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType SinOfV1()
         {
-            auto SinValue = One  / VariableConversionFunctions::Fact(1);
+            VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
+			unsigned int expTotal;
             for (int i = 1; i < 7; ++i)
             {
-                SinValue += Pow(*this, 2 * i + 1)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
+				expTotal = 2 * i + 1;
+				if((i&1)==0){
+					SinValue += UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+				else
+					SinValue -= UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return SinValue;
         }
@@ -4029,12 +4035,18 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        auto CosOf()
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType CosOfV1()
         {
-            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
+			unsigned int expTotal;
             for (int i = 1; i < 7; ++i)
             {
-                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+				expTotal = 2 * i;
+				if((i&1)==0)
+					CosValue += UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+				else
+					CosValue -= UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return CosValue;
         }
@@ -4045,14 +4057,22 @@ public:
         /// </summary>
         /// <param name="Value">The value in Radians.</param>
         /// <returns>MediumDecBase</returns>
-        auto TanOf()
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType TanOfV1()
         {
-            auto SinValue = One  / VariableConversionFunctions::Fact(1);
-            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
+            VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
+			unsigned int sinExp; unsigned int cosExp;
             for (int i = 1; i < 7; ++i)
             {
-                SinValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1)  / VariableConversionFunctions::Fact(2 * i + 1);
-                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+				sinExp = 2 * i + 1; cosExp = 2 * i;
+				if((i&1)==0){
+					SinValue += UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue += UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+				} else{
+					SinValue -= UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue -= UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+				}
             }
             return SinValue / CosValue;
         }
@@ -4063,27 +4083,26 @@ public:
         /// </summary>
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecBase</returns>
-        auto ATanOf()
+		template<MediumDecVariant VariantType=MediumDecBase>
+        VariantType ATanOfV1()
         {
-            auto SinValue = One  / VariableConversionFunctions::Fact(1);
-            auto CosValue = One / VariableConversionFunctions::Fact(0);
+            VariantType SinValue = One  / VariableConversionFunctions::Fact(1);
+            VariantType CosValue = One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
+			unsigned int sinExp; unsigned int cosExp;
             for (int i = 1; i < 7; ++i)
-            { // That's Taylor series!!
-                SinValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i + 1);
-                CosValue += Pow(*this, 2 * i)*(i % 2 == 0 ? 1 : -1) / VariableConversionFunctions::Fact(2 * i);
+            {
+				sinExp = 2 * i + 1; cosExp = 2 * i;
+				if((i&1)==0){
+					SinValue += UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue += UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+				} else{
+					SinValue -= UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue -= UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+				}
             }
             return CosValue / SinValue;
         }
-
-        /// <summary>
-        /// Calculate Sine from Value in Radians
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDecBase</returns>
-        static auto Sin(const auto& Value){ return SinOf(Value); }
-            
 
         /// <summary>
         /// atan2 calculation with self normalization
@@ -4093,14 +4112,15 @@ public:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        /// <returns>MediumDecBase</returns>
-        static auto ArcTan2(const auto& y, const auto& x)
+        /// <returns>MediumDec</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType ArcTan2(const VariantType& y, const VariantType& x)
         {
-            auto coeff_1 = PiNum / 4;
-            auto coeff_2 = coeff_1 * 3;
-            auto abs_y = Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
-            auto r;
-            auto angle;
+            VariantType coeff_1 = PiNum.DivideByFour();
+            VariantType coeff_2 = coeff_1.MultiplyByUInt(3);
+            VariantType abs_y = VariantType::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            VariantType r;
+            VariantType angle;
             if (x.IsPositive())
             {
                 r = (x - abs_y) / (x + abs_y);
@@ -4121,9 +4141,10 @@ public:
         /// Get Sin from Value of angle.
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
-        static auto SinFromAngle(auto Value)
+        /// <param name="value">The target VariantType variant value to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType SinFromAngleV1(VariantType Value)
         {
             if (Value.IsNegative())
             {
@@ -4165,7 +4186,7 @@ public:
                         return NegPointFive;
                     default:
                         //Angle as Radian
-                        auto Radius = PiNum * Value / 180;
+                        VariantType Radius = Pi * Value / 180;
                         return Sin(Radius);
                         break;
                 }
@@ -4173,7 +4194,7 @@ public:
             else
             {
                 //Angle as Radian
-                auto Radius = PiNum * Value / 180;
+                VariantType Radius = Pi * Value / 180;
                 return Sin(Radius);
             }
         }
@@ -4182,9 +4203,10 @@ public:
         /// Get Cos() from Value of Angle
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <param name="value">The target VariantType variant value to perform function on.</param>
         /// <returns></returns>
-        static auto CosFromAngle(auto Value)
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType CosFromAngleV1(VariantType Value)
         {
             if (Value.IsNegative())
             {
@@ -4226,7 +4248,7 @@ public:
                         return NegPointFive;
                     default:
                         //Angle as Radian
-                        auto Radius = Pi * Value / 180;
+                        VariantType Radius = Pi * Value / 180;
                         return Cos(Radius)
                         break;
                 }
@@ -4234,7 +4256,7 @@ public:
             else
             {
                 //Angle as Radian
-                auto Radius = PiNum * Value / 180;
+                VariantType Radius = Pi * Value / 180;
                 return Cos(Radius);
             }
         }
@@ -4243,9 +4265,10 @@ public:
         /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
-        static auto TanFromAngle(auto Value)
+        /// <param name="value">The target VariantType variant value to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType TanFromAngleV1(VariantType Value)
         {
             if (Value.IsNegative())
             {
@@ -4280,14 +4303,102 @@ public:
                         return Minimum;//Negative Infinity
                         break;
                     default:
-                        return Tan(PiNum * Value / 180);
+                        return Tan(Pi * Value / 180);
                         break;
                 }
             }
             else
-                return Tan(PiNum * Value / 180);
+                return Tan(Pi * Value / 180);
         }
-*/
+
+public:
+
+        /// <summary>
+        /// Get Sin from value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+        static MediumDecBase SinFromAngle(const MediumDecBase& tValue)
+        { return SinFromAngleV1(tValue); }
+		
+        /// <summary>
+        /// Get Cos() from value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns></returns>
+        static MediumDecBase CosFromAngle(const MediumDecBase& tValue)
+        { return CosFromAngleV1(tValue); }
+
+        /// <summary>
+        /// Get Tangent from value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+        static MediumDecBase TanFromAngle(const MediumDecBase& tValue)
+        { return TanFromAngleV1(tValue); }
+		
+		MediumDecBase SinOf()
+        { return SinOfV1(); }
+		
+		MediumDecBase CosOf()
+        { return CosOfV1(); }
+		
+		MediumDecBase TanOf()
+        { return TanOfV1(); }
+		
+		MediumDecBase ATanOf()
+        { return ATanOfV1(); }
+		
+        /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Sin(const MediumDecBase& tValue)
+        { return tValue.CosOfV1(); }
+		
+        /// <summary>
+        /// Get cosine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target VariantType variant value to perform function on.</param>
+        /// <returns></returns>
+        static MediumDecBase Cos(const MediumDecBase& tValue)
+        { return tValue.CosOfV1(); }
+		
+        /// <summary>
+        /// Get Tan from value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The tValue in Radians.</param>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase Tan(const MediumDecBase& tValue)
+        { return tValue.TanOfV1(); }
+		
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDecBase</returns>
+        static MediumDecBase ATan(const MediumDecBase& tValue)
+        { return tValue.ATanOfV1(); }
+		
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDecBase ArcTan2(const MediumDecBase& y, const MediumDecBase& x)
+        { return ArcTan2V1(y, x); }
 
     #pragma endregion Trigonomic Functions
     };
