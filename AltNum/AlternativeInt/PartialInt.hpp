@@ -171,6 +171,13 @@ public:
 
 		static PartialInt Zero;
 
+		void UInt64DivOp(const unsigned __int64& rValue);
+
+		void Int64DivOp(const signed __int64& rValue);
+
+		void UInt64MultOp(const unsigned __int64& rValue);
+
+		void Int64MultOp(const signed __int64& rValue);
 
  		friend PartialInt& operator/=(PartialInt& lValue, const PartialInt& rValue){
 			lValue.Value /= rValue.Value; return lValue;
@@ -278,6 +285,52 @@ public:
 		friend PartialInt operator-(const PartialInt& lValue, const signed int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
+        }
+
+        friend PartialInt& operator/=(PartialInt& lValue, const signed __int64& rValue) {
+            lValue.Int64DivOp(rValue); return lValue;
+        }
+
+        friend PartialInt& operator/=(PartialInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64DivOp(rValue);
+            return lValue;
+        }
+
+        friend PartialInt& operator/=(PartialInt& lValue, const signed __int64& rValue) {
+            lValue.Int64DivOp(rValue); return lValue;
+        }
+
+        friend PartialInt& operator/=(PartialInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64DivOp(rValue);
+            return lValue;
+        }
+
+        friend PartialInt operator/(const PartialInt& lValue, const unsigned __int64& rValue) {
+            PartialInt newVal = lValue;
+            newVal.UInt64DivOp(rValue); return newVal;
+        }
+
+        friend PartialInt operator/(const PartialInt& lValue, const signed __int64& rValue) {
+            PartialInt newVal = lValue;
+            newVal.Int64DivOp(rValue); return newVal;
+        }
+
+        friend PartialInt& operator*=(PartialInt& lValue, const signed __int64& rValue) {
+            lValue.Int64MultOp(rValue); return lValue;
+        }
+
+        friend PartialInt& operator*=(PartialInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64MultOp(rValue); return lValue;
+        }
+
+        friend PartialInt operator*(const PartialInt& lValue, const unsigned __int64& rValue) {
+            PartialInt newVal = lValue;
+            newVal.UInt64MultOp(rValue); return newVal;
+        }
+
+        friend PartialInt operator*(const PartialInt& lValue, const signed __int64& rValue) {
+            PartialInt newVal = lValue;
+            newVal.Int64MultOp(rValue); return newVal;
         }
 
     #pragma region Other Operators

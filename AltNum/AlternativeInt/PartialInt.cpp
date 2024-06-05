@@ -1,13 +1,40 @@
 #include "PartialInt.hpp"
 using PartialInt = BlazesRusCode::PartialInt;
 
-
 PartialInt PartialInt::Zero = PartialInt::ZeroValue();
 
 inline BlazesRusCode::PartialInt::PartialInt(unsigned int value, unsigned int flags)
 {
 	Value = value;
 	Flags = flags;
+}
+
+inline void BlazesRusCode::PartialInt::UInt64DivOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result /= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::PartialInt::Int64DivOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result /= rValue;//Assuming right side value is non-negative because does not support negative numbers(not worth small cost to check given primary function of class)
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::PartialInt::UInt64MultOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::PartialInt::Int64MultOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
 }
 
 inline bool BlazesRusCode::PartialInt::IsNormalVariant() const

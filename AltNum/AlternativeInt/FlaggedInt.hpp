@@ -173,6 +173,14 @@ namespace BlazesRusCode
 		
 		static FlaggedInt Zero;
 
+		void UInt64DivOp(const unsigned __int64& rValue);
+
+		void Int64DivOp(const signed __int64& rValue);
+
+		void UInt64MultOp(const unsigned __int64& rValue);
+
+		void Int64MultOp(const signed __int64& rValue);
+
  		friend FlaggedInt& operator/=(FlaggedInt& lValue, const FlaggedInt& rValue){
 			lValue.Value /= rValue.Value; return lValue;
         }
@@ -279,6 +287,43 @@ namespace BlazesRusCode
 		friend FlaggedInt operator-(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
+        }
+
+        friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed __int64& rValue) {
+            lValue.Int64DivOp(rValue); return lValue;
+        }
+
+        friend FlaggedInt& operator/=(FlaggedInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64DivOp(rValue);
+            return lValue;
+        }
+
+        friend FlaggedInt operator/(const FlaggedInt& lValue, const unsigned __int64& rValue) {
+            FlaggedInt newVal = lValue;
+            newVal.UInt64DivOp(rValue); return newVal;
+        }
+
+        friend FlaggedInt operator/(const FlaggedInt& lValue, const signed __int64& rValue) {
+            FlaggedInt newVal = lValue;
+            newVal.Int64DivOp(rValue); return newVal;
+        }
+
+        friend FlaggedInt& operator*=(FlaggedInt& lValue, const signed __int64& rValue) {
+            lValue.Int64MultOp(rValue); return lValue;
+        }
+
+        friend FlaggedInt& operator*=(FlaggedInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64MultOp(rValue); return lValue;
+        }
+
+        friend FlaggedInt operator*(const FlaggedInt& lValue, const unsigned __int64& rValue) {
+            FlaggedInt newVal = lValue;
+            newVal.UInt64MultOp(rValue); return newVal;
+        }
+
+        friend FlaggedInt operator*(const FlaggedInt& lValue, const signed __int64& rValue) {
+            FlaggedInt newVal = lValue;
+            newVal.Int64MultOp(rValue); return newVal;
         }
 
     #pragma region Other Operators

@@ -233,6 +233,44 @@ inline MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
 
 //Division operation
 
+inline void BlazesRusCode::MirroredInt::UInt64DivOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result /= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::MirroredInt::Int64DivOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	if (rValue<0) {
+		SwapNegativeStatus();
+		result /= -rValue;
+	}
+	else
+		result /= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::MirroredInt::UInt64MultOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::MirroredInt::Int64MultOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	if (rValue<0) {
+		SwapNegativeStatus();
+		result *= -rValue;
+	}
+	else
+		result *= rValue;
+	Value = (unsigned int)result;
+}
+
 inline void BlazesRusCode::MirroredInt::DivOp(const MirroredInt& rValue) {
 	if (rValue.IsNegative()) {
 		SwapNegativeStatus();
@@ -256,8 +294,6 @@ inline void BlazesRusCode::MirroredInt::IntDivOp(const signed int& rValue)
 	else
 		Value /= rValue;
 }
-
-//Multiplication operation
 
 inline void BlazesRusCode::MirroredInt::MultOp(const MirroredInt& rValue) {
 	if (rValue.IsNegative()) {
@@ -283,8 +319,6 @@ inline void BlazesRusCode::MirroredInt::IntMultOp(const signed int& rValue)
 		Value *= rValue;
 }
 
-//Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-
 inline void BlazesRusCode::MirroredInt::UnsignedAddOp(const MirroredInt& rValue) {
 	if (IsPositive())
 		Value += rValue.Value;
@@ -297,8 +331,6 @@ inline void BlazesRusCode::MirroredInt::UnsignedAddOp(const MirroredInt& rValue)
 			Value -= rValue.Value;
 	}
 }
-
-//Default Negative zero including addition operation(When DecimalHalf.Value!=0)
 
 inline void BlazesRusCode::MirroredInt::AddOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
@@ -323,8 +355,6 @@ inline void BlazesRusCode::MirroredInt::AddOp(const MirroredInt& rValue) {
 	}
 }
 
-//Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-
 inline void BlazesRusCode::MirroredInt::UIntAddOp(const unsigned int& rValue) {
 	if (IsPositive())
 		Value += rValue;
@@ -337,8 +367,6 @@ inline void BlazesRusCode::MirroredInt::UIntAddOp(const unsigned int& rValue) {
 			Value -= rValue;
 	}
 }
-
-//Default Negative zero including addition operation(When DecimalHalf.Value!=0)
 
 inline void BlazesRusCode::MirroredInt::IntAddOp(const signed int& rValue) {
 	if (IsPositive()) {
@@ -367,8 +395,6 @@ inline void BlazesRusCode::MirroredInt::IntAddOp(const signed int& rValue) {
 	}
 }
 
-//Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-
 inline void BlazesRusCode::MirroredInt::UnsignedSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.Value>Value) {//Becoming positive
@@ -381,8 +407,6 @@ inline void BlazesRusCode::MirroredInt::UnsignedSubOp(const MirroredInt& rValue)
 	else
 		Value += rValue.Value;
 }
-
-//Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
 
 inline void BlazesRusCode::MirroredInt::SubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
@@ -407,8 +431,6 @@ inline void BlazesRusCode::MirroredInt::SubOp(const MirroredInt& rValue) {
 	}
 }
 
-//Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-
 inline void BlazesRusCode::MirroredInt::UIntSubOp(const unsigned int& rValue) {
 	if (IsPositive()) {
 		if (rValue>Value) {//Becoming positive
@@ -421,8 +443,6 @@ inline void BlazesRusCode::MirroredInt::UIntSubOp(const unsigned int& rValue) {
 	else
 		Value += rValue;
 }
-
-//Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
 
 inline void BlazesRusCode::MirroredInt::IntSubOp(const signed int& rValue) {
 	if (IsPositive()) {
@@ -450,8 +470,6 @@ inline void BlazesRusCode::MirroredInt::IntSubOp(const signed int& rValue) {
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedAddOp(const MirroredInt& rValue) {
 	if (IsPositive())
 		Value += rValue.Value;
@@ -465,8 +483,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedAddOp(const Mirrored
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.Value >= Value) {//Becoming positive
@@ -479,8 +495,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedSubOp(const Mirrored
 	else
 		Value += rValue.Value;
 }
-
-//Exclude negative zero version(When DecimalHalf.Value==0)
 
 inline void BlazesRusCode::MirroredInt::NRepSkippingAddOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
@@ -505,8 +519,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingAddOp(const MirroredInt& rVa
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.IsNegative())
@@ -530,8 +542,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rVa
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerAddOp(const unsigned int& rValue) {
 	if (IsPositive())
 		Value += rValue;
@@ -545,8 +555,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerAddOp(const u
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerSubOp(const unsigned int& rValue) {
 	if (IsPositive()) {
 		if (rValue >= Value) {//Becoming positive
@@ -559,8 +567,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerSubOp(const u
 	else
 		Value += rValue;
 }
-
-//Exclude negative zero version(When DecimalHalf.Value==0)
 
 inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerAddOp(const signed int& rValue) {
 	bool rIsNeg = rValue < 0;
@@ -587,8 +593,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerAddOp(const signed in
 	}
 }
 
-//Exclude negative zero version(When DecimalHalf.Value==0)
-
 inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed int& rValue) {
 	bool rIsNeg = rValue < 0;
 	unsigned int rMag = (unsigned int)(rIsNeg ? -rValue : rValue);
@@ -613,11 +617,6 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed in
 			Value -= rMag;
 	}
 }
-
-/// <summary>
-/// MirroredInt to int explicit conversion
-/// </summary>
-/// <returns>The result of the operator.</returns>
 
 inline BlazesRusCode::MirroredInt::operator std::string()
 {

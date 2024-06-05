@@ -314,6 +314,57 @@ namespace BlazesRusCode
 		
 		static MirroredInt Zero;
 
+//These templates require size int 32 or greater in order to preserve storage of value (commenting out for now to reduce strain on extension)
+/*		template<IntegerType IntType=unsigned int>
+		void UIntDivOpV1(const IntType& rValue)
+		{
+			IntType result = (IntType) Value;
+			result /= rValue;
+			Value = (unsigned int) result;
+		}
+
+		template<IntegerType IntType=signed int>
+		void IntDivOpV1(const IntType& rValue)
+		{
+			IntType result = (IntType) Value;
+			if (rValue<0) {
+				SwapNegativeStatus();
+				result /= -rValue;
+			}
+			else
+				result /= rValue;
+			Value = (unsigned int) result;
+		}
+
+		template<IntegerType IntType=unsigned int>
+		void UIntMultOpV1(const IntType& rValue)
+		{
+			IntType result = (IntType) Value;
+			result *= rValue;
+			Value = (unsigned int) result;
+		}
+
+		template<IntegerType IntType=signed int>
+		void IntMultOpV1(const IntType& rValue)
+		{
+			IntType result = (IntType) Value;
+			if (rValue<0) {
+				SwapNegativeStatus();
+				result *= -rValue;
+			}
+			else
+				result *= rValue;
+			Value = (unsigned int) result;
+		}*/
+
+		void UInt64DivOp(const unsigned __int64& rValue);
+
+		void Int64DivOp(const signed __int64& rValue);
+
+		void UInt64MultOp(const unsigned __int64& rValue);
+
+		void Int64MultOp(const signed __int64& rValue);
+
         //Division operation
         void DivOp(const MirroredInt& rValue);
 
@@ -390,7 +441,7 @@ namespace BlazesRusCode
             lValue.Value /= rValue;
             return lValue;
         }
-		
+
 		friend MirroredInt operator/(const MirroredInt& lValue, const MirroredInt& rValue){
             MirroredInt newVal = lValue;
 			newVal.DivOp(rValue); return newVal;
@@ -404,6 +455,25 @@ namespace BlazesRusCode
 		friend MirroredInt operator/(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntDivOp(rValue); return newVal;
+        }
+
+        friend MirroredInt& operator/=(MirroredInt& lValue, const signed __int64& rValue) {
+            lValue.Int64DivOp(rValue); return lValue;
+        }
+
+        friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64DivOp(rValue);
+            return lValue;
+        }
+
+        friend MirroredInt operator/(const MirroredInt& lValue, const unsigned __int64& rValue) {
+            MirroredInt newVal = lValue;
+            newVal.UInt64DivOp(rValue); return newVal;
+        }
+
+        friend MirroredInt operator/(const MirroredInt& lValue, const signed __int64& rValue) {
+            MirroredInt newVal = lValue;
+            newVal.Int64DivOp(rValue); return newVal;
         }
 
         friend MirroredInt& operator*=(MirroredInt& lValue, const MirroredInt& rValue){
@@ -431,6 +501,24 @@ namespace BlazesRusCode
 		friend MirroredInt operator*(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntMultOp(rValue); return newVal;
+        }
+
+        friend MirroredInt& operator*=(MirroredInt& lValue, const signed __int64& rValue) {
+            lValue.Int64MultOp(rValue); return lValue;
+        }
+
+        friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned __int64& rValue) {
+            lValue.UInt64MultOp(rValue); return lValue;
+        }
+
+        friend MirroredInt operator*(const MirroredInt& lValue, const unsigned __int64& rValue) {
+            MirroredInt newVal = lValue;
+            newVal.UInt64MultOp(rValue); return newVal;
+        }
+
+        friend MirroredInt operator*(const MirroredInt& lValue, const signed __int64& rValue) {
+            MirroredInt newVal = lValue;
+            newVal.Int64MultOp(rValue); return newVal;
         }
 
         //Including negative zero by default use NRepSkippingAddOp when DecimalHalf==0

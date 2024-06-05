@@ -13,6 +13,34 @@ inline BlazesRusCode::FlaggedInt::FlaggedInt(const unsigned int& value, const un
 	IsAltRep = isAltRep;
 }
 
+inline void BlazesRusCode::FlaggedInt::UInt64DivOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result /= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::FlaggedInt::Int64DivOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result /= rValue;//Assuming right side value is non-negative because does not support negative numbers(not worth small cost to check given primary function of class)
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::FlaggedInt::UInt64MultOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
+}
+
+inline void BlazesRusCode::FlaggedInt::Int64MultOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
+}
+
 inline bool BlazesRusCode::FlaggedInt::IsAlternative() const
 {
 	return IsAltRep == 1;
@@ -73,40 +101,20 @@ inline FlaggedInt BlazesRusCode::FlaggedInt::AltMaximumValue()
 	return FlaggedInt(2147483647, 0);
 }
 
-/// <summary>
-/// Returns the value at one
-/// </summary>
-/// <returns>FlaggedInt</returns>
-
 inline FlaggedInt BlazesRusCode::FlaggedInt::OneValue()
 {
 	return FlaggedInt(1, 1);
 }
-
-/// <summary>
-/// Returns the value at two
-/// </summary>
-/// <returns>FlaggedInt</returns>
 
 inline FlaggedInt BlazesRusCode::FlaggedInt::TwoValue()
 {
 	return FlaggedInt(2, 1);
 }
 
-/// <summary>
-/// Returns the value at zero
-/// </summary>
-/// <returns>FlaggedInt</returns>
-
 inline FlaggedInt BlazesRusCode::FlaggedInt::ZeroValue()
 {
 	return FlaggedInt(0, 1);
 }
-
-/// <summary>
-/// MirroredInt to int explicit conversion
-/// </summary>
-/// <returns>The result of the operator.</returns>
 
 inline BlazesRusCode::FlaggedInt::operator std::string()
 {
