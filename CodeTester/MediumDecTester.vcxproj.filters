@@ -58,6 +58,9 @@
     <Filter Include="Header Files\AltNum\IntReplacements">
       <UniqueIdentifier>{f3d4feda-0fda-4ea6-8967-2c4ec8c34c50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AltNum\IntReplacements">
+      <UniqueIdentifier>{448afdff-b7e2-4758-be7d-923dbe950cd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp">
@@ -71,6 +74,15 @@
     </ClCompile>
     <ClCompile Include="..\AltNum\MediumDec\MediumDecBase.cpp">
       <Filter>Source Files\AltNum\MediumDec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp">
+      <Filter>Source Files\AltNum\IntReplacements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp">
+      <Filter>Source Files\AltNum\IntReplacements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp">
+      <Filter>Source Files\AltNum\IntReplacements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

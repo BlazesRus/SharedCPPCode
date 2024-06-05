@@ -180,6 +180,9 @@
     <ClInclude Include="..\tsl\ordered_map.h" />
     <ClInclude Include="..\OtherFunctions\StringFunctions.h" />
     <ClInclude Include="..\OtherFunctions\VariableConversionFunctions.h" />
+    <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp" />
+    <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp" />
+    <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp" />
     <ClCompile Include="..\AltNum\MediumDec\MediumDecBase.cpp" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
