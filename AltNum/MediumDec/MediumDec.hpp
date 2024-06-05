@@ -1297,14 +1297,14 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Abs(MediumDec tValue)
+        static MediumDec Abs(MediumDec tValue)
         { tValue.AbsOf(); return tValue; }
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        static auto Floor(MediumDec tValue, const int& precision = 0)
+        static MediumDec Floor(MediumDec tValue, const int& precision = 0)
         { return tValue.FloorOf(precision); }
 
         /// <summary>
@@ -1312,7 +1312,7 @@ public:
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Ceil(MediumDec tValue)
+        static MediumDec Ceil(MediumDec tValue)
         { return tValue.CeilOf(); }
 
         /// <summary>
@@ -1320,7 +1320,7 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static auto Trunc(MediumDec tValue)
+        static MediumDec Trunc(MediumDec tValue)
         { return tValue.TruncOf(); }
 
 	#pragma endregion Math Etc Functions
@@ -1330,14 +1330,14 @@ public:
     /// <summary>
     /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
     /// </summary>
-    MediumDecBase SqrtOf(const int& precision = 7) {
+    MediumDec SqrtOf(const int& precision = 7) {
         return SqrtOfV1(precision);
     }
 
     /// <summary>
     /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
     /// </summary>
-    static auto Sqrt(const auto& value, const int& precision = 7)
+    static MediumDec Sqrt(const auto& value, const int& precision = 7)
     {
         return value.SqrtOf(precision);
     }

@@ -608,6 +608,7 @@ inline void BlazesRusCode::MediumDecBase::FloorOf(const int& precision)
 	case 1: DecimalHalf.Value /= 100000000; DecimalHalf.Value *= 100000000; break;
 	case 0:
 		DecimalHalf = 0;
+		break;
 	default:
 		break;
 	}

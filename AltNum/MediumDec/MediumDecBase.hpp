@@ -2851,7 +2851,7 @@ protected:
             {
 				IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:exp&1==1?false:true;
+                bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
                 VariantType self = AbsOf();
                 IntHalf = 1; DecimalHalf = 0;// Initialize result
                 while (exp > 0)
