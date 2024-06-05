@@ -1298,14 +1298,14 @@ public:
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
         static MediumDec Abs(MediumDec tValue)
-        { tValue.AbsOf(); return tValue; }
+        { tValue.AbsOfV1(); return tValue; }
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
         static MediumDec Floor(MediumDec tValue, const int& precision = 0)
-        { return tValue.FloorOf(precision); }
+        { return FloorV1(tValue, precision); }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
@@ -1313,15 +1313,15 @@ public:
         /// <param name="Value">The target value to apply on.</param>
         /// <returns>MediumDecBase</returns>
         static MediumDec Ceil(MediumDec tValue)
-        { return tValue.CeilOf(); }
+        { return tValue.CeilOfV1(); }
 
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDec Trunc(MediumDec tValue)
-        { return tValue.TruncOf(); }
+        static MediumDec Trunc(const MediumDec& tValue)
+        { return tValue.TruncOfV1(); }
 
 	#pragma endregion Math Etc Functions
 

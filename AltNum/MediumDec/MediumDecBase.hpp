@@ -2618,7 +2618,7 @@ public:
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        void FloorOf(const int& precision = 0);
+        void ApplyFloorOf(const int& precision = 0);
 
 protected:
 
@@ -2656,9 +2656,9 @@ protected:
         /// <param name="Value">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
         template<MediumDecVariant VariantType = MediumDecBase>
-        static VariantType FloorV1(VariantType tValue, const int& precision = 0)
+        static VariantType FloorV1(const VariantType& tValue, const int& precision = 0)
         {
-			unsigned int decimalRes = DecimalHalf.Value;
+			unsigned int decimalRes = tValue.DecimalHalf.Value;
             switch (precision)
             {
             case 8: decimalRes /= 10; decimalRes *= 10; break;
@@ -2671,14 +2671,17 @@ protected:
             case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
-			if(decimalRes==0&&IntHalf==MirroredInt::NegativeZero)
+			if(decimalRes==0&&tValue.IntHalf==MirroredInt::NegativeZero)
 				return VariantType();
 			else
 				return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
-            return tValue;
         }
 		
-		
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType TruncOfV1() const
+        {
+            return VariantType(IntHalf == NegativeRep?0:IntHalf, 0);
+        }
 public:
 
 		MediumDecBase CeilOf() { return CeilOfV1(); }
@@ -2709,13 +2712,7 @@ public:
         /// <returns>MediumDecBase&</returns>
 		static signed int CeilInt(const MediumDecBase& tValue) { return tValue.CeilIntOf(); }
 
-        /// <summary>
-        /// Cuts off the decimal point from number
-        /// </summary>
-        /// <returns>MediumDecBase &</returns>
-        MediumDecBase TruncOf();
-
-		static MediumDecBase Trunc(MediumDecBase tValue) { return tValue.TruncOf(); }
+		static MediumDecBase Trunc(const MediumDecBase& tValue) { return tValue.TruncOfV1(); }
 
 	#pragma endregion Truncation Functions
 

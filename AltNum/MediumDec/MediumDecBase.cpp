@@ -594,7 +594,7 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::Abs(const MediumDecBase& tVal
 	return result;
 }
 
-inline void BlazesRusCode::MediumDecBase::FloorOf(const int& precision)
+inline void BlazesRusCode::MediumDecBase::ApplyFloorOf(const int& precision)
 {
 	switch (precision)
 	{
@@ -634,14 +634,6 @@ inline int BlazesRusCode::MediumDecBase::CeilIntOf() const
 		return 0;
 	else
 		return GetIntHalf() + 1;
-}
-
-inline MediumDecBase BlazesRusCode::MediumDecBase::TruncOf()
-{
-	DecimalHalf = 0;
-	if (IntHalf == NegativeRep)
-		IntHalf = 0;
-	return *this;
 }
 
 #pragma endregion Truncation Functions
