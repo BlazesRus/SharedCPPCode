@@ -84,6 +84,9 @@
     <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp">
       <Filter>Source Files\AltNum\IntReplacements</Filter>
     </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp">
+      <Filter>Source Files\AltNum\MediumDec</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DLLAPI.h">
