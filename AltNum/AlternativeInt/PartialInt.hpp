@@ -296,15 +296,6 @@ public:
             return lValue;
         }
 
-        friend PartialInt& operator/=(PartialInt& lValue, const signed __int64& rValue) {
-            lValue.Int64DivOp(rValue); return lValue;
-        }
-
-        friend PartialInt& operator/=(PartialInt& lValue, const unsigned __int64& rValue) {
-            lValue.UInt64DivOp(rValue);
-            return lValue;
-        }
-
         friend PartialInt operator/(const PartialInt& lValue, const unsigned __int64& rValue) {
             PartialInt newVal = lValue;
             newVal.UInt64DivOp(rValue); return newVal;
