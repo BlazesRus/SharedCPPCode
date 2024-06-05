@@ -30,65 +30,31 @@ namespace BlazesRusCode
 		//Stores non-signed part of value
 		unsigned int Value:31;
 		
-		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0)
-		{
-			Value = value;
-			IsAltRep = isAltRep;
-		}
+		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
 		
-		bool IsAlternative()
-		{
-			return IsAltRep==1;
-		}
+        bool IsAlternative() const;
 		
-		bool IsNormal()
-		{
-			return IsAltRep==0;
-		}
+		bool IsNormal();
 		
-		void SwitchToAlternative()
-		{
-			IsAltRep = 1;
-		}
+		void SwitchToAlternative();
 		
-		void SwitchToNormal()
-		{
-			IsAltRep = 0;
-		}
+		void SwitchToNormal();
 		
         //Is at zero value
-        bool IsAtZero()
-        {
-			return Value==0;
-        }
+        bool IsAtZero() const;
 
         //Is not at zero value
-        bool IsNotAtZero()
-        {
-			return Value!=0;
-        }
+        bool IsNotAtZero() const;
 		
         //Is at one value
-        bool IsAtOne()
-        {
-			return Value==1;
-        }
+        bool IsAtOne() const;
 
         //Is at neither zero or negative one
-        bool IsNotOne()
-        {
-			return Value!=1;
-        }
+        bool IsNotOne() const;
 		
-		bool IsEven()
-		{
-			return (Value&1)==0;
-		}
+		bool IsEven() const;
 		
-		bool IsOdd()
-		{
-			return (Value&1)==1;
-		}
+		bool IsOdd() const;
 		
 		std::strong_ordering operator<=>(const FlaggedInt& that) const
 		{
@@ -169,46 +135,31 @@ namespace BlazesRusCode
         /// Returns maximum stored value(2147483647)
         /// </summary>
         /// <returns>FlaggedInt</returns>
-        static FlaggedInt MaximumValue()
-        {
-            return FlaggedInt(2147483647,1);
-        }
+        static FlaggedInt MaximumValue();
 	
         /// <summary>
         /// Returns minimum stored value(-2147483647)
         /// </summary>
         /// <returns>FlaggedInt</returns>
-        static FlaggedInt AltMaximumValue()
-        {
-            return FlaggedInt(2147483647,0);
-        }
+        static FlaggedInt AltMaximumValue();
 		
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>FlaggedInt</returns>
-        static FlaggedInt OneValue()
-        {
-            return FlaggedInt(1,1);
-        }
+        static FlaggedInt OneValue();
 		
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>FlaggedInt</returns>
-        static FlaggedInt TwoValue()
-        {
-            return FlaggedInt(2,1);
-        }
+        static FlaggedInt TwoValue();
 		
         /// <summary>
         /// Returns the value at zero
         /// </summary>
         /// <returns>FlaggedInt</returns>
-        static FlaggedInt ZeroValue()
-        {
-            return FlaggedInt(0,1);
-        }
+        static FlaggedInt ZeroValue();
 		
 	public:
 
@@ -391,18 +342,9 @@ namespace BlazesRusCode
         /// MirroredInt to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator std::string()
-		{
-            return VariableConversionFunctions::UIntToStringConversion(Value);
-		}
+        explicit operator std::string();
 
 #pragma endregion StringOperations
 
 	};
-	
-	FlaggedInt FlaggedInt::Maximum = FlaggedInt::MaximumValue();
-	FlaggedInt FlaggedInt::AltMaximum = FlaggedInt::AltMaximumValue();
-	
-	FlaggedInt FlaggedInt::One = FlaggedInt::OneValue();
-	FlaggedInt FlaggedInt::Two = FlaggedInt::TwoValue();
 }

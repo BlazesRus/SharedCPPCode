@@ -32,79 +32,36 @@ namespace BlazesRusCode
 		
         static const unsigned int MaximumInt = 1073741823;
 
-		PartialInt(unsigned int value=0, unsigned int flags=0)
-		{
-			Value = value;
-			Flags = flags;
-		}
+		PartialInt(unsigned int value=0, unsigned int flags=0);
 		
-		bool IsNormalVariant()
-		{
-			return Flags==0;
-		}
+		bool IsNormalVariant() const;
 
-		bool IsPiVariant()
-		{
-			return Flags==1;
-		}
+		bool IsPiVariant() const;
 
-		bool IsEVariant()
-		{
-			return Flags==2;
-		}
+		bool IsEVariant() const;
 
-		bool IsIVariant()
-		{
-			return Flags==3;
-		}
+		bool IsIVariant() const;
 
-		void SwitchToNormal()
-		{
-			Flags = 0;
-		}
+		void SwitchToNormal();
 
-		void SwitchToPiVariant()
-		{
-			Flags = 1;
-		}
+		void SwitchToPiVariant();
 
-		void SwitchToEVariant()
-		{
-			Flags = 2;
-		}
+		void SwitchToEVariant();
 
-		void SwitchToIVariant()
-		{
-			Flags = 3;
-		}
+		void SwitchToIVariant();
 
         //Is at zero value
-        bool IsAtZero()
-        {
-			return Value==0;
-        }
+        bool IsAtZero() const;
 
         //Is not at zero value
-        bool IsNotAtZero()
-        {
-			return Value!=0;
-        }
+        bool IsNotAtZero() const;
 		
         //Is at one value
-        bool IsAtOne()
-        {
-			return Value==1;
-        }
+        bool IsAtOne() const;
 		
-		bool IsEven() const
-		{
-			return (Value&1)==0;
-		}
+		bool IsEven() const;
 		
-		bool IsOdd() const
-		{
-			return (Value&1)==1;
-		}
+		bool IsOdd() const;
 
 		std::strong_ordering operator<=>(const PartialInt& that) const
 		{
@@ -203,10 +160,7 @@ protected:
         /// Returns the value at zero
         /// </summary>
         /// <returns>MirroredInt</returns>
-        static PartialInt ZeroValue()
-        {
-            return PartialInt();
-        }
+        static PartialInt ZeroValue();
 
 public:
 
@@ -387,15 +341,10 @@ public:
         /// MirroredInt to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator std::string()
-		{
-            return VariableConversionFunctions::UIntToStringConversion(Value);
-		}
+        explicit operator std::string();
 
 #pragma endregion StringOperations
 
 	};
-
-	PartialInt PartialInt::Zero = PartialInt::ZeroValue();
 
 }
