@@ -1,6 +1,220 @@
 #include "MediumDecBase.hpp"
 using MediumDecBase = BlazesRusCode::MediumDecBase;
 
+#pragma region ValueSetters
+
+inline void BlazesRusCode::MediumDecBase::SetValueToPiNum()
+{
+	IntHalf = 3; DecimalHalf = 141592654;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToHundredMilPiNum()
+{
+	IntHalf = 314159265; DecimalHalf = 358979324;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToTenMilPiNum()
+{
+	IntHalf = 31415926; DecimalHalf = 535897932;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToOneMilPiNum()
+{
+	IntHalf = 3141592; DecimalHalf = 653589793;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToTenPiNum()
+{
+	IntHalf = 31; DecimalHalf = 415926536;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToENum()
+{
+	IntHalf = 2; DecimalHalf = 718281828;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToPoint5()
+{
+	IntHalf = 0; DecimalHalf = 500000000;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToJustAboveZero()
+{
+	IntHalf = 0; DecimalHalf = 1;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToOneMillionth()
+{
+	IntHalf = 0; DecimalHalf = 1000;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToFiveThousandth()
+{
+	IntHalf = 0; DecimalHalf = 5000000;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToFiveMillionth()
+{
+	IntHalf = 0; DecimalHalf = 5000;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToTenMillionth()
+{
+	IntHalf = 0; DecimalHalf = 100;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToOneHundredMillionth()
+{
+	IntHalf = 0; DecimalHalf = 10;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToLN10()
+{
+	IntHalf = 2; DecimalHalf = 302585093;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToLN10Div()
+{
+	IntHalf = 0; DecimalHalf = 434294482;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetValueToTwiceLN10Div()
+{
+	IntHalf = 0; DecimalHalf = 868588964;
+}
+
+#pragma endregion ValueSetters
+
+#pragma region ValueDefines
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::AlmostOneValue()
+{
+	return MediumDecBase(0, 999999999);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::PiNumValue()
+{
+	return MediumDecBase(3, 141592654);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::HundredMilPiNumValue()
+{
+	return MediumDecBase(314159265, 358979324);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::TenMilPiNumValue()
+{
+	return MediumDecBase(31415926, 535897932);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::OneMilPiNumValue()
+{
+	return MediumDecBase(3141592, 653589793);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::TenPiNumValue()
+{
+	return MediumDecBase(31, 415926536);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::ENumValue()
+{
+	return MediumDecBase(2, 718281828);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::ZeroValue()
+{
+	return MediumDecBase();
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::OneValue()
+{
+	return MediumDecBase(1);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::TwoValue()
+{
+	return MediumDecBase(MirroredInt::Two);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::NegativeOneValue()
+{
+	return MediumDecBase(MirroredInt::NegativeOne);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::Point5Value()
+{
+	return MediumDecBase(0, 500000000);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::JustAboveZeroValue()
+{
+	return MediumDecBase(0, 1);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::OneMillionthValue()
+{
+	return MediumDecBase(0, 1000);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::FiveThousandthValue()
+{
+	return MediumDecBase(0, 5000000);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::FiveMillionthValue()
+{
+	return MediumDecBase(0, 5000);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::TenMillionthValue()
+{
+	return MediumDecBase(0, 100);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::OneHundredMillionthValue()
+{
+	return MediumDecBase(0, 10);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::FiveBillionthValue()
+{
+	return MediumDecBase(0, 5);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::LN10Value()
+{
+	return MediumDecBase(2, 302585093);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::LN10DivValue()
+{
+	return MediumDecBase(0, 434294482);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::TwiceLN10DivValue()
+{
+	return MediumDecBase(0, 868588964);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::MinimumValue()
+{
+	return MediumDecBase(MirroredInt::Maximum, 999999999);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::MaximumValue()
+{
+	return MediumDecBase(MirroredInt::Minimum, 999999999);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::NegativePointFiveValue()
+{
+	return MediumDecBase(MirroredInt::NegativeZero, 500000000);
+}
+
+
+
+#pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
 MediumDecBase MediumDecBase::AlmostOne = MediumDecBase::AlmostOneValue();
@@ -28,6 +242,89 @@ MediumDecBase MediumDecBase::PiNum = MediumDecBase::PiNumValue();
 MediumDecBase MediumDecBase::ENum = MediumDecBase::ENumValue();
 MediumDecBase MediumDecBase::NegativePointFive = MediumDecBase::NegativePointFiveValue();
 #pragma endregion ValueDefine Source
+
+#pragma region Check_if_value
+
+inline void BlazesRusCode::MediumDecBase::SetAsZero()
+{
+	IntHalf = 0; DecimalHalf = 0;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetAsOne()
+{
+	IntHalf = 1; DecimalHalf = 0;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetAsOneVal()
+{
+	IntHalf.Value = 1; DecimalHalf = 0;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetAsValues(const MirroredInt& intVal, const PartialInt& decVal)
+{
+	IntHalf = 0; DecimalHalf = 0;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsAtZeroInt() const
+{
+	return IntHalf.Value == 0;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsNotAtZeroInt() const
+{
+	return IntHalf.Value != 0;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsAtOneInt() const
+{
+	return IntHalf.Value == 1;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsNotAtOneInt() const
+{
+	return IntHalf.Value != 1;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsZero() const
+{
+	return DecimalHalf == 0 && IntHalf.Value == 0;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsOne() const
+{
+	return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsNegOne() const
+{
+	return DecimalHalf == 0 && IntHalf == MirroredInt::NegativeOne;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsOneVal() const
+{
+	return DecimalHalf == 0 && IntHalf.Value == 1;
+}
+
+inline bool BlazesRusCode::MediumDecBase::IsOneVariantVal() const
+{
+	return DecimalHalf.Value == 0 && IntHalf.Value == 1;
+}
+
+#pragma endregion Check_if_value
+
+#pragma region RangeLimits
+
+inline void BlazesRusCode::MediumDecBase::SetAsMaximum()
+{
+	IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999;
+}
+
+inline void BlazesRusCode::MediumDecBase::SetAsMinimum()
+{
+	IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999;
+}
+
+#pragma endregion RangeLimits
 
 #pragma region ConvertToOtherTypes
 
@@ -152,20 +449,40 @@ inline void BlazesRusCode::MediumDecBase::DivideByFour()
 		UnsignedIntDivOp(4);
 }
 
+inline MediumDecBase BlazesRusCode::MediumDecBase::DividedByTwo() const
+{
+	return DividedByTwoV1();
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::DividedByFour() const
+{
+	return DividedByFourV1();
+}
+
 #pragma endregion Other Division Operations
 
 #pragma region Other multiplication operations
 
-inline void BlazesRusCode::MediumDecBase::MultipleByTwo()
+inline void BlazesRusCode::MediumDecBase::MultiplyByTwo()
 {
 	UnsignedIntMultOp(2);
 }
 
-inline void BlazesRusCode::MediumDecBase::MultipleByFour()
+inline void BlazesRusCode::MediumDecBase::MultiplyByFour()
 {
 	UnsignedIntMultOp(4);
 }
 
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::MultipliedByTwo() const
+{
+	return MultipliedByTwoV1();
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::MultipliedByFour() const
+{
+	return MultipliedByFourV1();
+}
 
 
 #pragma endregion Other multiplication operations
@@ -329,7 +646,6 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::TruncOf()
 #pragma endregion Truncation Functions
 
 #pragma region String Commands
-
 
 inline void BlazesRusCode::MediumDecBase::ReadString(const std::string& Value)
 {

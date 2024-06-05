@@ -136,19 +136,19 @@ public:
         { return MediumDec(3, 141592654); }
 
         //100,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec HundredMilPiNumVal()
+        static MediumDec HundredMilPiNumValue()
         { return MediumDec(314159265, 358979324); }
 
         //10,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec TenMilPiNumVal()
+        static MediumDec TenMilPiNumValue()
         { return MediumDec(31415926, 535897932); }
 
         //1,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec OneMilPiNumVal()
+        static MediumDec OneMilPiNumValue()
         { return MediumDec(3141592, 653589793);}
 
         //10xPi(Rounded to 9th decimal digit)
-        static MediumDec TenPiNumVal()
+        static MediumDec TenPiNumValue()
         { return MediumDec(31, 415926536); }
         
         static MediumDec ENumValue()

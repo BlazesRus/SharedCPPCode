@@ -149,48 +149,35 @@ namespace BlazesRusCode
     #pragma region Check_if_value
 
 		//Set value as exactly zero
-        void SetAsZero()
-        { IntHalf = 0; DecimalHalf = 0; }
+        void SetAsZero();
 
 		//Set value as exactly one
-        void SetAsOne()
-        { IntHalf = 1; DecimalHalf = 0; }
+        void SetAsOne();
 		
 		//Set as +-1 while keeping current sign
-        void SetAsOneVal()
-        { IntHalf.Value = 1; DecimalHalf = 0; }
+        void SetAsOneVal();
 
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero)
-        { IntHalf = 0; DecimalHalf = 0; }
+        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
 
         //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt() const
-        { return IntHalf.Value==0; }
+        bool IsAtZeroInt() const;
 
-        bool IsNotAtZeroInt() const
-        { return IntHalf.Value!=0; }
+        bool IsNotAtZeroInt() const;
 
-        bool IsAtOneInt() const
-        { return IntHalf.Value==1; }
+        bool IsAtOneInt() const;
 
-        bool IsNotAtOneInt() const
-        { return IntHalf.Value!=1; }
+        bool IsNotAtOneInt() const;
 
         //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero() const
-		{ return DecimalHalf==0&&IntHalf.Value==0; }
+		bool IsZero() const;
 		
-		bool IsOne() const
-        { return DecimalHalf==0&&IntHalf==MirroredInt::One; }
+		bool IsOne() const;
 		
-		bool IsNegOne() const
-        { return DecimalHalf==0&&IntHalf==MirroredInt::NegativeOne; }
+		bool IsNegOne() const;
 		
-		bool IsOneVal() const
-		{ return DecimalHalf==0&&IntHalf.Value==1; }
+		bool IsOneVal() const;
 
-		bool IsOneVariantVal() const
-		{ return DecimalHalf.Value==0&&IntHalf.Value==1; }
+		bool IsOneVariantVal() const;
 
     #pragma endregion Check_if_value
 
@@ -199,243 +186,171 @@ namespace BlazesRusCode
         /// <summary>
         /// Sets value to the highest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        void SetAsMaximum()
-        { IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999; }
+        void SetAsMaximum();
 
         /// <summary>
         /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
         /// </summary>
-        void SetAsMinimum()
-        { IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999; }
+        void SetAsMinimum();
 	
     #pragma endregion RangeLimits
 
     #pragma region ValueSetters
+protected://Work around for not allowing to use incomplete class statics during forming of class
+        static const unsigned int LN10Div_DecSection = 434294482;
+        static const unsigned int TwiceLN10Div_DecSection = 868588964;
+    
+public:
 
         /// <summary>
         /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
-        void  SetValueToPiNum()
-        {
-            IntHalf = 3; DecimalHalf = 141592654;
-        }
+        void  SetValueToPiNum();
 
         //100,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToHundredMilPiNum()
-        {
-            IntHalf = 314159265; DecimalHalf = 358979324;
-        }
+        void  SetValueToHundredMilPiNum();
 
         //10,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenMilPiNum()
-        {
-            IntHalf = 31415926; DecimalHalf = 535897932;
-        }
+        void  SetValueToTenMilPiNum();
 
         //1,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToOneMilPiNum()
-        {
-            IntHalf = 3141592; DecimalHalf = 653589793;
-        }
+        void  SetValueToOneMilPiNum();
 
         //10xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenPiNum()
-        {
-            IntHalf = 31; DecimalHalf = 415926536;
-        }
+        void  SetValueToTenPiNum();
 
         /// <summary>
         /// Euler's number rounded to 9th digit(2.718281828)
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        void  SetValueToENum()
-        {
-            IntHalf = 2; DecimalHalf = 718281828;
-        }
+        void  SetValueToENum();
         
         //Sets value to value at 0.5
-        void  SetValueToPoint5()
-        {
-            IntHalf = 0; DecimalHalf = 500000000;
-        }
+        void  SetValueToPoint5();
 
-        void  SetValueToJustAboveZero()
-        {
-            IntHalf = 0; DecimalHalf = 1;
-        }
+        void  SetValueToJustAboveZero();
 
         /// <summary>
         /// Sets the value at .000001000
         /// </summary>
-        void  SetValueToOneMillionth()
-        {
-            IntHalf = 0; DecimalHalf = 1000;
-        }
+        void  SetValueToOneMillionth();
 
         /// <summary>
         /// Sets the value at "0.005"
         /// </summary>
         /// <returns>MediumDec</returns>
-        void  SetValueToFiveThousandth()
-        {
-            IntHalf = 0; DecimalHalf = 5000000;
-        }
+        void  SetValueToFiveThousandth();
 
         /// <summary>
         /// Sets the value at "0.000005"
         /// </summary>
-        void  SetValueToFiveMillionth()
-        {
-            IntHalf = 0; DecimalHalf = 5000;
-        }
+        void  SetValueToFiveMillionth();
 
         //0e-7
-        void  SetValueToTenMillionth()
-        {
-            IntHalf = 0; DecimalHalf = 100;
-        }
+        void  SetValueToTenMillionth();
 
         /// <summary>
         /// Sets the value to .000000010
         /// </summary>
-        void  SetValueToOneHundredMillionth()
-        {
-            IntHalf = 0; DecimalHalf = 10;
-        }
+        void  SetValueToOneHundredMillionth();
 
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        void  SetValueToLN10()
-        {
-            IntHalf = 2; DecimalHalf = 302585093;
-        }
+        void  SetValueToLN10();
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        void  SetValueToLN10Div()
-        {
-            IntHalf = 0; DecimalHalf = 434294482;
-        }
+        void  SetValueToLN10Div();
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        void  SetValueToTwiceLN10Div()
-        {
-            IntHalf = 0; DecimalHalf = 868588964;
-        }
+        void  SetValueToTwiceLN10Div();
 
     #pragma endregion ValueSetters
 
     #pragma region ValueDefines
     private://Each class needs to define it's own
         
-        static MediumDecBase AlmostOneValue()
-        { return MediumDecBase(0, 999999999); }
+        static MediumDecBase AlmostOneValue();
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase PiNumValue()
-        { return MediumDecBase(3, 141592654); }
+        static MediumDecBase PiNumValue();
 
         //100,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDecBase HundredMilPiNumVal()
-        { return MediumDecBase(314159265, 358979324); }
+        static MediumDecBase HundredMilPiNumValue();
 
         //10,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDecBase TenMilPiNumVal()
-        { return MediumDecBase(31415926, 535897932); }
+        static MediumDecBase TenMilPiNumValue();
 
         //1,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDecBase OneMilPiNumVal()
-        { return MediumDecBase(3141592, 653589793);}
+        static MediumDecBase OneMilPiNumValue();
 
         //10xPi(Rounded to 9th decimal digit)
-        static MediumDecBase TenPiNumVal()
-        { return MediumDecBase(31, 415926536); }
+        static MediumDecBase TenPiNumValue();
         
-        static MediumDecBase ENumValue()
-        { return MediumDecBase(2, 718281828); }
+        static MediumDecBase ENumValue();
         
-        static MediumDecBase ZeroValue()
-        { return MediumDecBase(); }
+        static MediumDecBase ZeroValue();
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase OneValue()
-        { return MediumDecBase(1); }
+        static MediumDecBase OneValue();
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase TwoValue()
-        { return MediumDecBase(MirroredInt::Two);}
+        static MediumDecBase TwoValue();
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase NegativeOneValue()
-        { return MediumDecBase(MirroredInt::NegativeOne);}
+        static MediumDecBase NegativeOneValue();
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumDecBase</returns>
-        static MediumDecBase Point5Value()
-        { return MediumDecBase(0, 500000000); }
+        static MediumDecBase Point5Value();
 
-        static MediumDecBase JustAboveZeroValue()
-        { return MediumDecBase(0, 1); }
+        static MediumDecBase JustAboveZeroValue();
 
-        static MediumDecBase OneMillionthValue()
-        { return MediumDecBase(0, 1000); }
+        static MediumDecBase OneMillionthValue();
 
-        static MediumDecBase FiveThousandthValue()
-        { return MediumDecBase(0, 5000000); }
+        static MediumDecBase FiveThousandthValue();
 
-        static MediumDecBase FiveMillionthValue()
-        { return MediumDecBase(0, 5000);}
+        static MediumDecBase FiveMillionthValue();
 
-        static MediumDecBase TenMillionthValue()
-        { return MediumDecBase(0, 100); }
+        static MediumDecBase TenMillionthValue();
 
-        static MediumDecBase OneHundredMillionthValue()
-        { return MediumDecBase(0, 10); }
+        static MediumDecBase OneHundredMillionthValue();
 
-        static MediumDecBase FiveBillionthValue()
-        { return MediumDecBase(0, 5); }
+        static MediumDecBase FiveBillionthValue();
 
-        static MediumDecBase LN10Value()
-        { return MediumDecBase(2, 302585093); }
+        static MediumDecBase LN10Value();
 
-        static MediumDecBase LN10DivValue()
-        { return MediumDecBase(0, 434294482); }
+        static MediumDecBase LN10DivValue();
 
-        static MediumDecBase TwiceLN10DivValue()
-        { return MediumDecBase(0, 868588964); }
+        static MediumDecBase TwiceLN10DivValue();
 
-        static MediumDecBase MinimumValue()
-        { return MediumDecBase(MirroredInt::Maximum, 999999999); }
+        static MediumDecBase MinimumValue();
 
-        static MediumDecBase MaximumValue()
-        { return MediumDecBase(MirroredInt::Minimum, 999999999); }
+        static MediumDecBase MaximumValue();
 
-        static MediumDecBase NegativePointFiveValue()
-        {
-            return MediumDecBase(MirroredInt::NegativeZero, 500000000);
-        }
+        static MediumDecBase NegativePointFiveValue();
 
         static MediumDecBase NegativePointFive;
 
@@ -1208,6 +1123,32 @@ public:
         /// <returns>MediumDecBase&</returns>
         void DivideByFour();
 
+protected:
+
+        //Return copy of result divided by two
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType DividedByTwoV1() const
+        {
+            VariantType result = *this; result.DivideByTwo();
+            return result;
+        }
+
+        //Return copy of result divided by four
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType DividedByFourV1() const
+        {
+            VariantType result = *this; result.DivideByFour();
+            return result;
+        }
+
+public:
+
+        //Return copy of result divided by two
+        MediumDecBase DividedByTwo() const;
+
+        //Return copy of result divided by four
+        MediumDecBase DividedByFour() const;
+
         /// <summary>
         /// /= operation
         /// </summary>
@@ -1657,7 +1598,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>void</returns>
-        void MultipleByTwo();
+        void MultiplyByTwo();
 
         /// <summary>
         /// Simplified multiplication by 4 operation(to reduce cost of operations)
@@ -1665,7 +1606,33 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         /// <returns>void</returns>
-        void MultipleByFour();
+        void MultiplyByFour();
+
+protected:
+
+    //Return copy of result divided by two
+    template<MediumDecVariant VariantType = MediumDecBase>
+    VariantType MultipliedByTwoV1() const
+    {
+        VariantType result = *this; result.MultiplyByTwo();
+        return result;
+    }
+
+    //Return copy of result divided by four
+    template<MediumDecVariant VariantType = MediumDecBase>
+    VariantType MultipliedByFourV1() const
+    {
+        VariantType result = *this; result.MultiplyByFour();
+        return result;
+    }
+
+public:
+
+    //Return copy of result divided by two
+    MediumDecBase MultipliedByTwo() const;
+
+    //Return copy of result divided by four
+    MediumDecBase MultipliedByFour() const;
 
         /// <summary>
         /// *= operation
@@ -3300,7 +3267,7 @@ protected:
 		
 		//Common log calculations for when value is between 0 and one
 		template<MediumDecVariant VariantType=MediumDecBase>
-		VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero)
+		VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
 		{
 			VariantType TotalRes = (*this - 1)/ (*this + 1);
 			VariantType WSquared = TotalRes * TotalRes;
@@ -3320,7 +3287,7 @@ protected:
 		
 		//Common natural log calculations for range one to two
 		template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth)
+        VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
         {
             VariantType base = *this - 1;        // Base of the numerator; exponent will be explicit
             bool posSign = true;             // Used to swap the sign of each term
@@ -3342,7 +3309,7 @@ protected:
 		
 		//Common log calculations for when value is greater than one
 		template<MediumDecVariant VariantType=MediumDecBase>
-		VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero)
+		VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
 		{
 			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
 			VariantType TotalRes = (*this - 1) / (*this + 1);
@@ -3384,9 +3351,9 @@ protected:
             if (IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogZeroRangePart02(threshold).MultiplyByTwo();
+                return LogZeroRangePart02(threshold).MultipliedByTwo();
                 #else
-                return LogZeroRangePart02().MultiplyByTwo();
+                return LogZeroRangePart02().MultipliedByTwo();
                 #endif
             }
             else if (IntHalf == MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
@@ -3400,9 +3367,9 @@ protected:
             else
             {//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogGreaterRangePart02(threshold).MultiplyByTwo();
+                return LogGreaterRangePart02(threshold).MultipliedByTwo();
                 #else
-                return LogGreaterRangePart02().MultiplyByTwo();
+                return LogGreaterRangePart02().MultipliedByTwo();
                 #endif
             }
         }
@@ -3443,28 +3410,29 @@ protected:
                 return VariantType(9, 0);
             }
             #endif
+            const VariantType lnMultiplier = VariantType(0, LN10Div_DecSection);
             if (IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogZeroRangePart02(threshold).MultiplyByUnsigned(VariantType::LN10Div);
+                return LogZeroRangePart02(threshold).MultiplyByUnsigned(lnMultiplier);
                 #else
-                return LogZeroRangePart02().MultiplyByUnsigned(VariantType::LN10Div);
+                return LogZeroRangePart02().MultiplyByUnsigned(lnMultiplier);
                 #endif
             }
             else if (IntHalf == MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 #if defined(AltNum_UseCustomLnAccuracy)
-                return LnOfOneSection(threshold).MultiplyByUnsigned(VariantType::LN10Div);
+                return LnOfOneSection(threshold).MultiplyByUnsigned(lnMultiplier);
                 #else
-                return LnOfOneSection().MultiplyByUnsigned(VariantType::LN10Div);
+                return LnOfOneSection().MultiplyByUnsigned(lnMultiplier);
                 #endif
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogGreaterRangePart02(threshold).MultiplyByUnsigned(VariantType::LN10Div);
+                return LogGreaterRangePart02(threshold).MultiplyByUnsigned(lnMultiplier);
                 #else
-                return LogGreaterRangePart02().MultiplyByUnsigned(VariantType::LN10Div);
+                return LogGreaterRangePart02().MultiplyByUnsigned(lnMultiplier);
                 #endif
             }
         }
@@ -3501,7 +3469,8 @@ protected:
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
-                return LogGreaterRangeIntPart02(value).MultiplyByUnsigned(VariantType::TwiceLn10Div);
+                VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
+                return LogGreaterRangeIntPart02(value).MultiplyByUnsigned(lnMultiplier);
             }
         }
 		
@@ -3549,15 +3518,16 @@ protected:
             {
                 baseTotalRes = LogGreaterRangeIntPart02(baseVal);
             }
+            VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
             //Now calculate other log
             if (value.DecimalHalf == 0 && value.IntHalf.Value % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? VariantType(index, 0) / (baseTotalRes * VariantType::TwiceLN10Div): VariantType(index, 0)/ baseTotalRes;
+                        return lnMultLog ? VariantType(index, 0) / (baseTotalRes * lnMultiplier): VariantType(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? VariantType(9, 0) / (baseTotalRes*VariantType::TwiceLN10Div):VariantType(9, 0)/baseTotalRes;
+                return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyByUnsigned(lnMultiplier)):VariantType(9, 0)/baseTotalRes;
             }
 			if(value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
 			{
@@ -3565,14 +3535,14 @@ protected:
 				if(lnMultLog)
 					return TotalRes.DivideByUnsigned(baseTotalRes);
 				else
-					return (TotalRes.MultiplyByUnsigned(VariantType::TwiceLN10Div)).DivideByUnsigned(baseTotalRes);
+					return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
 			}
             else if (value.IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
 				if(lnMultLog)
-					return LnOfOneSection()/baseTotalRes;
+					return value.LnOfOneSection()/baseTotalRes;
 				else
-					return (LnOfOneSection().MultiplyByTwo())/ baseTotalRes;
+					return (value.LnOfOneSection().MultipliedByTwo())/ baseTotalRes;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
@@ -3580,7 +3550,7 @@ protected:
 				if(lnMultLog)
 					return TotalRes.DivideByUnsigned(baseTotalRes);
 				else
-					return (TotalRes.MultiplyByUnsigned(VariantType::TwiceLN10Div)).DivideByUnsigned(baseTotalRes);
+					return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
             }
         }
 		
@@ -3755,7 +3725,7 @@ protected:
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType ArcTan2V1(const VariantType& y, const VariantType& x)
         {
-            VariantType coeff_1 = PiNum.DivideByFour();
+            VariantType coeff_1 = PiNum.DividedByFour();
             VariantType coeff_2 = coeff_1.MultiplyByUInt(3);
             VariantType abs_y = VariantType::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
             VariantType r;
@@ -3795,7 +3765,7 @@ protected:
                 {
                     Value.SwapNegativeStatus();
                     Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
@@ -3857,7 +3827,7 @@ protected:
                 {
                     Value.SwapNegativeStatus();
                     Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
@@ -3919,7 +3889,7 @@ protected:
                 {
                     Value.SwapNegativeStatus();
                     Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf;
+                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
                     if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
                 }
             }
@@ -4043,30 +4013,3 @@ public:
     };
 	
 }
-
-#pragma region ValueDefine Source
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::AlmostOne = AlmostOneValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::Pi = PiNumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::One = OneValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::Two = TwoValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::NegativeOne = NegativeOneValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::Zero = ZeroValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::PointFive = Point5Value();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::JustAboveZero = JustAboveZeroValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::OneMillionth = OneMillionthValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::FiveThousandth = FiveThousandthValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::Minimum = MinimumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::Maximum = MaximumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::E = ENumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::LN10 = LN10Value();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::LN10Div = LN10DivValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::TwiceLN10Div = TwiceLN10DivValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::TenMillionth = TenMillionthValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::FiveMillionth = FiveMillionthValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::FiveBillionth = FiveBillionthValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::OneGMillionth = OneHundredMillionthValue();
-
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::PiNum = PiNumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::ENum = ENumValue();
-BlazesRusCode::MediumDecBase BlazesRusCode::MediumDecBase::NegativePointFive = NegativePointFiveValue();
-#pragma endregion ValueDefine Source
