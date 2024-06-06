@@ -489,10 +489,6 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <summary>
-        /// Reads the string.
-        /// </summary>
-        /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
 
         /// <summary>
@@ -538,6 +534,8 @@ public:
 
     #pragma region ConvertFromOtherTypes
 
+    #if defined(AltNum_EnableFloatingConversion)
+	
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -555,6 +553,8 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         void SetDecimalVal(const long double& Value);
+		
+	#endif
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
@@ -574,7 +574,8 @@ public:
         /// <param name="Value">The value.</param>
         void SetUIntVal(const unsigned int& Value);
 
-/*
+    #if defined(AltNum_EnableFloatingConversion)
+	
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
@@ -592,7 +593,8 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         MediumDecBase(const long double& Value){ this->SetDecimalVal(Value); }
-*/
+		
+	#endif
 
         MediumDecBase(const unsigned __int64& Value){ this->SetUIntVal(Value); }
         MediumDecBase(const signed __int64& Value){ this->SetIntVal(Value); }
@@ -612,7 +614,7 @@ public:
 
     #pragma region ConvertToOtherTypes
 
-        //To-Do: Add more exact conversion from floating point format to MediumDec variant
+    #if defined(AltNum_EnableFloatingConversion)
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
@@ -632,6 +634,8 @@ public:
         /// <returns>The result of the operator.</returns>
         long double toDecimal() const;
 
+    #endif
+
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
@@ -646,7 +650,8 @@ public:
 
         bool toBool() const { return IntHalf.IsZero() ? false : true; }
 
-/*
+    #if defined(AltNum_EnableFloatingConversion)
+
         /// <summary>
         /// MediumDec Variant to float explicit conversion
         /// </summary>
@@ -664,7 +669,8 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator long double() { return toDecimal(); }
-*/
+
+    #endif
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion

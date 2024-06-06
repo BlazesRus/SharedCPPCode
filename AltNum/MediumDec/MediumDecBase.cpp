@@ -326,6 +326,7 @@ inline void BlazesRusCode::MediumDecBase::SetAsMinimum()
 
 #pragma region ConvertToOtherTypes
 
+    #if defined(AltNum_EnableFloatingConversion)
 inline float BlazesRusCode::MediumDecBase::toFloat() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
@@ -409,6 +410,7 @@ inline long double BlazesRusCode::MediumDecBase::toDecimal() const
 	return 0.0L;//Placeholder
 	#endif
 }
+	#endif
 
 #pragma endregion ConvertToOtherTypes
 
@@ -726,7 +728,7 @@ inline std::string BlazesRusCode::MediumDecBase::ToFullString()
 
 #pragma region ConvertFromOtherTypes
 
-
+    #if defined(AltNum_EnableFloatingConversion)
 inline void BlazesRusCode::MediumDecBase::SetFloatVal(const float& Value)
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
@@ -807,6 +809,7 @@ inline void BlazesRusCode::MediumDecBase::SetDecimalVal(const long double& Value
 	//To-Do:Add code here
 	#endif
 }
+	#endif
 
 inline void BlazesRusCode::MediumDecBase::SetBoolVal(const bool& Value)
 {
