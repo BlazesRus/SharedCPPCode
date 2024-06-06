@@ -1,4 +1,4 @@
-#include "MediumDecV2.hpp"
+﻿#include "MediumDecV2.hpp"
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::MediumDecBase::RepType;
 

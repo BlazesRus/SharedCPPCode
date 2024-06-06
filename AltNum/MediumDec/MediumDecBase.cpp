@@ -1,4 +1,4 @@
-#include "MediumDecBase.hpp"
+﻿#include "MediumDecBase.hpp"
 using MediumDecBase = BlazesRusCode::MediumDecBase;
 
 #pragma region ValueSetters
