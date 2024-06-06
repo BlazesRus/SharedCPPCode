@@ -29,45 +29,12 @@ namespace BlazesRusCode
 {
     class MediumDecV2Base;
 
-    //Reduced version of MediumDec result for modulus result and other stuff
-    class DLL_API MediumDecV2Base : public AltNumBase//AltNumBase is used as base class to identify as MediumDec variant
+    //Reduced version of MediumDecV2 result for modulus result and other stuff
+    class DLL_API MediumDecV2Base : public MediumDecBase
     {
     public:
     #pragma region DigitStorage
-
-        /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-		/// (in the case of infinity is used to determine if positive vs negative infinity)
-        /// </summary>
-        MirroredInt IntHalf;
-
-        /// <summary>
-        /// Stores decimal section info and other special info
-        /// </summary>
-        PartialInt DecimalHalf;
-
-		//Return IntHalf as signed int
-        signed int GetIntHalf() const
-        {
-			return IntHalf.GetValue();
-        }
-
     #pragma endregion DigitStorage
-
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static unsigned int const DecimalOverflow = 1000000000;
-
-        /// <summary>
-        /// The decimal overflow
-        /// </summary>
-        static unsigned _int64 const DecimalOverflowX = 1000000000;
-
-        /// <summary>
-        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
-        /// </summary>
-        static MirroredInt const NegativeRep;
 
     #pragma region class_constructors
 
@@ -123,18 +90,6 @@ namespace BlazesRusCode
 
     #pragma region Negative_Status
 
-        bool IsPositive() const
-        { return IntHalf.IsPositive(); }
-
-        bool IsNegative() const
-        { return IntHalf.IsNegative(); }
-
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus()
-        { IntHalf.Sign ^= 1; }
-
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
@@ -147,131 +102,12 @@ namespace BlazesRusCode
 
 
     #pragma region Check_if_value
-
-		//Set value as exactly zero
-        void SetAsZero();
-
-		//Set value as exactly one
-        void SetAsOne();
-		
-		//Set as +-1 while keeping current sign
-        void SetAsOneVal();
-
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
-
-        //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt() const;
-
-        bool IsNotAtZeroInt() const;
-
-        bool IsAtOneInt() const;
-
-        bool IsNotAtOneInt() const;
-
-        //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero() const;
-		
-		bool IsOne() const;
-		
-		bool IsNegOne() const;
-		
-		bool IsOneVal() const;
-
-		bool IsOneVariantVal() const;
-
     #pragma endregion Check_if_value
 
     #pragma region RangeLimits
-
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMaximum();
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        void SetAsMinimum();
-	
     #pragma endregion RangeLimits
 
     #pragma region ValueSetters
-protected://Work around for not allowing to use incomplete class statics during forming of class
-        static const unsigned int LN10Div_DecSection = 434294482;
-        static const unsigned int TwiceLN10Div_DecSection = 868588964;
-    
-public:
-
-        /// <summary>
-        /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        void  SetValueToPiNum();
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToHundredMilPiNum();
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenMilPiNum();
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToOneMilPiNum();
-
-        //10xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenPiNum();
-
-        /// <summary>
-        /// Euler's number rounded to 9th digit(2.718281828)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        void  SetValueToENum();
-        
-        //Sets value to value at 0.5
-        void  SetValueToPoint5();
-
-        void  SetValueToJustAboveZero();
-
-        /// <summary>
-        /// Sets the value at .000001000
-        /// </summary>
-        void  SetValueToOneMillionth();
-
-        /// <summary>
-        /// Sets the value at "0.005"
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        void  SetValueToFiveThousandth();
-
-        /// <summary>
-        /// Sets the value at "0.000005"
-        /// </summary>
-        void  SetValueToFiveMillionth();
-
-        //0e-7
-        void  SetValueToTenMillionth();
-
-        /// <summary>
-        /// Sets the value to .000000010
-        /// </summary>
-        void  SetValueToOneHundredMillionth();
-
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        void  SetValueToLN10();
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToLN10Div();
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToTwiceLN10Div();
-
     #pragma endregion ValueSetters
 
     #pragma region ValueDefines
@@ -489,10 +325,6 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <summary>
-        /// Reads the string.
-        /// </summary>
-        /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
 
         /// <summary>
@@ -520,6 +352,18 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
+        std::string ToBasicString(){ return MediumDecBase::ToString(); }
+
+        /// <summary>
+        /// Converts to string with digits filled in even when empty
+        /// </summary>
+        /// <returns>std.string</returns>
+        std::string ToFullBasicString(){ return MediumDecBase::ToString(); }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>std.string</returns>
         std::string ToString();
 
         /// <summary>
@@ -538,62 +382,6 @@ public:
 
     #pragma region ConvertFromOtherTypes
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetFloatVal(const float& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDoubleVal(const double& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDecimalVal(const long double& Value);
-
-        /// <summary>
-        /// Sets the value(false equals zero; otherwise is true).
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetBoolVal(const bool& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetIntVal(const int& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetUIntVal(const unsigned int& Value);
-
-/*
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const float& Value){ this->SetFloatVal(Value); }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const double& Value){ this->SetDoubleVal(Value); }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const long double& Value){ this->SetDecimalVal(Value); }
-*/
-
         MediumDecV2Base(const unsigned __int64& Value){ this->SetUIntVal(Value); }
         MediumDecV2Base(const signed __int64& Value){ this->SetIntVal(Value); }
         MediumDecV2Base(const unsigned char& Value){ this->SetUIntVal(Value); }
@@ -611,26 +399,6 @@ public:
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-
-        //To-Do: Add more exact conversion from floating point format to MediumDec variant
-
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        float toFloat() const;
-
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        double toDouble() const;
-
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        long double toDecimal() const;
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -717,23 +485,6 @@ public:
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Comparison Operators
-protected:
-		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=MediumDecV2Base>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (MediumDecV2Base DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-		
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const;
-
 public:
 
 		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
@@ -793,45 +544,6 @@ public:
     #pragma region NormalRep Integer Division Operations
 protected:
 
-        template<IntegerType IntType=unsigned int>
-        void PartialUIntDivOpV1(const IntType& rValue)
-        {//Avoid using with special status representations such as approaching zero or result will be incorrect
-            unsigned _int64 SelfRes;
-            unsigned _int64 Res;
-            unsigned _int64 IntHalfRes;
-            unsigned _int64 DecimalRes;
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf.Value: DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-            Res = SelfRes / rValue;
-			
-            IntHalfRes = Res/DecimalOverflowX;
-            DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-		    IntHalf.Value = (unsigned int)IntHalfRes;
-			DecimalHalf.Value = (unsigned int)DecimalRes;
-        }
-
-        template<IntegerType IntType=signed int>
-        void PartialIntDivOpV1(const IntType& Value)
-        {
-            if(Value<0)
-            {
-                SwapNegativeStatus();
-                PartialUIntDivOp(-Value);
-            }
-            else
-                PartialUIntDivOp(Value);
-        }
-
-public:
-        void PartialUIntDivOp(const unsigned int& rValue) { PartialUIntDivOpV1(rValue); }
-        void PartialIntDivOp(const signed int& rValue) { PartialIntDivOpV1(rValue); }
-        void PartialUInt64DivOp(const unsigned int& rValue) { PartialUIntDivOpV1(rValue); }
-        void PartialInt64DivOp(const signed __int64& rValue) { PartialIntDivOpV1(rValue); }
-
-        void UnsignedPartialIntDivOp(const signed int& rValue) { PartialUIntDivOpV1(rValue); }
-        void UnsignedPartialInt64DivOp(const signed __int64& rValue) { PartialUIntDivOpV1(rValue); }
-
-protected:
-
         /// <summary>
         /// Basic division operation between MediumDec Variant and unsigned Integer value 
         /// that ignores special representation status
@@ -840,40 +552,24 @@ protected:
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
-        void UIntDivOpV1(const IntType& Value)
+        void BasicUIntDivOpV1(const IntType& Value)
         {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialUIntDivOpV1(Value);
-            if (IntHalf == 0 && DecimalHalf == 0)
-				DecimalHalf = 1;//Prevent Dividing into nothing
+            MediumDecBase::UIntDivOpV1(Value);
         }
 		
         template<IntegerType IntType=signed int>
-        void IntDivOpV1(const IntType& Value)
+        void BasicIntDivOpV1(const IntType& Value)
         {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOpV1(Value);
-            if (IntHalf == 0 && DecimalHalf == 0)
-				DecimalHalf = 1;//Prevent Dividing into nothing
+            MediumDecBase::IntDivOpV1(Value);
         }
 
-        template<IntegerType IntType=unsigned int>
-        MediumDecV2Base& UIntDivOperationV1(const IntType& rValue)
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicUIntDivOperationV1(const IntType& rValue)
         { UIntDivOpV1(rValue); return *this; }
 
-        template<IntegerType IntType=unsigned int>
-        MediumDecV2Base& IntDivOperationV1(const IntType& rValue)
-        { IntDivOpV1(rValue); return *this; }
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicIntDivOperationV1(const IntType& rValue)
+        { BasicIntDivOpV1(rValue); return *this; }
 
         /// <summary>
         /// Basic division operation between MediumDec Variant and unsigned Integer value 
@@ -882,9 +578,9 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
-        template<IntegerType IntType=unsigned int>
-        const auto DivideByUIntV1(const IntType& rValue)
-        { auto self = *this; return self.UIntDivOperationV1(rValue); }
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        const VariantType BasicDivideByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicUIntDivOperationV1(rValue); }
 
         /// <summary>
         /// Basic division operation between MediumDec Variant and unsigned Integer value 
@@ -893,46 +589,46 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         /// <returns>MediumDec&</returns>
-        template<IntegerType IntType=signed int>
-        const auto DivideByIntV1(const IntType& rValue)
-        { auto self = *this; return self.IntDivOperationV1(rValue); }
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=signed int>
+        const VariantType BasicDivideByIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicIntDivOperationV1(rValue); }
 
 public:
 
-        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
-        void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
-        void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
+        void UIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
+        void IntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
 
-        void UnsignedIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
-        void UnsignedInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
+        void UnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
 
-        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
-        void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
-        void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
+        void UInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
 
-        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
 
-        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
 
