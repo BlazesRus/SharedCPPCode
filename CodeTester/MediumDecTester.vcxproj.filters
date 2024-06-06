@@ -173,9 +173,6 @@
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp">
       <Filter>Header Files\AltNum\MediumDecV2</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDecV2\MediumDec as MediumDecV2Base.hpp">
-      <Filter>Header Files\AltNum\MediumDecV2</Filter>
-    </ClInclude>
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.hpp">
       <Filter>Header Files\AltNum\MediumDecV2</Filter>
     </ClInclude>
