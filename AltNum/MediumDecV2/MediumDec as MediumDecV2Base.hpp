@@ -633,7 +633,6 @@ public:
     #pragma endregion NormalRep Integer Division Operations
 
 	#pragma region NormalRep AltNum Division Operations
-protected:
 
 		/// <summary>
         /// Basic unsigned division operation(main code block)
@@ -641,154 +640,44 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        template<MediumDecVariant VariantType=MediumDecV2Base>
-        bool UnsignedPartialDivOpV1(const VariantType& rValue)
-        {
-            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
-
-            unsigned _int64 IntHalfRes = SelfRes / ValueRes;
-            unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntHalf.Value = (unsigned int) IntHalfRes;
-            DecimalHalf.Value = DecimalRes;
-            if (IntHalfRes == 0 && DecimalRes == 0)
-                return true;
-            else
-                return false;
-        }
-
-		/// <summary>
-        /// Unsigned division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side value</param>
-        template<MediumDecVariant VariantType=MediumDecV2Base>
-        void UnsignedDivOpV1(const VariantType& rValue)
-		{
-			if(DecimalHalf==0)
-			{
-				if(rValue.DecimalHalf==0)
-				{
-					switch(rValue.IntHalf.Value)
-					{
-						case 2:
-							if((IntHalf.Value&1)==1)//Check if number is odd
-								UnsignedIntDivOp(2);
-							else
-								IntHalf.Value /= 2;
-							break;
-						case 4:
-							if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
-								IntHalf.Value /= 4;
-							else
-								UnsignedIntDivOp(4);
-							break;
-						case 8:
-							if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
-								IntHalf.Value /= 8;
-							else
-								UnsignedIntDivOp(4);
-							break;
-						case 16:
-							if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
-								IntHalf.Value /= 16;
-							else
-								UnsignedIntDivOp(4);
-							break;
-						case 32:
-							if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
-								IntHalf.Value /= 32;
-							else
-								UnsignedIntDivOp(4);
-							break;
-                        case 0:
-                            throw "Target rValue can not be divided by zero";
-                            break;
-						default:
-							UnsignedIntDivOp(rValue.IntHalf.Value);
-							break;
-					}
-				}
-#if !defined(AltNum_DisableDivideDownToNothingPrevention)
-                else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
-				        DecimalHalf.Value = 1;
-#else
-                else
-                    UnsignedPartialDivOp(rValue);
-#endif
-			}
-#if !defined(AltNum_DisableDivideDownToNothingPrevention)
-            else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
-                DecimalHalf.Value = 1;
-#else
-            else
-                UnsignedPartialDivOp(rValue);
-#endif
-		}
-
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        template<MediumDecVariant VariantType=MediumDecV2Base>
-        void DivOpV1(const VariantType& Value)
-        {
-            if(Value.IsNegative())
-            {
-                SwapNegativeStatus();
-                UnsignedDivOp(-Value);
-            }
-            else
-                UnsignedDivOp(Value);
-        }
-
-public:
-
-		/// <summary>
-        /// Basic unsigned division operation(main code block)
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const MediumDecV2Base& rValue){ return UnsignedPartialDivOpV1(rValue); }
+        bool BasicUnsignedPartialDivOp(const MediumDecV2Base& rValue){ return MediumDecBase::UnsignedPartialDivOpV1(rValue); }
 		
 		/// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void UnsignedDivOp(const MediumDecV2Base& rValue){ UnsignedDivOpV1(rValue); }
+        void BasicUnsignedDivOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedDivOpV1(rValue); }
 		
 		/// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        void DivOp(const MediumDecV2Base& rValue){ DivOpV1(rValue); }
+        void BasicDivOp(const MediumDecV2Base& rValue){ MediumDecBase::DivOpV1(rValue); }
 
 		/// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& UnsignedDivOperation(const MediumDecV2Base& rValue)
-		{ UnsignedDivOp(rValue); return *this; }
+        MediumDecV2Base& BasicUnsignedDivOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::UnsignedDivOp(rValue); return *this; }
 
 		/// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& DivOperation(const MediumDecV2Base& rValue)
-		{ DivOp(rValue); return *this; }
+        MediumDecV2Base& BasicDivOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::DivOp(rValue); return *this; }
 
 		/// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        const MediumDecV2Base DivideByUnsigned(const MediumDecV2Base& rValue)
+        const MediumDecV2Base BasicDivideByUnsigned(const MediumDecV2Base& rValue)
         { MediumDecV2Base lValue = *this; return lValue.UnsignedDivOperation(rValue); }
 
 		/// <summary>
@@ -796,7 +685,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        const MediumDecV2Base DivideBy(const MediumDecV2Base& rValue)
+        const MediumDecV2Base BasicDivideBy(const MediumDecV2Base& rValue)
         { MediumDecV2Base lValue = *this; return lValue.DivOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Division Operations
