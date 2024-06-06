@@ -4,106 +4,100 @@
 // ***********************************************************************
 #pragma once
 
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-#include "MediumDecBaseV2.hpp"
-
+#include "MediumDecV2Preprocessors.h"
+#include "MediumDecBase.hpp"
 #if defined(AltNum_UseBuiltinVirtualTable)
-	#include "..\VirtualTableBase.hpp"
+#include "..\VirtualTableBase.hpp"
 #endif
 
 #include "..\RepType.h"
+
+using MirroredInt = BlazesRusCode::MirroredInt;
+using PartialInt = BlazesRusCode::PartialInt;
 
 namespace BlazesRusCode
 {
     class MediumDecV2Base;
 
-    /// <summary>
-    /// Separating functions that don't use static variables inside this base class for deriving
-    /// Completed class inside MediumDec
-	/// </summary>
+    //Reduced version of MediumDecV2 result for modulus result and other stuff
     class DLL_API MediumDecV2Base : public MediumDecBase
     {
-public:
-	#if defined(AltNum_UseBuiltinVirtualTable)
-	protected:
-		struct VirtualTable {
-			RepTypeFn* VirtualTable_GetRepType;
-			//String_RepTypeFn* VirtualTable_RepTypeAsString;
-		};
-		VirtualTable* VTable;
-	#endif
-	protected:
-		//BitFlag 01(1) = PiRep
-		RepTypeUnderlayer PiFlag = 1;
-		//BitFlag 02(2) = ERep
-		RepTypeUnderlayer EFlag = 2;
-		//BitFlag 03(4) = IRep
-		RepTypeUnderlayer IFlag = 4;
-		//BitFlag 04(8) = Fractional Rep
-		RepTypeUnderlayer FractionalFlag = 8;
-		//If BitFlag#7 and BitFlag#4 is set and BitFlag#6 isn't set,
-		//then Approaching From Top side;
-		//If BitFlag#7 is set and BitFlag#6 isn't set,
-		//then Approaching From Bottom side;
-		RepTypeUnderlayer ApproachFromRFlag = 8;
-		//BitFlag 05 (16) = Power of flag
-		RepTypeUnderlayer ToPowerOfFlag = 16;
-		//If BitFlag#7 is set,
-		//then Approaching but divided by ExtraRep
-		RepTypeUnderlayer DividedByFlag = 16;
-		//BitFlag 06 (32)= Mixed Fraction flag
-		RepTypeUnderlayer MixedFracFlag = 32;
-		//If BitFlag#7 is set and BitFlag#06 is set,
-		//then Is Infinity Type
-		RepTypeUnderlayer InfinityFlag = 32;
-		//BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
-		RepTypeUnderlayer InfTypeFlag = 64;
-		//Bitflag 08= Undefined/NaN/Nil
-		RepTypeUnderlayer UndefinedBit = 128;
-	public:
-        /// <summary>
-        /// long double (Extended precision double)
-        /// </summary>
-        using long double = long double;
+        #if defined(AltNum_UseBuiltinVirtualTable)//Experimental VTable code
+    protected:
+        struct VirtualTable {
+            RepTypeFn* VirtualTable_GetRepType;
+            //String_RepTypeFn* VirtualTable_RepTypeAsString;
+        };
+        #if defined(AltNum_UseNonStaticVirtualStable)
+        VirtualTable* VTable;
+        #else//Defaulting to non-static VTable to attempt to reduce virtual footprint
+        static VirtualTable* VTable;
+        #endif
+        #if !defined(AltNum_UseNonStaticVirtualStable)
+        VirtualTable* InitializeVTable() { return new VirtualTable; }
+        #endif
+        #endif
+    protected:
+        //BitFlag 01(1) = PiRep
+        RepTypeUnderlayer PiFlag = 1;
+        //BitFlag 02(2) = ERep
+        RepTypeUnderlayer EFlag = 2;
+        //BitFlag 03(4) = IRep
+        RepTypeUnderlayer IFlag = 4;
+        //BitFlag 04(8) = Fractional Rep
+        RepTypeUnderlayer FractionalFlag = 8;
+        //If BitFlag#7 and BitFlag#4 is set and BitFlag#6 isn't set,
+        //then Approaching From Top side;
+        //If BitFlag#7 is set and BitFlag#6 isn't set,
+        //then Approaching From Bottom side;
+        RepTypeUnderlayer ApproachFromRFlag = 8;
+        //BitFlag 05 (16) = Power of flag
+        RepTypeUnderlayer ToPowerOfFlag = 16;
+        //If BitFlag#7 is set,
+        //then Approaching but divided by ExtraRep
+        RepTypeUnderlayer DividedByFlag = 16;
+        //BitFlag 06 (32)= Mixed Fraction flag
+        RepTypeUnderlayer MixedFracFlag = 32;
+        //If BitFlag#7 is set and BitFlag#06 is set,
+        //then Is Infinity Type
+        RepTypeUnderlayer InfinityFlag = 32;
+        //BitFlag 07 = Infinitesimal/Infinity Bit (Infinity or approaching representation)
+        RepTypeUnderlayer InfTypeFlag = 64;
+        //Bitflag 08= Undefined/NaN/Nil
+        RepTypeUnderlayer UndefinedBit = 128;
+    public:
+        #pragma region DigitStorage
+        #pragma endregion DigitStorage
+
+        #pragma region class_constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDecV2Base(const IntHalfType& intVal, const DecimalHalfType& decVal = 0)
+        MediumDecV2Base(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
-	#if defined(AltNum_UseBuiltinVirtualTable)
-			VTable = new VirtualTable;
-	#endif
+            #if defined(AltNum_UseBuiltinVirtualTable)&&defined(AltNum_UseNonStaticVirtualStable)
+            VTable = new VirtualTable;
+            #endif
         }
 
-        MediumDecV2Base(const MediumDecV2Base&) = default;
-
-        MediumDecV2Base& operator=(const int& rhs)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// </summary>
+        /// <param name="intVal">The whole number based half of the representation</param>
+        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        MediumDecV2Base(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
         {
-			if(rhs<0)
-			{
-				IntHalf.Value = -rhs;
-				IntHalf.Sign = 0;
-			}
-			else
-				IntHalf = rhs;
-			DecimalHalf = 0;
-            return *this;
-        } const
-
-        MediumDecV2Base& operator=(const MediumDec& rhs)
-        {
-            // Check for self-assignment
-            if (this == &rhs)      // Same object?
-                return *this;        // Yes, so skip assignment, and just return *this.
-            IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
-            return *this;
-        } const
+            IntHalf = intVal;
+            DecimalHalf = decVal;
+            #if defined(AltNum_UseBuiltinVirtualTable)&&defined(AltNum_UseNonStaticVirtualStable)
+            VTable = new VirtualTable;
+            #endif
+        }
 
         MediumDecV2Base& operator=(const MediumDecV2Base& rhs)
         {
@@ -112,383 +106,383 @@ public:
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
             return *this;
-        } const
+        }
 
-        //Is at either zero or negative zero IntHalf of AltNum
-        constexpr auto IsAtZeroInt = MediumDecBase::IsAtZeroInt;
+        MediumDecV2Base& operator=(const signed int& rhs)
+        {
+            IntHalf = rhs; DecimalHalf = 0;
+            return *this;
+        }
 
-        //alias function
-        constexpr auto IsNotAtZeroInt = MediumDecBase::IsNotAtZeroInt;
-
-        //Detect if at exactly zero
-        constexpr auto IsZero = MediumDecBase::IsZero;
+        /// <summary>
+        /// Creates class from derived class into this class
+        /// (subscript operator of [])
+        /// </summary>
+        template<MediumDecVariant VariantType>
+        MediumDecV2Base operator[](VariantType variantValue) const
+        {
+            MediumDecV2Base newSelf = MediumDecV2Base(variantValue.IntHalf, variantValue.DecimalHalf);
+            return newSelf;
+        }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void SetVal(const MediumDecV2& Value)
+        void SetValue(const MediumDecV2& Value)
         {
             IntHalf = Value.IntHalf;
             DecimalHalf = Value.DecimalHalf;
         } const
 
+            #pragma endregion class_constructors
 
-        constexpr auto SetAsZero = MediumDecBase::SetAsZero;
+            #pragma region Negative_Status
 
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        constexpr auto SwapNegativeStatus = MediumDecBase::SwapNegativeStatus;
+            /// <summary>
+            /// Negative Unary Operator(Flips negative status)
+            /// </summary>
+            /// <param name="self">The self.</param>
+            /// <returns>MediumDecV2Base</returns>
+            MediumDecV2Base operator-() const
+        {
+            MediumDecV2Base self = *this; self.SwapNegativeStatus(); return self;
+        }
 
-    #pragma region Const Representation values
+        #pragma endregion Negative_Status
+
+
+        #pragma region Check_if_value
+        #pragma endregion Check_if_value
+
+        #pragma region Const Representation values
     protected:
-	#if defined(AltNum_EnablePiRep)
+        #if defined(AltNum_EnablePiRep)
         //Pi*Value representation(when DecimalHalf.Flag==1)
         static const unsigned int PiRep = 1;
-	#endif
-	#if defined(AltNum_EnableERep)
+        #endif
+        #if defined(AltNum_EnableERep)
         //e*Value representation(DecimalHalf.Flag==2)
         static const unsigned int ERep = 2;
-	#endif
-	#if defined(AltNum_EnableIRep)
+        #endif
+        #if defined(AltNum_EnableIRep)
         //e*Value representation(DecimalHalf.Flag==3)
         static const unsigned int IRep = 3;
-	#endif
-	
-	#if defined(AltNum_EnableInfinityRep)
+        #endif
+
+        #if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
-		static const unsigned int InfinityRep = 1073741805;
-	#endif
-	#if defined(AltNum_EnableApproaching)
+        static const unsigned int InfinityRep = 1073741805;
+        #endif
+        #if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
         static const unsigned int ApproachingBottomRep = 1073741806;
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
-		static const unsigned int ApproachingTopRep = 1073741807;
-	#endif
-    //If DecimalHalf is greator than NaNVariantThreshold, than number is at unknown range or indeterminate form
-    static const unsigned int NaNVariantThreshold = 1073741809;
-    #if defined(AltNum_EnableNil)
+        static const unsigned int ApproachingTopRep = 1073741807;
+        #endif
+        //If DecimalHalf is greator than NaNVariantThreshold, than number is at unknown range or indeterminate form
+        static const unsigned int NaNVariantThreshold = 1073741809;
+        #if defined(AltNum_EnableNil)
         //Is defined at empty value when DecimalHalf is at this value
         static const signed int NilRep = 1073741810;
-	#endif
-	#if defined(AltNum_EnableNaN)
+        #endif
+        #if defined(AltNum_EnableNaN)
         //Is NaN when DecimalHalf is at this value
         static const signed int NaNRep = 1073741811;
         //Is Undefined when DecimalHalf is at this value
         static const signed int UndefinedRep = 1073741812;
-	#endif
-	#if defined(AltNum_EnableUndefinedButInRange)
-		//When DecimalHalf is at this value, than value is undefined but within real number range
-		//Such as result of Cos of infinity
-		//https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
+        #endif
+        #if defined(AltNum_EnableUndefinedButInRange)
+        //When DecimalHalf is at this value, than value is undefined but within real number range
+        //Such as result of Cos of infinity
+        //https://www.cuemath.com/trigonometry/domain-and-range-of-trigonometric-functions/
         static const unsigned int UndefinedInRangeRep = 1073741813;
-	#endif
-	#if defined(AltNum_EnableIndeterminateForms)
-        //Is indeterminate form when DecimalHalf above this value 
-		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
-		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
-		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents 0 x -Infinity
-		static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold+1;//1073741814;
-		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
-		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents -Infinity / Infinity
-		static unsigned int InfDividedByInfRep = IndeterminateThreshold+2;
-		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
-		static unsigned int InfMinusInfRep = IndeterminateThreshold+3;
-		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
-		static unsigned int ZeroToPowerOfZeroRep = IndeterminateThreshold+4;
-		
-		//When DecimalHalf.Value is this value, then the indeterminate form represents IntHalf/0
-		static unsigned int DivideByZeroRep = IndeterminateThreshold+9;
-		
-		static unsigned int UnknownIndeterminateRep = IndeterminateThreshold+10;
-	#endif//Maximum DecimalHalf.Value = 1073741823
+        #endif
+        #if defined(AltNum_EnableIndeterminateForms)
+        //Is indeterminate form when DecimalHalf above this value
+        static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
+
+        //When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
+        //When IntHalf.Sign==NegativeSign, then the indeterminate form represents 0 x -Infinity
+        static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold + 1;//1073741814;
+
+        //When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
+        //When IntHalf.Sign==NegativeSign, then the indeterminate form represents -Infinity / Infinity
+        static unsigned int InfDividedByInfRep = IndeterminateThreshold + 2;
+
+        //When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
+        static unsigned int InfMinusInfRep = IndeterminateThreshold + 3;
+
+        //When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
+        static unsigned int ZeroToPowerOfZeroRep = IndeterminateThreshold + 4;
+
+        //When DecimalHalf.Value is this value, then the indeterminate form represents IntHalf/0
+        static unsigned int DivideByZeroRep = IndeterminateThreshold + 9;
+
+        static unsigned int UnknownIndeterminateRep = IndeterminateThreshold + 10;
+        #endif//Maximum DecimalHalf.Value = 1073741823
     public:
-    #pragma endregion Const Representation values
+        #pragma endregion Const Representation values
 
-    #pragma region RepType
+        #pragma region RepType
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
         RepType VirtualTable_GetPiRepType()
-    #else
+            #else
         RepType GetPiRepType()
-    #endif
+            #endif
         {
-            switch(DecimalHalf.Value)
+            switch (DecimalHalf.Value)
             {
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingTopE; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingTopE; break;
-		#endif
-				default:
-					return RepType::PiNum;
-			}
+                #if defined(AltNum_EnableApproaching)
+            case ApproachingBottomRep:
+                return RepType::ApproachingTopE; break;
+            case ApproachingTopRep:
+                return RepType::ApproachingTopE; break;
+                #endif
+            default:
+                return RepType::PiNum;
+            }
         }
 
-#if defined(AltNum_EnableERep)
+        #if defined(AltNum_EnableERep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
         RepType VirtualTable_GetERepType()
-    #else
+            #else
         RepType GetERepType()
-    #endif
+            #endif
         {
-            switch(DecimalHalf.Value)
+            switch (DecimalHalf.Value)
             {
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingTopE; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingTopE; break;
-		#endif
-				default:
-					return RepType::ENum;
-			}
+                #if defined(AltNum_EnableApproaching)
+            case ApproachingBottomRep:
+                return RepType::ApproachingTopE; break;
+            case ApproachingTopRep:
+                return RepType::ApproachingTopE; break;
+                #endif
+            default:
+                return RepType::ENum;
+            }
         }
-#endif
+        #endif
 
-#if defined(AltNum_EnableIRep)
+        #if defined(AltNum_EnableIRep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
         RepType VirtualTable_GetIRepType()
-    #else
+            #else
         RepType GetIRepType()
-    #endif
+            #endif
         {
-            switch(DecimalHalf.Value)
+            switch (DecimalHalf.Value)
             {
-        #if defined(AltNum_EnableImaginaryInfinity)
-				case InfinityRep:
-					return RepType::ImaginaryInfinity; break;
-		#endif
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingImaginaryBottom; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingImaginaryTop; break;
-		#endif
-				default:
-					return RepType::INum;
-			}
+                #if defined(AltNum_EnableImaginaryInfinity)
+            case InfinityRep:
+                return RepType::ImaginaryInfinity; break;
+                #endif
+                #if defined(AltNum_EnableApproaching)
+            case ApproachingBottomRep:
+                return RepType::ApproachingImaginaryBottom; break;
+            case ApproachingTopRep:
+                return RepType::ApproachingImaginaryTop; break;
+                #endif
+            default:
+                return RepType::INum;
+            }
         }
-#endif
+        #endif
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
         RepType VirtualTable_GetNormRepType()
-    #else
+            #else
         RepType GetNormRepType()
-    #endif
+            #endif
         {
-            switch(DecimalHalf.Value)
+            switch (DecimalHalf.Value)
             {
-		#if defined(AltNum_EnableApproaching)
-                case ApproachingBottomRep:
-                    return RepType::ApproachingBottom; break;
-                case ApproachingTopRep:
-                    return RepType::ApproachingTop; break;
-	    #endif
-		#if defined(AltNum_EnableInfinityRep)
-                case InfinityRep:
-                    return RepType::Infinity; break;
-		#endif
-		#if defined(AltNum_EnableNaN)
-                case NaNRep:
-                    return RepType::NaN; break;
-                case UndefinedRep:
-                    return RepType::Undefined; break;
-		#endif
-        #if defined(AltNum_EnableNil)
-                case NilRep:
-                    return RepType::Nil; break;
-		#endif
-                default:
-		#if defined(AltNum_EnableIndeterminateForms)
-					if(DecimalHalf>IndeterminateRep)
-						return RepType::IndeterminateForm;
-		#endif
-                    return RepType::NormalType; break;
+                #if defined(AltNum_EnableApproaching)
+            case ApproachingBottomRep:
+                return RepType::ApproachingBottom; break;
+            case ApproachingTopRep:
+                return RepType::ApproachingTop; break;
+                #endif
+                #if defined(AltNum_EnableInfinityRep)
+            case InfinityRep:
+                return RepType::Infinity; break;
+                #endif
+                #if defined(AltNum_EnableNaN)
+            case NaNRep:
+                return RepType::NaN; break;
+            case UndefinedRep:
+                return RepType::Undefined; break;
+                #endif
+                #if defined(AltNum_EnableNil)
+            case NilRep:
+                return RepType::Nil; break;
+                #endif
+            default:
+                #if defined(AltNum_EnableIndeterminateForms)
+                if (DecimalHalf > IndeterminateRep)
+                    return RepType::IndeterminateForm;
+                #endif
+                return RepType::NormalType; break;
             }
         }
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-#if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
         RepType VirtualTable_GetRepType()
-#else
+            #else
         RepType GetRepType()
-#endif
+            #endif
         {
-            switch(DecimalHalf.Flag)
+            switch (DecimalHalf.Flag)
             {
-		#if defined(AltNum_EnablePiRep)
-                case 1:
-                    return GetPiRepType(); break;
-        #endif
-		#if defined(AltNum_EnableERep)
-                case 2:
-                    return GetERepType(); break;
-        #endif
-		#if defined(AltNum_EnableIRep)
-                case 3:
-                    return GetIRepType(); break;
-		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
-                case 3:
-				    //If IntHalf==???, then left side range value equals negative infinity
-				    //If DecimalHalf.Value==???, then right side range value equals positive infinity
-				    //IntHalf represents left side minimum
-				    //For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
-				    return RepType::WithinMinMaxRange;
-        #endif
-                default:
-                    return GetNormRepType(); break;
+                #if defined(AltNum_EnablePiRep)
+            case 1:
+                return GetPiRepType(); break;
+                #endif
+                #if defined(AltNum_EnableERep)
+            case 2:
+                return GetERepType(); break;
+                #endif
+                #if defined(AltNum_EnableIRep)
+            case 3:
+                return GetIRepType(); break;
+                #elif defined(MediumDecV2_EnableWithinMinMaxRange)
+            case 3:
+                //If IntHalf==???, then left side range value equals negative infinity
+                //If DecimalHalf.Value==???, then right side range value equals positive infinity
+                //IntHalf represents left side minimum
+                //For DecimalHalf.Value represents right side maximum value with negative numbers represents at numbers above ???
+                return RepType::WithinMinMaxRange;
+                #endif
+            default:
+                return GetNormRepType(); break;
             }
         }
 
-#if defined(AltNum_UseBuiltinVirtualTable)
+        #if defined(AltNum_UseBuiltinVirtualTable)
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetPiRepType()
-		{
-			GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
-		}
+        {
+            GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
+        }
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetERepType()
-		{
-			GetVTable(VTable)->VirtualTable_GetERepType(VTable);
-		}
+        {
+            GetVTable(VTable)->VirtualTable_GetERepType(VTable);
+        }
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetIRepType()
-		{
-			GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
-		}
+        {
+            GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
+        }
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetNormRepType()
-		{
-			GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
-		}
+        {
+            GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
+        }
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
         RepType GetRepType()
-		{
-			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
-		}
+        {
+            GetVTable(VTable)->VirtualTable_GetRepType(VTable);
+        }
 
-#endif
+        #endif
 
-    #pragma endregion RepType
+        #pragma endregion RepType
 
-public:
-    #pragma region RangeLimits
+        #pragma region RangeLimits
+        #pragma endregion RangeLimits
 
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        constexpr auto SetAsMaximum = MediumDecBase::SetAsMaximum;
-
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
-        /// </summary>
-        constexpr auto SetAsMinimum = MediumDecBase::SetAsMinimum;
-
-    #pragma endregion RangeLimits
-
-    #pragma region PiNum Setters
-    #if defined(AltNum_EnablePiRep)
-protected:
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        #pragma region PiNum Setters
+        #if defined(AltNum_EnablePiRep)
+    protected:
+        template<MediumDecVariant VariantType = MediumDecBaseV2>
         void SetPiValV1(const VariantType& Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value, 1);
         }
-public:
+    public:
         constexpr auto SetPiVal = SetPiValV1<MediumDecV2Base>;
-  
+
         void SetPiValFromInt(int Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,1);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0, 1);
         }
-    #endif
-    #pragma endregion PiNum Setters
+        #endif
+        #pragma endregion PiNum Setters
 
-    #pragma region ENum Setters
-    #if defined(AltNum_EnableERep)
-protected:
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        #pragma region ENum Setters
+        #if defined(AltNum_EnableERep)
+    protected:
+        template<MediumDecVariant VariantType = MediumDecBaseV2>
         void SetEValV1(const VariantType& Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,2);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value, 2);
         }
-public:
+    public:
         constexpr auto SetEVal = SetEValV1<MediumDecV2Base>;
-		
+
         void SetEValFromInt(int Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,2);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0, 2);
         }
-    #endif
-    #pragma endregion ENum Setters
+        #endif
+        #pragma endregion ENum Setters
 
-    #pragma region INum Setters
-    #if defined(AltNum_EnableIRep)
-protected:
-        template<MediumDecVariant VariantType=MediumDecBaseV2>
+        #pragma region INum Setters
+        #if defined(AltNum_EnableIRep)
+    protected:
+        template<MediumDecVariant VariantType = MediumDecBaseV2>
         void SetIValV1(const VariantType& Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,3);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value, 3);
         }
-public:
+    public:
         constexpr auto SetIVal = SetEValV1<MediumDecV2Base>;
-		
+
         void SetIValFromInt(int Value)
         {
-            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0,3);
+            IntHalf = Value.IntHalf; DecimalHalf = PartialInt(0, 3);
         }
-    #endif
-    #pragma endregion INum Setters
+        #endif
+        #pragma endregion INum Setters
 
-    #pragma region Fractional Setters
-	//Not used for this variant(Used in AltDecBase and others)
-    #pragma endregion Fractional Setters
-    
-    #pragma region MixedFrac Setters
-	//Not used for this variant(Used in AltDecBase and others)
-    #pragma endregion MixedFrac Setters
+        #pragma region Infinity Setters
+        //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
+        // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
+        #if defined(AltNum_EnableInfinityRep)
 
-    #pragma region Infinity Setters
-    //Infinity operations based on https://www.gnu.org/software/libc/manual/html_node/Infinity-and-NaN.html
-    // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
-    #if defined(AltNum_EnableInfinityRep)
-	
         void SetAsInfinity()
         {
             IntHalf = 1; DecimalHalf = InfinityRep;
@@ -496,127 +490,127 @@ public:
 
         void SetAsNegativeInfinity()
         {
-            IntHalf = MirroredInt(1,MirroredInt::NegativeSign); DecimalHalf = InfinityRep;
+            IntHalf = MirroredInt(1, MirroredInt::NegativeSign); DecimalHalf = InfinityRep;
         }
-		
-    #if defined(AltNum_EnableIRep)
-	
+
+        #if defined(AltNum_EnableIRep)
+
         void SetAsImaginaryInfinity()
         {
-            IntHalf = 1; DecimalHalf = PartialInt(InfinityRep,3);
+            IntHalf = 1; DecimalHalf = PartialInt(InfinityRep, 3);
         }
 
         void SetAsNegativeImaginaryInfinity()
         {
-            IntHalf = MirroredInt(1,MirroredInt::NegativeSign); DecimalHalf = PartialInt(InfinityRep,3);
+            IntHalf = MirroredInt(1, MirroredInt::NegativeSign); DecimalHalf = PartialInt(InfinityRep, 3);
         }
-		
-	#endif
-		
-	#endif
-    #pragma endregion Infinity Setters
 
-    #pragma region ApproachingZero Setters
-	#if defined(AltNum_EnableApproaching)
+        #endif
 
-		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
+        #endif
+        #pragma endregion Infinity Setters
+
+        #pragma region ApproachingZero Setters
+        #if defined(AltNum_EnableApproaching)
+
+        //Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntHalf.000...1)
-        void SetAsApproachingBottom(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingBottom(const MirroredInt& value = MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = ApproachingBottomRep;
         }
 
-		#if !defined(AltNum_DisableApproachingTop)
-		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
+        #if !defined(AltNum_DisableApproachingTop)
+        //Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)
-        void SetAsApproachingTop(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTop(const MirroredInt& value = MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
-		
-		//SetAsApproachingBottom without changing sign
-        void SetAsApproachingBottomVal(const unsigned int& value=0)
+
+        //SetAsApproachingBottom without changing sign
+        void SetAsApproachingBottomVal(const unsigned int& value = 0)
         {
             IntHalf.Value = value; DecimalHalf = ApproachingBottomRep;
         }
 
-		#if !defined(AltNum_DisableApproachingTop)
-		//SetAsApproachingTop without changing sign
-        void SetAsApproachingTopVal(const unsigned int& value=0)
+        #if !defined(AltNum_DisableApproachingTop)
+        //SetAsApproachingTop without changing sign
+        void SetAsApproachingTopVal(const unsigned int& value = 0)
         {
             IntHalf.Value = value; DecimalHalf = ApproachingTopRep;
         }
         #endif
-		
-		//SetAsApproachingBottom without changing sign or flags
-        void SetAsApproachingBottomValV2(const unsigned int& value=0)
+
+        //SetAsApproachingBottom without changing sign or flags
+        void SetAsApproachingBottomValV2(const unsigned int& value = 0)
         {
             IntHalf.Value = value; DecimalHalf.Value = ApproachingBottomRep;
         }
 
-		#if !defined(AltNum_DisableApproachingTop)
-		//SetAsApproachingTop without changing sign
-        void SetAsApproachingTopValV2(const unsigned int& value=0)
+        #if !defined(AltNum_DisableApproachingTop)
+        //SetAsApproachingTop without changing sign
+        void SetAsApproachingTopValV2(const unsigned int& value = 0)
         {
             IntHalf.Value = value; DecimalHalf.Value = ApproachingTopRep;
         }
         #endif
-		
-		#if defined(AltNum_EnablePiRep)
 
-        void SetAsApproachingBottomPi(const MirroredInt& value=MirroredInt::Zero)
+        #if defined(AltNum_EnablePiRep)
+
+        void SetAsApproachingBottomPi(const MirroredInt& value = MirroredInt::Zero)
         {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep, 1);
         }
-		
-			#if !defined(AltNum_DisableApproachingTop)
-        void SetAsApproachingTopPi(const MirroredInt& value=MirroredInt::Zero)
+
+        #if !defined(AltNum_DisableApproachingTop)
+        void SetAsApproachingTopPi(const MirroredInt& value = MirroredInt::Zero)
         {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep, 1);
         }
-			#endif
-			
-		#endif
-		
-		#if defined(AltNum_EnableERep)
-		
-        void SetAsApproachingBottomE(const MirroredInt& value=MirroredInt::Zero)
+        #endif
+
+        #endif
+
+        #if defined(AltNum_EnableERep)
+
+        void SetAsApproachingBottomE(const MirroredInt& value = MirroredInt::Zero)
         {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep, 2);
         }
-		
-			#if !defined(AltNum_DisableApproachingTop)
+
+        #if !defined(AltNum_DisableApproachingTop)
         //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)e
-        void SetAsApproachingTopE(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTopE(const MirroredInt& value = MirroredInt::Zero)
         {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep, 2);
         }
-			#endif
-		
-		#endif
-		
-		#if defined(AltNum_EnableIRep)
-		
-        void SetAsApproachingBottomI(const MirroredInt& value=MirroredInt::Zero)
-        {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
-        }
-		
-			#if !defined(AltNum_DisableApproachingTop)
-        //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)i
-        void SetAsApproachingTopI(const MirroredInt& value=MirroredInt::Zero)
-        {
-            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
-        }
-			#endif
-		
-		#endif
-    #endif
-    #pragma endregion ApproachingZero Setters
+        #endif
 
-    #pragma region NaN Setters
-	#if defined(AltNum_EnableNaN)
+        #endif
+
+        #if defined(AltNum_EnableIRep)
+
+        void SetAsApproachingBottomI(const MirroredInt& value = MirroredInt::Zero)
+        {
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep, 3);
+        }
+
+        #if !defined(AltNum_DisableApproachingTop)
+        //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)i
+        void SetAsApproachingTopI(const MirroredInt& value = MirroredInt::Zero)
+        {
+            IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep, 3);
+        }
+        #endif
+
+        #endif
+        #endif
+        #pragma endregion ApproachingZero Setters
+
+        #pragma region NaN Setters
+        #if defined(AltNum_EnableNaN)
         void SetAsNaN()
         {
             IntHalf = 0; DecimalHalf = NaNRep;
@@ -626,34 +620,251 @@ public:
         {
             IntHalf = 0; DecimalHalf = UndefinedRep;
         }
-	#endif
-    #pragma endregion NaN Setters
+        #endif
+        #pragma endregion NaN Setters
 
-    #pragma region ValueDefines
+        #pragma region ValueDefines
+    private:
 
-    #pragma endregion ValueDefines
+        #if defined(AltNum_EnableNaN)
+        static MediumDec NaNValue()
+        {
+            MediumDec NewSelf = MediumDec(0, NaNRep);
+            return NewSelf;
+        }
 
-    #pragma region String Commands
+        static MediumDec UndefinedValue()
+        {
+            MediumDec NewSelf = MediumDec(0, UndefinedRep);
+            return NewSelf;
+        }
+        #endif
 
-protected:
+        static MediumDecV2Base AlmostOneValue();
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
+        /// (Stored as 3.141592654)
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base PiNumValue();
+
+        //100,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecV2Base HundredMilPiNumValue();
+
+        //10,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecV2Base TenMilPiNumValue();
+
+        //1,000,000xPi(Rounded to 9th decimal digit)
+        static MediumDecV2Base OneMilPiNumValue();
+
+        //10xPi(Rounded to 9th decimal digit)
+        static MediumDecV2Base TenPiNumValue();
+
+        static MediumDecV2Base ENumValue();
+
+        static MediumDecV2Base ZeroValue();
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base OneValue();
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base TwoValue();
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base NegativeOneValue();
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base Point5Value();
+
+        static MediumDecV2Base JustAboveZeroValue();
+
+        static MediumDecV2Base OneMillionthValue();
+
+        static MediumDecV2Base FiveThousandthValue();
+
+        static MediumDecV2Base FiveMillionthValue();
+
+        static MediumDecV2Base TenMillionthValue();
+
+        static MediumDecV2Base OneHundredMillionthValue();
+
+        static MediumDecV2Base FiveBillionthValue();
+
+        static MediumDecV2Base LN10Value();
+
+        static MediumDecV2Base LN10DivValue();
+
+        static MediumDecV2Base TwiceLN10DivValue();
+
+        static MediumDecV2Base MinimumValue();
+
+        static MediumDecV2Base MaximumValue();
+
+        static MediumDecV2Base NegativePointFiveValue();
+
+        static MediumDecV2Base NegativePointFive;
+
+        static MediumDecV2Base AlmostOne;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base PiNum;
+
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base ENum;
+
+        /// <summary>
+        /// Returns Pi(3.1415926535897932384626433) Representation
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base Pi;
+
+        /// <summary>
+        /// Euler's number (Non-Alternative Representation)
+        /// Irrational number equal to about (1 + 1/n)^n
+        /// (about 2.71828182845904523536028747135266249775724709369995)
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base E;
+
+        /// <summary>
+        /// Returns the value at zero
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base Zero;
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base One;
+
+        /// <summary>
+        /// Returns the value at two
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base Two;
+
+        /// <summary>
+        /// Returns the value at 0.5
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base PointFive;
+
+        /// <summary>
+        /// Returns the value at digit one more than zero (0.000000001)
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base JustAboveZero;
+
+        /// <summary>
+        /// Returns the value at .000000005
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base FiveBillionth;
+
+        /// <summary>
+        /// Returns the value at .000001000
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base OneMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.005"
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base FiveThousandth;
+
+        /// <summary>
+        /// Returns the value at .000000010
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base OneGMillionth;
+
+        //0e-7
+        static MediumDecV2Base TenMillionth;
+
+        /// <summary>
+        /// Returns the value at "0.000005"
+        /// </summary>
+        static MediumDecV2Base FiveMillionth;
+
+        /// <summary>
+        /// Returns the value at negative one
+        /// </summary>
+        /// <returns>MediumDecV2Base</returns>
+        static MediumDecV2Base NegativeOne;
+
+        /// <summary>
+        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// (-2147483647.999999999)
+        /// </summary>
+        static MediumDecV2Base Minimum;
+
+        /// <summary>
+        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// (2147483647.999999999)
+        /// </summary>
+        static MediumDecV2Base Maximum;
+
+        /// <summary>
+        /// 2.3025850929940456840179914546844
+        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+        /// </summary>
+        static MediumDecV2Base LN10;
+
+        /// <summary>
+        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecV2Base LN10Div;
+
+        /// <summary>
+        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+        /// </summary>
+        static MediumDecV2Base TwiceLN10Div;
+
+        #pragma endregion ValueDefines
+
+        #pragma region String Commands
+    protected:
 
         void InitialyzeAltRepFromString(const std::string& Value)
         {
-        #if defined(AltNum_EnablePiRep)
-            if(str.find("Pi") != std::string::npos)
+            #if defined(AltNum_EnablePiRep)
+            if (str.find("Pi") != std::string::npos)
                 DecimalHalf.Flags = 1;
-        #endif
-        #if defined(AltNum_EnableERep)
-            if(Value.last()=='e')
+            #endif
+            #if defined(AltNum_EnableERep)
+            if (Value.last() == 'e')
                 DecimalHalf.Flags = 2;
-        #endif
-        #if defined(AltNum_EnableIRep)
-            if(Value.last()=='i')
+            #endif
+            #if defined(AltNum_EnableIRep)
+            if (Value.last() == 'i')
                 DecimalHalf.Flags = 3;
-        #endif
+            #endif
         }
 
-public:
+    public:
 
         /// <summary>
         /// Reads the string.
@@ -666,145 +877,107 @@ public:
         }
 
         /// <summary>
-        /// Gets the value from string.
+        /// Converts to string.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        /// <returns>MediumDecVariant</returns>
-        constexpr auto GetValueFromString = MediumDecBase::GetValueFromString<MediumDecV2Base>;
+        /// <returns>std.string</returns>
+        std::string ToBasicString() { return MediumDecBase::ToString(); }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class from string literal
+        /// Converts to string with digits filled in even when empty
+        /// </summary>
+        /// <returns>std.string</returns>
+        std::string ToFullBasicString() { return MediumDecBase::ToFullString(); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
         MediumDecV2Base(const char* strVal)
         {
             std::string Value = strVal;
-            ReadString(Value);
+            this->ReadString(Value);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="Value">The value.</param>
         MediumDecV2Base(const std::string& Value)
         {
-            ReadString(Value);
+            this->ReadString(Value);
         }
 
-		std::string ConvertToBasicString(const RepType& repType)
-		{
-			auto self = ConvertAsNormType(repType);
-			return self.BasicToStringOp();
-		}
+        std::string ConvertToBasicString(const RepType& repType)
+        {
+            auto self = ConvertAsNormType(repType);
+            return self.BasicToString();
+        }
+
+        /// <summary>
+        /// Implements the operator std::string operator.
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator std::string() { return ToString(); }
 
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
+
+        MediumDecV2Base(const unsigned __int64& Value){ this->SetUIntVal(Value); }
+        MediumDecV2Base(const signed __int64& Value){ this->SetIntVal(Value); }
+        MediumDecV2Base(const unsigned char& Value){ this->SetUIntVal(Value); }
+        MediumDecV2Base(const signed char& Value){ this->SetIntVal(Value); }
+        MediumDecV2Base(const unsigned short& Value){ this->SetUIntVal(Value); }
+        MediumDecV2Base(const signed short& Value){ this->SetIntVal(Value); }
+        MediumDecV2Base(const unsigned int& Value){ this->SetUIntVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecV2Base(const bool& Value){ this->SetBoolVal(Value); }
+
+    #if defined(AltNum_EnableFloatingConversion)
+	
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const float& Value){ this->SetFloatVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const double& Value){ this->SetDoubleVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const long double& Value){ this->SetDecimalVal(Value); }
 		
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const float& Value)
-        {
-            this->SetFloatVal(Value);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const double& Value)
-        {
-            this->SetDoubleVal(Value);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const long double& Value)
-        {
-            this->SetDecimalVal(Value);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDecV2Base"/> class.
-        /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecV2Base(const bool& Value)
-        {
-            this->SetBoolVal(Value);
-        }
-
-#if defined(AltNum_EnableMediumDecV2BaseBasedSetValues)
-        MediumDecV2Base(const MediumDecV2Base& Value)
-        {
-            this->SetVal(Value);
-        }
-#endif
+	#endif
 
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
-public:
-
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        float toFloat()
-        {
-            auto self = *this;
-            self.ConvertToNormTypeV2();
-            return self.toFloatV1();
-        }
-
-private:
-        constexpr auto toDoubleV1 = MediumDecBase::toDouble;
-public:
-
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        double toDouble()
-        {
-            auto self = *this;
-            self.ConvertToNormTypeV2();
-            return self.toDoubleV1();
-        }
-
-private:
-        constexpr auto toDecimalV1 = MediumDecBase::toDecimal;
-public:
-
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        long double toDecimal()
-        {
-            auto self = *this;
-            self.ConvertToNormTypeV2();
-            return self.toDecimalV1();
-        }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toInt() {
-            auto self = *this;
-            self.ConvertToNormTypeV2();
-            return IntHalf.GetValue();
-        }
+        int toInt() const { return IntHalf.GetValue(); }
 
-        bool toBool() {
-            auto self = *this;
-            self.ConvertToNormTypeV2();
-            return IntHalf.IsZero() ? false : true;
-        }
+        /// <summary>
+        /// MediumDec Variant to int explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
+
+        bool toBool() const { return IntHalf.IsZero() ? false : true; }
+
+    #if defined(AltNum_EnableFloatingConversion)
 
         /// <summary>
         /// MediumDec Variant to float explicit conversion
@@ -824,11 +997,49 @@ public:
         /// <returns>The result of the operator.</returns>
         explicit operator long double() { return toDecimal(); }
 
+    #endif
+
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        explicit operator int() { return toInt(); }
+        explicit operator signed int() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to uint explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned int() { return toUInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to int64 explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed __int64() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to ubyte explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned char() { return toUInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to byte explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed char() { return toInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to ushort explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator unsigned short() { return toUInt(); }
+
+        /// <summary>
+        /// MediumDec Variant to short explicit conversion
+        /// </summary>
+        /// <returns>The result of the operator.</returns>
+        explicit operator signed short() { return toInt(); }
 
         /// <summary>
         /// MediumDec Variant to bool explicit conversion
@@ -840,7 +1051,7 @@ public:
 
     #pragma region Pi Conversion
     #if defined(AltNum_EnablePiRep)
-    
+
     void ConvertPiToNum();
 
     #endif
@@ -848,7 +1059,7 @@ public:
 
     #pragma region E Conversion
     #if defined(AltNum_EnableERep)
-    
+
     void ConvertEToNum();
 
     #endif
@@ -892,8 +1103,8 @@ public:
 			#endif
             #if defined(AltNum_EnableInfinityRep)
             case RepType::ImaginaryInfinity:
-                IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
-                DecimalHalf.Value = 999999999; 
+                IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
+                DecimalHalf.Value = 999999999;
                 /*ExtraRep = InitialExtraRep;*/
                 break;
             #endif
@@ -960,7 +1171,7 @@ public:
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
 			case RepType::Infinity:
-				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
 				DecimalHalf = 999999999;
 				break;
 	#endif
@@ -989,7 +1200,7 @@ public:
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
 			case RepType::ImaginaryInfinity:
-				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf; 
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
 				DecimalHalf.Value = 999999999;
 				break;
 		#endif
@@ -1081,7 +1292,7 @@ public:
 			}
 		}
 	#endif
-		
+
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
         RepType ConvertToNormalEquivalant(const RepType& repType)
         {
@@ -1109,7 +1320,7 @@ public:
 					if(IntHalf.Value==0)
 					{
 						DecimalHalf.Flags = 0;
-						return RepType::ApproachingBottom; 
+						return RepType::ApproachingBottom;
 					}
 					else
 					{
@@ -1260,7 +1471,7 @@ protected:
                     break;
 	#endif
 	#if defined(AltNum_EnableApproaching)
-	
+
 	#endif
 				default:
 				{
@@ -1321,7 +1532,7 @@ public:
 			return CompareWith(that);
 		}
 
-	/*  
+	/*
 		//Add comparisons to previous parent classes with more limited ranges based on supported values
 
     */
@@ -1367,7 +1578,7 @@ protected:
 
 public:
         /// <summary>
-        /// Basic division operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1376,7 +1587,7 @@ public:
         constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
 
         /// <summary>
-        /// Basic division operation between MediumDec Variant and Integer value 
+        /// Basic division operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1396,7 +1607,7 @@ protected:
 
 public:
         /// <summary>
-        /// Basic multiplication operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1405,7 +1616,7 @@ public:
         constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
 
         /// <summary>
-        /// Basic multiplication operation between MediumDec Variant and Integer value 
+        /// Basic multiplication operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1418,7 +1629,7 @@ public:
     #pragma region NormalRep Integer Addition Operations
 
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and Integer value 
+        /// Basic addition operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1431,7 +1642,7 @@ public:
     #pragma region NormalRep Integer Subtraction Operations
 
         /// <summary>
-        /// Basic subtraction operation between MediumDec Variant and Integer value 
+        /// Basic subtraction operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// </summary>
         /// <param name="rValue">The value.</param>
@@ -1692,14 +1903,14 @@ public:
         constexpr auto UnsignedIntDivOp = UIntDivOpV1<signed int>;
         constexpr auto UInt64DivOp = UIntDivOpV1<UInt64>;
         constexpr auto Int64DivOp = IntDivOpV1<Int64>;
-	
+
         constexpr auto DivByUInt = DivByUIntV1<unsigned int>;
         constexpr auto DivByInt = DivByIntV1<signed int>;
         constexpr auto UnsignedDivByInt = DivByUInt<signed int>;
         constexpr auto DivByUInt64 = DivByUInt<;
         constexpr auto DivByInt64 = BasicDivByInt64;
         constexpr auto UnsignedDivByInt64 = DivByUInt<Int64>;
-		
+
         constexpr auto DivByUInt8 = BasicDivByUInt8;
         constexpr auto DivByInt8 = BasicDivByInt8;
         constexpr auto DivByUInt16 = BasicDivByUInt16;
@@ -1764,7 +1975,7 @@ public:
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         void DivOp(const auto& Value)
         {
             if(Value.IsNegative())
@@ -1781,7 +1992,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto DivideByUnsigned(const auto& rValue)
         {
             auto self = *this;
@@ -1793,7 +2004,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto DivideBy(const auto& rValue)
         {
             auto self = *this;
@@ -1807,7 +2018,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivideBy(Value); }
-		
+
         /// <summary>
         /// /= operation
         /// </summary>
@@ -1815,7 +2026,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivOp(Value); }
-		
+
         /// <summary>
         /// Division operation between MediumDecV2Base and Integer value.
         /// </summary>
@@ -1826,7 +2037,7 @@ public:
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const Int64& Value) { return self.DivideByInt64(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned int& Value) { return self.DivideByUInt(Value); }
         friend MediumDecV2Base operator/(const MediumDecV2Base& self, const UInt64& Value) { return self.DivideByUInt64(Value); }
-		
+
         friend MediumDecV2Base operator/(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
         friend MediumDecV2Base operator/(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
         friend MediumDecV2Base operator/(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
@@ -1857,9 +2068,9 @@ public:
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed char& Value) { return self.Int8DivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed short& Value) { return self.Int16DivOp(Value); }
         friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }	#pragma endregion Other division operations	
+        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }	#pragma endregion Other division operations
 
-	#pragma endregion Other division operations	
+	#pragma endregion Other division operations
 
 	#pragma region Other multiplication operations
 
@@ -1915,7 +2126,7 @@ protected:
         					break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTopPi:
-        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9
         						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
         						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
@@ -1945,7 +2156,7 @@ protected:
                         } break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTopE:
-        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9
         						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
         						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
@@ -1975,7 +2186,7 @@ protected:
                             break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingImaginaryTop:
-        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9
         						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
         						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
@@ -2010,7 +2221,7 @@ protected:
                             break;
                         #if !defined(AltNum_DisableApproachingTop)
                         case RepType::ApproachingTop:
-        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9 
+        					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9
         						IntHalf.Value = (int)rValue - 1;
         					else//5.9..9 * 100 = 599.9..9
         						IntHalf.Value = (IntHalf.Value+1)*(unsigned int)rValue - 1;
@@ -2084,14 +2295,14 @@ public:
         constexpr auto UnsignedIntMultOp = UIntMultOpV1<signed int>;
         constexpr auto UInt64MultOp = UIntMultOpV1<UInt64>;
         constexpr auto Int64MultOp = IntMultOpV1<Int64>;
-	
+
         constexpr auto MultByUInt = MultByUIntV1<unsigned int>;
         constexpr auto MultByInt = MultByIntV1<signed int>;
         constexpr auto UnsignedMultByInt = MultByUInt<signed int>;
         constexpr auto MultByUInt64 = MultByUInt<;
         constexpr auto MultByInt64 = BasicMultByInt64;
         constexpr auto UnsignedMultByInt64 = MultByUInt<Int64>;
-		
+
         constexpr auto MultByUInt8 = BasicMultByUInt8;
         constexpr auto MultByInt8 = BasicMultByInt8;
         constexpr auto MultByUInt16 = BasicMultByUInt16;
@@ -2110,7 +2321,7 @@ public:
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         void MultOp(const auto& Value)
         {
             if(Value<0)
@@ -2127,7 +2338,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto MultiplyByUnsigned(const auto& rValue)
         {
             auto self = *this;
@@ -2139,7 +2350,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto MultiplyBy(const auto& rValue)
         {
             auto self = *this;
@@ -2161,7 +2372,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.MultOp(Value); }
-		
+
         /// <summary>
         /// Multition operation between MediumDecBase and Integer value.
         /// </summary>
@@ -2172,7 +2383,7 @@ public:
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const Int64& Value) { return self.MultByInt64(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned int& Value) { return self.MultByUInt(Value); }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const UInt64& Value) { return self.MultByUInt64(Value); }
-		
+
         friend MediumDecV2Base operator*(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt(lValue); }
         friend MediumDecV2Base operator*(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt64(lValue); }
         friend MediumDecV2Base operator*(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt(lValue); }
@@ -2327,14 +2538,14 @@ public:
         constexpr auto UnsignedIntAddOp = UIntAddOpV1<signed int>;
         constexpr auto UInt64AddOp = UIntAddOpV1<UInt64>;
         constexpr auto Int64AddOp = IntAddOpV1<Int64>;
-	
+
         constexpr auto AddByUInt = AddByUIntV1<unsigned int>;
         constexpr auto AddByInt = AddByIntV1<signed int>;
         constexpr auto UnsignedAddByInt = AddByUInt<signed int>;
         constexpr auto AddByUInt64 = AddByUInt<;
         constexpr auto AddByInt64 = BasicAddByInt64;
         constexpr auto UnsignedAddByInt64 = AddByUInt<Int64>;
-		
+
         constexpr auto AddByUInt8 = BasicAddByUInt8;
         constexpr auto AddByInt8 = BasicAddByInt8;
         constexpr auto AddByUInt16 = BasicAddByUInt16;
@@ -2367,7 +2578,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto AddByUnsigned(const auto& rValue)
         {
             auto self = *this;
@@ -2379,7 +2590,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto AddBy(const auto& rValue)
         {
             auto self = *this;
@@ -2401,7 +2612,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.AddOp(Value); }
-		
+
         /// <summary>
         /// Addition operation between MediumDecBase and Integer value.
         /// </summary>
@@ -2412,7 +2623,7 @@ public:
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const Int64& Value) { return self.AddByInt64(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned int& Value) { return self.AddByUInt(Value); }
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const UInt64& Value) { return self.AddByUInt64(Value); }
-		
+
         friend MediumDecV2Base operator+(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt(lValue); }
         friend MediumDecV2Base operator+(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt64(lValue); }
         friend MediumDecV2Base operator+(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt(lValue); }
@@ -2567,14 +2778,14 @@ public:
         constexpr auto UnsignedIntSubOp = UIntSubOpV1<signed int>;
         constexpr auto UInt64SubOp = UIntSubOpV1<UInt64>;
         constexpr auto Int64SubOp = IntSubOpV1<Int64>;
-	
+
         constexpr auto SubByUInt = SubByUIntV1<unsigned int>;
         constexpr auto SubByInt = SubByIntV1<signed int>;
         constexpr auto UnsignedSubByInt = SubByUInt<signed int>;
         constexpr auto SubByUInt64 = SubByUInt<;
         constexpr auto SubByInt64 = BasicSubByInt64;
         constexpr auto UnsignedSubByInt64 = SubByUInt<Int64>;
-		
+
         constexpr auto SubByUInt8 = BasicSubByUInt8;
         constexpr auto SubByInt8 = BasicSubByInt8;
         constexpr auto SubByUInt16 = BasicSubByUInt16;
@@ -2607,7 +2818,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto SubtractByUnsigned(const auto& rValue)
         {
             auto self = *this;
@@ -2619,7 +2830,7 @@ public:
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
+        /// <param name="rValue.">The right side Value</param>
         auto SubtractBy(const auto& rValue)
         {
             auto self = *this;
@@ -2633,7 +2844,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubtractBy(Value); }
-		
+
         /// <summary>
         /// -= operation
         /// </summary>
@@ -2641,7 +2852,7 @@ public:
         /// <param name="Value">The right side value.</param>
         /// <returns>MediumDecVariant</returns>
         friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubOp(Value); }
-		
+
         /// <summary>
         /// Subtraction operation between MediumDecV2Base and Integer value.
         /// </summary>
@@ -2652,7 +2863,7 @@ public:
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const Int64& Value) { return self.SubtractByInt64(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned int& Value) { return self.SubtractByUInt(Value); }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const UInt64& Value) { return self.SubtractByUInt64(Value); }
-		
+
         friend MediumDecV2Base operator-(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
@@ -2692,7 +2903,7 @@ public:
 	#pragma endregion Modulus Operations
 
     #pragma region Floating Operator Overrides
-    
+
         friend MediumDecV2Base operator+(const MediumDecV2Base& self, const float& Value) { return self + (MediumDecV2Base)Value; }
         friend MediumDecV2Base operator-(const MediumDecV2Base& self, const float& Value) { return self - (MediumDecV2Base)Value; }
         friend MediumDecV2Base operator*(const MediumDecV2Base& self, const float& Value) { return self * (MediumDecV2Base)Value; }
@@ -2721,7 +2932,7 @@ public:
     #pragma endregion Floating Operator Overrides
 
     #pragma region Other Operators
-	
+
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
@@ -2793,7 +3004,7 @@ public:
         {
             return *this;
         }
-		
+
     #pragma endregion Other Operators
 
 	#pragma region Math Etc Functions
@@ -2856,11 +3067,11 @@ public:
             auto start = 0, end = number;
             auto mid;
 
-            // variable to store the answer 
+            // variable to store the answer
             auto ans;
 
-            // for computing integral part 
-            // of square root of number 
+            // for computing integral part
+            // of square root of number
             while (start <= end) {
                 mid = (start + end) / 2;
                 if (mid * mid == number) {
@@ -2868,35 +3079,35 @@ public:
                     break;
                 }
 
-                // incrementing start if integral 
-                // part lies on right side of the mid 
+                // incrementing start if integral
+                // part lies on right side of the mid
                 if (mid * mid < number) {
                     start = mid + 1;
                     ans = mid;
                 }
 
-                // decrementing end if integral part 
-                // lies on the left side of the mid 
+                // decrementing end if integral part
+                // lies on the left side of the mid
                 else {
                     end = mid - 1;
                 }
             }
 
-            // For computing the fractional part 
-            // of square root up to given precision 
+            // For computing the fractional part
+            // of square root up to given precision
             auto increment = "0.1";
             for (int i = 0; i < precision; ++i) {
                 while (ans * ans <= number) {
                     ans += increment;
                 }
 
-                // loop terminates when ans * ans > number 
+                // loop terminates when ans * ans > number
                 ans = ans - increment;
                 increment = increment / 10;
             }
             return ans;
         }
-		
+
 		/// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
@@ -3090,7 +3301,7 @@ protected:
             }
             return *this;
         }
-		
+
         /// <summary>
         /// Applies Power of operation(for unsigned integer exponents)
         /// </summary>
@@ -3101,7 +3312,7 @@ protected:
             auto self = this;
             return self.BasicUIntPowOpV1();
 		}
-		
+
         /// <summary>
         /// Applies Power of operation(for integer exponents)
         /// </summary>
@@ -3119,7 +3330,7 @@ public:
         constexpr auto BasicIntPowOfOp = BasicIntPowOfOpV1<signed int>;
         constexpr auto BasicUInt64PowOfOp = BasicUIntPowOfOpV1<UInt64>;
         constexpr auto BasicInt64PowOfOp = BasicIntPowOpOfV1<Int64>;
-        
+
         constexpr auto BasicUIntPowOf = BasicUIntPowOfV1<unsigned int>;
         constexpr auto BasicIntPowOf = BasicIntPowOfV1<signed int>;
         constexpr auto BasicUInt64PowOf = BasicUIntPowOfV1<UInt64>;
@@ -3242,7 +3453,7 @@ protected:
             }
         #endif
             else
-                BasicUIntPowOpV1(expValue); 
+                BasicUIntPowOpV1(expValue);
 			return *this;
         }
 
@@ -3311,10 +3522,10 @@ protected:
             }
         #endif
             else
-                BasicIntPowOpV1(expValue); 
+                BasicIntPowOpV1(expValue);
 			return *this;
         }
-		
+
         /// <summary>
         /// Applies Power of operation(for unsigned integer exponents)
         /// </summary>
@@ -3325,7 +3536,7 @@ protected:
             auto self = this;
             return self.UIntPowOpV1();
 		}
-		
+
         /// <summary>
         /// Applies Power of operation(for integer exponents)
         /// </summary>
@@ -3352,7 +3563,7 @@ public:
         constexpr auto IntPowOfOp = IntPowOfOpV1<signed int>;
         constexpr auto UInt64PowOfOp = UIntPowOfOpV1<UInt64>;
         constexpr auto Int64PowOfOp = IntPowOpOfV1<Int64>;
-        
+
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
@@ -3447,7 +3658,7 @@ public:
             auto self = x.ConvertAsNormType();
             return self.NaturalLogOfV1();
 		}
-	
+
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
@@ -3457,7 +3668,7 @@ public:
         {
 			return value.NaturalLogOf();
         }
-		
+
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
@@ -3468,7 +3679,7 @@ public:
             auto self = x.ConvertAsNormType();
             return self.Log10OfV1();
 		}
-		
+
         /// <summary>
         /// Log Base 10 of Value
         /// </summary>
@@ -3478,9 +3689,9 @@ public:
         {
 			return value.Log10Of();
         }
-		
+
 protected:
-	
+
 
 public:
 
@@ -3490,7 +3701,7 @@ public:
         /// <param name="value">The target MediumDec variant value to perform function on.</param>
         /// <returns>MediumDecVariant</returns>
         constexpr auto Log10OfInt = MediumDecBase::Log10OfInt;
-		
+
         /// <summary>
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
@@ -3505,7 +3716,7 @@ public:
                 return Zero;
             return Log10Of() / baseVal.Log10Of();
         }
-		
+
         /// <summary>
         /// Log with Base of BaseVal of Value
         /// Based on http://home.windstream.net/okrebs/page57.html
@@ -3596,13 +3807,13 @@ public:
                 }
                 else
                 {
-                    self = Value.ConvertToNormType(repType);    
+                    self = Value.ConvertToNormType(repType);
                     return self.SinV1(Value);
-                }       
+                }
             }
             else
             {
-                auto self = Value.ConvertAsNormType(repType);    
+                auto self = Value.ConvertAsNormType(repType);
                 return self.SinV1(Value);
             }
         }
@@ -3635,13 +3846,13 @@ public:
 					return Zero;
                 else
                 {
-                    self = Value.ConvertToNormType(repType);    
+                    self = Value.ConvertToNormType(repType);
                     return self.CosV1(Value);
-                }       
+                }
             }
             else
             {
-                auto self = Value.ConvertAsNormType(repType);    
+                auto self = Value.ConvertAsNormType(repType);
                 return self.CosV1(Value);
             }
         }
@@ -3684,13 +3895,13 @@ public:
 				}
                 else
                 {
-                    self = Value.ConvertToNormType(repType);    
+                    self = Value.ConvertToNormType(repType);
                     return self.TanV1(Value);
-                }       
+                }
             }
             else
             {
-                auto self = Value.ConvertAsNormType(repType);    
+                auto self = Value.ConvertAsNormType(repType);
                 return self.TanV1(Value);
             }
         }
@@ -3722,7 +3933,7 @@ public:
         /// <returns>MediumDecVariant</returns>
         static auto SinFromAngle(const auto& Value)
         {
-            auto self = Value.ConvertAsNormType(repType);    
+            auto self = Value.ConvertAsNormType(repType);
             return self.SinFromAngleV1(Value);
         }
 
@@ -3734,7 +3945,7 @@ public:
         /// <returns></returns>
         static auto CosFromAngle(const auto& Value)
         {
-            auto self = Value.ConvertAsNormType(repType);    
+            auto self = Value.ConvertAsNormType(repType);
             return self.CosFromAngleV1(Value);
         }
 
@@ -3746,7 +3957,7 @@ public:
         /// <returns>MediumDecVariant</returns>
         static auto TanFromAngle(const auto& Value)
         {
-            auto self = Value.ConvertAsNormType(repType);    
+            auto self = Value.ConvertAsNormType(repType);
             return self.TanFromAngleV1(Value);
         }
 
@@ -3782,18 +3993,18 @@ public:
 	#endif
 	#if defined(AltNum_EnablePiRep)
         case RepType::PiNum:
-            return BasicToStringOp()+"π";
+            return BasicToString()+"π";
             break;
 	#endif
 	#if defined(AltNum_EnableERep)
         case RepType::ENum:
-            return BasicToStringOp()+"e";
+            return BasicToString()+"e";
             break;
 	#endif
 
 	#if defined(AltNum_EnableIRep)
         case RepType::INum:
-            return BasicToStringOp()+"i";
+            return BasicToString()+"i";
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
@@ -3833,7 +4044,7 @@ public:
             return IsNegative()?"-∞i":"∞i";
             break;
 	#endif
-	
+
 	#if defined(AltNum_EnableApproachingI)
         case RepType::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal

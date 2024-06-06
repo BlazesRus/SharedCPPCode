@@ -4,23 +4,13 @@
 // ***********************************************************************
 #pragma once
 
-#include "MediumDecPreprocessors.h"
-//#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
+#include "MediumDecV2Preprocessors.h"
+#include "MediumDecBase.hpp"
+#if defined(AltNum_UseBuiltinVirtualTable)
+    #include "..\VirtualTableBase.hpp"
+#endif
 
-#include <string>
-#include <cmath>
-
-#include <boost/rational.hpp>//Requires boost to reduce fractional(for Pow operations etc)
-
-#include <type_traits>
-#include <cstddef>
-#include <concepts>//C++20 feature
-#include <compare>//used for C++20 feature of spaceship operator
-#include "..\Concepts\MediumDecVariantConcept.hpp"
-
-
-#include "..\AlternativeInt\MirroredInt.hpp"
-#include "..\AlternativeInt\PartialInt.hpp"
+#include "..\RepType.h"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
@@ -207,7 +197,7 @@ public:
         static const unsigned int UndefinedInRangeRep = 1073741813;
 	#endif
 	#if defined(AltNum_EnableIndeterminateForms)
-        //Is indeterminate form when DecimalHalf above this value 
+        //Is indeterminate form when DecimalHalf above this value
 		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
 		
 		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
@@ -632,7 +622,7 @@ public:
     #pragma endregion NaN Setters
 
     #pragma region ValueDefines
-    private://Each class needs to define it's own
+    private:
         
 	#if defined(AltNum_EnableNaN)
         static MediumDec NaNValue()
@@ -851,16 +841,50 @@ public:
         /// </summary>
         static MediumDecV2Base TwiceLN10Div;
 
-public:
     #pragma endregion ValueDefines
 
     #pragma region String Commands
+protected:
+
+        void InitialyzeAltRepFromString(const std::string& Value)
+        {
+            #if defined(AltNum_EnablePiRep)
+            if (str.find("Pi") != std::string::npos)
+                DecimalHalf.Flags = 1;
+            #endif
+            #if defined(AltNum_EnableERep)
+            if (Value.last() == 'e')
+                DecimalHalf.Flags = 2;
+            #endif
+            #if defined(AltNum_EnableIRep)
+            if (Value.last() == 'i')
+                DecimalHalf.Flags = 3;
+            #endif
+        }
+
+public:
 
         /// <summary>
         /// Reads the string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        void ReadString(const std::string& Value);
+        void ReadString(const std::string& Value)
+        {
+            MediumDecBase::ReadString(Value);
+            InitialyzeAltRepFromString(Value);
+        }
+
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <returns>std.string</returns>
+        std::string ToBasicString() { return MediumDecBase::ToString(); }
+
+        /// <summary>
+        /// Converts to string with digits filled in even when empty
+        /// </summary>
+        /// <returns>std.string</returns>
+        std::string ToFullBasicString() { return MediumDecBase::ToFullString(); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -881,31 +905,11 @@ public:
             this->ReadString(Value);
         }
 
-public:
-
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToBasicString(){ return MediumDecBase::ToString(); }
-
-        /// <summary>
-        /// Converts to string with digits filled in even when empty
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToFullBasicString(){ return MediumDecBase::ToString(); }
-
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToString();
-
-        /// <summary>
-        /// Converts to string with digits filled in even when empty
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToFullString();
+        std::string ConvertToBasicString(const RepType& repType)
+        {
+            auto self = ConvertAsNormType(repType);
+            return self.BasicToString();
+        }
 
         /// <summary>
         /// Implements the operator std::string operator.
@@ -931,6 +935,28 @@ public:
         /// <param name="Value">The value.</param>
         MediumDecV2Base(const bool& Value){ this->SetBoolVal(Value); }
 
+    #if defined(AltNum_EnableFloatingConversion)
+	
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const float& Value){ this->SetFloatVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const double& Value){ this->SetDoubleVal(Value); }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// </summary>
+        /// <param name="Value">The value.</param>
+        MediumDecBase(const long double& Value){ this->SetDecimalVal(Value); }
+		
+	#endif
+
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
@@ -949,7 +975,8 @@ public:
 
         bool toBool() const { return IntHalf.IsZero() ? false : true; }
 
-/*
+    #if defined(AltNum_EnableFloatingConversion)
+
         /// <summary>
         /// MediumDec Variant to float explicit conversion
         /// </summary>
@@ -967,7 +994,8 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator long double() { return toDecimal(); }
-*/
+
+    #endif
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
