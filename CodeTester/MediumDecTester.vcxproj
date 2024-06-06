@@ -167,6 +167,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDec as MediumDecV2Base.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base - Copy.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base.hpp" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
@@ -177,17 +203,42 @@
     <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MediumDecV2Tests.cpp" />
     <ClInclude Include="..\tsl\ordered_map.h" />
     <ClInclude Include="..\OtherFunctions\StringFunctions.h" />
     <ClInclude Include="..\OtherFunctions\VariableConversionFunctions.h" />
     <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp" />
     <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp" />
     <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base - Copy.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\PowOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp" />
     <ClCompile Include="..\AltNum\MediumDec\MediumDecBase.cpp" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
-    <ClCompile Include="MediumDecTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />

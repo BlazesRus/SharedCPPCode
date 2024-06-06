@@ -69,9 +69,6 @@
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp">
       <Filter>Source Files\OtherFunctions</Filter>
     </ClCompile>
-    <ClCompile Include="MediumDecTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\AltNum\MediumDec\MediumDecBase.cpp">
       <Filter>Source Files\AltNum\MediumDec</Filter>
     </ClCompile>
@@ -86,6 +83,39 @@
     </ClCompile>
     <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp">
       <Filter>Source Files\AltNum\MediumDec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\PowOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base - Copy.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
+    <ClCompile Include="MediumDecV2Tests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +169,24 @@
     </ClInclude>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDec as MediumDecV2Base.hpp">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.hpp">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base - Copy.hpp">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base.hpp">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h">
+      <Filter>Header Files\AltNum\MediumDecV2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
