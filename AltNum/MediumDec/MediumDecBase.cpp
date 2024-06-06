@@ -212,8 +212,6 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::NegativePointFiveValue()
 	return MediumDecBase(MirroredInt::NegativeZero, 500000000);
 }
 
-
-
 #pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
@@ -548,13 +546,6 @@ inline void BlazesRusCode::MediumDecBase::UnsignedIntegerSubtraction(const Mirro
 			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 	}
 }
-
-/// <summary>
-/// Basic Subtraction operation between MediumDec Variant and MirroredInt
-/// that ignores special representation status
-/// (Modifies owner object)
-/// </summary>
-/// <param name="rValue">The right side value</param>
 
 inline void BlazesRusCode::MediumDecBase::IntegerSubtraction(const MirroredInt& rValue)
 {

@@ -3,34 +3,17 @@ using MediumDec = BlazesRusCode::MediumDec;
 
 #pragma region class_constructors
 
-/// <summary>
-/// Initializes a new instance of the <see cref="MediumDec"/> class.
-/// </summary>
-/// <param name="intVal">The whole number based half of the representation</param>
-/// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-
 inline BlazesRusCode::MediumDec::MediumDec(const MirroredInt& intVal, const PartialInt& decVal)
 {
 	IntHalf = intVal;
 	DecimalHalf = decVal;
 }
 
-/// <summary>
-/// Initializes a new instance of the <see cref="MediumDec"/> class.
-/// </summary>
-/// <param name="intVal">The whole number based half of the representation</param>
-/// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-
 inline BlazesRusCode::MediumDec::MediumDec(const signed int& intVal, const PartialInt& decVal)
 {
 	IntHalf = intVal;
 	DecimalHalf = decVal;
 }
-
-/// <summary>
-/// Initializes a new instance of the <see cref="MediumDec"/> class.
-/// </summary>
-/// <param name="Value">The value.</param>
 
 inline BlazesRusCode::MediumDec::MediumDec(const MediumDecBase& rhs)
 {
@@ -62,21 +45,15 @@ inline MediumDec BlazesRusCode::MediumDec::HundredMilPiNumValue()
 	return MediumDec(314159265, 358979324);
 }
 
-//10,000,000xPi(Rounded to 9th decimal digit)
-
 inline MediumDec BlazesRusCode::MediumDec::TenMilPiNumValue()
 {
 	return MediumDec(31415926, 535897932);
 }
 
-//1,000,000xPi(Rounded to 9th decimal digit)
-
 inline MediumDec BlazesRusCode::MediumDec::OneMilPiNumValue()
 {
 	return MediumDec(3141592, 653589793);
 }
-
-//10xPi(Rounded to 9th decimal digit)
 
 inline MediumDec BlazesRusCode::MediumDec::TenPiNumValue()
 {
@@ -93,40 +70,20 @@ inline MediumDec BlazesRusCode::MediumDec::ZeroValue()
 	return MediumDec();
 }
 
-/// <summary>
-/// Returns the value at one
-/// </summary>
-/// <returns>MediumDec</returns>
-
 inline MediumDec BlazesRusCode::MediumDec::OneValue()
 {
 	return MediumDec(1);
 }
-
-/// <summary>
-/// Returns the value at one
-/// </summary>
-/// <returns>MediumDec</returns>
 
 inline MediumDec BlazesRusCode::MediumDec::TwoValue()
 {
 	return MediumDec(MirroredInt::Two);
 }
 
-/// <summary>
-/// Returns the value at negative one
-/// </summary>
-/// <returns>MediumDec</returns>
-
 inline MediumDec BlazesRusCode::MediumDec::NegativeOneValue()
 {
 	return MediumDec(MirroredInt::NegativeOne);
 }
-
-/// <summary>
-/// Returns the value at 0.5
-/// </summary>
-/// <returns>MediumDec</returns>
 
 inline MediumDec BlazesRusCode::MediumDec::Point5Value()
 {
@@ -197,9 +154,6 @@ inline MediumDec BlazesRusCode::MediumDec::NegativePointFiveValue()
 {
 	return MediumDec(MirroredInt::NegativeZero, 500000000);
 }
-
-
-#pragma endregion ValueDefines
 
 #pragma endregion ValueDefines
 
