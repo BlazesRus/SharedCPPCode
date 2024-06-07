@@ -1047,23 +1047,508 @@ public:
 
     #pragma endregion ConvertToOtherTypes
 
-    #pragma region Comparison Operators
-public:
+    #pragma region Pi Conversion
+    #if defined(AltNum_EnablePiRep)
 
+    void ConvertPiToNum();
+
+    #endif
+    #pragma endregion Pi Conversion
+
+    #pragma region E Conversion
+    #if defined(AltNum_EnableERep)
+
+    void ConvertEToNum();
+
+    #endif
+    #pragma endregion E Conversion
+
+    #pragma region Imaginary Conversion
+    #if defined(AltNum_EnableIRep)
+
+        void ConvertIRepToINum(const RepType& repType)
+        {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
+            switch (repType)
+            {
+                case RepType::INum:
+                    break;
+			/*
+            #if defined(AltNum_EnableDecimaledIFractionals)
+                case RepType::INumByDiv://(Value/(ExtraRep.Value))*i Representation
+                    {
+                        BasicUnsignedDivOp(ExtraRep.Value);
+                        ExtraRep = InitialExtraRep;
+                    }
+                    break;
+            #endif*/
+            #if defined(AltNum_EnableApproaching)
+            case RepType::ApproachingImaginaryBottom:
+                DecimalHalf.Value = 1;
+                break;
+                #if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryTop:
+                DecimalHalf.Value = 999999999;
+                break;
+                #endif
+                /*#if defined(AltNum_EnableApproachingDivided)
+            case RepType::ApproachingImaginaryMidLeft:
+                ConvertFromApproachingIMidLeftToNorm(); break;
+					#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingImaginaryMidRight:
+                ConvertFromApproachingIMidRightToNorm(); break;
+					#endif
+				#endif*/
+			#endif
+            #if defined(AltNum_EnableInfinityRep)
+            case RepType::ImaginaryInfinity:
+                IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
+                DecimalHalf.Value = 999999999;
+                /*ExtraRep = InitialExtraRep;*/
+                break;
+            #endif
+            #ifdef AltNum_EnableComplexNumbers
+                case RepType::ComplexIRep:
+                {
+                    throw "Conversion from complex number to real number not supported yet.";
+                    break;
+                }
+            #endif
+                default:
+                    throw "Conversion not supported.";
+                    break;
+            }
+        }
+
+		auto ConvertAsNormalIRep(const RepType& repType)
+        {
+            auto Res = *this;
+            Res.ConvertIRepToINum(repType);
+            return Res;
+        } const
+
+    #endif
+    #pragma endregion region Imaginary Conversion
+
+
+    #pragma region Other RepType Conversion
+
+        //Returns value as normal type or INum representation
+        void ConvertToNormType(const RepType& repType)
+        {
+            switch (repType)
+            {
+            case RepType::NormalType:
+                break;
+	#if defined(AltNum_EnablePiRep)
+            case RepType::PiNum:
+                ConvertPiToNum(); break;
+		#if defined(AltNum_EnableApproaching)
+            case RepType::ApproachingBottomPi:
+                DecimalHalf.Value = 1;
+                break;
+			#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTopPi:
+                DecimalHalf.Value = 999999999;
+                break;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableERep)
+            case RepType::ENum:
+                ConvertENumToNum(); break;
+		#if defined(AltNum_EnableApproaching)
+            case RepType::ApproachingBottomPi:
+                DecimalHalf.Value = 1;
+                break;
+			#if !defined(AltNum_DisableApproachingTop)
+            case RepType::ApproachingTopPi:
+                DecimalHalf.Value = 999999999;
+                break;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+			case RepType::Infinity:
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
+				DecimalHalf = 999999999;
+				break;
+	#endif
+	#if defined(AltNum_EnableApproaching)
+			case RepType::ApproachingBottom:
+				DecimalHalf = 1;
+				break;
+		#if !defined(AltNum_DisableApproachingTop)
+			case RepType::ApproachingTop:
+				DecimalHalf = 999999999;
+				break;
+		#endif
+	#endif
+	#if defined(AltNum_EnableIRep)
+			case RepType::INum:
+				break;
+		#if defined(AltNum_EnableApproaching)
+			case RepType::ApproachingImaginaryBottom:
+				DecimalHalf.Value = 1;
+				break;
+			#if !defined(AltNum_DisableApproachingTop)
+			case RepType::ApproachingImaginaryTop:
+				DecimalHalf.Value = 999999999;
+				break;
+			#endif
+		#endif
+		#if defined(AltNum_EnableInfinityRep)
+			case RepType::ImaginaryInfinity:
+				IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
+				DecimalHalf.Value = 999999999;
+				break;
+		#endif
+		#ifdef AltNum_EnableComplexNumbers
+			case RepType::ComplexIRep:
+				throw "Conversion from complex number to real number not supported yet.";
+				break;
+		#endif
+	#endif
+	#ifdef AltNum_EnableComplexNumbers
+            case RepType::ComplexIRep:
+                throw "Conversion from complex number to real number not supported yet.";
+                break;
+	#endif
+            default:
+                throw "Conversion to normal number not supported yet?";
+                break;
+            }
+        } const
+
+		//Returns value as normal type or INum representation
+        auto ConvertAsNormType(const RepType& repType)
+        {
+            auto Res = *this;
+            Res.ConvertToNormType(repType);
+            return Res;
+        }
+
+        //Converts value to normal type representation
+        void ConvertToNormTypeV2()
+        {
+            RepType repType = GetRepType();
+            ConvertToNormType(repType);
+        }
+
+		//Returns value as normal type representation
+        auto ConvertAsNormTypeV2()
+        {
+            auto Res = *this;
+            Res.ConvertToNormTypeV2();
+            return Res;
+        }
+
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)||defined(AltNum_EnableIRep)
+        RepType GetRepAsNormalEquavant(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::INum:
+		#endif
+					return RepType::NormalType; break;
+		#if defined(AltNum_EnableApproaching)
+			#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+			#endif
+					return RepType::ApproachingBottom; break;
+			#if !defined(AltNum_DisableApproachingTop
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepType::ApproachingImaginaryBottom:
+				#endif
+					return RepType::ApproachingTop; break;
+			#endif
+		#endif
+		#if defined(AltNum_EnableImaginaryInfinity)
+				case RepType::ImaginaryInfinity:
+					return RepType::Infinity; break;
+		#endif
+				default:
+					return repType;
+			}
+		}
+	#endif
+
+	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
+        RepType ConvertToNormalEquivalant(const RepType& repType)
+        {
+			switch(repType)
+			{
+		#if defined(AltNum_EnablePiRep)
+				case RepType::PiNum:{
+					BasicUnsignedMultOp(PiNum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}break;
+		#endif
+		#if defined(AltNum_EnableERep)
+				case RepType::ENum:{
+					BasicUnsignedMultOp(ENum); DecimalHalf.Flags = 0;
+					return RepType::NormalType;
+				}	break;
+		#endif
+			#if defined(AltNum_EnableApproaching)
+				#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingBottomPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepType::ApproachingBottomE:
+				#endif
+					if(IntHalf.Value==0)
+					{
+						DecimalHalf.Flags = 0;
+						return RepType::ApproachingBottom;
+					}
+					else
+					{
+						ConvertToNormType(repType);
+						return RepType::NormalType;
+					}
+					break;
+				#if !defined(AltNum_DisableApproachingTop)
+					#if defined(AltNum_EnablePiRep)
+				case RepType::ApproachingTopPi:
+					#endif
+					#if defined(AltNum_EnableERep)
+				case RepType::ApproachingTopE:
+					#endif
+					ConvertToNormType(repType);
+					return RepType::NormalType;
+					break;
+				#endif
+			#endif
+				default:
+					return repType;
+			}
+		}
+
+		//Returns std::pair of Value and RepType
+        auto ConvertAsNormalEquivalant(const RepType& repType)
+        {
+            auto Res = *this;
+            RepType convertedRep = ConvertToNormalEquivalant(repType, convertedRep);
+            return std::make_pair(Res, convertedRep);
+		}
+	#endif
+
+    #pragma endregion Other RepType Conversion
+
+    #pragma region Comparison Operators
+protected:
+
+		std::strong_ordering BasicComparison(const MediumDecV2Base& that) const
+		{
+            return BasicComparisonV1(that);
+        }
+
+    #if defined(AltNum_EnableInfinityRep))
+		template<MediumDecVariant VariantType=MediumDecV2Base>
+		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
+		{
+			if(IntHalf.IsPositive())
+				if(RRep==RepType:Infinity&&that.IntHalf.IsPositive())
+					return 0<=>0;
+				else
+        #if defined(AltNum_UseInvertedSign)
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+		#else
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+		#endif
+			else
+				if(RRep==RepType:Infinity&&that.IntHalf.IsNegative())
+					return 0<=>0;
+				else
+		#if defined(AltNum_UseInvertedSign)
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+		#else
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+		#endif
+		}
+	#endif
+
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=MediumDecV2Base>
+		std::strong_ordering CompareWithV1(const VariantType& that) const
+		{
+	#if defined(MediumDecV2_EnableWithinMinMaxRange)
+			if(DecimalHalf.Flag==3) {
+				if(that.DecimalHalf.Flag==3) {
+					//To-do compare within min-max range code here
+				}
+				else {
+					//To-do compare within min-max range code here
+				}
+			}
+			else if(that.DecimalHalf.Flag==3) {
+				//To-do compare within min-max range code here
+			}
+	#endif
+			//Comparing if number is negative vs positive
+    #if defined(AltNum_UseInvertedSign)
+			auto SignCmp = Sign <=> that.Sign;
+    #else   //(inverted comparison so sign of zero==positive)
+            auto SignCmp = that.Sign <=> Sign;
+    #endif
+	        if (SignCmp != 0)
+				return SignCmp;
+			RepType LRep = GetRepType();
+			RepType RRep = that.GetRepType();
+    #if defined(AltNum_EnableNaN)||defined(AltNum_EnableNilRep)||defined(AltNum_EnableUndefinedButInRange)
+			if(LRep^UndefinedBit||RRep^UndefinedBit)
+				throw "Can't compare undefined/nil representations";
+    #endif
+    #if defined(AltNum_EnableIRep)
+            if (LValue.DecimalHalf.Flags == 3)
+            {
+                if(RValue.Flags!=3)
+                    throw "Can't compare imaginary number with real number";
+				else if(LRep==RepType:ImaginaryInfinity){
+					if(RRep==RepType:ImaginaryInfinity)
+						return SignCmp;
+					else{
+			#if defined(AltNum_UseInvertedSign)
+						if(IsPositive())//+Inf i vs Any non-inf imaginary
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else//-Inf i vs Any non-inf imaginary
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#else//Inverted order compared to if sign of positive == 1
+						if(IsPositive())
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+						else
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#endif
+					}
+				} else if(RRep==RepType:ImaginaryInfinity)
+                {
+			#if defined(AltNum_UseInvertedSign)
+						if(that.IsPositive())//Any non-inf imaginary vs +Inf i
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+						else//Any non-inf imaginary vs -Inf i
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#else
+						if(that.IsPositive())
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#endif
+                }
+                else
+			    	return BasicComparisonV2(rSide);
+            }
+            else if(RValue.Flags==3)
+                throw "Can't compare imaginary number with real number";
+    #endif
+			switch(LRep)
+			{
+	#if defined(AltNum_EnableInfinityRep)
+                case RepType:Infinity:
+                    LSideInfinityComparison(that, RRep);
+                    break;
+	#endif
+	#if defined(AltNum_EnableApproaching)
+
+	#endif
+				default:
+				{
+					if(LRep==RRep)
+						return BasicComparisonV2(that);
+					else if(RRep==RepType:Infinity)
+                    {
+			#if defined(AltNum_UseInvertedSign)
+                        if(that.IntHalf.IsPositive())
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;//Positive Infinity is greater than real number representations
+						else
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+			#else
+                        if(that.IntHalf.IsPositive())
+							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+						else
+							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+			#endid
+                    }
+                    else
+					{
+						auto lSide = *this;
+						auto rSide = that;
+						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+						return lSide.BasicComparison(rSide);
+					}
+				}
+			}
+		}
+
+		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
+		template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=signed int>
+		std::strong_ordering CompareWithIntV1(const IntType& that) const
+		{
+    #if defined(AltNum_EnableIRep)
+            if(DecimalHalf.Flags==3)
+                throw "Can't compare imaginary number with real number except for checking if equal.";
+    #endif
+			//Pi and E only enabled if imbedded flags are enabled
+			if(DecimalHalf.Flags==0)
+			{
+				return constexpr (std::is_unsigned<IntType>)?BasicUIntComparison(that):BasicIntComparison(that);
+			}
+			else
+			{
+				VariantType lSide = *this;
+				lSide.ConvertToNormTypeV2();
+				return constexpr (std::is_unsigned<IntType>)?lSide.BasicUIntComparison(that):lSide.BasicIntComparison(that);
+			}
+		}
+
+        std::strong_ordering CompareWith(const MediumDecV2Base& that) const
+		{
+            return CompareWithV1<MediumDecV2Base>
+        }
+
+		std::strong_ordering CompareWithInt(const unsigned int& that) const
+		{
+            return CompareWithIntV1(that);
+        }
+
+		std::strong_ordering CompareWithInt(const signed int& that) const
+		{
+            return CompareWithIntV1(that);
+        }
+
+public:
 		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
-		{//return BasicComparison(that);
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
+		{
+			return CompareWith(that);
 		}
 
 		std::strong_ordering operator<=>(const int& that) const
 		{
-			return BasicIntComparison(that);
+    #if defined(AltNum_EnableIRep)
+            if(DecimalHalf.Flags==3)
+                throw "Can't compare imaginary number with real number except for checking if equal.";
+    #endif
+            MediumDecV2Base LValue = *this;
+            LValue.ConvertToNormTypeV2();
+			return LValue.CompareWithInt(that);
 		}
 
 		bool operator==(const MediumDecV2Base& that) const

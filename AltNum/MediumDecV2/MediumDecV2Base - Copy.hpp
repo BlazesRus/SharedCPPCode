@@ -1358,15 +1358,13 @@ namespace BlazesRusCode
 
     #pragma region Comparison Operators
 protected:
-		//Compare only as if in NormalType representation mode
-        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MediumDecV2Base>;
 
-#if defined(AltNum_EnableMirroredSection)
-		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MediumDecV2Base>;
-#endif
+		std::strong_ordering BasicComparison(const MediumDecV2Base& that) const
+		{
+            return BasicComparisonV1(that);
+        }
 
-    #if defined(AltNum_DefineInfinityAsSignedReps)
+    #if defined(AltNum_EnableInfinityRep))
 		template<MediumDecVariant VariantType=MediumDecV2Base>
 		std::strong_ordering LSideInfinityComparison(const VariantType& that, const RepType& RRep) const
 		{
@@ -1496,35 +1494,47 @@ protected:
 						auto lSide = *this;
 						auto rSide = that;
 						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
-						return lSide.BasicComparisonV2(rSide);
+						return lSide.BasicComparison(rSide);
 					}
 				}
 			}
 		}
 
 		//Templated version of Spaceship operator to allow full version of class to inherit the spaceship operator code
-		template<MediumDecVariant VariantType=MediumDecV2Base>
-		std::strong_ordering CompareWithIntV1(const int& that) const
+		template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=signed int>
+		std::strong_ordering CompareWithIntV1(const IntType& that) const
 		{
-			int lVal; int rVal;
+    #if defined(AltNum_EnableIRep)
+            if(DecimalHalf.Flags==3)
+                throw "Can't compare imaginary number with real number except for checking if equal.";
+    #endif
 			//Pi and E only enabled if imbedded flags are enabled
 			if(DecimalHalf.Flags==0)
 			{
-				return BasicIntComparison(that);
+				return constexpr (std::is_unsigned<IntType>)?BasicUIntComparison(that):BasicIntComparison(that);
 			}
 			else
 			{
-				auto lSide = *this;
+				VariantType lSide = *this;
 				lSide.ConvertToNormTypeV2();
-				return lSide.BasicIntComparison(that);
+				return constexpr (std::is_unsigned<IntType>)?lSide.BasicUIntComparison(that):lSide.BasicIntComparison(that);
 			}
 		}
 
-		//Alias to prevent creating function more than once with template arguments
-        constexpr auto CompareWith = MediumDecBase::CompareWithV1<MediumDecV2Base>;
+        std::strong_ordering CompareWith(const MediumDecV2Base& that) const
+		{
+            return CompareWithV1<MediumDecV2Base>
+        }
 
-		//Alias to prevent creating function more than once with template arguments
-        constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MediumDecV2Base>;
+		std::strong_ordering CompareWithInt(const unsigned int& that) const
+		{
+            return CompareWithIntV1(that);
+        }
+
+		std::strong_ordering CompareWithInt(const signed int& that) const
+		{
+            return CompareWithIntV1(that);
+        }
 
 public:
 		std::strong_ordering operator<=>(const MediumDecV2Base& that) const
@@ -1532,14 +1542,33 @@ public:
 			return CompareWith(that);
 		}
 
-	/*
-		//Add comparisons to previous parent classes with more limited ranges based on supported values
-
-    */
-
 		std::strong_ordering operator<=>(const int& that) const
 		{
-			return CompareWithInt(that);
+    #if defined(AltNum_EnableIRep)
+            if(DecimalHalf.Flags==3)
+                throw "Can't compare imaginary number with real number except for checking if equal.";
+    #endif
+            MediumDecV2Base LValue = *this;
+            LValue.ConvertToNormTypeV2();
+			return LValue.CompareWithInt(that);
+		}
+
+		bool operator==(const MediumDecV2Base& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return false;
+			if (DecimalHalf!=that.DecimalHalf)
+				return false;
+            return true;
+		}
+
+		bool operator!=(const MediumDecV2Base& that) const
+		{
+			if (IntHalf!=that.IntHalf)
+				return true;
+			if (DecimalHalf!=that.DecimalHalf)
+				return true;
+            return false;
 		}
 
 		bool operator==(const int& that) const
@@ -1551,51 +1580,107 @@ public:
 			return true;
 		}
 
-		bool operator==(const MediumDec& that) const
+		bool operator!=(const int& that) const
 		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.IntHalf)
-				return false;
+			if (IntHalf!=that)
+				return true;
+			if (DecimalHalf!=0)
+				return true;
+			return false;
 		}
 
-		bool operator==(const MediumDecV2Base& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.IntHalf)
-				return false;
-		}
     #pragma endregion Comparison Operators
 
-    #pragma region NormalRep Integer division operations
+    #pragma region NormalRep Integer Division Operations
 protected:
-        template<IntegerType IntType=unsigned int>
-        constexpr auto PartialUIntDivOp = MediumDecBase::PartialUIntDivOp<IntType>;
 
+        /// <summary>
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntDivOpV1(const IntType& Value)
+        {
+            MediumDecBase::UIntDivOpV1(Value);
+        }
+		
         template<IntegerType IntType=signed int>
-        constexpr auto PartialIntDivOp = MediumDecBase::PartialIntDivOp<IntType>;
+        void BasicIntDivOpV1(const IntType& Value)
+        {
+            MediumDecBase::IntDivOpV1(Value);
+        }
+
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicUIntDivOperationV1(const IntType& rValue)
+        { UIntDivOpV1(rValue); return *this; }
+
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicIntDivOperationV1(const IntType& rValue)
+        { BasicIntDivOpV1(rValue); return *this; }
+
+        /// <summary>
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        const VariantType BasicDivideByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicUIntDivOperationV1(rValue); }
+
+        /// <summary>
+        /// Basic division operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=signed int>
+        const VariantType BasicDivideByIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicIntDivOperationV1(rValue); }
 
 public:
-        /// <summary>
-        /// Basic division operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
-        template<IntegerType IntType=unsigned int>
-        constexpr auto BasicUIntDivOp = MediumDecBase::BasicUIntDivOp<IntType>;
 
-        /// <summary>
-        /// Basic division operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
-        template<IntegerType IntType=signed int>
-        constexpr auto BasicIntDivOp = MediumDecBase::BasicIntDivOp<IntType>;
+        void UIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
+        void IntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
 
-    #pragma endregion NormalRep Integer division operations
+        void UnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
+        void UnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
+
+        void UInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
+        void Int16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
+
+        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
+
+        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
+
+    #pragma endregion NormalRep Integer Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
