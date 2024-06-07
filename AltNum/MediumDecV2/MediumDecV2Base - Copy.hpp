@@ -2231,30 +2231,92 @@ public:
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-        template<IntegerType IntType=signed int>
-        constexpr auto PartialIntMultOp = MediumDecBase::PartialIntMultOp<IntType>;
 
+        /// <summary>
+        /// Basic Multiplication operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntMultOpV1(const IntType& Value)
+        {
+            MediumDecBase::UIntMultOpV1(Value);
+        }
+		
         template<IntegerType IntType=signed int>
-        constexpr auto PartialUIntMultOp = MediumDecBase::PartialUIntMultOp<IntType>;
+        void BasicIntMultOpV1(const IntType& Value)
+        {
+            MediumDecBase::IntMultOpV1(Value);
+        }
+
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicUIntMultOperationV1(const IntType& rValue)
+        { UIntMultOpV1(rValue); return *this; }
+
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        VariantType& BasicIntMultOperationV1(const IntType& rValue)
+        { BasicIntMultOpV1(rValue); return *this; }
+
+        /// <summary>
+        /// Basic Multiplication operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=unsigned int>
+        const VariantType BasicMultiplyByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicUIntMultOperationV1(rValue); }
+
+        /// <summary>
+        /// Basic Multiplication operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<MediumDecVariant VariantType=MediumDecV2Base, IntegerType IntType=signed int>
+        const VariantType BasicMultiplyByIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicIntMultOperationV1(rValue); }
 
 public:
-        /// <summary>
-        /// Basic multiplication operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecV2&</returns>
-        template<IntegerType IntType=signed int>
-        constexpr auto BasicIntMultOp = MediumDecBase::BasicIntMultOp<IntType>;
 
-        /// <summary>
-        /// Basic multiplication operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecV2&</returns>
-        template<IntegerType IntType=signed int>
-        constexpr auto BasicUIntMultOp = MediumDecBase::BasicUIntMultOp<IntType>;
+        void BasicUIntMultOp(const unsigned int& rValue) { BasicUIntMultOpV1(rValue); }
+        void BasicIntMultOp(const signed int& rValue) { BasicIntMultOpV1(rValue); }
+        void BasicUInt64MultOp(const unsigned __int64& rValue) { BasicUIntMultOpV1(rValue); }
+        void BasicInt64MultOp(const signed __int64& rValue) { BasicIntMultOpV1(rValue); }
+
+        void BasicUnsignedIntMultOp(const signed int& rValue) { BasicUIntMultOpV1(rValue); }
+        void BasicUnsignedInt64MultOp(const signed __int64& rValue) { BasicUIntMultOpV1(rValue); }
+
+        void BasicUInt8MultOp(const unsigned char& rValue) { BasicUIntMultOpV1(rValue); }
+        void BasicInt8MultOp(const signed char& rValue) { BasicIntMultOpV1(rValue); }
+        void BasicUInt16MultOp(const unsigned short& rValue) { BasicUIntMultOpV1(rValue); }
+        void BasicInt16MultOp(const signed short& rValue) { BasicIntMultOpV1(rValue); }
+
+        MediumDecV2Base& BasicUIntMultOperation(const unsigned int& rValue) { return BasicUIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicIntMultOperation(const signed int& rValue) { return BasicIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt64MultOperation(const unsigned __int64& rValue) { return BasicUIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicInt64MultOperation(const signed __int64& rValue) { return BasicIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt8MultOperation(const unsigned char& rValue) { return BasicUIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicInt8MultOperation(const signed char& rValue) { return BasicIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt16MultOperation(const unsigned short& rValue) { return BasicUIntMultOperationV1(rValue); }
+        MediumDecV2Base& BasicInt16MultOperation(const signed short& rValue) { return BasicIntMultOperationV1(rValue); }
+
+        const MediumDecV2Base BasicMultiplyByUInt(const unsigned int& rValue) { return BasicMultiplyByUIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByInt(const signed int& rValue) { return BasicMultiplyByIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByUInt64(const unsigned __int64& rValue) { return BasicMultiplyByUIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByInt64(const signed __int64& rValue) { return BasicMultiplyByIntV1(rValue); }
+
+        const MediumDecV2Base BasicUnsignedMultiplyByInt(const signed int& rValue) { return BasicMultiplyByUIntV1(rValue); }
+        const MediumDecV2Base BasicUnsignedMultiplyByInt64(const signed __int64& rValue) { return BasicMultiplyByUIntV1(rValue); }
+
+        const MediumDecV2Base BasicMultiplyByUInt8(const unsigned char& rValue) { return BasicMultiplyByUIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByInt8(const signed char& rValue) { return BasicMultiplyByIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByUInt16(const unsigned short& rValue) { return BasicMultiplyByUIntV1(rValue); }
+        const MediumDecV2Base BasicMultiplyByInt16(const signed short& rValue) { return BasicMultiplyByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
