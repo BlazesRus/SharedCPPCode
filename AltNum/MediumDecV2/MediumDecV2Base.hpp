@@ -1643,40 +1643,40 @@ protected:
 
 public:
 
-        void UIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
-        void IntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicIntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
 
-        void UnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
-        void UnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicUnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicUnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
 
-        void UInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
 
-        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicIntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
 
-        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicUnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicUnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -1756,31 +1756,356 @@ public:
         /// <returns>MediumDecV2Base&</returns>
         void DivideByFour();
 
-protected:
-
-        //Return copy of result divided by two
-        template<MediumDecVariant VariantType = MediumDecV2Base>
-        VariantType DividedByTwoV1() const
-        {
-            VariantType result = *this; result.DivideByTwo();
-            return result;
-        }
-
-        //Return copy of result divided by four
-        template<MediumDecVariant VariantType = MediumDecV2Base>
-        VariantType DividedByFourV1() const
-        {
-            VariantType result = *this; result.DivideByFour();
-            return result;
-        }
-
-public:
-
         //Return copy of result divided by two
         MediumDecV2Base DividedByTwo() const;
 
         //Return copy of result divided by four
         MediumDecV2Base DividedByFour() const;
+
+protected:
+
+        /// <summary>
+        /// Unsigned division operation between MediumDec variant and unsigned integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecVariant&</returns>
+        template<IntegerType IntType= unsigned int>
+        auto UIntDivOpV1(const IntType& rValue)
+		{
+            if (rValue == 1)
+                return *this;
+            if (rValue == 0)
+            {
+                #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_DefineDivideByZeroAsInfinity)
+                if (IntHalf < 0)
+                    SetAsNegativeInfinity();
+                else
+                    SetAsInfinity();
+                return *this;
+                #else
+                throw "Target rValue can not be divided by zero";
+                #endif
+            }
+        	switch(DecimalHalf.Flags)
+        	{
+        #if defined(AltNum_EnablePiRep)
+        		case 1:{
+                    RepType LRep = rValue.GetPiRepType();
+                    switch(LRep)
+                    {
+                        case RepType::PiNum:{
+                            BasicUIntDivOp(rValue);
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomPi://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopPi://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableERep)
+        		case 2:{
+                    RepType LRep = rValue.GetERepType();
+                    switch(LRep)
+                    {
+                        case RepType::ENum:{
+                            BasicUIntDivOp(rValue);
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottomE://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTopE://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        #if defined(AltNum_EnableIRep)//IRep_to_integer
+        		case 3:{
+                    RepType LRep = rValue.GetIRepType();
+                    switch(LRep){
+                        case RepType::INum:{
+                            BasicUIntDivOp(rValue);
+                        } break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
+                    #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
+                    #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormalIRep(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+            #endif
+            #if defined(AltNum_EnableImaginaryInfinity)
+                        case RepType::ImaginaryInfinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        #endif
+        		default:{
+                    RepType LRep = rValue.GetNormRepType();
+                    switch(LRep)
+                    {
+                        case RepType::NormalType:
+                        {
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+            #if defined(AltNum_EnableApproaching)
+                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
+                        {
+                            if (IsAtZeroInt())
+                                return *this;
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        }
+                        break;
+                        #if !defined(AltNum_DisableApproachingTop)
+                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+                        #endif
+    #pragma region AltDecVariantExclusive
+    #pragma endregion AltDecVariantExclusive
+                        {
+                            ConvertToNormType(LRep);
+                            BasicUIntDivOp(rValue);
+                        } break;
+            #endif
+            #ifdef AltNum_EnableInfinity
+                        case RepType::Infinity:
+                            return *this;
+                            break;
+            #endif
+                        default:
+                            throw "Unable to perform integer division on current representation.";
+                    }
+                } break;
+        	}
+		}
+
+        /// <summary>
+        /// Division operation between MediumDec variant and integer values
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecVariant&</returns>
+        template<IntegerType IntType= signed int>
+        auto IntDivOpV1(const IntType& rValue)
+		{
+            if(Value<0)
+            {
+                SwapNegativeStatus();
+                UIntDivOpV1(-Value);
+            }
+            else
+                UIntDivOpV1(Value);
+		}
+
+        /// <summary>
+        /// Unsigned division operation between MediumDec variant and unsigned integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecVariant</returns>
+        template<IntegerType IntType= unsigned int>
+        auto DivByUIntV1(const IntType& rValue)
+		{
+            auto self = *this;
+            return self.UIntDivOpV1(rValue);
+		}
+
+        /// <summary>
+        /// Division operation between MediumDec variant and integer values
+        /// (Doesn't modifify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        /// <returns>MediumDecVariant</returns>
+        template<IntegerType IntType= signed int>
+        constexpr auto DivByIntV1(const IntType& rValue)
+		{
+            auto self = *this;
+            return self.IntDivOpV1(rValue);
+		}
+
+public:
+
+        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
+        void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
+        void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
+
+        void UnsignedIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
+
+        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
+        void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
+        void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
+
+        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
+
+        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
+
+protected:
+		void UnsignedDivOp_RValueIntSwitch(const auto& rValue)
+		{
+			switch(rValue.IntHalf.Value)
+			{
+				case 2:
+					if(IntHalf&1==1)//Check if number is odd
+						UnsignedBasicIntDivOp(2);
+					else
+						IntHalf.Value /= 2;
+					break;
+				case 4:
+					if(((IntHalf >> 2) << 2) == IntHalf)
+						IntHalf.Value /= 4;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 8:
+					if(((IntHalf >> 3) << 3) == IntHalf)
+						IntHalf.Value /= 8;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 16:
+					if(((IntHalf >> 4) << 4) == IntHalf)
+						IntHalf.Value /= 16;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 32:
+					if(((IntHalf >> 5) << 5) == IntHalf)
+						IntHalf.Value /= 32;
+					else
+						UnsignedBasicIntDivOp(4);
+					break;
+				case 0:
+					throw "Target value can not be divided by zero";
+					break;
+				default:
+					UnsignedBasicIntDivOp(rValue.IntHalf.Value);
+					break;
+			}
+		}
+
+public:
+
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base& UnsignedDivOp(const MediumDecV2Base& rValue);
+
+		/// <summary>
+        /// Division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        void DivOp(const MediumDecV2Base& Value)
+        {
+            if(Value.IsNegative())
+            {
+                SwapNegativeStatus();
+                UnsignedMultOp(-Value);
+            }
+            else
+                UnsignedDivOp(Value);
+        }
+
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto DivideByUnsigned(const MediumDecV2Base& rValue)
+        {
+            auto self = *this;
+            return self.UnsignedDivOp(rValue);
+        }
+
+		/// <summary>
+        /// Division operation that ignores special decimal status
+        /// Return true if divide into zero
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        auto DivideBy(const MediumDecV2Base& rValue)
+        {
+            auto self = *this;
+            return self.DivOp(rValue);
+        }
 
         /// <summary>
         /// /= operation

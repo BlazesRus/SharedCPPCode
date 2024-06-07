@@ -1645,42 +1645,100 @@ protected:
 
 public:
 
-        void UIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
-        void IntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUIntDivOp(const unsigned int& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicIntDivOp(const signed int& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt64DivOp(const unsigned __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt64DivOp(const signed __int64& rValue) { BasicIntDivOpV1(rValue); }
 
-        void UnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
-        void UnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicUnsignedIntDivOp(const signed int& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicUnsignedInt64DivOp(const signed __int64& rValue) { BasicUIntDivOpV1(rValue); }
 
-        void UInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
-        void Int16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt8DivOp(const unsigned char& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt8DivOp(const signed char& rValue) { BasicIntDivOpV1(rValue); }
+        void BasicUInt16DivOp(const unsigned short& rValue) { BasicUIntDivOpV1(rValue); }
+        void BasicInt16DivOp(const signed short& rValue) { BasicIntDivOpV1(rValue); }
 
-        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUIntDivOperation(const unsigned int& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicIntDivOperation(const signed int& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt64DivOperation(const unsigned __int64& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt64DivOperation(const signed __int64& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt8DivOperation(const unsigned char& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt8DivOperation(const signed char& rValue) { return BasicIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt16DivOperation(const unsigned short& rValue) { return BasicUIntDivOperationV1(rValue); }
+        MediumDecV2Base& BasicInt16DivOperation(const signed short& rValue) { return BasicIntDivOperationV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt(const unsigned int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt(const signed int& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt64(const unsigned __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt64(const signed __int64& rValue) { return BasicDivideByIntV1(rValue); }
 
-        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicUnsignedDivideByInt(const signed int& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicUnsignedDivideByInt64(const signed __int64& rValue) { return BasicDivideByUIntV1(rValue); }
 
-        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt8(const unsigned char& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt8(const signed char& rValue) { return BasicDivideByIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByUInt16(const unsigned short& rValue) { return BasicDivideByUIntV1(rValue); }
+        const MediumDecV2Base BasicDivideByInt16(const signed short& rValue) { return BasicDivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
+
+	#pragma region NormalRep AltNum Division Operations
+
+		/// <summary>
+        /// Basic unsigned division operation(main code block)
+        /// Return true if divide into zero
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The rValue</param>
+        bool BasicUnsignedPartialDivOp(const MediumDecV2Base& rValue){ return MediumDecBase::UnsignedPartialDivOpV1(rValue); }
+		
+		/// <summary>
+        /// Unsigned division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side value</param>
+        void BasicUnsignedDivOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedDivOpV1(rValue); }
+		
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        void BasicDivOp(const MediumDecV2Base& rValue){ MediumDecBase::DivOpV1(rValue); }
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base& BasicUnsignedDivOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::UnsignedDivOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base& BasicDivOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::DivOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic unsigned division operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        const MediumDecV2Base BasicDivideByUnsigned(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.UnsignedDivOperation(rValue); }
+
+		/// <summary>
+        /// Basic division operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        const MediumDecV2Base BasicDivideBy(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.DivOperation(rValue); }
+
+	#pragma endregion NormalRep AltNum Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
@@ -1736,30 +1794,6 @@ public:
         constexpr auto BasicIntSubOp = MediumDecBase::BasicIntSubOp<AltDecBase>;
 
     #pragma endregion NormalRep Integer Subtraction Operations
-
-    #pragma region NormalRep Integer Bitwise Operations
-
-    #pragma endregion NormalRep Integer Bitwise Operations
-
-    #pragma region Mixed Fraction Operations
-
-    #pragma endregion Mixed Fraction Operations
-
-    #pragma region NormalRep AltNum division operations
-
-    #pragma endregion NormalRep AltNum division operations
-
-    #pragma region NormalRep AltNum Multiplication Operations
-
-    #pragma endregion NormalRep AltNum Multiplication Operations
-
-	#pragma region NormalRep AltNum Addition Operations
-
-	#pragma endregion NormalRep AltNum Addition Operations
-
-	#pragma region NormalRep AltNum Subtraction Operations
-
-	#pragma endregion NormalRep AltNum Subtraction Operations
 
 	#pragma region Other division operations
 
@@ -1983,23 +2017,40 @@ protected:
 
 public:
 
-        constexpr auto UIntDivOpV1 = UIntDivOpV1<unsigned int>;
-        constexpr auto IntDivOpV1 = IntDivOpV1<signed int>;
-        constexpr auto UnsignedIntDivOp = UIntDivOpV1<signed int>;
-        constexpr auto UInt64DivOp = UIntDivOpV1<UInt64>;
-        constexpr auto Int64DivOp = IntDivOpV1<Int64>;
+        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
+        void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
+        void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        constexpr auto DivByUInt = DivByUIntV1<unsigned int>;
-        constexpr auto DivByInt = DivByIntV1<signed int>;
-        constexpr auto UnsignedDivByInt = DivByUInt<signed int>;
-        constexpr auto DivByUInt64 = DivByUInt<;
-        constexpr auto DivByInt64 = BasicDivByInt64;
-        constexpr auto UnsignedDivByInt64 = DivByUInt<Int64>;
+        void UnsignedIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
 
-        constexpr auto DivByUInt8 = BasicDivByUInt8;
-        constexpr auto DivByInt8 = BasicDivByInt8;
-        constexpr auto DivByUInt16 = BasicDivByUInt16;
-        constexpr auto DivByInt16 = BasicDivByInt16;
+        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
+        void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
+        void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
+
+        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
+
+        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+
+        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
 protected:
 		void UnsignedDivOp_RValueIntSwitch(const auto& rValue)
