@@ -1771,10 +1771,10 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
-        auto UIntDivOpV1(const IntType& rValue)
+        void UIntDivOpV1(const IntType& rValue)
 		{
             if (rValue == 1)
-                return *this;
+                return;
             if (rValue == 0)
             {
                 #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_DefineDivideByZeroAsInfinity)
@@ -1938,7 +1938,7 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
-        auto IntDivOpV1(const IntType& rValue)
+        void IntDivOpV1(const IntType& rValue)
 		{
             if(Value<0)
             {
@@ -1949,31 +1949,33 @@ protected:
                 UIntDivOpV1(Value);
 		}
 
-        /// <summary>
-        /// Unsigned division operation between MediumDec variant and unsigned integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= unsigned int>
-        auto DivByUIntV1(const IntType& rValue)
-		{
-            auto self = *this;
-            return self.UIntDivOpV1(rValue);
-		}
+        template<IntegerType IntType=unsigned int>
+        MediumDecBase& UIntDivOperationV1(const IntType& rValue)
+        { UIntDivOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=unsigned int>
+        MediumDecBase& IntDivOperationV1(const IntType& rValue)
+        { IntDivOpV1(rValue); return *this; }
 
         /// <summary>
-        /// Division operation between MediumDec variant and integer values
-        /// (Doesn't modifify owner object)
+        /// Division operation between MediumDec Variant and unsigned Integer value 
+        /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= signed int>
-        constexpr auto DivByIntV1(const IntType& rValue)
-		{
-            auto self = *this;
-            return self.IntDivOpV1(rValue);
-		}
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=unsigned int>
+        const auto DivideByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.UIntDivOperationV1(rValue); }
+
+        /// <summary>
+        /// Division operation between MediumDec Variant and unsigned Integer value 
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        /// <returns>MediumDec&</returns>
+        template<IntegerType IntType=signed int>
+        const auto DivideByIntV1(const IntType& rValue)
+        { auto self = *this; return self.IntDivOperationV1(rValue); }
 
 public:
 
