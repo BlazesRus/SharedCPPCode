@@ -355,7 +355,8 @@ public:
 
     #pragma region ConvertFromOtherTypes
 
-/*
+    #if defined(AltNum_EnableFloatingConversion)
+	
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
@@ -373,7 +374,8 @@ public:
         /// </summary>
         /// <param name="Value">The value.</param>
         MediumDec(const long double& Value){ this->SetDecimalVal(Value); }
-*/
+		
+	#endif
 
         MediumDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
         MediumDec(const signed __int64& Value){ this->SetIntVal(Value); }
@@ -393,7 +395,7 @@ public:
 
     #pragma region ConvertToOtherTypes
 
-/*
+    #if defined(AltNum_EnableFloatingConversion)
         /// <summary>
         /// MediumDec Variant to float explicit conversion
         /// </summary>
@@ -411,7 +413,7 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator long double() { return toDecimal(); }
-*/
+	#endif
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
@@ -477,7 +479,12 @@ public:
 				return DecimalHalfCmp;
 		}
 
-		std::strong_ordering operator<=>(const int& that) const
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			return BasicUIntComparison(that);
+		}
+
+		std::strong_ordering operator<=>(const signed int& that) const
 		{
 			return BasicIntComparison(that);
 		}
@@ -500,7 +507,7 @@ public:
             return false;
 		}
 
-		bool operator==(const int& that) const
+		bool operator==(const unsigned int& that) const
 		{
 			if (IntHalf!=that)
 				return false;
@@ -509,7 +516,25 @@ public:
 			return true;
 		}
 
-		bool operator!=(const int& that) const
+		bool operator!=(const unsigned int& that) const
+		{
+			if (IntHalf!=that)
+				return true;
+			if (DecimalHalf!=0)
+				return true;
+			return false;
+		}
+
+		bool operator==(const signed int& that) const
+		{
+			if (IntHalf!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator!=(const signed int& that) const
 		{
 			if (IntHalf!=that)
 				return true;

@@ -737,6 +737,14 @@ protected:
 				return DecimalHalfCmp;
 		}
 		
+		std::strong_ordering BasicComparison(const MediumDecBase& that) const
+		{
+            return BasicComparisonV1(that);
+        }
+
+		//Compare only as if in NormalType representation mode
+		std::strong_ordering BasicUIntComparison(const int& that) const;
+
 		//Compare only as if in NormalType representation mode
 		std::strong_ordering BasicIntComparison(const int& that) const;
 
@@ -753,7 +761,12 @@ public:
 				return DecimalHalfCmp;
 		}
 
-		std::strong_ordering operator<=>(const int& that) const
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			return BasicUIntComparison(that);
+		}
+
+		std::strong_ordering operator<=>(const signed int& that) const
 		{
 			return BasicIntComparison(that);
 		}
@@ -776,7 +789,7 @@ public:
             return false;
 		}
 
-		bool operator==(const int& that) const
+		bool operator==(const unsigned int& that) const
 		{
 			if (IntHalf!=that)
 				return false;
@@ -785,7 +798,25 @@ public:
 			return true;
 		}
 
-		bool operator!=(const int& that) const
+		bool operator!=(const unsigned int& that) const
+		{
+			if (IntHalf!=that)
+				return true;
+			if (DecimalHalf!=0)
+				return true;
+			return false;
+		}
+
+		bool operator==(const signed int& that) const
+		{
+			if (IntHalf!=that)
+				return false;
+			if (DecimalHalf!=0)
+				return false;
+			return true;
+		}
+
+		bool operator!=(const signed int& that) const
 		{
 			if (IntHalf!=that)
 				return true;

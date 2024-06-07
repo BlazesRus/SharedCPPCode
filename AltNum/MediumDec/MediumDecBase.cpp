@@ -416,7 +416,17 @@ inline long double BlazesRusCode::MediumDecBase::toDecimal() const
 
 #pragma region Comparison Operators
 
-inline std::strong_ordering BlazesRusCode::MediumDecBase::BasicIntComparison(const int& that) const
+inline std::strong_ordering BlazesRusCode::MediumDecBase::BasicUIntComparison(const unsigned int& that) const
+{
+	if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+		return IntHalfCmp;
+	//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+	unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
+	if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+		return DecimalHalfCmp;
+}
+
+inline std::strong_ordering BlazesRusCode::MediumDecBase::BasicIntComparison(const signed int& that) const
 {
 	if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
 		return IntHalfCmp;
