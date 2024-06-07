@@ -2261,233 +2261,46 @@ public:
     #pragma endregion NormalRep Integer Multiplication Operations
 
 	#pragma region NormalRep AltNum Multiplication Operations
-protected:
 
 		/// <summary>
         /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        template<MediumDecVariant VariantType=MediumDecV2Base>
-        void UnsignedMultOpV1(const VariantType& rValue)
-		{
-            if (DecimalHalf == 0)
-            {
-                if (IntHalf.Value == 1)
-                {
-					if(IntHalf.IsNegative())
-						IntHalf = -rValue.IntHalf;
-					else
-						IntHalf = rValue.IntHalf;
-					DecimalHalf = rValue.DecimalHalf;
-                }
-                else if (rValue.DecimalHalf == 0)
-                    IntHalf *= rValue.IntHalf;
-                else {
-                    __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf.Value : DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
-                    if (rRep >= DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = rRep / DecimalOverflowX;
-                        rRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
-                        DecimalHalf.Value = (unsigned int)rRep;
-                        return;
-                    }
-                    else
-                    {
-                        DecimalHalf = (signed int)rRep;
-                    #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                        if(DecimalHalf==0)
-                            DecimalHalf.Value = 1;
-                    #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-							SetAsZero(); return; }
-                    #endif
-                        IntHalf.Value = 0;
-                        return;
-                    }
-                }
-            }
-            else if (IntHalf.Value == 0)
-            {
-                __int64 SRep = (__int64)DecimalHalf;
-                SRep *= rValue.DecimalHalf.Value;
-                SRep /= DecimalOverflowX;
-                if (rValue.IntHalf == 0)
-                {
-                    DecimalHalf = (signed int)SRep;
-                #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                    if (DecimalHalf == 0)
-                        DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
-                    if(DecimalHalf==0){
-						SetAsZero(); return; }
-                #endif
-                    return;
-                }
-                else
-                {
-                    SRep += (__int64)DecimalHalf.Value * rValue.IntHalf.Value;
-                    if (SRep >= DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / DecimalOverflowX;
-                        SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = OverflowVal;
-                        DecimalHalf.Value = (signed int)SRep;
-						return;
-                    }
-                    else
-                    {
-                        DecimalHalf.Value = (unsigned int)SRep;
-                #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                        if(DecimalHalf==0)
-                            DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-							SetAsZero(); return; }
-                #endif
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                if (rValue.DecimalHalf == 0)//Y is integer
-                {
-                    __int64 SRep = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-                    SRep *= rValue.IntHalf.Value;
-                    if (SRep >= DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / DecimalOverflowX;
-                        SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
-                        DecimalHalf.Value = (unsigned int)SRep;
-                    }
-                    else
-                    {
-                        DecimalHalf.Value = (unsigned int)SRep;
-                        if(DecimalHalf==0)
-                        {
-                #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            if(DecimalHalf==0)
-                                DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-							SetAsZero(); return; }
-                #endif
-                        }
-                        IntHalf.Value = 0;
-                    }
-				    return;
-                }
-                else if (rValue.IntHalf == 0)
-                {
-                    __int64 SRep = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-                    SRep *= rValue.DecimalHalf.Value;
-                    SRep /= DecimalOverflowX;
-                    if (SRep >= DecimalOverflowX)
-                    {
-                        __int64 OverflowVal = SRep / DecimalOverflowX;
-                        SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
-                        DecimalHalf.Value = (unsigned int)SRep;
-                    }
-                    else
-                    {
-                        DecimalHalf.Value = (unsigned int)SRep;
-                        if(DecimalHalf==0)
-                        {
-                #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                            if(DecimalHalf==0)
-                                DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-							SetAsZero(); return; }
-                #endif
-                        }
-                        IntHalf.Value = 0;
-                    }
-                    return;
-                }
-                else
-                {
-                    //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-                    SRep *= rValue.IntHalf.Value;//SRep holds __int64 version of X.Y * Z
-                    //X.Y *.V
-                    unsigned __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf.Value);//Temp03 holds __int64 version of X *.V
-                    unsigned __int64 Temp04 = (__int64)DecimalHalf.Value * (__int64)rValue.DecimalHalf.Value;
-                    Temp04 /= DecimalOverflow;
-                    //Temp04 holds __int64 version of .Y * .V
-                    unsigned __int64 IntegerRep = SRep + Temp03 + Temp04;
-                    unsigned __int64 intHalf = IntegerRep / DecimalOverflow;
-                    IntegerRep -= intHalf * DecimalOverflowX;
-                    IntHalf.Value = (unsigned int) intHalf;
-                    DecimalHalf.Value = (unsigned int)IntegerRep;
-                }
-            }
-			#if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(DecimalHalf==0&&IntHalf==0)
-                DecimalHalf.Value = 1;
-			#elif !defined(AltNum_AllowNegativeZero)
-            if(DecimalHalf==0)
-				SetAsZero();
-			#endif
-		}
-
-        template<MediumDecVariant VariantType=MediumDecV2Base>
-        void MultOpV1(const VariantType& Value)
-        {
-            if(Value.IsNegative())
-            {
-                SwapNegativeStatus();
-                UnsignedMultOp(-Value);
-            }
-            else
-                UnsignedMultOp(Value);
-        }
-
-public:
-
-		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        void UnsignedMultOp(const MediumDecV2Base& rValue){ UnsignedMultOpV1(rValue); }
+        void BasicUnsignedMultOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedMultOpV1(rValue); }
 		
-        void MultOp(const MediumDecV2Base& rValue){ MultOpV1(rValue); }
+        void BasicMultOp(const MediumDecV2Base& rValue){ MediumDecBase::MultOpV1(rValue); }
 
 		/// <summary>
-        /// Basic unsigned multiplication operation that ignores special decimal status
+        /// Basic unsigned Multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& UnsignedMultOperation(const MediumDecV2Base& rValue)
-        { UnsignedMultOp(rValue); return *this; }
+        MediumDecV2Base& BasicUnsignedMultOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::UnsignedMultOp(rValue); return *this; }
 
 		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status
+        /// Basic Multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& MultOperation(const MediumDecV2Base& rValue)
-		{ MultOp(rValue); return *this; }
+        MediumDecV2Base& BasicMultOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::MultOp(rValue); return *this; }
 
 		/// <summary>
-        /// Basic unsigned multiplication operation that ignores special decimal status
+        /// Basic unsigned Multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base MultiplyByUnsigned(const MediumDecV2Base& rValue)
+        const MediumDecV2Base BasicMultiplyByUnsigned(const MediumDecV2Base& rValue)
         { MediumDecV2Base lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
 		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status
+        /// Basic Multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param> 
-        MediumDecV2Base MultiplyBy(const MediumDecV2Base& rValue)
+        const MediumDecV2Base BasicMultiplyBy(const MediumDecV2Base& rValue)
         { MediumDecV2Base lValue = *this; return lValue.MultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
