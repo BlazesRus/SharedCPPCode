@@ -1646,30 +1646,30 @@ public:
         void MultiplyByFour();
 
 protected:
-
-    //Return copy of result divided by two
-    template<MediumDecVariant VariantType = MediumDecBase>
-    VariantType MultipliedByTwoV1() const
-    {
-        VariantType result = *this; result.MultiplyByTwo();
-        return result;
-    }
-
-    //Return copy of result divided by four
-    template<MediumDecVariant VariantType = MediumDecBase>
-    VariantType MultipliedByFourV1() const
-    {
-        VariantType result = *this; result.MultiplyByFour();
-        return result;
-    }
+    
+        //Return copy of result divided by two
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType MultipliedByTwoV1() const
+        {
+            VariantType result = *this; result.MultiplyByTwo();
+            return result;
+        }
+    
+        //Return copy of result divided by four
+        template<MediumDecVariant VariantType = MediumDecBase>
+        VariantType MultipliedByFourV1() const
+        {
+            VariantType result = *this; result.MultiplyByFour();
+            return result;
+        }
 
 public:
 
-    //Return copy of result divided by two
-    MediumDecBase MultipliedByTwo() const;
-
-    //Return copy of result divided by four
-    MediumDecBase MultipliedByFour() const;
+        //Return copy of result divided by two
+        MediumDecBase MultipliedByTwo() const;
+    
+        //Return copy of result divided by four
+        MediumDecBase MultipliedByFour() const;
 
         /// <summary>
         /// *= operation

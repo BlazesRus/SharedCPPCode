@@ -35,8 +35,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        template<MediumDecVariant DerivedType>
-		AltNumModResult(const DerivedType& lValue, const DerivedType& rValue)
+		AltNumModResult(const VarType& lValue, const VarType& rValue)
 		{
             VarType LValue = VarType[lValue];
 			VarType RValue = VarType[rValue];
@@ -50,8 +49,7 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        template<MediumDecVariant DerivedType>
-        friend AltNumModResult operator%(const DerivedType& LValue, const DerivedType& RValue)
+        friend AltNumModResult operator%(const VarType& LValue, const VarType& RValue)
 		{
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;

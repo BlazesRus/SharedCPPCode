@@ -2171,64 +2171,6 @@ public:
 
 	#pragma endregion Other Division Operations
 
-	#pragma region NormalRep AltNum Division Operations
-
-		/// <summary>
-        /// Basic unsigned division operation(main code block)
-        /// Return true if divide into zero
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The rValue</param>
-        bool BasicUnsignedPartialDivOp(const MediumDecV2Base& rValue){ return MediumDecBase::UnsignedPartialDivOpV1(rValue); }
-		
-		/// <summary>
-        /// Unsigned division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side value</param>
-        void BasicUnsignedDivOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedDivOpV1(rValue); }
-		
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
-        void BasicDivOp(const MediumDecV2Base& rValue){ MediumDecBase::DivOpV1(rValue); }
-
-		/// <summary>
-        /// Basic unsigned division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& BasicUnsignedDivOperation(const MediumDecV2Base& rValue)
-		{ MediumDecBase::UnsignedDivOp(rValue); return *this; }
-
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        MediumDecV2Base& BasicDivOperation(const MediumDecV2Base& rValue)
-		{ MediumDecBase::DivOp(rValue); return *this; }
-
-		/// <summary>
-        /// Basic unsigned division operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        const MediumDecV2Base BasicDivideByUnsigned(const MediumDecV2Base& rValue)
-        { MediumDecV2Base lValue = *this; return lValue.UnsignedDivOperation(rValue); }
-
-		/// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param> 
-        const MediumDecV2Base BasicDivideBy(const MediumDecV2Base& rValue)
-        { MediumDecV2Base lValue = *this; return lValue.DivOperation(rValue); }
-
-	#pragma endregion NormalRep AltNum Division Operations
-
     #pragma region NormalRep Integer Multiplication Operations
 protected:
 
@@ -2320,465 +2262,77 @@ public:
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
-    #pragma region NormalRep Integer Addition Operations
-
-        /// <summary>
-        /// Basic addition operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecV2&</returns>
-        template<IntegerType IntType=signed int>
-        constexpr auto BasicIntAddOp = MediumDecBase::BasicIntAddOp<AltDecBase>;
-
-	#pragma endregion NormalRep Integer Addition Operations
-
-    #pragma region NormalRep Integer Subtraction Operations
-
-        /// <summary>
-        /// Basic subtraction operation between MediumDec Variant and Integer value
-        /// that ignores special representation status
-        /// </summary>
-        /// <param name="rValue">The value.</param>
-        /// <returns>AltDec&</returns>
-        template<IntegerType IntType=signed int>
-        constexpr auto BasicIntSubOp = MediumDecBase::BasicIntSubOp<AltDecBase>;
-
-    #pragma endregion NormalRep Integer Subtraction Operations
-
-	#pragma region Other division operations
-
-		//Simplified division by 2 operation(to reduce cost of dividing)
-        constexpr auto DivideByTwo = MediumDecBase::DivideByTwo;
-
-		//Simplified division by 4 operation(to reduce cost of dividing)
-        constexpr auto DivideByFour = MediumDecBase::DivideByFour;
-
-protected:
-
-        /// <summary>
-        /// Unsigned division operation between MediumDec variant and unsigned integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= unsigned int>
-        auto UIntDivOpV1(const IntType& rValue)
-		{
-            if (rValue == 1)
-                return *this;
-            if (rValue == 0)
-            {
-                #if defined(AltNum_EnableInfinityRep)&&defined(AltNum_DefineDivideByZeroAsInfinity)
-                if (IntHalf < 0)
-                    SetAsNegativeInfinity();
-                else
-                    SetAsInfinity();
-                return *this;
-                #else
-                throw "Target rValue can not be divided by zero";
-                #endif
-            }
-        	switch(DecimalHalf.Flags)
-        	{
-        #if defined(AltNum_EnablePiRep)
-        		case 1:{
-                    RepType LRep = rValue.GetPiRepType();
-                    switch(LRep)
-                    {
-                        case RepType::PiNum:{
-                            BasicUIntDivOp(rValue);
-                        } break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottomPi://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
-                        {
-                            if (IsAtZeroInt())
-                                return *this;
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        }
-                        break;
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTopPi://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
-                        #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-                        {
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        } break;
-            #endif
-                        default:
-                            throw "Unable to perform integer division on current representation.";
-                    }
-                } break;
-        #endif
-        #if defined(AltNum_EnableERep)
-        		case 2:{
-                    RepType LRep = rValue.GetERepType();
-                    switch(LRep)
-                    {
-                        case RepType::ENum:{
-                            BasicUIntDivOp(rValue);
-                        } break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottomE://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
-                        {
-                            if (IsAtZeroInt())
-                                return *this;
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        }
-                        break;
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTopE://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
-                        #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-                        {
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        } break;
-            #endif
-                        default:
-                            throw "Unable to perform integer division on current representation.";
-                    }
-                } break;
-        #endif
-        #if defined(AltNum_EnableIRep)//IRep_to_integer
-        		case 3:{
-                    RepType LRep = rValue.GetIRepType();
-                    switch(LRep){
-                        case RepType::INum:{
-                            BasicUIntDivOp(rValue);
-                        } break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
-                    #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
-                    #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-                        {
-                            ConvertToNormalIRep(LRep);
-                            BasicUIntDivOp(rValue);
-                        }
-                        break;
-            #endif
-            #if defined(AltNum_EnableImaginaryInfinity)
-                        case RepType::ImaginaryInfinity:
-                            return *this;
-                            break;
-            #endif
-                        default:
-                            throw "Unable to perform integer division on current representation.";
-                    }
-                } break;
-        #endif
-        		default:{
-                    RepType LRep = rValue.GetNormRepType();
-                    switch(LRep)
-                    {
-                        case RepType::NormalType:
-                        {
-                            BasicUIntDivOp(rValue);
-                        }
-                        break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.0...01)
-                        {
-                            if (IsAtZeroInt())
-                                return *this;
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        }
-                        break;
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
-                        #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-                        {
-                            ConvertToNormType(LRep);
-                            BasicUIntDivOp(rValue);
-                        } break;
-            #endif
-            #ifdef AltNum_EnableInfinity
-                        case RepType::Infinity:
-                            return *this;
-                            break;
-            #endif
-                        default:
-                            throw "Unable to perform integer division on current representation.";
-                    }
-                } break;
-        	}
-		}
-
-        /// <summary>
-        /// Division operation between MediumDec variant and integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= signed int>
-        auto IntDivOpV1(const IntType& rValue)
-		{
-            if(Value<0)
-            {
-                SwapNegativeStatus();
-                UIntDivOpV1(-Value);
-            }
-            else
-                UIntDivOpV1(Value);
-		}
-
-        /// <summary>
-        /// Unsigned division operation between MediumDec variant and unsigned integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= unsigned int>
-        auto DivByUIntV1(const IntType& rValue)
-		{
-            auto self = *this;
-            return self.UIntDivOpV1(rValue);
-		}
-
-        /// <summary>
-        /// Division operation between MediumDec variant and integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= signed int>
-        constexpr auto DivByIntV1(const IntType& rValue)
-		{
-            auto self = *this;
-            return self.IntDivOpV1(rValue);
-		}
-
-public:
-
-        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
-        void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
-        void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
-
-        void UnsignedIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
-        void UnsignedInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
-
-        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
-        void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
-        void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
-
-        MediumDecV2Base& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        MediumDecV2Base& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDecV2Base& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
-
-        const MediumDecV2Base DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
-
-        const MediumDecV2Base UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
-
-        const MediumDecV2Base DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        const MediumDecV2Base DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDecV2Base DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
-
-protected:
-		void UnsignedDivOp_RValueIntSwitch(const auto& rValue)
-		{
-			switch(rValue.IntHalf.Value)
-			{
-				case 2:
-					if(IntHalf&1==1)//Check if number is odd
-						UnsignedBasicIntDivOp(2);
-					else
-						IntHalf.Value /= 2;
-					break;
-				case 4:
-					if(((IntHalf >> 2) << 2) == IntHalf)
-						IntHalf.Value /= 4;
-					else
-						UnsignedBasicIntDivOp(4);
-					break;
-				case 8:
-					if(((IntHalf >> 3) << 3) == IntHalf)
-						IntHalf.Value /= 8;
-					else
-						UnsignedBasicIntDivOp(4);
-					break;
-				case 16:
-					if(((IntHalf >> 4) << 4) == IntHalf)
-						IntHalf.Value /= 16;
-					else
-						UnsignedBasicIntDivOp(4);
-					break;
-				case 32:
-					if(((IntHalf >> 5) << 5) == IntHalf)
-						IntHalf.Value /= 32;
-					else
-						UnsignedBasicIntDivOp(4);
-					break;
-				case 0:
-					throw "Target value can not be divided by zero";
-					break;
-				default:
-					UnsignedBasicIntDivOp(rValue.IntHalf.Value);
-					break;
-			}
-		}
-
-public:
+	#pragma region NormalRep AltNum Multiplication Operations
 
 		/// <summary>
-        /// Unsigned division operation that ignores special decimal status
-        /// Return true if divide into zero
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto& UnsignedDivOp(const auto& rValue);
+        void BasicUnsignedMultOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedMultOpV1(rValue); }
+		
+        void BasicMultOp(const MediumDecV2Base& rValue){ MediumDecBase::MultOpV1(rValue); }
 
 		/// <summary>
-        /// Division operation that ignores special decimal status
-        /// Return true if divide into zero
+        /// Basic unsigned Multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        void DivOp(const auto& Value)
-        {
-            if(Value.IsNegative())
-            {
-                SwapNegativeStatus();
-                UnsignedMultOp(-Value);
-            }
-            else
-                UnsignedDivOp(Value);
-        }
+        MediumDecV2Base& BasicUnsignedMultOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::UnsignedMultOp(rValue); return *this; }
 
 		/// <summary>
-        /// Unsigned division operation that ignores special decimal status
-        /// Return true if divide into zero
+        /// Basic Multiplication operation that ignores special decimal status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base& BasicMultOperation(const MediumDecV2Base& rValue)
+		{ MediumDecBase::MultOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic unsigned Multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto DivideByUnsigned(const auto& rValue)
-        {
-            auto self = *this;
-            return self.UnsignedDivOp(rValue);
-        }
+        const MediumDecV2Base BasicMultiplyByUnsigned(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
 		/// <summary>
-        /// Division operation that ignores special decimal status
-        /// Return true if divide into zero
+        /// Basic Multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        auto DivideBy(const auto& rValue)
-        {
-            auto self = *this;
-            return self.DivOp(rValue);
-        }
+        /// <param name="rValue.">The right side Value</param> 
+        const MediumDecV2Base BasicMultiplyBy(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.MultOperation(rValue); }
 
-        /// <summary>
-        /// Division operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivideBy(Value); }
-
-        /// <summary>
-        /// /= operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.DivOp(Value); }
-
-        /// <summary>
-        /// Division operation between MediumDecV2Base and Integer value.
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed int& Value) { return self.DivideByInt(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const Int64& Value) { return self.DivideByInt64(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned int& Value) { return self.DivideByUInt(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const UInt64& Value) { return self.DivideByUInt64(Value); }
-
-        friend MediumDecV2Base operator/(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const UInt64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed char& Value) { return self.DivideByInt8(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const signed short& Value) { return self.DivideByInt16(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned char& Value) { return self.DivideByUInt8(Value); }
-        friend MediumDecV2Base operator/(const MediumDecV2Base& self, const unsigned short& Value) { return self.DivideByUInt16(Value); }
-
-        friend MediumDecV2Base operator/(const signed char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const signed short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const unsigned char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-        friend MediumDecV2Base operator/(const unsigned short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).DivideBy(rValue); }
-
-
-        /// <summary>
-        /// *= operation between MediumDecV2Base and Integer value.
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed int& Value) { return self.IntDivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const Int64& Value) { return self.Int64DivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntDivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64DivOp(Value); }
-
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed char& Value) { return self.Int8DivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const signed short& Value) { return self.Int16DivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned char& Value) { return self.UInt8DivOp(Value); }
-        friend MediumDecV2Base& operator/=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16DivOp(Value); }	#pragma endregion Other division operations
-
-	#pragma endregion Other division operations
+	#pragma endregion NormalRep AltNum Multiplication Operations
 
 	#pragma region Other multiplication operations
 
         /// <summary>
-        /// Simplified multiplication by 2 operation(to reduce cost of operations)
+        /// Simplified Multiplication by 2 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>void</returns>
-        constexpr auto MultiplyByTwo = MediumDecBase:MultiplyByTwo;
+        /// <param name="rValue.">The right side value</param>
+        /// <returns>MediumDecV2Base&</returns>
+        void MultiplyByTwo();
 
         /// <summary>
-        /// Simplified multiplication by 4 operation(to reduce cost of operations)
+        /// Simplified Multiplication by 4 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>void</returns>
-        constexpr auto MultiplyByFour = MediumDecBase:MultiplyByFour;
+        /// <param name="rValue.">The right side value</param>
+        /// <returns>MediumDecV2Base&</returns>
+        void MultiplyByFour();
+
+        //Return copy of result divided by two
+        MediumDecV2Base MultipliedByTwo() const;
+
+        //Return copy of result divided by four
+        MediumDecV2Base MultipliedByFour() const;
 
 protected:
+
         /// <summary>
         /// Unsigned multiplication operation between MediumDec variant and unsigned integer values
         /// (Modifies owner object)
@@ -2786,7 +2340,7 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
-        auto& UIntMultOpV1(const IntType& rValue)
+        void UIntMultOpV1(const IntType& rValue)
 		{
             if (rValue == 1)
                 return *this;
@@ -2928,7 +2482,6 @@ protected:
                     }
                 } break;
         	}
-            return *this;
 		}
 
         /// <summary>
@@ -2938,7 +2491,7 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
-        auto& IntMultOpV1(const IntType& rValue)
+        void IntMultOpV1(const IntType& rValue)
 		{
             if(Value<0)
             {
@@ -2949,17 +2502,25 @@ protected:
                 UIntMultOpV1(rValue);
 		}
 
+        template<IntegerType IntType=unsigned int>
+        MediumDecV2Base& UIntMultOperationV1(const IntType& rValue)
+        { UIntMultOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=unsigned int>
+        MediumDecV2Base& IntMultOperationV1(const IntType& rValue)
+        { IntMultOpV1(rValue); return *this; }
+
         /// <summary>
-        /// Multiplication operation between MediumDec variant and unsigned integer values
+        /// Unsigned Multiplication operation between MediumDec variant and unsigned integer values
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
-        auto MultByUIntV1(const IntType& rValue)
+        auto MultiplyByUIntV1(const IntType& rValue)
 		{
             auto self = *this;
-            return self.UIntDivOpV1(rValue);
+            return self.UIntMultOpV1(rValue);
 		}
 
         /// <summary>
@@ -2969,40 +2530,56 @@ protected:
         /// <param name="rValue.">The right side Value</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        auto MultByIntV1(const IntType& rValue)
+        auto MultiplyByIntV1(const IntType& rValue)
 		{
             auto self = *this;
-            return self.IntDivOpV1(rValue);
+            return self.IntMultOpV1(rValue);
 		}
-
 
 public:
 
-        constexpr auto UIntMultOpV1 = UIntMultOpV1<unsigned int>;
-        constexpr auto IntMultOpV1 = IntMultOpV1<signed int>;
-        constexpr auto UnsignedIntMultOp = UIntMultOpV1<signed int>;
-        constexpr auto UInt64MultOp = UIntMultOpV1<UInt64>;
-        constexpr auto Int64MultOp = IntMultOpV1<Int64>;
+        void UIntMultOp(const unsigned int& rValue) { UIntMultOpV1(rValue); }
+        void IntMultOp(const signed int& rValue) { IntMultOpV1(rValue); }
+        void UInt64MultOp(const unsigned __int64& rValue) { UIntMultOpV1(rValue); }
+        void Int64MultOp(const signed __int64& rValue) { IntMultOpV1(rValue); }
 
-        constexpr auto MultByUInt = MultByUIntV1<unsigned int>;
-        constexpr auto MultByInt = MultByIntV1<signed int>;
-        constexpr auto UnsignedMultByInt = MultByUInt<signed int>;
-        constexpr auto MultByUInt64 = MultByUInt<;
-        constexpr auto MultByInt64 = BasicMultByInt64;
-        constexpr auto UnsignedMultByInt64 = MultByUInt<Int64>;
+        void UnsignedIntMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
+        void UnsignedInt64MultOp(const signed __int64& rValue) { UIntMultOpV1(rValue); }
 
-        constexpr auto MultByUInt8 = BasicMultByUInt8;
-        constexpr auto MultByInt8 = BasicMultByInt8;
-        constexpr auto MultByUInt16 = BasicMultByUInt16;
-        constexpr auto MultByInt16 = BasicMultByInt16;
+        void UInt8MultOp(const unsigned char& rValue) { UIntMultOpV1(rValue); }
+        void Int8MultOp(const signed char& rValue) { IntMultOpV1(rValue); }
+        void UInt16MultOp(const unsigned short& rValue) { UIntMultOpV1(rValue); }
+        void Int16MultOp(const signed short& rValue) { IntMultOpV1(rValue); }
 
-        /// <summary>
-        /// Unsigned multiplication operation between MediumDec variants.
+        MediumDecV2Base& UIntMultOperation(const unsigned int& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2Base& IntMultOperation(const signed int& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2Base& UInt64MultOperation(const unsigned __int64& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2Base& Int64MultOperation(const signed __int64& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2Base& UInt8MultOperation(const unsigned char& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2Base& Int8MultOperation(const signed char& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2Base& UInt16MultOperation(const unsigned short& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2Base& Int16MultOperation(const signed short& rValue) { return IntMultOperationV1(rValue); }
+
+        const MediumDecV2Base MultiplyByUInt(const unsigned int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2Base MultiplyByInt(const signed int& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2Base MultiplyByUInt64(const unsigned __int64& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2Base MultiplyByInt64(const signed __int64& rValue) { return MultiplyByIntV1(rValue); }
+
+        const MediumDecV2Base UnsignedMultiplyByInt(const signed int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2Base UnsignedMultiplyByInt64(const signed __int64& rValue) { return MultiplyByUIntV1(rValue); }
+
+        const MediumDecV2Base MultiplyByUInt8(const unsigned char& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2Base MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2Base MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2Base MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
+
+		/// <summary>
+        /// Unsigned Multiplication operation that ignores special decimal status
+        /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        auto& UnsignedMultOp(const auto& rValue);
+        MediumDecV2Base& UnsignedMultOp(const MediumDecV2Base& rValue);
 
 		/// <summary>
         /// Multiplication operation that ignores special decimal status
@@ -3010,9 +2587,9 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        void MultOp(const auto& Value)
+        void MultOp(const MediumDecV2Base& Value)
         {
-            if(Value<0)
+            if(Value.IsNegative())
             {
                 SwapNegativeStatus();
                 UnsignedMultOp(-Value);
@@ -3022,12 +2599,12 @@ public:
         }
 
 		/// <summary>
-        /// Unsigned division operation that ignores special decimal status
+        /// Unsigned Multiplication operation that ignores special decimal status
         /// Return true if divide into zero
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto MultiplyByUnsigned(const auto& rValue)
+        auto MultiplyByUnsigned(const MediumDecV2Base& rValue)
         {
             auto self = *this;
             return self.UnsignedMultOp(rValue);
@@ -3039,552 +2616,501 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
-        auto MultiplyBy(const auto& rValue)
+        auto MultiplyBy(const MediumDecV2Base& rValue)
         {
             auto self = *this;
             return self.MultOp(rValue);
         }
 
         /// <summary>
+        /// /= operation
+        /// </summary>
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const MediumDecV2Base& rValue) { return lValue.MultOperation(rValue); }
+
+        /// <summary>
+        /// *= operation between MediumDec variant and Integer rValue.
+        /// </summary>
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
+
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
+        friend MediumDecV2Base& operator*=(MediumDecV2Base& lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
+
+        /// <summary>
         /// Multiplication operation
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.MultBy(Value); }
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const MediumDecV2Base& rValue) { return lValue.MultiplyBy(rValue); }
+		
+        /// <summary>
+        /// Multiplication operation between MediumDec variant and Integer rValue.
+        /// </summary>
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
+
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
+        friend MediumDecV2Base operator*(MediumDecV2Base lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
+		
+        friend MediumDecV2Base operator*(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const signed __int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const unsigned __int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+
+        friend MediumDecV2Base operator*(const signed char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const signed short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const unsigned char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+        friend MediumDecV2Base operator*(const unsigned short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).MultiplyBy(rValue); }
+
+    #pragma endregion Other multiplication operations
+
+	#pragma region NormalRep Integer Addition Operations
+protected:
+		
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntAddOpV1(const IntType& rValue)
+        {
+			MediumDecBase::UIntAddOpV1(rValue);
+        }
+
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        void BasicIntAddOpV1(const IntType& rValue)
+        {
+			MediumDecBase::IntAddOpV1(rValue);
+        }
+
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntAddOperationV1(const IntType& rValue)
+        { BasicUIntAddOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=signed int>
+        auto& BasicIntAddOperationV1(const IntType& rValue)
+        { BasicIntAddOpV1(rValue); return *this; }
+
+		/// <summary>
+        /// Basic addition operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        auto BasicAddByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicUIntAddOperationV1(rValue); }
+
+		/// <summary>
+        /// Basic addition operation between MediumDec variant and Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto BasicAddByIntV1(const IntType& rValue)
+        { auto self = *this; return self.IntAddOperationV1(rValue); }
+
+public:
+
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and unsigned MirroredInt
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        void BasicUnsignedIntegerAddition(const MirroredInt& rValue)
+        { MediumDecBase::UnsignedIntegerAddition(rValue); }
+
+        /// <summary>
+        /// Basic addition operation between MediumDec Variant and MirroredInt
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        void BasicIntegerAddition(const MirroredInt& rValue)
+        { MediumDecBase::IntegerAddition(rValue); }
+
+        void BasicUIntAddOp(const unsigned int& rValue){ MediumDecBase::UIntAddOp(rValue); }
+
+        void BasicIntAddOp(const signed int& rValue) { MediumDecBase::IntAddOpV1(rValue); }
+        void BasicUInt64AddOp(const unsigned __int64& rValue) { MediumDecBase::UIntAddOpV1(rValue); }
+        void BasicInt64AddOp(const signed __int64& rValue) { MediumDecBase::IntAddOpV1(rValue); }
+
+        void BasicUnsignedIntAddOp(const signed int& rValue) { MediumDecBase::UIntAddOpV1(rValue); }
+        void BasicUnsignedInt64AddOp(const signed __int64& rValue) { MediumDecBase::UIntAddOpV1(rValue); }
+
+        void BasicUInt8AddOp(const unsigned char& rValue) { MediumDecBase::UIntAddOpV1(rValue); }
+        void BasicInt8AddOp(const signed char& rValue) { MediumDecBase::IntAddOpV1(rValue); }
+        void BasicUInt16AddOp(const unsigned short& rValue) { MediumDecBase::UIntAddOpV1(rValue); }
+        void BasicInt16AddOp(const signed short& rValue) { MediumDecBase::IntAddOpV1(rValue); }
+
+        MediumDecV2Base& BasicUIntAddOperation(const unsigned int& rValue){ return MediumDecBase::UIntAddOp(rValue); return *this; }
+
+        MediumDecV2Base& BasicIntAddOperation(const signed int& rValue) { return BasicIntAddOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt64AddOperation(const unsigned __int64& rValue) { return BasicUIntAddOperationV1(rValue); }
+        MediumDecV2Base& BasicInt64AddOperation(const signed __int64& rValue) { return BasicIntAddOperationV1(rValue); }
+		
+        MediumDecV2Base& BasicUInt8AddOperation(const unsigned char& rValue) { return BasicUIntAddOperationV1(rValue); }
+        MediumDecV2Base& BasicInt8AddOperation(const signed char& rValue) { return BasicIntAddOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt16AddOperation(const unsigned short& rValue) { return BasicUIntAddOperationV1(rValue); }
+        MediumDecV2Base& BasicInt16AddOperation(const signed short& rValue) { return BasicIntAddOperationV1(rValue); }
+        MediumDecV2Base BasicAddByUInt(const unsigned int& rValue) { return BasicAddByUIntV1(rValue); }
+        MediumDecV2Base BasicAddByInt(const signed int& rValue) { return BasicAddByIntV1(rValue); }
+        MediumDecV2Base BasicAddByUInt64(const unsigned __int64& rValue) { return BasicAddByUIntV1(rValue); }
+        MediumDecV2Base BasicAddByInt64(const signed __int64& rValue) { return BasicAddByIntV1(rValue); }
+
+        MediumDecV2Base BasicUnsignedAddByInt(const signed int& rValue) { return BasicAddByUIntV1(rValue); }
+        MediumDecV2Base BasicUnsignedAddByInt64(const signed __int64& rValue) { return BasicAddByUIntV1(rValue); }
+
+        MediumDecV2Base BasicAddByUInt8(const unsigned char& rValue) { return BasicAddByUIntV1(rValue); }
+        MediumDecV2Base BasicAddByInt8(const signed char rValue) { return BasicAddByIntV1(rValue); }
+        MediumDecV2Base BasicAddByUInt16(const unsigned short& rValue) { return BasicAddByUIntV1(rValue); }
+        MediumDecV2Base BasicAddByInt16(const signed short& rValue) { return BasicAddByIntV1(rValue); }
+    	
+	#pragma endregion NormalRep Integer Addition Operations
+
+	#pragma region NormalRep Integer Subtraction Operations
+protected:
+		
+        /// <summary>
+        /// Basic subtraction operation between MediumDec Variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntSubOpV1(const IntType& rValue)
+        {
+			MediumDecBase::UIntSubOpV1(rValue);
+        }
+
+        /// <summary>
+        /// Basic subtraction operation between MediumDec Variant and Integer value 
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        void BasicIntSubOpV1(const IntType& rValue)
+        {
+			MediumDecBase::IntSubOpV1(rValue);
+        }
+
+        template<IntegerType IntType=unsigned int>
+        auto& BasicUIntSubOperationV1(const IntType& rValue)
+        { BasicUIntSubOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=signed int>
+        auto& BasicIntSubOperationV1(const IntType& rValue)
+        { BasicIntSubOpV1(rValue); return *this; }
+
+		/// <summary>
+        /// Basic subtraction operation between MediumDec variant and unsigned Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=unsigned int>
+        auto BasicSubtractByUIntV1(const IntType& rValue)
+        { auto self = *this; return self.BasicUIntSubOperationV1(rValue); }
+
+		/// <summary>
+        /// Basic subtraction operation between MediumDec variant and Integer value 
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto BasicSubtractByIntV1(const IntType& rValue)
+        { auto self = *this; return self.IntSubOperationV1(rValue); }
+
+public:
+
+        /// <summary>
+        /// Basic subtraction operation between MediumDec Variant and unsigned MirroredInt
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        void BasicUnsignedIntegerSubtraction(const MirroredInt& rValue)
+        { MediumDecBase::UnsignedIntegerSubtraction(rValue); }
+
+        /// <summary>
+        /// Basic subtraction operation between MediumDec Variant and MirroredInt
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        void BasicIntegerSubtraction(const MirroredInt& rValue)
+        { MediumDecBase::IntegerSubtraction(rValue); }
+
+        void BasicUIntSubOp(const unsigned int& rValue){ MediumDecBase::UIntSubOp(rValue); }
+
+        void BasicIntSubOp(const signed int& rValue) { MediumDecBase::IntSubOpV1(rValue); }
+        void BasicUInt64SubOp(const unsigned __int64& rValue) { MediumDecBase::UIntSubOpV1(rValue); }
+        void BasicInt64SubOp(const signed __int64& rValue) { MediumDecBase::IntSubOpV1(rValue); }
+
+        void BasicUnsignedIntSubOp(const signed int& rValue) { MediumDecBase::UIntSubOpV1(rValue); }
+        void BasicUnsignedInt64SubOp(const signed __int64& rValue) { MediumDecBase::UIntSubOpV1(rValue); }
+
+        void BasicUInt8SubOp(const unsigned char& rValue) { MediumDecBase::UIntSubOpV1(rValue); }
+        void BasicInt8SubOp(const signed char& rValue) { MediumDecBase::IntSubOpV1(rValue); }
+        void BasicUInt16SubOp(const unsigned short& rValue) { MediumDecBase::UIntSubOpV1(rValue); }
+        void BasicInt16SubOp(const signed short& rValue) { MediumDecBase::IntSubOpV1(rValue); }
+
+        MediumDecV2Base& BasicUIntSubOperation(const unsigned int& rValue){ return MediumDecBase::UIntSubOp(rValue); return *this; }
+
+        MediumDecV2Base& BasicIntSubOperation(const signed int& rValue) { return BasicIntSubOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt64SubOperation(const unsigned __int64& rValue) { return BasicUIntSubOperationV1(rValue); }
+        MediumDecV2Base& BasicInt64SubOperation(const signed __int64& rValue) { return BasicIntSubOperationV1(rValue); }
+		
+        MediumDecV2Base& BasicUInt8SubOperation(const unsigned char& rValue) { return BasicUIntSubOperationV1(rValue); }
+        MediumDecV2Base& BasicInt8SubOperation(const signed char& rValue) { return BasicIntSubOperationV1(rValue); }
+        MediumDecV2Base& BasicUInt16SubOperation(const unsigned short& rValue) { return BasicUIntSubOperationV1(rValue); }
+        MediumDecV2Base& BasicInt16SubOperation(const signed short& rValue) { return BasicIntSubOperationV1(rValue); }
+        MediumDecV2Base BasicSubtractByUInt(const unsigned int& rValue) { return BasicSubtractByUIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByInt(const signed int& rValue) { return BasicSubtractByIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByUInt64(const unsigned __int64& rValue) { return BasicSubtractByUIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByInt64(const signed __int64& rValue) { return BasicSubtractByIntV1(rValue); }
+
+        MediumDecV2Base BasicUnsignedSubtractByInt(const signed int& rValue) { return BasicSubtractByUIntV1(rValue); }
+        MediumDecV2Base BasicUnsignedSubtractByInt64(const signed __int64& rValue) { return BasicSubtractByUIntV1(rValue); }
+
+        MediumDecV2Base BasicSubtractByUInt8(const unsigned char& rValue) { return BasicSubtractByUIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByInt8(const signed char rValue) { return BasicSubtractByIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByUInt16(const unsigned short& rValue) { return BasicSubtractByUIntV1(rValue); }
+        MediumDecV2Base BasicSubtractByInt16(const signed short& rValue) { return BasicSubtractByIntV1(rValue); }
+    	
+	#pragma endregion NormalRep Integer Subtraction Operations
+
+    #pragma region NormalRep AltNum Addition/Subtraction Operations
+
+        /// <summary>
+        /// Basic addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void UnsignedAddOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedAddOpV1(rValue); }
+
+	    /// <summary>
+        /// Basic addition Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void AddOp(const MediumDecV2Base& rValue){ MediumDecBase::AddOpV1(rValue); }
+
+	    /// <summary>
+        /// Basic subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void UnsignedSubOp(const MediumDecV2Base& rValue){ MediumDecBase::UnsignedSubOpV1(rValue); }
+		
+	    /// <summary>
+        /// Basic subtraction Operation
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side rValue</param>
+        void SubOp(const MediumDecV2Base& rValue){ MediumDecBase::SubOpV1(rValue); }
+
+        //Basic addition operation
+        MediumDecV2Base& UnsignedAddOperation(const MediumDecV2Base& rValue)
+        { MediumDecBase::UnsignedAddOp(rValue); return *this; }
+		
+        //Basic addition operation
+        MediumDecV2Base& AddOperation(const MediumDecV2Base& rValue)
+        { MediumDecBase::AddOp(rValue); return *this; }
+
+		/// <summary>
+        /// Unsigned Addition operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base AddByUnsigned(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
+
+		/// <summary>
+        /// Addition operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        MediumDecV2Base AddBy(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.AddOperation(rValue); } const
+
+        //Basic subtraction operation
+        MediumDecV2Base& UnsignedSubOperation(const MediumDecV2Base& rValue)
+        { MediumDecBase::UnsignedSubOp(rValue); return *this; }
+
+        //Basic subtraction operation
+        MediumDecV2Base& SubOperation(const MediumDecV2Base& rValue)
+        { MediumDecBase::SubOp(rValue); return *this; }
+
+		/// <summary>
+        /// Basic unsigned Subtraction operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param>
+        MediumDecV2Base SubtractByUnsigned(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
+
+		/// <summary>
+        /// Basic Subtraction operation that ignores special decimal status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue.">The right side Value</param> 
+        MediumDecV2Base SubtractBy(const MediumDecV2Base& rValue)
+        { MediumDecV2Base lValue = *this; return lValue.SubOperation(rValue); } const
+
+    #pragma endregion NormalRep AltNum Addition/Subtraction Operations
+
+	#pragma region Other addition operations
 
         /// <summary>
         /// += operation
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.MultOp(Value); }
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const MediumDecV2Base& rValue) { return lValue.AddOperation(rValue); }
 
         /// <summary>
-        /// Multition operation between MediumDecBase and Integer value.
+        /// += operation between MediumDec variant and Integer rValue.
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed int& Value) { return self.MultByInt(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const Int64& Value) { return self.MultByInt64(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned int& Value) { return self.MultByUInt(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const UInt64& Value) { return self.MultByUInt64(Value); }
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
 
-        friend MediumDecV2Base operator*(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt(lValue); }
-        friend MediumDecV2Base operator*(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt64(lValue); }
-        friend MediumDecV2Base operator*(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt(lValue); }
-        friend MediumDecV2Base operator*(const UInt64& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt64(lValue); }
-
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed char& Value) { return self.MultByInt8(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const signed short& Value) { return self.MultByInt16(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned char& Value) { return self.MultByUInt8(Value); }
-        friend MediumDecV2Base operator*(const MediumDecV2Base& self, const unsigned short& Value) { return self.MultByUInt16(Value); }
-
-        friend MediumDecV2Base operator*(const signed char& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt8(lValue); }
-        friend MediumDecV2Base operator*(const signed short& lValue, const MediumDecV2Base& rValue) { return rValue.MultByInt16(lValue); }
-        friend MediumDecV2Base operator*(const unsigned char& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt8(lValue); }
-        friend MediumDecV2Base operator*(const unsigned short& lValue, const MediumDecV2Base& rValue) { return rValue.MultByUInt16(lValue); }
-
-        /// <summary>
-        /// += operation between MediumDecBase and Integer value.
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed int& Value) { return self.IntMultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const Int64& Value) { return self.Int64MultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntMultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64MultOp(Value); }
-
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed char& Value) { return self.Int8MultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const signed short& Value) { return self.Int16MultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned char& Value) { return self.UInt8MultOp(Value); }
-        friend MediumDecV2Base& operator*=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16MultOp(Value); }
-
-    #pragma endregion Other multiplication operations
-
-    #pragma region Other addition operations
-protected:
-
-        /// <summary>
-        /// Addition operation between MediumDec variant and unsigned integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= unsigned int>
-        auto& UIntAddOpV1(const IntType& rValue)
-		{
-            if (rValue == 0)
-                return *this;
-        	switch(DecimalHalf.Flags)
-        	{
-        #if defined(AltNum_EnablePiRep)
-        		case 1:{
-                    RepType LRep = rValue.GetPiRepType();
-                    CatchAllUIntAddition(rValue, LRep);
-                } break;
-        #endif
-        #if defined(AltNum_EnableERep)
-        		case 2:{
-                    RepType LRep = rValue.GetERepType();
-                    CatchAllUIntAddition(rValue, LRep);
-                } break;
-        #endif
-        #if defined(AltNum_EnableIRep)//IRep_to_integer
-        		case 3:
-                    throw "Can't convert into complex number at moment";
-                break;
-        #endif
-        		default:{
-                    RepType LRep = rValue.GetNormRepType();
-                    switch(LRep)
-                    {
-                        case RepType::NormalType:
-                            BasicUIntAddOp(rValue);
-                        break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottom:
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTop:
-                        #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-        					if(IsNegative())
-        					{
-                                if(rValue>IntHalf.Value)
-								{
-                                    IntHalf.Sign = 1;
-                                    IntHalf.Value = rValue - IntHalf.Value;
-								}
-								else
-									IntHalf.Value -= rValue;
-                            }
-                            else
-                                IntHalf.Value += rValue;
-                        break;
-            #endif
-            #ifdef AltNum_EnableInfinity
-                        case RepType::Infinity:
-                            return *this;
-                            break;
-            #endif
-                        default:
-                            throw "Unable to perform integer division on current representation.";
-                    }
-                } break;
-        	}
-		}
-
-        /// <summary>
-        /// Addition operation between MediumDec variant and Integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= signed int>
-        auto& IntAddOpV1(const IntType& rValue)
-		{
-            if(Value<0)
-                UIntSubOpV1(-rValue);
-            else
-                UIntAddOpV1(rValue);
-		}
-
-        /// <summary>
-        /// Addition operation between MediumDec variant and unsigned Integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= unsigned int>
-        auto AddByUIntV1(const IntType& rValue){
-            auto self = *this;
-            return self.UIntAddOpV1(rValue);
-		}
-
-        /// <summary>
-        /// Addition operation between MediumDec variant and Integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= signed int>
-        auto AddByIntV1(const IntType& rValue){
-            auto self = *this;
-            return self.IntAddOpV1(rValue);
-		}
-
-public:
-
-        constexpr auto UIntAddOpV1 = UIntAddOpV1<unsigned int>;
-        constexpr auto IntAddOpV1 = IntAddOpV1<signed int>;
-        constexpr auto UnsignedIntAddOp = UIntAddOpV1<signed int>;
-        constexpr auto UInt64AddOp = UIntAddOpV1<UInt64>;
-        constexpr auto Int64AddOp = IntAddOpV1<Int64>;
-
-        constexpr auto AddByUInt = AddByUIntV1<unsigned int>;
-        constexpr auto AddByInt = AddByIntV1<signed int>;
-        constexpr auto UnsignedAddByInt = AddByUInt<signed int>;
-        constexpr auto AddByUInt64 = AddByUInt<;
-        constexpr auto AddByInt64 = BasicAddByInt64;
-        constexpr auto UnsignedAddByInt64 = AddByUInt<Int64>;
-
-        constexpr auto AddByUInt8 = BasicAddByUInt8;
-        constexpr auto AddByInt8 = BasicAddByInt8;
-        constexpr auto AddByUInt16 = BasicAddByUInt16;
-        constexpr auto AddByInt16 = BasicAddByInt16;
-
-        /// <summary>
-        /// Unsigned Addition operation between MediumDec variants.
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        auto& UnsignedAddOp(const auto& rValue);
-
-        /// <summary>
-        /// Addition operation between MediumDec variants.
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        auto& AddOp(const auto& Value)
-        {
-            if(Value<0)
-                return UnsignedSubOp(-Value);
-            else
-                return UnsignedAddOp(Value);
-        }
-
-		/// <summary>
-        /// Unsigned addition operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        auto AddByUnsigned(const auto& rValue)
-        {
-            auto self = *this;
-            return self.UnsignedAddOp(rValue);
-        }
-
-		/// <summary>
-        /// Addition operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        auto AddBy(const auto& rValue)
-        {
-            auto self = *this;
-            return self.AddOp(rValue);
-        }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
+        friend MediumDecV2Base& operator+=(MediumDecV2Base& lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
 
         /// <summary>
         /// Addition operation
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.AddBy(Value); }
-
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const MediumDecV2Base& rValue) { return lValue.AddOperation(rValue); }
+		
         /// <summary>
-        /// += operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.AddOp(Value); }
-
-        /// <summary>
-        /// Addition operation between MediumDecBase and Integer value.
+        /// Addition operation between MediumDec variant and Integer rValue.
         /// </summary>
         /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed int& Value) { return self.AddByInt(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const Int64& Value) { return self.AddByInt64(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned int& Value) { return self.AddByUInt(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const UInt64& Value) { return self.AddByUInt64(Value); }
+        /// <param name="rValue">The right side value.</param>
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
+		
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
+        friend MediumDecV2Base operator+(MediumDecV2Base lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
+		
+        friend MediumDecV2Base operator+(const signed int& lValue, MediumDecV2Base rValue)  { return rValue.IntAddOperation(lValue); }
+        friend MediumDecV2Base operator+(const signed __int64& lValue, MediumDecV2Base rValue)  { return rValue.Int64AddOperation(lValue); }
+        friend MediumDecV2Base operator+(const unsigned int& lValue, MediumDecV2Base rValue)  { return rValue.UIntAddOperation(lValue); }
+        friend MediumDecV2Base operator+(const unsigned __int64& lValue, MediumDecV2Base rValue)  { return rValue.UInt64AddOperation(lValue); }
+		
+        friend MediumDecV2Base operator+(const signed char& lValue, MediumDecV2Base rValue)  { return rValue.Int8AddOperation(lValue); }
+        friend MediumDecV2Base operator+(const signed short& lValue, MediumDecV2Base rValue)  { return rValue.Int16AddOperation(lValue); }
+        friend MediumDecV2Base operator+(const unsigned char& lValue, MediumDecV2Base rValue)  { return rValue.UInt8AddOperation(lValue); }
+        friend MediumDecV2Base operator+(const unsigned short& lValue, MediumDecV2Base rValue)  { return rValue.UInt16AddOperation(lValue); }
 
-        friend MediumDecV2Base operator+(const signed int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt(lValue); }
-        friend MediumDecV2Base operator+(const Int64& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt64(lValue); }
-        friend MediumDecV2Base operator+(const unsigned int& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt(lValue); }
-        friend MediumDecV2Base operator+(const UInt64& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt64(lValue); }
+	#pragma endregion Other addition operations
 
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed char& Value) { return self.AddByInt8(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const signed short& Value) { return self.AddByInt16(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned char& Value) { return self.AddByUInt8(Value); }
-        friend MediumDecV2Base operator+(const MediumDecV2Base& self, const unsigned short& Value) { return self.AddByUInt16(Value); }
-
-        friend MediumDecV2Base operator+(const signed char& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt8(lValue); }
-        friend MediumDecV2Base operator+(const signed short& lValue, const MediumDecV2Base& rValue) { return rValue.AddByInt16(lValue); }
-        friend MediumDecV2Base operator+(const unsigned char& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt8(lValue); }
-        friend MediumDecV2Base operator+(const unsigned short& lValue, const MediumDecV2Base& rValue) { return rValue.AddByUInt16(lValue); }
-
-        /// <summary>
-        /// += operation between MediumDecBase and Integer value.
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed int& Value) { return self.IntAddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const Int64& Value) { return self.Int64AddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntAddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64AddOp(Value); }
-
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed char& Value) { return self.Int8AddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const signed short& Value) { return self.Int16AddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned char& Value) { return self.UInt8AddOp(Value); }
-        friend MediumDecV2Base& operator+=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16AddOp(Value); }
-
-    #pragma endregion Other addition operations
-
-    #pragma region Other Subtraction Operations
-protected:
-
-        /// <summary>
-        /// Subtraction operation between MediumDec variant and unsigned integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= unsigned int>
-        auto& UIntSubOpV1(const IntType& rValue)
-		{
-            if (rValue == 0)
-                return *this;
-        	switch(DecimalHalf.Flags)
-        	{
-        #if defined(AltNum_EnablePiRep)
-        		case 1:{
-                    RepType LRep = rValue.GetPiRepType();
-                    CatchAllUIntSubtraction(rValue, LRep);
-                } break;
-        #endif
-        #if defined(AltNum_EnableERep)
-        		case 2:{
-                    RepType LRep = rValue.GetERepType();
-                    CatchAllUIntSubtraction(rValue, LRep);
-                } break;
-        #endif
-        #if defined(AltNum_EnableIRep)//IRep_to_integer
-        		case 3:
-                    throw "Can't convert into complex number at moment";
-                break;
-        #endif
-        		default:{
-                    RepType LRep = rValue.GetNormRepType();
-                    switch(LRep)
-                    {
-                        case RepType::NormalType:
-                            BasicUIntSubOp(rValue);
-                        break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-            #if defined(AltNum_EnableApproaching)
-                        case RepType::ApproachingBottom:
-                        #if !defined(AltNum_DisableApproachingTop)
-                        case RepType::ApproachingTop:
-                        #endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-        					if(IsPositive())
-        					{
-                                if(rValue>IntHalf.Value)
-								{
-                                    IntHalf.Sign = 0;
-                                    IntHalf.Value = rValue - IntHalf.Value;
-								}
-								else
-									IntHalf.Value -= rValue;
-                            }
-                            else
-                                IntHalf.Value += rValue;
-                            break;
-            #endif
-            #ifdef AltNum_EnableInfinity
-                        case RepType::Infinity:
-                            return *this;
-                            break;
-            #endif
-                        default:
-                            throw "Unable to perform integer subtraction on current representation.";
-                    }
-                } break;
-        	}
-		}
-
-        /// <summary>
-        /// Subtraction operation between MediumDec variant and Integer values
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant&</returns>
-        template<IntegerType IntType= signed int>
-        auto& IntSubOpV1(const IntType& rValue)
-		{
-            if(Value<0)
-                UIntAddOpV1(-rValue);
-            else
-                UIntSubOpV1(rValue);
-		}
-
-        /// <summary>
-        /// Subtraction operation between MediumDec variant and unsigned Integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= unsigned int>
-        auto SubtractByUIntV1(const IntType& rValue){
-            auto self = *this;
-            return self.UIntSubOpV1(rValue);
-		}
-
-        /// <summary>
-        /// Subtraction operation between MediumDec variant and Integer values
-        /// (Doesn't modifify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>MediumDecVariant</returns>
-        template<IntegerType IntType= signed int>
-        auto SubtractByIntV1(const IntType& rValue){
-            auto self = *this;
-            return self.IntSubOpV1(rValue);
-		}
-
-public:
-
-        constexpr auto UIntSubOpV1 = UIntSubOpV1<unsigned int>;
-        constexpr auto IntSubOpV1 = IntSubOpV1<signed int>;
-        constexpr auto UnsignedIntSubOp = UIntSubOpV1<signed int>;
-        constexpr auto UInt64SubOp = UIntSubOpV1<UInt64>;
-        constexpr auto Int64SubOp = IntSubOpV1<Int64>;
-
-        constexpr auto SubByUInt = SubByUIntV1<unsigned int>;
-        constexpr auto SubByInt = SubByIntV1<signed int>;
-        constexpr auto UnsignedSubByInt = SubByUInt<signed int>;
-        constexpr auto SubByUInt64 = SubByUInt<;
-        constexpr auto SubByInt64 = BasicSubByInt64;
-        constexpr auto UnsignedSubByInt64 = SubByUInt<Int64>;
-
-        constexpr auto SubByUInt8 = BasicSubByUInt8;
-        constexpr auto SubByInt8 = BasicSubByInt8;
-        constexpr auto SubByUInt16 = BasicSubByUInt16;
-        constexpr auto SubByInt16 = BasicSubByInt16;
-
-        /// <summary>
-        /// Unsigned subtraction operation between MediumDec variants.
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        auto& UnsignedSubOp(const auto& rValue);
-
-        /// <summary>
-        /// Subtraction operation between MediumDec variants.
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        /// <returns>auto&</returns>
-        auto& SubOp(const auto& Value)
-        {
-            if(Value<0)
-                return UnsignedAddOp(-Value);
-            else
-                return UnsignedSubOp(Value);
-        }
-
-		/// <summary>
-        /// Unsigned subtraction operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        auto SubtractByUnsigned(const auto& rValue)
-        {
-            auto self = *this;
-            return self.UnsignedSubOp(rValue);
-        }
-
-		/// <summary>
-        /// Subtraction operation that ignores special decimal status
-        /// Return true if divide into zero
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side Value</param>
-        auto SubtractBy(const auto& rValue)
-        {
-            auto self = *this;
-            return self.SubOp(rValue);
-        }
-
-        /// <summary>
-        /// Subtraction operation
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubtractBy(Value); }
+	#pragma region Other subtraction operations
 
         /// <summary>
         /// -= operation
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const MediumDecV2Base& Value) { return self.SubOp(Value); }
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const MediumDecV2Base& rValue) { return lValue.SubOperation(rValue); }
 
         /// <summary>
-        /// Subtraction operation between MediumDecV2Base and Integer value.
+        /// -= operation between MediumDec variant and Integer rValue.
         /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed int& Value) { return self.SubtractByInt(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const Int64& Value) { return self.SubtractByInt64(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned int& Value) { return self.SubtractByUInt(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const UInt64& Value) { return self.SubtractByUInt64(Value); }
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
 
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
+        friend MediumDecV2Base& operator-=(MediumDecV2Base& lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
+
+        /// <summary>
+        /// Subtraction operation
+        /// </summary>
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const MediumDecV2Base& rValue) { return lValue.SubOperation(rValue); }
+		
+        /// <summary>
+        /// Subtraction operation between MediumDec variant and Integer rValue.
+        /// </summary>
+        /// <param name="lValue">The left side value</param>
+        /// <param name="rValue">The right side value.</param>
+        /// <returns>MediumDecV2Base</returns>
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
+		
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
+        friend MediumDecV2Base operator-(MediumDecV2Base lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
+		
         friend MediumDecV2Base operator-(const signed int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
-        friend MediumDecV2Base operator-(const Int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
+        friend MediumDecV2Base operator-(const signed __int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const unsigned int& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
-        friend MediumDecV2Base operator-(const UInt64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
-
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed char& Value) { return self.SubtractByInt8(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const signed short& Value) { return self.SubtractByInt16(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned char& Value) { return self.SubtractByUInt8(Value); }
-        friend MediumDecV2Base operator-(const MediumDecV2Base& self, const unsigned short& Value) { return self.SubtractByUInt16(Value); }
-
+        friend MediumDecV2Base operator-(const unsigned __int64& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
+		
         friend MediumDecV2Base operator-(const signed char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const signed short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const unsigned char& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
         friend MediumDecV2Base operator-(const unsigned short& lValue, const MediumDecV2Base& rValue) { return ((MediumDecV2Base)lValue).SubtractBy(rValue); }
 
-
-        /// <summary>
-        /// -= operation between MediumDecV2Base and Integer value.
-        /// </summary>
-        /// <param name="self">The left side value</param>
-        /// <param name="Value">The right side value.</param>
-        /// <returns>MediumDecVariant</returns>
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed int& Value) { return self.IntSubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const Int64& Value) { return self.Int64SubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned int& Value) { return self.UIntSubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const UInt64& Value) { return self.UInt64SubOp(Value); }
-
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed char& Value) { return self.Int8SubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const signed short& Value) { return self.Int16SubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned char& Value) { return self.UInt8SubOp(Value); }
-        friend MediumDecV2Base& operator-=(MediumDecV2Base& self, const unsigned short& Value) { return self.UInt16SubOp(Value); }
-
-    #pragma endregion Other Subtraction Operations
+	#pragma endregion Other subtraction operations
 
 	#pragma region Modulus Operations
     //Defined inside full version of class object
