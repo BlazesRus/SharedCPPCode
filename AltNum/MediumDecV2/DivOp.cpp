@@ -1,5 +1,5 @@
 #include "MediumDecV2Base.hpp"
-using MediumDecVariant = BlazesRusCode::MediumDecV2Base;
+using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
 using RepType = BlazesRusCode::RepType;
 
 void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
@@ -713,8 +713,7 @@ void NormRepSwitch(const auto& rValue)
 	}
 }
 
-//UnsignedDivOp
-auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
+void MediumDecV2Base::UnsignedDivOp(const auto& rValue)
 {
 	#if defined(AltNum_EnableInfinityRep)
 	if(DecimalHalf.Value==InfinityRep){
@@ -800,6 +799,5 @@ auto& MediumDecVariant::UnsignedDivOp(const auto& rValue)
 				NormalRepSwitch(rValue); break;
 		}
 	}
-	return *this;
 }
 

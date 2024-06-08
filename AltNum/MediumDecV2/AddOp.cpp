@@ -1,5 +1,5 @@
 #include "MediumDecV2Base.hpp"
-using MediumDecVariant = BlazesRusCode::AltDecBase;
+using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
 using RepType = BlazesRusCode::RepType;
 
 void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
@@ -495,7 +495,7 @@ void NormRepSwitch(const auto& rValue)
 }
 
 //UnsignedAddOp or UnsignedSubOp
-auto& MediumDecVariant::UnsignedAddOp(const auto& rValue)
+void MediumDecV2Base::UnsignedAddOp(const auto& rValue)
 {
 	switch(DecimalHalf.Flags)
 	{
@@ -514,5 +514,4 @@ auto& MediumDecVariant::UnsignedAddOp(const auto& rValue)
 		default:
 			NormalRepSwitch(rValue); break;
 	}
-	return *this;
 }
