@@ -1220,6 +1220,28 @@ public:
 
 	#pragma endregion Other subtraction operations
 
+	#pragma region Modulus Operations
+
+        void UnsignedModulusOp(const MediumDecBase& rValue){ UnsignedModulusOpV1(rValue); }
+		
+        void ModulusOp(const MediumDecBase& rValue){ ModulusOpV1(rValue); }
+	
+		MediumDecBase& UnsignedModulusOperation(const MediumDec& rValue){
+			UnsignedModulusOp(rValue); return *this;
+		}
+		
+		MediumDecBase& ModulusOperation(const MediumDec& rValue){
+			ModulusOp(rValue); return *this;
+		}
+	
+        friend MediumDec& operator%=(MediumDec& lValue, const MediumDec& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const signed int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const signed __int64& rValue) { return lValue.UIntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const unsigned int& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.IntModulusOpV1(rValue); }
+
+	#pragma endregion Modulus Operations
+
 /*
     #pragma region Floating Operator Overrides
     

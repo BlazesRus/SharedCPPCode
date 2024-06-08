@@ -2455,7 +2455,75 @@ public:
 	#pragma endregion Other subtraction operations
 
 	#pragma region Modulus Operations
-	#pragma endregion Modulus Operations
+	protected:
+	
+        template<IntegerType IntType=unsigned int>
+        void UIntModulusOpV1(const IntType& rValue)
+        {
+            if(DecimalHalf.Value==0)
+                IntHalf.Value %= rValue.IntHalf;
+            else {
+                auto divRes = DivideByUIntV1(rValue);
+                UnsignedSubOp(divRes.MultiplyByUIntV1(rValue));
+            }
+        }
+	
+        template<IntegerType IntType=signed int>
+        void IntModulusOpV1(const IntType& rValue)
+        {
+            if (rValue.IsNegative()) {
+                SwapNegativeStatus();
+                UnsignedModulusOp(-rValue);
+            }
+            else
+                UnsignedModulusOp(rValue);
+        }
+	
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void UnsignedModulusOpV1(const VariantType& rValue)
+        {
+            if(DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0)
+                IntHalf.Value %= rValue.IntHalf.Value;
+            else {
+                auto divRes = DivideByUnsigned(rValue);
+                UnsignedSubOp(divRes.MultiplyByUnsigned(rValue));
+            }
+        }
+
+        template<MediumDecVariant VariantType=MediumDecBase>
+        void ModulusOpV1(const VariantType& rValue)
+        {
+            if (rValue.IsNegative()) {
+                SwapNegativeStatus();
+                UnsignedModulusOp(-rValue);
+            }
+            else
+                UnsignedModulusOp(rValue);
+        }
+		
+
+			
+	public:
+	
+        void UnsignedModulusOp(const MediumDecBase& rValue){ UnsignedModulusOpV1(rValue); }
+		
+        void ModulusOp(const MediumDecBase& rValue){ ModulusOpV1(rValue); }
+	
+		MediumDecBase& UnsignedModulusOperation(const MediumDecBase& rValue){
+			UnsignedModulusOp(rValue); return *this;
+		}
+		
+		MediumDecBase& ModulusOperation(const MediumDecBase& rValue){
+			ModulusOp(rValue); return *this;
+		}
+	
+        friend MediumDec& operator%=(MediumDecBase& lValue, const MediumDecBase& rValue) { return lValue.ModulusOperation(rValue); }
+        friend MediumDec& operator%=(MediumDecBase& lValue, const signed int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumDec& operator%=(MediumDecBase& lValue, const signed __int64& rValue) { return lValue.UIntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDecBase& lValue, const unsigned int& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDecBase& lValue, const unsigned __int64& rValue) { return lValue.IntModulusOpV1(rValue); }
+	
+	#pragma region Modulus Operations
 
 	#pragma region Bitwise Operations
     //Update code later
