@@ -1235,10 +1235,51 @@ public:
 		}
 	
         friend MediumDec& operator%=(MediumDec& lValue, const MediumDec& rValue) { return lValue.IntModulusOpV1(rValue); }
-        friend MediumDec& operator%=(MediumDec& lValue, const signed int& rValue) { return lValue.UIntAddOperation(rValue); }
-        friend MediumDec& operator%=(MediumDec& lValue, const signed __int64& rValue) { return lValue.UIntModulusOpV1(rValue); }
-        friend MediumDec& operator%=(MediumDec& lValue, const unsigned int& rValue) { return lValue.IntModulusOpV1(rValue); }
-        friend MediumDec& operator%=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const signed int& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const signed __int64& rValue) { return lValue.IntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const unsigned int& rValue) { return lValue.UIntModulusOpV1(rValue); }
+        friend MediumDec& operator%=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.UIntModulusOpV1(rValue); }
+		
+		//Experimental inverted assignment operator
+        friend signed int& operator%=(signed int& lValue, const MediumDec& rValue){
+			if(rValue.DecimalHalf.Value==0)
+				lValue %= rValue.IsNegative?-(signed int)rValue.Value:(signed int)rValue.Value;
+			else {
+				MediumDec LValue = lValue; 
+				LValue.ModulusOp(rValue); lValue = (signed int)LValue;
+			}
+			return lValue;
+		}
+		
+        friend signed __int64& operator%=(signed __int64& lValue, const MediumDec& rValue){
+			if(rValue.DecimalHalf.Value==0)
+				lValue %= rValue.IsNegative?-(signed __int64)rValue.Value:(signed __int64)rValue.Value;
+			else {
+				MediumDec LValue = lValue; 
+				LValue.ModulusOp(rValue); lValue = (signed int)LValue;
+			}
+			return lValue;
+		}
+		
+        friend unsigned int& operator%=(unsigned int& lValue, const MediumDec& rValue){
+			if(rValue.DecimalHalf.Value==0)
+				lValue %= rValue.Value;
+			else {
+				MediumDec LValue = lValue; 
+				LValue.UnsignedModulusOp(rValue); lValue = (unsigned int)LValue;
+			}
+			return lValue;
+		}
+		
+        friend unsigned __int64& operator%=(unsigned __int64& lValue, const MediumDec& rValue){
+			if(rValue.DecimalHalf.Value==0)
+				lValue %= rValue.Value;
+			else {
+				MediumDec LValue = lValue; 
+				LValue.UnsignedModulusOp(rValue); lValue = (unsigned __int64)LValue;
+			}
+			return lValue;
+		}
 
 	#pragma endregion Modulus Operations
 
