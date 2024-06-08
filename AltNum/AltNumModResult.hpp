@@ -32,13 +32,12 @@ namespace BlazesRusCode
 		
 		/// <summary>
         /// Initializes a new instance of the <see cref="AltNumModResult"/> class.
+		/// Convert down to base class before passing to perimeter to bypass incomplete class issues
         /// </summary>
-        /// <param name="intVal">The whole number based half of the representation</param>
-        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
+        /// <param name="lValue">The left side variable to perform modulus on</param>
+        /// <param name="rValue">The right side variable</param>
 		AltNumModResult(const VarType& lValue, const VarType& rValue)
 		{
-            VarType LValue = VarType[lValue];
-			VarType RValue = VarType[rValue];
             divRes = LValue / RValue;
             modRes = LValue - RValue * divRes;
 		}
@@ -64,31 +63,22 @@ namespace BlazesRusCode
         /// <returns>True if the remainder is equal to zero</returns>
         explicit operator bool(){ return modRes==0; }
 		
-  //      /// <summary>
-  //      /// Calculates if remainder is zero.
-  //      /// </summary>
-  //      /// <returns>True if the remainder is equal to zero</returns>
-		//bool operator! () 
-		//{
-		//	return modRes==0;
-		//} const
-		
         /// <summary>
         /// Returns modulus operation result value (explicit conversion operation)
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator VarType(){ return modRes; }
 		
-  //      /// <summary>
-  //      /// Unary + Operator (Returns modulus operation result value)
-		///// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
-  //      /// </summary>
-  //      /// <param name="self">The self.</param>
-  //      /// <returns>MediumDecBase</returns>
-  //      VarType operator+ ()
-  //      {
-		//	return modRes;
-  //      } const
+        /// <summary>
+        /// Unary + Operator (Returns modulus operation result value)
+		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
+        /// </summary>
+        /// <param name="self">The self.</param>
+        /// <returns>MediumDecBase</returns>
+        VarType operator+ () const
+        {
+			return modRes;
+        }
 	
     #pragma endregion ConvertToOtherTypes
 	
