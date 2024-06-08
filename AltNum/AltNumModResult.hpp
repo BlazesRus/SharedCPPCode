@@ -16,20 +16,20 @@ namespace BlazesRusCode
     public:
 		//Division result
         VarType divRes;
-		
+
 		//Returns result from modulus
         VarType modRes;
-		
+
 		auto GetResult()
 		{
 			return modRes;
 		}
-		
+
 		auto ReturnDivisionResult()
 		{
 			return divRes;
 		}
-		
+
 		/// <summary>
         /// Initializes a new instance of the <see cref="AltNumModResult"/> class.
 		/// Convert down to base class before passing to perimeter to bypass incomplete class issues
@@ -38,8 +38,8 @@ namespace BlazesRusCode
         /// <param name="rValue">The right side variable</param>
 		AltNumModResult(const VarType& lValue, const VarType& rValue)
 		{
-            divRes = LValue / RValue;
-            modRes = LValue - RValue * divRes;
+            divRes = lValue / rValue;
+            modRes = lValue - rValue * divRes;
 		}
 
         /// <summary>
@@ -48,30 +48,30 @@ namespace BlazesRusCode
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        friend AltNumModResult operator%(const VarType& LValue, const VarType& RValue)
+        friend AltNumModResult operator%(const VarType& lValue, const VarType& rValue)
 		{
-            divRes = LValue / RValue;
-            modRes = LValue - RValue * divRes;
+            divRes = lValue / rValue;
+            modRes = lValue - rValue * divRes;
 			return *this;
 		}
 
     #pragma region ConvertToOtherTypes
-	
+
         /// <summary>
         /// Calculates if remainder is zero. (explicit conversion operation)
         /// </summary>
         /// <returns>True if the remainder is equal to zero</returns>
         explicit operator bool(){ return modRes==0; }
-		
+
         /// <summary>
         /// Returns modulus operation result value (explicit conversion operation)
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator VarType(){ return modRes; }
-		
+
         /// <summary>
         /// Unary + Operator (Returns modulus operation result value)
-		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already. 
+		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already.
         /// </summary>
         /// <param name="self">The self.</param>
         /// <returns>MediumDecBase</returns>
@@ -79,8 +79,8 @@ namespace BlazesRusCode
         {
 			return modRes;
         }
-	
+
     #pragma endregion ConvertToOtherTypes
-	
+
     };
 }

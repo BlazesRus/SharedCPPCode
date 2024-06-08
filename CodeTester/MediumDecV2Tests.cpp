@@ -13,8 +13,8 @@ using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 using FlaggedInt = BlazesRusCode::FlaggedInt;
 
-#include "..\AltNum\MediumDecV2\MediumDecV2Base.hpp"
-using MediumDecVariant = BlazesRusCode::MediumDecV2Base;
+//#include "..\AltNum\MediumDecV2\MediumDecV2Base.hpp"
+//using MediumDecVariant = BlazesRusCode::MediumDecV2Base;
 
 #include <Windows.h>
 

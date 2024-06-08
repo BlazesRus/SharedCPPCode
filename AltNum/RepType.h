@@ -199,5 +199,5 @@ namespace BlazesRusCode
 	#endif
 		//Not currently used(Enum Bits:8, 1, 2, 3)
 		UnknownType = 135
-	}
-]
+	};
+}

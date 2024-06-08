@@ -416,25 +416,6 @@ inline long double BlazesRusCode::MediumDecBase::toDecimal() const
 
 #pragma region Comparison Operators
 
-inline std::strong_ordering BlazesRusCode::MediumDecBase::BasicUIntComparison(const unsigned int& that) const
-{
-	if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-		return IntHalfCmp;
-	//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-	unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-	if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-		return DecimalHalfCmp;
-}
-
-inline std::strong_ordering BlazesRusCode::MediumDecBase::BasicIntComparison(const signed int& that) const
-{
-	if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-		return IntHalfCmp;
-	//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-	unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-	if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-		return DecimalHalfCmp;
-}
 
 #pragma endregion Comparison Operators
 
@@ -846,3 +827,44 @@ inline void BlazesRusCode::MediumDecBase::SetUIntVal(const unsigned int& Value)
 }
 
 #pragma endregion ConvertFromOtherTypes
+
+		////Experimental inverted assignment operator
+  //      friend signed int& operator%=(signed int& lValue, const MediumDecBase& rValue){
+		//	if(rValue.DecimalHalf.Value==0)
+		//		lValue %= rValue.IsNegative?-(signed int)rValue.Value:(signed int)rValue.Value;
+		//	else {
+		//		MediumDecBase LValue = lValue;
+		//		LValue.ModulusOp(rValue); lValue = (signed int)LValue;
+		//	}
+		//	return lValue;
+		//}
+
+  //      friend signed __int64& operator%=(signed __int64& lValue, const MediumDecBase& rValue){
+		//	if(rValue.DecimalHalf.Value==0)
+		//		lValue %= rValue.IsNegative?-(signed __int64)rValue.Value:(signed __int64)rValue.Value;
+		//	else {
+		//		MediumDecBase LValue = lValue;
+		//		LValue.ModulusOp(rValue); lValue = (signed int)LValue;
+		//	}
+		//	return lValue;
+		//}
+
+  //      friend unsigned int& operator%=(unsigned int& lValue, const MediumDecBase& rValue){
+		//	if(rValue.DecimalHalf.Value==0)
+		//		lValue %= rValue.Value;
+		//	else {
+		//		MediumDecBase LValue = lValue;
+		//		LValue.UnsignedModulusOp(rValue); lValue = (unsigned int)LValue;
+		//	}
+		//	return lValue;
+		//}
+
+  //      friend unsigned __int64& operator%=(unsigned __int64& lValue, const MediumDecBase& rValue){
+		//	if(rValue.DecimalHalf.Value==0)
+		//		lValue %= rValue.Value;
+		//	else {
+		//		MediumDecBase LValue = lValue;
+		//		LValue.UnsignedModulusOp(rValue); lValue = (unsigned __int64)LValue;
+		//	}
+		//	return lValue;
+		//}
