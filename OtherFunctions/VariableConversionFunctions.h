@@ -295,7 +295,7 @@ namespace BlazesRusCode
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std::string</returns>
         template<typename IntType>
-        static constexpr std::string UnsignedIntToStringConversion(IntType IntegerHalf)
+        static constexpr std::string UIntToStringConversionV1(IntType IntegerHalf)
         {
             if (IntegerHalf == 0)
                 return "0";
@@ -322,7 +322,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std::string</returns>
-        static constexpr auto UnsignedByteToStringConversion = UnsignedIntToStringConversion<unsigned __int8>;
+        static constexpr auto UnsignedByteToStringConversion = UIntToStringConversionV1<unsigned __int8>;
 
         /// <summary>
         /// Converts int into String
@@ -336,7 +336,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="IntegerHalf">The integer half.</param>
         /// <returns>std.string</returns>
-        static constexpr auto UIntToStringConversion = UnsignedIntToStringConversion<unsigned int>;
+        static constexpr auto UIntToStringConversion = UIntToStringConversionV1<unsigned int>;
 
         /// <summary>
         /// Converts unsigned int64 into String

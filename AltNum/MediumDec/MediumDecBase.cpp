@@ -424,7 +424,7 @@ inline long double BlazesRusCode::MediumDecBase::toDecimal() const
 inline void BlazesRusCode::MediumDecBase::DivideByTwo()
 {
 	if (DecimalHalf == 0 && (IntHalf.Value & 1) == 1)//Check if number is odd
-		UnsignedIntDivOp(2);
+		UIntDivOp(2);
 	else
 		IntHalf /= 2;
 }
@@ -437,7 +437,7 @@ inline void BlazesRusCode::MediumDecBase::DivideByFour()
 	if (DecimalHalf == 0 && (((IntHalf.Value >> 2) << 2) == IntHalf.Value))//Check if number can be perfectly divided by 4
 		IntHalf /= 4;
 	else
-		UnsignedIntDivOp(4);
+		UIntDivOp(4);
 }
 
 inline MediumDecBase BlazesRusCode::MediumDecBase::DividedByTwo() const
@@ -456,12 +456,12 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::DividedByFour() const
 
 inline void BlazesRusCode::MediumDecBase::MultiplyByTwo()
 {
-	UnsignedIntMultOp(2);
+	UIntMultOp(2);
 }
 
 inline void BlazesRusCode::MediumDecBase::MultiplyByFour()
 {
-	UnsignedIntMultOp(4);
+	UIntMultOp(4);
 }
 
 
@@ -480,7 +480,7 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::MultipliedByFour() const
 
 #pragma region NormalRep Integer Addition Operations
 
-inline void MediumDecBase::UnsignedIntegerAddition(const MirroredInt& rValue)
+inline void MediumDecBase::UnsignedMirroredAddOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingUnsignedAddOp(rValue);
@@ -492,7 +492,7 @@ inline void MediumDecBase::UnsignedIntegerAddition(const MirroredInt& rValue)
 	}
 }
 
-inline void MediumDecBase::IntegerAddition(const MirroredInt& rValue)
+inline void MediumDecBase::MirroredAddOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0) {
 		IntHalf.NRepSkippingAddOp(rValue);
@@ -528,7 +528,7 @@ inline MediumDecBase& BlazesRusCode::MediumDecBase::UIntAddOperation(const unsig
 
 #pragma region NormalRep Integer Subtraction Operations
 
-inline void BlazesRusCode::MediumDecBase::UnsignedIntegerSubtraction(const MirroredInt& rValue)
+inline void BlazesRusCode::MediumDecBase::UnsignedMirroredSubOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingUnsignedSubOp(rValue);
@@ -540,7 +540,7 @@ inline void BlazesRusCode::MediumDecBase::UnsignedIntegerSubtraction(const Mirro
 	}
 }
 
-inline void BlazesRusCode::MediumDecBase::IntegerSubtraction(const MirroredInt& rValue)
+inline void BlazesRusCode::MediumDecBase::MirroredSubOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingSubOp(rValue);

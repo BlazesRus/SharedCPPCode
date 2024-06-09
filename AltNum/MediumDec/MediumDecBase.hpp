@@ -957,8 +957,8 @@ public:
         void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
         void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        void UnsignedIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
-        void UnsignedInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
+        void UIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
+        void UInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
 
         void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
         void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
@@ -1030,7 +1030,7 @@ protected:
 					{
 						case 2:
 							if((IntHalf.Value&1)==1)//Check if number is odd
-								UnsignedIntDivOp(2);
+								UIntDivOp(2);
 							else
 								IntHalf.Value /= 2;
 							break;
@@ -1038,31 +1038,31 @@ protected:
 							if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
 								IntHalf.Value /= 4;
 							else
-								UnsignedIntDivOp(4);
+								UIntDivOp(4);
 							break;
 						case 8:
 							if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
 								IntHalf.Value /= 8;
 							else
-								UnsignedIntDivOp(4);
+								UIntDivOp(4);
 							break;
 						case 16:
 							if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
 								IntHalf.Value /= 16;
 							else
-								UnsignedIntDivOp(4);
+								UIntDivOp(4);
 							break;
 						case 32:
 							if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
 								IntHalf.Value /= 32;
 							else
-								UnsignedIntDivOp(4);
+								UIntDivOp(4);
 							break;
                         case 0:
                             throw "Target rValue can not be divided by zero";
                             break;
 						default:
-							UnsignedIntDivOp(rValue.IntHalf.Value);
+							UIntDivOp(rValue.IntHalf.Value);
 							break;
 					}
 				}
@@ -1379,8 +1379,8 @@ public:
         void UInt64MultOp(const unsigned __int64& rValue) { UIntMultOpV1(rValue); }
         void Int64MultOp(const signed __int64& rValue) { IntMultOpV1(rValue); }
 
-        void UnsignedIntMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
-        void UnsignedInt64MultOp(const signed __int64& rValue) { UIntMultOpV1(rValue); }
+        void UIntMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
+        void UInt64MultOp(const signed __int64& rValue) { UIntMultOpV1(rValue); }
 
         void UInt8MultOp(const unsigned char& rValue) { UIntMultOpV1(rValue); }
         void Int8MultOp(const signed char& rValue) { IntMultOpV1(rValue); }
@@ -1758,7 +1758,7 @@ protected:
         void UIntAddOpV1(const IntType& rValue)
         {
 			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUnsignedIntegerAddOp(rValue);
+				IntHalf.NRepSkippingUIntAddOp(rValue);
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf.UIntAddOp((unsigned int)rValue);
@@ -1822,7 +1822,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UnsignedIntegerAddition(const MirroredInt& rValue);
+        void UnsignedMirroredAddOp(const MirroredInt& rValue);
 
         /// <summary>
         /// Basic addition operation between MediumDec Variant and MirroredInt
@@ -1830,15 +1830,15 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void IntegerAddition(const MirroredInt& rValue);
+        void MirroredAddOp(const MirroredInt& rValue);
 
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
         void UIntAddOp(const unsigned int& rValue);
         void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
 
-        void UnsignedIntAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
-        void UnsignedInt64AddOp(const signed __int64& rValue) { UIntAddOpV1(rValue); }
+        void UIntAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
+        void UInt64AddOp(const signed __int64& rValue) { UIntAddOpV1(rValue); }
 
         MediumDecBase& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
         MediumDecBase& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
@@ -1883,7 +1883,7 @@ protected:
         void UIntSubOpV1(const IntType& rValue)
         {
 			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUnsignedIntegerSubOp(rValue);
+				IntHalf.NRepSkippingUIntSubOp(rValue);
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf.UIntSubOp((unsigned int)rValue);
@@ -1947,7 +1947,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UnsignedIntegerSubtraction(const MirroredInt& rValue);
+        void UnsignedMirroredSubOp(const MirroredInt& rValue);
 
         /// <summary>
         /// Basic Subtraction operation between MediumDec Variant and MirroredInt
@@ -1955,7 +1955,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void IntegerSubtraction(const MirroredInt& rValue);
+        void MirroredSubOp(const MirroredInt& rValue);
 
         void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         /// <summary>
@@ -1968,8 +1968,8 @@ public:
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
-        void UnsignedIntSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
-        void UnsignedInt64SubOp(const signed __int64& rValue) { UIntSubOpV1(rValue); }
+        void UIntSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
+        void UInt64SubOp(const signed __int64& rValue) { UIntSubOpV1(rValue); }
 
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
@@ -2013,7 +2013,7 @@ protected:
         void UnsignedAddOpV1(const VariantType& rValue)
         {
 			if(rValue.DecimalHalf==0)
-                UnsignedIntegerAddition(rValue.IntHalf);
+                UnsignedMirroredAddOp(rValue.IntHalf);
 			else
             {
 				int signBeforeOp = IntHalf.Sign;
@@ -2066,7 +2066,7 @@ protected:
         void AddOpV1(const VariantType& rValue)
         {
             if (rValue.DecimalHalf == 0)
-                IntegerAddition(rValue.IntHalf);
+                MirroredAddOp(rValue.IntHalf);
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf += rValue.IntHalf;
@@ -2146,7 +2146,7 @@ protected:
         void UnsignedSubOpV1(const VariantType& rValue)
         {
             if (rValue.DecimalHalf == 0)
-                UnsignedIntegerSubtraction(rValue.IntHalf);
+                UnsignedMirroredSubOp(rValue.IntHalf);
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf.UnsignedSubOp(rValue.IntHalf);
@@ -2192,7 +2192,7 @@ protected:
         void SubOpV1(const VariantType& rValue)
         {
 			if(rValue.DecimalHalf==0)
-                IntegerSubtraction(rValue.IntHalf);
+                MirroredSubOp(rValue.IntHalf);
 			else
 			{
 				int signBeforeOp = IntHalf.Sign;
@@ -2720,17 +2720,15 @@ public:
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
-        /// <returns>MediumDecBase&</returns>
         void ApplyAbs(){ IntHalf.ApplyAbs(); }
 
 protected:
 
-        /// <summary>
-        /// Forces Number into non-negative
-        /// </summary>
-        /// <returns>MediumDecBase&</returns>
+        ///<summary>
+        /// Returns a copy of the number converted into non-negative version
+        ///</summary>
         template<MediumDecVariant VariantType = MediumDecBase>
-        VariantType AbsOfV1() {
+        VariantType AbsOfV1() const {
             VariantType result = *this; result.ApplyAbs();
             return result;
         }
@@ -2738,15 +2736,13 @@ protected:
 public:
 
         /// <summary>
-        /// Forces Number into non-negative
+        /// Returns a copy of the number converted into non-negative version
         /// </summary>
-        /// <returns>MediumDecBase&</returns>
-        MediumDecBase AbsOf() { return AbsOfV1(); }
+        MediumDecBase AbsOf() const { return AbsOfV1<MediumDecBase>(); }
 
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
-        /// <returns>MediumDecBase&</returns>
         static MediumDecBase Abs(const MediumDecBase& tValue);
 
 
@@ -2754,7 +2750,7 @@ public:
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
+        /// <param name="precision">precision level of digits to cut off</param>
         void ApplyFloorOf(const int& precision = 0);
 
 protected:
@@ -2762,7 +2758,6 @@ protected:
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
         /// </summary>
-        /// <returns>MediumDecBase&</returns>
 		template<MediumDecVariant VariantType=MediumDecBase>
         VariantType CeilOfV1() const
         {
@@ -2772,10 +2767,10 @@ protected:
 				return *this;
         }
 
-        /// <summary>
+        ///<summary>
         /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
-        /// </summary>
-        /// <returns>VariantType&</returns>
+        ///</summary>
+        /// <param name="tValue">Variable to apply method on</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType CeilV1(const VariantType& tValue)
         {

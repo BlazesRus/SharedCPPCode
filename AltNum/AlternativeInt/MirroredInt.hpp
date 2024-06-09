@@ -417,10 +417,10 @@ namespace BlazesRusCode
         void NRepSkippingSubOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedIntegerAddOp(const unsigned int& rValue);
+        void NRepSkippingUIntAddOp(const unsigned int& rValue);
 		
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedIntegerSubOp(const unsigned int& rValue);
+        void NRepSkippingUIntSubOp(const unsigned int& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingIntegerAddOp(const signed int& rValue);

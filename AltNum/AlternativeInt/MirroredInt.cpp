@@ -542,7 +542,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rVa
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerAddOp(const unsigned int& rValue) {
+inline void BlazesRusCode::MirroredInt::NRepSkippingUIntAddOp(const unsigned int& rValue) {
 	if (IsPositive())
 		Value += rValue;
 	else {
@@ -555,7 +555,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerAddOp(const u
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedIntegerSubOp(const unsigned int& rValue) {
+inline void BlazesRusCode::MirroredInt::NRepSkippingUIntSubOp(const unsigned int& rValue) {
 	if (IsPositive()) {
 		if (rValue >= Value) {//Becoming positive
 			Sign = PositiveSign;
