@@ -1832,19 +1832,13 @@ public:
         /// <param name="rValue">The right side value</param>
         void IntegerAddition(const MirroredInt& rValue);
 
+        void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
+        void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
         void UIntAddOp(const unsigned int& rValue);
-
-        void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
         void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
-        void Int64AddOp(const signed __int64& rValue) { IntAddOpV1(rValue); }
 
         void UnsignedIntAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
         void UnsignedInt64AddOp(const signed __int64& rValue) { UIntAddOpV1(rValue); }
-
-        void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
-        void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
-        void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
-        void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
 
         MediumDecBase& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
         MediumDecBase& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
@@ -1858,6 +1852,11 @@ public:
         MediumDecBase AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
         MediumDecBase AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
         MediumDecBase AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
+
+        void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
+        void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
+        void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
+        void Int64AddOp(const signed __int64& rValue) { IntAddOpV1(rValue); }
 		
         MediumDecBase& Int8AddOperation(const signed char& rValue) { return IntAddOperationV1(rValue); }
         MediumDecBase& Int16AddOperation(const signed short& rValue) { return IntAddOperationV1(rValue); }
@@ -1958,6 +1957,7 @@ public:
         /// <param name="rValue">The right side value</param>
         void IntegerSubtraction(const MirroredInt& rValue);
 
+        void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         /// <summary>
         /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value
         /// that ignores special representation status
@@ -1965,18 +1965,16 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         void UIntSubOp(const unsigned int& rValue);
-
-        void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
+        void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
-        void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
 
         void UnsignedIntSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
         void UnsignedInt64SubOp(const signed __int64& rValue) { UIntSubOpV1(rValue); }
 
-        void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
-        void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
+        void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
         void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
+        void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
 
         MediumDecBase& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
         MediumDecBase& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
