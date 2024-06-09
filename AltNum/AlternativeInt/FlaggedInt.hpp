@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -383,12 +383,25 @@ namespace BlazesRusCode
 
 #pragma region StringOperations
 
-		/// <summary>
-        /// MirroredInt to int explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator std::string();
+        std::string ToString() const;
+		
+        std::string ToDetailedString(const PartialInt& DecHalf) const
+		{
+			std::string result;
+			switch(DecHalf.Value)
+			{
+				#if defined(AltNum_EnableApproachingDivided)
+				case PartialInt::ApproachingMidRightRep://DecHalf.ToDetailedString()+"/"+ExtraRep.Value + "0.0..01"
+					result = "/"+ToString()+"+ 0.0..01";
+				#endif
+				default:
+					result = "/"+ToString();
+			}
+			return result;
+		}
 
+        explicit operator std::string();
+		
 #pragma endregion StringOperations
 
 	};

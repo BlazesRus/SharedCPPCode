@@ -116,7 +116,7 @@ inline FlaggedInt BlazesRusCode::FlaggedInt::ZeroValue()
 	return FlaggedInt(0, 1);
 }
 
-inline BlazesRusCode::FlaggedInt::operator std::string()
+inline std::string BlazesRusCode::PartialInt::ToString() const
 {
-	return VariableConversionFunctions::UIntToStringConversion(Value);
+    return VariableConversionFunctions::UIntToStringConversion(Value);
 }

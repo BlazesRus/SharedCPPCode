@@ -1,4 +1,4 @@
-#include "PartialInt.hpp"
+﻿#include "PartialInt.hpp"
 using PartialInt = BlazesRusCode::PartialInt;
 
 PartialInt PartialInt::Zero = PartialInt::ZeroValue();
@@ -77,21 +77,15 @@ inline void BlazesRusCode::PartialInt::SwitchToIVariant()
 	Flags = 3;
 }
 
-//Is at zero value
-
 inline bool BlazesRusCode::PartialInt::IsAtZero() const
 {
 	return Value == 0;
 }
 
-//Is not at zero value
-
 inline bool BlazesRusCode::PartialInt::IsNotAtZero() const
 {
 	return Value != 0;
 }
-
-//Is at one value
 
 inline bool BlazesRusCode::PartialInt::IsAtOne() const
 {
@@ -108,17 +102,51 @@ inline bool BlazesRusCode::PartialInt::IsOdd() const
 	return (Value & 1) == 1;
 }
 
-/// <summary>
-/// Returns the value at zero
-/// </summary>
-/// <returns>MirroredInt</returns>
-
 inline PartialInt BlazesRusCode::PartialInt::ZeroValue()
 {
 	return PartialInt();
 }
 
-inline BlazesRusCode::PartialInt::operator std::string()
+inline std::string BlazesRusCode::PartialInt::ToString() const
 {
     return VariableConversionFunctions::UIntToStringConversion(Value);
+}
+
+inline std::string BlazesRusCode::PartialInt::ToDetailedString() const
+{
+	std::string result;
+	switch(Value)
+	{
+		case InfinityRep:
+			result = "∞"; break;
+	#if defined(AltNum_EnableApproaching)
+		case ApproachingBottomRep:
+			result = "0..01"; break;
+		case ApproachingTopRep:
+		#if defined(AltNum_EnableApproachingDivided)
+		case ApproachingMidLeftRep://result+"/"+ExtraRep.Value
+		case ApproachingMidRightRep://result+"/"+ExtraRep.Value + "0.0..01"
+		#endif
+			result = "9..9"; break;
+	#endif
+		default:
+			result = ToString(); break;
+	}
+    switch(Flags)
+	{
+		case PiRep:
+			result += "π"; break;
+		case ERep:
+			result += "e"; break;
+		case IRep:
+			result += "i"; break;
+		default:
+			break;
+	}
+	return result;		
+}
+
+inline BlazesRusCode::PartialInt::operator std::string()
+{
+	return ToString();
 }

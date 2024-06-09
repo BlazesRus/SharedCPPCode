@@ -168,7 +168,35 @@ public:
         /// The decimal overflow
         /// </summary>
         static unsigned int const DecimalOverflow = 1000000000;
-
+		
+	#if defined(AltNum_EnablePiRep)
+        //Pi*Value representation(when DecimalHalf.Flags==1)
+        static const unsigned int PiRep = 1;
+	#endif
+	#if defined(AltNum_EnableERep)
+        //e*Value representation(DecimalHalf.Flags==2)
+        static const unsigned int ERep = 2;
+	#endif
+	#if defined(AltNum_EnableIRep)
+        //e*Value representation(DecimalHalf.Flags==3)
+        static const unsigned int IRep = 3;
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+        //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
+		static const unsigned int InfinityRep = 1073741805;
+	#endif
+	#if defined(AltNum_EnableApproaching)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
+        static const unsigned int ApproachingBottomRep = 1073741806;
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
+		static const unsigned int ApproachingTopRep = 1073741807;
+	#endif
+	#if defined(AltNum_EnableApproachingDivided)
+        //When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value-1
+        static const unsigned int ApproachingMidLeftRep = 1073741808;
+		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1 
+		static const unsigned int ApproachingMidRightRep = 1073741809;
+	#endif
 		static PartialInt Zero;
 
 		void UInt64DivOp(const unsigned __int64& rValue);
@@ -381,10 +409,10 @@ public:
 
 #pragma region StringOperations
 
-		/// <summary>
-        /// MirroredInt to int explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
+        std::string ToString() const;
+		
+        std::string ToDetailedString() const;
+
         explicit operator std::string();
 
 #pragma endregion StringOperations
