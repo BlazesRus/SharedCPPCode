@@ -84,21 +84,21 @@ namespace BlazesRusCode
         void SetAsZero();
 
         void SetAsNegativeZero();
-		
+
         //Is at either zero or negative zero
 		bool IsAtZeroInt() const;
 
         //Is at neither zero or negative zero
 		bool IsNotAtZeroInt() const;
-		
+
         //Is at either zero or negative one
 		bool IsAtOneInt() const;
 
         //Is at neither zero or negative one
 		bool IsNotAtOneInt() const;
-		
+
 		bool IsEven() const;
-		
+
 		bool IsOdd() const;
 
 		bool IsZero() const;
@@ -107,7 +107,7 @@ namespace BlazesRusCode
         MirroredInt Abs() const;
 
         void ApplyAbs();
-		
+
 		std::strong_ordering SignComparison(const MirroredInt& that) const
 		{
 			//Comparing if number is negative vs positive
@@ -157,7 +157,7 @@ namespace BlazesRusCode
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
 		}
-		
+
 		bool operator==(const MirroredInt& that) const
 		{
 			if (Value!=that.Value)
@@ -222,7 +222,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return Value; }
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
@@ -234,7 +234,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return GetValue(); }
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
@@ -245,7 +245,7 @@ namespace BlazesRusCode
         /// Swaps the negative status.
         /// </summary>
         void SwapNegativeStatus();
-		
+
         MirroredInt operator-() const
         { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
 
@@ -256,37 +256,37 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt MaximumValue();
-	
+
         /// <summary>
         /// Returns minimum stored value(-2147483647)
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt MinimumValue();
-		
+
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt NegativeOneValue();
-		
+
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt OneValue();
-		
+
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt TwoValue();
-		
+
         /// <summary>
         /// Returns the value at negative zero(for negative fractions)
         /// </summary>
         /// <returns>MirroredInt</returns>
         static MirroredInt NegativeZeroValue();
-		
+
         /// <summary>
         /// Returns the value at zero
         /// </summary>
@@ -298,20 +298,20 @@ namespace BlazesRusCode
         //Alias:MaxIntHalf
         //Maximum value(2147483647) that can be stored inside IntHalf field
         static MirroredInt Maximum;
-		
+
         //Alias:MinIntHalf
         //Minimum value(-2147483647) that can be stored inside IntHalf field
         static MirroredInt Minimum;
-		
+
         static MirroredInt NegativeOne;
-		
+
         static MirroredInt One;
-		
+
         static MirroredInt Two;
-		
+
         //Alias:NegativeZeroRep
         static MirroredInt NegativeZero;
-		
+
 		static MirroredInt Zero;
 
 //These templates require size int 32 or greater in order to preserve storage of value (commenting out for now to reduce strain on extension)
@@ -405,34 +405,34 @@ namespace BlazesRusCode
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
-		
+
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingAddOp(const MirroredInt& rValue);
 
-		
+
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingSubOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingUIntAddOp(const unsigned int& rValue);
-		
+
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingUIntSubOp(const unsigned int& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingIntegerAddOp(const signed int& rValue);
 
-		
+
 		//Exclude negative zero version(When DecimalHalf.Value==0)
         void NRepSkippingIntegerSubOp(const signed int& rValue);
 
  		friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
 			lValue.DivOp(rValue); return lValue;
         }
-		
+
 		friend MirroredInt& operator/=(MirroredInt& lValue, const signed int& rValue){
 			lValue.IntDivOp(rValue); return lValue;
         }
@@ -451,7 +451,7 @@ namespace BlazesRusCode
             MirroredInt newVal = lValue;
 			newVal.UIntDivOp(rValue); return newVal;
         }
-		
+
 		friend MirroredInt operator/(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntDivOp(rValue); return newVal;
@@ -487,7 +487,7 @@ namespace BlazesRusCode
         friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned int& rValue){
             lValue.UIntMultOp(rValue); return lValue;
         }
-		
+
 		friend MirroredInt operator*(const MirroredInt& lValue, const MirroredInt& rValue){
             MirroredInt newVal = lValue;
 			newVal.MultOp(rValue); return newVal;
@@ -497,7 +497,7 @@ namespace BlazesRusCode
             MirroredInt newVal = lValue;
 			newVal.UIntMultOp(rValue); return newVal;
         }
-		
+
 		friend MirroredInt operator*(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntMultOp(rValue); return newVal;
@@ -525,25 +525,25 @@ namespace BlazesRusCode
 		friend MirroredInt& operator+=(MirroredInt& lValue, const MirroredInt& rValue)
 		{ lValue.AddOp(rValue); return lValue;
         }
-		
+
 		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned int& rValue)
 		{ lValue.UIntAddOp(rValue); return lValue; }
 
 		friend MirroredInt& operator+=(MirroredInt& lValue, const signed int& rValue)
 		{ lValue.IntAddOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned __int64& rValue)
 		{ lValue.UIntAddOp(rValue); return lValue; }
 
 		friend MirroredInt& operator+=(MirroredInt& lValue, const signed __int64& rValue)
 		{ lValue.IntAddOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned char& rValue)
 		{ lValue.UIntAddOp(rValue); return lValue; }
 
 		friend MirroredInt& operator+=(MirroredInt& lValue, const signed char& rValue)
 		{ lValue.IntAddOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned short& rValue)
 		{ lValue.UIntAddOp(rValue); return lValue; }
 
@@ -559,7 +559,7 @@ namespace BlazesRusCode
             MirroredInt newVal = lValue;
 			newVal.UIntAddOp(rValue); return newVal;
         }
-		
+
 		friend MirroredInt operator+(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntAddOp(rValue); return newVal;
@@ -574,25 +574,25 @@ namespace BlazesRusCode
 
 		friend MirroredInt& operator-=(MirroredInt& lValue, const signed int& rValue)
 		{ lValue.IntSubOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned __int64& rValue)
 		{ lValue.UIntSubOp(rValue); return lValue; }
 
 		friend MirroredInt& operator-=(MirroredInt& lValue, const signed __int64& rValue)
 		{ lValue.IntSubOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned char& rValue)
 		{ lValue.UIntSubOp(rValue); return lValue; }
 
 		friend MirroredInt& operator-=(MirroredInt& lValue, const signed char& rValue)
 		{ lValue.IntSubOp(rValue); return lValue; }
-		
+
 		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned short& rValue)
 		{ lValue.UIntSubOp(rValue); return lValue; }
 
 		friend MirroredInt& operator-=(MirroredInt& lValue, const signed short& rValue)
 		{ lValue.IntSubOp(rValue); return lValue; }
-		
+
 		friend MirroredInt operator-(const MirroredInt& lValue, const MirroredInt& rValue){
             MirroredInt newVal = lValue;
 			newVal.SubOp(rValue); return newVal;
@@ -602,14 +602,14 @@ namespace BlazesRusCode
             MirroredInt newVal = lValue;
 			newVal.UIntSubOp(rValue); return newVal;
         }
-		
+
 		friend MirroredInt operator-(const MirroredInt& lValue, const signed int& rValue){
             MirroredInt newVal = lValue;
 			newVal.IntSubOp(rValue); return newVal;
         }
 
     #pragma region Other Operators
-	
+
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
@@ -671,10 +671,12 @@ namespace BlazesRusCode
         {
             return *this;
         }
-		
+
     #pragma endregion Other Operators
 
 #pragma region StringOperations
+
+        std::string ToString() const;
 
 		/// <summary>
         /// MirroredInt to int explicit conversion
@@ -685,6 +687,6 @@ namespace BlazesRusCode
 #pragma endregion StringOperations
 
 	};
-	
+
 
 }

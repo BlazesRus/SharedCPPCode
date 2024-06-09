@@ -618,10 +618,15 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed in
 	}
 }
 
-inline BlazesRusCode::MirroredInt::operator std::string()
+inline std::string BlazesRusCode::MirroredInt::ToString() const
 {
 	if (IsNegative())
 		return "-" + VariableConversionFunctions::UIntToStringConversion(Value);
 	else
 		return VariableConversionFunctions::UIntToStringConversion(Value);
+}
+
+inline BlazesRusCode::MirroredInt::operator std::string()
+{
+	return ToString();
 }
