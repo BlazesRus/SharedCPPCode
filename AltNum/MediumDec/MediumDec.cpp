@@ -209,7 +209,7 @@ inline MediumDec BlazesRusCode::MediumDec::GetValueFromString(std::string Value)
 /// </summary>
 /// <param name="self">The left side value</param>
 /// <param name="Value">The right side value.</param>
-/// <returns>MediumDecV2V2Base</returns>
+/// <returns>MediumDecBase</returns>
 ModResult operator%(const MediumDec& LValue, const MediumDec& RValue)
 {
 	return ModResult((MediumDecBase)LValue, (MediumDecBase)RValue);
