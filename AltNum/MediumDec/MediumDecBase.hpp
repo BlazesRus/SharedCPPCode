@@ -124,6 +124,11 @@ namespace BlazesRusCode
             return *this;
         }
 
+        MediumDecBase& ThisRef()
+        {
+            return *this;
+        }
+
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
@@ -962,8 +967,7 @@ public:
         void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
         void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        void UIntDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
-        void UInt64DivOp(const signed __int64& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedIntegerDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
 
         void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
         void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
@@ -1384,8 +1388,7 @@ public:
         void UInt64MultOp(const unsigned __int64& rValue) { UIntMultOpV1(rValue); }
         void Int64MultOp(const signed __int64& rValue) { IntMultOpV1(rValue); }
 
-        void UIntMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
-        void UInt64MultOp(const signed __int64& rValue) { UIntMultOpV1(rValue); }
+        void UnsignedIntegerMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
 
         void UInt8MultOp(const unsigned char& rValue) { UIntMultOpV1(rValue); }
         void Int8MultOp(const signed char& rValue) { IntMultOpV1(rValue); }
@@ -1842,8 +1845,7 @@ public:
         void UIntAddOp(const unsigned int& rValue);
         void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
 
-        void UIntAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
-        void UInt64AddOp(const signed __int64& rValue) { UIntAddOpV1(rValue); }
+        void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
         MediumDecBase& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
         MediumDecBase& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
@@ -1973,8 +1975,7 @@ public:
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
-        void UIntSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
-        void UInt64SubOp(const signed __int64& rValue) { UIntSubOpV1(rValue); }
+        void UnsignedIntegerSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
 
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }

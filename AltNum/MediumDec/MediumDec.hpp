@@ -87,6 +87,11 @@ public:
             return *this;
         }
 
+        MediumDec& ThisRef()
+        {
+            return *this;
+        }
+
 #pragma endregion class_constructors
 
 		//Performs remainder/Mod operation then saves division result
