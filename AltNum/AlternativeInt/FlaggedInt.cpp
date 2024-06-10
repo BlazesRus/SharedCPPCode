@@ -118,7 +118,22 @@ inline FlaggedInt BlazesRusCode::FlaggedInt::ZeroValue()
 
 inline std::string BlazesRusCode::FlaggedInt::ToString() const
 {
-    return VariableConversionFunctions::UIntToStringConversion(Value);
+	return VariableConversionFunctions::UIntToStringConversion(Value);
+}
+
+inline std::string BlazesRusCode::FlaggedInt::ToDetailedString(const PartialInt& DecHalf) const
+{
+	std::string result;
+	switch (DecHalf.Value)
+	{
+		#if defined(AltNum_EnableApproachingDivided)
+	case PartialInt::ApproachingMidRightRep://DecHalf.ToDetailedString()+"/"+ExtraRep.Value + "0.0..01"
+		result = "/" + ToString() + "+ 0.0..01";
+		#endif
+	default:
+		result = "/" + ToString();
+	}
+	return result;
 }
 
 inline BlazesRusCode::FlaggedInt::operator std::string()

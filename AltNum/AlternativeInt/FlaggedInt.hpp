@@ -21,47 +21,48 @@
 #include <compare>
 #include "..\Concepts\IntegerConcept.hpp"
 #include "..\..\OtherFunctions\VariableConversionFunctions.h"
+#include "PartialInt.hpp"
 
 namespace BlazesRusCode
 {
 	struct FlaggedInt {public:
-		//Is either mixed fraction or power of representation if this value is one 
+		//Is either mixed fraction or power of representation if this value is one
 		unsigned int IsAltRep:1;
 		//Stores non-signed part of value
 		unsigned int Value:31;
-		
+
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
-		
+
         bool IsAlternative() const;
-		
+
 		bool IsNormal();
-		
+
 		void SwitchToAlternative();
-		
+
 		void SwitchToNormal();
-		
+
         //Is at zero value
         bool IsAtZero() const;
 
         //Is not at zero value
         bool IsNotAtZero() const;
-		
+
         //Is at one value
         bool IsAtOne() const;
 
         //Is at neither zero or negative one
         bool IsNotOne() const;
-		
+
 		bool IsEven() const;
-		
+
 		bool IsOdd() const;
-		
+
 		std::strong_ordering operator<=>(const FlaggedInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
 		}
-		
+
 		bool operator==(const FlaggedInt& that) const
 		{
 			if (Value!=that.Value)
@@ -70,7 +71,7 @@ namespace BlazesRusCode
                 return false;
 			return true;
 		}
-		
+
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
 			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
@@ -105,72 +106,72 @@ namespace BlazesRusCode
 			else if (Value!=(unsigned int)that)
 				return true;
 		}
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return Value; }
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned __int64() { return Value; }
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return (signed int)Value; }
-		
+
         /// <summary>
         /// to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed __int64() { return (signed __int64) Value; }
-		
+
 	protected:
         /// <summary>
         /// Returns maximum stored value(2147483647)
         /// </summary>
         /// <returns>FlaggedInt</returns>
         static FlaggedInt MaximumValue();
-	
+
         /// <summary>
         /// Returns minimum stored value(-2147483647)
         /// </summary>
         /// <returns>FlaggedInt</returns>
         static FlaggedInt AltMaximumValue();
-		
+
         /// <summary>
         /// Returns the value at one
         /// </summary>
         /// <returns>FlaggedInt</returns>
         static FlaggedInt OneValue();
-		
+
         /// <summary>
         /// Returns the value at two
         /// </summary>
         /// <returns>FlaggedInt</returns>
         static FlaggedInt TwoValue();
-		
+
         /// <summary>
         /// Returns the value at zero
         /// </summary>
         /// <returns>FlaggedInt</returns>
         static FlaggedInt ZeroValue();
-		
+
 	public:
 
         static FlaggedInt Maximum;
-		
+
         static FlaggedInt AltMaximum;
-		
+
         static FlaggedInt One;
-		
+
         static FlaggedInt Two;
-		
+
 		static FlaggedInt Zero;
 
 		void UInt64DivOp(const unsigned __int64& rValue);
@@ -192,7 +193,7 @@ namespace BlazesRusCode
 		friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed int& rValue){
 			lValue.Value /= rValue; return lValue;
         }
-		
+
 		friend FlaggedInt operator/(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value /= rValue.Value; return newVal;
@@ -202,7 +203,7 @@ namespace BlazesRusCode
             FlaggedInt newVal = lValue;
 			newVal.Value /= rValue; return newVal;
         }
-		
+
 		friend FlaggedInt operator/(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value /= rValue; return newVal;
@@ -219,7 +220,7 @@ namespace BlazesRusCode
         friend FlaggedInt& operator*=(FlaggedInt& lValue, const signed int& rValue){
             lValue.Value *= rValue; return lValue;
         }
-		
+
 		friend FlaggedInt operator*(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value *= rValue.Value; return newVal;
@@ -229,7 +230,7 @@ namespace BlazesRusCode
             FlaggedInt newVal = lValue;
 			newVal.Value *= rValue; return newVal;
         }
-		
+
 		friend FlaggedInt operator*(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value *= rValue; return newVal;
@@ -238,7 +239,7 @@ namespace BlazesRusCode
 		friend FlaggedInt& operator+=(FlaggedInt& lValue, const FlaggedInt& rValue){
 			lValue.Value += rValue.Value; return lValue;
         }
-		
+
 		friend FlaggedInt& operator+=(FlaggedInt& lValue, const unsigned int& rValue){
 			lValue.Value += rValue; return lValue;
         }
@@ -256,7 +257,7 @@ namespace BlazesRusCode
             FlaggedInt newVal = lValue;
 			newVal.Value += rValue; return newVal;
         }
-		
+
 		friend FlaggedInt operator+(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value += rValue; return newVal;
@@ -273,7 +274,7 @@ namespace BlazesRusCode
 		friend FlaggedInt& operator-=(FlaggedInt& lValue, const signed int& rValue){
             lValue.Value -= rValue; return lValue;
         }
-		
+
 		friend FlaggedInt operator-(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value -= rValue.Value; return newVal;
@@ -283,7 +284,7 @@ namespace BlazesRusCode
             FlaggedInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
         }
-		
+
 		friend FlaggedInt operator-(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
@@ -378,30 +379,17 @@ namespace BlazesRusCode
         {
             return *this;
         }
-		
+
     #pragma endregion Other Operators
 
 #pragma region StringOperations
 
         std::string ToString() const;
-		
-        std::string ToDetailedString(const PartialInt& DecHalf) const
-		{
-			std::string result;
-			switch(DecHalf.Value)
-			{
-				#if defined(AltNum_EnableApproachingDivided)
-				case PartialInt::ApproachingMidRightRep://DecHalf.ToDetailedString()+"/"+ExtraRep.Value + "0.0..01"
-					result = "/"+ToString()+"+ 0.0..01";
-				#endif
-				default:
-					result = "/"+ToString();
-			}
-			return result;
-		}
+
+        std::string ToDetailedString(const PartialInt& DecHalf) const;
 
         explicit operator std::string();
-		
+
 #pragma endregion StringOperations
 
 	};
