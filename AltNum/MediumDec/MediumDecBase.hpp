@@ -119,6 +119,11 @@ namespace BlazesRusCode
             return newSelf;
         }
 
+        MediumDecBase CopyThis()
+        {
+            return *this;
+        }
+
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
@@ -1182,7 +1187,7 @@ protected:
         template<MediumDecVariant VariantType = MediumDecBase>
         VariantType DividedByTwoV1() const
         {
-            VariantType result = *this; result.DivideByTwo();
+            VariantType result = VariantType::CopyThis(); result.DivideByTwo();
             return result;
         }
 
@@ -1190,7 +1195,7 @@ protected:
         template<MediumDecVariant VariantType = MediumDecBase>
         VariantType DividedByFourV1() const
         {
-            VariantType result = *this; result.DivideByFour();
+            VariantType result = VariantType::CopyThis(); result.DivideByFour();
             return result;
         }
 
@@ -1667,7 +1672,7 @@ protected:
         template<MediumDecVariant VariantType = MediumDecBase>
         VariantType MultipliedByTwoV1() const
         {
-            VariantType result = *this; result.MultiplyByTwo();
+            VariantType result = VariantType::CopyThis(); result.MultiplyByTwo();
             return result;
         }
 
@@ -1675,7 +1680,7 @@ protected:
         template<MediumDecVariant VariantType = MediumDecBase>
         VariantType MultipliedByFourV1() const
         {
-            VariantType result = *this; result.MultiplyByFour();
+            VariantType result = VariantType::CopyThis(); result.MultiplyByFour();
             return result;
         }
 
@@ -2729,7 +2734,7 @@ protected:
         ///</summary>
         template<MediumDecVariant VariantType = MediumDecBase>
         VariantType AbsOfV1() const {
-            VariantType result = *this; result.ApplyAbs();
+            VariantType result = VariantType::CopyThis(); result.ApplyAbs();
             return result;
         }
 
@@ -2764,7 +2769,7 @@ protected:
             if (DecimalHalf != 0)
 				return VariantType(IntHalf+1);
             else
-				return *this;
+				return VariantType::CopyThis();
         }
 
         ///<summary>
@@ -2862,7 +2867,7 @@ protected:
                 throw "Can't display result of negative square root without imaginary number support";
             else if (DecimalHalf == 0)
             {
-                VariantType value = *this;
+                VariantType value = VariantType::CopyThis();
                 bool AutoSetValue = true;
                 switch (IntHalf.Value)
                 {
@@ -2895,7 +2900,7 @@ protected:
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
-            VariantType number = *this;
+            VariantType number = VariantType::CopyThis();
             VariantType start = VariantType(), end = number;
             VariantType mid;
 

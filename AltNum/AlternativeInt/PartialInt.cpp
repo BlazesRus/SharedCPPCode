@@ -117,18 +117,20 @@ inline std::string BlazesRusCode::PartialInt::ToDetailedString() const
 	std::string result;
 	switch(Value)
 	{
+	//#if defined(AltNum_EnableInfinityRep)
 		case InfinityRep:
 			result = "∞"; break;
-	#if defined(AltNum_EnableApproaching)
+	//#endif
+	//#if defined(AltNum_EnableApproaching)
 		case ApproachingBottomRep:
 			result = "0..01"; break;
 		case ApproachingTopRep:
-		#if defined(AltNum_EnableApproachingDivided)
+		//#if defined(AltNum_EnableApproachingDivided)
 		case ApproachingMidLeftRep://result+"/"+ExtraRep.Value
 		case ApproachingMidRightRep://result+"/"+ExtraRep.Value + "0.0..01"
-		#endif
+		//#endif
 			result = "9..9"; break;
-	#endif
+	//#endif
 		default:
 			result = ToString(); break;
 	}
@@ -143,7 +145,7 @@ inline std::string BlazesRusCode::PartialInt::ToDetailedString() const
 		default:
 			break;
 	}
-	return result;		
+	return result;
 }
 
 inline BlazesRusCode::PartialInt::operator std::string()

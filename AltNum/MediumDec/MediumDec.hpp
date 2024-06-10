@@ -81,6 +81,12 @@ public:
             return newSelf;
         }
 
+		//To ensure templated functions return type of current derived type instead of the original type of the templated function
+        MediumDec CopyThis()
+        {
+            return *this;
+        }
+
 #pragma endregion class_constructors
 
 		//Performs remainder/Mod operation then saves division result

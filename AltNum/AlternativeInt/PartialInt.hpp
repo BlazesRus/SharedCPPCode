@@ -21,6 +21,8 @@
 #include <compare>
 #include "..\Concepts\IntegerConcept.hpp"
 #include "..\..\OtherFunctions\VariableConversionFunctions.h"
+//#include "..\MediumDecV2\MediumDecV2Preprocessors.h"
+//#include "..\AltDec\AltDecPreprocessors.h"
 
 namespace BlazesRusCode
 {
@@ -29,11 +31,11 @@ namespace BlazesRusCode
 		unsigned int Value:30;
 		//Can store up to 4 Flag states including normal state at 0
 		unsigned int Flags:2;
-		
+
         static const unsigned int MaximumInt = 1073741823;
 
 		PartialInt(unsigned int value=0, unsigned int flags=0);
-		
+
 		bool IsNormalVariant() const;
 
 		bool IsPiVariant() const;
@@ -55,12 +57,12 @@ namespace BlazesRusCode
 
         //Is not at zero value
         bool IsNotAtZero() const;
-		
+
         //Is at one value
         bool IsAtOne() const;
-		
+
 		bool IsEven() const;
-		
+
 		bool IsOdd() const;
 
 		std::strong_ordering operator<=>(const PartialInt& that) const
@@ -68,7 +70,7 @@ namespace BlazesRusCode
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
 				return ValueCmp;
 		}
-		
+
 		bool operator==(const PartialInt& that) const
 		{
 			if (Value!=that.Value)
@@ -130,13 +132,13 @@ namespace BlazesRusCode
 			else if (Value!=(unsigned int)that)
 				return true;
 		}
-		
+
         /// <summary>
         /// to signed int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return Value; }
-		
+
         /// <summary>
         /// to signed int 64 explicit conversion
         /// </summary>
@@ -148,7 +150,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return (signed int)Value; }
-		
+
         /// <summary>
         /// to signed int 64 explicit conversion
         /// </summary>
@@ -168,35 +170,35 @@ public:
         /// The decimal overflow
         /// </summary>
         static unsigned int const DecimalOverflow = 1000000000;
-		
-	#if defined(AltNum_EnablePiRep)
+
+	//#if defined(AltNum_EnablePiRep)
         //Pi*Value representation(when DecimalHalf.Flags==1)
         static const unsigned int PiRep = 1;
-	#endif
-	#if defined(AltNum_EnableERep)
+	//#endif
+	//#if defined(AltNum_EnableERep)
         //e*Value representation(DecimalHalf.Flags==2)
         static const unsigned int ERep = 2;
-	#endif
-	#if defined(AltNum_EnableIRep)
+	//#endif
+	//#if defined(AltNum_EnableIRep)
         //e*Value representation(DecimalHalf.Flags==3)
         static const unsigned int IRep = 3;
-	#endif
-	#if defined(AltNum_EnableInfinityRep)
+	//#endif
+	//#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
 		static const unsigned int InfinityRep = 1073741805;
-	#endif
-	#if defined(AltNum_EnableApproaching)
+	//#endif
+	//#if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
         static const unsigned int ApproachingBottomRep = 1073741806;
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
 		static const unsigned int ApproachingTopRep = 1073741807;
-	#endif
-	#if defined(AltNum_EnableApproachingDivided)
+	//#endif
+	//#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value-1
         static const unsigned int ApproachingMidLeftRep = 1073741808;
-		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1 
+		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1
 		static const unsigned int ApproachingMidRightRep = 1073741809;
-	#endif
+	//#endif
 		static PartialInt Zero;
 
 		void UInt64DivOp(const unsigned __int64& rValue);
@@ -218,7 +220,7 @@ public:
 		friend PartialInt& operator/=(PartialInt& lValue, const signed int& rValue){
 			lValue.Value /= rValue; return lValue;
         }
-		
+
 		friend PartialInt operator/(const PartialInt& lValue, const PartialInt& rValue){
             PartialInt newVal = lValue;
 			newVal.Value /= rValue.Value; return newVal;
@@ -228,7 +230,7 @@ public:
             PartialInt newVal = lValue;
 			newVal.Value /= rValue; return newVal;
         }
-		
+
 		friend PartialInt operator/(const PartialInt& lValue, const signed int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value /= rValue; return newVal;
@@ -245,7 +247,7 @@ public:
         friend PartialInt& operator*=(PartialInt& lValue, const signed int& rValue){
             lValue.Value *= rValue; return lValue;
         }
-		
+
 		friend PartialInt operator*(const PartialInt& lValue, const PartialInt& rValue){
             PartialInt newVal = lValue;
 			newVal.Value *= rValue.Value; return newVal;
@@ -255,7 +257,7 @@ public:
             PartialInt newVal = lValue;
 			newVal.Value *= rValue; return newVal;
         }
-		
+
 		friend PartialInt operator*(const PartialInt& lValue, const signed int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value *= rValue; return newVal;
@@ -264,7 +266,7 @@ public:
 		friend PartialInt& operator+=(PartialInt& lValue, const PartialInt& rValue){
 			lValue.Value += rValue.Value; return lValue;
         }
-		
+
 		friend PartialInt& operator+=(PartialInt& lValue, const unsigned int& rValue){
 			lValue.Value += rValue; return lValue;
         }
@@ -282,7 +284,7 @@ public:
             PartialInt newVal = lValue;
 			newVal.Value += rValue; return newVal;
         }
-		
+
 		friend PartialInt operator+(const PartialInt& lValue, const signed int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value += rValue; return newVal;
@@ -299,7 +301,7 @@ public:
 		friend PartialInt& operator-=(PartialInt& lValue, const signed int& rValue){
             lValue.Value -= rValue; return lValue;
         }
-		
+
 		friend PartialInt operator-(const PartialInt& lValue, const PartialInt& rValue){
             PartialInt newVal = lValue;
 			newVal.Value -= rValue.Value; return newVal;
@@ -309,7 +311,7 @@ public:
             PartialInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
         }
-		
+
 		friend PartialInt operator-(const PartialInt& lValue, const signed int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value -= rValue; return newVal;
@@ -404,13 +406,13 @@ public:
         {
             return *this;
         }
-		
+
     #pragma endregion Other Operators
 
 #pragma region StringOperations
 
         std::string ToString() const;
-		
+
         std::string ToDetailedString() const;
 
         explicit operator std::string();
