@@ -82,7 +82,7 @@ public:
         }
 
 		//To ensure templated functions return type of current derived type instead of the original type of the templated function
-        MediumDec CopyThis()
+        MediumDec CopyThis() const
         {
             return *this;
         }

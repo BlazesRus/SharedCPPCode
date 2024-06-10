@@ -119,7 +119,7 @@ namespace BlazesRusCode
             return newSelf;
         }
 
-        MediumDecBase CopyThis()
+        MediumDecBase CopyThis() const
         {
             return *this;
         }
