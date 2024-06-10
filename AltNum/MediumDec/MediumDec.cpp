@@ -1,7 +1,7 @@
 ﻿#include "MediumDec.hpp"
 using MediumDec = BlazesRusCode::MediumDec;
 using MediumDecBase = BlazesRusCode::MediumDecBase;
-using ModResult = MediumDec::ModResult;
+using ModResult = BlazesRusCode::MediumDecModResult;
 
 #pragma region class_constructors
 
@@ -197,7 +197,7 @@ inline MediumDec BlazesRusCode::MediumDec::GetValueFromString(std::string Value)
 
 #pragma endregion String Commands
 
-
+/* //Failed attempt at Constructing from template
 #if defined(AltNum_EnableExperimentalModulusOverrides)//Global Binary functions
 #pragma region Modulus Operations
 
@@ -210,10 +210,13 @@ inline MediumDec BlazesRusCode::MediumDec::GetValueFromString(std::string Value)
 /// <param name="self">The left side value</param>
 /// <param name="Value">The right side value.</param>
 /// <returns>MediumDecBase</returns>
-ModResult operator%(const MediumDec& LValue, const MediumDec& RValue)
+ModResult operator%(const MediumDec& lValue, const MediumDec& rValue)
 {
-	return ModResult((MediumDecBase)LValue, (MediumDecBase)RValue);
+	MediumDecBase LValue = (MediumDecBase)lValue;
+	MediumDecBase RValue = (MediumDecBase)rValue;
+	ModResult result = ModResult(LValue, RValue);
+	return result;
 }
 
 #pragma endregion Modulus Operations
-#endif
+#endif*/

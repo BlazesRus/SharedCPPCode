@@ -12,6 +12,10 @@ using PartialInt = BlazesRusCode::PartialInt;
 
 namespace BlazesRusCode
 {
+	//Performs remainder/Mod operation then saves division result
+	class DLL_API MediumDecModResult : public AltNumModResult<MediumDecBase>
+    {};
+
     class MediumDec;
 
 	/// <summary>
@@ -93,9 +97,6 @@ public:
         }
 
 #pragma endregion class_constructors
-
-		//Performs remainder/Mod operation then saves division result
-		class DLL_API ModResult : public AltNumModResult<MediumDecBase>{};
 
         void SetValue(MediumDec Value);
 
