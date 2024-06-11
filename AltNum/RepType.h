@@ -37,18 +37,14 @@ namespace BlazesRusCode
 		//(Enum Bits:7,1)
 		//equal to IntValue.0..01 Pi
 		ApproachingBottomPi = 65,
-		#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,1,4)
 		//equal to IntValue.9..9 Pi
 		ApproachingTopPi = 73,
-		#endif
 		#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,1)
 		ApproachingMidLeftPi = 81,
-			#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4,5,1)
 		ApproachingMidRightPi = 89,
-			#endif
 		#endif
 	#endif
 #endif
@@ -64,18 +60,14 @@ namespace BlazesRusCode
 		//(Enum Bits:7,2)
 		//equal to IntValue.0..01 e
 		ApproachingBottomE = 66,
-		#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,2)
 		//equal to IntValue.9..9 e
 		ApproachingTopE = 74,
-		#endif
 		#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5,2)
 		ApproachingMidLeftE = 82,
-			#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4,5,2)
 		ApproachingMidRightE = 90,
-			#endif
 		#endif
 	#endif
 #endif
@@ -112,11 +104,9 @@ namespace BlazesRusCode
 #if defined(AltNum_EnableApproaching)
 		//(Enum Bits:7)
 		ApproachingBottom = 64,//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-	#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,4)
 		//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
 		ApproachingTop = 72,
-	#endif
 	#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,5)
 		//DecimalHalf:1000000000/ExtraRep - ApproachingZero (AlternativeName:ApproachingMidLeft)
@@ -134,20 +124,16 @@ namespace BlazesRusCode
 		//(Enum Bits:7,3)
 		//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		ApproachingImaginaryBottom = 68,
-	#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,3,4)
 		//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		ApproachingImaginaryTop = 76,
-	#endif
 	#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,3,5)
 		//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
 		ApproachingImaginaryMidLeft = 84,
-		#if !defined(AltNum_DisableApproachingTop)
 		//(Enum Bits:7,3,5,4)
 		//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
 		ApproachingImaginaryMidRight = 92,
-		#endif
 	#endif
 #endif
 #if defined(AltNum_EnableNaN)
