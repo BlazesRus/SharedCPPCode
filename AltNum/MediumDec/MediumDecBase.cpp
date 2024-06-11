@@ -574,8 +574,7 @@ inline MediumDecBase& BlazesRusCode::MediumDecBase::UIntSubOperation(const unsig
 #pragma region Truncation Functions
 
 inline MediumDecBase BlazesRusCode::MediumDecBase::Abs(const MediumDecBase& tValue) {
-	MediumDecBase result = tValue; result.ApplyAbs();
-	return result;
+	return AbsV1<MediumDecBase>(tValue);
 }
 
 inline void BlazesRusCode::MediumDecBase::ApplyFloorOf(const int& precision)

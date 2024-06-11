@@ -119,16 +119,6 @@ namespace BlazesRusCode
             return newSelf;
         }
 
-        MediumDecBase CopyThis() const
-        {
-            return *this;
-        }
-
-        MediumDecBase& ThisRef()
-        {
-            return *this;
-        }
-
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
@@ -2728,28 +2718,27 @@ public:
         /// </summary>
         void ApplyAbs(){ IntHalf.ApplyAbs(); }
 
-protected:
+protected://Using templating as static function instead as fix for *this pointer not updating when used in other classes
 
         ///<summary>
         /// Returns a copy of the number converted into non-negative version
         ///</summary>
         template<MediumDecVariant VariantType = MediumDecBase>
-        VariantType AbsOfV1() const {
-            VariantType result = VariantType::CopyThis(); result.ApplyAbs();
-            return result;
+        static VariantType AbsV1(VariantType tValue){
+            result.ApplyAbs(); return result;
         }
 
 public:
 
         /// <summary>
-        /// Returns a copy of the number converted into non-negative version
-        /// </summary>
-        MediumDecBase AbsOf() const { return AbsOfV1<MediumDecBase>(); }
-
-        /// <summary>
         /// Forces Number into non-negative
         /// </summary>
         static MediumDecBase Abs(const MediumDecBase& tValue);
+
+        /// <summary>
+        /// Returns a copy of the number converted into non-negative version
+        /// </summary>
+        MediumDecBase AbsOf() const { return Abs(*this); }
 
 
 
@@ -2761,22 +2750,6 @@ public:
 
 protected:
 
-        /// <summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
-        /// </summary>
-		template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType CeilOfV1() const
-        {
-            if (DecimalHalf != 0)
-				return VariantType(IntHalf+1);
-            else
-				return VariantType::CopyThis();
-        }
-
-        ///<summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
-        ///</summary>
-        /// <param name="tValue">Variable to apply method on</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType CeilV1(const VariantType& tValue)
         {
@@ -2823,9 +2796,18 @@ protected:
 
 public:
 
-		MediumDecBase CeilOf() { return CeilOfV1(); }
+        ///<summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        ///</summary>
+        /// <param name="tValue">Variable to apply method on</param>
+		static MediumDecBase Ceil(const MediumDecBase& tValue) { return CeilV1<MediumDecBase>(tValue); }
 
-		static MediumDecBase Ceil(const MediumDecBase& tValue) { return CeilV1(tValue); }
+        ///<summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        ///</summary>
+        /// <param name="tValue">Variable to apply method on</param>
+		MediumDecBase CeilOf() const { return Ceil(*this); }
+
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
@@ -2862,13 +2844,12 @@ protected:
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
         template<MediumDecVariant VariantType = MediumDecBase>
-        VariantType SqrtOfV1(const int& precision=7)
+        static VariantType SqrtV1(VariantType value, const int& precision=7)
         {
             if(IsNegative())
                 throw "Can't display result of negative square root without imaginary number support";
             else if (DecimalHalf == 0)
             {
-                VariantType value = VariantType::CopyThis();
                 bool AutoSetValue = true;
                 switch (IntHalf.Value)
                 {
@@ -2901,7 +2882,6 @@ protected:
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
-            VariantType number = VariantType::CopyThis();
             VariantType start = VariantType(), end = number;
             VariantType mid;
 
@@ -2913,14 +2893,14 @@ protected:
             while (start <= end) {
                 mid = (start + end);
                 mid.DivideByTwo();
-                if (mid * mid == number) {
+                if (mid * mid == value) {
                     ans = mid;
                     break;
                 }
 
                 // incrementing start if integral
                 // part lies on right side of the mid
-                if (mid * mid < number) {
+                if (mid * mid < value) {
                     start = mid + 1;
                     ans = mid;
                 }
@@ -2934,7 +2914,7 @@ protected:
 
             // For computing the fractional part
             // of square root up to given precision
-            VariantType increment = VariantType(0,100000000);//0.1
+            VariantType increment = VariantType::PointOne;//0.1
             for (int i = 0; i < precision; ++i) {
                 while (ans * ans <= number) {
                     ans += increment;
@@ -2952,16 +2932,16 @@ public:
     /// <summary>
     /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
     /// </summary>
-    MediumDecBase SqrtOf(const int& precision = 7) {
-        return SqrtOfV1(precision);
+    static MediumDecBase Sqrt(const auto& value, const int& precision = 7)
+    {
+        return SqrtOfV1<MediumDecBase>(value, precision);
     }
 
     /// <summary>
     /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
     /// </summary>
-    static auto Sqrt(const auto& value, const int& precision = 7)
-    {
-        return value.SqrtOf(precision);
+    MediumDecBase SqrtOf(const int& precision = 7) {
+        return Sqrt(*this, precision);
     }
 
 protected:
