@@ -1527,6 +1527,93 @@ public:
 
     #pragma region Trigonomic Functions
 
+        /// <summary>
+        /// Calculate Sine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="Value">The value in Radians.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDec Sin(const MediumDec& tValue)
+        { return SinV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Get cosine from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target VariantType variant value to perform function on.</param>
+        /// <returns></returns>
+        static MediumDec Cos(const MediumDec& tValue)
+        { return CosV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Get Tan from value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The tValue in Radians.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDec Tan(const MediumDec& tValue)
+        { return TanV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Gets Inverse Tangent from Value in Radians
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="value">The target MediumDec variant value to perform function on.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDec ATan(const MediumDec& tValue)
+        { return ATanV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Get Sin from value of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+        static MediumDec SinFromAngle(const MediumDec& tValue)
+        { return SinFromAngleV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Get Cos() from value of Angle
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns></returns>
+        static MediumDec CosFromAngle(const MediumDec& tValue)
+        { return CosFromAngleV1<MediumDec>(tValue); }
+
+        /// <summary>
+        /// Get Tangent from value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <returns>VariantTypeBase</returns>
+        static MediumDec TanFromAngle(const MediumDec& tValue)
+        { return TanFromAngleV1<MediumDec>(tValue); }
+
+		MediumDec SinOf()
+        { return Sin(*this); }
+
+		MediumDec CosOf()
+        { return Cos(*this); }
+
+		MediumDec TanOf()
+        { return Tan(*this); }
+
+		MediumDec ATanOf()
+        { return ATan(*this);; }
+
+        /// <summary>
+        /// atan2 calculation with self normalization
+        /// Application: Used when one wants to compute the 4-quadrant arctangent of a complex number (or any number with x-y coordinates) with a self-normalizing function.
+        /// Example Applications: digital FM demodulation, phase angle computations
+        /// Code from http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/ with some slight edit to get working
+        /// </summary>
+        /// <param name="y">The y.</param>
+        /// <param name="X">The x.</param>
+        /// <returns>MediumDec</returns>
+        static MediumDec ArcTan2(const MediumDec& y, const MediumDec& x)
+        { return ArcTan2V1<MediumDec>(y, x); }
+
     #pragma endregion Trigonomic Functions
 
     };
