@@ -1531,8 +1531,7 @@ public:
         /// Calculate Sine from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value in Radians.</param>
-        /// <returns>MediumDec</returns>
+        /// <param name="tValue">The value in Radians.</param>
         static MediumDec Sin(const MediumDec& tValue)
         { return SinV1<MediumDec>(tValue); }
 
@@ -1540,8 +1539,7 @@ public:
         /// Get cosine from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target VariantType variant value to perform function on.</param>
-        /// <returns></returns>
+        /// <param name="tValue">The tValue in Radians.</param>
         static MediumDec Cos(const MediumDec& tValue)
         { return CosV1<MediumDec>(tValue); }
 
@@ -1550,7 +1548,6 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
-        /// <returns>MediumDec</returns>
         static MediumDec Tan(const MediumDec& tValue)
         { return TanV1<MediumDec>(tValue); }
 
@@ -1558,8 +1555,7 @@ public:
         /// Gets Inverse Tangent from Value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDec</returns>
+        /// <param name="tValue">The tValue in Radians.</param>
         static MediumDec ATan(const MediumDec& tValue)
         { return ATanV1<MediumDec>(tValue); }
 
@@ -1568,7 +1564,6 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
-        /// <returns>VariantTypeBase</returns>
         static MediumDec SinFromAngle(const MediumDec& tValue)
         { return SinFromAngleV1<MediumDec>(tValue); }
 
@@ -1577,7 +1572,6 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
-        /// <returns></returns>
         static MediumDec CosFromAngle(const MediumDec& tValue)
         { return CosFromAngleV1<MediumDec>(tValue); }
 
@@ -1586,7 +1580,6 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
-        /// <returns>VariantTypeBase</returns>
         static MediumDec TanFromAngle(const MediumDec& tValue)
         { return TanFromAngleV1<MediumDec>(tValue); }
 
@@ -1610,7 +1603,6 @@ public:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        /// <returns>MediumDec</returns>
         static MediumDec ArcTan2(const MediumDec& y, const MediumDec& x)
         { return ArcTan2V1<MediumDec>(y, x); }
 
