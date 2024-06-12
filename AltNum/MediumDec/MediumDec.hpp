@@ -1393,54 +1393,106 @@ public:
 	#pragma region Math Etc Functions
 
         /// <summary>
-        /// Creates copy of variable with Abs applied
+        /// Forces Number into non-negative
         /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDec Abs(MediumDec tValue)
-        { tValue.AbsOfV1(); return tValue; }
+        static MediumDec Abs(const MediumDec& tValue);
+
+        /// <summary>
+        /// Returns a copy of the number converted into non-negative version
+        /// </summary>
+        MediumDec AbsOf() const;
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="Value">The target value to apply on.</param>
-        static MediumDec Floor(MediumDec tValue, const int& precision = 0)
-        { return FloorV1(tValue, precision); }
+        static MediumDec Floor(MediumDec tValue, const int& precision = 0);
 
-        /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs the ApproachingTopEst integer).
-        /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
-        /// <returns>MediumDecBase</returns>
-        static MediumDec Ceil(MediumDec tValue)
-        { return tValue.CeilOfV1(); }
+        ///<summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        ///</summary>
+        /// <param name="tValue">Variable to apply method on</param>
+		static MediumDec Ceil(const MediumDec& tValue);
+
+        ///<summary>
+        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        ///</summary>
+        /// <param name="tValue">Variable to apply method on</param>
+		MediumDec CeilOf() const;
 
         /// <summary>
         /// Cuts off the decimal point from number
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>MediumDecBase</returns>
-        static MediumDec Trunc(const MediumDec& tValue)
-        { return tValue.TruncOfV1(); }
+        static MediumDec Trunc(const MediumDec& tValue);
 
 	#pragma endregion Math Etc Functions
 
 	#pragma region Pow and Sqrt Functions
 
-    /// <summary>
-    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-    /// </summary>
-    MediumDec SqrtOf(const int& precision = 7) {
-        return SqrtOfV1(precision);
-    }
+		/// <summary>
+		/// Perform square root on this instance.
+		/// </summary>
+		static MediumDec Sqrt(const MediumDec& value, const int& precision = 7)
+		{
+			return SqrtV1<MediumDec>(value, precision);
+		}
 
-    /// <summary>
-    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-    /// </summary>
-    static MediumDec Sqrt(const auto& value, const int& precision = 7)
-    {
-        return value.SqrtOf(precision);
-    }
+		/// <summary>
+		/// Perform square root on this instance.
+		/// </summary>
+		MediumDec SqrtOf(const int& precision = 7) {
+			return Sqrt(*this, precision);
+		}
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue) const
+        { return IntPowOfV1<MediumDec>(tValue, expValue); }
+        static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue) const
+        { return UIntPowOfV1<MediumDec>(tValue, expValue); }
+
+        /// <summary>
+        /// Applies Power of operation (for signed integer exponents)
+        /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue) const
+		{ return IntPowOfV1<MediumDec>(tValue, expValue); }
+        static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue) const
+		{ return IntPowOfV1<MediumDec>(tValue, expValue); }
+
+        MediumDec UnsignedNegIntPower(const MediumDec& tValue, const unsigned int& expValue)
+		{ return UnsignedNegIntPowerV1<MediumDec>(tValue, expValue); }
+
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDec UIntPowOf(const unsigned int& expValue) const
+        { return UIntPow(*this, expValue); }
+        MediumDec UInt64PowOf(const unsigned __int64& expValue) const
+        { return UInt64Pow(*this, expValue); }
+
+        /// <summary>
+        /// Applies Power of operation (for signed integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDec IntPowOf(const signed int& expValue) const
+        { return IntPow(*this, expValue); }
+        MediumDec Int64PowOf(const signed __int64& expValue) const
+        { return Int64Pow(*this, expValue); }
+
+        static MediumDec UnsignedMirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
+        {   return UnsignedMirroredIntPowV1<MediumDec>(tValue, expValue); }
+
+        static MediumDec MirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
+        {   return MirroredIntPowV1<MediumDec>(tValue, expValue); }
 
 	#pragma endregion Pow and Sqrt Functions
 

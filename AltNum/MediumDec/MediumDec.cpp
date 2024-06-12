@@ -195,6 +195,33 @@ inline MediumDec BlazesRusCode::MediumDec::GetValueFromString(std::string Value)
 	return NewSelf;
 }
 
+inline MediumDec BlazesRusCode::MediumDec::Abs(const MediumDec& tValue)
+{
+	AbsV1<MediumDec>(tValue); return tValue;
+}
+
+inline MediumDec BlazesRusCode::MediumDec::AbsOf() const { return Abs(*this); }
+
+inline MediumDec BlazesRusCode::MediumDec::Floor(MediumDec tValue, const int& precision)
+{
+	return FloorV1(tValue, precision);
+}
+
+inline MediumDec BlazesRusCode::MediumDec::Ceil(const MediumDec& tValue) { return CeilV1<MediumDec>(tValue); }
+
+inline MediumDec BlazesRusCode::MediumDec::CeilOf() const { return Ceil(*this); }
+
+inline MediumDec BlazesRusCode::MediumDec::Trunc(const MediumDec& tValue) { return tValue.TruncOfV1<MediumDec>(); }
+
+inline MediumDec BlazesRusCode::MediumDec::Sqrt(const auto& value, const int& precision)
+{
+	return SqrtV1(value, precision);
+}
+
+inline MediumDec BlazesRusCode::MediumDec::SqrtOf(const int& precision) const {
+	return Sqrt(*this, precision);
+}
+
 #pragma endregion String Commands
 
 /* //Failed attempt at Constructing from template

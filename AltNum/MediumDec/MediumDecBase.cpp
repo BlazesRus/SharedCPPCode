@@ -619,6 +619,8 @@ inline int BlazesRusCode::MediumDecBase::CeilIntOf() const
 		return GetIntHalf() + 1;
 }
 
+inline MediumDecBase BlazesRusCode::MediumDecBase::Trunc(const MediumDecBase& tValue) { return tValue.TruncOfV1<MediumDecBase>(); }
+
 #pragma endregion Truncation Functions
 
 #pragma region String Commands

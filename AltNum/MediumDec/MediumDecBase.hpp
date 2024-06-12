@@ -2725,7 +2725,7 @@ protected://Using templating as static function instead as fix for *this pointer
         ///</summary>
         template<MediumDecVariant VariantType = MediumDecBase>
         static VariantType AbsV1(VariantType tValue){
-            result.ApplyAbs(); return result;
+            tValue.ApplyAbs(); return tValue;
         }
 
 public:
@@ -2739,8 +2739,6 @@ public:
         /// Returns a copy of the number converted into non-negative version
         /// </summary>
         MediumDecBase AbsOf() const { return Abs(*this); }
-
-
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
@@ -2808,7 +2806,6 @@ public:
         /// <param name="tValue">Variable to apply method on</param>
 		MediumDecBase CeilOf() const { return Ceil(*this); }
 
-
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
         /// </summary>
@@ -2833,7 +2830,7 @@ public:
         /// <returns>MediumDecBase&</returns>
 		static signed int CeilInt(const MediumDecBase& tValue) { return tValue.CeilIntOf(); }
 
-		static MediumDecBase Trunc(const MediumDecBase& tValue) { return tValue.TruncOfV1<MediumDecBase>(); }
+		static MediumDecBase Trunc(const MediumDecBase& tValue);
 
 	#pragma endregion Truncation Functions
 
@@ -2841,14 +2838,13 @@ public:
 protected:
 
         /// <summary>
-        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// Perform square root on this instance.
+        /// (Code other than switch statement adjusted from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
         template<MediumDecVariant VariantType = MediumDecBase>
-        static VariantType SqrtV1(VariantType value, const int& precision=7)
+        static VariantType UnsignedSqrtV1(VariantType value, const int& precision=7)
         {
-            if(IsNegative())
-                throw "Can't display result of negative square root without imaginary number support";
-            else if (DecimalHalf == 0)
+            if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
                 switch (IntHalf.Value)
@@ -2927,79 +2923,89 @@ protected:
             return ans;
         }
 
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        template<MediumDecVariant VariantType = MediumDecV2Base>
+        VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
+        {
+            if(value.IsNegative())
+                throw "Can't display result of negative square root without imaginary number support";
+            return UnsignedSqrt(value, precision);
+        }
+
 public:
 
-    /// <summary>
-    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-    /// </summary>
-    static MediumDecBase Sqrt(const auto& value, const int& precision = 7)
-    {
-        return SqrtOfV1<MediumDecBase>(value, precision);
-    }
-
-    /// <summary>
-    /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-    /// </summary>
-    MediumDecBase SqrtOf(const int& precision = 7) {
-        return Sqrt(*this, precision);
-    }
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        static MediumDecBase Sqrt(const auto& value, const int& precision = 7)
+        {
+            return SqrtV1<MediumDecBase>(value, precision);
+        }
+    
+        /// <summary>
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// </summary>
+        MediumDecBase SqrtOf(const int& precision = 7) {
+            return Sqrt(*this, precision);
+        }
 
 protected:
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=unsigned int>
-        void UIntPowOfOperationV1(const IntType& expValue)
+        static VariantType UIntPowV1(const VariantType& tValue, const IntType& expValue)
         {
-            if (expValue == 1) { return; }//Return self
+            if (expValue == 1)
+                return tValue;
             else if (expValue == 0)
+                return VariantType::One;
+            else if (tValue.DecimalHalf == 0 && tValue.IntHalf.Value == 10)
             {
-                IntHalf = 1; DecimalHalf = 0;
-            }
-            else if (DecimalHalf == 0 && IntHalf.Value == 10)
-            {
-                if(IsNegative()&&(expValue&1)==1)
-                    IntHalf.Sign = MirroredInt::PositiveSign;
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                VariantType result = tValue;
+                if(tValue.IsNegative()&&(expValue&1)==1)
+                    result.IntHalf.Sign = MirroredInt::PositiveSign;
+                result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                return result;
             }
             else
             {
 				IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
+                bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
                 VariantType self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
+                VariantType result = VariantType::One;
                 while (exp > 0)
                 {
                     // If expValue is odd, multiply self with result
                     if ((exp&1) == 1)
-                        UnsignedMultOp(self);
+                        result.UnsignedMultOp(self);
                     // n must be even now
                     exp = exp >> 1; // y = y/2
                     self.UnsignedMultOp(self); // Change x to x^2
                 }
                 if(IsNegative)
-                    IntHalf.Sign = MirroredInt::NegativeSign;
+                    result.IntHalf.Sign = MirroredInt::NegativeSign;
+                return result;
             }
         }
 
         /// <summary>
-        /// Applies Power of operation on references(for integer exponents)
+        /// Applies Power of operation (for signed integer exponents)
         /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
         template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType=signed int>
-        void IntPowOfOperationV1(const IntType& expValue)
+        static VariantType IntPowV1(const VariantType& tValue, const IntType& expValue)
         {
-            if (expValue == 1) { return; }//Return self
-            else if (expValue == 0)
-            {
-                IntHalf = 1; DecimalHalf = 0;
-            }
-            else if (expValue < 0)//Negative Pow
+            if (expValue < 0)//Negative Pow
             {
                 IntType exp = expValue * -1;
-                if (DecimalHalf == 0 && IntHalf == 10 && expValue >= -9)
+                if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && tValue.expValue >= -9)
                 {
                     IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
                     if(IsNegative()&&(exp&1)==1)
@@ -3009,14 +3015,14 @@ protected:
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                     //Switches from negative to positive if exp is odd number
-                    bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
-                    VariantType self = AbsOf();//Prevent needing to flip the sign
-                    IntHalf = 1; DecimalHalf = 0;// Initialize result
+                    bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+                    VariantType self = tValue.AbsOf();//Prevent needing to flip the sign
+                    VariantType result = VariantType::One;
                     while (exp > 0)
                     {
                         // If expValue is odd, multiply self with result
                         if ((exp & 1) == 1)
-                            UnsignedDivOp(self);
+                            result.UnsignedDivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
                         self.UnsignedMultOp(self); //  Change x to x^2
@@ -3025,124 +3031,99 @@ protected:
                         IntHalf.Sign = MirroredInt::NegativeSign;
                 }
             }
-            else if (DecimalHalf == 0 && IntHalf.Value == 10)
-            {
-                if(IsNegative()&&(expValue&1)==1)
-                    IntHalf.Sign = MirroredInt::PositiveSign;
-                IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
-            }
             else
-            {
-                //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                //Switches from negative to positive if exp is odd number
-				IntType exp = expValue;
-                bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
-                VariantType self = AbsOf();
-                IntHalf = 1; DecimalHalf = 0;// Initialize result
-                while (exp > 0)
-                {
-                    // If expValue is odd, multiply self with result
-                    if ((exp & 1) == 1)
-                        UnsignedMultOp(self);
-                    // n must be even now
-                    exp = exp >> 1; // y = y/2
-                    self.UnsignedMultOp(self); // Change x to x^2
-                }
-                if(IsNegative)
-                    IntHalf.Sign = MirroredInt::NegativeSign;
-            }
+                return UIntPowV1(tValue, expValue);
         }
 
 		template<MediumDecVariant VariantType=MediumDecBase>
-		VariantType UnsignedNegIntPowerV1(const unsigned int& expValue)
+		static VariantType UnsignedNegIntPowerV1(const VariantType& tValue, const unsigned int& expValue)
 		{
 			unsigned int exp = expValue;
 			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
 			//Switches from negative to positive if exp is odd number
-			bool IsNegative = IsPositive()?false:(exp&1)==1?false:true;
-            VariantType self = AbsOf();
-			IntHalf = 1; DecimalHalf = 0;// Initialize result
+			bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+            VariantType self = tValue.AbsOf();
+			VariantType result = VariantType::One;
 			while (exp > 0)
 			{
 				// If expValue is odd, divide self with result
 				if ((exp & 1) == 1)
-                    UnsignedDivOp(self);
+                    result.UnsignedDivOp(self);
 				// n must be even now
 				exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
 			}
 			if(IsNegative)
-				IntHalf.Sign = 0;
+				result.IntHalf.Sign = MirroredInt::NegativeSign;
+            return result;
 		}
 
+public:
+
         /// <summary>
-        /// Applies Power of operation (for signed integer exponents)
-        /// (Doesn't modify owner object)
+        /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        template<MediumDecVariant VariantType = MediumDecBase, IntegerType IntType = signed int>
-        MediumDecBase UIntPowOfV1(const signed int& expValue) const
-        {
-            VariantType result = *this; result.UIntPowOfOperationV1(expValue);
-            return result;
-        }
+        static MediumDecBase UIntPow(const MediumDecBase& tValue, const unsigned int& expValue) const
+        { return IntPowOfV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase UInt64Pow(const MediumDecBase& tValue, const unsigned __int64& expValue) const
+        { return UIntPowOfV1<MediumDecBase>(tValue, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
-        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="tValue">The target value to perform power of operation.</param>
+        /// <param name="expValue">The exponent value.</param>
+        static MediumDecBase IntPow(const MediumDecBase& tValue, const signed int& expValue) const
+		{ return IntPowOfV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase Int64Pow(const MediumDecBase& tValue, const signed __int64& expValue) const
+		{ return IntPowOfV1<MediumDecBase>(tValue, expValue); }
+
+        MediumDecBase UnsignedNegIntPower(const MediumDecBase& tValue, const unsigned int& expValue)
+		{ return UnsignedNegIntPowerV1<MediumDecBase>(tValue, expValue); }
+
+
+        /// <summary>
+        /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        template<MediumDecVariant VariantType = MediumDecBase, IntegerType IntType = signed int>
-        MediumDecBase IntPowOfV1(const signed int& expValue) const
+        MediumDecBase UIntPowOf(const unsigned int& expValue) const
+        { return UIntPow(*this, expValue); }
+        MediumDecBase UInt64PowOf(const unsigned __int64& expValue) const
+        { return UInt64Pow(*this, expValue); }
+
+        /// <summary>
+        /// Applies Power of operation (for signed integer exponents)
+        /// </summary>
+        /// <param name="expValue">The exponent value.</param>
+        MediumDecBase IntPowOf(const signed int& expValue) const
+        { return IntPow(*this, expValue); }
+        MediumDecBase Int64PowOf(const signed __int64& expValue) const
+        { return Int64Pow(*this, expValue); }
+
+protected:
+
+        template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
+        { return UIntPowOfV1<VariantType>(tValue, expValue.Value); }
+
+        template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
         {
-            VariantType result = *this; result.IntPowOfOperationV1(expValue);
-            return result;
+            if (expValue < 0)//Negative Pow
+                return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
+            else
+                return UIntPowOfV1<VariantType>(tValue, expValue.Value);
         }
 
 public:
 
-        MediumDecBase UnsignedNegIntPower(const unsigned int& expValue)
-		{ return UnsignedNegIntPowerV1(expValue); }
+        static MediumDecBase UnsignedMirroredIntPow(const MediumDecBase& tValue, const MirroredInt& expValue)
+        {   return UnsignedMirroredIntPowV1<MediumDecBase>(tValue, expValue); }
 
-        /// <summary>
-        /// Applies Power of operation (for unsigned integer exponents)
-		/// (Modifies owner object)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        MediumDecBase UIntPowOfOp(const unsigned int& expValue)
-		{ UIntPowOfOperationV1(expValue); return *this; }
-        MediumDecBase UInt64PowOfOp(const unsigned __int64& expValue)
-		{ IntPowOfOperationV1(expValue); return *this; }
-
-        /// <summary>
-        /// Applies Power of operation (for signed integer exponents)
-		/// (Modifies owner object)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        MediumDecBase IntPowOfOp(const signed int& expValue)
-		{ IntPowOfOperationV1(expValue); return *this; }
-        MediumDecBase Int64PowOfOp(const signed __int64& expValue)
-		{ IntPowOfOperationV1(expValue); return *this; }
-
-        /// <summary>
-        /// Applies Power of operation (for unsigned integer exponents)
-		/// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        MediumDecBase UIntPowOf(const unsigned int& expValue) const
-        { return UIntPowOfV1(expValue); }
-        MediumDecBase UInt64PowOf(const unsigned __int64& expValue) const
-        { return UIntPowOfV1(expValue); }
-
-        /// <summary>
-        /// Applies Power of operation (for signed integer exponents)
-		/// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="expValue">The exponent value.</param>
-        MediumDecBase IntPowOf(const signed int& expValue) const
-		{ return IntPowOfV1(expValue); }
-        MediumDecBase Int64PowOf(const signed __int64& expValue) const
-		{ return IntPowOfV1(expValue); }
+        static MediumDecBase MirroredIntPow(const MediumDecBase& tValue, const MirroredInt& expValue)
+        {   return MirroredIntPowV1<MediumDecBase>(tValue, expValue); }
 
 protected:
 
