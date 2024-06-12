@@ -829,43 +829,31 @@ inline void BlazesRusCode::MediumDecBase::SetUIntVal(const unsigned int& Value)
 
 #pragma endregion ConvertFromOtherTypes
 
-		////Experimental inverted assignment operator
-  //      friend signed int& operator%=(signed int& lValue, const MediumDecBase& rValue){
-		//	if(rValue.DecimalHalf.Value==0)
-		//		lValue %= rValue.IsNegative?-(signed int)rValue.Value:(signed int)rValue.Value;
-		//	else {
-		//		MediumDecBase LValue = lValue;
-		//		LValue.ModulusOp(rValue); lValue = (signed int)LValue;
-		//	}
-		//	return lValue;
-		//}
+#pragma region Pow and Sqrt Functions
 
-  //      friend signed __int64& operator%=(signed __int64& lValue, const MediumDecBase& rValue){
-		//	if(rValue.DecimalHalf.Value==0)
-		//		lValue %= rValue.IsNegative?-(signed __int64)rValue.Value:(signed __int64)rValue.Value;
-		//	else {
-		//		MediumDecBase LValue = lValue;
-		//		LValue.ModulusOp(rValue); lValue = (signed int)LValue;
-		//	}
-		//	return lValue;
-		//}
+inline MediumDecBase BlazesRusCode::MediumDecBase::Sqrt(const auto& value, const int& precision)
+{
+	return SqrtV1<MediumDecBase>(value, precision);
+}
 
-  //      friend unsigned int& operator%=(unsigned int& lValue, const MediumDecBase& rValue){
-		//	if(rValue.DecimalHalf.Value==0)
-		//		lValue %= rValue.Value;
-		//	else {
-		//		MediumDecBase LValue = lValue;
-		//		LValue.UnsignedModulusOp(rValue); lValue = (unsigned int)LValue;
-		//	}
-		//	return lValue;
-		//}
+inline MediumDecBase BlazesRusCode::MediumDecBase::SqrtOf(const int& precision) const {
+	return Sqrt(*this, precision);
+}
 
-  //      friend unsigned __int64& operator%=(unsigned __int64& lValue, const MediumDecBase& rValue){
-		//	if(rValue.DecimalHalf.Value==0)
-		//		lValue %= rValue.Value;
-		//	else {
-		//		MediumDecBase LValue = lValue;
-		//		LValue.UnsignedModulusOp(rValue); lValue = (unsigned __int64)LValue;
-		//	}
-		//	return lValue;
-		//}
+inline MediumDecBase BlazesRusCode::MediumDecBase::UnsignedNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision)
+{
+	return UnsignedNthRootV1<MediumDecBase>(tValue, n, precision);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::NthRootOf(const unsigned int& n, const MediumDecBase& precision) const
+{
+	return NthRoot(*this, n, precision);
+}
+
+inline MediumDecBase BlazesRusCode::MediumDecBase::AlternativeNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision)
+{
+	return NthRootV2<MediumDecBase>(tValue, n, precision);
+}
+
+
+#pragma endregion Pow and Sqrt Functions

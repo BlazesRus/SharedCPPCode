@@ -2878,7 +2878,7 @@ protected:
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
-            VariantType start = VariantType(), end = number;
+            VariantType start = VariantType(), end = value;
             VariantType mid;
 
             // variable to store the answer
@@ -2939,17 +2939,12 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDecBase Sqrt(const auto& value, const int& precision = 7)
-        {
-            return SqrtV1<MediumDecBase>(value, precision);
-        }
+        static MediumDecBase Sqrt(const auto& value, const int& precision = 7);
 
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        MediumDecBase SqrtOf(const int& precision = 7) {
-            return Sqrt(*this, precision);
-        }
+        MediumDecBase SqrtOf(const int& precision = 7) const;
 
 protected:
         /// <summary>
@@ -3130,8 +3125,8 @@ protected:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-		template<MediumDecVariant VariantType=MediumDecV2Base>
-        static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
@@ -3163,7 +3158,7 @@ protected:
         /// <param name="nValue">The nth root degree value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
+        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             if (IsNegative())
                 throw "Nth root of a negative number requires imaginary number support";
@@ -3171,9 +3166,9 @@ protected:
         }
 
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision = VariantType::JustAboveZero)
+        static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision)
         {
-            if(n.IsNegative()
+            if(n.IsNegative())
             {
                 switch(n.Value)
                 {
@@ -3196,7 +3191,7 @@ protected:
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType NthRootV2(const VariantType& tValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth) const
+        static VariantType NthRootV2(const VariantType& tValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth)
         {
 			if(n==0)
 				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
@@ -3213,10 +3208,7 @@ protected:
 
 public:
 
-        static MediumDecBase UnsignedNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero)
-        {
-            return UnsignedNthRootV1<MediumDecBase>(tValue, n, precision);
-        }
+        static MediumDecBase UnsignedNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero);
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -3226,17 +3218,12 @@ public:
         /// <param name="precision">Precision level (smaller = more precise)</param>
         static MediumDecBase NthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero)
         {
-            return NthRootV1<MediumDecBase>(tValue, n, precision);
+	        return NthRootV1<MediumDecBase>(tValue, n, precision);
         }
 
-        MediumDecV2Base NthRootOf(const unsigned int& n, const MediumDecV2Base& precision = MediumDecV2Base::JustAboveZero)
-        { return NthRootOfV1<MediumDecBase>(*this, n, precision); }
+        MediumDecBase NthRootOf(const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero) const;
 
-
-        static MediumDecBase AlternativeNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::FiveBillionth)
-        {
-            return NthRootV2<MediumDecBase>(tValue, n, precision);
-        }
+        static MediumDecBase AlternativeNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::FiveBillionth);
 
 protected:
 
@@ -4144,3 +4131,5 @@ public:
     };
 
 }
+
+
