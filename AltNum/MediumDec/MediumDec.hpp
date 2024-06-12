@@ -1442,7 +1442,7 @@ public:
 		/// <summary>
 		/// Perform square root on this instance.
 		/// </summary>
-		MediumDec SqrtOf(const int& precision = 7) {
+		MediumDec SqrtOf(const int& precision = 7) const {
 			return Sqrt(*this, precision);
 		}
 
@@ -1452,9 +1452,9 @@ public:
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
         static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue) const
-        { return IntPowOfV1<MediumDec>(tValue, expValue); }
+        { return IntPowV1<MediumDec>(tValue, expValue); }
         static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue) const
-        { return UIntPowOfV1<MediumDec>(tValue, expValue); }
+        { return UIntPowV1<MediumDec>(tValue, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
@@ -1462,9 +1462,9 @@ public:
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
         static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue) const
-		{ return IntPowOfV1<MediumDec>(tValue, expValue); }
+		{ return IntPowV1<MediumDec>(tValue, expValue); }
         static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue) const
-		{ return IntPowOfV1<MediumDec>(tValue, expValue); }
+		{ return IntPowV1<MediumDec>(tValue, expValue); }
 
         MediumDec UnsignedNegIntPower(const MediumDec& tValue, const unsigned int& expValue)
 		{ return UnsignedNegIntPowerV1<MediumDec>(tValue, expValue); }

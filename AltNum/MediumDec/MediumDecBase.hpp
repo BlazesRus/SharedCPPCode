@@ -2912,7 +2912,7 @@ protected:
             // of square root up to given precision
             VariantType increment = VariantType::PointOne;//0.1
             for (int i = 0; i < precision; ++i) {
-                while (ans * ans <= number) {
+                while (ans * ans <= value) {
                     ans += increment;
                 }
 
@@ -2927,7 +2927,7 @@ protected:
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
         template<MediumDecVariant VariantType = MediumDecBase>
-        VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
+        static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
         {
             if(value.IsNegative())
                 throw "Can't display result of negative square root without imaginary number support";
@@ -3197,7 +3197,7 @@ protected:
 				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
             unsigned int nMinus1 = n - 1;
 			VariantType OneByN = VariantType::One.DivideByUInt(n);
-            VariantType x[2] = { OneByN *tValue.MultiplyByUInt(nMinus1)+tValueDivideByUnsigned(UIntPowOf(nMinus1)), tValue };
+            VariantType x[2] = { OneByN *tValue.MultiplyByUInt(nMinus1)+tValue.DivideByUnsigned(UIntPowOf(nMinus1)), tValue };
             while (Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
