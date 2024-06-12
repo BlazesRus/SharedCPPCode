@@ -3130,15 +3130,10 @@ protected:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-        /// <param name="nValue">The nth root value.</param>
-        /// <param name="precision">Precision level (smaller = more precise)</param>
-        /// <returns>auto</returns>
-		template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType NthRootOfV1(const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
+		template<MediumDecVariant VariantType=MediumDecV2Base>
+        VariantType UnsignedNthRootV1(const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
         {
-            if (IsNegative())
-                throw "Nth root of a negative number requires imaginary number support";
-            VariantType xPre = ((*this - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two
@@ -3154,7 +3149,7 @@ protected:
                 //  calculating current value from previous
                 // value by newton's method
 
-                xK = (xPre * nMinus1 + DivideByUnsigned(xPre.UIntPowOfV1(nMinus1))) / n;
+                xK = (xPre * nMinus1 + tValue.DivideByUnsigned(xPre.UIntPowOfV1(nMinus1))) / n;
                 delX = VariantType::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
@@ -3162,47 +3157,86 @@ protected:
         }
 
         /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
+        /// <param name="nValue">The nth root degree value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
+        {
+            if (IsNegative())
+                throw "Nth root of a negative number requires imaginary number support";
+            return UnsignedNthRootOfV1(tValue, n, precision);
+        }
+
+		template<MediumDecVariant VariantType=MediumDecBase>
+        static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision = VariantType::JustAboveZero)
+        {
+            if(n.IsNegative()
+            {
+                switch(n.Value)
+                {
+                    case 2:
+                        return VariantType::One/NthRootV1(tValue, 2, precision); break;
+                    case 1:
+                        return VariantType::One/tValue; break;
+                    default:
+                        throw "Negative nth root of n less than 2 requires complex numbers to support result.";
+                        break;
+                }
+            }
+            else
+                NthRootV1(tValue, n.Value, precision);
+        }
+
+        /// <summary>
         /// Get the (n)th Root
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
-        /// Does not modify owner object
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
-        /// <returns></returns>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        VariantType NthRootOfV2(const unsigned int& n, const auto& Precision = FiveBillionth) const
+        static VariantType NthRootV2(const VariantType& tValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth) const
         {
 			if(n==0)
 				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
             unsigned int nMinus1 = n - 1;
 			VariantType OneByN = VariantType::One.DivideByUInt(n);
-            VariantType x[2] = { OneByN *VariantType::MultiplyByUInt(nMinus1)+DivideByUnsigned(UIntPowOf(nMinus1)), *this };
+            VariantType x[2] = { OneByN *tValue.MultiplyByUInt(nMinus1)+tValueDivideByUnsigned(UIntPowOf(nMinus1)), tValue };
             while (Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = OneByN * ((x[1].MultiplyByUInt(nMinus1)) + DivideBy(x[1].UIntPowOf(nMinus1)));
+                x[0] = OneByN * ((x[1].MultiplyByUInt(nMinus1)) + tValue.DivideBy(x[1].UIntPowOf(nMinus1)));
             }
             return x[0];
         }
 
 public:
 
+        static MediumDecBase UnsignedNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero)
+        {
+            return UnsignedNthRootV1<MediumDecBase>(tValue, n, precision);
+        }
+
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-        /// <param name="nValue">The nth root value.</param>
+        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
+        /// <param name="nValue">The nth root degree value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-        /// <returns>auto</returns>
-        MediumDecBase NthRootOf(const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero){ return NthRootOfV1(n, precision); }
+        static MediumDecBase NthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::JustAboveZero)
+        {
+            return NthRootV1<MediumDecBase>(tValue, n, precision);
+        }
 
-        /// <summary>
-        /// Get the (n)th Root
-        /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
-        /// </summary>
-        /// <param name="n">The n value to apply with root.</param>
-        /// <returns></returns>
-		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType NthRootV2(const VariantType& targetValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth)
-        { return targetValue.NthRootOfV1(n, Precision); }
+        MediumDecV2Base NthRootOf(const unsigned int& n, const MediumDecV2Base& precision = MediumDecV2Base::JustAboveZero)
+        { return NthRootOfV1<MediumDecBase>(*this, n, precision); }
+
+
+        static MediumDecBase AlternativeNthRoot(const MediumDecBase& tValue, const unsigned int& n, const MediumDecBase& precision = MediumDecBase::FiveBillionth)
+        {
+            return NthRootV2<MediumDecBase>(tValue, n, precision);
+        }
 
 protected:
 

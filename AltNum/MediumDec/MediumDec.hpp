@@ -1494,6 +1494,31 @@ public:
         static MediumDec MirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
         {   return MirroredIntPowV1<MediumDec>(tValue, expValue); }
 
+        static MediumDec UnsignedNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero)
+        {
+            return UnsignedNthRootV1<MediumDec>(tValue, n, precision);
+        }
+
+        /// <summary>
+        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
+        /// </summary>
+        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
+        /// <param name="nValue">The nth root degree value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
+        static MediumDec NthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero)
+        {
+            return NthRootV1<MediumDec>(tValue, n, precision);
+        }
+
+        MediumDec NthRootOf(const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero)
+        { return NthRootOfV1<MediumDec>(*this, n, precision); }
+
+
+        static MediumDec AlternativeNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::FiveBillionth)
+        {
+            return NthRootV2<MediumDec>(tValue, n, precision);
+        }
+
 	#pragma endregion Pow and Sqrt Functions
 
 	#pragma region Log Functions
