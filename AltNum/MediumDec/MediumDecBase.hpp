@@ -2926,7 +2926,7 @@ protected:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        template<MediumDecVariant VariantType = MediumDecV2Base>
+        template<MediumDecVariant VariantType = MediumDecBase>
         VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
         {
             if(value.IsNegative())
@@ -2943,7 +2943,7 @@ public:
         {
             return SqrtV1<MediumDecBase>(value, precision);
         }
-    
+
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
@@ -3065,20 +3065,20 @@ public:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDecBase UIntPow(const MediumDecBase& tValue, const unsigned int& expValue) const
-        { return IntPowOfV1<MediumDecBase>(tValue, expValue); }
-        static MediumDecBase UInt64Pow(const MediumDecBase& tValue, const unsigned __int64& expValue) const
-        { return UIntPowOfV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase UIntPow(const MediumDecBase& tValue, const unsigned int& expValue)
+        { return IntPowV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase UInt64Pow(const MediumDecBase& tValue, const unsigned __int64& expValue)
+        { return UIntPowV1<MediumDecBase>(tValue, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDecBase IntPow(const MediumDecBase& tValue, const signed int& expValue) const
-		{ return IntPowOfV1<MediumDecBase>(tValue, expValue); }
-        static MediumDecBase Int64Pow(const MediumDecBase& tValue, const signed __int64& expValue) const
-		{ return IntPowOfV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase IntPow(const MediumDecBase& tValue, const signed int& expValue)
+		{ return IntPowV1<MediumDecBase>(tValue, expValue); }
+        static MediumDecBase Int64Pow(const MediumDecBase& tValue, const signed __int64& expValue)
+		{ return IntPowV1<MediumDecBase>(tValue, expValue); }
 
         MediumDecBase UnsignedNegIntPower(const MediumDecBase& tValue, const unsigned int& expValue)
 		{ return UnsignedNegIntPowerV1<MediumDecBase>(tValue, expValue); }
@@ -3131,7 +3131,7 @@ protected:
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
 		template<MediumDecVariant VariantType=MediumDecV2Base>
-        VariantType UnsignedNthRootV1(const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
+        static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision = VariantType::JustAboveZero)
         {
             VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
