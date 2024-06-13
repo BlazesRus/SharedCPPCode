@@ -1175,26 +1175,6 @@ public:
         /// <returns>MediumDec&</returns>
         void DivideByFour();
 
-protected:
-
-        //Return copy of result divided by two
-        template<MediumDecVariant VariantType = MediumDec>
-        VariantType DividedByTwoV1() const
-        {
-            VariantType result = VariantType::CopyThis(); result.DivideByTwo();
-            return result;
-        }
-
-        //Return copy of result divided by four
-        template<MediumDecVariant VariantType = MediumDec>
-        VariantType DividedByFourV1() const
-        {
-            VariantType result = VariantType::CopyThis(); result.DivideByFour();
-            return result;
-        }
-
-public:
-
         //Return copy of result divided by two
         MediumDec DividedByTwo() const;
 
@@ -1658,26 +1638,6 @@ public:
         /// <param name="rValue.">The right side value</param>
         /// <returns>void</returns>
         void MultiplyByFour();
-
-protected:
-
-        //Return copy of result divided by two
-        template<MediumDecVariant VariantType = MediumDec>
-        VariantType MultipliedByTwoV1() const
-        {
-            VariantType result = VariantType::CopyThis(); result.MultiplyByTwo();
-            return result;
-        }
-
-        //Return copy of result divided by four
-        template<MediumDecVariant VariantType = MediumDec>
-        VariantType MultipliedByFourV1() const
-        {
-            VariantType result = VariantType::CopyThis(); result.MultiplyByFour();
-            return result;
-        }
-
-public:
 
         //Return copy of result divided by two
         MediumDec MultipliedByTwo() const;
@@ -2972,7 +2932,7 @@ protected:
 				IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-                VariantType self = AbsOf();
+                VariantType self = tValue.AbsOf();
                 VariantType result = VariantType::One;
                 while (exp > 0)
                 {
@@ -3000,11 +2960,12 @@ protected:
             if (expValue < 0)//Negative Pow
             {
                 IntType exp = expValue * -1;
-                if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && tValue.expValue >= -9)
+                if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && expValue >= -9)
                 {
-                    IntHalf = 0; DecimalHalf = DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp];
-                    if(IsNegative()&&(exp&1)==1)
-                        IntHalf.Sign = MirroredInt::PositiveSign;
+                    VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
+                    if(tValue.IsNegative()&&(exp&1)==1)
+                        result.IntHalf.Sign = MirroredInt::PositiveSign;
+                    return result;
                 }
                 else
                 {
@@ -3023,7 +2984,7 @@ protected:
                         self.UnsignedMultOp(self); //  Change x to x^2
                     }
                     if(IsNegative)
-                        IntHalf.Sign = MirroredInt::NegativeSign;
+                        result.IntHalf.Sign = MirroredInt::NegativeSign;
                 }
             }
             else

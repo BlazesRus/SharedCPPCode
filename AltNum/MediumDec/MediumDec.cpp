@@ -426,7 +426,7 @@ inline void BlazesRusCode::MediumDec::DivideByTwo()
 	if (DecimalHalf == 0 && (IntHalf.Value & 1) == 1)//Check if number is odd
 		UIntDivOp(2);
 	else
-		IntHalf /= 2;
+		IntHalf.Value /= 2;
 }
 
 inline void BlazesRusCode::MediumDec::DivideByFour()
@@ -435,19 +435,21 @@ inline void BlazesRusCode::MediumDec::DivideByFour()
 	//https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
 	//checking if divible by 8 equals (((n >> 3) << 3) == n)
 	if (DecimalHalf == 0 && (((IntHalf.Value >> 2) << 2) == IntHalf.Value))//Check if number can be perfectly divided by 4
-		IntHalf /= 4;
+		IntHalf.Value /= 4;
 	else
 		UIntDivOp(4);
 }
 
 inline MediumDec BlazesRusCode::MediumDec::DividedByTwo() const
 {
-	return DividedByTwoV1();
+	MediumDec result = *this; result.DivideByTwo();
+	return result;
 }
 
 inline MediumDec BlazesRusCode::MediumDec::DividedByFour() const
 {
-	return DividedByFourV1();
+	MediumDec result = *this; result.DivideByFour();
+	return result;
 }
 
 #pragma endregion Other Division Operations
@@ -467,12 +469,14 @@ inline void BlazesRusCode::MediumDec::MultiplyByFour()
 
 inline MediumDec BlazesRusCode::MediumDec::MultipliedByTwo() const
 {
-	return MultipliedByTwoV1<MediumDec>();
+	MediumDec result = *this; result.UIntMultOp(2);
+	return result;
 }
 
 inline MediumDec BlazesRusCode::MediumDec::MultipliedByFour() const
 {
-	return MultipliedByFourV1<MediumDec>();
+	MediumDec result = *this; result.UIntMultOp(4);
+	return result;
 }
 
 
