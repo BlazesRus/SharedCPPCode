@@ -467,12 +467,12 @@ inline void BlazesRusCode::MediumDecBase::MultiplyByFour()
 
 inline MediumDecBase BlazesRusCode::MediumDecBase::MultipliedByTwo() const
 {
-	return MultipliedByTwoV1();
+	return MultipliedByTwoV1<MediumDecBase>();
 }
 
 inline MediumDecBase BlazesRusCode::MediumDecBase::MultipliedByFour() const
 {
-	return MultipliedByFourV1();
+	return MultipliedByFourV1<MediumDecBase>();
 }
 
 
@@ -854,6 +854,5 @@ inline MediumDecBase BlazesRusCode::MediumDecBase::AlternativeNthRoot(const Medi
 {
 	return NthRootV2<MediumDecBase>(tValue, n, precision);
 }
-
 
 #pragma endregion Pow and Sqrt Functions

@@ -65,7 +65,7 @@ namespace BlazesRusCode
         static unsigned _int64 const DecimalOverflowX = 1000000000;
 
         /// <summary>
-        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// tValue when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
         static MirroredInt const NegativeRep;
 
@@ -184,12 +184,12 @@ namespace BlazesRusCode
     #pragma region RangeLimits
 
         /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State Value that it store
+        /// Sets value to the highest non-infinite/Special Decimal State tValue that it store
         /// </summary>
         void SetAsMaximum();
 
         /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State Value that it store
+        /// Sets value to the lowest non-infinite/Special Decimal State tValue that it store
         /// </summary>
         void SetAsMinimum();
 
@@ -453,13 +453,13 @@ public:
         static MediumDecBase NegativeOne;
 
         /// <summary>
-        /// Returns value of lowest non-infinite/Special Decimal State Value that can store
+        /// Returns value of lowest non-infinite/Special Decimal State tValue that can store
         /// (-2147483647.999999999)
         /// </summary>
         static MediumDecBase Minimum;
 
         /// <summary>
-        /// Returns value of highest non-infinite/Special Decimal State Value that can store
+        /// Returns value of highest non-infinite/Special Decimal State tValue that can store
         /// (2147483647.999999999)
         /// </summary>
         static MediumDecBase Maximum;
@@ -488,7 +488,7 @@ public:
         /// <summary>
         /// Reads the string.
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         void ReadString(const std::string& Value);
 
         /// <summary>
@@ -504,7 +504,7 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         MediumDecBase(const std::string& Value)
         {
             this->ReadString(Value);
@@ -539,39 +539,39 @@ public:
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetFloatVal(const float& Value);
+        /// <param name="tValue">The value.</param>
+        void SetFloatVal(const float& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDoubleVal(const double& Value);
+        /// <param name="tValue">The value.</param>
+        void SetDoubleVal(const double& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        void SetDecimalVal(const long double& Value);
+        /// <param name="tValue">The value.</param>
+        void SetDecimalVal(const long double& tValue);
 
 	#endif
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         void SetBoolVal(const bool& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         void SetIntVal(const int& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         void SetUIntVal(const unsigned int& Value);
 
     #if defined(AltNum_EnableFloatingConversion)
@@ -579,20 +579,20 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecBase(const float& Value){ this->SetFloatVal(Value); }
+        /// <param name="tValue">The value.</param>
+        MediumDecBase(const float& tValue){ this->SetFloatVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecBase(const double& Value){ this->SetDoubleVal(Value); }
+        /// <param name="tValue">The value.</param>
+        MediumDecBase(const double& tValue){ this->SetDoubleVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
-        /// <param name="Value">The value.</param>
-        MediumDecBase(const long double& Value){ this->SetDecimalVal(Value); }
+        /// <param name="tValue">The value.</param>
+        MediumDecBase(const long double& tValue){ this->SetDecimalVal(tValue); }
 
 	#endif
 
@@ -607,7 +607,7 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         MediumDecBase(const bool& Value){ this->SetBoolVal(Value); }
 
     #pragma endregion ConvertFromOtherTypes
@@ -1086,7 +1086,7 @@ protected:
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         template<MediumDecVariant VariantType=MediumDecBase>
         void DivOpV1(const VariantType& Value)
         {
@@ -1120,14 +1120,14 @@ public:
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         void DivOp(const MediumDecBase& rValue){ DivOpV1(rValue); }
 
 		/// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase& UnsignedDivOperation(const MediumDecBase& rValue)
 		{ UnsignedDivOp(rValue); return *this; }
 
@@ -1135,7 +1135,7 @@ public:
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase& DivOperation(const MediumDecBase& rValue)
 		{ DivOp(rValue); return *this; }
 
@@ -1143,7 +1143,7 @@ public:
         /// Basic unsigned division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         const MediumDecBase DivideByUnsigned(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.UnsignedDivOperation(rValue); }
 
@@ -1151,7 +1151,7 @@ public:
         /// Basic division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         const MediumDecBase DivideBy(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.DivOperation(rValue); }
 
@@ -1267,7 +1267,7 @@ protected:
         /// Partial version of UIntMultOpV1 without zero checks
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         template<IntegerType IntType=int>
         void PartialUIntMultOpV1(const IntType& rValue)
@@ -1416,7 +1416,7 @@ protected:
         /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         template<MediumDecVariant VariantType=MediumDecBase>
         void UnsignedMultOpV1(const VariantType& rValue)
 		{
@@ -1602,7 +1602,7 @@ public:
         /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         void UnsignedMultOp(const MediumDecBase& rValue){ UnsignedMultOpV1(rValue); }
 
         void MultOp(const MediumDecBase& rValue){ MultOpV1(rValue); }
@@ -1611,7 +1611,7 @@ public:
         /// Basic unsigned multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase& UnsignedMultOperation(const MediumDecBase& rValue)
         { UnsignedMultOp(rValue); return *this; }
 
@@ -1619,7 +1619,7 @@ public:
         /// Basic multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase& MultOperation(const MediumDecBase& rValue)
 		{ MultOp(rValue); return *this; }
 
@@ -1627,7 +1627,7 @@ public:
         /// Basic unsigned multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase MultiplyByUnsigned(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
@@ -1635,7 +1635,7 @@ public:
         /// Basic multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase MultiplyBy(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.MultOperation(rValue); }
 
@@ -2304,7 +2304,7 @@ public:
         /// Unsigned Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase AddByUnsigned(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
 
@@ -2312,7 +2312,7 @@ public:
         /// Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase AddBy(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.AddOperation(rValue); } const
 
@@ -2328,7 +2328,7 @@ public:
         /// Basic unsigned Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase SubtractByUnsigned(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
 
@@ -2336,7 +2336,7 @@ public:
         /// Basic Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
-        /// <param name="rValue.">The right side Value</param>
+        /// <param name="rValue.">The right side tValue</param>
         MediumDecBase SubtractBy(const MediumDecBase& rValue)
         { MediumDecBase lValue = *this; return lValue.SubOperation(rValue); } const
 
@@ -2558,54 +2558,54 @@ public:
     /*
     #if defined(AltNum_EnableBitwiseOverride)
         /// <summary>
-        /// Bitwise XOR Operation Between MediumDec and Integer Value
+        /// Bitwise XOR Operation Between MediumDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         template<IntegerType IntType=signed int>
-        friend MediumDec operator^(MediumDec self, IntType Value)
+        friend MediumDec operator^(MediumDec self, IntType tValue)
         {
-            if (self.DecimalHalf == 0) { self.IntHalf ^= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf ^= tValue; return self; }
             else
             {
                 bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = Value < 0;
+                bool ValIsNegative = tValue < 0;
                 if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntHalf = (0 & Value) * -1;
-                    self.DecimalHalf ^= Value;
+                    self.IntHalf = (0 & tValue) * -1;
+                    self.DecimalHalf ^= tValue;
                 }
                 else
                 {
-                    self.IntHalf ^= Value; self.DecimalHalf ^= Value;
+                    self.IntHalf ^= tValue; self.DecimalHalf ^= tValue;
                 }
             }
             return self;
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MediumDec and Integer Value
+        /// Bitwise Or Operation Between MediumDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         template<IntegerType IntType=signed int>
-        friend MediumDec operator|(MediumDec self, IntType Value)
+        friend MediumDec operator|(MediumDec self, IntType tValue)
         {
-            if (self.DecimalHalf == 0) { self.IntHalf |= Value; return self; }
+            if (self.DecimalHalf == 0) { self.IntHalf |= tValue; return self; }
             else
             {
                 bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = Value < 0;
+                bool ValIsNegative = tValue < 0;
                 if (SelfIsNegative && self.IntHalf == NegativeRep)
                 {
-                    self.IntHalf = (0 & Value) * -1;
-                    self.DecimalHalf |= Value;
+                    self.IntHalf = (0 & tValue) * -1;
+                    self.DecimalHalf |= tValue;
                 }
                 else
                 {
-                    self.IntHalf |= Value; self.DecimalHalf |= Value;
+                    self.IntHalf |= tValue; self.DecimalHalf |= tValue;
                 }
             }
             return self;
@@ -2617,30 +2617,30 @@ public:
     /*
     #pragma region Floating Operator Overrides
 
-        friend MediumDecBase operator+(const MediumDecBase& self, const float& Value) { return self + (MediumDecBase)Value; }
-        friend MediumDecBase operator-(const MediumDecBase& self, const float& Value) { return self - (MediumDecBase)Value; }
-        friend MediumDecBase operator*(const MediumDecBase& self, const float& Value) { return self * (MediumDecBase)Value; }
-        friend MediumDecBase operator/(const MediumDecBase& self, const float& Value) { return self / (MediumDecBase)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const float& tValue) { return self + (MediumDecBase)tValue; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const float& tValue) { return self - (MediumDecBase)tValue; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const float& tValue) { return self * (MediumDecBase)tValue; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const float& tValue) { return self / (MediumDecBase)tValue; }
 
-        friend MediumDecBase operator+(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value + self; }
-        friend MediumDecBase operator-(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value - self; }
-        friend MediumDecBase operator*(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value * self; }
-        friend MediumDecBase operator/(const float& Value, const MediumDecBase& self) { return (MediumDecBase)Value / self; }
+        friend MediumDecBase operator+(const float& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue + self; }
+        friend MediumDecBase operator-(const float& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue - self; }
+        friend MediumDecBase operator*(const float& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue * self; }
+        friend MediumDecBase operator/(const float& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue / self; }
 
-        friend MediumDecBase operator+(const MediumDecBase& self, const double& Value) { return self + (MediumDecBase)Value; }
-        friend MediumDecBase operator-(const MediumDecBase& self, const double& Value) { return self - (MediumDecBase)Value; }
-        friend MediumDecBase operator*(const MediumDecBase& self, const double& Value) { return self * (MediumDecBase)Value; }
-        friend MediumDecBase operator/(const MediumDecBase& self, const double& Value) { return self / (MediumDecBase)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const double& tValue) { return self + (MediumDecBase)tValue; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const double& tValue) { return self - (MediumDecBase)tValue; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const double& tValue) { return self * (MediumDecBase)tValue; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const double& tValue) { return self / (MediumDecBase)tValue; }
 
-        friend MediumDecBase operator+(const MediumDecBase& self, const long double& Value) { return self + (MediumDecBase)Value; }
-        friend MediumDecBase operator-(const MediumDecBase& self, const long double& Value) { return self - (MediumDecBase)Value; }
-        friend MediumDecBase operator*(const MediumDecBase& self, const long double& Value) { return self * (MediumDecBase)Value; }
-        friend MediumDecBase operator/(const MediumDecBase& self, const long double& Value) { return self / (MediumDecBase)Value; }
+        friend MediumDecBase operator+(const MediumDecBase& self, const long double& tValue) { return self + (MediumDecBase)tValue; }
+        friend MediumDecBase operator-(const MediumDecBase& self, const long double& tValue) { return self - (MediumDecBase)tValue; }
+        friend MediumDecBase operator*(const MediumDecBase& self, const long double& tValue) { return self * (MediumDecBase)tValue; }
+        friend MediumDecBase operator/(const MediumDecBase& self, const long double& tValue) { return self / (MediumDecBase)tValue; }
 
-        friend MediumDecBase operator+(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value + self; }
-        friend MediumDecBase operator-(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value - self; }
-        friend MediumDecBase operator*(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value * self; }
-        friend MediumDecBase operator/(const long double& Value, const MediumDecBase& self) { return (MediumDecBase)Value / self; }
+        friend MediumDecBase operator+(const long double& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue + self; }
+        friend MediumDecBase operator-(const long double& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue - self; }
+        friend MediumDecBase operator*(const long double& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue * self; }
+        friend MediumDecBase operator/(const long double& tValue, const MediumDecBase& self) { return (MediumDecBase)tValue / self; }
 
     #pragma endregion Floating Operator Overrides
     */
@@ -2762,7 +2762,7 @@ protected:
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
-        /// <param name="Value">The target value to apply on.</param>
+        /// <param name="tValue">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
         template<MediumDecVariant VariantType = MediumDecBase>
         static VariantType FloorV1(const VariantType& tValue, const int& precision = 0)
@@ -2795,37 +2795,37 @@ protected:
 public:
 
         ///<summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
 		static MediumDecBase Ceil(const MediumDecBase& tValue) { return CeilV1<MediumDecBase>(tValue); }
 
         ///<summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
 		MediumDecBase CeilOf() const { return Ceil(*this); }
 
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
         signed int FloorIntOf() const;
 
         /// <summary>
-        /// Returns the largest integer that is smaller than or equal to Value (Rounds downs to integer value).
+        /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
 		static signed int FloorInt(const MediumDecBase& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
         int CeilIntOf() const;
 
         /// <summary>
-        /// Returns the smallest integer that is greater than or equal to Value (Rounds up to integer value).
+        /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumDecBase&</returns>
 		static signed int CeilInt(const MediumDecBase& tValue) { return tValue.CeilIntOf(); }
@@ -3504,9 +3504,9 @@ protected:
         }
 
         /// <summary>
-        /// Log Base 10 of Value
+        /// Log Base 10 of tValue
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         template<MediumDecVariant VariantType = MediumDecBase>
         #if defined(AltNum_UseCustomLnAccuracy)
@@ -3556,9 +3556,9 @@ protected:
         }
 
         /// <summary>
-        /// Log Base 10 of Value
+        /// Log Base 10 of tValue
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         template<MediumDecVariant VariantType = MediumDecBase>
         static VariantType Log10V1(const VariantType& value)
@@ -3567,9 +3567,9 @@ protected:
         }
 
         /// <summary>
-        /// Log Base 10 of Value(integer value variant)
+        /// Log Base 10 of tValue(integer value variant)
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
 		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
         static VariantType Log10OfIntV1(const IntType& value)
@@ -3593,7 +3593,7 @@ protected:
         }
 
         /// <summary>
-        /// Log with Base of BaseVal of Value
+        /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
         /// <param name="value">The value.</param>
@@ -3608,10 +3608,10 @@ protected:
         }
 
         /// <summary>
-        /// Log with Base of BaseVal of Value
+        /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>VariantType</returns>
 		template<MediumDecVariant VariantType=MediumDecBase, IntegerType IntType = unsigned int>
@@ -3690,23 +3690,23 @@ public:
         { return LnV1(value); }
 
         /// <summary>
-        /// Log Base 10 of Value
+        /// Log Base 10 of tValue
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         static MediumDecBase Log10(const MediumDecBase& value)
         { return Log10V1(value); }
 
         /// <summary>
-        /// Log Base 10 of Value(integer value variant)
+        /// Log Base 10 of tValue(integer value variant)
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <returns>MediumDec</returns>
         static MediumDecBase Log10OfInt(const unsigned int& value)
         { return Log10OfIntV1(value); }
 
         /// <summary>
-        /// Log with Base of BaseVal of Value
+        /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
         /// <param name="value">The value.</param>
@@ -3716,10 +3716,10 @@ public:
         { return LogV1(value, baseVal); }
 
         /// <summary>
-        /// Log with Base of BaseVal of Value
+        /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="Value">The value.</param>
+        /// <param name="tValue">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumDecBase</returns>
         static MediumDecBase LogOfInt(const MediumDecBase& value, const unsigned int& baseVal)
@@ -3731,7 +3731,7 @@ public:
 protected:
 
         /// <summary>
-        /// Calculate Sine from Value in Radians
+        /// Calculate Sine from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
@@ -3753,7 +3753,7 @@ protected:
         }
 
         /// <summary>
-        /// Get Cos from Value in Radians
+        /// Get Cos from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
@@ -3775,10 +3775,10 @@ protected:
         }
 
         /// <summary>
-        /// Get Tan from Value in Radians
+        /// Get Tan from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="Value">The value in Radians.</param>
+        /// <param name="tValue">The value in Radians.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType TanV1(const VariantType& tValue)
         {
@@ -3801,11 +3801,10 @@ protected:
         }
 
         /// <summary>
-        /// Gets Inverse Tangent from Value in Radians
+        /// Gets Inverse Tangent from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target MediumDec variant value to perform function on.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <param name="tValue">The value in Radians.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType ATanV1(const VariantType& tValue)
         {
@@ -3836,7 +3835,6 @@ protected:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        /// <returns>MediumDec</returns>
 		template<MediumDecVariant VariantType=MediumDecBase>
         static VariantType ArcTan2V1(const VariantType& y, const VariantType& x)
         {
@@ -3862,35 +3860,34 @@ protected:
         }
 
         /// <summary>
-        /// Get Sin from Value of angle.
+        /// Get Sin from tValue of angle.
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target VariantType variant value to perform function on.</param>
-        /// <returns>VariantTypeBase</returns>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType SinFromAngleV1(VariantType Value)
+        static VariantType SinFromAngleV1(VariantType tValue)
         {
-            if (Value.IsNegative())
+            if (tValue.IsNegative())
             {
-                if (Value.IntHalf.Value == 0)
+                if (tValue.IntHalf.Value == 0)
                 {
-                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
                 }
                 else
                 {
-                    Value.SwapNegativeStatus();
-                    Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                    tValue.SwapNegativeStatus();
+                    tValue.IntHalf.Value %= 360;
+                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
+                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntHalf.Value %= 360;
+                tValue.IntHalf.Value %= 360;
             }
-            if(Value.DecimalHalf==0)
+            if(tValue.DecimalHalf==0)
             {
-                switch(Value.IntHalf.Value)
+                switch(tValue.IntHalf.Value)
                 {
                     case 0:
                     case 180://Pi Radians
@@ -3910,7 +3907,7 @@ protected:
                         return NegativePointFive;
                     default:
                         //Angle as Radian
-                        VariantType Radius = PiNum * Value / 180;
+                        VariantType Radius = PiNum * tValue / 180;
                         return SinV1<VariantType>(Radius);
                         break;
                 }
@@ -3918,41 +3915,40 @@ protected:
             else
             {
                 //Angle as Radian
-                VariantType Radius = PiNum * Value / 180;
+                VariantType Radius = PiNum * tValue / 180;
                 return SinV1<VariantType>(Radius);
             }
         }
 
         /// <summary>
-        /// Get Cos() from Value of Angle
+        /// Get Cos() from tValue of Angle
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target VariantType variant value to perform function on.</param>
-        /// <returns></returns>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType CosFromAngleV1(VariantType Value)
+        static VariantType CosFromAngleV1(VariantType tValue)
         {
-            if (Value.IsNegative())
+            if (tValue.IsNegative())
             {
-                if (Value.IntHalf.Value == 0)
+                if (tValue.IntHalf.Value == 0)
                 {
-                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
                 }
                 else
                 {
-                    Value.SwapNegativeStatus();
-                    Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                    tValue.SwapNegativeStatus();
+                    tValue.IntHalf.Value %= 360;
+                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
+                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntHalf.Value %= 360;
+                tValue.IntHalf.Value %= 360;
             }
-            if(Value.DecimalHalf==0)
+            if(tValue.DecimalHalf==0)
             {
-                switch(Value.IntHalf.Value)
+                switch(tValue.IntHalf.Value)
                 {
                     case 0:
                         return VariantType::One;
@@ -3972,7 +3968,7 @@ protected:
                         return VariantType::NegativePointFive;
                     default:
                         //Angle as Radian
-                        VariantType Radius = PiNum * Value / 180;
+                        VariantType Radius = PiNum * tValue / 180;
                         return CosV1<VariantType>(Radius);
                         break;
                 }
@@ -3980,41 +3976,40 @@ protected:
             else
             {
                 //Angle as Radian
-                VariantType Radius = PiNum * Value / 180;
+                VariantType Radius = PiNum * tValue / 180;
                 return CosV1<VariantType>(Radius);
             }
         }
 
         /// <summary>
-        /// Get Tangent from Value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
+        /// Get Tangent from tValue in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="value">The target VariantType variant value to perform function on.</param>
-        /// <returns>VariantTypeBase</returns>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
 		template<MediumDecVariant VariantType=MediumDecBase>
-        static VariantType TanFromAngleV1(VariantType Value)
+        static VariantType TanFromAngleV1(VariantType tValue)
         {
-            if (Value.IsNegative())
+            if (tValue.IsNegative())
             {
-                if (Value.IntHalf.Value == 0)
+                if (tValue.IntHalf.Value == 0)
                 {
-                    Value.IntHalf = 359; Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf;
+                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
                 }
                 else
                 {
-                    Value.SwapNegativeStatus();
-                    Value.IntHalf.Value %= 360;
-                    Value.IntHalf.Value = 360 - Value.IntHalf.Value;
-                    if (Value.DecimalHalf != 0) { Value.DecimalHalf = DecimalOverflow - Value.DecimalHalf; }
+                    tValue.SwapNegativeStatus();
+                    tValue.IntHalf.Value %= 360;
+                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
+                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
                 }
             }
             else
             {
-                Value.IntHalf.Value %= 360;
+                tValue.IntHalf.Value %= 360;
             }
-            if(Value.DecimalHalf==0)
+            if(tValue.DecimalHalf==0)
             {
-                switch(Value.IntHalf.Value)
+                switch(tValue.IntHalf.Value)
                 {
                     case 0:
                     case 180://Pi Radians
@@ -4027,18 +4022,18 @@ protected:
                         return Minimum;//Negative Infinity
                         break;
                     default:
-                        return TanV1<VariantType>(PiNum * Value / 180);
+                        return TanV1<VariantType>(PiNum * tValue / 180);
                         break;
                 }
             }
             else
-                return TanV1<VariantType>(PiNum * Value / 180);
+                return TanV1<VariantType>(PiNum * tValue / 180);
         }
 
 public:
 
         /// <summary>
-        /// Calculate Sine from Value in Radians
+        /// Calculate Sine from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
@@ -4046,7 +4041,7 @@ public:
         { return SinV1<MediumDecBase>(tValue); }
 
         /// <summary>
-        /// Get cosine from Value in Radians
+        /// Get cosine from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
@@ -4062,7 +4057,7 @@ public:
         { return TanV1<MediumDecBase>(tValue); }
 
         /// <summary>
-        /// Gets Inverse Tangent from Value in Radians
+        /// Gets Inverse Tangent from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
@@ -4073,7 +4068,7 @@ public:
         /// Get Sin from value of angle.
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
         static MediumDecBase SinFromAngle(const MediumDecBase& tValue)
         { return SinFromAngleV1<MediumDecBase>(tValue); }
 
@@ -4081,7 +4076,7 @@ public:
         /// Get Cos() from value of Angle
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
         static MediumDecBase CosFromAngle(const MediumDecBase& tValue)
         { return CosFromAngleV1<MediumDecBase>(tValue); }
 
@@ -4089,7 +4084,7 @@ public:
         /// Get Tangent from value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
-        /// <param name="tValue">The target VariantType variant tValue to perform function on.</param>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
         static MediumDecBase TanFromAngle(const MediumDecBase& tValue)
         { return TanFromAngleV1<MediumDecBase>(tValue); }
 

@@ -1451,9 +1451,9 @@ public:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue) const
+        static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue)
         { return IntPowV1<MediumDec>(tValue, expValue); }
-        static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue) const
+        static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue)
         { return UIntPowV1<MediumDec>(tValue, expValue); }
 
         /// <summary>
@@ -1461,9 +1461,9 @@ public:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue) const
+        static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue)
 		{ return IntPowV1<MediumDec>(tValue, expValue); }
-        static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue) const
+        static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue)
 		{ return IntPowV1<MediumDec>(tValue, expValue); }
 
         MediumDec UnsignedNegIntPower(const MediumDec& tValue, const unsigned int& expValue)
@@ -1511,7 +1511,7 @@ public:
         }
 
         MediumDec NthRootOf(const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero)
-        { return NthRootOfV1<MediumDec>(*this, n, precision); }
+        { return NthRootV1<MediumDec>(*this, n, precision); }
 
 
         static MediumDec AlternativeNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::FiveBillionth)
