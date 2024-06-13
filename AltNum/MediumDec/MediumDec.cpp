@@ -1,34 +1,89 @@
 ﻿#include "MediumDec.hpp"
 using MediumDec = BlazesRusCode::MediumDec;
-using MediumDecBase = BlazesRusCode::MediumDecBase;
-using ModResult = BlazesRusCode::MediumDecModResult;
 
-#pragma region class_constructors
+#pragma region ValueSetters
 
-inline BlazesRusCode::MediumDec::MediumDec(const MirroredInt& intVal, const PartialInt& decVal)
+inline void BlazesRusCode::MediumDec::SetValueToPiNum()
 {
-	IntHalf = intVal;
-	DecimalHalf = decVal;
+	IntHalf = 3; DecimalHalf = 141592654;
 }
 
-inline BlazesRusCode::MediumDec::MediumDec(const signed int& intVal, const PartialInt& decVal)
+inline void BlazesRusCode::MediumDec::SetValueToHundredMilPiNum()
 {
-	IntHalf = intVal;
-	DecimalHalf = decVal;
+	IntHalf = 314159265; DecimalHalf = 358979324;
 }
 
-inline BlazesRusCode::MediumDec::MediumDec(const MediumDecBase& rhs)
+inline void BlazesRusCode::MediumDec::SetValueToTenMilPiNum()
 {
-	IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+	IntHalf = 31415926; DecimalHalf = 535897932;
 }
 
-#pragma endregion class_constructors
-
-inline void BlazesRusCode::MediumDec::SetValue(MediumDec Value)
+inline void BlazesRusCode::MediumDec::SetValueToOneMilPiNum()
 {
-	IntHalf = Value.IntHalf;
-	DecimalHalf = Value.DecimalHalf;
+	IntHalf = 3141592; DecimalHalf = 653589793;
 }
+
+inline void BlazesRusCode::MediumDec::SetValueToTenPiNum()
+{
+	IntHalf = 31; DecimalHalf = 415926536;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToENum()
+{
+	IntHalf = 2; DecimalHalf = 718281828;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToPoint5()
+{
+	IntHalf = 0; DecimalHalf = 500000000;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToJustAboveZero()
+{
+	IntHalf = 0; DecimalHalf = 1;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToOneMillionth()
+{
+	IntHalf = 0; DecimalHalf = 1000;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToFiveThousandth()
+{
+	IntHalf = 0; DecimalHalf = 5000000;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToFiveMillionth()
+{
+	IntHalf = 0; DecimalHalf = 5000;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToTenMillionth()
+{
+	IntHalf = 0; DecimalHalf = 100;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToOneHundredMillionth()
+{
+	IntHalf = 0; DecimalHalf = 10;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToLN10()
+{
+	IntHalf = 2; DecimalHalf = 302585093;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToLN10Div()
+{
+	IntHalf = 0; DecimalHalf = 434294482;
+}
+
+inline void BlazesRusCode::MediumDec::SetValueToTwiceLN10Div()
+{
+	IntHalf = 0; DecimalHalf = 868588964;
+}
+
+#pragma endregion ValueSetters
 
 #pragma region ValueDefines
 
@@ -186,64 +241,618 @@ MediumDec MediumDec::ENum = MediumDec::ENumValue();
 MediumDec MediumDec::NegativePointFive = MediumDec::NegativePointFiveValue();
 #pragma endregion ValueDefine Source
 
-#pragma region String Commands
+#pragma region Check_if_value
 
-inline MediumDec BlazesRusCode::MediumDec::GetValueFromString(std::string Value)
+inline void BlazesRusCode::MediumDec::SetAsZero()
 {
-	MediumDec NewSelf = MediumDec();
-	NewSelf.ReadString(Value);
-	return NewSelf;
+	IntHalf = 0; DecimalHalf = 0;
 }
 
-inline MediumDec BlazesRusCode::MediumDec::Abs(const MediumDec& tValue)
+inline void BlazesRusCode::MediumDec::SetAsOne()
 {
-	AbsV1<MediumDec>(tValue); return tValue;
+	IntHalf = 1; DecimalHalf = 0;
 }
 
-inline MediumDec BlazesRusCode::MediumDec::AbsOf() const { return Abs(*this); }
-
-inline MediumDec BlazesRusCode::MediumDec::Floor(MediumDec tValue, const int& precision)
+inline void BlazesRusCode::MediumDec::SetAsOneVal()
 {
-	return FloorV1(tValue, precision);
+	IntHalf.Value = 1; DecimalHalf = 0;
 }
 
-inline MediumDec BlazesRusCode::MediumDec::Ceil(const MediumDec& tValue) { return CeilV1<MediumDec>(tValue); }
+inline void BlazesRusCode::MediumDec::SetAsValues(const MirroredInt& intVal, const PartialInt& decVal)
+{
+	IntHalf = 0; DecimalHalf = 0;
+}
 
-inline MediumDec BlazesRusCode::MediumDec::CeilOf() const { return Ceil(*this); }
+inline bool BlazesRusCode::MediumDec::IsAtZeroInt() const
+{
+	return IntHalf.Value == 0;
+}
+
+inline bool BlazesRusCode::MediumDec::IsNotAtZeroInt() const
+{
+	return IntHalf.Value != 0;
+}
+
+inline bool BlazesRusCode::MediumDec::IsAtOneInt() const
+{
+	return IntHalf.Value == 1;
+}
+
+inline bool BlazesRusCode::MediumDec::IsNotAtOneInt() const
+{
+	return IntHalf.Value != 1;
+}
+
+inline bool BlazesRusCode::MediumDec::IsZero() const
+{
+	return DecimalHalf == 0 && IntHalf.Value == 0;
+}
+
+inline bool BlazesRusCode::MediumDec::IsOne() const
+{
+	return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+}
+
+inline bool BlazesRusCode::MediumDec::IsNegOne() const
+{
+	return DecimalHalf == 0 && IntHalf == MirroredInt::NegativeOne;
+}
+
+inline bool BlazesRusCode::MediumDec::IsOneVal() const
+{
+	return DecimalHalf == 0 && IntHalf.Value == 1;
+}
+
+inline bool BlazesRusCode::MediumDec::IsOneVariantVal() const
+{
+	return DecimalHalf.Value == 0 && IntHalf.Value == 1;
+}
+
+#pragma endregion Check_if_value
+
+#pragma region RangeLimits
+
+inline void BlazesRusCode::MediumDec::SetAsMaximum()
+{
+	IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999;
+}
+
+inline void BlazesRusCode::MediumDec::SetAsMinimum()
+{
+	IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999;
+}
+
+#pragma endregion RangeLimits
+
+#pragma region ConvertToOtherTypes
+
+    #if defined(AltNum_EnableFloatingConversion)
+inline float BlazesRusCode::MediumDec::toFloat() const
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	float Value;
+	if (IntHalf.IsNegative())
+	{
+		Value = (float)-IntHalf.Value;
+		if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
+	}
+	else
+	{
+		Value = (float)IntHalf.Value;
+		if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
+	}
+	return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	if (IntHalf.Value == 0)//Exponent is negative
+	{
+		//To-Do:Add code here
+	}
+	else
+	{
+		//To-Do:Add code here
+	}
+	return 0.0f;//Placeholder
+	#endif
+}
+
+inline double BlazesRusCode::MediumDec::toDouble() const
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	double Value;
+	if (IntHalf < 0)
+	{
+		Value = (double)-IntHalf.Value;
+		if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
+	}
+	else
+	{
+		Value = (double)IntHalf.Value;
+		if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
+	}
+	return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	if (IntHalf.Value == 0)//Exponent is negative
+	{
+		//To-Do:Add code here
+	}
+	else
+	{
+		//To-Do:Add code here
+	}
+	return 0.0;//Placeholder
+	#endif
+}
+
+inline long double BlazesRusCode::MediumDec::toDecimal() const
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	long double Value;
+	if (IntHalf < 0)
+	{
+		Value = (long double)-IntHalf.Value;
+		if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
+	}
+	else
+	{
+		Value = (long double)IntHalf.Value;
+		if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
+	}
+	return Value;
+	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	if (IntHalf.Value == 0)//Exponent is negative
+	{
+		//To-Do:Add code here
+	}
+	else
+	{
+		//To-Do:Add code here
+	}
+	return 0.0L;//Placeholder
+	#endif
+}
+	#endif
+
+#pragma endregion ConvertToOtherTypes
+
+#pragma region Comparison Operators
+
+
+#pragma endregion Comparison Operators
+
+#pragma region Other Division Operations
+
+inline void BlazesRusCode::MediumDec::DivideByTwo()
+{
+	if (DecimalHalf == 0 && (IntHalf.Value & 1) == 1)//Check if number is odd
+		UIntDivOp(2);
+	else
+		IntHalf /= 2;
+}
+
+inline void BlazesRusCode::MediumDec::DivideByFour()
+{
+	//Checking if divisible by 4 based on
+	//https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
+	//checking if divible by 8 equals (((n >> 3) << 3) == n)
+	if (DecimalHalf == 0 && (((IntHalf.Value >> 2) << 2) == IntHalf.Value))//Check if number can be perfectly divided by 4
+		IntHalf /= 4;
+	else
+		UIntDivOp(4);
+}
+
+inline MediumDec BlazesRusCode::MediumDec::DividedByTwo() const
+{
+	return DividedByTwoV1();
+}
+
+inline MediumDec BlazesRusCode::MediumDec::DividedByFour() const
+{
+	return DividedByFourV1();
+}
+
+#pragma endregion Other Division Operations
+
+#pragma region Other multiplication operations
+
+inline void BlazesRusCode::MediumDec::MultiplyByTwo()
+{
+	UIntMultOp(2);
+}
+
+inline void BlazesRusCode::MediumDec::MultiplyByFour()
+{
+	UIntMultOp(4);
+}
+
+
+inline MediumDec BlazesRusCode::MediumDec::MultipliedByTwo() const
+{
+	return MultipliedByTwoV1<MediumDec>();
+}
+
+inline MediumDec BlazesRusCode::MediumDec::MultipliedByFour() const
+{
+	return MultipliedByFourV1<MediumDec>();
+}
+
+
+#pragma endregion Other multiplication operations
+
+#pragma region NormalRep Integer Addition Operations
+
+inline void MediumDec::UnsignedMirroredAddOp(const MirroredInt& rValue)
+{
+	if (DecimalHalf.Value == 0)
+		IntHalf.NRepSkippingUnsignedAddOp(rValue);
+	else {
+		int signBeforeOp = IntHalf.Sign;
+		IntHalf.UIntAddOp(rValue.Value);
+		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+	}
+}
+
+inline void MediumDec::MirroredAddOp(const MirroredInt& rValue)
+{
+	if (DecimalHalf.Value == 0) {
+		IntHalf.NRepSkippingAddOp(rValue);
+	}
+	else {
+		int signBeforeOp = IntHalf.Sign;
+		IntHalf += rValue;
+		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+	}
+}
+
+inline void MediumDec::UIntAddOp(const unsigned int& rValue)
+{
+	{
+		if (DecimalHalf.Value == 0)
+			IntHalf.NRepSkippingUnsignedAddOp(rValue);
+		else {
+			int signBeforeOp = IntHalf.Sign;
+			IntHalf.UIntAddOp(rValue);
+			if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+				DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+		}
+	}
+}
+
+inline MediumDec& BlazesRusCode::MediumDec::UIntAddOperation(const unsigned int& rValue)
+{
+	UIntAddOp(rValue); return *this;
+}
+
+#pragma endregion NormalRep Integer Addition Operations
+
+#pragma region NormalRep Integer Subtraction Operations
+
+inline void BlazesRusCode::MediumDec::UnsignedMirroredSubOp(const MirroredInt& rValue)
+{
+	if (DecimalHalf.Value == 0)
+		IntHalf.NRepSkippingUnsignedSubOp(rValue);
+	else {
+		int signBeforeOp = IntHalf.Sign;
+		IntHalf.UIntSubOp(rValue.Value);
+		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+	}
+}
+
+inline void BlazesRusCode::MediumDec::MirroredSubOp(const MirroredInt& rValue)
+{
+	if (DecimalHalf.Value == 0)
+		IntHalf.NRepSkippingSubOp(rValue);
+	else {
+		unsigned int signBeforeOp = IntHalf.Sign;
+		IntHalf += rValue;
+		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+	}
+}
+
+inline void BlazesRusCode::MediumDec::UIntSubOp(const unsigned int& rValue)
+{
+	if (DecimalHalf.Value == 0)
+		IntHalf.NRepSkippingUnsignedSubOp(rValue);
+	else {
+		unsigned int signBeforeOp = IntHalf.Sign;
+		IntHalf.UIntSubOp(rValue);
+		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			DecimalHalf = DecimalOverflow - DecimalHalf;
+	}
+}
+
+inline MediumDec& BlazesRusCode::MediumDec::UIntSubOperation(const unsigned int& rValue)
+{
+	UIntSubOp(rValue); return *this;
+}
+
+#pragma endregion NormalRep Integer Subtraction Operations
+
+#pragma region Truncation Functions
+
+inline MediumDec BlazesRusCode::MediumDec::Abs(const MediumDec& tValue) {
+	return AbsV1<MediumDec>(tValue);
+}
+
+inline void BlazesRusCode::MediumDec::ApplyFloorOf(const int& precision)
+{
+	switch (precision)
+	{
+	case 8: DecimalHalf.Value /= 10; DecimalHalf.Value *= 10; break;
+	case 7: DecimalHalf.Value /= 100; DecimalHalf.Value *= 100; break;
+	case 6: DecimalHalf.Value /= 1000; DecimalHalf.Value *= 1000; break;
+	case 5: DecimalHalf.Value /= 10000; DecimalHalf.Value *= 10000; break;
+	case 4: DecimalHalf.Value /= 100000; DecimalHalf.Value *= 100000; break;
+	case 3: DecimalHalf.Value /= 1000000; DecimalHalf.Value *= 1000000; break;
+	case 2: DecimalHalf.Value /= 10000000; DecimalHalf.Value *= 10000000; break;
+	case 1: DecimalHalf.Value /= 100000000; DecimalHalf.Value *= 100000000; break;
+	case 0:
+		DecimalHalf = 0;
+		break;
+	default:
+		break;
+	}
+	if (IntHalf == MirroredInt::NegativeZero && DecimalHalf == 0)
+		IntHalf = 0;
+}
+
+inline signed int BlazesRusCode::MediumDec::FloorIntOf() const
+{
+	if (DecimalHalf == 0)
+		return GetIntHalf();
+	else if (IntHalf == MirroredInt::NegativeZero)
+		return -1;
+	else
+		return GetIntHalf() - 1;
+}
+
+inline int BlazesRusCode::MediumDec::CeilIntOf() const
+{
+	if (DecimalHalf == 0)
+		return GetIntHalf();
+	else if (IntHalf == MirroredInt::NegativeZero)
+		return 0;
+	else
+		return GetIntHalf() + 1;
+}
 
 inline MediumDec BlazesRusCode::MediumDec::Trunc(const MediumDec& tValue) { return tValue.TruncOfV1<MediumDec>(); }
 
+#pragma endregion Truncation Functions
+
+#pragma region String Commands
+
+inline void BlazesRusCode::MediumDec::ReadString(const std::string& Value)
+{
+	IntHalf = 0; DecimalHalf = 0;
+	int PlaceNumber;
+	std::string WholeNumberBuffer = "";
+	std::string DecimalBuffer = "";
+
+	bool ReadingDecimal = false;
+	int TempInt;
+	int TempInt02;
+	for (char const& StringChar : Value)
+	{
+		if (VariableConversionFunctions::IsDigit(StringChar))
+		{
+			if (ReadingDecimal) { DecimalBuffer += StringChar; }
+			else { WholeNumberBuffer += StringChar; }
+		}
+		else if (StringChar == '-')
+			IntHalf.Sign = 0;
+		else if (StringChar == '.')
+			ReadingDecimal = true;
+		else if (StringChar != ' ')
+			break;//Stop Extracting after encounter non-number character such as i
+	}
+	PlaceNumber = WholeNumberBuffer.length() - 1;
+	for (char const& StringChar : WholeNumberBuffer)
+	{
+		TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+		TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+		if (StringChar != '0')
+		{
+			IntHalf.Value += TempInt02;
+		}
+		PlaceNumber--;
+	}
+	PlaceNumber = 8;
+	for (char const& StringChar : DecimalBuffer)
+	{
+		//Limit stored decimal numbers to the amount it can store
+		if (PlaceNumber > -1)
+		{
+			TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+			TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+			if (StringChar != '0')
+			{
+				DecimalHalf += TempInt02;
+			}
+			PlaceNumber--;
+		}
+	}
+}
+
+inline std::string BlazesRusCode::MediumDec::ToString()
+{
+	std::string Value = std::string(IntHalf);
+	if (DecimalHalf != 0)
+	{
+		Value += ".";
+		Value += std::string(DecimalHalf);
+	}
+	return Value;
+}
+
+inline std::string BlazesRusCode::MediumDec::ToFullString()
+{
+	std::string Value = std::string(IntHalf);
+	if (DecimalHalf != 0)
+	{
+		unsigned __int8 CurrentDigit;
+		Value += ".";
+		bool HasDigitsUsed = false;
+		unsigned int CurrentSection = DecimalHalf.Value;
+		for (__int8 Index = 8; Index >= 0; --Index)
+		{
+			if (CurrentSection > 0)
+			{
+				CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
+				CurrentSection -= (CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
+				Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+			}
+			else
+				Value += "0";
+		}
+	}
+	else
+	{
+		Value += ".000000000";
+	}
+	return Value;
+}
+
+#pragma endregion String Commands
+
+#pragma region ConvertFromOtherTypes
+
+    #if defined(AltNum_EnableFloatingConversion)
+inline void BlazesRusCode::MediumDec::SetFloatVal(const float& Value)
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	float lValue = Value;
+	bool IsNegative = Value < 0.0f;
+	if (IsNegative) { lValue *= -1.0f; }
+	//Cap value if too big on initialize (preventing overflow on conversion)
+	if (Value >= 2147483648.0f)
+	{
+		if (IsNegative)
+			IntHalf = MirroredInt(2147483647, 0);
+		else
+			IntHalf = 2147483647;
+		DecimalHalf = 999999999;
+	}
+	else
+	{
+		signed __int64 WholeValue = (signed __int64)std::floor(Value);
+		lValue -= (float)WholeValue;
+		DecimalHalf = (signed int)Value * 10000000000;
+		IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
+	}
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	//To-Do:Add code here
+	#endif
+}
+
+inline void BlazesRusCode::MediumDec::SetDoubleVal(const double& Value)
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	double lValue = Value;
+	bool IsNegative = Value < 0.0;
+	if (IsNegative) { lValue *= -1.0; }
+	//Cap value if too big on initialize (preventing overflow on conversion)
+	if (Value >= 2147483648.0)
+	{
+		if (IsNegative)
+			IntHalf = MirroredInt(2147483647, 0);
+		else
+			IntHalf = 2147483647;
+		DecimalHalf = 999999999;
+	}
+	else
+	{
+		signed __int64 WholeValue = (signed __int64)std::floor(Value);
+		lValue -= (double)WholeValue;
+		DecimalHalf = (signed int)Value * 10000000000;
+		IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
+	}
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	//To-Do:Add code here
+	#endif
+}
+
+inline void BlazesRusCode::MediumDec::SetDecimalVal(const long double& Value)
+{
+	#if defined(AltNum_UseLegacyFloatingConversion)
+	long double lValue = Value;
+	bool IsNegative = Value < 0.0L;
+	if (IsNegative) { lValue *= -1.0L; }
+	//Cap value if too big on initialize (preventing overflow on conversion)
+	if (lValue >= 2147483648.0L)
+	{
+		if (IsNegative)
+			IntHalf = MirroredInt(2147483647, 0);
+		else
+			IntHalf = 2147483647;
+		DecimalHalf = 999999999;
+	}
+	else
+	{
+		signed __int64 WholeValue = (signed __int64)std::floor(lValue);
+		lValue -= (long double)WholeValue;
+		DecimalHalf = (signed int)lValue * 10000000000;
+		IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
+	}
+	#else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
+	//To-Do:Add code here
+	#endif
+}
+	#endif
+
+inline void BlazesRusCode::MediumDec::SetBoolVal(const bool& Value)
+{
+	IntHalf = Value == false ? 0 : 1;
+	DecimalHalf = 0;
+}
+
+inline void BlazesRusCode::MediumDec::SetIntVal(const int& Value)
+{
+	if (Value<0)
+	{
+		IntHalf.Sign = MirroredInt::NegativeSign;
+		IntHalf.Value = -Value;
+	}
+	else
+		IntHalf = Value;
+	DecimalHalf = 0;
+}
+
+inline void BlazesRusCode::MediumDec::SetUIntVal(const unsigned int& Value)
+{
+	IntHalf = Value;
+	DecimalHalf = 0;
+}
+
+#pragma endregion ConvertFromOtherTypes
+
+#pragma region Pow and Sqrt Functions
+
 inline MediumDec BlazesRusCode::MediumDec::Sqrt(const auto& value, const int& precision)
 {
-	return SqrtV1(value, precision);
+	return SqrtV1<MediumDec>(value, precision);
 }
 
 inline MediumDec BlazesRusCode::MediumDec::SqrtOf(const int& precision) const {
 	return Sqrt(*this, precision);
 }
 
-#pragma endregion String Commands
-
-/* //Failed attempt at Constructing from template
-#if defined(AltNum_EnableExperimentalModulusOverrides)//Global Binary functions
-#pragma region Modulus Operations
-
-/// <summary>
-/// Modulus Operation:
-/// divRes member variables gives division result,
-/// modRes member variable and + operator gives mod result,
-/// bool conversion gives result of modRes==0
-/// </summary>
-/// <param name="self">The left side value</param>
-/// <param name="Value">The right side value.</param>
-/// <returns>MediumDecBase</returns>
-ModResult operator%(const MediumDec& lValue, const MediumDec& rValue)
+inline MediumDec BlazesRusCode::MediumDec::UnsignedNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision)
 {
-	MediumDecBase LValue = (MediumDecBase)lValue;
-	MediumDecBase RValue = (MediumDecBase)rValue;
-	ModResult result = ModResult(LValue, RValue);
-	return result;
+	return UnsignedNthRootV1<MediumDec>(tValue, n, precision);
 }
 
-#pragma endregion Modulus Operations
-#endif*/
+inline MediumDec BlazesRusCode::MediumDec::NthRootOf(const unsigned int& n, const MediumDec& precision) const
+{
+	return NthRoot(*this, n, precision);
+}
+
+inline MediumDec BlazesRusCode::MediumDec::AlternativeNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision)
+{
+	return NthRootV2<MediumDec>(tValue, n, precision);
+}
+
+#pragma endregion Pow and Sqrt Functions
