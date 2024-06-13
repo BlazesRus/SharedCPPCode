@@ -47,7 +47,6 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="Value">The value.</param>
-        /// <returns>MediumDecBase</returns>
         friend AltNumModResult operator%(const VarType& lValue, const VarType& rValue)
 		{
             divRes = lValue / rValue;
@@ -74,7 +73,6 @@ namespace BlazesRusCode
 		/// The unary plus (+) operator precedes its operand and evaluates to its operand but attempts to convert it into a number, if it isn't already.
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDecBase</returns>
         VarType operator+ () const
         {
 			return modRes;
