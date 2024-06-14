@@ -74,30 +74,6 @@ namespace BlazesRusCode
 		#endif
 	#endif
 #endif
-#if defined(AltNum_EnableIRep)
-		INum = 4,
-	#if defined(AltNum_EnableFractionals)
-		//(Value/(ExtraRep.Value))*i Representation
-		INumByDiv = 11,
-	#endif
-#endif
-#if defined(AltNum_EnableMixedFractional)
-		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-		MixedFrac = 32,
-	#if defined(AltNum_EnablePiRep)
-		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-		MixedPi = 33,
-	#endif
-	#if defined(AltNum_EnableERep)
-		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-		MixedE = 34,
-	#endif
-	#if defined(AltNum_EnableIRep)
-		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
-		MixedI = 36,
-	#endif
-#endif
-
 #if defined(AltNum_EnableInfinityRep)
 		//(Enum Bits:7,6)
 		//If Positive Infinity, then convert number into MaximumValue instead when need as real number
@@ -119,24 +95,47 @@ namespace BlazesRusCode
 		ApproachingMidRight = 88,
 	#endif
 #endif
-#if defined(AltNum_EnableImaginaryInfinity)
+#if defined(AltNum_EnableIRep)
+		INum = 4,
+	#if defined(AltNum_EnableFractionals)
+		//(Value/(ExtraRep.Value))*i Representation
+		INumByDiv = 11,
+	#endif
+	#if defined(AltNum_EnableInfinity)
 		//(Enum Bits:7,6,3)
 		ImaginaryInfinity = 100,
-#endif
-#if defined(AltNum_EnableApproaching)&&defined(AltNum_EnableIRep)
+	#endif
+	#if defined(AltNum_EnableApproaching)
 		//(Enum Bits:7,3)
 		//(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
 		ApproachingImaginaryBottom = 68,
 		//(Enum Bits:7,3,4)
 		//(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
 		ApproachingImaginaryTop = 76,
-	#if defined(AltNum_EnableApproachingDivided)
+		#if defined(AltNum_EnableApproachingDivided)
 		//(Enum Bits:7,3,5)
 		//DecimalHalf:1000000000/ExtraRep - ApproachingImaginaryZero
 		ApproachingImaginaryMidLeft = 84,
 		//(Enum Bits:7,3,5,4)
 		//DecimalHalf:1000000000/ExtraRep + ApproachingImaginaryZero
 		ApproachingImaginaryMidRight = 92,
+		#endif
+	#endif
+#endif
+#if defined(AltNum_EnableMixedFractional)
+		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+		MixedFrac = 32,
+	#if defined(AltNum_EnablePiRep)
+		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+		MixedPi = 33,
+	#endif
+	#if defined(AltNum_EnableERep)
+		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+		MixedE = 34,
+	#endif
+	#if defined(AltNum_EnableIRep)
+		//Sign*(IntValue + (DecimalHalf.Value/ExtraRep.Value))
+		MixedI = 36,
 	#endif
 #endif
 #if defined(AltNum_EnableNaN)
@@ -221,167 +220,165 @@ namespace BlazesRusCode
 		//Enum Bits subject to change for Complec Number later(Not completely used yet)
 		ComplexIRep = 255,
 	#endif
-	
+
 		//Not currently used(Enum Bits:8, 1, 2, 3)
 		UnknownType = 135
 	};
-	
+
 #if !defined(AltNum_UseJustEnumForRepType)
 	class RepType
 	{
 	public:
 		//Stored enum value for RepType
 		RepTypeEnum Value;
-	
-		RepType(const RepType& value)
+
+		RepType(const RepTypeEnum& value)
 		{
 			Value = value;
 		}
-	
+
+		RepType(const RepType& rValue)
+		{
+			Value = rValue.Value;
+		}
+
         RepType& operator=(const RepType& rhs)
         {
-            // Check for self-assignment
-            if (this == &rhs)      // Same object?
-                return *this;        // Yes, so skip assignment, and just return *this.
             Value = rhs.Value;
             return *this;
         } const
-		
+
         RepType& operator=(const RepTypeEnum& rhs)
         {
-            // Check for self-assignment
-            if (this == &rhs)      // Same object?
-                return *this;        // Yes, so skip assignment, and just return *this.
             Value = rhs;
             return *this;
         } const
-	
+
 		bool operator==(const RepType& that) const
 		{
 			Value==that.Value;
 		}
-		
+
 		bool operator!=(const RepType& that) const
 		{
 			Value!=that.Value;
 		}
-		
+
 		static const RepType NormalType = RepTypeEnum::NormalType;
-#if defined(AltNum_EnableFractionals)
-		static const RepType NumByDiv = RepTypeEnum::NumByDiv;
-#endif
-#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType ToPowerOf = RepTypeEnum::ToPowerOf;
-#endif
-#if defined(AltNum_EnablePiRep)
-		static const RepType PiNum = RepTypeEnum::PiNum;
-	#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType PiPower = RepTypeEnum::PiPower;
-	#endif
 	#if defined(AltNum_EnableFractionals)
-		static const RepType PiNumByDiv = RepTypeEnum::PiNumByDiv;
+		static const RepType NumByDiv = RepTypeEnum::NumByDiv;
 	#endif
-	#if defined(AltNum_EnableApproaching)
+	#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType ToPowerOf = RepTypeEnum::ToPowerOf;
+	#endif
+	#if defined(AltNum_EnablePiRep)
+		static const RepType PiNum = RepTypeEnum::PiNum;
+		#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType PiPower = RepTypeEnum::PiPower;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+		static const RepType PiNumByDiv = RepTypeEnum::PiNumByDiv;
+		#endif
+		#if defined(AltNum_EnableApproaching)
 		static const RepType ApproachingBottomPi = RepTypeEnum::ApproachingBottomPi;
 		static const RepType ApproachingTopPi = RepTypeEnum::ApproachingTopPi;
-		#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
 		static const RepType ApproachingMidLeftPi = RepTypeEnum::ApproachingMidLeftPi;
 		static const RepType ApproachingMidRightPi = RepTypeEnum::ApproachingMidRightPi;
+			#endif
 		#endif
-	#endif
-#endif
-#if defined(AltNum_EnableERep)
-		static const RepType ENum = RepTypeEnum::ENum;
-	#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType EPower = RepTypeEnum::EPower;
-	#endif
-	#if defined(AltNum_EnableFractionals)
-		static const RepType ENumByDiv = RepTypeEnum::ENumByDiv;
-	#endif
-	#if defined(AltNum_EnableApproaching)
-		static const RepType ApproachingBottomE = RepTypeEnum::ApproachingBottomE;
-		static const RepType ApproachingTopE = RepTypeEnum::ApproachingTopE;
-		#if defined(AltNum_EnableApproachingDivided)
-		static const RepType ApproachingMidLeftE = RepTypeEnum::ApproachingMidLeftE;
-		static const RepType ApproachingMidRightE = RepTypeEnum::ApproachingMidRightE;
-		#endif
-	#endif
-#endif
-#if defined(AltNum_EnableIRep)
-		static const RepType INum = RepTypeEnum::INum;
-	#if defined(AltNum_EnableFractionals)
-		static const RepType INumByDiv = RepTypeEnum::INumByDiv;
-	#endif
-#endif
-#if defined(AltNum_EnableMixedFractional)
-		static const RepType MixedFrac = RepTypeEnum::MixedFrac;
-	#if defined(AltNum_EnablePiRep)
-		static const RepType MixedPi = RepTypeEnum::MixedPi;
 	#endif
 	#if defined(AltNum_EnableERep)
-		static const RepType MixedE = RepTypeEnum::MixedE;
+		static const RepType ENum = RepTypeEnum::ENum;
+		#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType EPower = RepTypeEnum::EPower;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+		static const RepType ENumByDiv = RepTypeEnum::ENumByDiv;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+		static const RepType ApproachingBottomE = RepTypeEnum::ApproachingBottomE;
+		static const RepType ApproachingTopE = RepTypeEnum::ApproachingTopE;
+			#if defined(AltNum_EnableApproachingDivided)
+		static const RepType ApproachingMidLeftE = RepTypeEnum::ApproachingMidLeftE;
+		static const RepType ApproachingMidRightE = RepTypeEnum::ApproachingMidRightE;
+			#endif
+		#endif
 	#endif
-	#if defined(AltNum_EnableIRep)
-		static const RepType MixedI = RepTypeEnum::MixedI;
-	#endif
-#endif
-
-#if defined(AltNum_EnableInfinityRep)
+	#if defined(AltNum_EnableInfinityRep)
 		static const RepType Infinity = RepTypeEnum::Infinity;
-#endif
-#if defined(AltNum_EnableApproaching)
+	#endif
+	#if defined(AltNum_EnableApproaching)
 		static const RepType ApproachingBottom = RepTypeEnum::ApproachingBottom;
 		static const RepType ApproachingTop = RepTypeEnum::ApproachingTop;
-	#if defined(AltNum_EnableApproachingDivided)
+		#if defined(AltNum_EnableApproachingDivided)
 		static const RepType ApproachingMidLeft = RepTypeEnum::ApproachingMidLeft;
 		static const RepType ApproachingMidRight = RepTypeEnum::ApproachingMidRight;
+		#endif
 	#endif
-#endif
-#if defined(AltNum_EnableImaginaryInfinity)
+	#if defined(AltNum_EnableIRep)
+		static const RepType INum = RepTypeEnum::INum;
+		#if defined(AltNum_EnableFractionals)
+		static const RepType INumByDiv = RepTypeEnum::INumByDiv;
+		#endif
+		#if defined(AltNum_EnableInfinity)
 		static const RepType ImaginaryInfinity = RepTypeEnum::ImaginaryInfinity;
-#endif
-#if defined(AltNum_EnableApproaching)&&defined(AltNum_EnableIRep)
+		#endif
+		#if defined(AltNum_EnableApproaching)
 		static const RepType ApproachingImaginaryBottom = RepTypeEnum::ApproachingImaginaryBottom;
 		static const RepType ApproachingImaginaryTop = RepTypeEnum::ApproachingImaginaryTop;
-	#if defined(AltNum_EnableApproachingDivided)
+			#if defined(AltNum_EnableApproachingDivided)
 		static const RepType ApproachingImaginaryMidLeft = RepTypeEnum::ApproachingImaginaryMidLeft;
 		static const RepType ApproachingImaginaryMidRight = RepTypeEnum::ApproachingImaginaryMidRight;
+			#endif
+		#endif
 	#endif
-#endif
-#if defined(AltNum_EnableNaN)
-		static const RepType Undefined = RepTypeEnum::Undefined;
-		static const RepType NaN = RepTypeEnum::NaN;
-#endif
-#if defined(AltNum_EnableUndefinedButInRange)
-		static const RepType UndefinedButInRange = RepTypeEnum::UndefinedButInRange;
-	#if defined(AltNum_EnableWithinMinMaxRange)
-		static const RepType WithinMinMaxRange = RepTypeEnum::WithinMinMaxRange;
+	#if defined(AltNum_EnableMixedFractional)
+		static const RepType MixedFrac = RepTypeEnum::MixedFrac;
 		#if defined(AltNum_EnablePiRep)
-		static const RepType WithinMinMaxRangePi = RepTypeEnum::WithinMinMaxRangePi;
+		static const RepType MixedPi = RepTypeEnum::MixedPi;
 		#endif
 		#if defined(AltNum_EnableERep)
-		static const RepType WithinMinMaxRangeE = RepTypeEnum::WithinMinMaxRangeE;
+		static const RepType MixedE = RepTypeEnum::MixedE;
 		#endif
 		#if defined(AltNum_EnableIRep)
-		static const RepType WithinMinMaxRangeI = RepTypeEnum::WithinMinMaxRangeI;
+		static const RepType MixedI = RepTypeEnum::MixedI;
 		#endif
 	#endif
-#endif
-#if defined(AltNum_EnableNil)
+	#if defined(AltNum_EnableNaN)
+		static const RepType Undefined = RepTypeEnum::Undefined;
+		static const RepType NaN = RepTypeEnum::NaN;
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)
+		static const RepType UndefinedButInRange = RepTypeEnum::UndefinedButInRange;
+		#if defined(AltNum_EnableWithinMinMaxRange)
+		static const RepType WithinMinMaxRange = RepTypeEnum::WithinMinMaxRange;
+			#if defined(AltNum_EnablePiRep)
+		static const RepType WithinMinMaxRangePi = RepTypeEnum::WithinMinMaxRangePi;
+			#endif
+			#if defined(AltNum_EnableERep)
+		static const RepType WithinMinMaxRangeE = RepTypeEnum::WithinMinMaxRangeE;
+			#endif
+			#if defined(AltNum_EnableIRep)
+		static const RepType WithinMinMaxRangeI = RepTypeEnum::WithinMinMaxRangeI;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableNil)
 		static const RepType Nil = RepTypeEnum::Nil;
-#endif
-#if defined(AltNum_EnableIndeterminateForms)
+	#endif
+	#if defined(AltNum_EnableIndeterminateForms)
 		//0/0, infinity/infinity, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
 		//Defined when DecimalHalf.Value == IndeterminateRep with exact value determined by IntValue field
 		static const RepType IndeterminateForm = RepTypeEnum::IndeterminateForm;
-#endif
-#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+	#endif
+	#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 		//Indeterminate form of divided by zero
 		static const RepType DividedByZero = RepTypeEnum::DividedByZero;
-#endif
+	#endif
 		//https://en.wikipedia.org/wiki/Sine_and_cosine
 		//Unknown X value when IntHalf = NegativeZero
-#if defined(AltNum_EnableTrigExpressions)//Store values as Formula IntHalf (with ExtraRep used for powers and divisors)
+	#if defined(AltNum_EnableTrigExpressions)//Store values as Formula IntHalf (with ExtraRep used for powers and divisors)
 		//Sin(X or IntHalf (Radians));
 		static const RepType Sin = RepTypeEnum::Sin;
 		#if defined(AltNum_EnablePiRep)
@@ -416,142 +413,157 @@ namespace BlazesRusCode
 		#if defined(AltNum_EnableIRep)
 		static const RepType TanI = RepTypeEnum::TanI;
 		#endif
-#endif
+	#endif
 
-		static std::string RepTypeAsString(RepType& repType)
+		std::string ToString()
 		{
-			switch(repType)
+			switch(Value)
 			{
-				case RepType::NormalType:
+				case RepTypeEnum::NormalType:
 					return "NormalType"; break;
-	#if defined(AltNum_EnableFractionals)
-				case RepType::NumByDiv:
-					return "NumByDiv"; break;
-	#endif
-	#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::NumByDiv:
-					return "NumByDiv"; break;
-	#endif
-	#if defined(AltNum_EnablePiRep)
-				case RepType::PiNum:
-					return "PiNum"; break;
-		#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::PiPower:
-					return "PiPower"; break;
-		#endif
 		#if defined(AltNum_EnableFractionals)
-				case RepType::PiNumByDiv:
-					return "PiNumByDiv"; break;
+				case RepTypeEnum::NumByDiv:
+					return "NumByDiv"; break;
 		#endif
-		#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomPi:
-					return "ApproachingBottomPi"; break;
-				case RepType::ApproachingTopPi:
-					return "ApproachingTopPi"; break;
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftPi:
-					return "ApproachingMidLeftPi"; break;
-				case RepType::ApproachingMidRightPi:
-					return "ApproachingMidRightPi"; break;
-			#Pindif
-		#Pindif
-	#endif
-	#if defined(AltNum_EnableERep)
-				case RepType::ENum:
-					return "ENum"; break;
 		#if defined(AltNum_EnablePowerOfRepresentation)
-				case RepType::EPower:
-					return "EPower"; break;
+				case RepTypeEnum::ToPowerOf:
+					return "ToPowerOf"; break;
 		#endif
-		#if defined(AltNum_EnableFractionals)
-				case RepType::ENumByDiv:
-					return "ENumByDiv"; break;
-		#endif
-		#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomE:
-					return "ApproachingBottomE"; break;
-				case RepType::ApproachingTopE:
-					return "ApproachingTopE"; break;
-			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeftE:
-					return "ApproachingMidLeftE"; break;
-				case RepType::ApproachingMidRightE:
-					return "ApproachingMidRightE"; break;
-			#endif
-		#endif
-	#endif
-	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac:
-					return "MixedFrac"; break;
 		#if defined(AltNum_EnablePiRep)
-				case RepType::MixedPi:
-					return "MixedPi"; break;
+				case RepTypeEnum::PiNum:
+					return "PiNum"; break;
+			#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepTypeEnum::PiPower:
+					return "PiPower"; break;
+			#endif
+			#if defined(AltNum_EnableFractionals)
+				case RepTypeEnum::PiNumByDiv:
+					return "PiNumByDiv"; break;
+			#endif
+			#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingBottomPi:
+					return "ApproachingBottomPi"; break;
+				case RepTypeEnum::ApproachingTopPi:
+					return "ApproachingTopPi"; break;
+				#if defined(AltNum_EnableApproachingDivided)
+				case RepTypeEnum::ApproachingMidLeftPi:
+					return "ApproachingMidLeftPi"; break;
+				case RepTypeEnum::ApproachingMidRightPi:
+					return "ApproachingMidRightPi"; break;
+				#endif
+			#endif
 		#endif
 		#if defined(AltNum_EnableERep)
-				case RepType::MixedE:
+				case RepTypeEnum::ENum:
+					return "ENum"; break;
+			#if defined(AltNum_EnablePowerOfRepresentation)
+				case RepTypeEnum::EPower:
+					return "EPower"; break;
+			#endif
+			#if defined(AltNum_EnableFractionals)
+				case RepTypeEnum::ENumByDiv:
+					return "ENumByDiv"; break;
+			#endif
+			#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingBottomE:
+					return "ApproachingBottomE"; break;
+				case RepTypeEnum::ApproachingTopE:
+					return "ApproachingTopE"; break;
+				#if defined(AltNum_EnableApproachingDivided)
+				case RepTypeEnum::ApproachingMidLeftE:
+					return "ApproachingMidLeftE"; break;
+				case RepTypeEnum::ApproachingMidRightE:
+					return "ApproachingMidRightE"; break;
+				#endif
+			#endif
+		#endif
+		#if defined(AltNum_EnableMixedFractional)
+				case RepTypeEnum::MixedFrac:
+					return "MixedFrac"; break;
+			#if defined(AltNum_EnablePiRep)
+				case RepTypeEnum::MixedPi:
+					return "MixedPi"; break;
+			#endif
+			#if defined(AltNum_EnableERep)
+				case RepTypeEnum::MixedE:
 					return "MixedE"; break;
-		#endif
-		#if defined(AltNum_EnableIRep)
-				case RepType::MixedI:
+			#endif
+			#if defined(AltNum_EnableIRep)
+				case RepTypeEnum::MixedI:
 					return "MixedI"; break;
-		#endif
-	#endif
-	#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
-                    return "ApproachingBottom"; break;
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
-                    return "ApproachingTop"; break;
-		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidLeft:
-					return "ApproachingMidLeft"; break;
-				case RepType::ApproachingMidRight:
-					return "ApproachingMidRight"; break;
-		#endif
-	#endif
-	#if defined(AltNum_EnableInfinityRep)
-				case RepType::Infinity:
-					return "Infinity"; break;
-	#endif
-	#if defined(AltNum_EnableIRep)
-				case RepType::INum:
-                    return "INum"; break;
-		#if defined(AltNum_EnableFractionals)
-				case RepType::INumByDiv:
-					return "INumByDiv"; break;
-		#endif
-		#if defined(AltNum_EnableInfinityRep)
-				case RepType::ImaginaryInfinity:
-					return "ImaginaryInfinity"; break;
+			#endif
 		#endif
 		#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
-					return "ApproachingImaginaryBottom"; break;
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
-					return "ApproachingImaginaryTop"; break;
+				case RepTypeEnum::ApproachingBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)
+                    return "ApproachingBottom"; break;
+				case RepTypeEnum::ApproachingTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)
+                    return "ApproachingTop"; break;
 			#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidLeft:
-					return "ApproachingImaginaryMidLeft"; break;
-				case RepType::ApproachingImaginaryMidRight:
-					return "ApproachingImaginaryMidRight"; break;
+				case RepTypeEnum::ApproachingMidLeft:
+					return "ApproachingMidLeft"; break;
+				case RepTypeEnum::ApproachingMidRight:
+					return "ApproachingMidRight"; break;
 			#endif
-    #endif
-		#ifdef AltNum_EnableComplexNumbers
-				case RepType::ComplexIRep:
-					return "ComplexIRep"; break;
 		#endif
-	#endif
-    #if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
+		#if defined(AltNum_EnableInfinityRep)
+				case RepTypeEnum::Infinity:
+					return "Infinity"; break;
+		#endif
+		#if defined(AltNum_EnableIRep)
+				case RepTypeEnum::INum:
+                    return "INum"; break;
+			#if defined(AltNum_EnableFractionals)
+				case RepTypeEnum::INumByDiv:
+					return "INumByDiv"; break;
+			#endif
+			#if defined(AltNum_EnableInfinityRep)
+				case RepTypeEnum::ImaginaryInfinity:
+					return "ImaginaryInfinity"; break;
+			#endif
+			#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntValue of 0 results in 0.00...1)i
+					return "ApproachingImaginaryBottom"; break;
+				case RepTypeEnum::ApproachingImaginaryTop://(Approaching Away from Zero);(IntValue of 0 results in 0.99...9)i
+					return "ApproachingImaginaryTop"; break;
+				#if defined(AltNum_EnableApproachingDivided)
+				case RepTypeEnum::ApproachingImaginaryMidLeft:
+					return "ApproachingImaginaryMidLeft"; break;
+				case RepTypeEnum::ApproachingImaginaryMidRight:
+					return "ApproachingImaginaryMidRight"; break;
+				#endif
+			#endif
+			#ifdef AltNum_EnableComplexNumbers
+				case RepTypeEnum::ComplexIRep:
+					return "ComplexIRep"; break;
+			#endif
+		#endif
+		#if defined(AltNum_EnableNaN)
+				case RepTypeEnum::Undefined:
 					return "Undefined"; break;
-				case RepType::NaN:
+				case RepTypeEnum::NaN:
 					return "NaN"; break;
-    #endif
-	#if defined(AltNum_EnableUndefinedButInRange)
-				case RepType::UndefinedButInRange:
+		#endif
+		#if defined(AltNum_EnableUndefinedButInRange)
+				case RepTypeEnum::UndefinedButInRange:
 					return "UndefinedButInRange"; break;
-		#if defined(AltNum_EnableWithinMinMaxRange)
-				case RepType::WithinMinMaxRange:
+			#if defined(AltNum_EnableWithinMinMaxRange)
+				case RepTypeEnum::WithinMinMaxRange:
 					return "WithinMinMaxRange"; break;
+				#if defined(AltNum_EnablePiRep)
+				case RepTypeEnum::WithinMinMaxRangePi:
+					return "WithinMinMaxRangePi"; break;
+				#endif
+				#if defined(AltNum_EnableERep)
+				case RepTypeEnum::WithinMinMaxRangeE:
+					return "WithinMinMaxRangeE"; break;
+				#endif
+				#if defined(AltNum_EnableIRep)
+				case RepTypeEnum::WithinMinMaxRangeI:
+					return "WithinMinMaxRangeI"; break;
+				#endif
+			#endif
+		#endif
+		#if defined(AltNum_EnableTrigExpressions)
 			#if defined(AltNum_EnablePiRep)
 			#endif
 			#if defined(AltNum_EnableERep)
@@ -559,23 +571,17 @@ namespace BlazesRusCode
 			#if defined(AltNum_EnableIRep)
 			#endif
 		#endif
-	#endif
-	#if defined(AltNum_EnableTrigExpressions)
-		#if defined(AltNum_EnablePiRep)
-		#endif
-		#if defined(AltNum_EnableERep)
-		#endif
-		#if defined(AltNum_EnableIRep)
-		#endif
-	#endif
-    #if defined(AltNum_EnableNilRep)
-				case RepType::Nil:
+		#if defined(AltNum_EnableNilRep)
+				case RepTypeEnum::Nil:
 					return "Nil"; break;
-    #endif
+		#endif
 				default:
 					return "Unknown";
 			}
 		}
+
+        explicit operator std::string() { return ToString(); }
+
 
 	};
 #endif
