@@ -2,7 +2,7 @@
 using RepType = BlazesRusCode::RepType;
 using RepTypeEnum = BlazesRusCode::RepType;
 
-#if defined(AltNum_UseRepTypeClass)
+#if !defined(AltNum_UseRepTypeAsEnumOnly)
 #pragma region ValueDefine Source
 
 inline const RepType RepType::NormalTypeValue(){ return RepTypeEnum::NormalType; }
@@ -147,6 +147,7 @@ inline RepType RepType::TanEValue(){ return RepTypeEnum::TanE; }
 		#endif
 		#if defined(AltNum_EnableIRep)
 inline RepType RepType::TanIValue(){ return RepTypeEnum::TanI; }
+
 		#endif
 	#endif
 
@@ -300,4 +301,132 @@ const RepType RepType::TanI = RepType::TanIValue();
 	#endif
 
 #pragma endregion ValueDefine Source
+
+inline RepType BlazesRusCode::RepType::ConvertFromNormalRep(const unsigned int Flags) const
+{
+	switch (Flags)
+	{
+		#if defined(AltNum_EnablePiRep)
+	case 1:
+	{
+		switch (Value)
+		{
+		case RepTypeEnum::NormalType:
+			return RepTypeEnum::PiNum; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+		case RepTypeEnum::ApproachingBottom:
+			return RepTypeEnum::ApproachingBottomPi; break;
+		case RepTypeEnum::ApproachingTop:
+			return RepTypeEnum::ApproachingTopPi; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#endif
+		default:
+			throw "Conversion not defined";
+		}
+	}
+	break;
+	#endif
+	#if defined(AltNum_EnableERep)
+	case 2:
+	{
+		switch (repType)
+		{
+		case RepTypeEnum::NormalType:
+			return RepTypeEnum::ENum; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+		case RepTypeEnum::ApproachingBottom:
+			return RepTypeEnum::ApproachingBottomE; break;
+		case RepTypeEnum::ApproachingTop:
+			return RepTypeEnum::ApproachingTopE; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#endif
+		default:
+			throw "Conversion not defined";
+		}
+	}
+	break;
+	#endif
+	#if defined(AltNum_EnableIRep)
+	case 3:
+	{
+		switch (repType)
+		{
+		case RepTypeEnum::NormalType:
+			return RepTypeEnum::INum; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#if defined(AltNum_EnableApproaching)
+		case RepTypeEnum::ApproachingBottom:
+			return RepTypeEnum::ApproachingImaginaryBottom; break;
+		case RepTypeEnum::ApproachingTop:
+			return RepTypeEnum::ApproachingImaginaryTop; break;
+			#pragma region AltDecVariantExclusive
+			#pragma endregion AltDecVariantExclusive
+			#endif
+			#ifdef AltNum_EnableInfinity
+		case RepTypeEnum::Infinity:
+			return RepTypeEnum::ImaginaryInfinity; break;
+			#endif
+		default:
+			throw "Conversion not defined";
+		}
+	}
+	break;
+	#endif
+	default:
+		return Value;
+	}
+}
+
+inline RepType BlazesRusCode::RepType::GetRepAsNormalEquavant() const
+{
+	switch (Value)
+	{
+		#if defined(AltNum_EnablePiRep)
+	case RepTypeEnum::PiNum:
+		#endif
+		#if defined(AltNum_EnableERep)
+	case RepTypeEnum::ENum:
+		#endif
+		#if defined(AltNum_EnableERep)
+	case RepTypeEnum::INum:
+		#endif
+		return RepTypeEnum::NormalType; break;
+		#if defined(AltNum_EnableApproaching)
+		#if defined(AltNum_EnablePiRep)
+	case RepTypeEnum::ApproachingBottomPi:
+		#endif
+		#if defined(AltNum_EnableERep)
+	case RepTypeEnum::ApproachingBottomE:
+		#endif
+		#if defined(AltNum_EnableIRep)
+	case RepTypeEnum::ApproachingImaginaryBottom:
+		#endif
+		return RepTypeEnum::ApproachingBottom; break;
+		#if defined(AltNum_EnablePiRep)
+	case RepTypeEnum::ApproachingTopPi:
+		#endif
+		#if defined(AltNum_EnableERep)
+	case RepTypeEnum::ApproachingTopE:
+		#endif
+		#if defined(AltNum_EnableIRep)
+	case RepTypeEnum::ApproachingImaginaryBottom:
+		#endif
+		return RepTypeEnum::ApproachingTop; break;
+		#endif
+		#if defined(AltNum_EnableInfinity)&&defined(AltNum_EnableIRep)
+	case RepTypeEnum::ImaginaryInfinity:
+		return RepTypeEnum::Infinity; break;
+		#endif
+	default:
+		return Value;
+	}
+}
+
 #endif

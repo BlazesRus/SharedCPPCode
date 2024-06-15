@@ -10,7 +10,7 @@
 	#define RepTypeUnderlayer unsigned int
 #endif
 
-#if !defined(AltNum_UseJustEnumForRepType)
+#if !defined(AltNum_UseRepTypeAsEnumOnly)
 	#include "..\DLLAPI.h"
 	#include <string>
 #endif
@@ -20,7 +20,7 @@ namespace BlazesRusCode
 	/// <summary>
 	/// Enum representing value type stored
 	/// </summary>
-#if !defined(AltNum_UseRepTypeClass)
+#if defined(AltNum_UseRepTypeAsEnumOnly)
 	enum class RepType: RepTypeUnderlayer
 #else
 	enum class RepTypeEnum: RepTypeUnderlayer
@@ -230,7 +230,7 @@ namespace BlazesRusCode
 		UnknownType = 135
 	};
 
-#if defined(AltNum_UseRepTypeClass)
+#if !defined(AltNum_UseRepTypeAsEnumOnly)
 	class DLL_API RepType
 	{
 	public:
@@ -242,10 +242,10 @@ namespace BlazesRusCode
 			Value = value;
 		}
 
-		//RepType(const RepType& rValue)
-		//{
-		//	Value = rValue.Value;
-		//}
+		RepType(const RepType& rValue)
+		{
+			Value = rValue.Value;
+		}
 
         RepType& operator=(const RepType& rhs)
         {
@@ -253,11 +253,11 @@ namespace BlazesRusCode
             return *this;
         } const
 
-        //RepType& operator=(const RepTypeEnum& rhs)
-        //{
-        //    Value = rhs;
-        //    return *this;
-        //} const
+        RepType& operator=(const RepTypeEnum& rhs)
+        {
+            Value = rhs;
+            return *this;
+        } const
 
 		bool operator==(const RepType& that) const
 		{
@@ -740,6 +740,12 @@ public:
 
         explicit operator std::string() { return ToString(); }
 
+		operator RepTypeEnum() { return Value; }
+
+        //Convert from general RepType category to the actual category stored
+		RepType ConvertFromNormalRep(const unsigned int Flags) const;
+
+        RepType GetRepAsNormalEquavant() const;
 	};
 #endif
 }
