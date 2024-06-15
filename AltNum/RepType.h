@@ -10,12 +10,17 @@
 	#define RepTypeUnderlayer unsigned int
 #endif
 
+#if !defined(AltNum_UseJustEnumForRepType)
+	#include "..\DLLAPI.h"
+	#include <string>
+#endif
+
 namespace BlazesRusCode
 {
 	/// <summary>
 	/// Enum representing value type stored
 	/// </summary>
-#if defined(AltNum_UseJustEnumForRepType)
+#if !defined(AltNum_UseRepTypeClass)
 	enum class RepType: RepTypeUnderlayer
 #else
 	enum class RepTypeEnum: RepTypeUnderlayer
@@ -225,8 +230,8 @@ namespace BlazesRusCode
 		UnknownType = 135
 	};
 
-#if !defined(AltNum_UseJustEnumForRepType)
-	class RepType
+#if defined(AltNum_UseRepTypeClass)
+	class DLL_API RepType
 	{
 	public:
 		//Stored enum value for RepType
@@ -237,10 +242,10 @@ namespace BlazesRusCode
 			Value = value;
 		}
 
-		RepType(const RepType& rValue)
-		{
-			Value = rValue.Value;
-		}
+		//RepType(const RepType& rValue)
+		//{
+		//	Value = rValue.Value;
+		//}
 
         RepType& operator=(const RepType& rhs)
         {
@@ -248,11 +253,11 @@ namespace BlazesRusCode
             return *this;
         } const
 
-        RepType& operator=(const RepTypeEnum& rhs)
-        {
-            Value = rhs;
-            return *this;
-        } const
+        //RepType& operator=(const RepTypeEnum& rhs)
+        //{
+        //    Value = rhs;
+        //    return *this;
+        //} const
 
 		bool operator==(const RepType& that) const
 		{
@@ -264,154 +269,307 @@ namespace BlazesRusCode
 			Value!=that.Value;
 		}
 
-		static const RepType NormalType = RepTypeEnum::NormalType;
+#pragma region ValueDefines
+	protected:
+
+		static const RepType NormalTypeValue();
 	#if defined(AltNum_EnableFractionals)
-		static const RepType NumByDiv = RepTypeEnum::NumByDiv;
+		static const RepType NumByDivValue();
 	#endif
 	#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType ToPowerOf = RepTypeEnum::ToPowerOf;
+		static const RepType ToPowerOfValue();
 	#endif
 	#if defined(AltNum_EnablePiRep)
-		static const RepType PiNum = RepTypeEnum::PiNum;
+		static const RepType PiNumValue();
 		#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType PiPower = RepTypeEnum::PiPower;
+		static const RepType PiPowerValue();
 		#endif
 		#if defined(AltNum_EnableFractionals)
-		static const RepType PiNumByDiv = RepTypeEnum::PiNumByDiv;
+		static const RepType PiNumByDivValue();
 		#endif
 		#if defined(AltNum_EnableApproaching)
-		static const RepType ApproachingBottomPi = RepTypeEnum::ApproachingBottomPi;
-		static const RepType ApproachingTopPi = RepTypeEnum::ApproachingTopPi;
+		static const RepType ApproachingBottomPiValue();
+		static const RepType ApproachingTopPiValue();
 			#if defined(AltNum_EnableApproachingDivided)
-		static const RepType ApproachingMidLeftPi = RepTypeEnum::ApproachingMidLeftPi;
-		static const RepType ApproachingMidRightPi = RepTypeEnum::ApproachingMidRightPi;
+		static const RepType ApproachingMidLeftPiValue();
+		static const RepType ApproachingMidRightPiValue();
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableERep)
-		static const RepType ENum = RepTypeEnum::ENum;
+		static const RepType ENumValue();
 		#if defined(AltNum_EnablePowerOfRepresentation)
-		static const RepType EPower = RepTypeEnum::EPower;
+		static const RepType EPowerValue();
 		#endif
 		#if defined(AltNum_EnableFractionals)
-		static const RepType ENumByDiv = RepTypeEnum::ENumByDiv;
+		static const RepType ENumByDivValue();
 		#endif
 		#if defined(AltNum_EnableApproaching)
-		static const RepType ApproachingBottomE = RepTypeEnum::ApproachingBottomE;
-		static const RepType ApproachingTopE = RepTypeEnum::ApproachingTopE;
+		static const RepType ApproachingBottomEValue();
+		static const RepType ApproachingTopEValue();
 			#if defined(AltNum_EnableApproachingDivided)
-		static const RepType ApproachingMidLeftE = RepTypeEnum::ApproachingMidLeftE;
-		static const RepType ApproachingMidRightE = RepTypeEnum::ApproachingMidRightE;
+		static const RepType ApproachingMidLeftEValue();
+		static const RepType ApproachingMidRightEValue();
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableInfinityRep)
-		static const RepType Infinity = RepTypeEnum::Infinity;
+		static const RepType InfinityValue();
 	#endif
 	#if defined(AltNum_EnableApproaching)
-		static const RepType ApproachingBottom = RepTypeEnum::ApproachingBottom;
-		static const RepType ApproachingTop = RepTypeEnum::ApproachingTop;
+		static const RepType ApproachingBottomValue();
+		static const RepType ApproachingTopValue();
 		#if defined(AltNum_EnableApproachingDivided)
-		static const RepType ApproachingMidLeft = RepTypeEnum::ApproachingMidLeft;
-		static const RepType ApproachingMidRight = RepTypeEnum::ApproachingMidRight;
+		static const RepType ApproachingMidLeftValue();
+		static const RepType ApproachingMidRightValue();
 		#endif
 	#endif
 	#if defined(AltNum_EnableIRep)
-		static const RepType INum = RepTypeEnum::INum;
+		static const RepType INumValue();
 		#if defined(AltNum_EnableFractionals)
-		static const RepType INumByDiv = RepTypeEnum::INumByDiv;
+		static const RepType INumByDivValue();
 		#endif
 		#if defined(AltNum_EnableInfinity)
-		static const RepType ImaginaryInfinity = RepTypeEnum::ImaginaryInfinity;
+		static const RepType ImaginaryInfinityValue();
 		#endif
 		#if defined(AltNum_EnableApproaching)
-		static const RepType ApproachingImaginaryBottom = RepTypeEnum::ApproachingImaginaryBottom;
-		static const RepType ApproachingImaginaryTop = RepTypeEnum::ApproachingImaginaryTop;
+		static const RepType ApproachingImaginaryBottomValue();
+		static const RepType ApproachingImaginaryTopValue();
 			#if defined(AltNum_EnableApproachingDivided)
-		static const RepType ApproachingImaginaryMidLeft = RepTypeEnum::ApproachingImaginaryMidLeft;
-		static const RepType ApproachingImaginaryMidRight = RepTypeEnum::ApproachingImaginaryMidRight;
+		static const RepType ApproachingImaginaryMidLeftValue();
+		static const RepType ApproachingImaginaryMidRightValue();
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableMixedFractional)
-		static const RepType MixedFrac = RepTypeEnum::MixedFrac;
+		static const RepType MixedFracValue();
 		#if defined(AltNum_EnablePiRep)
-		static const RepType MixedPi = RepTypeEnum::MixedPi;
+		static const RepType MixedPiValue();
 		#endif
 		#if defined(AltNum_EnableERep)
-		static const RepType MixedE = RepTypeEnum::MixedE;
+		static const RepType MixedEValue();
 		#endif
 		#if defined(AltNum_EnableIRep)
-		static const RepType MixedI = RepTypeEnum::MixedI;
+		static const RepType MixedIValue();
 		#endif
 	#endif
 	#if defined(AltNum_EnableNaN)
-		static const RepType Undefined = RepTypeEnum::Undefined;
-		static const RepType NaN = RepTypeEnum::NaN;
+		static const RepType UndefinedValue();
+		static const RepType NaNValue();
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)
-		static const RepType UndefinedButInRange = RepTypeEnum::UndefinedButInRange;
+		static const RepType UndefinedButInRangeValue();
 		#if defined(AltNum_EnableWithinMinMaxRange)
-		static const RepType WithinMinMaxRange = RepTypeEnum::WithinMinMaxRange;
+		static const RepType WithinMinMaxRangeValue();
 			#if defined(AltNum_EnablePiRep)
-		static const RepType WithinMinMaxRangePi = RepTypeEnum::WithinMinMaxRangePi;
+		static const RepType WithinMinMaxRangePiValue();
 			#endif
 			#if defined(AltNum_EnableERep)
-		static const RepType WithinMinMaxRangeE = RepTypeEnum::WithinMinMaxRangeE;
+		static const RepType WithinMinMaxRangeEValue();
 			#endif
 			#if defined(AltNum_EnableIRep)
-		static const RepType WithinMinMaxRangeI = RepTypeEnum::WithinMinMaxRangeI;
+		static const RepType WithinMinMaxRangeIValue();
 			#endif
 		#endif
 	#endif
 	#if defined(AltNum_EnableNil)
-		static const RepType Nil = RepTypeEnum::Nil;
+		static const RepType NilValue();
+	#endif
+	#if defined(AltNum_EnableIndeterminateForms)
+		static const RepType IndeterminateFormValue();
+	#endif
+	#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+		static const RepType DividedByZeroValue();
+	#endif
+	#if defined(AltNum_EnableTrigExpressions)
+
+		static const RepType SinValue();
+		#if defined(AltNum_EnablePiRep)
+		static const RepType SinPiValue();
+		#endif
+		#if defined(AltNum_EnableERep)
+		static const RepType SinEValue();
+		#endif
+		#if defined(AltNum_EnableIRep)
+		static const RepType SinIValue();
+		#endif
+
+		static const RepType CosValue();
+		#if defined(AltNum_EnablePiRep)
+		static const RepType CosPiValue();
+		#endif
+		#if defined(AltNum_EnableERep)
+		static const RepType CosEValue();
+		#endif
+		#if defined(AltNum_EnableIRep)
+		static const RepType CosIValue();
+		#endif
+
+		static const RepType TanValue();
+		#if defined(AltNum_EnablePiRep)
+		static const RepType TanPiValue();
+		#endif
+		#if defined(AltNum_EnableERep)
+		static const RepType TanEValue();
+		#endif
+		#if defined(AltNum_EnableIRep)
+		static const RepType TanIValue();
+		#endif
+	#endif
+#pragma endregion ValueDefines
+public:
+
+		static const RepType NormalType;
+	#if defined(AltNum_EnableFractionals)
+		static const RepType NumByDiv;
+	#endif
+	#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType ToPowerOf;
+	#endif
+	#if defined(AltNum_EnablePiRep)
+		static const RepType PiNum;
+		#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType PiPower;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+		static const RepType PiNumByDiv;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+		static const RepType ApproachingBottomPi;
+		static const RepType ApproachingTopPi;
+			#if defined(AltNum_EnableApproachingDivided)
+		static const RepType ApproachingMidLeftPi;
+		static const RepType ApproachingMidRightPi;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableERep)
+		static const RepType ENum;
+		#if defined(AltNum_EnablePowerOfRepresentation)
+		static const RepType EPower;
+		#endif
+		#if defined(AltNum_EnableFractionals)
+		static const RepType ENumByDiv;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+		static const RepType ApproachingBottomE;
+		static const RepType ApproachingTopE;
+			#if defined(AltNum_EnableApproachingDivided)
+		static const RepType ApproachingMidLeftE;
+		static const RepType ApproachingMidRightE;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableInfinityRep)
+		static const RepType Infinity;
+	#endif
+	#if defined(AltNum_EnableApproaching)
+		static const RepType ApproachingBottom;
+		static const RepType ApproachingTop;
+		#if defined(AltNum_EnableApproachingDivided)
+		static const RepType ApproachingMidLeft;
+		static const RepType ApproachingMidRight;
+		#endif
+	#endif
+	#if defined(AltNum_EnableIRep)
+		static const RepType INum;
+		#if defined(AltNum_EnableFractionals)
+		static const RepType INumByDiv;
+		#endif
+		#if defined(AltNum_EnableInfinity)
+		static const RepType ImaginaryInfinity;
+		#endif
+		#if defined(AltNum_EnableApproaching)
+		static const RepType ApproachingImaginaryBottom;
+		static const RepType ApproachingImaginaryTop;
+			#if defined(AltNum_EnableApproachingDivided)
+		static const RepType ApproachingImaginaryMidLeft;
+		static const RepType ApproachingImaginaryMidRight;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableMixedFractional)
+		static const RepType MixedFrac;
+		#if defined(AltNum_EnablePiRep)
+		static const RepType MixedPi;
+		#endif
+		#if defined(AltNum_EnableERep)
+		static const RepType MixedE;
+		#endif
+		#if defined(AltNum_EnableIRep)
+		static const RepType MixedI;
+		#endif
+	#endif
+	#if defined(AltNum_EnableNaN)
+		static const RepType Undefined;
+		static const RepType NaN;
+	#endif
+	#if defined(AltNum_EnableUndefinedButInRange)
+		static const RepType UndefinedButInRange;
+		#if defined(AltNum_EnableWithinMinMaxRange)
+		static const RepType WithinMinMaxRange;
+			#if defined(AltNum_EnablePiRep)
+		static const RepType WithinMinMaxRangePi;
+			#endif
+			#if defined(AltNum_EnableERep)
+		static const RepType WithinMinMaxRangeE;
+			#endif
+			#if defined(AltNum_EnableIRep)
+		static const RepType WithinMinMaxRangeI;
+			#endif
+		#endif
+	#endif
+	#if defined(AltNum_EnableNil)
+		static const RepType Nil;
 	#endif
 	#if defined(AltNum_EnableIndeterminateForms)
 		//0/0, infinity/infinity, 0 to power of 0, 0 * infinity, infinity - infinity, 1 to power of infinity, and infinity to power of 0
 		//Defined when DecimalHalf.Value == IndeterminateRep with exact value determined by IntValue field
-		static const RepType IndeterminateForm = RepTypeEnum::IndeterminateForm;
+		static const RepType IndeterminateForm;
 	#endif
 	#if defined(AltNum_EnableEnhancedDivideByZeroForm)
 		//Indeterminate form of divided by zero
-		static const RepType DividedByZero = RepTypeEnum::DividedByZero;
+		static const RepType DividedByZero;
 	#endif
 		//https://en.wikipedia.org/wiki/Sine_and_cosine
 		//Unknown X value when IntHalf = NegativeZero
 	#if defined(AltNum_EnableTrigExpressions)//Store values as Formula IntHalf (with ExtraRep used for powers and divisors)
+
 		//Sin(X or IntHalf (Radians));
-		static const RepType Sin = RepTypeEnum::Sin;
+		static const RepType Sin;
 		#if defined(AltNum_EnablePiRep)
 		//Sin((X or IntHalf)Pi (Radians));
-		static const RepType SinPi = RepTypeEnum::SinPi;
+		static const RepType SinPi;
 		#endif
 		#if defined(AltNum_EnableERep)
-		static const RepType SinE = RepTypeEnum::SinE;
+		static const RepType SinE;
 		#endif
 		#if defined(AltNum_EnableIRep)
-		static const RepType SinI = RepTypeEnum::SinI;
+		static const RepType SinI;
 		#endif
-		//(Enum Bits:10)
-		static const RepType Cos = RepTypeEnum::Cos;
+
+
+		static const RepType Cos;
 		#if defined(AltNum_EnablePiRep)
-		static const RepType CosPi = RepTypeEnum::CosPi;
+		static const RepType CosPi;
 		#endif
 		#if defined(AltNum_EnableERep)
-		static const RepType CosE = RepTypeEnum::CosE;
+		static const RepType CosE;
 		#endif
 		#if defined(AltNum_EnableIRep)
-		static const RepType CosI = RepTypeEnum::CosI;
+		static const RepType CosI;
 		#endif
-		//(Enum Bits:11)
-		static const RepType Tan = RepTypeEnum::Tan;
+
+
+		static const RepType Tan;
 		#if defined(AltNum_EnablePiRep)
-		static const RepType TanPi = RepTypeEnum::TanPi;
+		static const RepType TanPi;
 		#endif
 		#if defined(AltNum_EnableERep)
-		static const RepType TanE = RepTypeEnum::TanE;
+		static const RepType TanE;
 		#endif
 		#if defined(AltNum_EnableIRep)
-		static const RepType TanI = RepTypeEnum::TanI;
+		static const RepType TanI;
 		#endif
 	#endif
 
@@ -581,7 +739,6 @@ namespace BlazesRusCode
 		}
 
         explicit operator std::string() { return ToString(); }
-
 
 	};
 #endif
