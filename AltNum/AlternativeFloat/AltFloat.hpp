@@ -295,7 +295,6 @@ protected:
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat Point5Value()
         {
             return AltFloat(0, -1);
@@ -321,37 +320,31 @@ public:
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat Zero;
 		
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat One;
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat NegativeOne;
 		
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>AltFloat</returns>
         static AltFloat PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
-        /// <returns>MediumDec</returns>
         static AltFloat JustAboveZero;
 
         /// <summary>
@@ -388,7 +381,6 @@ public:
         /// Gets the value from string.
         /// </summary>
         /// <param name="Value">The value.</param>
-        /// <returns>AltFloat</returns>
         AltFloat GetValueFromString(std::string Value);
 
         /// <summary>
@@ -646,7 +638,6 @@ public:
         /// <summary>
         /// AltFloat to float explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator float()
         {
             return toFloat();
@@ -689,7 +680,6 @@ public:
         /// <summary>
         /// AltFloat to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator signed int()
         {
             if(IsNegative())
@@ -721,7 +711,6 @@ public:
         /// <summary>
         /// AltFloat to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator unsigned int()
         {
             if(IsNegative())
@@ -752,7 +741,6 @@ public:
         /// <summary>
         /// AltFloat to int64 explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator Int64()
         {
             if(IsNegative())
@@ -784,7 +772,6 @@ public:
         /// <summary>
         /// AltFloat to int64 explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator UInt64()
         {
             if(IsNegative())
@@ -813,7 +800,6 @@ public:
         /// <summary>
         /// AltFloat to MediumDec explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator MediumDec()
         {
             if(IsZero())
@@ -1279,7 +1265,7 @@ public:
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDec</returns>
         AltFloat operator- ()
         {
 			auto self = this;

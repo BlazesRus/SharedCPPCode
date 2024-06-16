@@ -136,25 +136,21 @@ namespace BlazesRusCode
         /// <summary>
         /// to signed int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return Value; }
 
         /// <summary>
         /// to signed int 64 explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator unsigned __int64() { return (signed __int64) Value; }
+        explicit operator unsigned __int64() { return (unsigned __int64) Value; }
 
         /// <summary>
         /// to signed int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return (signed int)Value; }
 
         /// <summary>
         /// to signed int 64 explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator signed __int64() { return (signed __int64)Value; }
 
 protected:
@@ -359,7 +355,6 @@ public:
         /// <summary>
         /// ++PartialInt Operator
         /// </summary>
-        /// <returns>PartialInt &</returns>
         PartialInt& operator ++()
         {
             Value += 1;
@@ -369,7 +364,6 @@ public:
         /// <summary>
         /// ++PartialInt Operator
         /// </summary>
-        /// <returns>PartialInt &</returns>
         PartialInt& operator --()
         {
             Value -= 1;
@@ -379,7 +373,6 @@ public:
         /// <summary>
         /// PartialInt++ Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         PartialInt operator ++(int)
         {
             PartialInt tmp(*this);
@@ -390,7 +383,6 @@ public:
         /// <summary>
         /// PartialInt-- Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         PartialInt operator --(int)
         {
             PartialInt tmp(*this);
@@ -401,7 +393,6 @@ public:
         /// <summary>
         /// PartialInt* Operator
         /// </summary>
-        /// <returns>PartialInt &</returns>
         PartialInt& operator *()
         {
             return *this;

@@ -220,25 +220,21 @@ namespace BlazesRusCode
         /// <summary>
         /// to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return Value; }
 
         /// <summary>
         /// to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator unsigned __int64() { return Value; }
 
         /// <summary>
         /// to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return GetValue(); }
 
         /// <summary>
         /// to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator signed __int64() { return GetValue(); }
 
         /// <summary>
@@ -254,43 +250,36 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns maximum stored value(2147483647)
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt MaximumValue();
 
         /// <summary>
         /// Returns minimum stored value(-2147483647)
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt MinimumValue();
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt NegativeOneValue();
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt OneValue();
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt TwoValue();
 
         /// <summary>
         /// Returns the value at negative zero(for negative fractions)
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt NegativeZeroValue();
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>MirroredInt</returns>
         static MirroredInt ZeroValue();
 
 	public:
@@ -614,7 +603,6 @@ namespace BlazesRusCode
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDecVariant</returns>
         MirroredInt operator- ()
         {
 			auto self = *this;
@@ -624,7 +612,6 @@ namespace BlazesRusCode
         /// <summary>
         /// ++MirroredInt Operator
         /// </summary>
-        /// <returns>MirroredInt &</returns>
         MirroredInt& operator ++()
         {
             UIntAddOp(1);
@@ -634,7 +621,6 @@ namespace BlazesRusCode
         /// <summary>
         /// ++MirroredInt Operator
         /// </summary>
-        /// <returns>MirroredInt &</returns>
         MirroredInt& operator --()
         {
             UIntSubOp(1);
@@ -644,7 +630,6 @@ namespace BlazesRusCode
         /// <summary>
         /// MirroredInt++ Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         MirroredInt operator ++(int)
         {
             MirroredInt tmp(*this);
@@ -655,7 +640,6 @@ namespace BlazesRusCode
         /// <summary>
         /// MirroredInt-- Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         MirroredInt operator --(int)
         {
             MirroredInt tmp(*this);
@@ -666,7 +650,6 @@ namespace BlazesRusCode
         /// <summary>
         /// MirroredInt* Operator
         /// </summary>
-        /// <returns>MirroredInt &</returns>
         MirroredInt& operator *()
         {
             return *this;
@@ -681,7 +664,6 @@ namespace BlazesRusCode
 		/// <summary>
         /// MirroredInt to int explicit conversion
         /// </summary>
-        /// <returns>The result of the operator.</returns>
         explicit operator std::string();
 
 #pragma endregion StringOperations

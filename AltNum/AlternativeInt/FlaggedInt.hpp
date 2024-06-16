@@ -135,31 +135,26 @@ namespace BlazesRusCode
         /// <summary>
         /// Returns maximum stored value(2147483647)
         /// </summary>
-        /// <returns>FlaggedInt</returns>
         static FlaggedInt MaximumValue();
 
         /// <summary>
         /// Returns minimum stored value(-2147483647)
         /// </summary>
-        /// <returns>FlaggedInt</returns>
         static FlaggedInt AltMaximumValue();
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>FlaggedInt</returns>
         static FlaggedInt OneValue();
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>FlaggedInt</returns>
         static FlaggedInt TwoValue();
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>FlaggedInt</returns>
         static FlaggedInt ZeroValue();
 
 	public:
@@ -332,7 +327,6 @@ namespace BlazesRusCode
         /// <summary>
         /// ++FlaggedInt Operator
         /// </summary>
-        /// <returns>FlaggedInt &</returns>
         FlaggedInt& operator ++()
         {
             Value += 1;
@@ -342,7 +336,6 @@ namespace BlazesRusCode
         /// <summary>
         /// ++FlaggedInt Operator
         /// </summary>
-        /// <returns>FlaggedInt &</returns>
         FlaggedInt& operator --()
         {
             Value -= 1;
@@ -352,7 +345,6 @@ namespace BlazesRusCode
         /// <summary>
         /// FlaggedInt++ Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         FlaggedInt operator ++(int)
         {
             FlaggedInt tmp(*this);
@@ -363,7 +355,6 @@ namespace BlazesRusCode
         /// <summary>
         /// FlaggedInt-- Operator
         /// </summary>
-        /// <returns>MediumDecVariant</returns>
         FlaggedInt operator --(int)
         {
             FlaggedInt tmp(*this);
@@ -374,7 +365,6 @@ namespace BlazesRusCode
         /// <summary>
         /// FlaggedInt* Operator
         /// </summary>
-        /// <returns>FlaggedInt &</returns>
         FlaggedInt& operator *()
         {
             return *this;

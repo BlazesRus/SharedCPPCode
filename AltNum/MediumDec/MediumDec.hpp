@@ -950,6 +950,10 @@ protected:
         const auto DivideByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntDivOperationV1(rValue); }
 
+        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=unsigned int>
+        static VariantType UIntDivisionV1(VariantType lValue, const IntType& rValue)
+        { return lValue.UIntDivOperationV1(rValue); }
+
 public:
 
         void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
@@ -1088,15 +1092,21 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<MediumDecVariant VariantType=MediumDec>
-        void DivOpV1(const VariantType& Value)
+        void DivOpV1(const VariantType& rValue)
         {
-            if(Value.IsNegative())
+            if(rValue.IsNegative())
             {
                 SwapNegativeStatus();
-                UnsignedDivOp(-Value);
+                UnsignedDivOp(-rValue);
             }
             else
-                UnsignedDivOp(Value);
+                UnsignedDivOp(rValue);
+        }
+
+        template<MediumDecVariant VariantType=MediumDec>
+        static VariantType UnsignedDivisionV1(VariantType lValue, const VariantType& rValue)
+        {
+            lValue.UnsignedDivOpV1(rValue); return lValue;
         }
 
 public:
@@ -1351,6 +1361,10 @@ protected:
         const MediumDec MultiplyByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntMultOperationV1(rValue); }
 
+        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=unsigned int>
+        static VariantType UIntMultiplicationV1(VariantType lValue, const IntType& rValue)
+        { return lValue.UIntMultOperationV1(rValue); }
+
 public:
 
         void UIntMultOp(const unsigned int& rValue) { UIntMultOpV1(rValue); }
@@ -1574,6 +1588,12 @@ protected:
             }
             else
                 UnsignedMultOp(Value);
+        }
+
+        template<MediumDecVariant VariantType=MediumDec>
+        static VariantType UnsignedMultiplicationV1(VariantType lValue, const VariantType& rValue)
+        {
+            lValue.UnsignedMultOpV1(rValue); return lValue;
         }
 
 public:
@@ -2221,6 +2241,18 @@ protected:
                 }
 			}
 		}
+
+        template<MediumDecVariant VariantType=MediumDec>
+        static VariantType UnsignedAdditionV1(VariantType lValue, const VariantType& rValue)
+        {
+            lValue.UnsignedAddOpV1(rValue); return lValue;
+        }
+
+        template<MediumDecVariant VariantType=MediumDec>
+        static VariantType UnsignedSubtractionV1(VariantType lValue, const VariantType& rValue)
+        {
+            lValue.UnsignedSubOpV1(rValue); return lValue;
+        }
 
 public:
 
@@ -3062,7 +3094,7 @@ protected:
 
         template<MediumDecVariant VariantType=MediumDec>
         static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-        { return UIntPowOfV1<VariantType>(tValue, expValue.Value); }
+        { return UIntPowV1<VariantType>(tValue, expValue.Value); }
 
         template<MediumDecVariant VariantType=MediumDec>
         static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
@@ -3070,7 +3102,7 @@ protected:
             if (expValue < 0)//Negative Pow
                 return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
             else
-                return UIntPowOfV1<VariantType>(tValue, expValue.Value);
+                return UIntPowV1<VariantType>(tValue, expValue.Value);
         }
 
 public:
@@ -3105,7 +3137,9 @@ protected:
                 //  calculating current value from previous
                 // value by newton's method
 
-                xK = (xPre * nMinus1 + tValue.DivideByUnsigned(xPre.UIntPowOfV1(nMinus1))) / n;
+                xK = xPre * nMinus1;
+                xK += UnsignedDivisionV1(tValue, UIntPowV1(xPre, nMinus1));
+                xK /= n;
                 delX = VariantType::Abs(xK - xPre);
                 xPre = xK;
             } while (delX > precision);
@@ -3121,9 +3155,9 @@ protected:
 		template<MediumDecVariant VariantType=MediumDec>
         static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
-            if (IsNegative())
+            if (tValue.IsNegative())
                 throw "Nth root of a negative number requires imaginary number support";
-            return UnsignedNthRootOfV1(tValue, n, precision);
+            return UnsignedNthRootV1(tValue, n, precision);
         }
 
 		template<MediumDecVariant VariantType=MediumDec>
@@ -3157,12 +3191,14 @@ protected:
 			if(n==0)
 				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
             unsigned int nMinus1 = n - 1;
-			VariantType OneByN = VariantType::One.DivideByUInt(n);
-            VariantType x[2] = { OneByN *tValue.MultiplyByUInt(nMinus1)+tValue.DivideByUnsigned(UIntPowOf(nMinus1)), tValue };
+			VariantType OneByN = VariantType::One/n;
+            VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
+            InitialX1 += UnsignedDivisionV1(tValue, tValue.UIntPowOf(nMinus1));
+            VariantType x[2] = { InitialX1, tValue };
             while (Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = OneByN * ((x[1].MultiplyByUInt(nMinus1)) + tValue.DivideBy(x[1].UIntPowOf(nMinus1)));
+                x[0] = OneByN * ((x[1]*nMinus1) + UnsignedDivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
             }
             return x[0];
         }
@@ -3820,13 +3856,8 @@ protected:
                 return angle;
         }
 
-        /// <summary>
-        /// Get Sin from tValue of angle.
-        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
-        /// </summary>
-        /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<MediumDecVariant VariantType=MediumDec>
-        static VariantType SinFromAngleV1(VariantType tValue)
+    	template<MediumDecVariant VariantType=MediumDecV2>
+        static VariantType NormalizeForTrig(VariantType tValue)
         {
             if (tValue.IsNegative())
             {
@@ -3846,9 +3877,21 @@ protected:
             {
                 tValue.IntHalf.Value %= 360;
             }
-            if(tValue.DecimalHalf==0)
+			return tValue;
+        }
+
+        /// <summary>
+        /// Get Sin from tValue of angle.
+        /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
+        /// </summary>
+        /// <param name="tValue">The target value in degrees to perform operation on.</param>
+		template<MediumDecVariant VariantType=MediumDec>
+        static VariantType SinFromAngleV1(const VariantType& tValue)
+        {
+			VariantType lValue = NormalizeForTrig(tValue);
+            if(lValue.DecimalHalf==0)
             {
-                switch(tValue.IntHalf.Value)
+                switch(lValue.IntHalf.Value)
                 {
                     case 0:
                     case 180://Pi Radians
@@ -3868,7 +3911,7 @@ protected:
                         return NegativePointFive;
                     default:
                         //Angle as Radian
-                        VariantType Radius = PiNum * tValue / 180;
+                        VariantType Radius = PiNum * lValue / 180;
                         return SinV1<VariantType>(Radius);
                         break;
                 }
@@ -3876,7 +3919,7 @@ protected:
             else
             {
                 //Angle as Radian
-                VariantType Radius = PiNum * tValue / 180;
+                VariantType Radius = PiNum * lValue / 180;
                 return SinV1<VariantType>(Radius);
             }
         }
@@ -3887,29 +3930,12 @@ protected:
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
 		template<MediumDecVariant VariantType=MediumDec>
-        static VariantType CosFromAngleV1(VariantType tValue)
+        static VariantType CosFromAngleV1(const VariantType& tValue)
         {
-            if (tValue.IsNegative())
+			VariantType lValue = NormalizeForTrig(tValue);
+            if(lValue.DecimalHalf==0)
             {
-                if (tValue.IntHalf.Value == 0)
-                {
-                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
-                }
-                else
-                {
-                    tValue.SwapNegativeStatus();
-                    tValue.IntHalf.Value %= 360;
-                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
-                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
-                }
-            }
-            else
-            {
-                tValue.IntHalf.Value %= 360;
-            }
-            if(tValue.DecimalHalf==0)
-            {
-                switch(tValue.IntHalf.Value)
+                switch(lValue.IntHalf.Value)
                 {
                     case 0:
                         return VariantType::One;
@@ -3929,7 +3955,7 @@ protected:
                         return VariantType::NegativePointFive;
                     default:
                         //Angle as Radian
-                        VariantType Radius = PiNum * tValue / 180;
+                        VariantType Radius = PiNum * lValue / 180;
                         return CosV1<VariantType>(Radius);
                         break;
                 }
@@ -3937,7 +3963,7 @@ protected:
             else
             {
                 //Angle as Radian
-                VariantType Radius = PiNum * tValue / 180;
+                VariantType Radius = PiNum * lValue / 180;
                 return CosV1<VariantType>(Radius);
             }
         }
@@ -3948,29 +3974,12 @@ protected:
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
 		template<MediumDecVariant VariantType=MediumDec>
-        static VariantType TanFromAngleV1(VariantType tValue)
+        static VariantType TanFromAngleV1(const VariantType& tValue)
         {
-            if (tValue.IsNegative())
+			VariantType lValue = NormalizeForTrig(tValue);
+            if(lValue.DecimalHalf==0)
             {
-                if (tValue.IntHalf.Value == 0)
-                {
-                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
-                }
-                else
-                {
-                    tValue.SwapNegativeStatus();
-                    tValue.IntHalf.Value %= 360;
-                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
-                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
-                }
-            }
-            else
-            {
-                tValue.IntHalf.Value %= 360;
-            }
-            if(tValue.DecimalHalf==0)
-            {
-                switch(tValue.IntHalf.Value)
+                switch(lValue.IntHalf.Value)
                 {
                     case 0:
                     case 180://Pi Radians
@@ -3983,12 +3992,12 @@ protected:
                         return Minimum;//Negative Infinity
                         break;
                     default:
-                        return TanV1<VariantType>(PiNum * tValue / 180);
+                        return TanV1<VariantType>(PiNum * lValue / 180);
                         break;
                 }
             }
             else
-                return TanV1<VariantType>(PiNum * tValue / 180);
+                return TanV1<VariantType>(PiNum * lValue / 180);
         }
 
 public:
