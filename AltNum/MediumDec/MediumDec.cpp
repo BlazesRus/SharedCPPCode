@@ -83,6 +83,11 @@ inline void BlazesRusCode::MediumDec::SetValueToTwiceLN10Div()
 	IntHalf = 0; DecimalHalf = 868588964;
 }
 
+inline void BlazesRusCode::MediumDec::SetValueToPointOne()
+{
+	IntHalf = 0; DecimalHalf = 100000000;
+}
+
 #pragma endregion ValueSetters
 
 #pragma region ValueDefines
@@ -212,6 +217,11 @@ inline MediumDec BlazesRusCode::MediumDec::NegativePointFiveValue()
 	return MediumDec(MirroredInt::NegativeZero, 500000000);
 }
 
+inline MediumDec BlazesRusCode::MediumDec::PointOneValue()
+{
+	return MediumDec(0, 100000000);
+}
+
 #pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
@@ -239,6 +249,7 @@ MediumDec MediumDec::OneGMillionth = MediumDec::OneHundredMillionthValue();
 MediumDec MediumDec::PiNum = MediumDec::PiNumValue();
 MediumDec MediumDec::ENum = MediumDec::ENumValue();
 MediumDec MediumDec::NegativePointFive = MediumDec::NegativePointFiveValue();
+MediumDec MediumDec::PointOne = MediumDec::PointOneValue();
 #pragma endregion ValueDefine Source
 
 #pragma region Check_if_value

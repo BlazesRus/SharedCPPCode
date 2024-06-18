@@ -275,7 +275,7 @@ public:
     #pragma endregion ValueSetters
 
     #pragma region ValueDefines
-    private://Each class needs to define it's own
+public:
 
         static MediumDec AlmostOneValue();
 
@@ -351,6 +351,8 @@ public:
         static MediumDec MaximumValue();
 
         static MediumDec NegativePointFiveValue();
+		
+		static MediumDec PointOneValue();
 
         static MediumDec NegativePointFive;
 
@@ -480,7 +482,8 @@ public:
         /// </summary>
         static MediumDec TwiceLN10Div;
 
-public:
+        static MediumDec PointOne();
+
     #pragma endregion ValueDefines
 
     #pragma region String Commands
@@ -2839,7 +2842,7 @@ protected:
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
-                switch (IntHalf.Value)
+                switch (value.IntHalf.Value)
                 {
                 case 1: value.IntHalf = 1; break;
                 case 4: value.IntHalf = 2; break;
@@ -2870,7 +2873,7 @@ protected:
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
-            VariantType start = VariantType(), end = value;
+            VariantType start = VariantType::Zero, end = value;
             VariantType mid;
 
             // variable to store the answer
@@ -2923,7 +2926,7 @@ protected:
         {
             if(value.IsNegative())
                 throw "Can't display result of negative square root without imaginary number support";
-            return UnsignedSqrt(value, precision);
+            return UnsignedSqrtV1(value, precision);
         }
 
 public:
@@ -3742,9 +3745,9 @@ protected:
             {
 				expTotal = 2 * i + 1;
 				if(AddToResult)
-					SinValue += tValue.UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+					SinValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
 				else
-					SinValue -= tValue.UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+					SinValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return SinValue;
         }
@@ -3764,9 +3767,9 @@ protected:
             {
 				expTotal = 2 * i;
 				if(AddToResult)
-					CosValue += tValue.UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+					CosValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
 				else
-					CosValue -= tValue.UIntPowOf(expTotal) / VariableConversionFunctions::Fact(expTotal);
+					CosValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return CosValue;
         }
@@ -3787,11 +3790,11 @@ protected:
             {
 				sinExp = 2 * i + 1; cosExp = 2 * i;
 				if(AddToResult){
-					SinValue += tValue.UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue += tValue.UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+					SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
 				} else{
-					SinValue -= tValue.UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue -= tValue.UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+					SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
 				}
             }
             return SinValue / CosValue;
@@ -3805,8 +3808,8 @@ protected:
 		template<MediumDecVariant VariantType=MediumDec>
         static VariantType ATanV1(const VariantType& tValue)
         {
-            VariantType SinValue = One  / VariableConversionFunctions::Fact(1);
-            VariantType CosValue = One / VariableConversionFunctions::Fact(0);
+            VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
+            VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
 			unsigned int sinExp; unsigned int cosExp;
 			bool AddToResult = false;
@@ -3814,11 +3817,11 @@ protected:
             {
 				sinExp = 2 * i + 1; cosExp = 2 * i;
 				if(AddToResult){
-					SinValue += tValue.UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue += tValue.UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+					SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
 				} else{
-					SinValue -= tValue.UIntPowOf(sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue -= tValue.UIntPowOf(cosExp) / VariableConversionFunctions::Fact(cosExp);
+					SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+					CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
 				}
             }
             return CosValue / SinValue;
@@ -3835,9 +3838,9 @@ protected:
 		template<MediumDecVariant VariantType=MediumDec>
         static VariantType ArcTan2V1(const VariantType& y, const VariantType& x)
         {
-            VariantType coeff_1 = PiNum.DividedByFour();
+            VariantType coeff_1 = VariantType::PiNum.DividedByFour();
             VariantType coeff_2 = coeff_1.MultiplyByUInt(3);
-            VariantType abs_y = VariantType::Abs(y) + JustAboveZero;// kludge to prevent 0/0 condition
+            VariantType abs_y = VariantType::Abs(y) + VariantType::JustAboveZero;// kludge to prevent 0/0 condition
             VariantType r;
             VariantType angle;
             if (x.IsPositive())
@@ -3856,7 +3859,7 @@ protected:
                 return angle;
         }
 
-    	template<MediumDecVariant VariantType=MediumDecV2>
+    	template<MediumDecVariant VariantType=MediumDec>
         static VariantType NormalizeForTrig(VariantType tValue)
         {
             if (tValue.IsNegative())
@@ -3895,24 +3898,24 @@ protected:
                 {
                     case 0:
                     case 180://Pi Radians
-                        return Zero;
+                        return VariantType::Zero;
                         break;
                     case 90://0.5 Pi Radians
-                        return One;
+                        return VariantType::One;
                         break;
                     case 270://1.5 Pi Radians
-                        return NegativeOne;
+                        return VariantType::NegativeOne;
                         break;
                     case 30://0.1666666666 Pi Radians
                     case 150://0.833333333 Pi Radians
-                        return PointFive;
+                        return VariantType::PointFive;
                     case 210:
                     case 330:
-                        return NegativePointFive;
+                        return VariantType::NegativePointFive;
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
-                        return SinV1<VariantType>(Radius);
+                        return MediumDec::SinV1<VariantType>(Radius);
                         break;
                 }
             }
@@ -3920,7 +3923,7 @@ protected:
             {
                 //Angle as Radian
                 VariantType Radius = PiNum * lValue / 180;
-                return SinV1<VariantType>(Radius);
+                return MediumDec::SinV1<VariantType>(Radius);
             }
         }
 
@@ -3956,7 +3959,7 @@ protected:
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
-                        return CosV1<VariantType>(Radius);
+                        return MediumDec::CosV1<VariantType>(Radius);
                         break;
                 }
             }
@@ -3964,7 +3967,7 @@ protected:
             {
                 //Angle as Radian
                 VariantType Radius = PiNum * lValue / 180;
-                return CosV1<VariantType>(Radius);
+                return MediumDec::CosV1<VariantType>(Radius);
             }
         }
 
@@ -3983,21 +3986,21 @@ protected:
                 {
                     case 0:
                     case 180://Pi Radians
-                        return Zero;
+                        return VariantType::Zero;
                         break;
                     case 90://0.5 Pi Radians
-                        return Maximum;//Positive Infinity
+                        return VariantType::Maximum;//Positive Infinity
                         break;
                     case 270://1.5 Pi Radians
-                        return Minimum;//Negative Infinity
+                        return VariantType::Minimum;//Negative Infinity
                         break;
                     default:
-                        return TanV1<VariantType>(PiNum * lValue / 180);
+                        return MediumDec::TanV1<VariantType>(PiNum * lValue / 180);
                         break;
                 }
             }
             else
-                return TanV1<VariantType>(PiNum * lValue / 180);
+                return MediumDec::TanV1<VariantType>(PiNum * lValue / 180);
         }
 
 public:
