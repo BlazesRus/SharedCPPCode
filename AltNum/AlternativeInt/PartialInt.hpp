@@ -351,16 +351,16 @@ public:
         }
 
 		friend PartialInt& operator%=(PartialInt& lValue, const unsigned int& rValue)
-		{ Value %= rValue; return lValue; }
+		{ lValue.Value %= rValue; return lValue; }
 		
 		friend PartialInt operator%(const PartialInt& lValue, const unsigned int& rValue){
             PartialInt newVal = lValue;
-			Value %= rValue; return newVal;
+			newVal.Value %= rValue; return newVal;
         }
 
 		friend PartialInt& operator%=(PartialInt& lValue, const PartialInt& rValue)
 		{
-			Value %= rValue.Value; return lValue; 
+			lValue.Value %= rValue.Value; return lValue; 
 		}
 		
 		friend PartialInt operator%(const PartialInt& lValue, const PartialInt& rValue){

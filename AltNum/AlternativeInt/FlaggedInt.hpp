@@ -323,16 +323,16 @@ namespace BlazesRusCode
         }
 
 		friend FlaggedInt& operator%=(FlaggedInt& lValue, const unsigned int& rValue)
-		{ Value %= rValue; return lValue; }
+		{ lValue.Value %= rValue; return lValue; }
 		
 		friend FlaggedInt operator%(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			Value %= rValue; return newVal;
+			newVal.Value %= rValue; return newVal;
         }
 
 		friend FlaggedInt& operator%=(FlaggedInt& lValue, const FlaggedInt& rValue)
 		{
-			Value %= rValue.Value; return lValue; 
+			lValue.Value %= rValue.Value; return lValue; 
 		}
 		
 		friend FlaggedInt operator%(const FlaggedInt& lValue, const FlaggedInt& rValue){

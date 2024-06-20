@@ -598,21 +598,21 @@ namespace BlazesRusCode
         }
 
 		friend MirroredInt& operator%=(MirroredInt& lValue, const unsigned int& rValue)
-		{ Value %= rValue; return lValue; }
-		
+		{ lValue.Value %= rValue; return lValue; }
+
 		friend MirroredInt operator%(const MirroredInt& lValue, const unsigned int& rValue){
             MirroredInt newVal = lValue;
-			Value %= rValue; return newVal;
+			newVal.Value %= rValue; return newVal;
         }
 
 		friend MirroredInt& operator%=(MirroredInt& lValue, const MirroredInt& rValue)
 		{
 			if(rValue.IsNegative())
 				lValue.SwapNegativeStatus();
-			Value %= rValue.Value; 
-			return lValue; 
+			lValue.Value %= rValue.Value;
+			return lValue;
 		}
-		
+
 		friend MirroredInt operator%(const MirroredInt& lValue, const MirroredInt& rValue){
             MirroredInt newVal = lValue;
 			return newVal%=rValue;
