@@ -350,6 +350,24 @@ public:
             newVal.Int64MultOp(rValue); return newVal;
         }
 
+		friend PartialInt& operator%=(PartialInt& lValue, const unsigned int& rValue)
+		{ Value %= rValue; return lValue; }
+		
+		friend PartialInt operator%(const PartialInt& lValue, const unsigned int& rValue){
+            PartialInt newVal = lValue;
+			Value %= rValue; return newVal;
+        }
+
+		friend PartialInt& operator%=(PartialInt& lValue, const PartialInt& rValue)
+		{
+			Value %= rValue.Value; return lValue; 
+		}
+		
+		friend PartialInt operator%(const PartialInt& lValue, const PartialInt& rValue){
+            PartialInt newVal = lValue;
+			return newVal%=rValue;
+        }
+
     #pragma region Other Operators
 
         /// <summary>

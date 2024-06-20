@@ -322,6 +322,24 @@ namespace BlazesRusCode
             newVal.Int64MultOp(rValue); return newVal;
         }
 
+		friend FlaggedInt& operator%=(FlaggedInt& lValue, const unsigned int& rValue)
+		{ Value %= rValue; return lValue; }
+		
+		friend FlaggedInt operator%(const FlaggedInt& lValue, const unsigned int& rValue){
+            FlaggedInt newVal = lValue;
+			Value %= rValue; return newVal;
+        }
+
+		friend FlaggedInt& operator%=(FlaggedInt& lValue, const FlaggedInt& rValue)
+		{
+			Value %= rValue.Value; return lValue; 
+		}
+		
+		friend FlaggedInt operator%(const FlaggedInt& lValue, const FlaggedInt& rValue){
+            FlaggedInt newVal = lValue;
+			return newVal%=rValue;
+        }
+
     #pragma region Other Operators
 
         /// <summary>
