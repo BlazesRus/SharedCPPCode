@@ -3010,7 +3010,7 @@ public:
 
 /*
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned MirroredInt
+        /// Subtraction operation between MediumDec Variant and unsigned MirroredInt
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -3134,7 +3134,7 @@ public:
 
 /*
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and MirroredInt
+        /// Addition operation between MediumDec Variant and MirroredInt
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -3159,7 +3159,7 @@ public:
 
 /*
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and MirroredInt
+        /// Subtraction operation between MediumDec Variant and MirroredInt
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -3217,9 +3217,9 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        void BasicUnsignedAddOp(const MediumDecV2& rValue){ MediumDec::UnsignedAddOpV1<MediumDecV2>(rValue); }
+        void BasicUnsignedAddOp(const MediumDecV2& rValue);
 
-        void BasicAddOp(const MediumDecV2& rValue){ MediumDec::AddOpV1<MediumDecV2>(rValue); }
+        void BasicAddOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Basic unsigned addition operation that ignores special decimal status

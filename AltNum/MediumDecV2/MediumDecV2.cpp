@@ -306,6 +306,143 @@ inline MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByFour() const
 
 #pragma endregion Other multiplication operations
 
+#pragma region Basic_addition
+
+inline void BlazesRusCode::MediumDecV2::BasicUnsignedAddOp(const MediumDecV2& rValue) {
+	if (rValue.DecimalHalf == 0)
+		UnsignedMirroredAddOp(rValue.IntHalf);
+	else
+	{
+		int signBeforeOp = IntHalf.Sign;
+		IntHalf.UnsignedAddOp(rValue.IntHalf);
+		if (signBeforeOp == MirroredInt::NegativeSign)
+		{
+			if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 + -4.5
+				if (IntHalf.Value == 0)
+					SetAsZero();
+				else
+					DecimalHalf.Value = 0;
+			}
+			else if (rValue.DecimalHalf.Value>DecimalHalf.Value)
+			{
+				++IntHalf;
+				if (signBeforeOp != IntHalf.Sign)//-1.6 + 2.7 = 1.1
+					DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+				else//-1.6 + .7 = -0.9
+					DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+			}
+			else if (signBeforeOp != IntHalf.Sign)//-1.6 + 2.5 = 0.9
+				DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
+			else
+				DecimalHalf.Value -= rValue.DecimalHalf.Value;
+		}
+		else {
+			unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+			if (decResult == DecimalOverflow) {//5.4 + 4.6
+				++IntHalf;
+				if (IntHalf.Value == 0)
+					SetAsZero();
+				else
+					DecimalHalf.Value = 0;
+			}
+			else if (decResult>DecimalOverflow) {//5.4 + 4.7
+				++IntHalf;
+				DecimalHalf.Value = decResult - DecimalOverflow;
+			}
+			else if (signBeforeOp != IntHalf.Sign)
+				DecimalHalf.Value = DecimalOverflow - decResult;
+			else
+				DecimalHalf.Value = decResult;
+		}
+	}
+}
+
+inline void BlazesRusCode::MediumDecV2::BasicAddOp(const MediumDecV2& rValue) {
+	if (rValue.DecimalHalf == 0)
+		MirroredAddOp(rValue.IntHalf);
+	else {
+		int signBeforeOp = IntHalf.Sign;
+		IntHalf += rValue.IntHalf;
+
+		if (signBeforeOp == MirroredInt::NegativeSign) {
+			if (rValue.IsPositive()) {
+				if (DecimalHalf.Value == rValue.DecimalHalf.Value) {
+					if (IntHalf.Value == 0)
+						SetAsZero();
+					else
+						DecimalHalf.Value = 0;
+				}
+				else if (rValue.DecimalHalf.Value>DecimalHalf.Value) {
+					++IntHalf;
+					if (signBeforeOp != IntHalf.Sign)//-1.6 + 2.7 = 1.1
+						DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+					else//-1.6 + .7 = -0.9
+						DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+				}
+				else if (signBeforeOp != IntHalf.Sign)//-1.6 + 2.5 = 0.9
+					DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
+				else
+					DecimalHalf.Value -= rValue.DecimalHalf.Value;
+			}
+			else {
+				unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+				if (decResult == DecimalOverflow) {//-5.4 + - 5.6
+					--IntHalf;
+					if (IntHalf.Value == 0)
+						SetAsZero();
+					else
+						DecimalHalf.Value = 0;
+				}
+				else if (decResult > DecimalOverflow) {//-5.4 - 5.7 = -11.1
+					--IntHalf;
+					DecimalHalf.Value = decResult - DecimalOverflow;
+				}
+				else//-5.2 - 5.2 = -10.4
+					DecimalHalf.Value = decResult;
+			}
+		}
+		else {
+			if (rValue.IsPositive()) {
+				unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+				if (decResult == DecimalOverflow) {//5.5 + 4.5 = 10
+					++IntHalf;
+					if (IntHalf.Value == 0)
+						SetAsZero();
+					else
+						DecimalHalf.Value = 0;
+				}
+				else if (decResult>DecimalOverflow) {//5.5 + 4.6 = 10.1
+					++IntHalf;
+					DecimalHalf.Value = decResult - DecimalOverflow;
+				}
+				else//5.4 + 5.3 = 10.7
+					DecimalHalf.Value = decResult;
+			}
+			else {
+				if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 + -5.5
+					if (IntHalf.Value == 0)
+						SetAsZero();
+					else
+						DecimalHalf.Value = 0;
+				}
+				else if (rValue.DecimalHalf.Value>DecimalHalf.Value) {
+					--IntHalf;
+					if (signBeforeOp != IntHalf.Sign)//4.3 - 5.4 = -1.1
+						DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+					else//4.3 - 2.4 = 1.9
+						DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+				}
+				else if (signBeforeOp != IntHalf.Sign)//5.4 + - 6.3 = -0.9
+					DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4
+				else//4.4 + -2.3 = 2.1
+					DecimalHalf.Value -= rValue.DecimalHalf.Value;
+			}
+		}
+	}
+}
+
+#pragma endregion Basic_addition
+
 #pragma region Truncation Functions
 
 inline MediumDecV2 BlazesRusCode::MediumDecV2::Abs(const MediumDecV2& tValue) { return AbsV1<MediumDecV2>(tValue); }
