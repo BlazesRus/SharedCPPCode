@@ -3,6 +3,7 @@ using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 using RepTypeEnum = BlazesRusCode::RepTypeEnum;
 
+/*
 static void CatchAllOp(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
@@ -17,14 +18,14 @@ static void CatchAllOpV2(MediumDecV2& lValue, const MediumDecV2& rValue, const R
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-static void SameRepCatchAll(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void DivOp_SameRepCatchAll(const MediumDecV2& rValue, const RepType& LRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep);
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-static void SameRepCatchAllV2(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void DivOp_SameRepCatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep.ConvertFromNormalRep(rValue.GetFlags()));
@@ -34,7 +35,7 @@ static void SameRepCatchAllV2(MediumDecV2& lValue, const MediumDecV2& rValue, co
 #pragma region AltDecVariantExclusive
 #pragma endregion AltDecVariantExclusive
 
-static void SameRep_ApproachingBottom(MediumDecV2& lValue, const MediumDecV2& rValue)
+void DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
 {
     if(lValue.IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
@@ -48,13 +49,15 @@ static void SameRep_ApproachingBottom(MediumDecV2& lValue, const MediumDecV2& rV
 		SameRepCatchAll(lValue, rValue, RepType::ApproachingBottom);
 }
 
-static void SameRep_ApproachingTop(MediumDecV2& lValue, const MediumDecV2& rValue)
+void DivOp_SameRep_ApproachingTop(const MediumDecV2& rValue)
 {
 	SameRepCatchAll(lValue, rValue, RepType::ApproachingTop);
 }
+*/
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 {
+/*
 	#if defined(AltNum_EnableInfinityRep)
 	if(DecimalHalf.Value==InfinityRep){
 		if(rValue.DecimalHalf.Value==InfinityRep)
@@ -345,5 +348,6 @@ void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 			}
 		}
 	}
+*/
 }
 

@@ -2,8 +2,8 @@
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 using RepTypeEnum = BlazesRusCode::RepTypeEnum;
-
-void CatchAllOp(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+/*
+void MediumDecV2::MultOp_CatchAllOp(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 {
     lValue.ConvertToNormType(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
@@ -13,15 +13,16 @@ void CatchAllOp(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& L
 #pragma region AltDecVariantExclusive
 #pragma endregion AltDecVariantExclusive
 
-void SameRep_ApproachingBottom(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::MultOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
 
-void SameRep_ApproachingTop(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::MultOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
+*/
 
 void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 {
