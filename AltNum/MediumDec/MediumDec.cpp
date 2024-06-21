@@ -252,6 +252,25 @@ MediumDec MediumDec::NegativePointFive = MediumDec::NegativePointFiveValue();
 MediumDec MediumDec::PointOne = MediumDec::PointOneValue();
 #pragma endregion ValueDefine Source
 
+#pragma region Negative_Status
+
+inline bool BlazesRusCode::MediumDec::IsPositive() const
+{
+	return IntHalf.IsPositive();
+}
+
+inline bool BlazesRusCode::MediumDec::IsNegative() const
+{
+	return IntHalf.IsNegative();
+}
+
+inline void BlazesRusCode::MediumDec::SwapNegativeStatus()
+{
+	IntHalf.Sign ^= 1;
+}
+
+#pragma endregion Negative_Status
+
 #pragma region Check_if_value
 
 inline void BlazesRusCode::MediumDec::SetAsZero()
@@ -690,6 +709,17 @@ inline void BlazesRusCode::MediumDec::ReadString(const std::string& Value)
 			PlaceNumber--;
 		}
 	}
+}
+
+inline BlazesRusCode::MediumDec::MediumDec(const char* strVal)
+{
+	std::string Value = strVal;
+	this->ReadString(Value);
+}
+
+inline BlazesRusCode::MediumDec::MediumDec(const std::string& Value)
+{
+	this->ReadString(Value);
 }
 
 inline std::string BlazesRusCode::MediumDec::ToString()

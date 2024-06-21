@@ -154,7 +154,7 @@ namespace BlazesRusCode
     #endif
 	        if (SignCmp != 0)
 				return SignCmp;
-			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
+			auto ValueCmp = Value <=> that.Value;
 				return ValueCmp;
 		}
 
@@ -177,7 +177,7 @@ namespace BlazesRusCode
     #endif
 	        if (SignCmp != 0)
 				return SignCmp;
-			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+			auto ValueCmp = Value <=> that;
 				return ValueCmp;
 		}
 
@@ -203,7 +203,7 @@ namespace BlazesRusCode
         #endif
     	        if (SignCmp != 0)
     				return SignCmp;
-    			if (auto ValueCmp = Value <=> (unsigned int)(-that); ValueCmp != 0)
+    			auto ValueCmp = Value <=> (unsigned int)(-that);
     				return ValueCmp;
             }
 		}

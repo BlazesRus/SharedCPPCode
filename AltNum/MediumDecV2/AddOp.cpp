@@ -3,12 +3,12 @@ using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 using RepTypeEnum = BlazesRusCode::RepTypeEnum;
 
-void SameRep_ApproachingBottom(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
 
-void SameRep_ApproachingTop(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
@@ -31,10 +31,10 @@ void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 #pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableApproaching)
 			case RepTypeEnum::ApproachingBottom:
-				SameRep_ApproachingBottom(*this, rValue, LRep);
+				AddOp_SameRep_ApproachingBottom(rValue, LRep);
 				break;
 			case RepTypeEnum::ApproachingTop:
-				SameRep_ApproachingTop(*this, rValue, LRep);
+				AddOp_SameRep_ApproachingTop(rValue, LRep);
 				break;
 #pragma region AltDecVariantExclusive
 #pragma endregion AltDecVariantExclusive

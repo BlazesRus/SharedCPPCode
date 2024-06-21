@@ -123,17 +123,14 @@ namespace BlazesRusCode
 
     #pragma region Negative_Status
 
-        bool IsPositive() const
-        { return IntHalf.IsPositive(); }
+        bool IsPositive() const;
 
-        bool IsNegative() const
-        { return IntHalf.IsNegative(); }
+        bool IsNegative() const;
 
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        void SwapNegativeStatus()
-        { IntHalf.Sign ^= 1; }
+        void SwapNegativeStatus();
 
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
@@ -500,20 +497,13 @@ public:
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        MediumDec(const char* strVal)
-        {
-            std::string Value = strVal;
-            this->ReadString(Value);
-        }
+        MediumDec(const char* strVal);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const std::string& Value)
-        {
-            this->ReadString(Value);
-        }
+        MediumDec(const std::string& Value);
 
 public:
 

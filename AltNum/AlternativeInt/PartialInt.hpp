@@ -91,21 +91,22 @@ namespace BlazesRusCode
 
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
-			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
-				return ValueCmp;
+			auto ValueCmp = Value <=> that;
+			return ValueCmp;
 		}
 
 		bool operator==(const unsigned int& that) const
 		{
 			if (Value==that)
 				return true;
+            return false;
 		}
 
 		bool operator!=(const unsigned int& that) const
 		{
 			if (Value!=that)
 				return true;
-			return true;
+			return false;
 		}
 
 		std::strong_ordering operator<=>(const signed int& that) const
@@ -123,6 +124,7 @@ namespace BlazesRusCode
 				return false;
 			else if (Value==(unsigned int)that)
 				return true;
+            return false;
 		}
 
 		bool operator!=(const signed int& that) const
@@ -352,7 +354,7 @@ public:
 
 		friend PartialInt& operator%=(PartialInt& lValue, const unsigned int& rValue)
 		{ lValue.Value %= rValue; return lValue; }
-		
+
 		friend PartialInt operator%(const PartialInt& lValue, const unsigned int& rValue){
             PartialInt newVal = lValue;
 			newVal.Value %= rValue; return newVal;
@@ -360,9 +362,9 @@ public:
 
 		friend PartialInt& operator%=(PartialInt& lValue, const PartialInt& rValue)
 		{
-			lValue.Value %= rValue.Value; return lValue; 
+			lValue.Value %= rValue.Value; return lValue;
 		}
-		
+
 		friend PartialInt operator%(const PartialInt& lValue, const PartialInt& rValue){
             PartialInt newVal = lValue;
 			return newVal%=rValue;

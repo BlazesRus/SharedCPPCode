@@ -7,6 +7,24 @@ using RepType = BlazesRusCode::RepType;
 
 #pragma region ValueDefines
 
+
+inline void BlazesRusCode::MediumDecV2::SetValue(const MediumDecV2& Value)
+{
+	IntHalf = Value.IntHalf;
+	DecimalHalf = Value.DecimalHalf;
+}
+
+inline const void BlazesRusCode::MediumDecV2::SetMediumDecValue(const MediumDec& Value)
+{
+	IntHalf = Value.IntHalf;
+	DecimalHalf = Value.DecimalHalf;
+}
+
+inline const unsigned int BlazesRusCode::MediumDecV2::GetFlags() const
+{
+	return DecimalHalf.Flags;
+}
+
 inline MediumDecV2 BlazesRusCode::MediumDecV2::AlmostOneValue()
 {
 	return MediumDecV2(0, 999999999);

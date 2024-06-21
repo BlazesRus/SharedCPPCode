@@ -130,26 +130,15 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetValue(const MediumDecV2& Value)
-        {
-            IntHalf = Value.IntHalf;
-            DecimalHalf = Value.DecimalHalf;
-        } const
+        void SetValue(const MediumDecV2& Value); const
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetValue(const MediumDec& Value)
-        {
-            IntHalf = Value.IntHalf;
-            DecimalHalf = Value.DecimalHalf;
-        } const
+        void SetMediumDecValue(const MediumDec& Value); const
 
-        unsigned int GetFlags() const
-        {
-            return DecimalHalf.Flags;
-        }
+        unsigned int GetFlags() const;
 
     #pragma endregion class_constructors
 
@@ -1475,44 +1464,34 @@ protected:
             else if(RValue.Flags==3)
                 throw "Can't compare imaginary number with real number";
     #endif
-			switch(LRep)
-			{
 	#if defined(AltNum_EnableInfinityRep)
-                case RepType:Infinity:
-                    lValue.LSideInfinityComparison(that, RRep);
-                    break;
+            if(LRep==RepType:Infinity)
+                return lValue.LSideInfinityComparison(that, RRep);
 	#endif
-	#if defined(AltNum_EnableApproaching)
-
-	#endif
-				default:
-				{
-					if(LRep==RRep)
-						return lValue.BasicComparison(that);
-            #if defined(AltNum_EnableInfinityRep)
-					else if(RRep==RepTypeEnum::Infinity)
-                    {
-			    #if defined(AltNum_UseInvertedSign)
-                        if(that.IntHalf.IsPositive())
-							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;//Positive Infinity is greater than real number representations
-						else
-							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
-			    #else
-                        if(that.IntHalf.IsPositive())
-							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
-						else
-							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
-			    #endif
-                    }
-            #endif
-                    else
-					{
-						VariantType lSide = lValue;
-						VariantType rSide = that;
-						lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
-						return lSide.BasicComparison(rSide);
-					}
-				}
+			if(LRep==RRep)
+				return lValue.BasicComparison(that);
+    #if defined(AltNum_EnableInfinityRep)
+			else if(RRep==RepTypeEnum::Infinity)
+            {
+		#if defined(AltNum_UseInvertedSign)
+                if(that.IntHalf.IsPositive())
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;//Positive Infinity is greater than real number representations
+				else
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+		#else
+                if(that.IntHalf.IsPositive())
+					return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
+				else
+					return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
+		#endif
+            }
+    #endif
+            else
+			{
+				VariantType lSide = lValue;
+				VariantType rSide = that;
+				lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
+				return lSide.BasicComparison(rSide);
 			}
 		}
 
@@ -3338,6 +3317,18 @@ public:
 			auto convertedRVal = rValue.ConvertAsNormType(RRep);
 			BasicUnsignedSubOp(convertedRVal);
 		}
+
+private:
+
+		void AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
+
+		void AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+
+		void SubOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
+
+		void SubOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+
+public:
 
         /// <summary>
         /// Basic addition Operation
