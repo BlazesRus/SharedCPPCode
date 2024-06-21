@@ -25,9 +25,9 @@
 #ifdef MixedDec_DeriveFromAltDec
 	#include "..\AltDec\AltDecBase.hpp"
 #elif MixedDec_DeriveFromMediumDecV2
-	#include "..\MediumDecV2\MediumDecV2Base.hpp"
+	#include "..\MediumDecV2\MediumDecV2.hpp"
 #else
-	#include "..\MediumDec\MediumDecBase.hpp"
+	#include "..\MediumDec\MediumDec.hpp"
 #endif
 
 #include "..\MediumDec\MediumDec.hpp"
@@ -53,9 +53,9 @@ namespace BlazesRusCode
 #ifdef MixedDec_DeriveFromAltDec
     public AltDecBase
 #elif MixedDec_DeriveFromMediumDecV2
-    public MediumDecV2Base
+    public MediumDecV2
 #else
-    public MediumDecBase
+    public MediumDec
 #endif
     {
 protected:
@@ -312,134 +312,134 @@ public:
 		{
 			switch(repType)
 			{
-				case RepType::NormalType:
+				case RepTypeEnum::NormalType:
 					return "NormalType"; break;
 	#if defined(MixedDec_EnableFractionals)
-				case RepType::NumByDiv:
+				case RepTypeEnum::NumByDiv:
 					return "NumByDiv"; break;
 	#endif
 	#if defined(MixedDec_EnablePiRep)
-				case RepType::PiNum:
+				case RepTypeEnum::PiNum:
 					return "PiNum"; break;
 		#if defined(MixedDec_EnablePiPowers)
-				case RepType::PiPower:
+				case RepTypeEnum::PiPower:
 					return "PiPower"; break;
 		#endif
 		#if defined(MixedDec_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+				case RepTypeEnum::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 					return "PiNumByDiv"; break;
 		#endif
 	#endif
 	#if defined(MixedDec_EnableERep)
-				case RepType::ENum:
+				case RepTypeEnum::ENum:
 					return "ENum"; break;
 		#if defined(MixedDec_EnableFractionals)
-				case RepType::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
+				case RepTypeEnum::ENumByDiv://(Value/(ExtraRep*-1))*e Representation
 					return "ENumByDiv"; break;
 		#endif
 	#endif
 	#if defined(MixedDec_EnableImaginaryNum)
-				case RepType::INum:
+				case RepTypeEnum::INum:
                     return "INum"; break;
 		#if defined(MixedDec_EnableFractionals)
-				case RepType::INumByDiv://(Value/(ExtraRep*-1))*i Representation
+				case RepTypeEnum::INumByDiv://(Value/(ExtraRep*-1))*i Representation
 					return "INumByDiv"; break;
 		#endif
 		#ifdef MixedDec_EnableComplexNumbers
-				case RepType::ComplexIRep:
+				case RepTypeEnum::ComplexIRep:
 					return "ComplexIRep"; break;
 		#endif
 	#endif
 
 	#if defined(MixedDec_EnableMixedFractional)
-				case RepType::MixedFrac://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepTypeEnum::MixedFrac://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedFrac"; break;
 		#if defined(MixedDec_EnableMixedPiFractional)
-				case RepType::MixedPi://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepTypeEnum::MixedPi://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedPi"; break;
 		#elif defined(MixedDec_EnableMixedEFractional)
-				case RepType::MixedE://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepTypeEnum::MixedE://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedE"; break;
 		#elif defined(MixedDec_EnableMixedIFractional)
-				case RepType::MixedI://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
+				case RepTypeEnum::MixedI://IntHalf +- (DecimalHalf.Value/ExtraRep.Value)
 					return "MixedI"; break;
 		#endif
 	#endif
 
 	#if defined(MixedDec_EnableInfinityRep)
-				case RepType::Infinity:
+				case RepTypeEnum::Infinity:
 					return "Infinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingValues)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+				case RepTypeEnum::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
                     return "ApproachingBottom"; break;
 		#if !defined(MixedDec_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+				case RepTypeEnum::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
                     return "ApproachingTop"; break;
 		#endif
 		#if defined(MixedDec_EnableApproachingDivided)
-				case RepType::ApproachingMidLeft:
+				case RepTypeEnum::ApproachingMidLeft:
 					return "ApproachingMidLeft"; break;
-				case RepType::ApproachingMidRight:
+				case RepTypeEnum::ApproachingMidRight:
 					return "ApproachingMidRight"; break;
 		#endif
 	#endif
     #if defined(MixedDec_EnableNaN)
-				case RepType::Undefined:
+				case RepTypeEnum::Undefined:
 					return "Undefined"; break;
-				case RepType::NaN:
+				case RepTypeEnum::NaN:
 					return "NaN"; break;
     #endif
 	#if defined(MixedDec_EnableApproachingPi)
-				case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
+				case RepTypeEnum::ApproachingTopPi://equal to IntHalf.9..9 Pi
 					return "ApproachingTopPi"; break;
 		#if defined(MixedDec_EnableApproachingAlternativeDiv)
-				case RepType::ApproachingMidLeftPi:
+				case RepTypeEnum::ApproachingMidLeftPi:
 					return "ApproachingMidLeftPi"; break;
-				case RepType::ApproachingMidRightPi:
+				case RepTypeEnum::ApproachingMidRightPi:
 					return "ApproachingMidRightPi"; break;
 		#endif
 	#endif
 	#if defined(MixedDec_EnableApproachingE)
-				case RepType::ApproachingTopE://equal to IntHalf.9..9 e
+				case RepTypeEnum::ApproachingTopE://equal to IntHalf.9..9 e
 					return "ApproachingTopE"; break;
 		#if defined(MixedDec_EnableApproachingAlternativeDiv)
-				case RepType::ApproachingMidLeftE:
+				case RepTypeEnum::ApproachingMidLeftE:
 					return "ApproachingMidLeftE"; break;
-				case RepType::ApproachingMidRightE:
+				case RepTypeEnum::ApproachingMidRightE:
 					return "ApproachingMidRightE"; break;
 		#endif
 	#endif
 	#if defined(MixedDec_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:
+				case RepTypeEnum::ImaginaryInfinity:
 					return "ImaginaryInfinity"; break;
 	#endif
 	#if defined(MixedDec_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
+				case RepTypeEnum::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 					return "ApproachingImaginaryBottom"; break;
 		#if !defined(MixedDec_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
+				case RepTypeEnum::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 					return "ApproachingImaginaryTop"; break;
 		#endif
 		#if defined(MixedDec_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidLeft:
+				case RepTypeEnum::ApproachingImaginaryMidLeft:
 					return "ApproachingImaginaryMidLeft"; break;
 			#if !defined(MixedDec_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidRight:
+				case RepTypeEnum::ApproachingImaginaryMidRight:
 					return "ApproachingImaginaryMidRight"; break;
 			#endif
 		#endif
     #endif
 	#if defined(MixedDec_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range: ExtraRepValue==UndefinedInRangeRep)
-				case RepType::UndefinedButInRange:
+				case RepTypeEnum::UndefinedButInRange:
 					return "UndefinedButInRange"; break;
 		#if defined(MixedDec_EnableWithinMinMaxRange)//Undefined except for ranged IntHalf to DecimalHalf (ExtraRepValue==UndefinedInRangeMinMaxRep)
-				case RepType::WithinMinMaxRange:
+				case RepTypeEnum::WithinMinMaxRange:
 					return "WithinMinMaxRange"; break;
 		#endif
 	#endif
     #if defined(MixedDec_EnableNilRep)
-				case RepType::Nil:
+				case RepTypeEnum::Nil:
 					return "Nil"; break;
     #endif
 				default:
@@ -1419,7 +1419,7 @@ public:
             this->SetBoolVal(Value);
         }
 
-#if defined(AltNum_EnableMediumDecBasedSetValues)
+#if defined(AltNum_EnableMediumDecdSetValues)
         MixedDec(const MediumDec& Value)
         {
             this->SetVal(Value);
@@ -1472,10 +1472,10 @@ public:
 protected:
         //Updating BasicComparison to include the trailing digit added from this class
 
-		template<MediumDecVariant VariantType=MediumDecBase>
+		template<MediumDecVariant VariantType=MediumDec>
 		std::strong_ordering BasicComparisonV1(const VariantType& that) const
 		{
-			MediumDecBase::BasicComparisonV1(that);
+			MediumDec::BasicComparisonV1(that);
 		//--Trailing Digit comparison
 		//Flip digits when negative to properly compare
 		#if defined(MixedDec_EnableRestrictedFloat)
@@ -1493,10 +1493,10 @@ protected:
 		}
 		
 		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-		template<MediumDecVariant VariantType=MediumDecBase>
+		template<MediumDecVariant VariantType=MediumDec>
 		std::strong_ordering BasicComparisonWithoutSignCheck(const VariantType& that) const
 		{
-			MediumDecBase::BasicComparisonWithoutSignCheck(that);
+			MediumDec::BasicComparisonWithoutSignCheck(that);
 		//--Trailing Digit comparison
 		//Flip digits when negative to properly compare
 		#if defined(MixedDec_EnableRestrictedFloat)
@@ -1514,15 +1514,15 @@ protected:
 		}
 		
 		//Compare only as if in NormalType representation mode
-        constexpr auto BasicComparison = MediumDecBase::BasicComparisonV1<MixedDec>;
+        constexpr auto BasicComparison = MediumDec::BasicComparisonV1<MixedDec>;
 
 #if defined(AltNum_EnableMirroredSection)
 		//Compare only as if in NormalType representation mode ignoring sign(check before using)
-        constexpr auto BasicComparisonV2 = MediumDecBase::BasicComparisonWithoutSignCheck<MixedDec>;
+        constexpr auto BasicComparisonV2 = MediumDec::BasicComparisonWithoutSignCheck<MixedDec>;
 #endif
 
     #if defined(MixedDec_DefineInfinityAsSignedReps)
-        constexpr auto LSideInfinityComparison = MediumDecV2Base::LSideInfinityComparison<MixedDec>;
+        constexpr auto LSideInfinityComparison = MediumDecV2::LSideInfinityComparison<MixedDec>;
 	#endif
 
 		//Excluding templated override for this class because MixedDec has no partial version of class unlike previous parent classes
@@ -1686,8 +1686,8 @@ protected:
 						}
 						else
 						{
-							MediumDecV2Base lSide = *this;
-							MediumDecV2Base rSide = that;
+							MediumDecV2 lSide = *this;
+							MediumDecV2 rSide = that;
 							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 		#if defined(MixedDec_EnableMirroredSection)
 							return lSide.BasicComparisonV2(rSide);
@@ -1712,8 +1712,8 @@ protected:
 						}
 						else
 						{
-							MediumDecV2Base lSide = *this;
-							MediumDecV2Base rSide = that;
+							MediumDecV2 lSide = *this;
+							MediumDecV2 rSide = that;
 							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 		#if defined(MixedDec_EnableMirroredSection)
 							return lSide.BasicComparisonV2(rSide);
@@ -1742,8 +1742,8 @@ protected:
 						}
 						else
 						{
-							MediumDecV2Base lSide = *this;
-							MediumDecV2Base rSide = that;
+							MediumDecV2 lSide = *this;
+							MediumDecV2 rSide = that;
 							lSide.ConvertToNormTypeV2(); rSide.ConvertToNormTypeV2();
 		#if defined(MixedDec_EnableMirroredSection)
 							return lSide.BasicComparisonV2(rSide);
@@ -1816,10 +1816,10 @@ protected:
 		}
 
 		//Alias to prevent creating function more than once with template arguments
-        constexpr auto CompareWith = MediumDecBase::CompareWithV1<MixedDec>;
+        constexpr auto CompareWith = MediumDec::CompareWithV1<MixedDec>;
 
 		//Alias to prevent creating function more than once with template arguments
-        constexpr auto CompareWithInt = MediumDecBase::CompareWithIntV1<MixedDec>;
+        constexpr auto CompareWithInt = MediumDec::CompareWithIntV1<MixedDec>;
 
 public:
 		std::strong_ordering operator<=>(const MixedDec& that) const
@@ -2586,7 +2586,7 @@ public:
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDecBase</returns>
+        /// <returns>MediumDec</returns>
         MixedDec operator- ()
         {
 			auto self = this;

@@ -98,7 +98,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);AltDec_EnableInfinityRep;MixedDec_EnableInfinityRep;MixedDec_EnablePIRep</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);AltDec_EnableInfinityRep;MixedDec_EnableInfinityRep;MixedDec_EnablePIRep;AltNum_UseRepTypeClass</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -118,7 +118,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -135,7 +135,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -152,7 +152,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostRoot);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -167,10 +167,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
+    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
-    <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
     <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
@@ -178,6 +178,12 @@
     <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
+    <ClCompile Include="..\AltNum\RepType.cpp" />
     <ClCompile Include="MediumDecV2Tests.cpp" />
     <ClInclude Include="..\tsl\ordered_map.h" />
     <ClInclude Include="..\OtherFunctions\StringFunctions.h" />
@@ -185,33 +191,8 @@
     <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp" />
     <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp" />
     <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base - Copy.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2Base.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDec_As_MediumDecV2.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\PowOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp" />
-    <ClCompile Include="..\AltNum\MediumDec\MediumDecBase.cpp" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
   </ItemGroup>
@@ -223,12 +204,6 @@
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

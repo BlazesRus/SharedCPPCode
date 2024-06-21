@@ -188,13 +188,13 @@
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
+    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
-    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base.hpp" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />

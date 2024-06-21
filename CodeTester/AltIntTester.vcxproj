@@ -168,8 +168,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
-    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDecBase.hpp" />
+    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
+    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDec.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />

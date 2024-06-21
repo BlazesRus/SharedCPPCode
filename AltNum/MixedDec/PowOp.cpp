@@ -67,19 +67,19 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 	    RepType RRep = GetRepType();
         switch(RRep)
         {
-	        case RepType::PositiveInfinity:
-	        case RepType::NegativeInfinity:
+	        case RepTypeEnum::PositiveInfinity:
+	        case RepTypeEnum::NegativeInfinity:
                 if(exponent.IntHalf==1)
                     return *this;
                 else
                     return Zero;
                 break;
     #if defined(AltNum_EnableIRep)
-	        case RepType::INum:
+	        case RepTypeEnum::INum:
         #if defined(AltNum_EnableDecimaledIFractionals)
-	        case RepType::INumByDiv:
+	        case RepTypeEnum::INumByDiv:
         #elif defined(AltNum_EnableIFractional)
-	        case RepType::IFractional:
+	        case RepTypeEnum::IFractional:
         #endif
         #if defined(AltNum_EnableNaN)
 			    return Undefined;
@@ -103,7 +103,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 	switch (expType)
 	{
 		#if defined(AltNum_EnableFractionals)
-		case RepType::NumByDiv:
+		case RepTypeEnum::NumByDiv:
 		{
 			MixedDec targetVal = MixedDec(exponent.IntHalf, exponent.DecimalHalf);
 			targetVal = Pow(targetVal);
@@ -112,7 +112,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 		}
 		#endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
-		case RepType::PiNumByDiv:
+		case RepTypeEnum::PiNumByDiv:
 		{
 			MixedDec targetVal = MixedDec(exponent.IntHalf, exponent.DecimalHalf, PiRep);
 			targetVal = Pow(targetVal);
@@ -120,7 +120,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 			break;
 		}
 		#elif defined(AltNum_EnableDecimaledEFractionals)
-		case RepType::ENumByDiv:
+		case RepTypeEnum::ENumByDiv:
 		{
 			MixedDec targetVal = MixedDec(exponent.IntHalf, exponent.DecimalHalf, ERep);
 			targetVal = Pow(targetVal);
@@ -129,7 +129,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 		}
 		#endif
 		#if defined(AltNum_EnablePiFractional)
-		case RepType::PiFractional:
+		case RepTypeEnum::PiFractional:
 		{
 			MixedDec targetVal = MixedDec(exponent.IntHalf, 0, PiRep);
 			targetVal = Pow(targetVal);
@@ -137,7 +137,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 		}
 		#endif
 		#if defined(AltNum_EnableEFractional)
-		case RepType::EFractional:
+		case RepTypeEnum::EFractional:
 		{
 			MixedDec targetVal = MixedDec(exponent.IntHalf, 0, ERep);
 			targetVal = Pow(targetVal);
@@ -151,14 +151,14 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 			//-2^PositiveInfinity = Within range of Positive and NegativeInfinity(undefined?)
 			//2^NegativeInfinity = ApproachingZero
 			//-2^NegativeInfinity = -Approaching Zero
-		case RepType::PositiveInfinity:
+		case RepTypeEnum::PositiveInfinity:
 			if (IsNegative())
 				return NegativeInfinity;
 			else
 				return Infinity;//Technically within range of Positive and NegativeInfinity
 			return *this;
 			break;
-		case RepType::NegativeInfinity:
+		case RepTypeEnum::NegativeInfinity:
 			#if defined(AltNum_EnableApproaching)
 			if (IsNegative())
 				SetAsApproachingBottom(NegativeRep);
@@ -171,7 +171,7 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 			break;
 		#endif
 		#if defined(AltNum_EnableApproaching)
-		case RepType::ApproachingBottom:
+		case RepTypeEnum::ApproachingBottom:
 			if(exponent.IntHalf==0)
 				return ApproachingOneFromRightValue();
 			else if(exponent.IntHalf==NegativeRep)
@@ -181,28 +181,28 @@ inline MixedDec BlazesRusCode::MixedDec::PowOp(const MixedDec& exponent)
 			break;
 		#endif
 		#if defined(AltNum_EnableIRep)
-		case RepType::INum:
+		case RepTypeEnum::INum:
 		#if defined(AltNum_EnableDecimaledIFractionals)
-		case RepType::INumByDiv:
+		case RepTypeEnum::INumByDiv:
 		#elif defined(AltNum_EnableIFractional)
-		case RepType::IFractional:
+		case RepTypeEnum::IFractional:
 		#endif
 		#if defined(AltNum_EnableMixedIFractional)
-		case RepType::MixedI:
+		case RepTypeEnum::MixedI:
 		#endif
 		#if defined(AltNum_EnableImaginaryInfinity)
-		case RepType::PositiveImaginaryInfinity:
-		case RepType::NegativeImaginaryInfinity:
+		case RepTypeEnum::PositiveImaginaryInfinity:
+		case RepTypeEnum::NegativeImaginaryInfinity:
 		#endif
 		#if defined(AltNum_EnableApproachingI)
-		case RepType::ApproachingImaginaryBottom:
+		case RepTypeEnum::ApproachingImaginaryBottom:
 			#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingImaginaryTop:
+		case RepTypeEnum::ApproachingImaginaryTop:
 			#endif
 			#if defined(AltNum_EnableApproachingDivided)
-		case RepType::ApproachingImaginaryMidLeft:
+		case RepTypeEnum::ApproachingImaginaryMidLeft:
 				#if !defined(AltNum_DisableApproachingTop)
-		case RepType::ApproachingImaginaryMidRight:
+		case RepTypeEnum::ApproachingImaginaryMidRight:
 				#endif
 			#endif
 		#endif

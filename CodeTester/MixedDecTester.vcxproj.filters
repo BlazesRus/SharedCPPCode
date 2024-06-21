@@ -89,7 +89,7 @@
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp">
+    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h">

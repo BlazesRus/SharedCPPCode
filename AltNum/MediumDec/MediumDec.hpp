@@ -272,6 +272,8 @@ public:
         /// </summary>
         void  SetValueToTwiceLN10Div();
 
+        void SetValueToPointOne();
+
     #pragma endregion ValueSetters
 
     #pragma region ValueDefines
@@ -351,7 +353,7 @@ public:
         static MediumDec MaximumValue();
 
         static MediumDec NegativePointFiveValue();
-		
+
 		static MediumDec PointOneValue();
 
         static MediumDec NegativePointFive;
@@ -482,7 +484,7 @@ public:
         /// </summary>
         static MediumDec TwiceLN10Div;
 
-        static MediumDec PointOne();
+        static MediumDec PointOne;
 
     #pragma endregion ValueDefines
 

@@ -193,7 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
-    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Base.hpp" />
+    <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />

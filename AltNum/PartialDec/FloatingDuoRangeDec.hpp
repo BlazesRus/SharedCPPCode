@@ -922,7 +922,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The value.</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto& BasicUIntAddOp(const IntType& rValue)
         {
@@ -948,7 +948,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDecBase&</returns>
+        /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         auto BasicUIntSubOp(const IntType& rValue)
         {
@@ -1148,8 +1148,8 @@ public:
             if (Value.DecimalHalf != 0)
             {
 				DecimalHalf += Value.DecimalHalf;
-				if (DecimalHalf >= MediumDecBase::DecimalOverflow) {
-					DecimalHalf -= MediumDecBase::DecimalOverflow; ++IntHalf; }
+				if (DecimalHalf >= MediumDec::DecimalOverflow) {
+					DecimalHalf -= MediumDec::DecimalOverflow; ++IntHalf; }
             }
         }
 		

@@ -261,12 +261,12 @@ namespace BlazesRusCode
 
 		bool operator==(const RepType& that) const
 		{
-			Value==that.Value;
+			return Value==that.Value;
 		}
 
 		bool operator!=(const RepType& that) const
 		{
-			Value!=that.Value;
+			return Value!=that.Value;
 		}
 
 #pragma region ValueDefines

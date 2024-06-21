@@ -8,13 +8,14 @@
 #include "..\AltNum\AlternativeInt\PartialInt.hpp"
 #include "..\AltNum\AlternativeInt\MirroredInt.hpp"
 #include "..\AltNum\AlternativeInt\FlaggedInt.hpp"
+#include "..\AltNum\RepType.h"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 using FlaggedInt = BlazesRusCode::FlaggedInt;
 
-//#include "..\AltNum\MediumDecV2\MediumDecV2Base.hpp"
-//using MediumDecVariant = BlazesRusCode::MediumDecV2Base;
+//#include "..\AltNum\MediumDecV2\MediumDecV2.hpp"
+//using MediumDecVariant = BlazesRusCode::MediumDecV2;
 
 #include <Windows.h>
 

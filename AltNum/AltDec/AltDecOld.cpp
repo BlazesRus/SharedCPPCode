@@ -87,68 +87,68 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
         RepType repType = GetRepType();
         switch (repType)
         {
-			case RepType::NormalType:
+			case RepTypeEnum::NormalType:
 				return BasicToStringOp();
 				break;
         #if defined(AltNum_EnableFractionals)
-            case RepType::NumByDiv:
+            case RepTypeEnum::NumByDiv:
                 return BasicToStringOp()+"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
                 break;
         #endif
         #if defined(AltNum_EnablePiRep)
-            case RepType::PiNum:
+            case RepTypeEnum::PiNum:
                 return BasicToStringOp()+"π";
                 break;
         #endif
         #if defined(AltNum_EnableERep)
-            case RepType::ENum:
+            case RepTypeEnum::ENum:
                 return BasicToStringOp()+"e";
                 break;
         #endif
         #if defined(AltNum_EnableDecimaledPiFractionals)
-            case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+            case RepTypeEnum::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
                 return BasicToStringOp()+"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
                 break;
         #elif defined(AltNum_EnablePiFractional)
-            case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+            case RepTypeEnum::PiFractional://  IntHalf/DecimalHalf*Pi Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
                 break;
         #endif
         #if defined(AltNum_EnableDecimaledEFractionals)
-            case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+            case RepTypeEnum::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
                 return BasicToStringOp()+"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
                 break;
         #elif defined(AltNum_EnableEFractional)
-            case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+            case RepTypeEnum::EFractional://  IntHalf/DecimalHalf*e Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
                 break;
         #endif
         #if defined(AltNum_EnableInfinityRep)
-            case RepType::PositiveInfinity:
+            case RepTypeEnum::PositiveInfinity:
                 return "∞";
                 break;
-            case RepType::NegativeInfinity:
+            case RepTypeEnum::NegativeInfinity:
                 return "-∞";
                 break;
         #endif
         #if defined(AltNum_EnableApproaching)
-            case RepType::ApproachingBottom:
+            case RepTypeEnum::ApproachingBottom:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingBottom);
+                ConvertToNormType(RepTypeEnum::ApproachingBottom);
                 return BasicToStringOp();
                 #else
                 return IntHalfAsString() + ".0..1";
                 #endif
                 break;
             #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingTop:
+            case RepTypeEnum::ApproachingTop:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingTop);
+                ConvertToNormType(RepTypeEnum::ApproachingTop);
                 return BasicToStringOp();
                 #else
                 return IntHalfAsString() + ".9..9";
@@ -157,9 +157,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
         #endif
         #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft:
+            case RepTypeEnum::ApproachingMidLeft:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingMidLeft);
+                ConvertToNormType(RepTypeEnum::ApproachingMidLeft);
                 return BasicToStringOp();
                 #else
             {
@@ -169,9 +169,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 #endif
 				break;
             #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingMidRight:
+            case RepTypeEnum::ApproachingMidRight:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingMidRight);
+                ConvertToNormType(RepTypeEnum::ApproachingMidRight);
                 return BasicToStringOp();
                 #else
             {
@@ -183,25 +183,25 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
         #endif
         #if defined(AltNum_EnableIRep)
-            case RepType::INum:
+            case RepTypeEnum::INum:
                 return BasicToStringOp()+"i";
                 break;
         #endif
         #if defined(AltNum_EnableDecimaledIFractionals)
-            case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+            case RepTypeEnum::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
                 return BasicToStringOp()+"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
                 break;
         #elif defined(AltNum_EnableIFractional)
-            case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+            case RepTypeEnum::IFractional://  IntHalf/DecimalHalf*i Representation
                 return IntHalfAsString() +"/"
                 +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
                 break;
         #endif
         #if defined(AltNum_EnableApproachingPi)
-            case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
+            case RepTypeEnum::ApproachingTopPi://equal to IntHalf.9..9 Pi
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingTop);
+                ConvertToNormType(RepTypeEnum::ApproachingTop);
                 return BasicToStringOp()+"π";
                 #else
                 return IntHalfAsString() + ".9..9π";
@@ -209,9 +209,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 break;
         #endif
         #if defined(AltNum_EnableApproachingE)
-            case RepType::ApproachingTopE://equal to IntHalf.9..9 e
+            case RepTypeEnum::ApproachingTopE://equal to IntHalf.9..9 e
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingTop);
+                ConvertToNormType(RepTypeEnum::ApproachingTop);
                 return BasicToStringOp()+"e";
                 #else
                 return IntHalfAsString() + ".9..9e";
@@ -219,48 +219,48 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 break;
         #endif
         #if defined(AltNum_EnableMixedFractional)
-            case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+            case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
                 break;
             #if defined(AltNum_EnableMixedPiFractional)
-            case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+            case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
                 break;
             #elif defined(AltNum_EnableMixedEFractional)
-            case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+            case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
                 break;
             #elif defined(AltNum_EnableMixedIFractional)
-            case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+            case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
                 return IntHalfAsString()+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
                 +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
                 break;
             #endif
         #endif
 		#if defined(AltNum_EnableImaginaryInfinity)
-			case RepType::PositiveImaginaryInfinity:
+			case RepTypeEnum::PositiveImaginaryInfinity:
 				return "∞";
 				break;
-			case RepType::NegativeImaginaryInfinity:
+			case RepTypeEnum::NegativeImaginaryInfinity:
 				return "-∞";
 				break;
 		#endif
     #if defined(AltNum_EnableApproachingI)
-			case RepType::ApproachingImaginaryBottom:
+			case RepTypeEnum::ApproachingImaginaryBottom:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
+				ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryBottom);
 				return BasicToStringOp()+"i";
 				#else
 				return IntHalfAsString() + ".0..1i";
 				#endif
 				break;
 			#if !defined(AltNum_DisableApproachingTop)
-			case RepType::ApproachingImaginaryTop:
+			case RepTypeEnum::ApproachingImaginaryTop:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertIRepToNormal(RepType::ApproachingImaginaryTop);
+				ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryTop);
 				return BasicToStringOp()+"i";
 				#else
 				return IntHalfAsString() + ".9..9i";
@@ -268,9 +268,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 			#endif
         #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingImaginaryMidLeft:
+            case RepTypeEnum::ApproachingImaginaryMidLeft:
             #ifdef AltNum_DisplayApproachingAsReal
-                ConvertIRepToNormal(RepType::ApproachingImaginaryMidLeft);
+                ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryMidLeft);
                 return BasicToStringOp()+"i";
             #else
             {
@@ -280,9 +280,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
 			break;
             #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingImaginaryMidRight:
+            case RepTypeEnum::ApproachingImaginaryMidRight:
             #ifdef AltNum_DisplayApproachingAsReal
-                ConvertIRepToNormal(RepType::ApproachingImaginaryMidRight);
+                ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryMidRight);
                 return BasicToStringOp()+"i";
             #else
             {
@@ -294,9 +294,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 		#endif
     #endif
         #if defined(AltNum_EnableNaN)
-            case RepType::Undefined:
+            case RepTypeEnum::Undefined:
                 return "Undefined"; break;
-            case RepType::NaN:
+            case RepTypeEnum::NaN:
                 return "NaN"; break;
         #endif
         #if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
@@ -310,7 +310,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
         #endif
         #if defined(AltNum_EnableNil)
-            case RepType::Nil:
+            case RepTypeEnum::Nil:
                 return "Nil"; break;
         #endif
             default:
@@ -353,67 +353,67 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
         RepType repType = GetRepType();
         switch (repType)
         {
-			case RepType::NormalType:
+			case RepTypeEnum::NormalType:
 				return BasicToFullStringOp();
 				break;
 		#if defined(AltNum_EnableFractionals)
-            case RepType::NumByDiv:
+            case RepTypeEnum::NumByDiv:
 				return BasicToFullStringOp()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
 				break;
 		#endif
 		#if defined(AltNum_EnablePiRep)
-			case RepType::PiNum:
+			case RepTypeEnum::PiNum:
 				return BasicToFullStringOp()+"π";
 				break;
 		#endif
 		#if defined(AltNum_EnableERep)
-			case RepType::ENum:
+			case RepTypeEnum::ENum:
 				return BasicToFullStringOp()+"e";
 				break;
 		#endif
 		#if defined(AltNum_EnableDecimaledEFractionals)
-			case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+			case RepTypeEnum::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
 				return BasicToFullStringOp()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
 				break;
 		#elif defined(AltNum_EnableEFractional)
-			case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+			case RepTypeEnum::EFractional://  IntHalf/DecimalHalf*e Representation
 				return IntHalfAsString()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
 				break;
 		#endif
 		#if defined(AltNum_EnableDecimaledPiFractionals)
-			case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+			case RepTypeEnum::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
 				return BasicToFullStringOp()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
 				break;
 		#elif defined(AltNum_EnablePiFractional)
-			case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+			case RepTypeEnum::PiFractional://  IntHalf/DecimalHalf*Pi Representation
 				return IntHalfAsString()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
 				break;
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
-			case RepType::PositiveInfinity:
+			case RepTypeEnum::PositiveInfinity:
 				return "∞";
 				break;
-			case RepType::NegativeInfinity:
+			case RepTypeEnum::NegativeInfinity:
 				return "-∞";
 				break;
 		#endif
 		#if defined(AltNum_EnableApproaching)
-			case RepType::ApproachingBottom:
+			case RepTypeEnum::ApproachingBottom:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertToNormType(RepType::ApproachingBottom);
+				ConvertToNormType(RepTypeEnum::ApproachingBottom);
 				return BasicToFullStringOp();
 				#else
 				return IntHalfAsString() + ".0..1";
 				#endif
 				break;
-			case RepType::ApproachingTop:
+			case RepTypeEnum::ApproachingTop:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertToNormType(RepType::ApproachingTop);
+				ConvertToNormType(RepTypeEnum::ApproachingTop);
 				return BasicToFullStringOp();
 				#else
 				return IntHalfAsString() + ".9..9";
@@ -421,9 +421,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 		#endif
         #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingMidLeft:
+            case RepTypeEnum::ApproachingMidLeft:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingMidLeft);
+                ConvertToNormType(RepTypeEnum::ApproachingMidLeft);
                 return BasicToStringOp();
                 #else
             {
@@ -433,9 +433,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
                 #endif
 				break;
             #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingMidRight:
+            case RepTypeEnum::ApproachingMidRight:
                 #ifdef AltNum_DisplayApproachingAsReal
-                ConvertToNormType(RepType::ApproachingMidRight);
+                ConvertToNormType(RepTypeEnum::ApproachingMidRight);
                 return BasicToStringOp();
                 #else
             {
@@ -447,25 +447,25 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
         #endif
 		#if defined(AltNum_EnableIRep)
-			case RepType::INum:
+			case RepTypeEnum::INum:
 				return BasicToFullStringOp()+"i";
 				break;
 		#endif
 		#if defined(AltNum_EnableDecimaledIFractionals)
-			case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+			case RepTypeEnum::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
 				return BasicToFullStringOp()+"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
 				break;
 		#elif defined(AltNum_EnableIFractional)
-			case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+			case RepTypeEnum::IFractional://  IntHalf/DecimalHalf*i Representation
 				return IntHalfAsString() +"/"
 				+VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
 				break;
 		#endif
 		#if defined(AltNum_EnableApproachingPi)
-			case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
+			case RepTypeEnum::ApproachingTopPi://equal to IntHalf.9..9 Pi
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertToNormType(RepType::ApproachingTop);
+				ConvertToNormType(RepTypeEnum::ApproachingTop);
 				return BasicToFullStringOp()+"π";
 				#else
 				return IntHalfAsString() + ".9..9π";
@@ -473,9 +473,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 		#endif
 		#if defined(AltNum_EnableApproachingE)
-			case RepType::ApproachingTopE://equal to IntHalf.9..9 e
+			case RepTypeEnum::ApproachingTopE://equal to IntHalf.9..9 e
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertToNormType(RepType::ApproachingTop);
+				ConvertToNormType(RepTypeEnum::ApproachingTop);
 				return BasicToFullStringOp()+"e";
 				#else
 				return IntHalfAsString() + ".9..9e";
@@ -483,26 +483,26 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 		#endif
 		#if defined(AltNum_EnableImaginaryInfinity)
-			case RepType::PositiveImaginaryInfinity:
+			case RepTypeEnum::PositiveImaginaryInfinity:
 				return "∞";
 				break;
-			case RepType::NegativeImaginaryInfinity:
+			case RepTypeEnum::NegativeImaginaryInfinity:
 				return "-∞";
 				break;
 		#endif
     #if defined(AltNum_EnableApproachingI)
-			case RepType::ApproachingImaginaryBottom:
+			case RepTypeEnum::ApproachingImaginaryBottom:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertIRepToNormal(RepType::ApproachingImaginaryBottom);
+				ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryBottom);
 				return BasicToFullStringOp()+"i";
 				#else
 				return IntHalfAsString() + ".0..1i";
 				#endif
 				break;
 			#if !defined(AltNum_DisableApproachingTop)
-			case RepType::ApproachingImaginaryTop:
+			case RepTypeEnum::ApproachingImaginaryTop:
 				#ifdef AltNum_DisplayApproachingAsReal
-				ConvertIRepToNormal(RepType::ApproachingImaginaryTop);
+				ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryTop);
 				return BasicToFullStringOp()+"i";
 				#else
 				return IntHalfAsString() + ".9..9i";
@@ -510,9 +510,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 				break;
 			#endif
         #if defined(AltNum_EnableApproachingDivided)
-            case RepType::ApproachingImaginaryMidLeft:
+            case RepTypeEnum::ApproachingImaginaryMidLeft:
             #ifdef AltNum_DisplayApproachingAsReal
-                ConvertIRepToNormal(RepType::ApproachingImaginaryMidLeft);
+                ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryMidLeft);
                 return BasicToFullStringOp()+"i";
             #else
             {
@@ -522,9 +522,9 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
             #endif
 			break;
             #if !defined(AltNum_DisableApproachingTop)
-            case RepType::ApproachingImaginaryMidRight:
+            case RepTypeEnum::ApproachingImaginaryMidRight:
             #ifdef AltNum_DisplayApproachingAsReal
-                ConvertIRepToNormal(RepType::ApproachingImaginaryMidRight);
+                ConvertIRepToNormal(RepTypeEnum::ApproachingImaginaryMidRight);
                 return BasicToFullStringOp()+"i";
             #else
             {
@@ -536,31 +536,31 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 		#endif
     #endif
 		#if defined(AltNum_EnableMixedFractional)
-			case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+			case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
 				break;
 			#if defined(AltNum_EnableMixedPiFractional)
-			case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+			case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
 				break;
 			#elif defined(AltNum_EnableMixedEFractional)
-			case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+			case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
 				break;
 			#elif defined(AltNum_EnableMixedIFractional)
-			case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+			case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 				return IntHalfAsString() +" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
 				+"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
 				break;
 			#endif
 		#endif
 		#if defined(AltNum_EnableNaN)
-			case RepType::Undefined:
+			case RepTypeEnum::Undefined:
 				return "Undefined"; break;
-			case RepType::NaN:
+			case RepTypeEnum::NaN:
 				return "NaN"; break;
 		#endif
 		#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
@@ -574,7 +574,7 @@ using RepType = BlazesRusCode::AltDecBase::RepType;
 			#endif
 		#endif
 		#if defined(AltNum_EnableNil)
-			case RepType::Nil:
+			case RepTypeEnum::Nil:
 				return "Nil"; break;
 		#endif
 			default:

@@ -1455,14 +1455,14 @@ public:
 			{
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 		#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv:
+				case RepTypeEnum::PiNumByDiv:
 		#elif defined(AltNum_EnablePiFractional)
-				case RepType::PiFractional:
+				case RepTypeEnum::PiFractional:
 		#endif
 		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv:
+				case RepTypeEnum::ENumByDiv:
 		#elif defined(AltNum_EnableEFractional)
-				case RepType::EFractional:
+				case RepTypeEnum::EFractional:
 		#endif
                     #if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
 					ConvertToNormType(LRep);
@@ -1470,9 +1470,9 @@ public:
 					break;
                     #endif
 		#if defined(AltNum_EnableDecimaledIFractionals)
-				case RepType::INumByDiv:
+				case RepTypeEnum::INumByDiv:
 		#elif defined(AltNum_EnableEFractional)
-				case RepType::IFractional:
+				case RepTypeEnum::IFractional:
 		#endif
                     #if defined(AltNum_EnableIRep)
 					ConvertToNormType(LRep);
@@ -1481,26 +1481,26 @@ public:
                     #endif
 	#endif
     #ifdef AltNum_EnableImaginaryInfinity
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
+				case RepTypeEnum::PositiveImaginaryInfinity:
+				case RepTypeEnum::NegativeImaginaryInfinity:
 					return;
 					break;
     #endif
 	#if defined(AltNum_EnableIRep)
 	#endif
 	#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+				case RepTypeEnum::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
 					if(self.IntHalf.IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntDivOpV2(Value);
 	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+				case RepTypeEnum::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
 	    #endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepTypeEnum::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
 					ConvertToNormType(LRep);
@@ -1510,19 +1510,19 @@ public:
 	#if defined(AltNum_EnableFractionals)
 	#endif
 	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
+				case RepTypeEnum::PositiveImaginaryInfinity:
+				case RepTypeEnum::NegativeImaginaryInfinity:
 					return;
 					break;
 		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
+				case RepTypeEnum::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
+				case RepTypeEnum::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 			#endif
 		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
@@ -1531,7 +1531,7 @@ public:
 	    #endif
     #endif
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+				case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
                     int divRes;
                     int C;
                     if(IntHalf.IsZero())//Become NumByDiv
@@ -1576,11 +1576,11 @@ public:
                     }
 					break;
 		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#endif
 		#if defined(AltNum_EnableAlternativeMixedFrac)
                     int divRes;
@@ -1640,8 +1640,8 @@ public:
 		#endif
 	#endif
 	#if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
-				case RepType::NaN:
+				case RepTypeEnum::Undefined:
+				case RepTypeEnum::NaN:
 					throw "Can't perform operations with NaN or Undefined number";
 					break;
 	#endif			
@@ -1961,47 +1961,47 @@ public:
 			{
 	#if defined(AltNum_EnableAlternativeRepFractionals)
 		#if defined(AltNum_EnableDecimaledPiFractionals)
-				case RepType::PiNumByDiv:
+				case RepTypeEnum::PiNumByDiv:
 		#elif defined(AltNum_EnablePiFractional)
-				case RepType::PiFractional:
+				case RepTypeEnum::PiFractional:
 		#endif
 		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::ENumByDiv:
+				case RepTypeEnum::ENumByDiv:
 		#elif defined(AltNum_EnableEFractional)
-				case RepType::EFractional:
+				case RepTypeEnum::EFractional:
 		#endif
 					ConvertToNormType(LRep);
 					BasicIntMultOpV2(Value);
 					break;
 		#if defined(AltNum_EnableDecimaledEFractionals)
-				case RepType::INumByDiv:
+				case RepTypeEnum::INumByDiv:
 		#elif defined(AltNum_EnableEFractional)
-				case RepType::IFractional:
+				case RepTypeEnum::IFractional:
 		#endif
 					ConvertToNormType(LRep);
 					BasicIntMultOpV2(Value);
 					break;
 	#endif
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
+				case RepTypeEnum::PositiveImaginaryInfinity:
+				case RepTypeEnum::NegativeImaginaryInfinity:
 					return;
 					break;
 	#if defined(AltNum_EnableIRep)
 	#endif
 	#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
+				case RepTypeEnum::ApproachingBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)
 					if(self.IsZero())
 						return;
 					ConvertToNormType(LRep);
 					BasicIntMultOpV2(Value);
 					break;
 	    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
+				case RepTypeEnum::ApproachingTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)
 	    #endif
 		#if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
             #if !defined(AltNum_DisableApproachingTop)
-                case RepType::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
+                case RepTypeEnum::ApproachingMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			#endif
 		#endif
 					ConvertToNormType(LRep);
@@ -2011,19 +2011,19 @@ public:
 	#if defined(AltNum_EnableFractionals)
 	#endif
 	#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::PositiveImaginaryInfinity:
-				case RepType::NegativeImaginaryInfinity:
+				case RepTypeEnum::PositiveImaginaryInfinity:
+				case RepTypeEnum::NegativeImaginaryInfinity:
 					return;
 					break;
 		#if defined(AltNum_EnableApproachingI)
-				case RepType::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
+				case RepTypeEnum::ApproachingImaginaryBottom://(Approaching Towards Zero);(IntHalf of 0 results in 0.00...1)i
 			#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
+				case RepTypeEnum::ApproachingImaginaryTop://(Approaching Away from Zero);(IntHalf of 0 results in 0.99...9)i
 			#endif
 		    #if defined(AltNum_EnableApproachingDivided)
-				case RepType::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingImaginaryMidRight://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep-ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep+ApproachingLeftRealValue if negative)
 			    #if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
+				case RepTypeEnum::ApproachingImaginaryMidLeft://(Approaching Away from Zero is equal to IntHalf + 1/ExtraRep+ApproachingLeftRealValue if positive: IntHalf - 1/ExtraRep-ApproachingLeftRealValue if negative)
 			    #endif
 		    #endif
 					ConvertToNormalIRep(LRep);
@@ -2032,7 +2032,7 @@ public:
 	    #endif
     #endif
 	#if defined(AltNum_EnableMixedFractional)
-				case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+				case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
 					BasicIntMultOpV2(Value);
 					DecimalHalf *= Value;
 					int divRes = DecimalHalf / -ExtraRep;
@@ -2047,11 +2047,11 @@ public:
 					}
 					break;
 		#if defined(AltNum_EnableMixedPiFractional)
-				case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedEFractional)
-				case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#elif defined(AltNum_EnableMixedIFractional)
-				case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+				case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
 		#endif
 		#if defined(AltNum_EnableAlternativeMixedFrac)
 					BasicIntMultOpV2(Value);
@@ -2070,8 +2070,8 @@ public:
 		#endif
 	#endif
 	#if defined(AltNum_EnableNaN)
-				case RepType::Undefined:
-				case RepType::NaN:
+				case RepTypeEnum::Undefined:
+				case RepTypeEnum::NaN:
 					throw "Can't perform operations with NaN or Undefined number";
 					break;
 	#endif			
@@ -4234,24 +4234,24 @@ public:
         switch (repType)
         {
 	#if defined(AltNum_EnableInfinityRep)
-        case RepType::PositiveInfinity:
+        case RepTypeEnum::PositiveInfinity:
             return "∞";
             break;
-        case RepType::NegativeInfinity:
+        case RepTypeEnum::NegativeInfinity:
             return "-∞";
             break;
 	    #if defined(AltNum_EnableApproaching)
-        case RepType::ApproachingBottom:
+        case RepTypeEnum::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
+			ConvertToNormType(RepTypeEnum::ApproachingBottom);
             return BasicToStringOp();
 			#else
             return (std::string)IntHalf + ".0..1";
 			#endif
             break;
-        case RepType::ApproachingTop:
+        case RepTypeEnum::ApproachingTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToStringOp();
 			#else
             return (std::string)IntHalf + ".9..9";
@@ -4259,8 +4259,8 @@ public:
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
 		//ToDo:work on unreal string version for the various approaching values
-        case RepType::ApproachingMidRight:
-        case RepType::ApproachingMidLeft:
+        case RepTypeEnum::ApproachingMidRight:
+        case RepTypeEnum::ApproachingMidLeft:
             ConvertToNormType(repType);
 			return BasicToStringOp();
 			break;
@@ -4273,32 +4273,32 @@ public:
             break;
     #endif
 	#if defined(AltNum_EnablePiRep)
-        case RepType::PiNum:
+        case RepTypeEnum::PiNum:
             return BasicToStringOp()+"π";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+        case RepTypeEnum::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+        case RepTypeEnum::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableERep)
-        case RepType::ENum:
+        case RepTypeEnum::ENum:
             return BasicToStringOp()+"e";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+        case RepTypeEnum::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+        case RepTypeEnum::EFractional://  IntHalf/DecimalHalf*e Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
@@ -4306,25 +4306,25 @@ public:
 	#endif
 
 	#if defined(AltNum_EnableIRep)
-        case RepType::INum:
+        case RepTypeEnum::INum:
             return BasicToStringOp()+"i";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+        case RepTypeEnum::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
             return BasicToStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+        case RepTypeEnum::IFractional://  IntHalf/DecimalHalf*i Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
-        case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
+        case RepTypeEnum::ApproachingTopPi://equal to IntHalf.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToStringOp()+"π";
 			#else
             return (std::string)IntHalf + ".9..9π";
@@ -4332,9 +4332,9 @@ public:
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-        case RepType::ApproachingTopE://equal to IntHalf.9..9 e
+        case RepTypeEnum::ApproachingTopE://equal to IntHalf.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToStringOp()+"e";
 			#else
             return (std::string)IntHalf + ".9..9e";
@@ -4342,24 +4342,24 @@ public:
             break;
 	#endif
     #if defined(AltNum_EnableImaginaryInfinity)
-        case RepType::PositiveImaginaryInfinity:
+        case RepTypeEnum::PositiveImaginaryInfinity:
             return "∞i";
             break;
-        case RepType::NegativeImaginaryInfinity:
+        case RepTypeEnum::NegativeImaginaryInfinity:
             return "-∞i";
             break;
 	    #if defined(AltNum_EnableApproaching)
-        case RepType::ApproachingImaginaryBottom:
+        case RepTypeEnum::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
+			ConvertToNormType(RepTypeEnum::ApproachingBottom);
             return BasicToStringOp()+"i";
 			#else
             return (std::string)IntHalf + ".0..1i";
 			#endif
             break;
-        case RepType::ApproachingImaginaryTop:
+        case RepTypeEnum::ApproachingImaginaryTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToStringOp()+"i";
 			#else
             return (std::string)IntHalf + ".9..9i";
@@ -4367,8 +4367,8 @@ public:
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
 		//ToDo:work on unreal string version for the various approaching values
-        case RepType::ApproachingImaginaryMidRight:
-        case RepType::ApproachingImaginaryMidLeft:
+        case RepTypeEnum::ApproachingImaginaryMidRight:
+        case RepTypeEnum::ApproachingImaginaryMidLeft:
             ConvertToNormType(repType);
 			return BasicToStringOp()+"i";
 			break;
@@ -4376,31 +4376,31 @@ public:
             #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-        case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+        case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
-        case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
-        case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
-        case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
     #endif
 	#if defined(AltNum_EnableNaN)
-        case RepType::Undefined:
+        case RepTypeEnum::Undefined:
             return "Undefined";
-        case RepType::NaN:
+        case RepTypeEnum::NaN:
             return "NaN";
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
@@ -4414,7 +4414,7 @@ public:
         #endif
 	#endif
     #if defined(AltNum_EnableNil)
-        case RepType::Nil:
+        case RepTypeEnum::Nil:
             return "Nil";
     #endif
         default:
@@ -4458,24 +4458,24 @@ public:
         switch (repType)
         {
 	#if defined(AltNum_EnableInfinityRep)
-        case RepType::PositiveInfinity:
+        case RepTypeEnum::PositiveInfinity:
             return "∞";
             break;
-        case RepType::NegativeInfinity:
+        case RepTypeEnum::NegativeInfinity:
             return "-∞";
             break;
 	    #if defined(AltNum_EnableApproaching)
-        case RepType::ApproachingBottom:
+        case RepTypeEnum::ApproachingBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
+			ConvertToNormType(RepTypeEnum::ApproachingBottom);
             return BasicToFullStringOp();
 			#else
             return (std::string)IntHalf + ".0..1";
 			#endif
             break;
-        case RepType::ApproachingTop:
+        case RepTypeEnum::ApproachingTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToFullStringOp();
 			#else
             return (std::string)IntHalf + ".9..9";
@@ -4483,8 +4483,8 @@ public:
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
 		//ToDo:work on unreal string version for the various approaching values
-        case RepType::ApproachingMidRight:
-        case RepType::ApproachingMidLeft:
+        case RepTypeEnum::ApproachingMidRight:
+        case RepTypeEnum::ApproachingMidLeft:
             ConvertToNormType(repType);
 			return BasicToFullStringOp();
 			break;
@@ -4497,32 +4497,32 @@ public:
             break;
     #endif
 	#if defined(AltNum_EnablePiRep)
-        case RepType::PiNum:
+        case RepTypeEnum::PiNum:
             return BasicToFullStringOp()+"π";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
+        case RepTypeEnum::PiNumByDiv://  (Value/(ExtraRep*-1))*Pi Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::PiFractional://  IntHalf/DecimalHalf*Pi Representation
+        case RepTypeEnum::PiFractional://  IntHalf/DecimalHalf*Pi Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"π";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableERep)
-        case RepType::ENum:
+        case RepTypeEnum::ENum:
             return BasicToFullStringOp()+"e";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
+        case RepTypeEnum::ENumByDiv://  (Value/(ExtraRep*-1))*e Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::EFractional://  IntHalf/DecimalHalf*e Representation
+        case RepTypeEnum::EFractional://  IntHalf/DecimalHalf*e Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"e";
             break;
@@ -4530,25 +4530,25 @@ public:
 	#endif
 
 	#if defined(AltNum_EnableIRep)
-        case RepType::INum:
+        case RepTypeEnum::INum:
             return BasicToFullStringOp()+"i";
             break;
         #if defined(AltNum_EnableDecimaledPiFractionals)
-        case RepType::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
+        case RepTypeEnum::INumByDiv://  (Value/(ExtraRep*-1))*i Representation
             return BasicToFullStringOp()+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
         #elif defined(AltNum_EnableAlternativeRepFractionals)
-        case RepType::IFractional://  IntHalf/DecimalHalf*i Representation
+        case RepTypeEnum::IFractional://  IntHalf/DecimalHalf*i Representation
             return (std::string)IntHalf+"/"
             +VariableConversionFunctions::UnsignedIntToStringConversion(DecimalHalf)+"i";
             break;
         #endif
 	#endif
 	#if defined(AltNum_EnableApproachingPi)
-        case RepType::ApproachingTopPi://equal to IntHalf.9..9 Pi
+        case RepTypeEnum::ApproachingTopPi://equal to IntHalf.9..9 Pi
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToFullStringOp()+"π";
 			#else
             return (std::string)IntHalf + ".9..9π";
@@ -4556,9 +4556,9 @@ public:
             break;
 	#endif
 	#if defined(AltNum_EnableApproachingE)
-        case RepType::ApproachingTopE://equal to IntHalf.9..9 e
+        case RepTypeEnum::ApproachingTopE://equal to IntHalf.9..9 e
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToFullStringOp()+"e";
 			#else
             return (std::string)IntHalf + ".9..9e";
@@ -4566,24 +4566,24 @@ public:
             break;
 	#endif
     #if defined(AltNum_EnableImaginaryInfinity)
-        case RepType::PositiveImaginaryInfinity:
+        case RepTypeEnum::PositiveImaginaryInfinity:
             return "∞i";
             break;
-        case RepType::NegativeImaginaryInfinity:
+        case RepTypeEnum::NegativeImaginaryInfinity:
             return "-∞i";
             break;
 	    #if defined(AltNum_EnableApproaching)
-        case RepType::ApproachingImaginaryBottom:
+        case RepTypeEnum::ApproachingImaginaryBottom:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingBottom);
+			ConvertToNormType(RepTypeEnum::ApproachingBottom);
             return BasicToFullStringOp()+"i";
 			#else
             return (std::string)IntHalf + ".0..1i";
 			#endif
             break;
-        case RepType::ApproachingImaginaryTop:
+        case RepTypeEnum::ApproachingImaginaryTop:
 			#ifdef AltNum_DisplayApproachingAsReal
-			ConvertToNormType(RepType::ApproachingTop);
+			ConvertToNormType(RepTypeEnum::ApproachingTop);
             return BasicToFullStringOp()+"i";
 			#else
             return (std::string)IntHalf + ".9..9i";
@@ -4591,8 +4591,8 @@ public:
             break;
 		    #if defined(AltNum_EnableApproachingDivided)
 		//ToDo:work on unreal string version for the various approaching values
-        case RepType::ApproachingImaginaryMidRight:
-        case RepType::ApproachingImaginaryMidLeft:
+        case RepTypeEnum::ApproachingImaginaryMidRight:
+        case RepTypeEnum::ApproachingImaginaryMidLeft:
             ConvertToNormType(repType);
 			return BasicToFullStringOp()+"i";
 			break;
@@ -4600,31 +4600,31 @@ public:
         #endif
     #endif
     #if defined(AltNum_EnableMixedFractional)
-        case RepType::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
+        case RepTypeEnum::MixedFrac://IntHalf +- (-DecimalHalf)/ExtraRep
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(ExtraRep);
             break;
 		#if defined(AltNum_EnableMixedPiFractional)
-        case RepType::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedPi://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"π";
             break;
 		#elif defined(AltNum_EnableMixedEFractional)
-        case RepType::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedE://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"e";
             break;
 		#elif defined(AltNum_EnableMixedIFractional)
-        case RepType::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
+        case RepTypeEnum::MixedI://IntHalf +- (-DecimalHalf/-ExtraRep)
             return (std::string)IntHalf+" "+VariableConversionFunctions::UnsignedIntToStringConversion(-DecimalHalf)
             +"/"+VariableConversionFunctions::UnsignedIntToStringConversion(-ExtraRep)+"i";
             break;
 		#endif
     #endif
 	#if defined(AltNum_EnableNaN)
-        case RepType::Undefined:
+        case RepTypeEnum::Undefined:
             return "Undefined";
-        case RepType::NaN:
+        case RepTypeEnum::NaN:
             return "NaN";
 	#endif
 	#if defined(AltNum_EnableUndefinedButInRange)//Such as result of Cos of infinity(value format part uses for +- range, ExtraRepValue==UndefinedInRangeRep)
@@ -4638,7 +4638,7 @@ public:
         #endif
 	#endif
     #if defined(AltNum_EnableNil)
-        case RepType::Nil:
+        case RepTypeEnum::Nil:
             return "Nil";
     #endif
         default:

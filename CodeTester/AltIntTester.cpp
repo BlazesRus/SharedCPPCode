@@ -8,7 +8,7 @@
 #include "..\AltNum\AlternativeInt\PartialInt.hpp"
 #include "..\AltNum\AlternativeInt\MirroredInt.hpp"
 #include "..\AltNum\AlternativeInt\FlaggedInt.hpp"
-#include "..\AltNum\MediumDec\ReducedMediumDecBase.hpp"
+#include "..\AltNum\MediumDec\ReducedMediumDec.hpp"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;

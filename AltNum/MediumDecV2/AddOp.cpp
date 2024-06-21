@@ -1,517 +1,66 @@
-#include "MediumDecV2Base.hpp"
-using MediumDecV2Base = BlazesRusCode::MediumDecV2Base;
+﻿#include "MediumDecV2.hpp"
+using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
+using RepTypeEnum = BlazesRusCode::RepTypeEnum;
 
-void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+void SameRep_ApproachingBottom(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
 {
-    ConvertToNormType(LRep);
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedAddOp(RValue);
+
 }
 
-void RightSideOp(const auto& rValue, const RepType& RRep)
+void SameRep_ApproachingTop(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep)
 {
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedAddOp(RValue);
+
 }
 
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-
-#if defined(AltNum_EnablePiRep)
-//PiRep_to_others
-void PiRepSwitch(const auto& rValue)
-{
-	RepType LRep = GetPiRepType();
-	switch(rValue.DecimalHalf.Flags)
-	{
-    #pragma region PiRep_to_PiRep
-		case 1:{
-			RepType RRep = rValue.GetPiRepType();
-			if(LRep==RRep)
-			{
-				switch(LRep)
-				{
-					case RepType::PiNum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopPi:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-			else
-			{
-				switch(LRep)
-				{
-					case RepType::PiNum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomPi:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopPi:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-		} break;
-    #pragma endregion PiRep_to_PiRep
-
-#if defined(AltNum_EnableERep)
-		case 2:
-			RightSideEOp(rValue, RRep); break;
-#endif
-
-#if defined(AltNum_EnableIRep)
-		case 3:
-			if(rValue.IsNotZero())
-				throw "Complex number operations not enabled yet.";
-			break;
-		} break;
-#endif
-
-    #pragma region PiRep_to_NormRep
-		default:{
-			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::PiNum:{
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomPi:{
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTopPi:{
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-			default:
-				throw "Unsupported operation"; break;
-			}
-		} break;
-    #pragma endregion PiRep_to_NormRep
-	}
-}
-#endif
-
-#if defined(AltNum_EnableERep)
-//ERep_to_others
-void ERepSwitch(const auto& rValue)
-{
-	RepType LRep = GetERepType();
-	switch(rValue.DecimalHalf.Flags)
-	{
-#if defined(AltNum_EnablePiRep)
-		case 1:
-			RightSidePiOp(rValue, RRep); break;
-#endif
-    #pragma region ERep_to_ERep
-		case 2:
-		{
-			RepType RRep = rValue.GetERepType();
-			if(LRep==RRep)
-			{
-				switch(LRep)
-				{
-					case RepType::ENum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomE:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopE:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-			else
-			{
-				switch(LRep)
-				{
-					case RepType::ENum:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingBottomE:{
-						switch(RRep){
-						}
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingTopE:{
-						switch(RRep){
-						}
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-		} break;
-    #pragma endregion ERep_to_ERep
-
-#if defined(AltNum_EnableIRep)
-		case 3://ERep_to_IRep
-			if(rValue.IsNotZero())
-				throw "Complex number operations not enabled yet.";
-			break;
-#endif
-
-		default:{//ERep_to_NormalRep
-			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::ENum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingBottomE:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingTopE:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-			default:
-				throw "Unsupported operation"; break;
-			}
-		} break;
-	}
-}
-#endif
-
-#if defined(AltNum_EnableIRep)
-//IRep_to_others
-void IRepSwitch(const auto& rValue)
-{
-	RepType LRep = GetIRepType();
-	switch(rValue.DecimalHalf.Flags)
-	{
-#if defined(AltNum_EnablePiRep)
-		case 1:
-			throw "Complex number operations not enabled yet.";
-			break;
-#endif
-
-#if defined(AltNum_EnableERep)
-		case 2:
-			throw "Complex number operations not enabled yet.";
-			break;
-#endif
-
-    #pragma region IRep_to_IRep
-		case 3:
-		{
-			RepType RRep = rValue.GetIRepType();
-			if(LRep==RRep)
-			{
-				switch(LRep)
-				{
-					case RepType::INum:{
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:{
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryTop:{
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-					} break;
-#endif
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-			else
-			{
-				switch(LRep)
-				{
-					case RepType::INum:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				#if defined(AltNum_EnableApproaching)
-					case RepType::ApproachingImaginaryBottom:{
-						switch(RRep){
-						}
-					} break;
-					#if !defined(AltNum_DisableApproachingTop)
-					case RepType::ApproachingImaginaryTop:{
-						switch(RRep){
-						}
-					} break;
-					#endif
-				#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-					case RepType::ImaginaryInfinity:{
-						switch(RRep){
-						}
-					} break;
-#endif
-				default:
-					throw "Unsupported operation"; break;
-				}
-			}
-		} break;
-    #pragma endregion IRep_to_IRep
-
-    #pragma region IRep_to_NormRep
-		default:
-		{
-			RepType RRep = rValue.GetNormRepType();
-			switch(LRep)
-			{
-				case RepType::INum:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-			#if defined(AltNum_EnableApproaching)
-				case RepType::ApproachingImaginaryBottom:{
-					switch(RRep){
-					}
-				} break;
-				#if !defined(AltNum_DisableApproachingTop)
-				case RepType::ApproachingImaginaryTop:{
-					switch(RRep){
-					}
-				} break;
-				#endif
-			#endif
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableImaginaryInfinity)
-				case RepType::ImaginaryInfinity:{
-					switch(RRep){
-					}
-				} break;
-#endif
-			default:
-				throw "Unsupported operation"; break;
-			}
-		} break;
-    #pragma region IRep_to_NormRep
-	}
-}
-#endif
-
-//NormalRep_to_others
-void NormRepSwitch(const auto& rValue)
+void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 {
 	RepType LRep = GetNormRepType();
-	switch(rValue.DecimalHalf.Flags)
+	RepType RRep = rValue.GetNormRepType();
+	if(DecimalHalf.Flags==rValue.DecimalHalf.Flags)//Same flag category
 	{
-#if defined(AltNum_EnablePiRep)
-    #pragma region NormRep_to_PiRep
-		case 1:
+		if(LRep==RRep)
 		{
-			RepType RRep = rValue.GetPiRepType();
 			switch(LRep)
 			{
-				case RepType::NormalType:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				case RepType::ApproachingBottomRep:{
-					switch(RRep){
-					}
-				} break;
-				case RepType::ApproachingTopRep:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-#if defined(AltNum_EnableInfinityRep)
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
+			case RepTypeEnum::NormalType:
+				BasicUnsignedAddOp(rValue);
+				break;
+			break;
+#pragma region AltDecVariantExclusive
+#pragma endregion AltDecVariantExclusive
+#if defined(AltNum_EnableApproaching)
+			case RepTypeEnum::ApproachingBottom:
+				SameRep_ApproachingBottom(*this, rValue, LRep);
+				break;
+			case RepTypeEnum::ApproachingTop:
+				SameRep_ApproachingTop(*this, rValue, LRep);
+				break;
+#pragma region AltDecVariantExclusive
+#pragma endregion AltDecVariantExclusive
 #endif
-				default:
-					throw "Unsupported operation";
+			default:
+				throw "Operation not supported at moment.";
 			}
-		} break;
-    #pragma endregion NormRep_to_PiRep
-#endif
-
-#if defined(AltNum_EnableERep)
-    #pragma region NormRep_to_ERep
-		case 2:
+		}
+		else
 		{
-			RepType RRep = rValue.GetERepType();
-			switch(LRep)
-			{
-				case RepType::NormalType:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				case RepType::ApproachingBottomRep:{
-					switch(RRep){
-					}
-				} break;
-				case RepType::ApproachingTopRep:{
-					switch(RRep){
-					}
-				} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-				case RepType::InfinityRep:{
-					switch(RRep){
-					}
-				} break;
-				default:
-					throw "Unsupported operation";
-			}
-		} break;
-    #pragma endregion NormRep_to_ERep
-#endif
-
-#if defined(AltNum_EnableIRep)
-    #pragma region NormRep_to_IRep
-		case 3:
+		}
+	}
+	else//Separate Categories
+	{
+		if(rValue.DecimalHalf.Flags==3){
 			if(IsZero())
-				SetAsValue(rValue);
+				SetValue(rValue);
 			else
 				throw "Complex number operations not enabled yet.";
-			break;
-    #pragma endregion NormRep_to_IRep
-#endif
-
-    #pragma region NormRep_to_NormRep
-		default:
-		{
-			RepType RRep = rValue.GetNormRepType();
-			if(LRep==RRep)
-			{
-				switch(LRep)
-				{
-					case RepType::NormalType:{
-					}; break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottomRep:{
-					} break;
-					case RepType::ApproachingTopRep:{
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-					} break;
-					default:
-						throw "Unsupported operation";
-				}
-			}
+		} else if(DecimalHalf.Flags==3){
+			if(rValue.IsZero())
+				SetValue(rValue);
 			else
-			{
-				switch(LRep)
-				{
-					case RepType::NormalType:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-					case RepType::ApproachingBottomRep:{
-						switch(RRep){
-						}
-					} break;
-					case RepType::ApproachingTopRep:{
-						switch(RRep){
-						}
-					} break;
-    #pragma region AltDecVariantExclusive
-    #pragma endregion AltDecVariantExclusive
-					case RepType::InfinityRep:{
-						switch(RRep){
-						}
-					} break;
-					default:
-						throw "Unsupported operation";
-				}
-			}
-		} break;
-#pragma endregion NormRep_to_NormRep
-	}
-}
-
-//UnsignedAddOp or UnsignedSubOp
-void MediumDecV2Base::UnsignedAddOp(const auto& rValue)
-{
-	switch(DecimalHalf.Flags)
-	{
-#if defined(AltNum_EnablePiRep)
-		case 1:
-			PiRepSwitch(rValue); break;
-#endif
-#if defined(AltNum_EnableERep)
-		case 2:
-			ERepSwitch(rValue); break;
-#endif
-#if defined(AltNum_EnableIRep)//IRep_to_others
-		case 3:
-            IRepSwitch(rValue); break;
-#endif
-		default:
-			NormalRepSwitch(rValue); break;
+				throw "Complex number operations not enabled yet.";
+		} else
+		{
+		}
 	}
 }

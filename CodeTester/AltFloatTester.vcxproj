@@ -188,7 +188,7 @@
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecBase.hpp" />
+    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
     <ClInclude Include="..\AltNum\MediumDec\OtherMath.hpp" />
   </ItemGroup>
