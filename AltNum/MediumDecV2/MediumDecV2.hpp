@@ -1394,6 +1394,151 @@ public:
 		}
 	#endif
 
+#if !defined(AltNum_UseRepTypeAsClass)
+
+		static RepType ConvertFromRepTypeV2(const RepType& lValue, const unsigned int& Flags)
+		{
+			switch (Flags)
+			{
+				#if defined(AltNum_EnablePiRep)
+			case 1:
+			{
+				switch (lValue)
+				{
+				case RepTypeEnum::NormalType:
+					return RepTypeEnum::PiNum; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingBottom:
+					return RepTypeEnum::ApproachingBottomPi; break;
+				case RepTypeEnum::ApproachingTop:
+					return RepTypeEnum::ApproachingTopPi; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#endif
+				default:
+					throw "Conversion not defined";
+				}
+			}
+			break;
+			#endif
+			#if defined(AltNum_EnableERep)
+			case 2:
+			{
+				switch (lValue)
+				{
+				case RepTypeEnum::NormalType:
+					return RepTypeEnum::ENum; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingBottom:
+					return RepTypeEnum::ApproachingBottomE; break;
+				case RepTypeEnum::ApproachingTop:
+					return RepTypeEnum::ApproachingTopE; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#endif
+				default:
+					throw "Conversion not defined";
+				}
+			}
+			break;
+			#endif
+			#if defined(AltNum_EnableIRep)
+			case 3:
+			{
+				switch (lValue)
+				{
+				case RepTypeEnum::NormalType:
+					return RepTypeEnum::INum; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#if defined(AltNum_EnableApproaching)
+				case RepTypeEnum::ApproachingBottom:
+					return RepTypeEnum::ApproachingImaginaryBottom; break;
+				case RepTypeEnum::ApproachingTop:
+					return RepTypeEnum::ApproachingImaginaryTop; break;
+					#pragma region AltDecVariantExclusive
+					#pragma endregion AltDecVariantExclusive
+					#endif
+					#ifdef AltNum_EnableInfinity
+				case RepTypeEnum::Infinity:
+					return RepTypeEnum::ImaginaryInfinity; break;
+					#endif
+				default:
+					throw "Conversion not defined";
+				}
+			}
+			break;
+			#endif
+			default:
+				return lValue;
+			}
+		}
+
+		static RepType GetRepAsNormalEquavant(const RepType& lValue)
+		{
+			switch (lValue)
+			{
+				#if defined(AltNum_EnablePiRep)
+			case RepTypeEnum::PiNum:
+				#endif
+				#if defined(AltNum_EnableERep)
+			case RepTypeEnum::ENum:
+				#endif
+				#if defined(AltNum_EnableERep)
+			case RepTypeEnum::INum:
+				#endif
+				return RepTypeEnum::NormalType; break;
+				#if defined(AltNum_EnableApproaching)
+				#if defined(AltNum_EnablePiRep)
+			case RepTypeEnum::ApproachingBottomPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+			case RepTypeEnum::ApproachingBottomE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+			case RepTypeEnum::ApproachingImaginaryBottom:
+				#endif
+				return RepTypeEnum::ApproachingBottom; break;
+				#if defined(AltNum_EnablePiRep)
+			case RepTypeEnum::ApproachingTopPi:
+				#endif
+				#if defined(AltNum_EnableERep)
+			case RepTypeEnum::ApproachingTopE:
+				#endif
+				#if defined(AltNum_EnableIRep)
+			case RepTypeEnum::ApproachingImaginaryBottom:
+				#endif
+				return RepTypeEnum::ApproachingTop; break;
+				#endif
+				#if defined(AltNum_EnableInfinity)&&defined(AltNum_EnableIRep)
+			case RepTypeEnum::ImaginaryInfinity:
+				return RepTypeEnum::Infinity; break;
+				#endif
+			default:
+				return lValue;
+			}
+		}
+
+#endif
+
+        RepType ConvertFromNormType(const RepType& repType) const
+		{
+		#if defined(AltNum_UseRepTypeAsClass)
+			return repType.ConvertFromNormalRep(GetFlags());
+		#else
+			return ConvertFromRepTypeV2(repType,GetFlags());
+		#endif
+		}
+
+		void ConvertToNormTypeFromOther(const RepType& repType)
+		{
+			ConvertToNormType(ConvertFromNormType(repType));
+		}
+
     #pragma endregion Other RepType Conversion
 
     #pragma region Comparison Operators
@@ -1900,11 +2045,11 @@ protected:
                 case RepTypeEnum::ApproachingBottom:
                     if (IsAtZeroInt())
                         return;
-                    ConvertToNormType(LRep.ConvertFromNormalRep(GetFlags()));
+                    ConvertToNormTypeFromOther(LRep);
                     BasicUIntDivOp(rValue);
                 break;
                 case RepTypeEnum::ApproachingTop:
-                    ConvertToNormType(LRep.ConvertFromNormalRep(GetFlags()));
+                    ConvertToNormTypeFromOther(LRep);
                     BasicUIntDivOp(rValue);
                     break;
 #pragma region AltDecVariantExclusive
@@ -2364,7 +2509,7 @@ protected:
     #if defined(AltNum_EnableApproaching)
                 case RepTypeEnum::ApproachingBottom:
 					if(IntHalf.Value!=0)
-						CatchAllUIntMultiplication(rValue, LRep.ConvertFromNormalRep(GetFlags()));
+						CatchAllUIntMultiplication(rValue, ConvertFromNormType(LRep));
                     break;
                 case RepTypeEnum::ApproachingTop:
 					if(IntHalf.Value==0)//0.99.9 * 5 = ~4.9..9
