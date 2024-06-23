@@ -133,15 +133,26 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetValue(const MediumDecV2& Value); const
+        void SetValue(const MediumDecV2& rValue) const
+        {
+            IntHalf = rValue.IntHalf;
+            DecimalHalf = rValue.DecimalHalf;
+        }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetMediumDecValue(const MediumDec& Value); const
+        void SetMediumDecValue(const MediumDec& rValue) const
+        {
+            IntHalf = rValue.IntHalf;
+            DecimalHalf = rValue.DecimalHalf;
+        }
 
-        unsigned int GetFlags() const;
+        unsigned int GetFlags() const
+        {
+            return DecimalHalf.Flags;
+        }
 
     #pragma endregion class_constructors
 
@@ -170,7 +181,10 @@ public:
     #pragma region Check_if_value
 
         //Detect if at exactly zero
-		bool IsZero() const;
+        bool IsZero() const
+        {
+            return DecimalHalf == 0 && IntHalf.Value == 0;
+        }
 
     #pragma endregion Check_if_value
 
