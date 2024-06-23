@@ -15,6 +15,9 @@
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
+#if !defined(AltNum_UseRepTypeAsClass)
+using RepTypeEnum = BlazesRusCode::RepType;
+#endif
 
 namespace BlazesRusCode
 {
@@ -144,6 +147,15 @@ public:
 
     #pragma region Negative_Status
 
+        bool IsPositive() const;
+
+        bool IsNegative() const;
+
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus();
+
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
@@ -156,6 +168,10 @@ public:
 
 
     #pragma region Check_if_value
+
+        //Detect if at exactly zero
+		bool IsZero() const;
+
     #pragma endregion Check_if_value
 
     #pragma region Const Representation values
@@ -1234,15 +1250,22 @@ protected:
         }
 
 public:
+#if defined(AltNum_UseRepTypeAsClass)
         void ConvertToNormfromEnum(const RepTypeEnum& repType)
         {
-            ConvertToNormTypeV3(*this, repType);
+            ConvertToNormTypeV3<MediumDecV2>(*this, repType);
         }
+#endif
+
 
         //Returns value as normal type or INum representation
         void ConvertToNormType(const RepType& repType)
         {
+        #if defined(AltNum_UseRepTypeAsClass)
             ConvertToNormfromEnum(repType.Value);
+        #else
+            ConvertToNormTypeV3<MediumDecV2>(*this, repType);
+        #endif
         }
 
 protected:
@@ -1251,7 +1274,11 @@ protected:
         VariantType ConvertAsNormTypeV1(const RepType& repType) const
         {
             VariantType Res = *this;
+        #if defined(AltNum_UseRepTypeAsClass)
             Res.ConvertToNormType(repType);
+        #else
+            ConvertToNormTypeV3<MediumDecV2>(Res, repType);
+        #endif
             return Res;
         }
 
@@ -1276,8 +1303,11 @@ public:
         }
 
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
-
+#if defined(AltNum_UseRepTypeAsClass)
         RepType ConvertToNormalEquivalantV2(const RepTypeEnum& repType)
+#else
+        RepType ConvertToNormalEquivalant(const RepType& repType)
+#endif
         {
 			switch(repType)
 			{
@@ -1326,17 +1356,21 @@ public:
 			}
 		}
 
+#if defined(AltNum_UseRepTypeAsClass)
         RepType ConvertToNormalEquivalant(const RepType& repType)
         {
             ConvertToNormalEquivalantV2(repType.Value);
         }
+#endif
 
+#if defined(AltNum_UseRepTypeAsClass)
         template<MediumDecVariant VariantType=MediumDecV2>
         static std::pair<VariantType, RepType> ConvertAsNormalEquivalantV2(VariantType tValue, const RepTypeEnum& repType)
         {
             RepType convertedRep = tValue.ConvertToNormalEquivalantV2(repType);
             return std::make_pair(tValue, convertedRep);
 		}
+#endif
 
         template<MediumDecVariant VariantType=MediumDecV2>
         static std::pair<VariantType, RepType> ConvertAsNormalEquivalantV1(VariantType tValue, const RepType& repType)
@@ -1345,11 +1379,13 @@ public:
             return std::make_pair(tValue, convertedRep);
 		}
 
+#if defined(AltNum_UseRepTypeAsClass)
 		//Returns std::pair of tValue and RepType
         std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalantFromEnum(const RepTypeEnum& repType) const
         {
             return ConvertAsNormalEquivalantV2(*this, repType);
 		}
+#endif
 
 		//Returns std::pair of tValue and RepType
         std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalant(const RepType& repType) const

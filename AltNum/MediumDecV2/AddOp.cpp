@@ -1,7 +1,6 @@
 ﻿#include "MediumDecV2.hpp"
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
-using RepTypeEnum = BlazesRusCode::RepTypeEnum;
 
 void MediumDecV2::AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {

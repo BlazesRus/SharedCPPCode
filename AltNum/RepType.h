@@ -20,7 +20,7 @@ namespace BlazesRusCode
 	/// <summary>
 	/// Enum representing value type stored
 	/// </summary>
-#if defined(AltNum_UseRepTypeAsEnumOnly)
+#if !defined(AltNum_UseRepTypeAsClass)
 	enum class RepType: RepTypeUnderlayer
 #else
 	enum class RepTypeEnum: RepTypeUnderlayer
@@ -230,7 +230,7 @@ namespace BlazesRusCode
 		UnknownType = 135
 	};
 
-#if !defined(AltNum_UseRepTypeAsEnumOnly)
+#if defined(AltNum_UseRepTypeAsClass)
 	class DLL_API RepType
 	{
 	public:

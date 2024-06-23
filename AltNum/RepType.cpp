@@ -1,8 +1,9 @@
 ﻿#include "RepType.h"
 using RepType = BlazesRusCode::RepType;
-using RepTypeEnum = BlazesRusCode::RepType;
 
-#if !defined(AltNum_UseRepTypeAsEnumOnly)
+#if defined(AltNum_UseRepTypeAsClass)
+using RepTypeEnum = BlazesRusCode::RepTypeEnum;
+
 #pragma region ValueDefine Source
 
 inline const RepType RepType::NormalTypeValue(){ return RepTypeEnum::NormalType; }

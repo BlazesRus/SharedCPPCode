@@ -197,7 +197,32 @@ MediumDecV2 MediumDecV2::ImaginaryMinimum = MediumDecV2::ImaginaryMinimumValue()
 MediumDecV2 MediumDecV2::ImaginaryMaximum = MediumDecV2::ImaginaryMaximumValue();
 #pragma endregion ValueDefine Source
 
+#pragma region Negative_Status
+
+inline bool BlazesRusCode::MediumDecV2::IsPositive() const
+{
+	return IntHalf.IsPositive();
+}
+
+inline bool BlazesRusCode::MediumDecV2::IsNegative() const
+{
+	return IntHalf.IsNegative();
+}
+
+inline void BlazesRusCode::MediumDecV2::SwapNegativeStatus()
+{
+	IntHalf.Sign ^= 1;
+}
+
+#pragma endregion Negative_Status
+
 #pragma region Check_if_value
+
+inline bool BlazesRusCode::MediumDecV2::IsZero() const
+{
+	return DecimalHalf == 0 && IntHalf.Value == 0;
+}
+
 #pragma endregion Check_if_value
 
 #pragma region RangeLimits
