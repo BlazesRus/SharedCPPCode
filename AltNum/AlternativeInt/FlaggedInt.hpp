@@ -33,6 +33,25 @@ namespace BlazesRusCode
 
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
 
+        FlaggedInt& operator=(const FlaggedInt& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            Value = rhs.Value; IsAltRep = rhs.IsAltRep;
+            return *this;
+        }
+
+/*
+        FlaggedInt& operator=(const unsigned int& rhs)
+        {
+		    Value = rhs;
+            IsAltRep = 0;
+            return *this;
+        }
+
+*/
+
         bool IsAlternative() const;
 
 		bool IsNormal();

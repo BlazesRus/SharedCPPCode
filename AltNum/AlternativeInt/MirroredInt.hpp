@@ -43,6 +43,42 @@ namespace BlazesRusCode
 
 		MirroredInt(const signed int& value);
 
+		MirroredInt(const MirroredInt& rvalue)
+        {
+            Value = rvalue.Value; Sign = rvalue.Sign;
+        }
+
+        MirroredInt& operator=(const MirroredInt& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            Value = rhs.Value; Sign = rhs.Sign;
+            return *this;
+        }
+
+/*
+        MirroredInt& operator=(const unsigned int& rhs)
+        {
+		    Value = rhs;
+            Sign = PositiveSign;
+            return *this;
+        }
+
+        MirroredInt& operator=(const signed int& rhs)
+        {
+	        if (rhs<0) {
+		        Sign = PositiveSign;
+		        Value = -rhs;
+	        }
+	        else {
+		        Sign = NegativeSign;
+		        Value = rhs;
+	        }
+            return *this;
+        }
+*/
+
 		bool IsNegative() const;
 
 		bool IsPositive() const;

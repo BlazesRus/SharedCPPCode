@@ -36,6 +36,25 @@ namespace BlazesRusCode
 
 		PartialInt(unsigned int value=0, unsigned int flags=0);
 
+        PartialInt& operator=(const PartialInt& rhs)
+        {
+            // Check for self-assignment
+            if (this == &rhs)      // Same object?
+                return *this;        // Yes, so skip assignment, and just return *this.
+            Value = rhs.Value; Flags = rhs.Flags;
+            return *this;
+        }
+
+/*
+        PartialInt& operator=(const unsigned int& rhs)
+        {
+		    Value = rhs;
+            Flags = 0;
+            return *this;
+        }
+
+*/
+
 		bool IsNormalVariant() const;
 
 		bool IsPiVariant() const;
