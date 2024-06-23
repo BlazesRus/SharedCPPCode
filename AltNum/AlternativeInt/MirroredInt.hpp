@@ -4,20 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-	#ifndef DLL_API
-		#ifdef UsingBlazesSharedCodeDLL
-			#define DLL_API __declspec(dllimport)
-		#elif defined(BLAZESSharedCode_LIBRARY)
-			#define DLL_API __declspec(dllexport)
-		#else
-			#define DLL_API
-		#endif
-	#endif
-#else
-	#include "..\..\DLLAPI.h"
-#endif
-
+#include "..\..\DLLAPI.h"
 
 #include <compare>
 #include "..\Concepts\IntegerConcept.hpp"
@@ -30,7 +17,7 @@ namespace BlazesRusCode
     /// <summary>
     /// Integer alternative with magnitude and sign field
 	/// </summary>
-	class MirroredInt
+	class DLL_API MirroredInt
     {
 	public:
     #if defined(AltNum_UseInvertedSign)

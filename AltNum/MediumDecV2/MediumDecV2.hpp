@@ -932,7 +932,6 @@ public:
             return self.ToBasicString();
         }
 
-
         /// <summary>
         /// Converts to string.
         /// </summary>
@@ -2732,6 +2731,12 @@ public:
     #pragma endregion Other multiplication operations
 
 	#pragma region NormalRep Integer Addition Operations
+public:
+
+        void BasicUnsignedMirroredAddOp(const MirroredInt& rValue);
+
+        void BasicMirroredAddOp(const MirroredInt& rValue);
+
 protected:
 
         /// <summary>
@@ -2788,24 +2793,6 @@ protected:
 
 public:
 
-        /// <summary>
-        /// Basic addition operation between MediumDec Variant and unsigned MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void BasicUIntAddition(const MirroredInt& rValue)
-        { MediumDec::UnsignedMirroredAddOp(rValue); }
-
-        /// <summary>
-        /// Basic addition operation between MediumDec Variant and MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void BasicIntegerAddition(const MirroredInt& rValue)
-        { MediumDec::MirroredAddOp(rValue); }
-
         void BasicUIntAddOp(const unsigned int& rValue){ MediumDec::UIntAddOp(rValue); }
 
         void BasicIntAddOp(const signed int& rValue) { MediumDec::IntAddOpV1(rValue); }
@@ -2845,6 +2832,12 @@ public:
 	#pragma endregion NormalRep Integer Addition Operations
 
 	#pragma region NormalRep Integer Subtraction Operations
+public:
+
+        void BasicUnsignedMirroredSubOp(const MirroredInt& rValue);
+
+        void BasicMirroredSubOp(const MirroredInt& rValue);
+
 protected:
 
         /// <summary>
@@ -2901,24 +2894,6 @@ protected:
 
 public:
 
-        /// <summary>
-        /// Basic subtraction operation between MediumDec Variant and unsigned MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void BasicUIntSubtraction(const MirroredInt& rValue)
-        { MediumDec::UnsignedMirroredSubOp(rValue); }
-
-        /// <summary>
-        /// Basic subtraction operation between MediumDec Variant and MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void BasicIntegerSubtraction(const MirroredInt& rValue)
-        { MediumDec::MirroredSubOp(rValue); }
-
         void BasicUIntSubOp(const unsigned int& rValue){ MediumDec::UIntSubOp(rValue); }
 
         void BasicIntSubOp(const signed int& rValue) { MediumDec::IntSubOpV1(rValue); }
@@ -2958,6 +2933,16 @@ public:
 	#pragma endregion NormalRep Integer Subtraction Operations
 
     #pragma region Unsigned Addition/Subtraction Operations
+public:
+/*
+        void UnsignedMirroredAddOp(const MirroredInt& rValue);
+
+        void MirroredAddOp(const MirroredInt& rValue);
+
+        void UnsignedMirroredSubOp(const MirroredInt& rValue);
+
+        void MirroredSubOp(const MirroredInt& rValue);
+*/
 protected:
 
         template<IntegerType IntType=unsigned int>
@@ -3443,9 +3428,9 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        void BasicUnsignedSubOp(const MediumDecV2& rValue){ MediumDec::UnsignedSubOpV1<MediumDecV2>(rValue); }
+        void BasicUnsignedSubOp(const MediumDecV2& rValue);
 
-        void BasicSubOp(const MediumDecV2& rValue){ MediumDec::SubOpV1<MediumDecV2>(rValue); }
+        void BasicSubOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Basic unsigned subtraction operation that ignores special decimal status
