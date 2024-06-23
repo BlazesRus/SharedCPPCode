@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -3036,7 +3036,7 @@ protected:
                             break;
             #endif
                         default:
-                            throw "Unable to perform integer division on current representation.";
+                            throw "Unable to perform integer addition on current representation.";
                     }
                 } break;
         	}
@@ -3124,7 +3124,6 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto AddByUIntV1(const IntType& rValue){
             auto self = *this;
@@ -3136,7 +3135,6 @@ protected:
         /// (Doesn't modifify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
         auto SubtractByUIntV1(const IntType& rValue){
             auto self = *this;
@@ -3145,15 +3143,6 @@ protected:
 
 public:
 
-/*
-        /// <summary>
-        /// Basic addition operation between MediumDec Variant and unsigned MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredAddOp(const MirroredInt& rValue);
-*/
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
         void UIntAddOp(const unsigned int& rValue){ UIntAddOpV1(rValue); }
@@ -3174,15 +3163,6 @@ public:
         MediumDecV2 AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
         MediumDecV2 AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
 
-/*
-        /// <summary>
-        /// Subtraction operation between MediumDec Variant and unsigned MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredSubOp(const MirroredInt& rValue);
-*/
 
         void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         void UIntSubOp(const unsigned int& rValue){ UIntSubOpV1(rValue); }
@@ -3298,16 +3278,6 @@ protected:
 
 public:
 
-/*
-        /// <summary>
-        /// Addition operation between MediumDec Variant and MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void MirroredAddOp(const MirroredInt& rValue);
-*/
-
         void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
         void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
         void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
@@ -3322,16 +3292,6 @@ public:
         MediumDecV2 AddByInt16(const signed short& rValue) { return AddByIntV1(rValue); }
         MediumDecV2 AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
         MediumDecV2 AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
-
-/*
-        /// <summary>
-        /// Subtraction operation between MediumDec Variant and MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void MirroredSubOp(const MirroredInt& rValue);
-*/
 
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
