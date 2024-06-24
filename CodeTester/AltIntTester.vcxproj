@@ -168,22 +168,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
-    <ClInclude Include="..\AltNum\MediumDec\ReducedMediumDec.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
-    <ClInclude Include="..\AltNum\AltNumDebug.hpp" />
     <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
     <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
     <ClInclude Include="..\AltNum\RepType.h" />
     <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
+    <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\AltNum\RepType.cpp" />
+    <ClCompile Include="AltIntTester.cpp" />
     <ClInclude Include="..\tsl\ordered_map.h" />
     <ClInclude Include="..\OtherFunctions\StringFunctions.h" />
     <ClInclude Include="..\OtherFunctions\VariableConversionFunctions.h" />
+    <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp" />
+    <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp" />
+    <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
-    <ClCompile Include="AltIntTester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />
@@ -191,7 +193,7 @@
     <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
+    <ClInclude Include="..\AltNum\MediumDec\AltNumBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
