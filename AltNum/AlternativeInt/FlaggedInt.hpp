@@ -76,6 +76,64 @@ namespace BlazesRusCode
 
 		bool IsOdd() const;
 
+#pragma region StringOperations
+
+		void ReadString(const std::string& value)
+		{
+			Value = 0;
+			std::string WholeNumberBuffer = "";
+
+			int charAsNumber;
+			int charAsNumberInPlace;
+			for (char const& StringChar : value)
+			{
+				if (VariableConversionFunctions::IsDigit(StringChar))
+					WholeNumberBuffer += StringChar;
+				else if (StringChar == '-')
+					Sign = NegativeSign;
+				else if (StringChar != ' ')
+					break;//Stop Extracting after encounter non-number character such as i or .
+			}
+	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit one
+	        for (char const& StringChar : WholeNumberBuffer)
+	        {
+				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
+				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+				if (StringChar != '0')
+				{
+					Value += charAsNumberInPlace;
+				}
+                PlaceNumber--;
+			}
+		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FlaggedInt"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        FlaggedInt(const char* strVal)
+        {
+            std::string Value = strVal;
+            this->ReadString(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FlaggedInt"/> class.
+        /// </summary>
+        /// <param name="tValue">The value.</param>
+        FlaggedInt(const std::string& Value)
+        {
+            this->ReadString(Value);
+        }
+
+        std::string ToString() const;
+
+        std::string ToDetailedString(const PartialInt& DecHalf) const;
+
+        explicit operator std::string();
+
+#pragma endregion StringOperations
+
 		std::strong_ordering operator<=>(const FlaggedInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
@@ -408,16 +466,6 @@ namespace BlazesRusCode
         }
 
     #pragma endregion Other Operators
-
-#pragma region StringOperations
-
-        std::string ToString() const;
-
-        std::string ToDetailedString(const PartialInt& DecHalf) const;
-
-        explicit operator std::string();
-
-#pragma endregion StringOperations
 
 	};
 }

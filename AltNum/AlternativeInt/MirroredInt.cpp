@@ -66,14 +66,11 @@ inline void BlazesRusCode::MirroredInt::SetValue(const unsigned int& value, cons
 	Sign = sign;
 }
 
-//Set as zero without changing sign(including negative zero)
-
 inline void BlazesRusCode::MirroredInt::SetAsZeroVal()
 {
 	Value = 0;
 }
 
-//Return value as real number(negative zero counts as zero)
 
 inline int BlazesRusCode::MirroredInt::GetValue() const
 {
@@ -93,28 +90,20 @@ inline void BlazesRusCode::MirroredInt::SetAsNegativeZero()
 	Value = 0; Sign = NegativeSign;
 }
 
-//Is at either zero or negative zero
-
 inline bool BlazesRusCode::MirroredInt::IsAtZeroInt() const
 {
 	return Value == 0;
 }
-
-//Is at neither zero or negative zero
 
 inline bool BlazesRusCode::MirroredInt::IsNotAtZeroInt() const
 {
 	return Value != 0;
 }
 
-//Is at either zero or negative one
-
 inline bool BlazesRusCode::MirroredInt::IsAtOneInt() const
 {
 	return Value == 1;
 }
-
-//Is at neither zero or negative one
 
 inline bool BlazesRusCode::MirroredInt::IsNotAtOneInt() const
 {
@@ -136,8 +125,6 @@ inline bool BlazesRusCode::MirroredInt::IsZero() const
 	return Value == 0 && Sign == PositiveSign;
 }
 
-//Returns copy of value as Absolute value
-
 inline MirroredInt BlazesRusCode::MirroredInt::Abs() const
 {
 	if (IsPositive())
@@ -152,86 +139,52 @@ inline void BlazesRusCode::MirroredInt::ApplyAbs()
 		Sign = PositiveSign;
 }
 
-/// <summary>
-/// Swaps the negative status.
-/// </summary>
-
 inline void BlazesRusCode::MirroredInt::SwapNegativeStatus()
 {
 	Sign ^= 1;
 }
 
-/// <summary>
-/// Returns maximum stored value(2147483647)
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::MaximumValue()
 {
 	return MirroredInt(2147483647, PositiveSign);
 }
 
-/// <summary>
-/// Returns minimum stored value(-2147483647)
-/// </summary>
-/// <returns>MirroredInt</returns>
-
 inline MirroredInt BlazesRusCode::MirroredInt::MinimumValue()
 {
 	return MirroredInt(2147483647, NegativeSign);
 }
 
-/// <summary>
-/// Returns the value at negative one
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::NegativeOneValue()
 {
 	return MirroredInt(1, NegativeSign);
 }
 
-/// <summary>
-/// Returns the value at one
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::OneValue()
 {
 	return MirroredInt(1);
 }
 
-/// <summary>
-/// Returns the value at two
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::TwoValue()
 {
 	return MirroredInt(2);
 }
 
-/// <summary>
-/// Returns the value at negative zero(for negative fractions)
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::NegativeZeroValue()
 {
 	return MirroredInt(0, NegativeSign);
 }
 
-/// <summary>
-/// Returns the value at zero
-/// </summary>
-/// <returns>MirroredInt</returns>
 
 inline MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
 {
 	return MirroredInt();
 }
 
-//Division operation
 
 inline void BlazesRusCode::MirroredInt::UInt64DivOp(const unsigned __int64& rValue)
 {
@@ -624,9 +577,4 @@ inline std::string BlazesRusCode::MirroredInt::ToString() const
 		return "-" + VariableConversionFunctions::UIntToStringConversion(Value);
 	else
 		return VariableConversionFunctions::UIntToStringConversion(Value);
-}
-
-inline BlazesRusCode::MirroredInt::operator std::string()
-{
-	return ToString();
 }

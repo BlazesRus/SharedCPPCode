@@ -39,14 +39,16 @@ namespace BlazesRusCode
         static const unsigned int PositiveSign = 0;
     #endif
 
+    #pragma region class_constructors
+
 		MirroredInt(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
 
 		MirroredInt(const signed int& value);
 
-		MirroredInt(const MirroredInt& rvalue)
-        {
-            Value = rvalue.Value; Sign = rvalue.Sign;
-        }
+		//MirroredInt(const MirroredInt& rvalue)
+  //      {
+  //          Value = rvalue.Value; Sign = rvalue.Sign;
+  //      }
 
         MirroredInt& operator=(const MirroredInt& rhs)
         {
@@ -57,7 +59,6 @@ namespace BlazesRusCode
             return *this;
         }
 
-/*
         MirroredInt& operator=(const unsigned int& rhs)
         {
 		    Value = rhs;
@@ -77,7 +78,14 @@ namespace BlazesRusCode
 	        }
             return *this;
         }
-*/
+
+        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+
+        void SetSignedValue(const signed int& val=0);
+
+    #pragma endregion class_constructors
+
+    #pragma region Negative_Status
 
 		bool IsNegative() const;
 
@@ -87,16 +95,76 @@ namespace BlazesRusCode
 
         void SetAsNegative();
 
-        void SetSignedValue(const signed int& val=0);
+        /// <summary>
+        /// Swaps the negative status.
+        /// </summary>
+        void SwapNegativeStatus();
 
-    #if defined(AltNum_UseInvertedSign)
-		//If Sign is one, then the sign is positive.
-        //Otherwise, the sign is negative
-    #else
-		//If Sign is one, then the sign is negative.
-        //Otherwise, the sign is positive
-    #endif
-        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+        MirroredInt operator-() const
+        { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
+
+    #pragma endregion Negative_Status
+
+	#pragma region StringOperations
+
+		void ReadString(const std::string& value)
+		{
+			Value = 0; Sign = PositiveSign;
+			std::string WholeNumberBuffer = "";
+
+			int charAsNumber;
+			int charAsNumberInPlace;
+			for (char const& StringChar : value)
+			{
+				if (VariableConversionFunctions::IsDigit(StringChar))
+					WholeNumberBuffer += StringChar;
+				else if (StringChar == '-')
+					Sign = NegativeSign;
+				else if (StringChar != ' ')
+					break;//Stop Extracting after encounter non-number character such as i or .
+			}
+	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit value 0-9
+	        for (char const& StringChar : WholeNumberBuffer)
+	        {
+				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
+				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+				if (StringChar != '0')
+				{
+					Value += charAsNumberInPlace;
+				}
+                PlaceNumber--;
+			}
+		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        MirroredInt(const char* strVal)
+        {
+            std::string Value = strVal;
+            this->ReadString(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
+        /// </summary>
+        /// <param name="tValue">The value.</param>
+        MirroredInt(const std::string& Value)
+        {
+            this->ReadString(Value);
+        }
+
+        std::string ToString() const;
+
+		/// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        explicit operator std::string() { return ToString(); }
+
+	#pragma endregion StringOperations
+
+    #pragma region Check_if_value
 
         //Set as zero without changing sign(including negative zero)
         void SetAsZeroVal();
@@ -125,6 +193,8 @@ namespace BlazesRusCode
 		bool IsOdd() const;
 
 		bool IsZero() const;
+
+    #pragma endregion Check_if_value
 
         //Returns copy of value as Absolute value
         MirroredInt Abs() const;
@@ -259,14 +329,6 @@ namespace BlazesRusCode
         /// to int explicit conversion
         /// </summary>
         explicit operator signed __int64() { return GetValue(); }
-
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus();
-
-        MirroredInt operator-() const
-        { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
 
 	protected:
 
@@ -551,7 +613,9 @@ namespace BlazesRusCode
 		{ lValue.IntAddOp(rValue); return lValue; }
 
 		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned char& rValue)
-		{ lValue.UIntAddOp(rValue); return lValue; }
+        {
+            lValue.UIntAddOp(rValue); return lValue;
+        }
 
 		friend MirroredInt& operator+=(MirroredInt& lValue, const signed char& rValue)
 		{ lValue.IntAddOp(rValue); return lValue; }
@@ -700,17 +764,6 @@ namespace BlazesRusCode
         }
 
     #pragma endregion Other Operators
-
-#pragma region StringOperations
-
-        std::string ToString() const;
-
-		/// <summary>
-        /// MirroredInt to int explicit conversion
-        /// </summary>
-        explicit operator std::string();
-
-#pragma endregion StringOperations
 
 	};
 

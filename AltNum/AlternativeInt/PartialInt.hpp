@@ -84,6 +84,76 @@ namespace BlazesRusCode
 
 		bool IsOdd() const;
 
+	#pragma region StringOperations
+	
+		void ReadString(const std::string& value)
+		{
+			Value = 0;
+			std::string WholeNumberBuffer = "";
+
+			int charAsNumber;
+			int charAsNumberInPlace;
+			for (char const& StringChar : value)
+			{
+				if (VariableConversionFunctions::IsDigit(StringChar))
+					WholeNumberBuffer += StringChar;
+				else if (StringChar == '-')
+					Sign = NegativeSign;
+				else if (StringChar != ' ')
+					break;//Stop Extracting after encounter non-number character such as i or .
+			}
+	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit one
+	        for (char const& StringChar : WholeNumberBuffer)
+	        {
+				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
+				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+				if (StringChar != '0')
+				{
+					Value += charAsNumberInPlace;
+				}
+                PlaceNumber--;
+			}
+            #if defined(AltNum_EnablePiRep)
+            if (value.find("Pi") != std::string::npos)
+                DecimalHalf.Flags = 1;
+            #endif
+            #if defined(AltNum_EnableERep)
+            if (value.last() == 'e')
+                DecimalHalf.Flags = 2;
+            #endif
+            #if defined(AltNum_EnableIRep)
+            if (value.last() == 'i')
+                DecimalHalf.Flags = 3;
+            #endif
+		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PartialInt"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        PartialInt(const char* strVal)
+        {
+            std::string Value = strVal;
+            this->ReadString(Value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PartialInt"/> class.
+        /// </summary>
+        /// <param name="tValue">The value.</param>
+        PartialInt(const std::string& Value)
+        {
+            this->ReadString(Value);
+        }
+
+        std::string ToString() const;
+
+        std::string ToDetailedString() const;
+
+        explicit operator std::string();
+	
+	#pragma endregion StringOperations
+
 		std::strong_ordering operator<=>(const PartialInt& that) const
 		{
 			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
@@ -438,16 +508,6 @@ public:
         }
 
     #pragma endregion Other Operators
-
-#pragma region StringOperations
-
-        std::string ToString() const;
-
-        std::string ToDetailedString() const;
-
-        explicit operator std::string();
-
-#pragma endregion StringOperations
 
 	};
 
