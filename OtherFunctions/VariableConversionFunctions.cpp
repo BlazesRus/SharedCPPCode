@@ -19,9 +19,9 @@ unsigned __int64 VariableConversionFunctions::PowerOfTens64Bit[19] = { 1, 10, 10
 // Qualifier:
 // Parameter: double Value
 //************************************
-int VariableConversionFunctions::NumberOfPlaces(double Value)
+unsigned int VariableConversionFunctions::NumberOfPlaces(double Value)
 {
-    int NumberOfPlaces = floor(log10(Value));
+    unsigned int NumberOfPlaces = floor(log10(Value));
     return NumberOfPlaces;
 }
 
@@ -33,7 +33,7 @@ int VariableConversionFunctions::NumberOfPlaces(double Value)
 // Qualifier:
 // Parameter: double Value
 //************************************
-int VariableConversionFunctions::NumberOfDecimalPlaces(double Value)
+unsigned int VariableConversionFunctions::NumberOfDecimalPlaces(double Value)
 {
     int NumberOfPlaces = floor(log(Value));
     NumberOfPlaces *= -1;
@@ -208,6 +208,7 @@ double VariableConversionFunctions::ReadDoubleFromString(string TempString)
     cout << "\n";
     return CalculatedValue;
 }
+
 float VariableConversionFunctions::ReadFloatFromString(std::string TempString)
 {
     int WholeNumberPart = 0;
@@ -529,7 +530,7 @@ std::string VariableConversionFunctions::DoubleToStringConversion(double TempVal
     if(DecimalHalf != 0.0)
     {
         DigitString += ".";
-        int DecimalPlaces = NumberOfDecimalPlaces(DecimalHalf);
+        unsigned int DecimalPlaces = NumberOfDecimalPlaces(DecimalHalf);
         for(unsigned int Index = 0; Index < DecimalPlaces; ++Index)
         {
             CurrentDigit = floor(DecimalHalf*(10*pow(10,Index)));

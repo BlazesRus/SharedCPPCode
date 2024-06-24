@@ -2,19 +2,7 @@
 #ifndef VariableConversionFunctions_IncludeGuard
 #define VariableConversionFunctions_IncludeGuard
 
-#ifdef BlazesSharedCode_LocalLayout
-    #ifndef DLL_API
-        #ifdef UsingBlazesSharedCodeDLL
-            #define DLL_API __declspec(dllimport)
-        #elif defined(BLAZESSharedCode_LIBRARY)
-            #define DLL_API __declspec(dllexport)
-        #else
-            #define DLL_API
-        #endif
-    #endif
-#else
-    #include "..\DLLAPI.h"
-#endif
+#include "..\DLLAPI.h"
 
 #include <string>
 #include <stdint.h>
@@ -32,12 +20,12 @@ namespace BlazesRusCode
         int C = 0;
         __int64 ExDivRes = 0;
         __int64 ExtC = 0;
+
         /// <summary>
         /// Calculates if remainder is zero.
         /// </summary>
         /// <param name="a">a.</param>
         /// <param name="b">The b.</param>
-        /// <returns>bool</returns>
         bool CalcIfZero(int a, int b)
         {
             divRes = a / b;
@@ -48,6 +36,7 @@ namespace BlazesRusCode
             }
             return false;
         }
+
         bool CalcIfZero(__int64 a, __int64 b)
         {
             ExDivRes = a / b;
@@ -58,6 +47,7 @@ namespace BlazesRusCode
             }
             return false;
         }
+
         bool CalcIfZero(__int64 a, int b)
         {
             ExDivRes = a / b;
@@ -68,24 +58,26 @@ namespace BlazesRusCode
             }
             return false;
         }
+
         /// <summary>
         /// Calculates the mod.
         /// </summary>
         /// <param name="a">a.</param>
         /// <param name="b">The b.</param>
-        /// <returns>int</returns>
         int CalcMod(int a, int b)
         {
             divRes = a / b;
             C = a - b * divRes;
             return C;
         }
+
         __int64 CalcMod(__int64 a, __int64 b)
         {
             ExDivRes = a / b;
             ExtC = ExtC - b * ExDivRes;
             return ExtC;
         }
+
         __int64 CalcMod(__int64 a, int b)
         {
             ExDivRes = a / b;
@@ -93,6 +85,81 @@ namespace BlazesRusCode
             return ExtC;
         }
     };
+
+    class UnsignedModChecker
+    {//based on https://embeddedgurus.com/stack-overflow/2011/02/efficient-c-tip-13-use-the-modulus-operator-with-caution/
+    public:
+        unsigned int divRes = 0;
+        unsigned int C = 0;
+        __int64 ExDivRes = 0;
+        __int64 ExtC = 0;
+
+        /// <summary>
+        /// Calculates if remainder is zero.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        bool CalcIfZero(unsigned int a, unsigned int b)
+        {
+            divRes = a / b;
+            C = a - b * divRes;
+            if (C == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool CalcIfZero(unsigned __int64 a, unsigned __int64 b)
+        {
+            ExDivRes = a / b;
+            ExtC = ExtC - b * ExDivRes;
+            if (ExtC == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool CalcIfZero(unsigned __int64 a, unsigned int b)
+        {
+            ExDivRes = a / b;
+            ExtC = ExtC - b * ExDivRes;
+            if (ExtC == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Calculates the mod.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        int CalcMod(unsigned int a, unsigned int b)
+        {
+            divRes = a / b;
+            C = a - b * divRes;
+            return C;
+        }
+
+        unsigned __int64 CalcMod(unsigned __int64 a, unsigned __int64 b)
+        {
+            ExDivRes = a / b;
+            ExtC = ExtC - b * ExDivRes;
+            return ExtC;
+        }
+
+        unsigned __int64 CalcMod(unsigned __int64 a, unsigned int b)
+        {
+            ExDivRes = a / b;
+            ExtC = ExtC - b * ExDivRes;
+            return ExtC;
+        }
+    };
+
+
     class DLL_API VariableConversionFunctions
     {
     public:
@@ -109,7 +176,7 @@ namespace BlazesRusCode
         /// <param name="Value">The value.</param>
         /// <returns>int</returns>
         template<typename targetType>
-        static int NumberOfPlaces(targetType Value)
+        static unsigned int NumberOfPlaces(targetType Value)
         {
             int NumberOfPlaces = floor(log10(Value));
             return NumberOfPlaces;
@@ -123,14 +190,14 @@ namespace BlazesRusCode
         // Qualifier:
         // Parameter: double Value
         //************************************
-        static int NumberOfPlaces(double Value);
+        static unsigned int NumberOfPlaces(double Value);
 
         /// <summary>
         /// Retrieves number of decimal places from integer version of decimal half
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>int</returns>
-        static int NumberOfDecimalPlaces(int Value)
+        static unsigned int NumberOfDecimalPlaces(int Value)
         {
             int NumberOfPlaces = floor(log(Value));
             NumberOfPlaces *= -1;
@@ -138,7 +205,7 @@ namespace BlazesRusCode
             return NumberOfPlaces;
         }
 
-        static int NumberOfDecimalPlaces(double Value);
+        static unsigned int NumberOfDecimalPlaces(double Value);
         //************************************
         // Method:    CharAsInt
         // FullName:  VariableConversionFunctions::CharAsInt
