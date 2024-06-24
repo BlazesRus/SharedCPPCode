@@ -662,7 +662,7 @@ inline MediumDec BlazesRusCode::MediumDec::Trunc(const MediumDec& tValue) { retu
 inline void BlazesRusCode::MediumDec::ReadString(const std::string& Value)
 {
 	IntHalf = 0; DecimalHalf = 0;
-	int PlaceNumber;
+
 	std::string WholeNumberBuffer = "";
 	std::string DecimalBuffer = "";
 
@@ -683,7 +683,7 @@ inline void BlazesRusCode::MediumDec::ReadString(const std::string& Value)
 		else if (StringChar != ' ')
 			break;//Stop Extracting after encounter non-number character such as i
 	}
-	PlaceNumber = WholeNumberBuffer.length() - 1;
+	unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;
 	for (char const& StringChar : WholeNumberBuffer)
 	{
 		TempInt = VariableConversionFunctions::CharAsInt(StringChar);
@@ -697,17 +697,14 @@ inline void BlazesRusCode::MediumDec::ReadString(const std::string& Value)
 	PlaceNumber = 8;
 	for (char const& StringChar : DecimalBuffer)
 	{
-		//Limit stored decimal numbers to the amount it can store
-		if (PlaceNumber > -1)
+		TempInt = VariableConversionFunctions::CharAsInt(StringChar);
+		TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+		if (StringChar != '0')
 		{
-			TempInt = VariableConversionFunctions::CharAsInt(StringChar);
-			TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-			if (StringChar != '0')
-			{
-				DecimalHalf += TempInt02;
-			}
-			PlaceNumber--;
+			DecimalHalf += TempInt02;
 		}
+		if(Placenumber==0)//Limit stored decimal numbers to the amount it can store
+			break;
 	}
 }
 

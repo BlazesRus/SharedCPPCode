@@ -881,18 +881,18 @@ public:
     #pragma region String Commands
 protected:
 
-        void InitialyzeAltRepFromString(const std::string& Value)
+        void InitialyzeAltRepFromString(const std::string& tvalue)
         {
             #if defined(AltNum_EnablePiRep)
-            if (Value.find("Pi") != std::string::npos)
+            if (tvalue.find("Pi") != std::string::npos)
                 DecimalHalf.Flags = 1;
             #endif
             #if defined(AltNum_EnableERep)
-            if (tValue.last() == 'e')
+            if (tvalue.last() == 'e')
                 DecimalHalf.Flags = 2;
             #endif
             #if defined(AltNum_EnableIRep)
-            if (tValue.last() == 'i')
+            if (tvalue.last() == 'i')
                 DecimalHalf.Flags = 3;
             #endif
         }
