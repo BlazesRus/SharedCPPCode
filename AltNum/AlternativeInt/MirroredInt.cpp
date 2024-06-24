@@ -1,4 +1,5 @@
 #include "MirroredInt.hpp"
+
 using MirroredInt = BlazesRusCode::MirroredInt;
 
 MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();
@@ -10,13 +11,13 @@ MirroredInt MirroredInt::NegativeOne = MirroredInt::NegativeOneValue();
 MirroredInt MirroredInt::One = MirroredInt::OneValue();
 MirroredInt MirroredInt::Two = MirroredInt::TwoValue();
 
-inline BlazesRusCode::MirroredInt::MirroredInt(const unsigned int& value, const unsigned int& sign)
+BlazesRusCode::MirroredInt::MirroredInt(const unsigned int& value, const unsigned int& sign)
 {
 	Value = value;
 	Sign = sign;
 }
 
-inline BlazesRusCode::MirroredInt::MirroredInt(const signed int& value)
+BlazesRusCode::MirroredInt::MirroredInt(const signed int& value)
 {
 	if (value<0) {
 		Sign = PositiveSign;
@@ -28,27 +29,27 @@ inline BlazesRusCode::MirroredInt::MirroredInt(const signed int& value)
 	}
 }
 
-inline bool BlazesRusCode::MirroredInt::IsNegative() const
+bool BlazesRusCode::MirroredInt::IsNegative() const
 {
 	return Sign == NegativeSign;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsPositive() const
+bool BlazesRusCode::MirroredInt::IsPositive() const
 {
 	return Sign == PositiveSign;
 }
 
-inline void BlazesRusCode::MirroredInt::SetAsPositive()
+void BlazesRusCode::MirroredInt::SetAsPositive()
 {
 	Sign = PositiveSign;
 }
 
-inline void BlazesRusCode::MirroredInt::SetAsNegative()
+void BlazesRusCode::MirroredInt::SetAsNegative()
 {
 	Sign = NegativeSign;
 }
 
-inline void BlazesRusCode::MirroredInt::SetSignedValue(const signed int& val)
+void BlazesRusCode::MirroredInt::SetSignedValue(const signed int& val)
 {
 	if (val<0) {
 		Sign = PositiveSign;
@@ -60,19 +61,19 @@ inline void BlazesRusCode::MirroredInt::SetSignedValue(const signed int& val)
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::SetValue(const unsigned int& value, const unsigned int& sign)
+void BlazesRusCode::MirroredInt::SetValue(const unsigned int& value, const unsigned int& sign)
 {
 	Value = value;
 	Sign = sign;
 }
 
-inline void BlazesRusCode::MirroredInt::SetAsZeroVal()
+void BlazesRusCode::MirroredInt::SetAsZeroVal()
 {
 	Value = 0;
 }
 
 
-inline int BlazesRusCode::MirroredInt::GetValue() const
+int BlazesRusCode::MirroredInt::GetValue() const
 {
 	if (IsPositive())
 		return (signed int)Value;
@@ -80,52 +81,52 @@ inline int BlazesRusCode::MirroredInt::GetValue() const
 		return -((signed int)Value);
 }
 
-inline void BlazesRusCode::MirroredInt::SetAsZero()
+void BlazesRusCode::MirroredInt::SetAsZero()
 {
 	Value = 0; Sign = PositiveSign;
 }
 
-inline void BlazesRusCode::MirroredInt::SetAsNegativeZero()
+void BlazesRusCode::MirroredInt::SetAsNegativeZero()
 {
 	Value = 0; Sign = NegativeSign;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsAtZeroInt() const
+bool BlazesRusCode::MirroredInt::IsAtZeroInt() const
 {
 	return Value == 0;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsNotAtZeroInt() const
+bool BlazesRusCode::MirroredInt::IsNotAtZeroInt() const
 {
 	return Value != 0;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsAtOneInt() const
+bool BlazesRusCode::MirroredInt::IsAtOneInt() const
 {
 	return Value == 1;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsNotAtOneInt() const
+bool BlazesRusCode::MirroredInt::IsNotAtOneInt() const
 {
 	return Value != 1;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsEven() const
+bool BlazesRusCode::MirroredInt::IsEven() const
 {
 	return (Value & 1) == 0;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsOdd() const
+bool BlazesRusCode::MirroredInt::IsOdd() const
 {
 	return (Value & 1) == 1;
 }
 
-inline bool BlazesRusCode::MirroredInt::IsZero() const
+bool BlazesRusCode::MirroredInt::IsZero() const
 {
 	return Value == 0 && Sign == PositiveSign;
 }
 
-inline MirroredInt BlazesRusCode::MirroredInt::Abs() const
+MirroredInt BlazesRusCode::MirroredInt::Abs() const
 {
 	if (IsPositive())
 		return *this;
@@ -133,67 +134,67 @@ inline MirroredInt BlazesRusCode::MirroredInt::Abs() const
 		return MirroredInt(Value);
 }
 
-inline void BlazesRusCode::MirroredInt::ApplyAbs()
+void BlazesRusCode::MirroredInt::ApplyAbs()
 {
 	if (IsNegative())
 		Sign = PositiveSign;
 }
 
-inline void BlazesRusCode::MirroredInt::SwapNegativeStatus()
+void BlazesRusCode::MirroredInt::SwapNegativeStatus()
 {
 	Sign ^= 1;
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::MaximumValue()
+MirroredInt BlazesRusCode::MirroredInt::MaximumValue()
 {
 	return MirroredInt(2147483647, PositiveSign);
 }
 
-inline MirroredInt BlazesRusCode::MirroredInt::MinimumValue()
+MirroredInt BlazesRusCode::MirroredInt::MinimumValue()
 {
 	return MirroredInt(2147483647, NegativeSign);
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::NegativeOneValue()
+MirroredInt BlazesRusCode::MirroredInt::NegativeOneValue()
 {
 	return MirroredInt(1, NegativeSign);
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::OneValue()
+MirroredInt BlazesRusCode::MirroredInt::OneValue()
 {
 	return MirroredInt(1);
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::TwoValue()
+MirroredInt BlazesRusCode::MirroredInt::TwoValue()
 {
 	return MirroredInt(2);
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::NegativeZeroValue()
+MirroredInt BlazesRusCode::MirroredInt::NegativeZeroValue()
 {
 	return MirroredInt(0, NegativeSign);
 }
 
 
-inline MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
+MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
 {
 	return MirroredInt();
 }
 
 
-inline void BlazesRusCode::MirroredInt::UInt64DivOp(const unsigned __int64& rValue)
+void BlazesRusCode::MirroredInt::UInt64DivOp(const unsigned __int64& rValue)
 {
 	unsigned __int64 result = (unsigned __int64)Value;
 	result /= rValue;
 	Value = (unsigned int)result;
 }
 
-inline void BlazesRusCode::MirroredInt::Int64DivOp(const signed __int64& rValue)
+void BlazesRusCode::MirroredInt::Int64DivOp(const signed __int64& rValue)
 {
 	signed __int64 result = (signed __int64)Value;
 	if (rValue<0) {
@@ -205,14 +206,14 @@ inline void BlazesRusCode::MirroredInt::Int64DivOp(const signed __int64& rValue)
 	Value = (unsigned int)result;
 }
 
-inline void BlazesRusCode::MirroredInt::UInt64MultOp(const unsigned __int64& rValue)
+void BlazesRusCode::MirroredInt::UInt64MultOp(const unsigned __int64& rValue)
 {
 	unsigned __int64 result = (unsigned __int64)Value;
 	result *= rValue;
 	Value = (unsigned int)result;
 }
 
-inline void BlazesRusCode::MirroredInt::Int64MultOp(const signed __int64& rValue)
+void BlazesRusCode::MirroredInt::Int64MultOp(const signed __int64& rValue)
 {
 	signed __int64 result = (signed __int64)Value;
 	if (rValue<0) {
@@ -224,7 +225,7 @@ inline void BlazesRusCode::MirroredInt::Int64MultOp(const signed __int64& rValue
 	Value = (unsigned int)result;
 }
 
-inline void BlazesRusCode::MirroredInt::DivOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::DivOp(const MirroredInt& rValue) {
 	if (rValue.IsNegative()) {
 		SwapNegativeStatus();
 		Value /= rValue.Value;
@@ -233,12 +234,12 @@ inline void BlazesRusCode::MirroredInt::DivOp(const MirroredInt& rValue) {
 		Value /= rValue.Value;
 }
 
-inline void BlazesRusCode::MirroredInt::UIntDivOp(const unsigned int& rValue)
+void BlazesRusCode::MirroredInt::UIntDivOp(const unsigned int& rValue)
 {
 	Value /= rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::IntDivOp(const signed int& rValue)
+void BlazesRusCode::MirroredInt::IntDivOp(const signed int& rValue)
 {
 	if (rValue<0) {
 		SwapNegativeStatus();
@@ -248,7 +249,7 @@ inline void BlazesRusCode::MirroredInt::IntDivOp(const signed int& rValue)
 		Value /= rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::MultOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::MultOp(const MirroredInt& rValue) {
 	if (rValue.IsNegative()) {
 		SwapNegativeStatus();
 		Value *= rValue.Value;
@@ -257,12 +258,12 @@ inline void BlazesRusCode::MirroredInt::MultOp(const MirroredInt& rValue) {
 		Value *= rValue.Value;
 }
 
-inline void BlazesRusCode::MirroredInt::UIntMultOp(const unsigned int& rValue)
+void BlazesRusCode::MirroredInt::UIntMultOp(const unsigned int& rValue)
 {
 	Value *= rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::IntMultOp(const signed int& rValue)
+void BlazesRusCode::MirroredInt::IntMultOp(const signed int& rValue)
 {
 	if (rValue<0) {
 		SwapNegativeStatus();
@@ -272,7 +273,7 @@ inline void BlazesRusCode::MirroredInt::IntMultOp(const signed int& rValue)
 		Value *= rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::UnsignedAddOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::UnsignedAddOp(const MirroredInt& rValue) {
 	if (IsPositive())
 		Value += rValue.Value;
 	else {
@@ -285,7 +286,7 @@ inline void BlazesRusCode::MirroredInt::UnsignedAddOp(const MirroredInt& rValue)
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::AddOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::AddOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.IsPositive())
 			Value += rValue.Value;
@@ -308,7 +309,8 @@ inline void BlazesRusCode::MirroredInt::AddOp(const MirroredInt& rValue) {
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::UIntAddOp(const unsigned int& rValue) {
+void BlazesRusCode::MirroredInt::UIntAddOp(const unsigned int& rValue)
+{
 	if (IsPositive())
 		Value += rValue;
 	else {
@@ -321,7 +323,7 @@ inline void BlazesRusCode::MirroredInt::UIntAddOp(const unsigned int& rValue) {
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::IntAddOp(const signed int& rValue) {
+void BlazesRusCode::MirroredInt::IntAddOp(const signed int& rValue) {
 	if (IsPositive()) {
 		if (rValue >= 0)
 			Value += rValue;
@@ -348,7 +350,7 @@ inline void BlazesRusCode::MirroredInt::IntAddOp(const signed int& rValue) {
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::UnsignedSubOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::UnsignedSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.Value>Value) {//Becoming positive
 			Sign = PositiveSign;
@@ -361,7 +363,7 @@ inline void BlazesRusCode::MirroredInt::UnsignedSubOp(const MirroredInt& rValue)
 		Value += rValue.Value;
 }
 
-inline void BlazesRusCode::MirroredInt::SubOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::SubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.IsNegative())
 			Value += rValue.Value;
@@ -384,7 +386,7 @@ inline void BlazesRusCode::MirroredInt::SubOp(const MirroredInt& rValue) {
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::UIntSubOp(const unsigned int& rValue) {
+void BlazesRusCode::MirroredInt::UIntSubOp(const unsigned int& rValue) {
 	if (IsPositive()) {
 		if (rValue>Value) {//Becoming positive
 			Sign = PositiveSign;
@@ -397,7 +399,7 @@ inline void BlazesRusCode::MirroredInt::UIntSubOp(const unsigned int& rValue) {
 		Value += rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::IntSubOp(const signed int& rValue) {
+void BlazesRusCode::MirroredInt::IntSubOp(const signed int& rValue) {
 	if (IsPositive()) {
 		if (rValue<0)
 			Value -= rValue;
@@ -423,7 +425,7 @@ inline void BlazesRusCode::MirroredInt::IntSubOp(const signed int& rValue) {
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedAddOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingUnsignedAddOp(const MirroredInt& rValue) {
 	if (IsPositive())
 		Value += rValue.Value;
 	else {
@@ -436,7 +438,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedAddOp(const Mirrored
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedSubOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingUnsignedSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.Value >= Value) {//Becoming positive
 			Sign = PositiveSign;
@@ -449,7 +451,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUnsignedSubOp(const Mirrored
 		Value += rValue.Value;
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingAddOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingAddOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.IsPositive())
 			Value += rValue.Value;
@@ -472,7 +474,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingAddOp(const MirroredInt& rVa
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rValue) {
 	if (IsPositive()) {
 		if (rValue.IsNegative())
 			Value += rValue.Value;
@@ -495,7 +497,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingSubOp(const MirroredInt& rVa
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUIntAddOp(const unsigned int& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingUIntAddOp(const unsigned int& rValue) {
 	if (IsPositive())
 		Value += rValue;
 	else {
@@ -508,7 +510,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUIntAddOp(const unsigned int
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingUIntSubOp(const unsigned int& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingUIntSubOp(const unsigned int& rValue) {
 	if (IsPositive()) {
 		if (rValue >= Value) {//Becoming positive
 			Sign = PositiveSign;
@@ -521,7 +523,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingUIntSubOp(const unsigned int
 		Value += rValue;
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerAddOp(const signed int& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingIntegerAddOp(const signed int& rValue) {
 	bool rIsNeg = rValue < 0;
 	unsigned int rMag = (unsigned int)(rIsNeg ? -rValue : rValue);
 	if (IsPositive()) {
@@ -546,7 +548,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerAddOp(const signed in
 	}
 }
 
-inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed int& rValue) {
+void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed int& rValue) {
 	bool rIsNeg = rValue < 0;
 	unsigned int rMag = (unsigned int)(rIsNeg ? -rValue : rValue);
 	if (IsPositive()) {
@@ -571,7 +573,7 @@ inline void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed in
 	}
 }
 
-inline std::string BlazesRusCode::MirroredInt::ToString() const
+std::string BlazesRusCode::MirroredInt::ToString() const
 {
 	if (IsNegative())
 		return "-" + VariableConversionFunctions::UIntToStringConversion(Value);

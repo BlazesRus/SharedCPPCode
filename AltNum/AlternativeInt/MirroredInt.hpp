@@ -460,7 +460,19 @@ namespace BlazesRusCode
         void AddOp(const MirroredInt& rValue);
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UIntAddOp(const unsigned int& rValue);
+        void UIntAddOp(const unsigned int& rValue)
+        {
+	        if (IsPositive())
+		        Value += rValue;
+	        else {
+		        if (rValue>Value) {//Becoming positive
+			        Sign = PositiveSign;
+			        Value = rValue - Value - 1;
+		        }
+		        else
+			        Value -= rValue;
+	        }
+        }
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void IntAddOp(const signed int& rValue);
