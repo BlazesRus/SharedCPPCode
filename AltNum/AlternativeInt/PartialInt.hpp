@@ -16,12 +16,19 @@ namespace BlazesRusCode
 {
 	struct DLL_API PartialInt {
     public:
+    #pragma region DigitStorage
+
 		//Stores Digits XXX XXX XXX
 		unsigned int Value:30;
+
 		//Can store up to 4 Flag states including normal state at 0
 		unsigned int Flags:2;
 
+    #pragma endregion DigitStorage
+
         static const unsigned int MaximumInt = 1073741823;
+
+    #pragma region class_constructors
 
 		PartialInt(unsigned int value=0, unsigned int flags=0);
 
@@ -43,95 +50,56 @@ namespace BlazesRusCode
             return *this;
         }
 
+    #pragma endregion class_constructors
 
-		bool IsNormalVariant() const;
+    #pragma region Check_if_value
 
-		bool IsPiVariant() const;
+		inline bool IsNormalVariant() const;
 
-		bool IsEVariant() const;
+		inline bool IsPiVariant() const;
 
-		bool IsIVariant() const;
+		inline bool IsEVariant() const;
 
-		void SwitchToNormal();
+		inline bool IsIVariant() const;
 
-		void SwitchToPiVariant();
+		inline void SwitchToNormal();
 
-		void SwitchToEVariant();
+		inline void SwitchToPiVariant();
 
-		void SwitchToIVariant();
+		inline void SwitchToEVariant();
+
+		inline void SwitchToIVariant();
 
         //Is at zero value
-        bool IsAtZero() const;
+        inline bool IsAtZero() const;
 
         //Is not at zero value
-        bool IsNotAtZero() const;
+        inline bool IsNotAtZero() const;
 
         //Is at one value
-        bool IsAtOne() const;
+        inline bool IsAtOne() const;
 
-		bool IsEven() const;
+		inline bool IsEven() const;
 
-		bool IsOdd() const;
+		inline bool IsOdd() const;
+
+    #pragma endregion Check_if_value
 
 	#pragma region StringOperations
 
-		void ReadString(const std::string& value)
-		{
-			Value = 0;
-			std::string WholeNumberBuffer = "";
-
-			int charAsNumber;
-			int charAsNumberInPlace;
-			for (char const& StringChar : value)
-			{
-				if (VariableConversionFunctions::IsDigit(StringChar))
-					WholeNumberBuffer += StringChar;
-				else if (StringChar != ' ')
-					break;//Stop Extracting after encounter non-number character such as i or .
-			}
-	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit one
-	        for (char const& StringChar : WholeNumberBuffer)
-	        {
-				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
-				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-				if (StringChar != '0')
-				{
-					Value += charAsNumberInPlace;
-				}
-                PlaceNumber--;
-			}
-            #if defined(AltNum_EnablePiRep)
-            if (value.find("Pi") != std::string::npos)
-                DecimalHalf.Flags = 1;
-            #endif
-            #if defined(AltNum_EnableERep)
-            if (value.last() == 'e')
-                DecimalHalf.Flags = 2;
-            #endif
-            #if defined(AltNum_EnableIRep)
-            if (value.last() == 'i')
-                DecimalHalf.Flags = 3;
-            #endif
-		}
+		inline void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialInt"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        PartialInt(const char* strVal)
-        {
-            std::string Value = strVal;
-            this->ReadString(Value);
-        }
+        PartialInt(const char* strVal);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialInt"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        PartialInt(const std::string& Value)
-        {
-            this->ReadString(Value);
-        }
+        PartialInt(const std::string& Value);
 
         std::string ToString() const;
 
@@ -140,6 +108,8 @@ namespace BlazesRusCode
         explicit operator std::string();
 
 	#pragma endregion StringOperations
+
+    #pragma region Comparison Operators
 
 		std::strong_ordering operator<=>(const PartialInt& that) const
 		{
@@ -236,44 +206,56 @@ protected:
         /// Returns the value at zero
         /// </summary>
         /// <returns>MirroredInt</returns>
-        static PartialInt ZeroValue();
+        inline static PartialInt ZeroValue();
 
 public:
+
+#if !defined(AltNum_PreventExtra_PartialInt_Constants)
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static unsigned int const DecimalOverflow = 1000000000;
+        inline static unsigned int const DecimalOverflow = 1000000000;
 
 	//#if defined(AltNum_EnablePiRep)
         //Pi*Value representation(when DecimalHalf.Flags==1)
-        static const unsigned int PiRep = 1;
+        inline static const unsigned int PiRep = 1;
 	//#endif
+    //
 	//#if defined(AltNum_EnableERep)
         //e*Value representation(DecimalHalf.Flags==2)
-        static const unsigned int ERep = 2;
+        inline static const unsigned int ERep = 2;
 	//#endif
+    //
 	//#if defined(AltNum_EnableIRep)
         //e*Value representation(DecimalHalf.Flags==3)
-        static const unsigned int IRep = 3;
+        inline static const unsigned int IRep = 3;
 	//#endif
+    //
 	//#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
-		static const unsigned int InfinityRep = 1073741805;
+		inline static const unsigned int InfinityRep = 1073741805;
 	//#endif
+    //
 	//#if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
-        static const unsigned int ApproachingBottomRep = 1073741806;
+        inline static const unsigned int ApproachingBottomRep = 1073741806;
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
-		static const unsigned int ApproachingTopRep = 1073741807;
+		inline static const unsigned int ApproachingTopRep = 1073741807;
 	//#endif
+    //
 	//#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value-1
-        static const unsigned int ApproachingMidLeftRep = 1073741808;
+        inline static const unsigned int ApproachingMidLeftRep = 1073741808;
 		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1
-		static const unsigned int ApproachingMidRightRep = 1073741809;
+		inline static const unsigned int ApproachingMidRightRep = 1073741809;
 	//#endif
-		static PartialInt Zero;
+
+#endif
+
+		static const PartialInt Zero;
+
+private:
 
 		void UInt64DivOp(const unsigned __int64& rValue);
 
@@ -282,6 +264,8 @@ public:
 		void UInt64MultOp(const unsigned __int64& rValue);
 
 		void Int64MultOp(const signed __int64& rValue);
+
+public:
 
  		friend PartialInt& operator/=(PartialInt& lValue, const PartialInt& rValue){
 			lValue.Value /= rValue.Value; return lValue;
@@ -497,5 +481,4 @@ public:
     #pragma endregion Other Operators
 
 	};
-
 }

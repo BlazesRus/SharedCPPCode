@@ -2,14 +2,7 @@
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 
-MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();
-MirroredInt MirroredInt::Zero = MirroredInt::ZeroValue();
-MirroredInt MirroredInt::Maximum = MirroredInt::MaximumValue();
-MirroredInt MirroredInt::Minimum = MirroredInt::MinimumValue();
-
-MirroredInt MirroredInt::NegativeOne = MirroredInt::NegativeOneValue();
-MirroredInt MirroredInt::One = MirroredInt::OneValue();
-MirroredInt MirroredInt::Two = MirroredInt::TwoValue();
+#pragma region class_constructors
 
 BlazesRusCode::MirroredInt::MirroredInt(const unsigned int& value, const unsigned int& sign)
 {
@@ -34,24 +27,12 @@ BlazesRusCode::MirroredInt::MirroredInt(const MirroredInt& rvalue)
 	Value = rvalue.Value; Sign = rvalue.Sign;
 }
 
-bool BlazesRusCode::MirroredInt::IsNegative() const
+int BlazesRusCode::MirroredInt::GetValue() const
 {
-	return Sign == NegativeSign;
-}
-
-bool BlazesRusCode::MirroredInt::IsPositive() const
-{
-	return Sign == PositiveSign;
-}
-
-void BlazesRusCode::MirroredInt::SetAsPositive()
-{
-	Sign = PositiveSign;
-}
-
-void BlazesRusCode::MirroredInt::SetAsNegative()
-{
-	Sign = NegativeSign;
+	if (IsPositive())
+		return (signed int)Value;
+	else
+		return -((signed int)Value);
 }
 
 void BlazesRusCode::MirroredInt::SetSignedValue(const signed int& val)
@@ -72,19 +53,97 @@ void BlazesRusCode::MirroredInt::SetValue(const unsigned int& value, const unsig
 	Sign = sign;
 }
 
+#pragma endregion class_constructors
+
+#pragma region ValueDefines
+
+MirroredInt BlazesRusCode::MirroredInt::MaximumValue()
+{
+	return MirroredInt(2147483647, PositiveSign);
+}
+
+MirroredInt BlazesRusCode::MirroredInt::MinimumValue()
+{
+	return MirroredInt(2147483647, NegativeSign);
+}
+
+
+MirroredInt BlazesRusCode::MirroredInt::NegativeOneValue()
+{
+	return MirroredInt(1, NegativeSign);
+}
+
+
+MirroredInt BlazesRusCode::MirroredInt::OneValue()
+{
+	return MirroredInt(1);
+}
+
+
+MirroredInt BlazesRusCode::MirroredInt::TwoValue()
+{
+	return MirroredInt(2);
+}
+
+
+MirroredInt BlazesRusCode::MirroredInt::NegativeZeroValue()
+{
+	return MirroredInt(0, NegativeSign);
+}
+
+
+MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
+{
+	return MirroredInt();
+}
+
+const MirroredInt MirroredInt::NegativeZero = MirroredInt::NegativeZeroValue();
+const MirroredInt MirroredInt::Zero = MirroredInt::ZeroValue();
+const MirroredInt MirroredInt::Maximum = MirroredInt::MaximumValue();
+const MirroredInt MirroredInt::Minimum = MirroredInt::MinimumValue();
+
+const MirroredInt MirroredInt::NegativeOne = MirroredInt::NegativeOneValue();
+const MirroredInt MirroredInt::One = MirroredInt::OneValue();
+const MirroredInt MirroredInt::Two = MirroredInt::TwoValue();
+
+#pragma endregion ValueDefines
+
+#pragma region Negative_Status
+
+bool BlazesRusCode::MirroredInt::IsNegative() const
+{
+	return Sign == NegativeSign;
+}
+
+bool BlazesRusCode::MirroredInt::IsPositive() const
+{
+	return Sign == PositiveSign;
+}
+
+void BlazesRusCode::MirroredInt::SetAsPositive()
+{
+	Sign = PositiveSign;
+}
+
+void BlazesRusCode::MirroredInt::SetAsNegative()
+{
+	Sign = NegativeSign;
+}
+
+void BlazesRusCode::MirroredInt::SwapNegativeStatus()
+{
+	Sign ^= 1;
+}
+
+#pragma endregion Negative_Status
+
+#pragma region Check_if_value
+
 void BlazesRusCode::MirroredInt::SetAsZeroVal()
 {
 	Value = 0;
 }
 
-
-int BlazesRusCode::MirroredInt::GetValue() const
-{
-	if (IsPositive())
-		return (signed int)Value;
-	else
-		return -((signed int)Value);
-}
 
 void BlazesRusCode::MirroredInt::SetAsZero()
 {
@@ -145,10 +204,9 @@ void BlazesRusCode::MirroredInt::ApplyAbs()
 		Sign = PositiveSign;
 }
 
-void BlazesRusCode::MirroredInt::SwapNegativeStatus()
-{
-	Sign ^= 1;
-}
+#pragma endregion Check_if_value
+
+#pragma region StringOperations
 
 void BlazesRusCode::MirroredInt::ReadString(const std::string& value)
 {
@@ -179,58 +237,26 @@ void BlazesRusCode::MirroredInt::ReadString(const std::string& value)
 	}
 }
 
-/// <summary>
-/// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
-/// </summary>
-/// <param name="strVal">The value.</param>
-
 BlazesRusCode::MirroredInt::MirroredInt(const char* strVal)
 {
 	std::string Value = strVal;
 	this->ReadString(Value);
 }
 
-
-MirroredInt BlazesRusCode::MirroredInt::MaximumValue()
+BlazesRusCode::MirroredInt::MirroredInt(const std::string& Value)
 {
-	return MirroredInt(2147483647, PositiveSign);
+	this->ReadString(Value);
 }
 
-MirroredInt BlazesRusCode::MirroredInt::MinimumValue()
+std::string BlazesRusCode::MirroredInt::ToString() const
 {
-	return MirroredInt(2147483647, NegativeSign);
+	if (IsNegative())
+		return "-" + VariableConversionFunctions::UIntToStringConversion(Value);
+	else
+		return VariableConversionFunctions::UIntToStringConversion(Value);
 }
 
-
-MirroredInt BlazesRusCode::MirroredInt::NegativeOneValue()
-{
-	return MirroredInt(1, NegativeSign);
-}
-
-
-MirroredInt BlazesRusCode::MirroredInt::OneValue()
-{
-	return MirroredInt(1);
-}
-
-
-MirroredInt BlazesRusCode::MirroredInt::TwoValue()
-{
-	return MirroredInt(2);
-}
-
-
-MirroredInt BlazesRusCode::MirroredInt::NegativeZeroValue()
-{
-	return MirroredInt(0, NegativeSign);
-}
-
-
-MirroredInt BlazesRusCode::MirroredInt::ZeroValue()
-{
-	return MirroredInt();
-}
-
+#pragma endregion StringOperations
 
 void BlazesRusCode::MirroredInt::UInt64DivOp(const unsigned __int64& rValue)
 {
@@ -616,17 +642,4 @@ void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed int& rVal
 		else
 			Value -= rMag;
 	}
-}
-
-inline BlazesRusCode::MirroredInt::MirroredInt(const std::string& Value)
-{
-	this->ReadString(Value);
-}
-
-std::string BlazesRusCode::MirroredInt::ToString() const
-{
-	if (IsNegative())
-		return "-" + VariableConversionFunctions::UIntToStringConversion(Value);
-	else
-		return VariableConversionFunctions::UIntToStringConversion(Value);
 }

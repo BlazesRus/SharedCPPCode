@@ -20,16 +20,7 @@ namespace BlazesRusCode
 	class DLL_API MirroredInt
     {
 	public:
-    #if defined(AltNum_UseInvertedSign)
-		//If Sign is one, then the sign is positive.
-        //Otherwise, the sign is negative
-    #else
-		//If Sign is one, then the sign is negative.
-        //Otherwise, the sign is positive
-    #endif
-		unsigned int Sign:1;
-		//Stores non-signed part of value
-		unsigned int Value:31;
+    #pragma region DigitStorage
 
     #if defined(AltNum_UseInvertedSign)
         static const unsigned int NegativeSign = 0;
@@ -38,6 +29,15 @@ namespace BlazesRusCode
         static const unsigned int NegativeSign = 1;
         static const unsigned int PositiveSign = 0;
     #endif
+
+		//If(Sign==NegativeSign), then the sign is negative.
+        //Otherwise, the sign is positive
+		unsigned int Sign:1;
+
+		//Stores non-signed part of value
+		unsigned int Value:31;
+
+    #pragma endregion DigitStorage
 
     #pragma region class_constructors
 
@@ -102,31 +102,6 @@ namespace BlazesRusCode
 
     #pragma endregion Negative_Status
 
-	#pragma region StringOperations
-
-		inline void ReadString(const std::string& value);
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
-        /// </summary>
-        /// <param name="strVal">The value.</param>
-        MirroredInt(const char* strVal);
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MirroredInt(const std::string& Value);
-
-        std::string ToString() const;
-
-		/// <summary>
-        /// MirroredInt to int explicit conversion
-        /// </summary>
-        explicit operator std::string() { return ToString(); }
-
-	#pragma endregion StringOperations
-
     #pragma region Check_if_value
 
         //Set as zero without changing sign(including negative zero)
@@ -157,12 +132,39 @@ namespace BlazesRusCode
 
 		inline bool IsZero() const;
 
-    #pragma endregion Check_if_value
-
         //Returns copy of value as Absolute value
         inline MirroredInt Abs() const;
 
         inline void ApplyAbs();
+
+    #pragma endregion Check_if_value
+
+	#pragma region StringOperations
+
+		inline void ReadString(const std::string& value);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
+        /// </summary>
+        /// <param name="strVal">The value.</param>
+        MirroredInt(const char* strVal);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
+        /// </summary>
+        /// <param name="tValue">The value.</param>
+        MirroredInt(const std::string& Value);
+
+        std::string ToString() const;
+
+		/// <summary>
+        /// MirroredInt to int explicit conversion
+        /// </summary>
+        explicit operator std::string() { return ToString(); }
+
+	#pragma endregion StringOperations
+
+    #pragma region Comparison Operators
 
 		std::strong_ordering SignComparison(const MirroredInt& that) const
 		{
@@ -223,6 +225,15 @@ namespace BlazesRusCode
 			return true;
 		}
 
+		bool operator!=(const MirroredInt& that) const
+		{
+			if (Sign!=that.Sign)
+				return true;
+			if (Value==that.Value)
+				return false;
+			return true;
+		}
+
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
 			//Comparing if number is negative vs positive
@@ -272,6 +283,49 @@ namespace BlazesRusCode
 				return false;
 			return true;
 		}
+
+        bool operator!=(const unsigned int& that) const
+		{
+			if (Sign==NegativeSign)
+				return true;
+			if (Value==that)
+				return false;
+			return true;
+		}
+
+        bool operator==(const signed int& that) const
+		{
+			if(that<0){
+                if(Sign!=NegativeSign)
+                    return false;
+			    if (Value==(unsigned int)-that)
+				    return true;
+            } else {
+                if(Sign!=PositiveSign)
+                    return false;
+			    if (Value==(unsigned int)that)
+				    return true;
+            }
+			return false;
+		}
+
+        bool operator!=(const signed int& that) const
+		{
+			if(that<0){
+                if(Sign==PositiveSign)
+                    return true;
+			    else if (Value==(unsigned int)-that)
+				    return false;
+            } else {
+                if(Sign==NegativeSign)
+                    return true;
+			    else if (Value==(unsigned int)that)
+				    return false;
+            }
+			return true;
+		}
+
+    #pragma endregion Comparison Operators
 
         /// <summary>
         /// to int explicit conversion
@@ -334,65 +388,24 @@ namespace BlazesRusCode
 
         //Alias:MaxIntHalf
         //Maximum value(2147483647) that can be stored inside IntHalf field
-        static MirroredInt Maximum;
+        static const MirroredInt Maximum;
 
         //Alias:MinIntHalf
         //Minimum value(-2147483647) that can be stored inside IntHalf field
-        static MirroredInt Minimum;
+        static const MirroredInt Minimum;
 
-        static MirroredInt NegativeOne;
+        static const MirroredInt NegativeOne;
 
-        static MirroredInt One;
+        static const MirroredInt One;
 
-        static MirroredInt Two;
+        static const MirroredInt Two;
 
         //Alias:NegativeZeroRep
-        static MirroredInt NegativeZero;
+        static const MirroredInt NegativeZero;
 
-		static MirroredInt Zero;
+		static const MirroredInt Zero;
 
-//These templates require size int 32 or greater in order to preserve storage of value (commenting out for now to reduce strain on extension)
-/*		template<IntegerType IntType=unsigned int>
-		void UIntDivOpV1(const IntType& rValue)
-		{
-			IntType result = (IntType) Value;
-			result /= rValue;
-			Value = (unsigned int) result;
-		}
-
-		template<IntegerType IntType=signed int>
-		void IntDivOpV1(const IntType& rValue)
-		{
-			IntType result = (IntType) Value;
-			if (rValue<0) {
-				SwapNegativeStatus();
-				result /= -rValue;
-			}
-			else
-				result /= rValue;
-			Value = (unsigned int) result;
-		}
-
-		template<IntegerType IntType=unsigned int>
-		void UIntMultOpV1(const IntType& rValue)
-		{
-			IntType result = (IntType) Value;
-			result *= rValue;
-			Value = (unsigned int) result;
-		}
-
-		template<IntegerType IntType=signed int>
-		void IntMultOpV1(const IntType& rValue)
-		{
-			IntType result = (IntType) Value;
-			if (rValue<0) {
-				SwapNegativeStatus();
-				result *= -rValue;
-			}
-			else
-				result *= rValue;
-			Value = (unsigned int) result;
-		}*/
+private:
 
 		void UInt64DivOp(const unsigned __int64& rValue);
 
@@ -440,31 +453,33 @@ namespace BlazesRusCode
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void IntSubOp(const signed int& rValue);
 
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
+public:
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
+        inline void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingAddOp(const MirroredInt& rValue);
-
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingSubOp(const MirroredInt& rValue);
+        inline void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUIntAddOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUIntSubOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingIntegerAddOp(const signed int& rValue);
+        inline void NRepSkippingAddOp(const MirroredInt& rValue);
 
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingIntegerSubOp(const signed int& rValue);
+        inline void NRepSkippingSubOp(const MirroredInt& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        inline void NRepSkippingUIntAddOp(const unsigned int& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        inline void NRepSkippingUIntSubOp(const unsigned int& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        inline void NRepSkippingIntegerAddOp(const signed int& rValue);
+
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        inline void NRepSkippingIntegerSubOp(const signed int& rValue);
 
  		friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
 			lValue.DivOp(rValue); return lValue;
@@ -729,6 +744,4 @@ namespace BlazesRusCode
     #pragma endregion Other Operators
 
 	};
-
-
 }

@@ -1,123 +1,159 @@
 ﻿#include "PartialInt.hpp"
 using PartialInt = BlazesRusCode::PartialInt;
 
-PartialInt PartialInt::Zero = PartialInt::ZeroValue();
+#pragma region class_constructors
 
-inline BlazesRusCode::PartialInt::PartialInt(unsigned int value, unsigned int flags)
+BlazesRusCode::PartialInt::PartialInt(unsigned int value, unsigned int flags)
 {
 	Value = value;
 	Flags = flags;
 }
 
-inline BlazesRusCode::PartialInt::PartialInt(const PartialInt& rhs)
+BlazesRusCode::PartialInt::PartialInt(const PartialInt& rhs)
 {
 	Value = rhs.Value; Flags = rhs.Flags;
 }
 
-inline void BlazesRusCode::PartialInt::UInt64DivOp(const unsigned __int64& rValue)
-{
-	unsigned __int64 result = (unsigned __int64)Value;
-	result /= rValue;
-	Value = (unsigned int)result;
-}
+#pragma endregion class_constructors
 
-inline void BlazesRusCode::PartialInt::Int64DivOp(const signed __int64& rValue)
-{
-	signed __int64 result = (signed __int64)Value;
-	result /= rValue;//Assuming right side value is non-negative because does not support negative numbers(not worth small cost to check given primary function of class)
-	Value = (unsigned int)result;
-}
+#pragma region ValueDefines
 
-inline void BlazesRusCode::PartialInt::UInt64MultOp(const unsigned __int64& rValue)
-{
-	unsigned __int64 result = (unsigned __int64)Value;
-	result *= rValue;
-	Value = (unsigned int)result;
-}
+const PartialInt PartialInt::Zero = PartialInt::ZeroValue();
 
-inline void BlazesRusCode::PartialInt::Int64MultOp(const signed __int64& rValue)
-{
-	signed __int64 result = (signed __int64)Value;
-	result *= rValue;
-	Value = (unsigned int)result;
-}
+#pragma endregion ValueDefines
 
-inline bool BlazesRusCode::PartialInt::IsNormalVariant() const
+#pragma region Check_if_value
+
+bool BlazesRusCode::PartialInt::IsNormalVariant() const
 {
 	return Flags == 0;
 }
 
-inline bool BlazesRusCode::PartialInt::IsPiVariant() const
+bool BlazesRusCode::PartialInt::IsPiVariant() const
 {
 	return Flags == 1;
 }
 
-inline bool BlazesRusCode::PartialInt::IsEVariant() const
+bool BlazesRusCode::PartialInt::IsEVariant() const
 {
 	return Flags == 2;
 }
 
-inline bool BlazesRusCode::PartialInt::IsIVariant() const
+bool BlazesRusCode::PartialInt::IsIVariant() const
 {
 	return Flags == 3;
 }
 
-inline void BlazesRusCode::PartialInt::SwitchToNormal()
+void BlazesRusCode::PartialInt::SwitchToNormal()
 {
 	Flags = 0;
 }
 
-inline void BlazesRusCode::PartialInt::SwitchToPiVariant()
+void BlazesRusCode::PartialInt::SwitchToPiVariant()
 {
 	Flags = 1;
 }
 
-inline void BlazesRusCode::PartialInt::SwitchToEVariant()
+void BlazesRusCode::PartialInt::SwitchToEVariant()
 {
 	Flags = 2;
 }
 
-inline void BlazesRusCode::PartialInt::SwitchToIVariant()
+void BlazesRusCode::PartialInt::SwitchToIVariant()
 {
 	Flags = 3;
 }
 
-inline bool BlazesRusCode::PartialInt::IsAtZero() const
+bool BlazesRusCode::PartialInt::IsAtZero() const
 {
 	return Value == 0;
 }
 
-inline bool BlazesRusCode::PartialInt::IsNotAtZero() const
+bool BlazesRusCode::PartialInt::IsNotAtZero() const
 {
 	return Value != 0;
 }
 
-inline bool BlazesRusCode::PartialInt::IsAtOne() const
+bool BlazesRusCode::PartialInt::IsAtOne() const
 {
 	return Value == 1;
 }
 
-inline bool BlazesRusCode::PartialInt::IsEven() const
+bool BlazesRusCode::PartialInt::IsEven() const
 {
 	return (Value & 1) == 0;
 }
 
-inline bool BlazesRusCode::PartialInt::IsOdd() const
+bool BlazesRusCode::PartialInt::IsOdd() const
 {
 	return (Value & 1) == 1;
 }
 
-inline PartialInt BlazesRusCode::PartialInt::ZeroValue()
+PartialInt BlazesRusCode::PartialInt::ZeroValue()
 {
 	return PartialInt();
 }
 
-inline std::string BlazesRusCode::PartialInt::ToString() const
+#pragma endregion Check_if_value
+
+#pragma region StringOperations
+
+void BlazesRusCode::PartialInt::ReadString(const std::string& value)
+{
+	Value = 0;
+	std::string WholeNumberBuffer = "";
+
+	int charAsNumber;
+	int charAsNumberInPlace;
+	for (char const& StringChar : value)
+	{
+		if (VariableConversionFunctions::IsDigit(StringChar))
+			WholeNumberBuffer += StringChar;
+		else if (StringChar != ' ')
+			break;//Stop Extracting after encounter non-number character such as i or .
+	}
+	unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit one
+	for (char const& StringChar : WholeNumberBuffer)
+	{
+		charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
+		charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+		if (StringChar != '0')
+		{
+			Value += charAsNumberInPlace;
+		}
+		PlaceNumber--;
+	}
+	#if defined(AltNum_EnablePiRep)
+	if (value.find("Pi") != std::string::npos)
+		DecimalHalf.Flags = 1;
+	#endif
+	#if defined(AltNum_EnableERep)
+	if (value.last() == 'e')
+		DecimalHalf.Flags = 2;
+	#endif
+	#if defined(AltNum_EnableIRep)
+	if (value.last() == 'i')
+		DecimalHalf.Flags = 3;
+	#endif
+}
+
+BlazesRusCode::PartialInt::PartialInt(const char* strVal)
+{
+	std::string Value = strVal;
+	this->ReadString(Value);
+}
+
+BlazesRusCode::PartialInt::PartialInt(const std::string& Value)
+{
+	this->ReadString(Value);
+}
+
+std::string BlazesRusCode::PartialInt::ToString() const
 {
     return VariableConversionFunctions::UIntToStringConversion(Value);
 }
 
-inline std::string BlazesRusCode::PartialInt::ToDetailedString() const
+std::string BlazesRusCode::PartialInt::ToDetailedString() const
 {
 	std::string result;
 	switch(Value)
@@ -153,7 +189,37 @@ inline std::string BlazesRusCode::PartialInt::ToDetailedString() const
 	return result;
 }
 
-inline BlazesRusCode::PartialInt::operator std::string()
+BlazesRusCode::PartialInt::operator std::string()
 {
 	return ToString();
+}
+
+#pragma endregion StringOperations
+
+void BlazesRusCode::PartialInt::UInt64DivOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result /= rValue;
+	Value = (unsigned int)result;
+}
+
+void BlazesRusCode::PartialInt::Int64DivOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result /= rValue;//Assuming right side value is non-negative because does not support negative numbers(not worth small cost to check given primary function of class)
+	Value = (unsigned int)result;
+}
+
+void BlazesRusCode::PartialInt::UInt64MultOp(const unsigned __int64& rValue)
+{
+	unsigned __int64 result = (unsigned __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
+}
+
+void BlazesRusCode::PartialInt::Int64MultOp(const signed __int64& rValue)
+{
+	signed __int64 result = (signed __int64)Value;
+	result *= rValue;
+	Value = (unsigned int)result;
 }

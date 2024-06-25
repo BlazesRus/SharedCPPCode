@@ -23,11 +23,18 @@ int main()
     test02 = test01;
     MirroredInt test03 = test01;
     PartialInt Partialtest02 = 4;
-    FlaggedInt Flaggedtest03 = 3;
+    PartialInt Partialtest03 = Partialtest02;
+    FlaggedInt Flaggedtest03 = FlaggedInt::Zero;
+    FlaggedInt Flaggedtest04 = Flaggedtest03;
     test01 *= 10;
+    test02 /= -2;
     ++test02;
     test03 *= ++test03;
+    Partialtest02 += 5;
+    Flaggedtest03 /= 2;
     std::string strTest = (std::string) test01;
+    std::string strTest02 = (std::string) Partialtest02;
+    std::string strTest03 = (std::string) Flaggedtest03;
     //Need to fix debug output
     //Outputting to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
 

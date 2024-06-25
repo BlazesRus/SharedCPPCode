@@ -13,12 +13,19 @@
 
 namespace BlazesRusCode
 {
-	struct DLL_API FlaggedInt {
+	class DLL_API FlaggedInt {
     public:
+    #pragma region DigitStorage
+
 		//Is either mixed fraction or power of representation if this value is one
 		unsigned int IsAltRep:1;
+
 		//Stores non-signed part of value
 		unsigned int Value:31;
+
+    #pragma endregion DigitStorage
+
+    #pragma region class_constructors
 
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
 
@@ -33,7 +40,6 @@ namespace BlazesRusCode
             return *this;
         }
 
-/*
         FlaggedInt& operator=(const unsigned int& rhs)
         {
 		    Value = rhs;
@@ -41,87 +47,61 @@ namespace BlazesRusCode
             return *this;
         }
 
-*/
+    #pragma endregion class_constructors
 
-        bool IsAlternative() const;
+    #pragma region Check_if_value
 
-		bool IsNormal();
+        inline bool IsAlternative() const;
 
-		void SwitchToAlternative();
+		inline bool IsNormal();
 
-		void SwitchToNormal();
+		inline void SwitchToAlternative();
+
+		inline void SwitchToNormal();
 
         //Is at zero value
-        bool IsAtZero() const;
+        inline bool IsAtZero() const;
 
         //Is not at zero value
-        bool IsNotAtZero() const;
+        inline bool IsNotAtZero() const;
 
         //Is at one value
-        bool IsAtOne() const;
+        inline bool IsAtOne() const;
 
         //Is at neither zero or negative one
-        bool IsNotOne() const;
+        inline bool IsNotOne() const;
 
-		bool IsEven() const;
+		inline bool IsEven() const;
 
-		bool IsOdd() const;
+		inline bool IsOdd() const;
+
+    #pragma endregion Check_if_value
 
 #pragma region StringOperations
 
-		void ReadString(const std::string& value)
-		{
-			Value = 0;
-			std::string WholeNumberBuffer = "";
-
-			int charAsNumber;
-			int charAsNumberInPlace;
-			for (char const& StringChar : value)
-			{
-				if (VariableConversionFunctions::IsDigit(StringChar))
-					WholeNumberBuffer += StringChar;
-				else if (StringChar != ' ')
-					break;//Stop Extracting after encounter non-number character such as i or .
-			}
-	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit one
-	        for (char const& StringChar : WholeNumberBuffer)
-	        {
-				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
-				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-				if (StringChar != '0')
-				{
-					Value += charAsNumberInPlace;
-				}
-                PlaceNumber--;
-			}
-		}
+		inline void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlaggedInt"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        FlaggedInt(const char* strVal)
-        {
-            std::string Value = strVal;
-            this->ReadString(Value);
-        }
+        FlaggedInt(const char* strVal);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlaggedInt"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        FlaggedInt(const std::string& Value)
-        {
-            this->ReadString(Value);
-        }
+        FlaggedInt(const std::string& Value);
 
-        std::string ToString() const;
+        inline std::string ToString() const;
 
-        std::string ToDetailedString(const PartialInt& DecHalf) const;
+        inline std::string ToDetailedString(const PartialInt& DecHalf) const;
 
         explicit operator std::string();
 
 #pragma endregion StringOperations
+
+    #pragma region Comparison Operators
 
 		std::strong_ordering operator<=>(const FlaggedInt& that) const
 		{
@@ -172,6 +152,8 @@ namespace BlazesRusCode
 			else if (Value!=(unsigned int)that)
 				return true;
 		}
+
+    #pragma endregion Comparison Operators
 
         /// <summary>
         /// to int explicit conversion
@@ -225,15 +207,17 @@ namespace BlazesRusCode
 
 	public:
 
-        static FlaggedInt Maximum;
+        static const FlaggedInt Maximum;
 
-        static FlaggedInt AltMaximum;
+        static const FlaggedInt AltMaximum;
 
-        static FlaggedInt One;
+        static const FlaggedInt One;
 
-        static FlaggedInt Two;
+        static const FlaggedInt Two;
 
-		static FlaggedInt Zero;
+		static const FlaggedInt Zero;
+
+private:
 
 		void UInt64DivOp(const unsigned __int64& rValue);
 
@@ -242,6 +226,8 @@ namespace BlazesRusCode
 		void UInt64MultOp(const unsigned __int64& rValue);
 
 		void Int64MultOp(const signed __int64& rValue);
+
+public:
 
  		friend FlaggedInt& operator/=(FlaggedInt& lValue, const FlaggedInt& rValue){
 			lValue.Value /= rValue.Value; return lValue;

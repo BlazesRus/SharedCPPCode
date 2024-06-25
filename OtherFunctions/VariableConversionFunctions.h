@@ -197,9 +197,9 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="Value">The value.</param>
         /// <returns>int</returns>
-        static unsigned int NumberOfDecimalPlaces(int Value)
+        static unsigned int NumberOfDecimalPlaces(unsigned int Value)
         {
-            int NumberOfPlaces = floor(log(Value));
+            unsigned int NumberOfPlaces = floor(log(Value));
             NumberOfPlaces *= -1;
             NumberOfPlaces += 1;
             return NumberOfPlaces;
