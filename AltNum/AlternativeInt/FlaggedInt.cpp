@@ -13,6 +13,11 @@ inline BlazesRusCode::FlaggedInt::FlaggedInt(const unsigned int& value, const un
 	IsAltRep = isAltRep;
 }
 
+inline BlazesRusCode::FlaggedInt::FlaggedInt(const FlaggedInt& rhs)
+{
+	Value = rhs.Value; IsAltRep = rhs.IsAltRep;
+}
+
 inline void BlazesRusCode::FlaggedInt::UInt64DivOp(const unsigned __int64& rValue)
 {
 	unsigned __int64 result = (unsigned __int64)Value;

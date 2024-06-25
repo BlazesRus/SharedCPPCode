@@ -45,10 +45,7 @@ namespace BlazesRusCode
 
 		MirroredInt(const signed int& value);
 
-		//MirroredInt(const MirroredInt& rvalue)
-  //      {
-  //          Value = rvalue.Value; Sign = rvalue.Sign;
-  //      }
+		MirroredInt(const MirroredInt& rvalue);
 
         MirroredInt& operator=(const MirroredInt& rhs)
         {
@@ -79,26 +76,26 @@ namespace BlazesRusCode
             return *this;
         }
 
-        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+        inline void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
 
-        void SetSignedValue(const signed int& val=0);
+        inline void SetSignedValue(const signed int& val=0);
 
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
 
-		bool IsNegative() const;
+		inline bool IsNegative() const;
 
-		bool IsPositive() const;
+		inline bool IsPositive() const;
 
-        void SetAsPositive();
+        inline void SetAsPositive();
 
-        void SetAsNegative();
+        inline void SetAsNegative();
 
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        void SwapNegativeStatus();
+        inline void SwapNegativeStatus();
 
         MirroredInt operator-() const
         { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
@@ -107,53 +104,19 @@ namespace BlazesRusCode
 
 	#pragma region StringOperations
 
-		void ReadString(const std::string& value)
-		{
-			Value = 0; Sign = PositiveSign;
-			std::string WholeNumberBuffer = "";
-
-			int charAsNumber;
-			int charAsNumberInPlace;
-			for (char const& StringChar : value)
-			{
-				if (VariableConversionFunctions::IsDigit(StringChar))
-					WholeNumberBuffer += StringChar;
-				else if (StringChar == '-')
-					Sign = NegativeSign;
-				else if (StringChar != ' ')
-					break;//Stop Extracting after encounter non-number character such as i or .
-			}
-	        unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit value 0-9
-	        for (char const& StringChar : WholeNumberBuffer)
-	        {
-				charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
-				charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
-				if (StringChar != '0')
-				{
-					Value += charAsNumberInPlace;
-				}
-                PlaceNumber--;
-			}
-		}
+		inline void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        MirroredInt(const char* strVal)
-        {
-            std::string Value = strVal;
-            this->ReadString(Value);
-        }
+        MirroredInt(const char* strVal);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MirroredInt"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MirroredInt(const std::string& Value)
-        {
-            this->ReadString(Value);
-        }
+        MirroredInt(const std::string& Value);
 
         std::string ToString() const;
 
@@ -167,39 +130,39 @@ namespace BlazesRusCode
     #pragma region Check_if_value
 
         //Set as zero without changing sign(including negative zero)
-        void SetAsZeroVal();
+        inline void SetAsZeroVal();
 
         //Return value as real number(negative zero counts as zero)
-        int GetValue() const;
+        inline int GetValue() const;
 
-        void SetAsZero();
+        inline void SetAsZero();
 
-        void SetAsNegativeZero();
+        inline void SetAsNegativeZero();
 
         //Is at either zero or negative zero
-		bool IsAtZeroInt() const;
+		inline bool IsAtZeroInt() const;
 
         //Is at neither zero or negative zero
-		bool IsNotAtZeroInt() const;
+		inline bool IsNotAtZeroInt() const;
 
         //Is at either zero or negative one
-		bool IsAtOneInt() const;
+		inline bool IsAtOneInt() const;
 
         //Is at neither zero or negative one
-		bool IsNotAtOneInt() const;
+		inline bool IsNotAtOneInt() const;
 
-		bool IsEven() const;
+		inline bool IsEven() const;
 
-		bool IsOdd() const;
+		inline bool IsOdd() const;
 
-		bool IsZero() const;
+		inline bool IsZero() const;
 
     #pragma endregion Check_if_value
 
         //Returns copy of value as Absolute value
-        MirroredInt Abs() const;
+        inline MirroredInt Abs() const;
 
-        void ApplyAbs();
+        inline void ApplyAbs();
 
 		std::strong_ordering SignComparison(const MirroredInt& that) const
 		{
@@ -460,19 +423,7 @@ namespace BlazesRusCode
         void AddOp(const MirroredInt& rValue);
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UIntAddOp(const unsigned int& rValue)
-        {
-	        if (IsPositive())
-		        Value += rValue;
-	        else {
-		        if (rValue>Value) {//Becoming positive
-			        Sign = PositiveSign;
-			        Value = rValue - Value - 1;
-		        }
-		        else
-			        Value -= rValue;
-	        }
-        }
+        void UIntAddOp(const unsigned int& rValue);
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void IntAddOp(const signed int& rValue);

@@ -29,6 +29,11 @@ BlazesRusCode::MirroredInt::MirroredInt(const signed int& value)
 	}
 }
 
+BlazesRusCode::MirroredInt::MirroredInt(const MirroredInt& rvalue)
+{
+	Value = rvalue.Value; Sign = rvalue.Sign;
+}
+
 bool BlazesRusCode::MirroredInt::IsNegative() const
 {
 	return Sign == NegativeSign;
@@ -143,6 +148,46 @@ void BlazesRusCode::MirroredInt::ApplyAbs()
 void BlazesRusCode::MirroredInt::SwapNegativeStatus()
 {
 	Sign ^= 1;
+}
+
+void BlazesRusCode::MirroredInt::ReadString(const std::string& value)
+{
+	Value = 0; Sign = PositiveSign;
+	std::string WholeNumberBuffer = "";
+
+	int charAsNumber;
+	int charAsNumberInPlace;
+	for (char const& StringChar : value)
+	{
+		if (VariableConversionFunctions::IsDigit(StringChar))
+			WholeNumberBuffer += StringChar;
+		else if (StringChar == '-')
+			Sign = NegativeSign;
+		else if (StringChar != ' ')
+			break;//Stop Extracting after encounter non-number character such as i or .
+	}
+	unsigned int PlaceNumber = WholeNumberBuffer.length() - 1;//Last character is digit value 0-9
+	for (char const& StringChar : WholeNumberBuffer)
+	{
+		charAsNumber = VariableConversionFunctions::CharAsInt(StringChar);
+		charAsNumberInPlace = (charAsNumber * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
+		if (StringChar != '0')
+		{
+			Value += charAsNumberInPlace;
+		}
+		PlaceNumber--;
+	}
+}
+
+/// <summary>
+/// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
+/// </summary>
+/// <param name="strVal">The value.</param>
+
+BlazesRusCode::MirroredInt::MirroredInt(const char* strVal)
+{
+	std::string Value = strVal;
+	this->ReadString(Value);
 }
 
 
@@ -571,6 +616,11 @@ void BlazesRusCode::MirroredInt::NRepSkippingIntegerSubOp(const signed int& rVal
 		else
 			Value -= rMag;
 	}
+}
+
+inline BlazesRusCode::MirroredInt::MirroredInt(const std::string& Value)
+{
+	this->ReadString(Value);
 }
 
 std::string BlazesRusCode::MirroredInt::ToString() const

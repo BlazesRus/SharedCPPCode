@@ -9,6 +9,11 @@ inline BlazesRusCode::PartialInt::PartialInt(unsigned int value, unsigned int fl
 	Flags = flags;
 }
 
+inline BlazesRusCode::PartialInt::PartialInt(const PartialInt& rhs)
+{
+	Value = rhs.Value; Flags = rhs.Flags;
+}
+
 inline void BlazesRusCode::PartialInt::UInt64DivOp(const unsigned __int64& rValue)
 {
 	unsigned __int64 result = (unsigned __int64)Value;

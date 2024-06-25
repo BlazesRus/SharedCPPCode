@@ -4,19 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-	#ifndef DLL_API
-		#ifdef UsingBlazesSharedCodeDLL
-			#define DLL_API __declspec(dllimport)
-		#elif defined(BLAZESSharedCode_LIBRARY)
-			#define DLL_API __declspec(dllexport)
-		#else
-			#define DLL_API
-		#endif
-	#endif
-#else
-	#include "..\..\DLLAPI.h"
-#endif
+#include "..\..\DLLAPI.h"
 
 #include <compare>
 #include "..\Concepts\IntegerConcept.hpp"
@@ -25,13 +13,16 @@
 
 namespace BlazesRusCode
 {
-	struct FlaggedInt {public:
+	struct DLL_API FlaggedInt {
+    public:
 		//Is either mixed fraction or power of representation if this value is one
 		unsigned int IsAltRep:1;
 		//Stores non-signed part of value
 		unsigned int Value:31;
 
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
+
+        FlaggedInt(const FlaggedInt& rhs);
 
         FlaggedInt& operator=(const FlaggedInt& rhs)
         {
@@ -89,8 +80,6 @@ namespace BlazesRusCode
 			{
 				if (VariableConversionFunctions::IsDigit(StringChar))
 					WholeNumberBuffer += StringChar;
-				else if (StringChar == '-')
-					Sign = NegativeSign;
 				else if (StringChar != ' ')
 					break;//Stop Extracting after encounter non-number character such as i or .
 			}
@@ -401,7 +390,7 @@ namespace BlazesRusCode
 
 		friend FlaggedInt& operator%=(FlaggedInt& lValue, const unsigned int& rValue)
 		{ lValue.Value %= rValue; return lValue; }
-		
+
 		friend FlaggedInt operator%(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
 			newVal.Value %= rValue; return newVal;
@@ -409,9 +398,9 @@ namespace BlazesRusCode
 
 		friend FlaggedInt& operator%=(FlaggedInt& lValue, const FlaggedInt& rValue)
 		{
-			lValue.Value %= rValue.Value; return lValue; 
+			lValue.Value %= rValue.Value; return lValue;
 		}
-		
+
 		friend FlaggedInt operator%(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
 			return newVal%=rValue;

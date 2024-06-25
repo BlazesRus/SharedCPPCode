@@ -4,19 +4,7 @@
 // ***********************************************************************
 #pragma once
 
-#ifdef BlazesSharedCode_LocalLayout
-	#ifndef DLL_API
-		#ifdef UsingBlazesSharedCodeDLL
-			#define DLL_API __declspec(dllimport)
-		#elif defined(BLAZESSharedCode_LIBRARY)
-			#define DLL_API __declspec(dllexport)
-		#else
-			#define DLL_API
-		#endif
-	#endif
-#else
-	#include "..\..\DLLAPI.h"
-#endif
+#include "..\..\DLLAPI.h"
 
 #include <compare>
 #include "..\Concepts\IntegerConcept.hpp"
@@ -26,7 +14,8 @@
 
 namespace BlazesRusCode
 {
-	struct PartialInt {public:
+	struct DLL_API PartialInt {
+    public:
 		//Stores Digits XXX XXX XXX
 		unsigned int Value:30;
 		//Can store up to 4 Flag states including normal state at 0
@@ -35,6 +24,8 @@ namespace BlazesRusCode
         static const unsigned int MaximumInt = 1073741823;
 
 		PartialInt(unsigned int value=0, unsigned int flags=0);
+
+        PartialInt(const PartialInt& rhs);
 
         PartialInt& operator=(const PartialInt& rhs)
         {
@@ -45,7 +36,6 @@ namespace BlazesRusCode
             return *this;
         }
 
-/*
         PartialInt& operator=(const unsigned int& rhs)
         {
 		    Value = rhs;
@@ -53,7 +43,6 @@ namespace BlazesRusCode
             return *this;
         }
 
-*/
 
 		bool IsNormalVariant() const;
 
@@ -85,7 +74,7 @@ namespace BlazesRusCode
 		bool IsOdd() const;
 
 	#pragma region StringOperations
-	
+
 		void ReadString(const std::string& value)
 		{
 			Value = 0;
@@ -97,8 +86,6 @@ namespace BlazesRusCode
 			{
 				if (VariableConversionFunctions::IsDigit(StringChar))
 					WholeNumberBuffer += StringChar;
-				else if (StringChar == '-')
-					Sign = NegativeSign;
 				else if (StringChar != ' ')
 					break;//Stop Extracting after encounter non-number character such as i or .
 			}
@@ -151,7 +138,7 @@ namespace BlazesRusCode
         std::string ToDetailedString() const;
 
         explicit operator std::string();
-	
+
 	#pragma endregion StringOperations
 
 		std::strong_ordering operator<=>(const PartialInt& that) const
