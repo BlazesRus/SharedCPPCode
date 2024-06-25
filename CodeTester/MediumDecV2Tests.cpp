@@ -1,6 +1,4 @@
-﻿// ExprFormulaTester.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+﻿
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -8,21 +6,39 @@
 #include "..\AltNum\AlternativeInt\PartialInt.hpp"
 #include "..\AltNum\AlternativeInt\MirroredInt.hpp"
 #include "..\AltNum\AlternativeInt\FlaggedInt.hpp"
-#include "..\AltNum\RepType.h"
 
 using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 using FlaggedInt = BlazesRusCode::FlaggedInt;
+#include <Windows.h>//Windows.h detects some errors?
+
+#include "..\AltNum\MediumDec\MediumDec.hpp"
+using MediumDec = BlazesRusCode::MediumDec;
 
 //#include "..\AltNum\MediumDecV2\MediumDecV2.hpp"
-//using MediumDecVariant = BlazesRusCode::MediumDecV2;
-
-#include <Windows.h>
+//using MediumDecV2 = BlazesRusCode::MediumDecV2;
 
 int main()
 {
     std::ostringstream streamObj;
     streamObj << std::fixed << std::setprecision(99);
-    //streamObj << LAlt.ToString() <<" + "<< RAlt.ToString() << " = " << AltResult.ToString()<< std::endl;
-    ::OutputDebugStringA(streamObj.str().c_str());//Outputing to debug output based on https://www.codeproject.com/Articles/1053/Using-an-Output-Stream-for-Debugging
+    MediumDec MediumDectest02 = 4;
+    MediumDec MediumDectest03 = MediumDectest02;
+
+    MediumDectest02 *= 10;
+    MediumDectest02 /= -2;
+    MediumDectest02 += 5;
+
+    std::string strTest = (std::string) MediumDectest02;
+/*
+    MediumDecV2 MediumDecV2test03 = MediumDecV2::Zero;
+    MediumDecV2 MediumDecV2test04 = MediumDecV2test03;
+    ++MediumDecV2test03;
+    MediumDecV2test04 *= ++MediumDecV2test03;
+    MediumDecV2test03 /= 2;
+    std::string strTest02 = (std::string) MediumDecV2test03;
+*/
+
+
+    ::OutputDebugStringA(streamObj.str().c_str());
 }
