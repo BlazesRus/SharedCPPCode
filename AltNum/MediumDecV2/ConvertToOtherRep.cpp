@@ -3,7 +3,7 @@ using MediumDecV2 = BlazesRusCode::MediumDecV2;
 
 #if defined(AltNum_EnablePiRep)
 //3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844 *selfNum
-inline void BlazesRusCode::MediumDecV2::ConvertPiToNum()
+void BlazesRusCode::MediumDecV2::ConvertPiToNum()
 {
 	if (IntHalf.Value >= 683565275 && DecimalHalf.Value >= 168866626)//Exceeding Storage limit of NormalRep
 	{
@@ -51,7 +51,7 @@ inline void BlazesRusCode::MediumDecV2::ConvertPiToNum()
 
 #if defined(AltNum_EnableERep)
 //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
-inline void BlazesRusCode::MediumDecV2::ConvertENumToNum()
+void BlazesRusCode::MediumDecV2::ConvertENumToNum()
 {
 	if(IntHalf.Value>=790015084&&DecimalHalf.Value>=351050349)//Exceeding Storage limit of NormalRep
 	{

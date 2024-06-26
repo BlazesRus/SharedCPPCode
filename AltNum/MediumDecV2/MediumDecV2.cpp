@@ -7,142 +7,142 @@ using RepType = BlazesRusCode::RepType;
 
 #pragma region ValueDefines
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::AlmostOneValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::AlmostOneValue()
 {
 	return MediumDecV2(0, 999999999);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::PiNumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::PiNumValue()
 {
 	return MediumDecV2(3, 141592654);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::HundredMilPiNumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::HundredMilPiNumValue()
 {
 	return MediumDecV2(314159265, 358979324);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::TenMilPiNumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::TenMilPiNumValue()
 {
 	return MediumDecV2(31415926, 535897932);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::OneMilPiNumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::OneMilPiNumValue()
 {
 	return MediumDecV2(3141592, 653589793);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::TenPiNumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::TenPiNumValue()
 {
 	return MediumDecV2(31, 415926536);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::ENumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::ENumValue()
 {
 	return MediumDecV2(2, 718281828);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::ZeroValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::ZeroValue()
 {
 	return MediumDecV2();
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::OneValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::OneValue()
 {
 	return MediumDecV2(1);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::TwoValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::TwoValue()
 {
 	return MediumDecV2(MirroredInt::Two);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::NegativeOneValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::NegativeOneValue()
 {
 	return MediumDecV2(MirroredInt::NegativeOne);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::Point5Value()
+MediumDecV2 BlazesRusCode::MediumDecV2::Point5Value()
 {
 	return MediumDecV2(0, 500000000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::JustAboveZeroValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::JustAboveZeroValue()
 {
 	return MediumDecV2(0, 1);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::OneMillionthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::OneMillionthValue()
 {
 	return MediumDecV2(0, 1000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::FiveThousandthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::FiveThousandthValue()
 {
 	return MediumDecV2(0, 5000000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::FiveMillionthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::FiveMillionthValue()
 {
 	return MediumDecV2(0, 5000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::TenMillionthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::TenMillionthValue()
 {
 	return MediumDecV2(0, 100);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::OneHundredMillionthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::OneHundredMillionthValue()
 {
 	return MediumDecV2(0, 10);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::FiveBillionthValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::FiveBillionthValue()
 {
 	return MediumDecV2(0, 5);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::LN10Value()
+MediumDecV2 BlazesRusCode::MediumDecV2::LN10Value()
 {
 	return MediumDecV2(2, 302585093);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::LN10DivValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::LN10DivValue()
 {
 	return MediumDecV2(0, 434294482);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::TwiceLN10DivValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::TwiceLN10DivValue()
 {
 	return MediumDecV2(0, 868588964);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::MinimumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::MinimumValue()
 {
 	return MediumDecV2(MirroredInt::Maximum, 999999999);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::MaximumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::MaximumValue()
 {
 	return MediumDecV2(MirroredInt::Minimum, 999999999);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::NegativePointFiveValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::NegativePointFiveValue()
 {
 	return MediumDecV2(MirroredInt::NegativeZero, 500000000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::PointOneValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::PointOneValue()
 {
 	return MediumDecV2(0, 100000000);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::ImaginaryMinimumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::ImaginaryMinimumValue()
 {
 	return MediumDecV2(MirroredInt::Maximum, PartialInt(999999999,3));
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::ImaginaryMaximumValue()
+MediumDecV2 BlazesRusCode::MediumDecV2::ImaginaryMaximumValue()
 {
 	return MediumDecV2(MirroredInt::Minimum, PartialInt(999999999,3));
 }
@@ -150,48 +150,48 @@ inline MediumDecV2 BlazesRusCode::MediumDecV2::ImaginaryMaximumValue()
 #pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
-MediumDecV2 MediumDecV2::AlmostOne = MediumDecV2::AlmostOneValue();
-MediumDecV2 MediumDecV2::Pi = MediumDecV2::PiNumValue();
-MediumDecV2 MediumDecV2::One = MediumDecV2::OneValue();
-MediumDecV2 MediumDecV2::Two = MediumDecV2::TwoValue();
-MediumDecV2 MediumDecV2::NegativeOne = MediumDecV2::NegativeOneValue();
-MediumDecV2 MediumDecV2::Zero = MediumDecV2::ZeroValue();
-MediumDecV2 MediumDecV2::PointFive = MediumDecV2::Point5Value();
-MediumDecV2 MediumDecV2::JustAboveZero = MediumDecV2::JustAboveZeroValue();
-MediumDecV2 MediumDecV2::OneMillionth = MediumDecV2::OneMillionthValue();
-MediumDecV2 MediumDecV2::FiveThousandth = MediumDecV2::FiveThousandthValue();
-MediumDecV2 MediumDecV2::Minimum = MediumDecV2::MinimumValue();
-MediumDecV2 MediumDecV2::Maximum = MediumDecV2::MaximumValue();
-MediumDecV2 MediumDecV2::E = MediumDecV2::ENumValue();
-MediumDecV2 MediumDecV2::LN10 = MediumDecV2::LN10Value();
-MediumDecV2 MediumDecV2::LN10Div = MediumDecV2::LN10DivValue();
-MediumDecV2 MediumDecV2::TwiceLN10Div = MediumDecV2::TwiceLN10DivValue();
-MediumDecV2 MediumDecV2::TenMillionth = MediumDecV2::TenMillionthValue();
-MediumDecV2 MediumDecV2::FiveMillionth = MediumDecV2::FiveMillionthValue();
-MediumDecV2 MediumDecV2::FiveBillionth = MediumDecV2::FiveBillionthValue();
-MediumDecV2 MediumDecV2::OneGMillionth = MediumDecV2::OneHundredMillionthValue();
+const MediumDecV2 MediumDecV2::AlmostOne = MediumDecV2::AlmostOneValue();
+const MediumDecV2 MediumDecV2::Pi = MediumDecV2::PiNumValue();
+const MediumDecV2 MediumDecV2::One = MediumDecV2::OneValue();
+const MediumDecV2 MediumDecV2::Two = MediumDecV2::TwoValue();
+const MediumDecV2 MediumDecV2::NegativeOne = MediumDecV2::NegativeOneValue();
+const MediumDecV2 MediumDecV2::Zero = MediumDecV2::ZeroValue();
+const MediumDecV2 MediumDecV2::PointFive = MediumDecV2::Point5Value();
+const MediumDecV2 MediumDecV2::JustAboveZero = MediumDecV2::JustAboveZeroValue();
+const MediumDecV2 MediumDecV2::OneMillionth = MediumDecV2::OneMillionthValue();
+const MediumDecV2 MediumDecV2::FiveThousandth = MediumDecV2::FiveThousandthValue();
+const MediumDecV2 MediumDecV2::Minimum = MediumDecV2::MinimumValue();
+const MediumDecV2 MediumDecV2::Maximum = MediumDecV2::MaximumValue();
+const MediumDecV2 MediumDecV2::E = MediumDecV2::ENumValue();
+const MediumDecV2 MediumDecV2::LN10 = MediumDecV2::LN10Value();
+const MediumDecV2 MediumDecV2::LN10Div = MediumDecV2::LN10DivValue();
+const MediumDecV2 MediumDecV2::TwiceLN10Div = MediumDecV2::TwiceLN10DivValue();
+const MediumDecV2 MediumDecV2::TenMillionth = MediumDecV2::TenMillionthValue();
+const MediumDecV2 MediumDecV2::FiveMillionth = MediumDecV2::FiveMillionthValue();
+const MediumDecV2 MediumDecV2::FiveBillionth = MediumDecV2::FiveBillionthValue();
+const MediumDecV2 MediumDecV2::OneGMillionth = MediumDecV2::OneHundredMillionthValue();
 
-MediumDecV2 MediumDecV2::PiNum = MediumDecV2::PiNumValue();
-MediumDecV2 MediumDecV2::ENum = MediumDecV2::ENumValue();
-MediumDecV2 MediumDecV2::NegativePointFive = MediumDecV2::NegativePointFiveValue();
-MediumDecV2 MediumDecV2::PointOne = MediumDecV2::PointOneValue();
-MediumDecV2 MediumDecV2::ImaginaryMinimum = MediumDecV2::ImaginaryMinimumValue();
-MediumDecV2 MediumDecV2::ImaginaryMaximum = MediumDecV2::ImaginaryMaximumValue();
+const MediumDecV2 MediumDecV2::PiNum = MediumDecV2::PiNumValue();
+const MediumDecV2 MediumDecV2::ENum = MediumDecV2::ENumValue();
+const MediumDecV2 MediumDecV2::NegativePointFive = MediumDecV2::NegativePointFiveValue();
+const MediumDecV2 MediumDecV2::PointOne = MediumDecV2::PointOneValue();
+const MediumDecV2 MediumDecV2::ImaginaryMinimum = MediumDecV2::ImaginaryMinimumValue();
+const MediumDecV2 MediumDecV2::ImaginaryMaximum = MediumDecV2::ImaginaryMaximumValue();
 #pragma endregion ValueDefine Source
 
 #pragma region Negative_Status
 
-inline bool BlazesRusCode::MediumDecV2::IsPositive() const
+bool BlazesRusCode::MediumDecV2::IsPositive() const
 {
 	return IntHalf.IsPositive();
 }
 
-inline bool BlazesRusCode::MediumDecV2::IsNegative() const
+bool BlazesRusCode::MediumDecV2::IsNegative() const
 {
 	return IntHalf.IsNegative();
 }
 
-inline void BlazesRusCode::MediumDecV2::SwapNegativeStatus()
+void BlazesRusCode::MediumDecV2::SwapNegativeStatus()
 {
 	IntHalf.Sign ^= 1;
 }
@@ -213,29 +213,29 @@ inline void BlazesRusCode::MediumDecV2::SwapNegativeStatus()
 
 #pragma region Other Division Operations
 
-inline void BlazesRusCode::MediumDecV2::DivideByTwo()
+void BlazesRusCode::MediumDecV2::DivideByTwo()
 {
 	MediumDec::DivideByTwo();
 }
 
-inline void BlazesRusCode::MediumDecV2::DivideByFour()
+void BlazesRusCode::MediumDecV2::DivideByFour()
 {
 	MediumDec::DivideByFour();
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::DividedByTwo() const
+MediumDecV2 BlazesRusCode::MediumDecV2::DividedByTwo() const
 {
 	MediumDecV2 result = *this; result.DivideByTwo();
 	return result;
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::DividedByFour() const
+MediumDecV2 BlazesRusCode::MediumDecV2::DividedByFour() const
 {
 	MediumDecV2 result = *this; result.DivideByFour();
 	return result;
 }
 
-inline void BlazesRusCode::MediumDecV2::UnsignedDivOp_RValueIntSwitch(const MediumDecV2& rValue)
+void BlazesRusCode::MediumDecV2::UnsignedDivOp_RValueIntSwitch(const MediumDecV2& rValue)
 {
 	switch(rValue.IntHalf.Value)
 	{
@@ -282,24 +282,24 @@ inline void BlazesRusCode::MediumDecV2::UnsignedDivOp_RValueIntSwitch(const Medi
 
 #pragma region Other multiplication operations
 
-inline void BlazesRusCode::MediumDecV2::MultiplyByTwo()
+void BlazesRusCode::MediumDecV2::MultiplyByTwo()
 {
 	MediumDec::MultiplyByTwo();
 }
 
-inline void BlazesRusCode::MediumDecV2::MultiplyByFour()
+void BlazesRusCode::MediumDecV2::MultiplyByFour()
 {
 	MediumDec::MultiplyByFour();
 }
 
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByTwo() const
+MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByTwo() const
 {
 	MediumDecV2 result = *this; result.UIntMultOp(2);
 	return result;
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByFour() const
+MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByFour() const
 {
 	MediumDecV2 result = *this; result.UIntMultOp(4);
 	return result;
@@ -310,7 +310,7 @@ inline MediumDecV2 BlazesRusCode::MediumDecV2::MultipliedByFour() const
 
 #pragma region Basic_addition
 
-inline void MediumDecV2::BasicUnsignedMirroredAddOp(const MirroredInt& rValue)
+void MediumDecV2::BasicUnsignedMirroredAddOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingUnsignedAddOp(rValue);
@@ -322,7 +322,7 @@ inline void MediumDecV2::BasicUnsignedMirroredAddOp(const MirroredInt& rValue)
 	}
 }
 
-inline void MediumDecV2::BasicMirroredAddOp(const MirroredInt& rValue)
+void MediumDecV2::BasicMirroredAddOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0) {
 		IntHalf.NRepSkippingAddOp(rValue);
@@ -335,7 +335,7 @@ inline void MediumDecV2::BasicMirroredAddOp(const MirroredInt& rValue)
 	}
 }
 
-inline void BlazesRusCode::MediumDecV2::BasicUnsignedAddOp(const MediumDecV2& rValue) {
+void BlazesRusCode::MediumDecV2::BasicUnsignedAddOp(const MediumDecV2& rValue) {
 	if (rValue.DecimalHalf == 0)
 		BasicUnsignedMirroredAddOp(rValue.IntHalf);
 	else
@@ -384,7 +384,7 @@ inline void BlazesRusCode::MediumDecV2::BasicUnsignedAddOp(const MediumDecV2& rV
 	}
 }
 
-inline void BlazesRusCode::MediumDecV2::BasicAddOp(const MediumDecV2& rValue) {
+void BlazesRusCode::MediumDecV2::BasicAddOp(const MediumDecV2& rValue) {
 	if (rValue.DecimalHalf == 0)
 		BasicMirroredAddOp(rValue.IntHalf);
 	else {
@@ -472,7 +472,7 @@ inline void BlazesRusCode::MediumDecV2::BasicAddOp(const MediumDecV2& rValue) {
 
 #pragma region Basic_subtraction
 
-inline void BlazesRusCode::MediumDecV2::BasicUnsignedMirroredSubOp(const MirroredInt& rValue)
+void BlazesRusCode::MediumDecV2::BasicUnsignedMirroredSubOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingUnsignedSubOp(rValue);
@@ -484,7 +484,7 @@ inline void BlazesRusCode::MediumDecV2::BasicUnsignedMirroredSubOp(const Mirrore
 	}
 }
 
-inline void BlazesRusCode::MediumDecV2::BasicMirroredSubOp(const MirroredInt& rValue)
+void BlazesRusCode::MediumDecV2::BasicMirroredSubOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
 		IntHalf.NRepSkippingSubOp(rValue);
@@ -496,7 +496,7 @@ inline void BlazesRusCode::MediumDecV2::BasicMirroredSubOp(const MirroredInt& rV
 	}
 }
 
-inline void BlazesRusCode::MediumDecV2::BasicUnsignedSubOp(const MediumDecV2& rValue) {
+void BlazesRusCode::MediumDecV2::BasicUnsignedSubOp(const MediumDecV2& rValue) {
     if (rValue.DecimalHalf == 0)
         BasicUnsignedMirroredSubOp(rValue.IntHalf);
 	else {
@@ -535,7 +535,7 @@ inline void BlazesRusCode::MediumDecV2::BasicUnsignedSubOp(const MediumDecV2& rV
 	}
 }
 
-inline void BlazesRusCode::MediumDecV2::BasicSubOp(const MediumDecV2& rValue) {
+void BlazesRusCode::MediumDecV2::BasicSubOp(const MediumDecV2& rValue) {
 	if(rValue.DecimalHalf==0)
         BasicMirroredSubOp(rValue.IntHalf);
 	else
@@ -615,19 +615,19 @@ inline void BlazesRusCode::MediumDecV2::BasicSubOp(const MediumDecV2& rValue) {
 
 #pragma region Truncation Functions
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::Abs(const MediumDecV2& tValue) { return AbsV1<MediumDecV2>(tValue); }
+MediumDecV2 BlazesRusCode::MediumDecV2::Abs(const MediumDecV2& tValue) { return AbsV1<MediumDecV2>(tValue); }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::AbsOf() const { return Abs(*this); }
+MediumDecV2 BlazesRusCode::MediumDecV2::AbsOf() const { return Abs(*this); }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::Ceil(const MediumDecV2& tValue) { return CeilV1<MediumDecV2>(tValue); }
+MediumDecV2 BlazesRusCode::MediumDecV2::Ceil(const MediumDecV2& tValue) { return CeilV1<MediumDecV2>(tValue); }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::CeilOf() const { return Ceil(*this); }
+MediumDecV2 BlazesRusCode::MediumDecV2::CeilOf() const { return Ceil(*this); }
 
-inline signed int BlazesRusCode::MediumDecV2::FloorInt(const MediumDecV2& tValue) { return tValue.FloorIntOf(); }
+signed int BlazesRusCode::MediumDecV2::FloorInt(const MediumDecV2& tValue) { return tValue.FloorIntOf(); }
 
-inline signed int BlazesRusCode::MediumDecV2::CeilInt(const MediumDecV2& tValue) { return tValue.CeilIntOf(); }
+signed int BlazesRusCode::MediumDecV2::CeilInt(const MediumDecV2& tValue) { return tValue.CeilIntOf(); }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::Trunc(const MediumDecV2& tValue) { return tValue.TruncOfV1<MediumDecV2>(); }
+MediumDecV2 BlazesRusCode::MediumDecV2::Trunc(const MediumDecV2& tValue) { return tValue.TruncOfV1<MediumDecV2>(); }
 
 #pragma endregion Truncation Functions
 
@@ -791,28 +791,28 @@ std::string MediumDecV2::ToFullString()
 
 #pragma region Pow and Sqrt Functions
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::Sqrt(const auto& value, const int& precision)
+MediumDecV2 BlazesRusCode::MediumDecV2::Sqrt(const auto& value, const int& precision)
 {
 	return SqrtV1<MediumDecV2>(value, precision);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::SqrtOf(const int& precision) const {
+MediumDecV2 BlazesRusCode::MediumDecV2::SqrtOf(const int& precision) const {
 	return Sqrt(*this, precision);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::UnsignedNthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision)
+MediumDecV2 BlazesRusCode::MediumDecV2::UnsignedNthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision)
 {
 	return UnsignedNthRootV1<MediumDecV2>(tValue, n, precision);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::NthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision) { return NthRootV1<MediumDecV2>(tValue, n, precision); }
+MediumDecV2 BlazesRusCode::MediumDecV2::NthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision) { return NthRootV1<MediumDecV2>(tValue, n, precision); }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::NthRootOf(const unsigned int& n, const MediumDecV2& precision) const
+MediumDecV2 BlazesRusCode::MediumDecV2::NthRootOf(const unsigned int& n, const MediumDecV2& precision) const
 {
 	return NthRoot(*this, n, precision);
 }
 
-inline MediumDecV2 BlazesRusCode::MediumDecV2::AlternativeNthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision)
+MediumDecV2 BlazesRusCode::MediumDecV2::AlternativeNthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision)
 {
 	return NthRootV2<MediumDecV2>(tValue, n, precision);
 }

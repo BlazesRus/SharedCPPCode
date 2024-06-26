@@ -3,28 +3,28 @@ using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 
 /*
-static void CatchAllOp(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+void MediumDecV2::DivOp_CatchAllOp(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(RRep.ConvertFromNormalRep(rValue.GetFlags()));
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-static void CatchAllOpV2(MediumDecV2& lValue, const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+void MediumDecV2::DivOp_CatchAllOpV2(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(RRep);
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-void DivOp_SameRepCatchAll(const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::DivOp_SameRepCatchAll(const MediumDecV2& rValue, const RepType& LRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep);
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-void DivOp_SameRepCatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::DivOp_SameRepCatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
 {
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep.ConvertFromNormalRep(rValue.GetFlags()));
@@ -34,7 +34,7 @@ void DivOp_SameRepCatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
 #pragma region AltDecVariantExclusive
 #pragma endregion AltDecVariantExclusive
 
-void DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
+void MediumDecV2::DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
 {
     if(lValue.IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
@@ -48,7 +48,7 @@ void DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
 		SameRepCatchAll(lValue, rValue, RepType::ApproachingBottom);
 }
 
-void DivOp_SameRep_ApproachingTop(const MediumDecV2& rValue)
+void MediumDecV2::DivOp_SameRep_ApproachingTop(const MediumDecV2& rValue)
 {
 	SameRepCatchAll(lValue, rValue, RepType::ApproachingTop);
 }

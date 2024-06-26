@@ -898,7 +898,6 @@ protected:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         inline void UIntDivOpV1(const IntType& Value)
         {
@@ -941,25 +940,19 @@ protected:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        /// <returns>MediumDec&</returns>
         template<IntegerType IntType=unsigned int>
         const auto DivideByUIntV1(const IntType& rValue)
         { auto self = *this; return self.UIntDivOperationV1(rValue); }
 
         /// <summary>
-        /// Basic division operation between MediumDec Variant and unsigned Integer value
+        /// Basic division operation between MediumDec Variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        /// <returns>MediumDec&</returns>
         template<IntegerType IntType=signed int>
         const auto DivideByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntDivOperationV1(rValue); }
-
-        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=unsigned int>
-        static VariantType UIntDivisionV1(VariantType lValue, const IntType& rValue)
-        { return lValue.UIntDivOperationV1(rValue); }
 
 public:
 
@@ -1007,7 +1000,7 @@ protected:
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="rValue.">The rValue</param>
+        /// <param name="rValue.">The right side value</param>
         template<MediumDecVariant VariantType=MediumDec>
         inline bool UnsignedPartialDivOpV1(const VariantType& rValue)
         {
@@ -1161,7 +1154,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDec DivideByUnsigned(const MediumDec& rValue)
+        inline MediumDec DivideByUnsigned(const MediumDec& rValue) const
         { MediumDec lValue = *this; return lValue.UnsignedDivOperation(rValue); }
 
 		/// <summary>
@@ -1169,7 +1162,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDec DivideBy(const MediumDec& rValue)
+        inline MediumDec DivideBy(const MediumDec& rValue) const
         { MediumDec lValue = *this; return lValue.DivOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Division Operations
@@ -1293,15 +1286,15 @@ protected:
 		//Partial version of BasicIntMultOpV1 without zero checks
 		//Modifies owner object
         template<IntegerType IntType=signed int>
-        inline void PartialIntMultOpV1(const IntType& Value)
+        inline void PartialIntMultOpV1(const IntType& rValue)
         {
-            if(Value<0)
+            if(rValue<0)
             {
                 SwapNegativeStatus();
-                PartialUIntMultOpV1(-Value);
+                PartialUIntMultOpV1(-rValue);
             }
             else
-                PartialUIntMultOp(Value);
+                PartialUIntMultOp(rValue);
         }
 public:
 
@@ -1586,15 +1579,15 @@ protected:
 		}
 
         template<MediumDecVariant VariantType=MediumDec>
-        inline void MultOpV1(const VariantType& Value)
+        inline void MultOpV1(const VariantType& rValue)
         {
-            if(Value.IsNegative())
+            if(rValue.IsNegative())
             {
                 SwapNegativeStatus();
-                UnsignedMultOp(-Value);
+                UnsignedMultOp(-rValue);
             }
             else
-                UnsignedMultOp(Value);
+                UnsignedMultOp(rValue);
         }
 
         template<MediumDecVariant VariantType=MediumDec>
@@ -1635,7 +1628,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDec MultiplyByUnsigned(const MediumDec& rValue)
+        inline MediumDec MultiplyByUnsigned(const MediumDec& rValue) const
         { MediumDec lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
 		/// <summary>
@@ -1643,7 +1636,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDec MultiplyBy(const MediumDec& rValue)
+        inline MediumDec MultiplyBy(const MediumDec& rValue) const
         { MediumDec lValue = *this; return lValue.MultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
