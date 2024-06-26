@@ -135,7 +135,7 @@ namespace BlazesRusCode
         //Returns copy of value as Absolute value
         inline MirroredInt Abs() const;
 
-        inline void ApplyAbs();
+        void ApplyAbs();
 
     #pragma endregion Check_if_value
 
@@ -456,30 +456,30 @@ private:
 public:
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
+        void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
+        void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingAddOp(const MirroredInt& rValue);
-
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingSubOp(const MirroredInt& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingUIntAddOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingUIntSubOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingIntegerAddOp(const signed int& rValue);
+        void NRepSkippingAddOp(const MirroredInt& rValue);
 
 
 		//Exclude negative zero version(When DecimalHalf.Value==0)
-        inline void NRepSkippingIntegerSubOp(const signed int& rValue);
+        void NRepSkippingSubOp(const MirroredInt& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingUIntAddOp(const unsigned int& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingUIntSubOp(const unsigned int& rValue);
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingIntegerAddOp(const signed int& rValue);
+
+
+		//Exclude negative zero version(When DecimalHalf.Value==0)
+        void NRepSkippingIntegerSubOp(const signed int& rValue);
 
  		friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
 			lValue.DivOp(rValue); return lValue;

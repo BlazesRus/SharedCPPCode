@@ -9,6 +9,12 @@ BlazesRusCode::PartialInt::PartialInt(unsigned int value, unsigned int flags)
 	Flags = flags;
 }
 
+BlazesRusCode::PartialInt::PartialInt(signed int value, unsigned int flags)
+{
+	Value = value;
+	Flags = flags;
+}
+
 BlazesRusCode::PartialInt::PartialInt(const PartialInt& rhs)
 {
 	Value = rhs.Value; Flags = rhs.Flags;

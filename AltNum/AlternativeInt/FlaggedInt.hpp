@@ -29,6 +29,9 @@ namespace BlazesRusCode
 
 		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
 
+		FlaggedInt(const signed int& value, const unsigned int& isAltRep=0);
+
+
         FlaggedInt(const FlaggedInt& rhs);
 
         FlaggedInt& operator=(const FlaggedInt& rhs)
@@ -41,6 +44,13 @@ namespace BlazesRusCode
         }
 
         FlaggedInt& operator=(const unsigned int& rhs)
+        {
+		    Value = rhs;
+            IsAltRep = 0;
+            return *this;
+        }
+
+        FlaggedInt& operator=(const signed int& rhs)
         {
 		    Value = rhs;
             IsAltRep = 0;

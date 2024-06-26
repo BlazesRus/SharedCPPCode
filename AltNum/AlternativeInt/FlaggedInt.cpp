@@ -9,6 +9,12 @@ BlazesRusCode::FlaggedInt::FlaggedInt(const unsigned int& value, const unsigned 
 	IsAltRep = isAltRep;
 }
 
+BlazesRusCode::FlaggedInt::FlaggedInt(const signed int& value, const unsigned int& isAltRep)
+{
+	Value = value;
+	IsAltRep = isAltRep;
+}
+
 BlazesRusCode::FlaggedInt::FlaggedInt(const FlaggedInt& rhs)
 {
 	Value = rhs.Value; IsAltRep = rhs.IsAltRep;

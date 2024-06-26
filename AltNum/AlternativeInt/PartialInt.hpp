@@ -32,6 +32,8 @@ namespace BlazesRusCode
 
 		PartialInt(unsigned int value=0, unsigned int flags=0);
 
+		PartialInt(signed int value, unsigned int flags=0);
+
         PartialInt(const PartialInt& rhs);
 
         PartialInt& operator=(const PartialInt& rhs)
@@ -44,6 +46,13 @@ namespace BlazesRusCode
         }
 
         PartialInt& operator=(const unsigned int& rhs)
+        {
+		    Value = rhs;
+            Flags = 0;
+            return *this;
+        }
+
+        PartialInt& operator=(const signed int& rhs)
         {
 		    Value = rhs;
             Flags = 0;
