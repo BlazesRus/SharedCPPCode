@@ -1779,7 +1779,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        inline auto AddByUIntV1(const IntType& rValue)
+        inline auto AddByUIntV1(const IntType& rValue) const
         { auto self = *this; return self.UIntAddOperationV1(rValue); }
 
 		/// <summary>
@@ -1789,7 +1789,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=signed int>
-        inline auto AddByIntV1(const IntType& rValue)
+        inline auto AddByIntV1(const IntType& rValue) const
         { auto self = *this; return self.IntAddOperationV1(rValue); }
 
 public:
