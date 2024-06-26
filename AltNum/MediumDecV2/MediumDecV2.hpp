@@ -1947,7 +1947,7 @@ protected:
         /// <param name="lValue.">The left side value</param>
         /// <param name="rValue.">The right side value</param>
         template<MediumDecVariant VariantType=MediumDec>
-        bool BasicUnsignedPartialDivOpV1(VariantType& lValue, const VariantType& rValue)
+        static bool BasicUnsignedPartialDivOpV1(VariantType& lValue, const VariantType& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * lValue.IntHalf.Value + lValue.DecimalHalf.Value;
             unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
