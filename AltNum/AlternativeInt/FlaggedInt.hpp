@@ -119,6 +119,18 @@ namespace BlazesRusCode
 				return ValueCmp;
 		}
 
+		std::strong_ordering operator<=>(const unsigned int& that) const
+		{
+			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
+		std::strong_ordering operator<=>(const signed int& that) const
+		{
+			if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
+				return ValueCmp;
+		}
+
 		bool operator==(const FlaggedInt& that) const
 		{
 			if (Value!=that.Value)
@@ -128,23 +140,10 @@ namespace BlazesRusCode
 			return true;
 		}
 
-		std::strong_ordering operator<=>(const unsigned int& that) const
-		{
-			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
-				return ValueCmp;
-		}
-
 		bool operator==(const unsigned int& that) const
 		{
 			if (Value==that)
 				return true;
-		}
-
-		bool operator!=(const unsigned int& that) const
-		{
-			if (Value!=that)
-				return true;
-			return true;
 		}
 
 		bool operator==(const signed int& that) const
@@ -153,14 +152,6 @@ namespace BlazesRusCode
 				return false;
 			else if (Value==(unsigned int)that)
 				return false;
-		}
-
-		bool operator!=(const signed int& that) const
-		{
-			if (that < 0)
-				return false;
-			else if (Value!=(unsigned int)that)
-				return true;
 		}
 
     #pragma endregion Comparison Operators

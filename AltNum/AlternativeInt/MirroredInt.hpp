@@ -216,24 +216,6 @@ namespace BlazesRusCode
 				return ValueCmp;
 		}
 
-		bool operator==(const MirroredInt& that) const
-		{
-			if (Value!=that.Value)
-				return false;
-			if (Sign!=that.Sign)
-				return false;
-			return true;
-		}
-
-		bool operator!=(const MirroredInt& that) const
-		{
-			if (Sign!=that.Sign)
-				return true;
-			if (Value==that.Value)
-				return false;
-			return true;
-		}
-
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
 			//Comparing if number is negative vs positive
@@ -275,20 +257,20 @@ namespace BlazesRusCode
             }
 		}
 
+		bool operator==(const MirroredInt& that) const
+		{
+			if (Value!=that.Value)
+				return false;
+			if (Sign!=that.Sign)
+				return false;
+			return true;
+		}
+
         bool operator==(const unsigned int& that) const
 		{
 			if (Value!=that)
 				return false;
 			if (Sign!=PositiveSign)
-				return false;
-			return true;
-		}
-
-        bool operator!=(const unsigned int& that) const
-		{
-			if (Sign==NegativeSign)
-				return true;
-			if (Value==that)
 				return false;
 			return true;
 		}
@@ -307,22 +289,6 @@ namespace BlazesRusCode
 				    return true;
             }
 			return false;
-		}
-
-        bool operator!=(const signed int& that) const
-		{
-			if(that<0){
-                if(Sign==PositiveSign)
-                    return true;
-			    else if (Value==(unsigned int)-that)
-				    return false;
-            } else {
-                if(Sign==NegativeSign)
-                    return true;
-			    else if (Value==(unsigned int)that)
-				    return false;
-            }
-			return true;
 		}
 
     #pragma endregion Comparison Operators
@@ -405,50 +371,50 @@ namespace BlazesRusCode
 
 		static const MirroredInt Zero;
 
-private:
-
 		void UInt64DivOp(const unsigned __int64& rValue);
 
-		void Int64DivOp(const signed __int64& rValue);
-
 		void UInt64MultOp(const unsigned __int64& rValue);
+
+        void UIntDivOp(const unsigned int& rValue);
+
+        void UIntMultOp(const unsigned int& rValue);
+
+        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+        void UnsignedAddOp(const MirroredInt& rValue);
+
+        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+        void UIntAddOp(const unsigned int& rValue);
+
+        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+        void UnsignedSubOp(const MirroredInt& rValue);
+
+        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+        void UIntSubOp(const unsigned int& rValue);
+
+private:
+
+		void Int64DivOp(const signed __int64& rValue);
 
 		void Int64MultOp(const signed __int64& rValue);
 
         //Division operation
         void DivOp(const MirroredInt& rValue);
 
-        void UIntDivOp(const unsigned int& rValue);
-
         void IntDivOp(const signed int& rValue);
 
         //Multiplication operation
         void MultOp(const MirroredInt& rValue);
 
-        void UIntMultOp(const unsigned int& rValue);
-
         void IntMultOp(const signed int& rValue);
-
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UnsignedAddOp(const MirroredInt& rValue);
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void AddOp(const MirroredInt& rValue);
 
         //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UIntAddOp(const unsigned int& rValue);
-
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
         void IntAddOp(const signed int& rValue);
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void UnsignedSubOp(const MirroredInt& rValue);
-
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void SubOp(const MirroredInt& rValue);
-
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void UIntSubOp(const unsigned int& rValue);
 
         //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
         void IntSubOp(const signed int& rValue);
@@ -682,6 +648,20 @@ public:
             MirroredInt newVal = lValue;
 			return newVal%=rValue;
         }
+
+		//template<IntegerType IntType=signed int>
+		//MirroredInt& UIntDivisionOperation(const IntType& rValue)
+		//{
+		//    std::conditional<sizeof(IntType) > sizeof(int), UInt64DivOp(rValue), UIntDivOp(rValue)>;
+  //          return *this;
+		//}
+
+		//template<IntegerType IntType=signed int>
+	 //   MirroredInt& UIntMultiplicationOperation(const IntType& rValue)
+		//{
+		//	std::conditional<sizeof(IntType) > sizeof(int), UInt64MultOp(rValue), UIntMultOp(rValue)>);
+		//    return *this;
+  //      }
 
     #pragma region Other Operators
 

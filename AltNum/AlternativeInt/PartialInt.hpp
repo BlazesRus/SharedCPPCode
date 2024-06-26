@@ -126,42 +126,10 @@ namespace BlazesRusCode
 				return ValueCmp;
 		}
 
-		bool operator==(const PartialInt& that) const
-		{
-			if (Value!=that.Value)
-				return false;
-            if(Flags!=that.Flags)
-                return false;
-			return true;
-		}
-
-		bool operator!=(const PartialInt& that) const
-		{
-			if (Value!=that.Value)
-				return true;
-            if(Flags!=that.Flags)
-                return true;
-			return false;
-		}
-
 		std::strong_ordering operator<=>(const unsigned int& that) const
 		{
 			auto ValueCmp = Value <=> that;
 			return ValueCmp;
-		}
-
-		bool operator==(const unsigned int& that) const
-		{
-			if (Value==that)
-				return true;
-            return false;
-		}
-
-		bool operator!=(const unsigned int& that) const
-		{
-			if (Value!=that)
-				return true;
-			return false;
 		}
 
 		std::strong_ordering operator<=>(const signed int& that) const
@@ -173,6 +141,22 @@ namespace BlazesRusCode
 				return ValueCmp;
 		}
 
+		bool operator==(const PartialInt& that) const
+		{
+			if (Value!=that.Value)
+				return false;
+            if(Flags!=that.Flags)
+                return false;
+			return true;
+		}
+
+		bool operator==(const unsigned int& that) const
+		{
+			if (Value==that)
+				return true;
+            return false;
+		}
+
 		bool operator==(const signed int& that) const
 		{
 			if (that < 0)
@@ -180,14 +164,6 @@ namespace BlazesRusCode
 			else if (Value==(unsigned int)that)
 				return true;
             return false;
-		}
-
-		bool operator!=(const signed int& that) const
-		{
-			if (that < 0)
-				return false;
-			else if (Value!=(unsigned int)that)
-				return true;
 		}
 
         /// <summary>

@@ -28,7 +28,16 @@ int main()
     FlaggedInt Flaggedtest04 = Flaggedtest03;
     test01 *= 10;
     test02 /= -2;
-    ++test02;
+    if(test01<test02)
+        ++test02;
+    if(test01!=test02)
+        --test03;
+    if(5!=test02)
+        test01--;
+    if(5==test02)
+        test01++;
+    if(test03!=6)
+        test02++;
     test03 *= ++test03;
     Partialtest02 += 5;
     Flaggedtest03 /= 2;
