@@ -47,16 +47,21 @@ namespace BlazesRusCode
         PartialInt DecimalHalf;
 
 		//Return IntHalf as signed int
-        signed int GetIntHalf() const
+        inline signed int GetIntHalf() const
         {
 			return IntHalf.GetValue();
         }
 
-        unsigned int GetFlags() const
+        inline unsigned int GetFlags() const
         {
             return DecimalHalf.Flags;
         }
 
+		inline void SetFlag(const unsigned int& flagVal)
+		{
+			DecimalHalf.Flags = flagVal;
+		}
+		
     #pragma endregion DigitStorage
 
         /// <summary>

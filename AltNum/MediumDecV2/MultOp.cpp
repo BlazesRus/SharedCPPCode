@@ -56,20 +56,22 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 	}
 	else//Separate flag category
 	{
-		switch(rValue.DecimalHalf.Flags)
-		{
-			case 1:
-			{
-			}
-			break;
-			case 2:
-			{
-			}
-			break;
-			case 3:
-			{
-			}
-			break;
-		}
+        if(rValue.DecimalHalf.Flags==1){
+            if(GetFlags()==0)
+                SetFlag(1);
+            else
+                UnsignedMultOp(PiNum);
+        } else if(rValue.DecimalHalf.Flags==2){
+            if(GetFlags()==0)
+                SetFlag(2);
+            else
+                UnsignedMultOp(ENum);
+        } else if(rValue.DecimalHalf.Flags==3){
+            SetFlag(3);
+            if(DecimalHalf.Flags==1)
+                UnsignedMultOp(PiNum);
+            else if(DecimalHalf.Flags==2)
+                UnsignedMultOp(ENum);
+        }
 	}
 }
