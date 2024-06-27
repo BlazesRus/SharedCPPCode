@@ -131,6 +131,16 @@ namespace BlazesRusCode
             return MediumDec(intVal,decVal);
         }
 
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="tValue">The value.</param>
+        inline void SetValue(const MediumDec& rValue)
+        {
+            IntHalf = rValue.IntHalf;
+            DecimalHalf.SetValueV2(rValue.DecimalHalf);
+        }
+
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
@@ -1739,7 +1749,7 @@ protected:
 				IntHalf.NRepSkippingUIntAddOp(rValue);
 			else {
 				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue;
+				IntHalf.UIntAddOp(rValue);
 				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
 					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 			}
@@ -1863,7 +1873,7 @@ protected:
 				IntHalf.NRepSkippingUIntSubOp(rValue);
 			else {
 				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue;
+				IntHalf.UIntSubOp(rValue);
 				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
 					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 			}

@@ -59,6 +59,11 @@ namespace BlazesRusCode
             return *this;
         }
 
+        //Fix for C2678 error on assignment
+        inline void SetValueV2(const PartialInt& rValue);
+
+        inline void SetValue(unsigned int value=0, unsigned int flags=0);
+
     #pragma endregion class_constructors
 
     #pragma region Check_if_value
@@ -135,10 +140,12 @@ namespace BlazesRusCode
 		std::strong_ordering operator<=>(const signed int& that) const
 		{
 			if (that < 0){
-				if (auto ValueCmp = Value <=> 0; ValueCmp != 0)
+				auto ValueCmp = Value <=> 0;
 					return ValueCmp;
-			} else if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
-				return ValueCmp;
+			} else {
+                auto ValueCmp = Value <=> (unsigned int)that;
+                    return ValueCmp;
+            }
 		}
 
 		bool operator==(const PartialInt& that) const

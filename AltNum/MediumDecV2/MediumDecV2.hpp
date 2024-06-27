@@ -145,20 +145,20 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        inline void SetValue(const MediumDecV2& rValue) const
+        inline void SetValue(const MediumDecV2& rValue)
         {
-            IntHalf = rValue.IntHalf;
-            DecimalHalf = rValue.DecimalHalf;
+            IntHalf.SetValueV2(rValue.IntHalf);
+            DecimalHalf.SetValueV2(rValue.DecimalHalf);
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        inline void SetMediumDecValue(const MediumDec& rValue) const
+        inline void SetMediumDecValue(const MediumDec& rValue)
         {
-            IntHalf = rValue.IntHalf;
-            DecimalHalf = rValue.DecimalHalf;
+            IntHalf.SetValueV2(rValue.IntHalf);
+            DecimalHalf.SetValueV2(rValue.DecimalHalf);
         }
 
         inline unsigned int GetFlags() const
@@ -1826,29 +1826,29 @@ protected:
                 throw "Target value can not be divided by zero";
             else if (lValue.IsZero())
                 return;
-            lValue.PartialUIntDivOpV1(Value);
+            lValue.PartialUIntDivOpV1(rValue);
             if (lValue.IntHalf == 0 && lValue.DecimalHalf == 0)
 				lValue.DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static void BasicUIntDivOpV1(VariantType& lValue, const IntType& rValue)
+        static void BasicIntDivOpV1(VariantType& lValue, const IntType& rValue)
         {
             if (rValue == 0)
                 throw "Target value can not be divided by zero";
             else if (lValue.IsZero())
                 return;
-            lValue.PartialIntDivOpV1(Value);
+            lValue.PartialIntDivOpV1(rValue);
             if (lValue.IntHalf == 0 && lValue.DecimalHalf == 0)
 				lValue.DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicUIntDivOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicUIntDivOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicUIntDivOpV1(lValue, rValue); return lValue; }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicIntDivOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicIntDivOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicIntDivOpV1(lValue, rValue); return lValue; }
 
         /// <summary>
@@ -1858,7 +1858,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto BasicDivideByUIntV1(VariantType lValue, const IntType& rValue)
+        static VariantType BasicDivideByUIntV1(VariantType lValue, const IntType& rValue)
         { return BasicUIntDivOperationV1(lValue, rValue); }
 
         /// <summary>
@@ -1868,7 +1868,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static auto BasicDivideByIntV1(VariantType lValue, const IntType rValue)
+        static VariantType BasicDivideByIntV1(VariantType lValue, const IntType rValue)
         { return BasicIntDivOperationV1(lValue, rValue); }
 
 public:
@@ -1920,16 +1920,16 @@ public:
         inline const MediumDecV2 BasicDivideByInt64(const signed __int64& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedDivideByInt(const signed int& rValue) 
+        inline const MediumDecV2 BasicUnsignedDivideByInt(const signed int& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicUnsignedDivideByInt64(const signed __int64& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
 
         inline const MediumDecV2 BasicDivideByUInt8(const unsigned char& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByInt8(const signed char& rValue) 
+        inline const MediumDecV2 BasicDivideByInt8(const signed char& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByUInt16(const unsigned short& rValue) 
+        inline const MediumDecV2 BasicDivideByUInt16(const unsigned short& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicDivideByInt16(const signed short& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
@@ -1984,7 +1984,7 @@ protected:
 								lValue.IntHalf.Value /= 2;
 							break;
 						case 4:
-							if(((IntHalf.Value >> 2) << 2) == lValue.IntHalf.Value)
+							if(((lValue.IntHalf.Value >> 2) << 2) == lValue.IntHalf.Value)
 								lValue.IntHalf.Value /= 4;
 							else
 								lValue.UIntDivOp(4);
@@ -1996,13 +1996,13 @@ protected:
 								lValue.UIntDivOp(4);
 							break;
 						case 16:
-							if(((IntHalf.Value >> 4) << 4) == lValue.IntHalf.Value)
+							if(((lValue.IntHalf.Value >> 4) << 4) == lValue.IntHalf.Value)
 								lValue.IntHalf.Value /= 16;
 							else
 								lValue.UIntDivOp(4);
 							break;
 						case 32:
-							if(((IntHalf.Value >> 5) << 5) == lValue.IntHalf.Value)
+							if(((lValue.IntHalf.Value >> 5) << 5) == lValue.IntHalf.Value)
 								lValue.IntHalf.Value /= 32;
 							else
 								lValue.UIntDivOp(4);
@@ -2016,7 +2016,7 @@ protected:
 					}
 				}
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-                else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
+                else if (BasicUnsignedPartialDivOpV1(lValue, rValue))//Prevent Dividing into nothing
 				        lValue.DecimalHalf.Value = 1;
 #else
                 else
@@ -2024,7 +2024,7 @@ protected:
 #endif
 			}
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-            else if (lValue.UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
+            else if (BasicUnsignedPartialDivOpV1(lValue, rValue))//Prevent Dividing into nothing
                 lValue.DecimalHalf.Value = 1;
 #else
             else
@@ -2038,10 +2038,10 @@ protected:
             if(rValue.IsNegative())
             {
                 lValue.SwapNegativeStatus();
-                BasicUnsignedDivOpV1<VariantType>(lValue, -rValue);
+                BasicUDivOpV1<VariantType>(lValue, -rValue);
             }
             else
-                BasicUnsignedDivOpV1<VariantType>(lValue, rValue);
+                BasicUDivOpV1<VariantType>(lValue, rValue);
         }
 
 public:
@@ -2457,7 +2457,7 @@ protected:
         static void BasicPartialUIntMultOpV1(VariantType& lValue, const IntType& rValue)
         {
             if (lValue.DecimalHalf == 0)
-                IntHalf.Value *= rValue;
+                lValue.IntHalf.Value *= rValue;
             else
 			{
                 __int64 SRep = lValue.IntHalf == 0 ? lValue.DecimalHalf.Value : DecimalOverflowX * lValue.IntHalf.Value + lValue.DecimalHalf.Value;
@@ -2498,7 +2498,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static void BasicUIntMultOpV1(VariantType& lValue, const IntType& Value)
+        static void BasicUIntMultOpV1(VariantType& lValue, const IntType& rValue)
         {
             if (rValue == 0)
             {
@@ -2511,7 +2511,7 @@ protected:
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static void BasicIntMultOpV1(VariantType& lValue, const IntType& Value)
+        static void BasicIntMultOpV1(VariantType& lValue, const IntType& rValue)
         {
             if (rValue == 0)
             {
@@ -2524,12 +2524,12 @@ protected:
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicUIntMultOperationV1(VariantType& lValue, const IntType& rValue)
-        { BasicUIntMultOpV1(lValue, rValue); return lValue; }
+        static VariantType& BasicUIntMultOperationV1(VariantType& lValue, const IntType& rValue)
+        { BasicUIntMultOpV1<VariantType>(lValue, rValue); return lValue; }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicIntMultOperationV1(VariantType& lValue, const IntType& rValue)
-        { BasicIntMultOpV1(lValue, rValue); return lValue; }
+        static VariantType& BasicIntMultOperationV1(VariantType& lValue, const IntType& rValue)
+        { BasicIntMultOpV1<VariantType>(lValue, rValue); return lValue; }
 
         /// <summary>
         /// Basic Multiplication operation between MediumDec Variant and unsigned Integer value
@@ -2538,8 +2538,8 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto BasicMultiplyByUIntV1(VariantType lValue, const IntType& rValue)
-        { return lValue.BasicUIntMultOperationV1(rValue); }
+        static VariantType BasicMultiplyByUIntV1(VariantType lValue, const IntType& rValue)
+        { return BasicUIntMultOperationV1<VariantType>(lValue, rValue); }
 
         /// <summary>
         /// Basic Multiplication operation between MediumDec Variant and Integer value
@@ -2548,8 +2548,8 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static auto BasicMultiplyByIntV1(VariantType lValue, const IntType& rValue)
-        { return lValue.BasicIntMultOperationV1(rValue); }
+        static VariantType BasicMultiplyByIntV1(VariantType lValue, const IntType& rValue)
+        { return BasicIntMultOperationV1<VariantType>(lValue, rValue); }
 
 public:
 
@@ -2600,16 +2600,16 @@ public:
         inline const MediumDecV2 BasicMultiplyByInt64(const signed __int64& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedMultiplyByInt(const signed int& rValue) 
+        inline const MediumDecV2 BasicUnsignedMultiplyByInt(const signed int& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicUnsignedMultiplyByInt64(const signed __int64& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
 
         inline const MediumDecV2 BasicMultiplyByUInt8(const unsigned char& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByInt8(const signed char& rValue) 
+        inline const MediumDecV2 BasicMultiplyByInt8(const signed char& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByUInt16(const unsigned short& rValue) 
+        inline const MediumDecV2 BasicMultiplyByUInt16(const unsigned short& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicMultiplyByInt16(const signed short& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
@@ -2652,10 +2652,10 @@ protected:
                     {
                         lValue.DecimalHalf = (signed int)rRep;
                     #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-                        if(DecimalHalf==0)
+                        if(lValue.DecimalHalf==0)
                             lValue.DecimalHalf.Value = 1;
                     #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
+                        if(lValue.DecimalHalf==0){
 							lValue.SetAsZero(); return; }
                     #endif
                         lValue.IntHalf.Value = 0;
@@ -2721,7 +2721,7 @@ protected:
                     else
                     {
                         lValue.DecimalHalf.Value = (unsigned int)SRep;
-                        if(DecimalHalf==0)
+                        if(lValue.DecimalHalf==0)
                         {
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(lValue.DecimalHalf==0)
@@ -2782,7 +2782,7 @@ protected:
                 }
             }
 			#if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
-            if(lValue.DecimalHalf==0&&IntHalf==0)
+            if(lValue.DecimalHalf==0&&lValue.IntHalf==0)
                 lValue.DecimalHalf.Value = 1;
 			#elif !defined(AltNum_AllowNegativeZero)
             if(DecimalHalf==0)
@@ -2795,10 +2795,10 @@ protected:
             if(rValue.IsNegative())
             {
                 lValue.SwapNegativeStatus();
-                lValue.UnsignedMultOp<VariantType>(-rValue);
+                lValue.UnsignedMultOp(-rValue);
             }
             else
-                lValue.UnsignedMultOp<VariantType>(rValue);
+                lValue.UnsignedMultOp(rValue);
         }
 
 public:
@@ -3224,8 +3224,8 @@ protected:
 				lValue.IntHalf.NRepSkippingUIntAddOp(rValue);
 			else {
 				int signBeforeOp = lValue.IntHalf.Sign;
-				lValue.IntHalf += rValue;
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+				lValue.IntHalf.UIntAddOp(rValue);
+				if(signBeforeOp!=lValue.IntHalf.Sign)//Invert the decimal section
 					lValue.DecimalHalf.Value = DecimalOverflow - lValue.DecimalHalf.Value;
 			}
         }
@@ -3239,7 +3239,7 @@ protected:
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
         static void BasicIntAddOpV1(VariantType& lValue, const IntType& rValue)
         {
-			if(DecimalHalf.Value==0)
+			if(lValue.DecimalHalf.Value==0)
 				lValue.IntHalf.NRepSkippingIntegerAddOp(rValue);
 			else {
 				int signBeforeOp = lValue.IntHalf.Sign;
@@ -3250,11 +3250,11 @@ protected:
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicUIntAddOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicUIntAddOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicUIntAddOpV1(lValue, rValue); return lValue; }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static auto& BasicIntAddOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicIntAddOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicIntAddOpV1(lValue, rValue); return lValue; }
 
 		/// <summary>
@@ -3264,8 +3264,8 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto BasicAddByUIntV1(VariantType lValue, const IntType& rValue)
-        { return lValue.BasicUIntAddOperationV1(rValue); }
+        static VariantType BasicAddByUIntV1(VariantType lValue, const IntType& rValue)
+        { return BasicUIntAddOperationV1(lValue, rValue); }
 
 		/// <summary>
         /// Basic addition operation between MediumDec variant and Integer value
@@ -3274,8 +3274,8 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static auto BasicAddByIntV1(VariantType lValue, const IntType& rValue)
-        { return lValue.BasicIntAddOperationV1(rValue); }
+        static VariantType BasicAddByIntV1(VariantType lValue, const IntType& rValue)
+        { return BasicIntAddOperationV1(lValue, rValue); }
 
 public:
 
@@ -3326,16 +3326,16 @@ public:
         inline const MediumDecV2 BasicAddByInt64(const signed __int64& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedAddByInt(const signed int& rValue) 
+        inline const MediumDecV2 BasicUnsignedAddByInt(const signed int& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicUnsignedAddByInt64(const signed __int64& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
 
         inline const MediumDecV2 BasicAddByUInt8(const unsigned char& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByInt8(const signed char& rValue) 
+        inline const MediumDecV2 BasicAddByInt8(const signed char& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByUInt16(const unsigned short& rValue) 
+        inline const MediumDecV2 BasicAddByUInt16(const unsigned short& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicAddByInt16(const signed short& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
@@ -3351,7 +3351,7 @@ protected:
         		lValue.IntHalf.NRepSkippingUnsignedSubOp(rValue);
         	else {
         		int signBeforeOp = lValue.IntHalf.Sign;
-        		lValue.IntHalf -= rValue.Value;
+        		lValue.IntHalf.UIntSubOp(rValue.Value);
         		if (signBeforeOp != lValue.IntHalf.Sign)//Invert the decimal section
         			lValue.DecimalHalf.Value = DecimalOverflow - lValue.DecimalHalf.Value;
         	}
@@ -3417,11 +3417,11 @@ protected:
         }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicUIntSubOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicUIntSubOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicUIntSubOpV1(lValue, rValue); return lValue; }
 
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto& BasicIntSubOperationV1(VariantType& lValue, const IntType& rValue)
+        static VariantType& BasicIntSubOperationV1(VariantType& lValue, const IntType& rValue)
         { BasicIntSubOpV1(lValue, rValue); return lValue; }
 
         /// <summary>
@@ -3431,7 +3431,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=unsigned int>
-        static auto BasicSubtractByUIntV1(VariantType lValue, const IntType& rValue)
+        static VariantType BasicSubtractByUIntV1(VariantType lValue, const IntType& rValue)
         { return BasicUIntSubOperationV1(lValue, rValue); }
 
         /// <summary>
@@ -3441,7 +3441,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<MediumDecVariant VariantType=MediumDecV2, IntegerType IntType=signed int>
-        static auto BasicSubtractByIntV1(VariantType lValue, const IntType rValue)
+        static VariantType BasicSubtractByIntV1(VariantType lValue, const IntType rValue)
         { return BasicIntSubOperationV1(lValue, rValue); }
 
 public:
@@ -3493,16 +3493,16 @@ public:
         inline const MediumDecV2 BasicSubtractByInt64(const signed __int64& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedSubtractByInt(const signed int& rValue) 
+        inline const MediumDecV2 BasicUnsignedSubtractByInt(const signed int& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicUnsignedSubtractByInt64(const signed __int64& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
 
         inline const MediumDecV2 BasicSubtractByUInt8(const unsigned char& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByInt8(const signed char& rValue) 
+        inline const MediumDecV2 BasicSubtractByInt8(const signed char& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByUInt16(const unsigned short& rValue) 
+        inline const MediumDecV2 BasicSubtractByUInt16(const unsigned short& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
         inline const MediumDecV2 BasicSubtractByInt16(const signed short& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
@@ -3654,7 +3654,7 @@ protected:
                     switch(LRep)
                     {
                         case RepTypeEnum::NormalType:
-                            BasicUIntSubOpV1(rValue);
+                            BasicUIntSubOpV1(*this, rValue);
                         break;
     #pragma region AltDecVariantExclusive
     #pragma endregion AltDecVariantExclusive

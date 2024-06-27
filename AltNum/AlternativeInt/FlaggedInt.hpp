@@ -57,6 +57,11 @@ namespace BlazesRusCode
             return *this;
         }
 
+        //Fix for C2678 error on assignment
+        inline void SetValueV2(const FlaggedInt& rValue);
+
+        inline void SetValue(const unsigned int& value=0, const unsigned int& isAltRep=0);
+
     #pragma endregion class_constructors
 
     #pragma region Check_if_value

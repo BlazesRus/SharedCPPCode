@@ -76,6 +76,9 @@ namespace BlazesRusCode
             return *this;
         }
 
+        //Fix for C2678 error on assignment
+        inline void SetValueV2(const MirroredInt& rValue);
+
         inline void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
 
         inline void SetSignedValue(const signed int& val=0);

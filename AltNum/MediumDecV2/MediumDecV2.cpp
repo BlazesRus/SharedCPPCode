@@ -252,7 +252,7 @@ void BlazesRusCode::MediumDecV2::UnsignedDivOp_RValueIntSwitch(const MediumDecV2
 				BasicUIntDivOp(4);
 			break;
 		case 8:
-			if(((IntHalf.Value >> 3) << 3) == IntHalf)
+			if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
 				IntHalf.Value /= 8;
 			else
 				BasicUIntDivOp(4);
@@ -316,7 +316,7 @@ void MediumDecV2::BasicUnsignedMirroredAddOp(const MirroredInt& rValue)
 		IntHalf.NRepSkippingUnsignedAddOp(rValue);
 	else {
 		int signBeforeOp = IntHalf.Sign;
-		IntHalf.UIntAddOp(rValue.Value);
+		IntHalf.UnsignedAddOp(rValue);
 		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
 			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 	}
@@ -478,7 +478,7 @@ void BlazesRusCode::MediumDecV2::BasicUnsignedMirroredSubOp(const MirroredInt& r
 		IntHalf.NRepSkippingUnsignedSubOp(rValue);
 	else {
 		int signBeforeOp = IntHalf.Sign;
-		IntHalf.UIntSubOp(rValue.Value);
+		IntHalf.UnsignedSubOp(rValue);
 		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
 			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 	}

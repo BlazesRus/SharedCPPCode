@@ -20,6 +20,17 @@ BlazesRusCode::PartialInt::PartialInt(const PartialInt& rhs)
 	Value = rhs.Value; Flags = rhs.Flags;
 }
 
+void BlazesRusCode::PartialInt::SetValueV2(const PartialInt& rValue)
+{
+	Value = rValue.Value; Flags = rValue.Flags;
+}
+
+void BlazesRusCode::PartialInt::SetValue(unsigned int value, unsigned int flags)
+{
+	Value = value;
+	Flags = flags;
+}
+
 #pragma endregion class_constructors
 
 #pragma region ValueDefines

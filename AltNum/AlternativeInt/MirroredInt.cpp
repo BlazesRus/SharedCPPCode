@@ -35,6 +35,11 @@ int BlazesRusCode::MirroredInt::GetValue() const
 		return -((signed int)Value);
 }
 
+void BlazesRusCode::MirroredInt::SetValueV2(const MirroredInt& rValue)
+{
+	Value = rValue.Value; Sign = rValue.Sign;
+}
+
 void BlazesRusCode::MirroredInt::SetSignedValue(const signed int& val)
 {
 	if (val<0) {

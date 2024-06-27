@@ -20,6 +20,17 @@ BlazesRusCode::FlaggedInt::FlaggedInt(const FlaggedInt& rhs)
 	Value = rhs.Value; IsAltRep = rhs.IsAltRep;
 }
 
+void BlazesRusCode::FlaggedInt::SetValueV2(const FlaggedInt& rValue)
+{
+	Value = rValue.Value; IsAltRep = rValue.IsAltRep;
+}
+
+void BlazesRusCode::FlaggedInt::SetValue(const unsigned int& value, const unsigned int& isAltRep)
+{
+	Value = value;
+	IsAltRep = isAltRep;
+}
+
 #pragma endregion class_constructors
 
 #pragma region ValueDefines
