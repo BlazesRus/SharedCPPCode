@@ -51,7 +51,7 @@ void BlazesRusCode::MediumDecV2::ConvertPiToNum()
 
 #if defined(AltNum_EnableERep)
 //2.71828 18284 59045 23536 02874 71352 66249 77572 47093 69995 * selfNum
-void BlazesRusCode::MediumDecV2::ConvertENumToNum()
+void BlazesRusCode::MediumDecV2::ConvertEToNum()
 {
 	if(IntHalf.Value>=790015084&&DecimalHalf.Value>=351050349)//Exceeding Storage limit of NormalRep
 	{
@@ -72,13 +72,13 @@ void BlazesRusCode::MediumDecV2::ConvertENumToNum()
 	else if(IntHalf==0)
 	{
 		SRep = 2718281828;
-		SRep *= DecimalHalf;
+		SRep *= DecimalHalf.Value;
 		divRes = SRep / 1000000000000000000;
 		DecimalHalf.Value = ((SRep - 1000000000000000000 * divRes) / DecimalOverflowX);
 	}
 	else
 	{
-		SRep = DecimalOverflowX * IntHalf + DecimalHalf;
+		SRep = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
 		SRep *= 2;//SRep holds __int64 version of X.Y * Z
 		//X.Y *.V
 		unsigned __int64 Temp03 = (__int64)IntHalf * 718281828ll;//Temp03 holds __int64 version of X *.V

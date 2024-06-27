@@ -147,8 +147,8 @@ public:
         /// <param name="tValue">The value.</param>
         inline void SetValue(const MediumDecV2& rValue)
         {
-            IntHalf.SetValueV2(rValue.IntHalf);
-            DecimalHalf.SetValueV2(rValue.DecimalHalf);
+            IntHalf = rValue.IntHalf;
+            DecimalHalf = rValue.DecimalHalf;
         }
 
         /// <summary>
@@ -157,8 +157,8 @@ public:
         /// <param name="tValue">The value.</param>
         inline void SetMediumDecValue(const MediumDec& rValue)
         {
-            IntHalf.SetValueV2(rValue.IntHalf);
-            DecimalHalf.SetValueV2(rValue.DecimalHalf);
+            IntHalf = rValue.IntHalf;
+            DecimalHalf = rValue.DecimalHalf;
         }
 
         inline unsigned int GetFlags() const
@@ -170,14 +170,14 @@ public:
 
     #pragma region Negative_Status
 
-        inline bool IsPositive() const;
+        bool IsPositive() const;
 
-        inline bool IsNegative() const;
+        bool IsNegative() const;
 
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        inline void SwapNegativeStatus();
+        void SwapNegativeStatus();
 
         /// <summary>
         /// Negative Unary Operator(Flips negative status)
@@ -216,13 +216,13 @@ public:
 	#endif
 
 	#if defined(AltNum_EnableInfinityRep)
-        //When DecimalHalf.tValue equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
+        //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
 		static const unsigned int InfinityRep = PartialInt::InfinityRep;
 	#endif
 	#if defined(AltNum_EnableApproaching)
-        //When DecimalHalf.tValue equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
         static const unsigned int ApproachingBottomRep = PartialInt::ApproachingBottomRep;
-        //When DecimalHalf.tValue equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
+        //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
 		static const unsigned int ApproachingTopRep = PartialInt::ApproachingTopRep;
 	#endif
     //If DecimalHalf is greator than NaNVariantThreshold, than number is at unknown range or indeterminate form
@@ -247,74 +247,50 @@ public:
         //Is indeterminate form when DecimalHalf above this value
 		static unsigned int IndeterminateThreshold = UndefinedInRangeRep;
 
-		//When DecimalHalf.tValue is this value, then the indeterminate form represents 0 x Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 x Infinity
 		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents 0 x -Infinity
 		static unsigned int ZeroTimesInfinityRep = IndeterminateThreshold+1;//1073741814;
 
-		//When DecimalHalf.tValue is this value, then the indeterminate form represents Infinity / Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity / Infinity
 		//When IntHalf.Sign==NegativeSign, then the indeterminate form represents -Infinity / Infinity
 		static unsigned int InfDividedByInfRep = IndeterminateThreshold+2;
 
-		//When DecimalHalf.tValue is this value, then the indeterminate form represents Infinity - Infinity
+		//When DecimalHalf.Value is this value, then the indeterminate form represents Infinity - Infinity
 		static unsigned int InfMinusInfRep = IndeterminateThreshold+3;
 
-		//When DecimalHalf.tValue is this value, then the indeterminate form represents 0 to power of 0
+		//When DecimalHalf.Value is this value, then the indeterminate form represents 0 to power of 0
 		static unsigned int ZeroToPowerOfZeroRep = IndeterminateThreshold+4;
 
-		//When DecimalHalf.tValue is this value, then the indeterminate form represents IntHalf/0
+		//When DecimalHalf.Value is this value, then the indeterminate form represents IntHalf/0
 		static unsigned int DivideByZeroRep = IndeterminateThreshold+9;
 
 		static unsigned int UnknownIndeterminateRep = IndeterminateThreshold+10;
-	#endif//Maximum DecimalHalf.tValue = 1073741823
+	#endif//Maximum DecimalHalf.Value = 1073741823
     public:
     #pragma endregion Const Representation values
 
     #pragma region RepType
 
+#if defined(AltNum_EnablePiRep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
     #if defined(AltNum_UseBuiltinVirtualTable)
-        inline RepType VirtualTable_GetPiRepType() const
+        RepType VirtualTable_GetPiRepType() const;
     #else
-        inline RepType GetPiRepType() const
+        RepType GetPiRepType() const;
     #endif
-        {
-            switch(DecimalHalf.Value)
-            {
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingTopPi; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingTopPi; break;
-		#endif
-				default:
-					return RepType::PiNum;
-			}
-        }
+#endif
 
 #if defined(AltNum_EnableERep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
     #if defined(AltNum_UseBuiltinVirtualTable)
-        inline RepType VirtualTable_GetERepType() const
+        RepType VirtualTable_GetERepType() const;
     #else
-        inline RepType GetERepType() const
+        RepType GetERepType() const;
     #endif
-        {
-            switch(DecimalHalf.tValue)
-            {
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingTopE; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingTopE; break;
-		#endif
-				default:
-					return RepType::ENum;
-			}
-        }
 #endif
 
 #if defined(AltNum_EnableIRep)
@@ -322,110 +298,37 @@ public:
         /// Returns representation type data that is stored in value
         /// </summary>
     #if defined(AltNum_UseBuiltinVirtualTable)
-        inline RepType VirtualTable_GetIRepType() const
+        RepType VirtualTable_GetIRepType() const;
     #else
-        inline RepType GetIRepType() const
-    #endif
-        {
-            switch(DecimalHalf.tValue)
-            {
-        #if defined(AltNum_EnableImaginaryInfinity)
-				case InfinityRep:
-					return RepType::ImaginaryInfinity; break;
-		#endif
-		#if defined(AltNum_EnableApproaching)
-				case ApproachingBottomRep:
-					return RepType::ApproachingImaginaryBottom; break;
-				case ApproachingTopRep:
-					return RepType::ApproachingImaginaryTop; break;
-		#endif
-				default:
-					return RepType::INum;
-			}
-        }
+        RepType GetIRepType() const;
+    #endif;
 #endif
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
     #if defined(AltNum_UseBuiltinVirtualTable)
-        inline RepType VirtualTable_GetNormRepType() const
+        RepType VirtualTable_GetNormRepType() const;
     #else
-        inline RepType GetNormRepType() const
+        RepType GetNormRepType() const;
     #endif
-        {
-            switch(DecimalHalf.Value)
-            {
-		#if defined(AltNum_EnableApproaching)
-                case ApproachingBottomRep:
-                    return RepType::ApproachingBottom; break;
-                case ApproachingTopRep:
-                    return RepType::ApproachingTop; break;
-	    #endif
-		#if defined(AltNum_EnableInfinityRep)
-                case InfinityRep:
-                    return RepType::Infinity; break;
-		#endif
-		#if defined(AltNum_EnableNaN)
-                case NaNRep:
-                    return RepType::NaN; break;
-                case UndefinedRep:
-                    return RepType::Undefined; break;
-		#endif
-        #if defined(AltNum_EnableNil)
-                case NilRep:
-                    return RepType::Nil; break;
-		#endif
-                default:
-		#if defined(AltNum_EnableIndeterminateForms)
-					if(DecimalHalf>IndeterminateRep)
-						return RepType::IndeterminateForm;
-		#endif
-                    return RepType::NormalType; break;
-            }
-        }
+
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
 #if defined(AltNum_UseBuiltinVirtualTable)
-        inline RepType VirtualTable_GetRepType() const
+        RepType VirtualTable_GetRepType() const;
 #else
-        inline RepType GetRepType() const
+        RepType GetRepType() const;
 #endif
-        {
-            switch(DecimalHalf.Flags)
-            {
-		#if defined(AltNum_EnablePiRep)
-                case 1:
-                    return GetPiRepType(); break;
-        #endif
-		#if defined(AltNum_EnableERep)
-                case 2:
-                    return GetERepType(); break;
-        #endif
-		#if defined(AltNum_EnableIRep)
-                case 3:
-                    return GetIRepType(); break;
-		#elif defined(MediumDecV2_EnableWithinMinMaxRange)
-                case 3:
-				    //If IntHalf==???, then left side range value equals negative infinity
-				    //If DecimalHalf.tValue==???, then right side range value equals positive infinity
-				    //IntHalf represents left side minimum
-				    //For DecimalHalf.tValue represents right side maximum value with negative numbers represents at numbers above ???
-				    return RepType::WithinMinMaxRange;
-        #endif
-                default:
-                    return GetNormRepType(); break;
-            }
-        }
 
 #if defined(AltNum_UseBuiltinVirtualTable)
 
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
-        inline RepType GetPiRepType() const
+        RepType GetPiRepType() const
 		{
 			GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
 		}
@@ -433,7 +336,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
-        inline RepType GetERepType() const
+        RepType GetERepType() const
 		{
 			GetVTable(VTable)->VirtualTable_GetERepType(VTable);
 		}
@@ -441,7 +344,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
-        inline RepType GetIRepType() const
+        RepType GetIRepType() const
 		{
 			GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
 		}
@@ -449,7 +352,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
-        inline RepType GetNormRepType() const
+        RepType GetNormRepType() const
 		{
 			GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
 		}
@@ -457,7 +360,7 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value(Directly calling function)
         /// </summary>
-        inline RepType GetRepType() const
+        RepType GetRepType() const
 		{
 			GetVTable(VTable)->VirtualTable_GetRepType(VTable);
 		}
@@ -473,14 +376,14 @@ public:
     #if defined(AltNum_EnablePiRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecV2>
-        inline void SetPiValV1(const VariantType& Value)
+        void SetPiValV1(const VariantType& Value)
         {
             IntHalf = Value.IntHalf; DecimalHalf = PartialInt(Value.DecimalHalf.Value,1);
         }
 public:
-        inline void SetPiVal(const MediumDecV2& Value){ SetPiValV1(Value); };
+        void SetPiVal(const MediumDecV2& Value){ SetPiValV1(Value); };
 
-        inline void SetPiValFromInt(const MirroredInt& Value)
+        void SetPiValFromInt(const MirroredInt& Value)
         {
             IntHalf = Value; DecimalHalf = PartialInt(0,1);
         }
@@ -491,14 +394,14 @@ public:
     #if defined(AltNum_EnableERep)
 protected:
         template<MediumDecVariant VariantType=MediumDecV2>
-        inline void SetEValV1(const VariantType& tValue)
+        void SetEValV1(const VariantType& tValue)
         {
-            IntHalf = tValue.IntHalf; DecimalHalf = PartialInt(tValue.DecimalHalf.tValue,2);
+            IntHalf = tValue.IntHalf; DecimalHalf = PartialInt(tValue.DecimalHalf.Value,2);
         }
 public:
-        inline void SetEVal(const MediumDecV2& tValue){ SetEValV1(tValue); };
+        void SetEVal(const MediumDecV2& tValue){ SetEValV1(tValue); };
 
-        inline void SetEValFromInt(const MirroredInt& tValue)
+        void SetEValFromInt(const MirroredInt& tValue)
         {
             IntHalf = tValue; DecimalHalf = PartialInt(0,2);
         }
@@ -509,14 +412,14 @@ public:
     #if defined(AltNum_EnableIRep)
 protected:
         template<MediumDecVariant VariantType=MediumDecV2>
-        inline void SetIValV1(const VariantType& tValue)
+        void SetIValV1(const VariantType& tValue)
         {
-            IntHalf = tValue.IntHalf; DecimalHalf = PartialInt(tValue.DecimalHalf.tValue,3);
+            IntHalf = tValue.IntHalf; DecimalHalf = PartialInt(tValue.DecimalHalf.Value,3);
         }
 public:
-        inline void SetIVal(const MediumDecV2& tValue){ SetIValV1(tValue); };
+        void SetIVal(const MediumDecV2& tValue){ SetIValV1(tValue); };
 
-        inline void SetIValFromInt(const MirroredInt& tValue)
+        void SetIValFromInt(const MirroredInt& tValue)
         {
             IntHalf = tValue; DecimalHalf = PartialInt(0,3);
         }
@@ -528,24 +431,24 @@ public:
     // and https://tutorial.math.lamar.edu/classes/calcI/typesofinfinity.aspx
     #if defined(AltNum_EnableInfinityRep)
 
-        inline void SetAsInfinity()
+        void SetAsInfinity()
         {
             IntHalf = MirroredInt::One; DecimalHalf = InfinityRep;
         }
 
-        inline void SetAsNegativeInfinity()
+        void SetAsNegativeInfinity()
         {
             IntHalf = MirroredInt::NegativeOne; DecimalHalf = InfinityRep;
         }
 
     #if defined(AltNum_EnableIRep)
 
-        inline void SetAsImaginaryInfinity()
+        void SetAsImaginaryInfinity()
         {
             IntHalf = 1; DecimalHalf = PartialInt(InfinityRep,3);
         }
 
-        inline void SetAsNegativeImaginaryInfinity()
+        void SetAsNegativeImaginaryInfinity()
         {
             IntHalf = MirroredInt::NegativeOne; DecimalHalf = PartialInt(InfinityRep,3);
         }
@@ -560,50 +463,50 @@ public:
 
 		//Alias:SetAsApproachingValueFromRight, Alias:SetAsApproachingZero if value = 0
         //Approaching Towards values from right to left side(IntHalf.000...1)
-        inline void SetAsApproachingBottom(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingBottom(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = ApproachingBottomRep;
         }
 
 		//Alias:SetAsApproachingValueFromLeft, Alias:SetAsApproachingZeroFromLeft if value = 0
         //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)
-        inline void SetAsApproachingTop(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTop(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = ApproachingTopRep;
         }
 
 		//SetAsApproachingBottom without changing sign
-        inline void SetAsApproachingBottomVal(const unsigned int& value=0)
+        void SetAsApproachingBottomVal(const unsigned int& value=0)
         {
             IntHalf.Value = value; DecimalHalf = ApproachingBottomRep;
         }
 
 		//SetAsApproachingTop without changing sign
-        inline void SetAsApproachingTopVal(const unsigned int& value=0)
+        void SetAsApproachingTopVal(const unsigned int& value=0)
         {
             IntHalf.Value = value; DecimalHalf = ApproachingTopRep;
         }
 
 		//SetAsApproachingBottom without changing sign or flags
-        inline void SetAsApproachingBottomValV2(const unsigned int& value=0)
+        void SetAsApproachingBottomValV2(const unsigned int& value=0)
         {
             IntHalf.Value = value; DecimalHalf.Value = ApproachingBottomRep;
         }
 
 		//SetAsApproachingTop without changing sign
-        inline void SetAsApproachingTopValV2(const unsigned int& value=0)
+        void SetAsApproachingTopValV2(const unsigned int& value=0)
         {
             IntHalf.Value = value; DecimalHalf.Value = ApproachingTopRep;
         }
 
 		#if defined(AltNum_EnablePiRep)
 
-        inline void SetAsApproachingBottomPi(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingBottomPi(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
 
-        inline void SetAsApproachingTopPi(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTopPi(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,1);
         }
@@ -612,13 +515,13 @@ public:
 
 		#if defined(AltNum_EnableERep)
 
-        inline void SetAsApproachingBottomE(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingBottomE(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,2);
         }
 
         //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)e
-        inline void SetAsApproachingTopE(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTopE(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,2);
         }
@@ -627,13 +530,13 @@ public:
 
 		#if defined(AltNum_EnableIRep)
 
-        inline void SetAsApproachingBottomI(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingBottomI(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingBottomRep,3);
         }
 
         //Approaching Towards (IntHalf-1) from Left to right side(IntHalf.999...9)i
-        inline void SetAsApproachingTopI(const MirroredInt& value=MirroredInt::Zero)
+        void SetAsApproachingTopI(const MirroredInt& value=MirroredInt::Zero)
         {
             IntHalf = value; DecimalHalf = PartialInt(ApproachingTopRep,3);
         }
@@ -644,12 +547,12 @@ public:
 
     #pragma region NaN Setters
 	#if defined(AltNum_EnableNaN)
-        inline void SetAsNaN()
+        void SetAsNaN()
         {
             IntHalf = 0; DecimalHalf = NaNRep;
         }
 
-        inline void SetAsUndefined()
+        void SetAsUndefined()
         {
             IntHalf = 0; DecimalHalf = UndefinedRep;
         }
@@ -893,18 +796,18 @@ public:
     #pragma region String Commands
 protected:
 
-        inline void InitialyzeAltRepFromString(const std::string& tvalue)
+        void InitialyzeAltRepFromString(const std::string& tvalue)
         {
             #if defined(AltNum_EnablePiRep)
             if (tvalue.find("Pi") != std::string::npos)
                 DecimalHalf.Flags = 1;
             #endif
             #if defined(AltNum_EnableERep)
-            if (tvalue.last() == 'e')
+            if (tvalue.back() == 'e')
                 DecimalHalf.Flags = 2;
             #endif
             #if defined(AltNum_EnableIRep)
-            if (tvalue.last() == 'i')
+            if (tvalue.back() == 'i')
                 DecimalHalf.Flags = 3;
             #endif
         }
@@ -915,7 +818,7 @@ public:
         /// Reads the string.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        inline void ReadString(const std::string& Value)
+        void ReadString(const std::string& Value)
         {
             MediumDec::ReadString(Value);
             InitialyzeAltRepFromString(Value);
@@ -925,13 +828,13 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
-        inline std::string ToBasicString() { return MediumDec::ToString(); }
+        std::string ToBasicString() { return MediumDec::ToString(); }
 
         /// <summary>
         /// Converts to string with digits filled in even when empty
         /// </summary>
         /// <returns>std.string</returns>
-        inline std::string ToFullBasicString() { return MediumDec::ToFullString(); }
+        std::string ToFullBasicString() { return MediumDec::ToFullString(); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
@@ -952,7 +855,7 @@ public:
             this->ReadString(Value);
         }
 
-        inline std::string ConvertToBasicString(const RepType& repType)
+        std::string ConvertToBasicString(const RepType& repType)
         {
             auto self = ConvertAsNormType(repType);
             return self.ToBasicString();
@@ -962,13 +865,13 @@ public:
         /// Converts to string.
         /// </summary>
         /// <returns>std.string</returns>
-        inline std::string ToString();
+        std::string ToString();
 
         /// <summary>
         /// Converts to string with digits filled in even when empty
         /// </summary>
         /// <returns>std.string</returns>
-        inline std::string ToFullString();
+        std::string ToFullString();
 
         /// <summary>
         /// Implements the operator std::string operator.
@@ -1024,15 +927,15 @@ public:
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        inline int toInt() const { return IntHalf.GetValue(); }
+        int toInt() const { return IntHalf.GetValue(); }
 
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        inline int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
+        int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
 
-        inline bool toBool() const { return IntHalf.IsZero() ? false : true; }
+        bool toBool() const { return IntHalf.IsZero() ? false : true; }
 
     #if defined(AltNum_EnableFloatingConversion)
 
@@ -1109,7 +1012,7 @@ public:
     #pragma region Pi Conversion
     #if defined(AltNum_EnablePiRep)
 
-		inline void ConvertPiToNum();
+		void ConvertPiToNum();
 
     #endif
     #pragma endregion Pi Conversion
@@ -1117,7 +1020,7 @@ public:
     #pragma region E Conversion
     #if defined(AltNum_EnableERep)
 
-		inline void ConvertEToNum();
+		void ConvertEToNum();
 
     #endif
     #pragma endregion E Conversion
@@ -1125,7 +1028,7 @@ public:
     #pragma region Imaginary Conversion
     #if defined(AltNum_EnableIRep)
 
-        inline void ConvertIRepToINumV2(const RepTypeEnum& repType)
+        void ConvertIRepToINumV2(const RepTypeEnum& repType)
         {//Assuming not zero(should not reach needing to convert the representation if RValue is zero)
             switch (repType)
             {
@@ -1142,10 +1045,10 @@ public:
             #endif*/
             #if defined(AltNum_EnableApproaching)
             case RepTypeEnum::ApproachingImaginaryBottom:
-                DecimalHalf.tValue = 1;
+                DecimalHalf.Value = 1;
                 break;
             case RepTypeEnum::ApproachingImaginaryTop:
-                DecimalHalf.tValue = 999999999;
+                DecimalHalf.Value = 999999999;
                 break;
                 /*#if defined(AltNum_EnableApproachingDivided)
             case RepTypeEnum::ApproachingImaginaryMidLeft:
@@ -1157,7 +1060,7 @@ public:
             #if defined(AltNum_EnableInfinityRep)
             case RepTypeEnum::ImaginaryInfinity:
                 IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
-                DecimalHalf.tValue = 999999999;
+                DecimalHalf.Value = 999999999;
                 /*ExtraRep = InitialExtraRep;*/
                 break;
             #endif
@@ -1174,19 +1077,19 @@ public:
             }
         }
 
-        inline void ConvertIRepToINum(const RepType& repType)
+        void ConvertIRepToINum(const RepType& repType)
         {
             ConvertIRepToINumV2(repType);
         }
 
-		inline auto ConvertAsNormalIRepV2(const RepTypeEnum& repType) const
+		auto ConvertAsNormalIRepV2(const RepTypeEnum& repType) const
         {
             auto Res = *this;
             Res.ConvertIRepToINumV2(repType);
             return Res;
         }
 
-		inline auto ConvertAsNormalIRep(const RepType& repType) const
+		auto ConvertAsNormalIRep(const RepType& repType) const
         {
             auto Res = *this;
             Res.ConvertIRepToINum(repType);
@@ -1221,13 +1124,13 @@ protected:
 	#endif
 	#if defined(AltNum_EnableERep)
             case RepTypeEnum::ENum:
-                lValue.ConvertENumToNum(); break;
+                lValue.ConvertEToNum(); break;
 		#if defined(AltNum_EnableApproaching)
-            case RepTypeEnum::ApproachingBottomPi:
-                lValue.DecimalHalf.tValue = 1;
+            case RepTypeEnum::ApproachingBottomE:
+                lValue.DecimalHalf.Value = 1;
                 break;
-            case RepTypeEnum::ApproachingTopPi:
-                lValue.DecimalHalf.tValue = 999999999;
+            case RepTypeEnum::ApproachingTopE:
+                lValue.DecimalHalf.Value = 999999999;
                 break;
 		#endif
 	#endif
@@ -1250,16 +1153,16 @@ protected:
 				break;
 		#if defined(AltNum_EnableApproaching)
 			case RepTypeEnum::ApproachingImaginaryBottom:
-				lValue.DecimalHalf.tValue = 1;
+				lValue.DecimalHalf.Value = 1;
 				break;
 			case RepTypeEnum::ApproachingImaginaryTop:
-				lValue.DecimalHalf.tValue = 999999999;
+				lValue.DecimalHalf.Value = 999999999;
 				break;
 		#endif
 		#if defined(AltNum_EnableInfinityRep)
 			case RepTypeEnum::ImaginaryInfinity:
 				lValue.IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
-				lValue.DecimalHalf.tValue = 999999999;
+				lValue.DecimalHalf.Value = 999999999;
 				break;
 		#endif
 	#endif
@@ -1276,7 +1179,7 @@ protected:
 
 public:
 #if defined(AltNum_UseRepTypeAsClass)
-        inline void ConvertToNormfromEnum(const RepTypeEnum& repType)
+        void ConvertToNormfromEnum(const RepTypeEnum& repType)
         {
             ConvertToNormTypeV3<MediumDecV2>(*this, repType);
         }
@@ -1284,7 +1187,7 @@ public:
 
 
         //Returns value as normal type or INum representation
-        inline void ConvertToNormType(const RepType& repType)
+        void ConvertToNormType(const RepType& repType)
         {
         #if defined(AltNum_UseRepTypeAsClass)
             ConvertToNormfromEnum(repType.Value);
@@ -1296,7 +1199,7 @@ public:
 protected:
 
         template<MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType ConvertAsNormTypeV1(const RepType& repType) const
+        VariantType ConvertAsNormTypeV1(const RepType& repType) const
         {
             VariantType Res = *this;
         #if defined(AltNum_UseRepTypeAsClass)
@@ -1309,18 +1212,18 @@ protected:
 
 public:
 		//Returns value as normal type or INum representation
-        inline MediumDecV2 ConvertAsNormType(const RepType& repType) const
+        MediumDecV2 ConvertAsNormType(const RepType& repType) const
         { return ConvertAsNormTypeV1<MediumDecV2>(repType); }
 
         //Converts value to normal type representation
-        inline void ConvertToNormTypeV2()
+        void ConvertToNormTypeV2()
         {
             RepType repType = GetRepType();
             ConvertToNormType(repType);
         }
 
 		//Returns value as normal type representation
-        inline MediumDecV2 ConvertAsNormTypeV2() const
+        MediumDecV2 ConvertAsNormTypeV2() const
         {
             MediumDecV2 Res = *this;
             Res.ConvertToNormTypeV2();
@@ -1329,9 +1232,9 @@ public:
 
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
 #if defined(AltNum_UseRepTypeAsClass)
-        inline RepType ConvertToNormalEquivalantV2(const RepTypeEnum& repType)
+        RepType ConvertToNormalEquivalantV2(const RepTypeEnum& repType)
 #else
-        inline RepType ConvertToNormalEquivalant(const RepType& repType)
+        RepType ConvertToNormalEquivalant(const RepType& repType)
 #endif
         {
 			switch(repType)
@@ -1382,7 +1285,7 @@ public:
 		}
 
 #if defined(AltNum_UseRepTypeAsClass)
-        inline RepType ConvertToNormalEquivalant(const RepType& repType)
+        RepType ConvertToNormalEquivalant(const RepType& repType)
         {
             ConvertToNormalEquivalantV2(repType.Value);
         }
@@ -1406,14 +1309,14 @@ public:
 
 #if defined(AltNum_UseRepTypeAsClass)
 		//Returns std::pair of tValue and RepType
-        inline std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalantFromEnum(const RepTypeEnum& repType) const
+        std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalantFromEnum(const RepTypeEnum& repType) const
         {
             return ConvertAsNormalEquivalantV2(*this, repType);
 		}
 #endif
 
 		//Returns std::pair of tValue and RepType
-        inline std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalant(const RepType& repType) const
+        std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalant(const RepType& repType) const
         {
             return ConvertAsNormalEquivalantV1(*this, repType);
 		}
@@ -1517,7 +1420,7 @@ public:
 			case RepTypeEnum::INum:
 				#endif
 				return RepTypeEnum::NormalType; break;
-				#if defined(AltNum_EnableApproaching)
+		#if defined(AltNum_EnableApproaching)
 				#if defined(AltNum_EnablePiRep)
 			case RepTypeEnum::ApproachingBottomPi:
 				#endif
@@ -1535,14 +1438,14 @@ public:
 			case RepTypeEnum::ApproachingTopE:
 				#endif
 				#if defined(AltNum_EnableIRep)
-			case RepTypeEnum::ApproachingImaginaryBottom:
+			case RepTypeEnum::ApproachingImaginaryTop:
 				#endif
 				return RepTypeEnum::ApproachingTop; break;
-				#endif
-				#if defined(AltNum_EnableInfinity)&&defined(AltNum_EnableIRep)
+		#endif
+		#if defined(AltNum_EnableInfinity)&&defined(AltNum_EnableIRep)
 			case RepTypeEnum::ImaginaryInfinity:
 				return RepTypeEnum::Infinity; break;
-				#endif
+		#endif
 			default:
 				return lValue;
 			}
@@ -1550,7 +1453,7 @@ public:
 
 #endif
 
-        inline RepType ConvertFromNormType(const RepType& repType) const
+        RepType ConvertFromNormType(const RepType& repType) const
 		{
 		#if defined(AltNum_UseRepTypeAsClass)
 			return repType.ConvertFromNormalRep(GetFlags());
@@ -1559,7 +1462,7 @@ public:
 		#endif
 		}
 
-		inline void ConvertToNormTypeFromOther(const RepType& repType)
+		void ConvertToNormTypeFromOther(const RepType& repType)
 		{
 			ConvertToNormType(ConvertFromNormType(repType));
 		}
@@ -1569,7 +1472,7 @@ public:
     #pragma region Comparison Operators
 protected:
 
-		inline std::strong_ordering BasicComparison(const MediumDecV2& that) const
+		std::strong_ordering BasicComparison(const MediumDecV2& that) const
 		{
             return BasicComparisonV1(that);
         }
@@ -1630,12 +1533,13 @@ protected:
 				throw "Can't compare undefined/nil representations yet";
     #endif
     #if defined(AltNum_EnableIRep)
-            if (lValue.DecimalHalf.Flags == 3)
+            if (lValue.GetFlags() == 3)
             {
-                if(RValue.Flags!=3)
+                if(that.GetFlags()!=3)
                     throw "Can't compare imaginary number with real number";
-				else if(LRep==RepType:ImaginaryInfinity){
-					if(RRep==RepType:ImaginaryInfinity)
+        #if defined(AltNum_EnableInfinity)
+				else if(LRep==RepType::ImaginaryInfinity){
+					if(RRep==RepType::ImaginaryInfinity)
 						return SignCmp;
 					else{
 			#if defined(AltNum_UseInvertedSign)
@@ -1650,7 +1554,7 @@ protected:
 							return MirroredInt::PositiveSign<=>MirroredInt::NegativeSign;
 			#endif
 					}
-				} else if(RRep==RepType:ImaginaryInfinity)
+				} else if(RRep==RepType::ImaginaryInfinity)
                 {
 			#if defined(AltNum_UseInvertedSign)
 						if(that.IsPositive())//Any non-inf imaginary vs +Inf i
@@ -1664,10 +1568,11 @@ protected:
 							return MirroredInt::NegativeSign<=>MirroredInt::PositiveSign;
 			#endif
                 }
+        #endif
                 else
-			    	return BasicComparison(rSide);
+			    	return lValue.BasicComparison(that);
             }
-            else if(RValue.Flags==3)
+            else if(that.GetFlags() == 3)
                 throw "Can't compare imaginary number with real number";
     #endif
 	#if defined(AltNum_EnableInfinityRep)
@@ -1873,65 +1778,65 @@ protected:
 
 public:
 
-        inline void BasicUIntDivOp(const unsigned int& rValue)
+        void BasicUIntDivOp(const unsigned int& rValue)
         { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicIntDivOp(const signed int& rValue)
+        void BasicIntDivOp(const signed int& rValue)
         { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt64DivOp(const unsigned __int64& rValue)
+        void BasicUInt64DivOp(const unsigned __int64& rValue)
         { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt64DivOp(const signed __int64& rValue)
-        { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUnsignedIntegerDivOp(const signed int& rValue)
-        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUInt8DivOp(const unsigned char& rValue)
-        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt8DivOp(const signed char& rValue)
-        { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt16DivOp(const unsigned short& rValue)
-        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt16DivOp(const signed short& rValue)
+        void BasicInt64DivOp(const signed __int64& rValue)
         { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
 
-        inline MediumDecV2& BasicUIntDivOperation(const unsigned int& rValue)
+        void BasicUnsignedIntegerDivOp(const signed int& rValue)
+        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
+
+        void BasicUInt8DivOp(const unsigned char& rValue)
+        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt8DivOp(const signed char& rValue)
+        { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
+        void BasicUInt16DivOp(const unsigned short& rValue)
+        { BasicUIntDivOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt16DivOp(const signed short& rValue)
+        { BasicIntDivOpV1<MediumDecV2>(*this, rValue); }
+
+        MediumDecV2& BasicUIntDivOperation(const unsigned int& rValue)
         { return BasicUIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicIntDivOperation(const signed int& rValue)
+        MediumDecV2& BasicIntDivOperation(const signed int& rValue)
         { return BasicIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt64DivOperation(const unsigned __int64& rValue)
+        MediumDecV2& BasicUInt64DivOperation(const unsigned __int64& rValue)
         { return BasicUIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt64DivOperation(const signed __int64& rValue)
+        MediumDecV2& BasicInt64DivOperation(const signed __int64& rValue)
         { return BasicIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt8DivOperation(const unsigned char& rValue)
+        MediumDecV2& BasicUInt8DivOperation(const unsigned char& rValue)
         { return BasicUIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt8DivOperation(const signed char& rValue)
+        MediumDecV2& BasicInt8DivOperation(const signed char& rValue)
         { return BasicIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt16DivOperation(const unsigned short& rValue)
+        MediumDecV2& BasicUInt16DivOperation(const unsigned short& rValue)
         { return BasicUIntDivOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt16DivOperation(const signed short& rValue)
+        MediumDecV2& BasicInt16DivOperation(const signed short& rValue)
         { return BasicIntDivOperationV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicDivideByUInt(const unsigned int& rValue)
+        const MediumDecV2 BasicDivideByUInt(const unsigned int& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByInt(const signed int& rValue)
+        const MediumDecV2 BasicDivideByInt(const signed int& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByUInt64(const unsigned __int64& rValue)
+        const MediumDecV2 BasicDivideByUInt64(const unsigned __int64& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicDivideByInt64(const signed __int64& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedDivideByInt(const signed int& rValue)
+        const MediumDecV2 BasicUnsignedDivideByInt(const signed int& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicUnsignedDivideByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicUnsignedDivideByInt64(const signed __int64& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicDivideByUInt8(const unsigned char& rValue)
+        const MediumDecV2 BasicDivideByUInt8(const unsigned char& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByInt8(const signed char& rValue)
+        const MediumDecV2 BasicDivideByInt8(const signed char& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByUInt16(const unsigned short& rValue)
+        const MediumDecV2 BasicDivideByUInt16(const unsigned short& rValue)
         { return BasicDivideByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicDivideByInt16(const signed short& rValue)
+        const MediumDecV2 BasicDivideByInt16(const signed short& rValue)
         { return BasicDivideByIntV1<MediumDecV2>(*this, rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
@@ -2052,7 +1957,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        inline bool BasicUnsignedPartialDivOp(const MediumDecV2& rValue)
+        bool BasicUnsignedPartialDivOp(const MediumDecV2& rValue)
         { return BasicUnsignedPartialDivOpV1<MediumDecV2>(*this, rValue); }
 
 		/// <summary>
@@ -2060,21 +1965,21 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        inline void BasicUnsignedDivOp(const MediumDecV2& rValue){ BasicUDivOpV1<MediumDecV2>(*this, rValue); }
+        void BasicUnsignedDivOp(const MediumDecV2& rValue){ BasicUDivOpV1<MediumDecV2>(*this, rValue); }
 
 		/// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void BasicDivOp(const MediumDecV2& rValue){ BasicDivOpV1<MediumDecV2>(*this, rValue); }
+        void BasicDivOp(const MediumDecV2& rValue){ BasicDivOpV1<MediumDecV2>(*this, rValue); }
 
 		/// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicUnsignedDivOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicUnsignedDivOperation(const MediumDecV2& rValue)
 		{ BasicUnsignedDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -2082,7 +1987,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicDivOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicDivOperation(const MediumDecV2& rValue)
 		{ BasicDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -2090,7 +1995,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 BasicDivideByUnsigned(const MediumDecV2& rValue) const
+        MediumDecV2 BasicDivideByUnsigned(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.BasicUnsignedDivOperation(rValue); }
 
 		/// <summary>
@@ -2098,7 +2003,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 BasicDivideBy(const MediumDecV2& rValue) const
+        MediumDecV2 BasicDivideBy(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.BasicDivOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Division Operations
@@ -2106,35 +2011,35 @@ public:
 	#pragma region Other Division Operations
 protected:
         template<IntegerType IntType=signed int>
-		inline void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
+		void CatchAllUIntDivision(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntDivOp(rValue);
 		}
 
         template<IntegerType IntType=unsigned int>
-		inline void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
+		void CatchAllIntDivision(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntDivOp(rValue);
 		}
 
         template<IntegerType IntType=signed int>
-        inline void CatchAllUIntDivisionV2(const IntType& rValue)
+        void CatchAllUIntDivisionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicUIntDivOp(rValue);
         }
 
         template<IntegerType IntType=signed int>
-        inline void CatchAllIntDivisionV2(const IntType& rValue)
+        void CatchAllIntDivisionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicIntDivOp(rValue);
         }
 
         template<MediumDecVariant VariantType=MediumDecV2>
-		inline void CatchAllUnsignedDivision(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
+		void CatchAllUnsignedDivision(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
 		{
 			ConvertToNormType(LRep);
 			auto convertedRVal = rValue.ConvertAsNormType(RRep);
@@ -2142,7 +2047,7 @@ protected:
 		}
 
         template<MediumDecVariant VariantType=MediumDecV2>
-		inline void CatchAllUnsignedDivisionV2(const VariantType& rValue, const RepType& SameRep)
+		void CatchAllUnsignedDivisionV2(const VariantType& rValue, const RepType& SameRep)
 		{
             ConvertToNormType(SameRep);
 			auto convertedRVal = rValue.ConvertAsNormType(SameRep);
@@ -2150,7 +2055,7 @@ protected:
 		}
 
         template<MediumDecVariant VariantType=MediumDecV2>
-        inline void CatchAllUnsignedDivisionV3(const VariantType& rValue)
+        void CatchAllUnsignedDivisionV3(const VariantType& rValue)
         {
 	        ConvertToNormTypeV2();
             auto convertedRVal = rValue.ConvertAsNormTypeV2();
@@ -2163,19 +2068,19 @@ public:
         /// Simplified division by 2 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        inline void DivideByTwo();
+        void DivideByTwo();
 
         /// <summary>
         /// Simplified division by 4 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        inline void DivideByFour();
+        void DivideByFour();
 
         //Return copy of result divided by two
-        inline MediumDecV2 DividedByTwo() const;
+        MediumDecV2 DividedByTwo() const;
 
         //Return copy of result divided by four
-        inline MediumDecV2 DividedByFour() const;
+        MediumDecV2 DividedByFour() const;
 
 protected:
 
@@ -2185,7 +2090,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<IntegerType IntType= unsigned int>
-        inline void UIntDivOpV1(const IntType& rValue)
+        void UIntDivOpV1(const IntType& rValue)
 		{
             if (rValue == 1)
                 return;
@@ -2241,7 +2146,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<IntegerType IntType= signed int>
-        inline void IntDivOpV1(const IntType& rValue)
+        void IntDivOpV1(const IntType& rValue)
 		{
             if(rValue<0)
             {
@@ -2253,11 +2158,11 @@ protected:
 		}
 
         template<IntegerType IntType=unsigned int, MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType& UIntDivOperationV1(const IntType& rValue)
+        VariantType& UIntDivOperationV1(const IntType& rValue)
         { UIntDivOpV1(rValue); return *this; }
 
         template<IntegerType IntType=unsigned int, MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType& IntDivOperationV1(const IntType& rValue)
+        VariantType& IntDivOperationV1(const IntType& rValue)
         { IntDivOpV1(rValue); return *this; }
 
         /// <summary>
@@ -2282,42 +2187,42 @@ protected:
 
 public:
 
-        inline void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
-        inline void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-        inline void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
-        inline void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
+        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
+        void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
+        void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        inline void UnsignedIntegerDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedIntegerDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
 
-        inline void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
-        inline void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-        inline void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
-        inline void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
+        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
+        void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
+        void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
 
-        inline MediumDecV2& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
-        inline MediumDecV2& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        inline MediumDecV2& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
-        inline MediumDecV2& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        inline MediumDecV2& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
-        inline MediumDecV2& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        inline MediumDecV2& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
-        inline MediumDecV2& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
+        MediumDecV2& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        MediumDecV2& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
 
-        inline const MediumDecV2 DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
-        inline const MediumDecV2 DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        inline const MediumDecV2 DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
-        inline const MediumDecV2 DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2 DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2 DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
 
-        inline const MediumDecV2 UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        inline const MediumDecV2 UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
 
-        inline const MediumDecV2 DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
-        inline const MediumDecV2 DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        inline const MediumDecV2 DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
-        inline const MediumDecV2 DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2 DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
+        const MediumDecV2 DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const MediumDecV2 DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
 protected:
-		inline void UnsignedDivOp_RValueIntSwitch(const MediumDecV2& rValue);
+		void UnsignedDivOp_RValueIntSwitch(const MediumDecV2& rValue);
 
 public:
 
@@ -2326,14 +2231,14 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void UnsignedDivOp(const MediumDecV2& rValue);
+        void UnsignedDivOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void DivOp(const MediumDecV2& Value)
+        void DivOp(const MediumDecV2& Value)
         {
             if(Value.IsNegative())
             {
@@ -2349,7 +2254,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& UnsignedDivOperation(const MediumDecV2& rValue)
+        MediumDecV2& UnsignedDivOperation(const MediumDecV2& rValue)
 		{ UnsignedDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -2357,7 +2262,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& DivOperation(const MediumDecV2& rValue)
+        MediumDecV2& DivOperation(const MediumDecV2& rValue)
 		{ DivOp(rValue); return *this; }
 
 		/// <summary>
@@ -2366,7 +2271,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 DivideByUnsigned(const MediumDecV2& rValue) const
+        MediumDecV2 DivideByUnsigned(const MediumDecV2& rValue) const
         {
             auto self = *this;
             return self.UnsignedDivOperation(rValue);
@@ -2378,7 +2283,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 DivideBy(const MediumDecV2& rValue) const
+        MediumDecV2 DivideBy(const MediumDecV2& rValue) const
         {
             auto self = *this;
             return self.DivOperation(rValue);
@@ -2551,67 +2456,73 @@ protected:
         static VariantType BasicMultiplyByIntV1(VariantType lValue, const IntType& rValue)
         { return BasicIntMultOperationV1<VariantType>(lValue, rValue); }
 
+        template<IntegerType IntType=unsigned int>
+        void BasicUIntMultOpV2(const IntType& rValue)
+        {
+            BasicUIntMultOpV1(*this, rValue);
+        }
+
 public:
 
-        inline void BasicUIntMultOp(const unsigned int& rValue)
+        void BasicUIntMultOp(const unsigned int& rValue)
         { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicIntMultOp(const signed int& rValue)
+        void BasicIntMultOp(const signed int& rValue)
         { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt64MultOp(const unsigned __int64& rValue)
+        void BasicUInt64MultOp(const unsigned __int64& rValue)
         { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt64MultOp(const signed __int64& rValue)
-        { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUnsignedIntegerMultOp(const signed int& rValue)
-        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUInt8MultOp(const unsigned char& rValue)
-        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt8MultOp(const signed char& rValue)
-        { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt16MultOp(const unsigned short& rValue)
-        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt16MultOp(const signed short& rValue)
+        void BasicInt64MultOp(const signed __int64& rValue)
         { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
 
-        inline MediumDecV2& BasicUIntMultOperation(const unsigned int& rValue)
+        void BasicUnsignedIntegerMultOp(const signed int& rValue)
+        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
+
+        void BasicUInt8MultOp(const unsigned char& rValue)
+        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt8MultOp(const signed char& rValue)
+        { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
+        void BasicUInt16MultOp(const unsigned short& rValue)
+        { BasicUIntMultOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt16MultOp(const signed short& rValue)
+        { BasicIntMultOpV1<MediumDecV2>(*this, rValue); }
+
+        MediumDecV2& BasicUIntMultOperation(const unsigned int& rValue)
         { return BasicUIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicIntMultOperation(const signed int& rValue)
+        MediumDecV2& BasicIntMultOperation(const signed int& rValue)
         { return BasicIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt64MultOperation(const unsigned __int64& rValue)
+        MediumDecV2& BasicUInt64MultOperation(const unsigned __int64& rValue)
         { return BasicUIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt64MultOperation(const signed __int64& rValue)
+        MediumDecV2& BasicInt64MultOperation(const signed __int64& rValue)
         { return BasicIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt8MultOperation(const unsigned char& rValue)
+        MediumDecV2& BasicUInt8MultOperation(const unsigned char& rValue)
         { return BasicUIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt8MultOperation(const signed char& rValue)
+        MediumDecV2& BasicInt8MultOperation(const signed char& rValue)
         { return BasicIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt16MultOperation(const unsigned short& rValue)
+        MediumDecV2& BasicUInt16MultOperation(const unsigned short& rValue)
         { return BasicUIntMultOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt16MultOperation(const signed short& rValue)
+        MediumDecV2& BasicInt16MultOperation(const signed short& rValue)
         { return BasicIntMultOperationV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicMultiplyByUInt(const unsigned int& rValue)
+        const MediumDecV2 BasicMultiplyByUInt(const unsigned int& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByInt(const signed int& rValue)
+        const MediumDecV2 BasicMultiplyByInt(const signed int& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByUInt64(const unsigned __int64& rValue)
+        const MediumDecV2 BasicMultiplyByUInt64(const unsigned __int64& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicMultiplyByInt64(const signed __int64& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedMultiplyByInt(const signed int& rValue)
+        const MediumDecV2 BasicUnsignedMultiplyByInt(const signed int& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicUnsignedMultiplyByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicUnsignedMultiplyByInt64(const signed __int64& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicMultiplyByUInt8(const unsigned char& rValue)
+        const MediumDecV2 BasicMultiplyByUInt8(const unsigned char& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByInt8(const signed char& rValue)
+        const MediumDecV2 BasicMultiplyByInt8(const signed char& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByUInt16(const unsigned short& rValue)
+        const MediumDecV2 BasicMultiplyByUInt16(const unsigned short& rValue)
         { return BasicMultiplyByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicMultiplyByInt16(const signed short& rValue)
+        const MediumDecV2 BasicMultiplyByInt16(const signed short& rValue)
         { return BasicMultiplyByIntV1<MediumDecV2>(*this, rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
@@ -2807,18 +2718,18 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void BasicUnsignedMultOp(const MediumDecV2& rValue){
+        void BasicUnsignedMultOp(const MediumDecV2& rValue){
             BasicUMultOpV1<MediumDecV2>(*this, rValue);
         }
 
-        inline void BasicMultOp(const MediumDecV2& rValue){ BasicMultOpV1<MediumDecV2>(*this, rValue); }
+        void BasicMultOp(const MediumDecV2& rValue){ BasicMultOpV1<MediumDecV2>(*this, rValue); }
 
 		/// <summary>
         /// Basic unsigned Multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicUnsignedMultOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicUnsignedMultOperation(const MediumDecV2& rValue)
 		{ BasicUnsignedMultOp(rValue); return *this; }
 
 		/// <summary>
@@ -2826,7 +2737,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicMultOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicMultOperation(const MediumDecV2& rValue)
 		{ BasicMultOp(rValue); return *this; }
 
 		/// <summary>
@@ -2834,7 +2745,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 BasicMultiplyByUnsigned(const MediumDecV2& rValue) const
+        MediumDecV2 BasicMultiplyByUnsigned(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
 		/// <summary>
@@ -2842,7 +2753,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 BasicMultiplyBy(const MediumDecV2& rValue) const
+        MediumDecV2 BasicMultiplyBy(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.MultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
@@ -2851,48 +2762,48 @@ public:
 
 protected:
         template<IntegerType IntType=signed int>
-		inline void CatchAllUIntMultiplication(const IntType& rValue, const RepType& LRep)
+		void CatchAllUIntMultiplication(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntMultOp(rValue);
 		}
 
         template<IntegerType IntType=unsigned int>
-		inline void CatchAllIntMultiplication(const IntType& rValue, const RepType& LRep)
+		void CatchAllIntMultiplication(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicIntMultOp(rValue);
 		}
 
         template<IntegerType IntType=signed int>
-        inline void CatchAllUIntMultiplicationV2(const IntType& rValue)
+        void CatchAllUIntMultiplicationV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicUIntMultOp(rValue);
         }
 
         template<IntegerType IntType=signed int>
-        inline void CatchAllIntMultiplicationV2(const IntType& rValue)
+        void CatchAllIntMultiplicationV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicIntMultOp(rValue);
         }
 
-		inline void CatchAllUnsignedMultiplication(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+		void CatchAllUnsignedMultiplication(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 		{
 			ConvertToNormType(LRep);
 			auto convertedRVal = rValue.ConvertAsNormType(RRep);
 			BasicUnsignedMultOp(convertedRVal);
 		}
 
-		inline void CatchAllUnsignedMultiplicationV2(const MediumDecV2& rValue, const RepType& SameRep)
+		void CatchAllUnsignedMultiplicationV2(const MediumDecV2& rValue, const RepType& SameRep)
 		{
             ConvertToNormType(SameRep);
 			auto convertedRVal = rValue.ConvertAsNormType(SameRep);
 			BasicUnsignedMultOp(convertedRVal);
 		}
 
-		inline void CatchAllUnsignedMultiplicationV3(const MediumDecV2& rValue)
+		void CatchAllUnsignedMultiplicationV3(const MediumDecV2& rValue)
 		{
 			ConvertToNormTypeV2();
             auto convertedRVal = rValue.ConvertAsNormTypeV2();
@@ -2905,19 +2816,19 @@ public:
         /// Simplified Multiplication by 2 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        inline void MultiplyByTwo();
+        void MultiplyByTwo();
 
         /// <summary>
         /// Simplified Multiplication by 4 operation(to reduce cost of operations)
         /// (Modifies owner object)
         /// </summary>
-        inline void MultiplyByFour();
+        void MultiplyByFour();
 
         //Return copy of result divided by two
-        inline MediumDecV2 MultipliedByTwo() const;
+        MediumDecV2 MultipliedByTwo() const;
 
         //Return copy of result divided by four
-        inline MediumDecV2 MultipliedByFour() const;
+        MediumDecV2 MultipliedByFour() const;
 
 protected:
 
@@ -2927,7 +2838,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<IntegerType IntType= unsigned int>
-        inline void UIntMultOpV1(const IntType& rValue)
+        void UIntMultOpV1(const IntType& rValue)
 		{
             if (rValue == 1)
                 return;
@@ -2974,7 +2885,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
-        inline void IntMultOpV1(const IntType& rValue)
+        void IntMultOpV1(const IntType& rValue)
 		{
             if(rValue<0)
             {
@@ -2986,11 +2897,11 @@ protected:
 		}
 
         template<IntegerType IntType=unsigned int>
-        inline auto& UIntMultOperationV1(const IntType& rValue)
+        auto& UIntMultOperationV1(const IntType& rValue)
         { UIntMultOpV1(rValue); return *this; }
 
         template<IntegerType IntType=unsigned int>
-        inline auto& IntMultOperationV1(const IntType& rValue)
+        auto& IntMultOperationV1(const IntType& rValue)
         { IntMultOpV1(rValue); return *this; }
 
         /// <summary>
@@ -3000,7 +2911,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= unsigned int>
-        inline MediumDecV2 MultiplyByUIntV1(const IntType& rValue) const
+        MediumDecV2 MultiplyByUIntV1(const IntType& rValue) const
 		{
             auto self = *this;
             return self.UIntMultOperationV1(rValue);
@@ -3013,7 +2924,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        inline MediumDecV2 MultiplyByIntV1(const IntType& rValue) const
+        MediumDecV2 MultiplyByIntV1(const IntType& rValue) const
 		{
             auto self = *this;
             return self.IntMultOperationV1(rValue);
@@ -3027,46 +2938,46 @@ protected:
 
 public:
 
-        inline void UIntMultOp(const unsigned int& rValue) { UIntMultOpV1(rValue); }
-        inline void IntMultOp(const signed int& rValue) { IntMultOpV1(rValue); }
-        inline void UInt64MultOp(const unsigned __int64& rValue) { UIntMultOpV1(rValue); }
-        inline void Int64MultOp(const signed __int64& rValue) { IntMultOpV1(rValue); }
+        void UIntMultOp(const unsigned int& rValue) { UIntMultOpV1(rValue); }
+        void IntMultOp(const signed int& rValue) { IntMultOpV1(rValue); }
+        void UInt64MultOp(const unsigned __int64& rValue) { UIntMultOpV1(rValue); }
+        void Int64MultOp(const signed __int64& rValue) { IntMultOpV1(rValue); }
 
-        inline void UnsignedIntegerMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
+        void UnsignedIntegerMultOp(const signed int& rValue) { UIntMultOpV1(rValue); }
 
-        inline void UInt8MultOp(const unsigned char& rValue) { UIntMultOpV1(rValue); }
-        inline void Int8MultOp(const signed char& rValue) { IntMultOpV1(rValue); }
-        inline void UInt16MultOp(const unsigned short& rValue) { UIntMultOpV1(rValue); }
-        inline void Int16MultOp(const signed short& rValue) { IntMultOpV1(rValue); }
+        void UInt8MultOp(const unsigned char& rValue) { UIntMultOpV1(rValue); }
+        void Int8MultOp(const signed char& rValue) { IntMultOpV1(rValue); }
+        void UInt16MultOp(const unsigned short& rValue) { UIntMultOpV1(rValue); }
+        void Int16MultOp(const signed short& rValue) { IntMultOpV1(rValue); }
 
-        inline MediumDecV2& UIntMultOperation(const unsigned int& rValue) { return UIntMultOperationV1(rValue); }
-        inline MediumDecV2& IntMultOperation(const signed int& rValue) { return IntMultOperationV1(rValue); }
-        inline MediumDecV2& UInt64MultOperation(const unsigned __int64& rValue) { return UIntMultOperationV1(rValue); }
-        inline MediumDecV2& Int64MultOperation(const signed __int64& rValue) { return IntMultOperationV1(rValue); }
-        inline MediumDecV2& UInt8MultOperation(const unsigned char& rValue) { return UIntMultOperationV1(rValue); }
-        inline MediumDecV2& Int8MultOperation(const signed char& rValue) { return IntMultOperationV1(rValue); }
-        inline MediumDecV2& UInt16MultOperation(const unsigned short& rValue) { return UIntMultOperationV1(rValue); }
-        inline MediumDecV2& Int16MultOperation(const signed short& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2& UIntMultOperation(const unsigned int& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2& IntMultOperation(const signed int& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2& UInt64MultOperation(const unsigned __int64& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2& Int64MultOperation(const signed __int64& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2& UInt8MultOperation(const unsigned char& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2& Int8MultOperation(const signed char& rValue) { return IntMultOperationV1(rValue); }
+        MediumDecV2& UInt16MultOperation(const unsigned short& rValue) { return UIntMultOperationV1(rValue); }
+        MediumDecV2& Int16MultOperation(const signed short& rValue) { return IntMultOperationV1(rValue); }
 
-        inline const MediumDecV2 MultiplyByUInt(const unsigned int& rValue) { return MultiplyByUIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByInt(const signed int& rValue) { return MultiplyByIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByUInt64(const unsigned __int64& rValue) { return MultiplyByUIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByInt64(const signed __int64& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2 MultiplyByUInt(const unsigned int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 MultiplyByInt(const signed int& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2 MultiplyByUInt64(const unsigned __int64& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 MultiplyByInt64(const signed __int64& rValue) { return MultiplyByIntV1(rValue); }
 
-        inline const MediumDecV2 UnsignedMultiplyByInt(const signed int& rValue) { return MultiplyByUIntV1(rValue); }
-        inline const MediumDecV2 UnsignedMultiplyByInt64(const signed __int64& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 UnsignedMultiplyByInt(const signed int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 UnsignedMultiplyByInt64(const signed __int64& rValue) { return MultiplyByUIntV1(rValue); }
 
-        inline const MediumDecV2 MultiplyByUInt8(const unsigned char& rValue) { return MultiplyByUIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
-        inline const MediumDecV2 MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2 MultiplyByUInt8(const unsigned char& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumDecV2 MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumDecV2 MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
 
 		/// <summary>
         /// Unsigned Multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void UnsignedMultOp(const MediumDecV2& rValue);
+        void UnsignedMultOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Multiplication operation that ignores special decimal status
@@ -3074,7 +2985,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void MultOp(const MediumDecV2& Value)
+        void MultOp(const MediumDecV2& Value)
         {
             if(Value.IsNegative())
             {
@@ -3085,10 +2996,10 @@ public:
                 UnsignedMultOp(Value);
         }
 
-        inline MediumDecV2& UnsignedMultOperation(const MediumDecV2& rValue)
+        MediumDecV2& UnsignedMultOperation(const MediumDecV2& rValue)
         { UnsignedMultOp(rValue); return *this; }
 
-        inline MediumDecV2& MultOperation(const MediumDecV2& rValue)
+        MediumDecV2& MultOperation(const MediumDecV2& rValue)
         { MultOp(rValue); return *this; }
 
 		/// <summary>
@@ -3097,7 +3008,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 MultiplyByUnsigned(const MediumDecV2& rValue) const
+        MediumDecV2 MultiplyByUnsigned(const MediumDecV2& rValue) const
         {
             auto self = *this;
             return self.UnsignedMultOperation(rValue);
@@ -3109,7 +3020,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 MultiplyBy(const MediumDecV2& rValue) const
+        MediumDecV2 MultiplyBy(const MediumDecV2& rValue) const
         {
             auto self = *this;
             return self.MultOperation(rValue);
@@ -3205,9 +3116,9 @@ protected:
 
 public:
 
-        inline void BasicUnsignedMirroredAddOp(const MirroredInt& rValue);
+        void BasicUnsignedMirroredAddOp(const MirroredInt& rValue);
 
-        inline void BasicMirroredAddOp(const MirroredInt& rValue);
+        void BasicMirroredAddOp(const MirroredInt& rValue);
 
 protected:
 
@@ -3279,65 +3190,65 @@ protected:
 
 public:
 
-        inline void BasicUIntAddOp(const unsigned int& rValue)
+        void BasicUIntAddOp(const unsigned int& rValue)
         { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicIntAddOp(const signed int& rValue)
+        void BasicIntAddOp(const signed int& rValue)
         { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt64AddOp(const unsigned __int64& rValue)
+        void BasicUInt64AddOp(const unsigned __int64& rValue)
         { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt64AddOp(const signed __int64& rValue)
-        { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUnsignedIntegerAddOp(const signed int& rValue)
-        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUInt8AddOp(const unsigned char& rValue)
-        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt8AddOp(const signed char& rValue)
-        { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt16AddOp(const unsigned short& rValue)
-        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt16AddOp(const signed short& rValue)
+        void BasicInt64AddOp(const signed __int64& rValue)
         { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
 
-        inline MediumDecV2& BasicUIntAddOperation(const unsigned int& rValue)
+        void BasicUnsignedIntegerAddOp(const signed int& rValue)
+        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
+
+        void BasicUInt8AddOp(const unsigned char& rValue)
+        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt8AddOp(const signed char& rValue)
+        { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
+        void BasicUInt16AddOp(const unsigned short& rValue)
+        { BasicUIntAddOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt16AddOp(const signed short& rValue)
+        { BasicIntAddOpV1<MediumDecV2>(*this, rValue); }
+
+        MediumDecV2& BasicUIntAddOperation(const unsigned int& rValue)
         { return BasicUIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicIntAddOperation(const signed int& rValue)
+        MediumDecV2& BasicIntAddOperation(const signed int& rValue)
         { return BasicIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt64AddOperation(const unsigned __int64& rValue)
+        MediumDecV2& BasicUInt64AddOperation(const unsigned __int64& rValue)
         { return BasicUIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt64AddOperation(const signed __int64& rValue)
+        MediumDecV2& BasicInt64AddOperation(const signed __int64& rValue)
         { return BasicIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt8AddOperation(const unsigned char& rValue)
+        MediumDecV2& BasicUInt8AddOperation(const unsigned char& rValue)
         { return BasicUIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt8AddOperation(const signed char& rValue)
+        MediumDecV2& BasicInt8AddOperation(const signed char& rValue)
         { return BasicIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt16AddOperation(const unsigned short& rValue)
+        MediumDecV2& BasicUInt16AddOperation(const unsigned short& rValue)
         { return BasicUIntAddOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt16AddOperation(const signed short& rValue)
+        MediumDecV2& BasicInt16AddOperation(const signed short& rValue)
         { return BasicIntAddOperationV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicAddByUInt(const unsigned int& rValue)
+        const MediumDecV2 BasicAddByUInt(const unsigned int& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByInt(const signed int& rValue)
+        const MediumDecV2 BasicAddByInt(const signed int& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByUInt64(const unsigned __int64& rValue)
+        const MediumDecV2 BasicAddByUInt64(const unsigned __int64& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicAddByInt64(const signed __int64& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedAddByInt(const signed int& rValue)
+        const MediumDecV2 BasicUnsignedAddByInt(const signed int& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicUnsignedAddByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicUnsignedAddByInt64(const signed __int64& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicAddByUInt8(const unsigned char& rValue)
+        const MediumDecV2 BasicAddByUInt8(const unsigned char& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByInt8(const signed char& rValue)
+        const MediumDecV2 BasicAddByInt8(const signed char& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByUInt16(const unsigned short& rValue)
+        const MediumDecV2 BasicAddByUInt16(const unsigned short& rValue)
         { return BasicAddByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicAddByInt16(const signed short& rValue)
+        const MediumDecV2 BasicAddByInt16(const signed short& rValue)
         { return BasicAddByIntV1<MediumDecV2>(*this, rValue); }
 
 	#pragma endregion NormalRep Integer Addition Operations
@@ -3372,9 +3283,9 @@ protected:
 
 public:
 
-        inline void BasicUnsignedMirroredSubOp(const MirroredInt& rValue);
+        void BasicUnsignedMirroredSubOp(const MirroredInt& rValue);
 
-        inline void BasicMirroredSubOp(const MirroredInt& rValue);
+        void BasicMirroredSubOp(const MirroredInt& rValue);
 
 protected:
 
@@ -3446,65 +3357,65 @@ protected:
 
 public:
 
-        inline void BasicUIntSubOp(const unsigned int& rValue)
+        void BasicUIntSubOp(const unsigned int& rValue)
         { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicIntSubOp(const signed int& rValue)
+        void BasicIntSubOp(const signed int& rValue)
         { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt64SubOp(const unsigned __int64& rValue)
+        void BasicUInt64SubOp(const unsigned __int64& rValue)
         { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt64SubOp(const signed __int64& rValue)
-        { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUnsignedIntegerSubOp(const signed int& rValue)
-        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
-
-        inline void BasicUInt8SubOp(const unsigned char& rValue)
-        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt8SubOp(const signed char& rValue)
-        { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicUInt16SubOp(const unsigned short& rValue)
-        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
-        inline void BasicInt16SubOp(const signed short& rValue)
+        void BasicInt64SubOp(const signed __int64& rValue)
         { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
 
-        inline MediumDecV2& BasicUIntSubOperation(const unsigned int& rValue)
+        void BasicUnsignedIntegerSubOp(const signed int& rValue)
+        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
+
+        void BasicUInt8SubOp(const unsigned char& rValue)
+        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt8SubOp(const signed char& rValue)
+        { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
+        void BasicUInt16SubOp(const unsigned short& rValue)
+        { BasicUIntSubOpV1<MediumDecV2>(*this, rValue); }
+        void BasicInt16SubOp(const signed short& rValue)
+        { BasicIntSubOpV1<MediumDecV2>(*this, rValue); }
+
+        MediumDecV2& BasicUIntSubOperation(const unsigned int& rValue)
         { return BasicUIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicIntSubOperation(const signed int& rValue)
+        MediumDecV2& BasicIntSubOperation(const signed int& rValue)
         { return BasicIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt64SubOperation(const unsigned __int64& rValue)
+        MediumDecV2& BasicUInt64SubOperation(const unsigned __int64& rValue)
         { return BasicUIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt64SubOperation(const signed __int64& rValue)
+        MediumDecV2& BasicInt64SubOperation(const signed __int64& rValue)
         { return BasicIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt8SubOperation(const unsigned char& rValue)
+        MediumDecV2& BasicUInt8SubOperation(const unsigned char& rValue)
         { return BasicUIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt8SubOperation(const signed char& rValue)
+        MediumDecV2& BasicInt8SubOperation(const signed char& rValue)
         { return BasicIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicUInt16SubOperation(const unsigned short& rValue)
+        MediumDecV2& BasicUInt16SubOperation(const unsigned short& rValue)
         { return BasicUIntSubOperationV1<MediumDecV2>(*this, rValue); }
-        inline MediumDecV2& BasicInt16SubOperation(const signed short& rValue)
+        MediumDecV2& BasicInt16SubOperation(const signed short& rValue)
         { return BasicIntSubOperationV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicSubtractByUInt(const unsigned int& rValue)
+        const MediumDecV2 BasicSubtractByUInt(const unsigned int& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByInt(const signed int& rValue)
+        const MediumDecV2 BasicSubtractByInt(const signed int& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByUInt64(const unsigned __int64& rValue)
+        const MediumDecV2 BasicSubtractByUInt64(const unsigned __int64& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicSubtractByInt64(const signed __int64& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicUnsignedSubtractByInt(const signed int& rValue)
+        const MediumDecV2 BasicUnsignedSubtractByInt(const signed int& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicUnsignedSubtractByInt64(const signed __int64& rValue)
+        const MediumDecV2 BasicUnsignedSubtractByInt64(const signed __int64& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
 
-        inline const MediumDecV2 BasicSubtractByUInt8(const unsigned char& rValue)
+        const MediumDecV2 BasicSubtractByUInt8(const unsigned char& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByInt8(const signed char& rValue)
+        const MediumDecV2 BasicSubtractByInt8(const signed char& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByUInt16(const unsigned short& rValue)
+        const MediumDecV2 BasicSubtractByUInt16(const unsigned short& rValue)
         { return BasicSubtractByUIntV1<MediumDecV2>(*this, rValue); }
-        inline const MediumDecV2 BasicSubtractByInt16(const signed short& rValue)
+        const MediumDecV2 BasicSubtractByInt16(const signed short& rValue)
         { return BasicSubtractByIntV1<MediumDecV2>(*this, rValue); }
 
 	#pragma endregion NormalRep Integer Subtraction Operations
@@ -3512,39 +3423,39 @@ public:
     #pragma region Unsigned Addition/Subtraction Operations
 public:
 /*
-        inline void UnsignedMirroredAddOp(const MirroredInt& rValue);
+        void UnsignedMirroredAddOp(const MirroredInt& rValue);
 
-        inline void MirroredAddOp(const MirroredInt& rValue);
+        void MirroredAddOp(const MirroredInt& rValue);
 
-        inline void UnsignedMirroredSubOp(const MirroredInt& rValue);
+        void UnsignedMirroredSubOp(const MirroredInt& rValue);
 
-        inline void MirroredSubOp(const MirroredInt& rValue);
+        void MirroredSubOp(const MirroredInt& rValue);
 */
 protected:
 
         template<IntegerType IntType=unsigned int>
-		inline void CatchAllUIntAddition(const IntType& rValue, const RepType& LRep)
+		void CatchAllUIntAddition(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntAddOp(rValue);
 		}
 
         template<IntegerType IntType=unsigned int>
-        inline void CatchAllUIntAdditionV2(const IntType& rValue)
+        void CatchAllUIntAdditionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicUIntAddOp(rValue);
         }
 
         template<IntegerType IntType=unsigned int>
-		inline void CatchAllUIntSubtraction(const IntType& rValue, const RepType& LRep)
+		void CatchAllUIntSubtraction(const IntType& rValue, const RepType& LRep)
 		{
             ConvertToNormType(LRep);
 			BasicUIntSubOp(rValue);
 		}
 
         template<IntegerType IntType=unsigned int>
-        inline void CatchAllUIntSubtractionV2(const IntType& rValue)
+        void CatchAllUIntSubtractionV2(const IntType& rValue)
         {
 			ConvertToNormTypeV2();
 			BasicUIntSubOp(rValue);
@@ -3557,7 +3468,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
-        inline void UIntAddOpV1(const IntType& rValue)
+        void UIntAddOpV1(const IntType& rValue)
 		{
             if (rValue == 0)
                 return;
@@ -3626,7 +3537,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= unsigned int>
-        inline void UIntSubOpV1(const IntType& rValue)
+        void UIntSubOpV1(const IntType& rValue)
 		{
             if (rValue == 0)
                 return;
@@ -3689,11 +3600,11 @@ protected:
 		}
 
         template<IntegerType IntType=unsigned int>
-        inline auto& UIntAddOperationV1(const IntType& rValue)
+        auto& UIntAddOperationV1(const IntType& rValue)
         { UIntAddOpV1(rValue); return *this; }
 
         template<IntegerType IntType=unsigned int>
-        inline auto& UIntSubOperationV1(const IntType& rValue)
+        auto& UIntSubOperationV1(const IntType& rValue)
         { UIntSubOpV1(rValue); return *this; }
 
         /// <summary>
@@ -3702,7 +3613,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<IntegerType IntType= unsigned int>
-        inline auto AddByUIntV1(const IntType& rValue){
+        auto AddByUIntV1(const IntType& rValue){
             auto self = *this;
             return self.UIntAddOperationV1(rValue);
 		}
@@ -3713,53 +3624,53 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<IntegerType IntType= unsigned int>
-        inline auto SubtractByUIntV1(const IntType& rValue){
+        auto SubtractByUIntV1(const IntType& rValue){
             auto self = *this;
             return self.UIntSubOperationV1(rValue);
 		}
 
 public:
 
-        inline void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
-        inline void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
-        inline void UIntAddOp(const unsigned int& rValue){ UIntAddOpV1(rValue); }
-        inline void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
+        void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
+        void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
+        void UIntAddOp(const unsigned int& rValue){ UIntAddOpV1(rValue); }
+        void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
 
-        inline void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
+        void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
-        inline MediumDecV2& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
-        inline MediumDecV2& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
-        inline MediumDecV2& UIntAddOperation(const unsigned int& rValue){ return UIntAddOperationV1(rValue); }
-        inline MediumDecV2& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
+        MediumDecV2& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
+        MediumDecV2& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
+        MediumDecV2& UIntAddOperation(const unsigned int& rValue){ return UIntAddOperationV1(rValue); }
+        MediumDecV2& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
 
-        inline MediumDecV2 UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
-        inline MediumDecV2 UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
 
-        inline MediumDecV2 AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
-        inline MediumDecV2 AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
-        inline MediumDecV2 AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
-        inline MediumDecV2 AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
+        MediumDecV2 AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
 
 
-        inline void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
-        inline void UIntSubOp(const unsigned int& rValue){ UIntSubOpV1(rValue); }
-        inline void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
-        inline void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
+        void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
+        void UIntSubOp(const unsigned int& rValue){ UIntSubOpV1(rValue); }
+        void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
+        void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
-        inline void UnsignedIntegerSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
+        void UnsignedIntegerSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
 
-        inline MediumDecV2& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
-        inline MediumDecV2& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
-        inline MediumDecV2& UIntSubOperation(const unsigned int& rValue){ return UIntSubOperationV1(rValue); }
-        inline MediumDecV2& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
+        MediumDecV2& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
+        MediumDecV2& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
+        MediumDecV2& UIntSubOperation(const unsigned int& rValue){ return UIntSubOperationV1(rValue); }
+        MediumDecV2& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
 
-        inline MediumDecV2 UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
-        inline MediumDecV2 UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
 
-        inline MediumDecV2 SubtractByUInt8(const unsigned char& rValue) { return SubtractByUIntV1(rValue); }
-        inline MediumDecV2 SubtractByUInt16(const unsigned short& rValue) { return SubtractByUIntV1(rValue); }
-        inline MediumDecV2 SubtractByUInt(const unsigned int& rValue) { return SubtractByUIntV1(rValue); }
-        inline MediumDecV2 SubtractByUInt64(const unsigned __int64& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 SubtractByUInt8(const unsigned char& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 SubtractByUInt16(const unsigned short& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 SubtractByUInt(const unsigned int& rValue) { return SubtractByUIntV1(rValue); }
+        MediumDecV2 SubtractByUInt64(const unsigned __int64& rValue) { return SubtractByUIntV1(rValue); }
 
         friend MediumDecV2& operator+=(MediumDecV2& lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
         friend MediumDecV2& operator+=(MediumDecV2& lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
@@ -3798,7 +3709,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
-        inline void IntAddOpV1(const IntType& rValue)
+        void IntAddOpV1(const IntType& rValue)
 		{
             if(rValue<0)
                 UIntSubOpV1(-rValue);
@@ -3813,7 +3724,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant&</returns>
         template<IntegerType IntType= signed int>
-        inline void IntSubOpV1(const IntType& rValue)
+        void IntSubOpV1(const IntType& rValue)
 		{
             if(rValue<0)
                 UIntAddOpV1(-rValue);
@@ -3822,11 +3733,11 @@ protected:
 		}
 
         template<IntegerType IntType=signed int>
-        inline auto& IntAddOperationV1(const IntType& rValue)
+        auto& IntAddOperationV1(const IntType& rValue)
         { IntAddOpV1(rValue); return *this; }
 
         template<IntegerType IntType=signed int>
-        inline auto& IntSubOperationV1(const IntType& rValue)
+        auto& IntSubOperationV1(const IntType& rValue)
         { IntSubOpV1(rValue); return *this; }
 
         /// <summary>
@@ -3836,7 +3747,7 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        inline auto AddByIntV1(const IntType& rValue){
+        auto AddByIntV1(const IntType& rValue){
             auto self = *this;
             return self.IntAddOperationV1(rValue);
 		}
@@ -3848,42 +3759,42 @@ protected:
         /// <param name="rValue.">The right side tValue</param>
         /// <returns>MediumDecVariant</returns>
         template<IntegerType IntType= signed int>
-        inline auto SubtractByIntV1(const IntType& rValue){
+        auto SubtractByIntV1(const IntType& rValue){
             auto self = *this;
             return self.IntSubOperationV1(rValue);
 		}
 
 public:
 
-        inline void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
-        inline void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
-        inline void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
-        inline void Int64AddOp(const signed __int64& rValue) { IntAddOpV1(rValue); }
+        void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
+        void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
+        void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
+        void Int64AddOp(const signed __int64& rValue) { IntAddOpV1(rValue); }
 
-        inline MediumDecV2& Int8AddOperation(const signed char& rValue) { return IntAddOperationV1(rValue); }
-        inline MediumDecV2& Int16AddOperation(const signed short& rValue) { return IntAddOperationV1(rValue); }
-        inline MediumDecV2& IntAddOperation(const signed int& rValue) { return IntAddOperationV1(rValue); }
-        inline MediumDecV2& Int64AddOperation(const signed __int64& rValue) { return IntAddOperationV1(rValue); }
+        MediumDecV2& Int8AddOperation(const signed char& rValue) { return IntAddOperationV1(rValue); }
+        MediumDecV2& Int16AddOperation(const signed short& rValue) { return IntAddOperationV1(rValue); }
+        MediumDecV2& IntAddOperation(const signed int& rValue) { return IntAddOperationV1(rValue); }
+        MediumDecV2& Int64AddOperation(const signed __int64& rValue) { return IntAddOperationV1(rValue); }
 
-        inline MediumDecV2 AddByInt8(const signed char rValue) { return AddByIntV1(rValue); }
-        inline MediumDecV2 AddByInt16(const signed short& rValue) { return AddByIntV1(rValue); }
-        inline MediumDecV2 AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
-        inline MediumDecV2 AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
+        MediumDecV2 AddByInt8(const signed char rValue) { return AddByIntV1(rValue); }
+        MediumDecV2 AddByInt16(const signed short& rValue) { return AddByIntV1(rValue); }
+        MediumDecV2 AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
+        MediumDecV2 AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
 
-        inline void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
-        inline void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
-        inline void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
-        inline void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
+        void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
+        void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
+        void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
+        void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
 
-        inline MediumDecV2& Int8SubOperation(const signed char& rValue) { return IntSubOperationV1(rValue); }
-        inline MediumDecV2& Int16SubOperation(const signed short& rValue) { return IntSubOperationV1(rValue); }
-        inline MediumDecV2& IntSubOperation(const signed int& rValue) { return IntSubOperationV1(rValue); }
-        inline MediumDecV2& Int64SubOperation(const signed __int64& rValue) { return IntSubOperationV1(rValue); }
+        MediumDecV2& Int8SubOperation(const signed char& rValue) { return IntSubOperationV1(rValue); }
+        MediumDecV2& Int16SubOperation(const signed short& rValue) { return IntSubOperationV1(rValue); }
+        MediumDecV2& IntSubOperation(const signed int& rValue) { return IntSubOperationV1(rValue); }
+        MediumDecV2& Int64SubOperation(const signed __int64& rValue) { return IntSubOperationV1(rValue); }
 
-        inline MediumDecV2 SubtractByInt8(const signed char rValue) { return SubtractByIntV1(rValue); }
-        inline MediumDecV2 SubtractByInt16(const signed short& rValue) { return SubtractByIntV1(rValue); }
-        inline MediumDecV2 SubtractByInt(const signed int& rValue) { return SubtractByIntV1(rValue); }
-        inline MediumDecV2 SubtractByInt64(const signed __int64& rValue) { return SubtractByIntV1(rValue); }
+        MediumDecV2 SubtractByInt8(const signed char rValue) { return SubtractByIntV1(rValue); }
+        MediumDecV2 SubtractByInt16(const signed short& rValue) { return SubtractByIntV1(rValue); }
+        MediumDecV2 SubtractByInt(const signed int& rValue) { return SubtractByIntV1(rValue); }
+        MediumDecV2 SubtractByInt64(const signed __int64& rValue) { return SubtractByIntV1(rValue); }
 
         friend MediumDecV2& operator+=(MediumDecV2& lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
         friend MediumDecV2& operator+=(MediumDecV2& lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
@@ -3920,16 +3831,16 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void BasicUnsignedAddOp(const MediumDecV2& rValue);
+        void BasicUnsignedAddOp(const MediumDecV2& rValue);
 
-        inline void BasicAddOp(const MediumDecV2& rValue);
+        void BasicAddOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Basic unsigned addition operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicUnsignedAddOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicUnsignedAddOperation(const MediumDecV2& rValue)
 		{ BasicUnsignedAddOp(rValue); return *this; }
 
 		/// <summary>
@@ -3937,7 +3848,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicAddOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicAddOperation(const MediumDecV2& rValue)
 		{ BasicAddOp(rValue); return *this; }
 
 		/// <summary>
@@ -3945,7 +3856,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDecV2 BasicAddByUnsigned(const MediumDecV2& rValue)
+        const MediumDecV2 BasicAddByUnsigned(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.UnsignedAddOperation(rValue); }
 
 		/// <summary>
@@ -3953,7 +3864,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDecV2 BasicAddBy(const MediumDecV2& rValue)
+        const MediumDecV2 BasicAddBy(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.AddOperation(rValue); }
 
 	#pragma endregion Basic_addition
@@ -3965,16 +3876,16 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline void BasicUnsignedSubOp(const MediumDecV2& rValue);
+        void BasicUnsignedSubOp(const MediumDecV2& rValue);
 
-        inline void BasicSubOp(const MediumDecV2& rValue);
+        void BasicSubOp(const MediumDecV2& rValue);
 
 		/// <summary>
         /// Basic unsigned subtraction operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicUnsignedSubOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicUnsignedSubOperation(const MediumDecV2& rValue)
 		{ BasicUnsignedSubOp(rValue); return *this; }
 
 		/// <summary>
@@ -3982,7 +3893,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2& BasicSubOperation(const MediumDecV2& rValue)
+        MediumDecV2& BasicSubOperation(const MediumDecV2& rValue)
 		{ BasicSubOp(rValue); return *this; }
 
 		/// <summary>
@@ -3990,7 +3901,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDecV2 BasicSubtractByUnsigned(const MediumDecV2& rValue)
+        const MediumDecV2 BasicSubtractByUnsigned(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.UnsignedSubOperation(rValue); }
 
 		/// <summary>
@@ -3998,7 +3909,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline const MediumDecV2 BasicSubtractBy(const MediumDecV2& rValue)
+        const MediumDecV2 BasicSubtractBy(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.SubOperation(rValue); }
 
 	#pragma endregion Basic_subtraction
@@ -4006,7 +3917,7 @@ public:
 	#pragma region Other_addition&subtraction
 
         template<MediumDecVariant VariantType=MediumDecV2>
-		inline void CatchAllUnsignedAddition(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
+		void CatchAllUnsignedAddition(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
 		{
 			ConvertToNormType(LRep);
 			auto convertedRVal = rValue.ConvertAsNormType(RRep);
@@ -4014,7 +3925,7 @@ public:
 		}
 
         template<MediumDecVariant VariantType=MediumDecV2>
-		inline void CatchAllUnsignedSubtraction(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
+		void CatchAllUnsignedSubtraction(const VariantType& rValue, const RepType& LRep, const RepType& RRep)
 		{
 			ConvertToNormType(LRep);
 			auto convertedRVal = rValue.ConvertAsNormType(RRep);
@@ -4023,13 +3934,13 @@ public:
 
 private:
 
-		inline void AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
+		void AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
 
-		inline void AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+		void AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
 
-		inline void SubOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
+		void SubOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
 
-		inline void SubOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+		void SubOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
 
 public:
 
@@ -4038,17 +3949,17 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        inline void UnsignedAddOp(const MediumDecV2& rValue);
+        void UnsignedAddOp(const MediumDecV2& rValue);
 
 	    /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        inline void UnsignedSubOp(const MediumDecV2& rValue);
+        void UnsignedSubOp(const MediumDecV2& rValue);
 
         //Basic addition operation
-        inline MediumDecV2& UnsignedAddOperation(const MediumDecV2& rValue)
+        MediumDecV2& UnsignedAddOperation(const MediumDecV2& rValue)
         { MediumDec::UnsignedAddOp(rValue); return *this; }
 
 		/// <summary>
@@ -4056,11 +3967,11 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 AddByUnsigned(const MediumDecV2& rValue)
+        MediumDecV2 AddByUnsigned(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
 
         //Basic subtraction operation
-        inline MediumDecV2& UnsignedSubOperation(const MediumDecV2& rValue)
+        MediumDecV2& UnsignedSubOperation(const MediumDecV2& rValue)
         { MediumDec::UnsignedSubOp(rValue); return *this; }
 
 		/// <summary>
@@ -4068,7 +3979,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 SubtractByUnsigned(const MediumDecV2& rValue)
+        MediumDecV2 SubtractByUnsigned(const MediumDecV2& rValue)
         { MediumDecV2 lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
 
         /// <summary>
@@ -4076,7 +3987,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        inline void AddOp(const MediumDecV2& rValue){
+        void AddOp(const MediumDecV2& rValue){
             if(rValue.IsNegative())
                 UnsignedSubOp(-rValue);
             else
@@ -4088,7 +3999,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        inline void SubOp(const MediumDecV2& rValue){
+        void SubOp(const MediumDecV2& rValue){
             if(rValue.IsNegative())
                 UnsignedAddOp(-rValue);
             else
@@ -4096,7 +4007,7 @@ public:
         }
 
         //Basic addition operation
-        inline MediumDecV2& AddOperation(const MediumDecV2& rValue)
+        MediumDecV2& AddOperation(const MediumDecV2& rValue)
         { AddOp(rValue); return *this; }
 
 		/// <summary>
@@ -4104,11 +4015,11 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 AddBy(const MediumDecV2& rValue) const
+        MediumDecV2 AddBy(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.AddOperation(rValue); }
 
         //Basic subtraction operation
-        inline MediumDecV2& SubOperation(const MediumDecV2& rValue)
+        MediumDecV2& SubOperation(const MediumDecV2& rValue)
         { SubOp(rValue); return *this; }
 
 		/// <summary>
@@ -4116,7 +4027,7 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        inline MediumDecV2 SubtractBy(const MediumDecV2& rValue) const
+        MediumDecV2 SubtractBy(const MediumDecV2& rValue) const
         { MediumDecV2 lValue = *this; return lValue.SubOperation(rValue); }
 
         friend MediumDecV2 operator-(const unsigned char& lValue, const MediumDecV2& rValue) { return ((MediumDecV2)lValue).SubtractBy(rValue); }
@@ -4164,9 +4075,9 @@ public:
 
 	#pragma region Modulus Operations
 
-        inline void UnsignedModulusOp(const MediumDecV2& rValue){ UnsignedModulusOpV1<MediumDecV2>(rValue); }
+        void UnsignedModulusOp(const MediumDecV2& rValue){ UnsignedModulusOpV1<MediumDecV2>(rValue); }
 
-        inline void ModulusOp(const MediumDecV2& rValue){ ModulusOpV1<MediumDecV2>(rValue); }
+        void ModulusOp(const MediumDecV2& rValue){ ModulusOpV1<MediumDecV2>(rValue); }
 
 		MediumDecV2& UnsignedModulusOperation(const MediumDecV2& rValue){
 			UnsignedModulusOp(rValue); return *this;
@@ -4293,11 +4204,11 @@ public:
         /// <summary>
         /// Returns a copy of the number converted into non-negative version
         /// </summary>
-        inline MediumDecV2 AbsOf() const;
+        MediumDecV2 AbsOf() const;
 
 		static MediumDecV2 Ceil(const MediumDecV2& tValue);
 
-        inline MediumDecV2 CeilOf() const;
+        MediumDecV2 CeilOf() const;
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
@@ -4332,7 +4243,7 @@ protected:
             if(value.DecimalHalf.Flags==3)
                 throw "Square root of imaginary numbers not supported yet.";//Requires complex number support for some results
             if(value.IsNegative()){
-                value = MediumDec::UnsignedSqrt<VariantType>(-value, precision);
+                value = UnsignedSqrtV1<VariantType>(-value, precision);
                 value.DecimalHalf.Flags = 3;
                 return value;
             }
@@ -4350,7 +4261,7 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        inline MediumDecV2 SqrtOf(const int& precision = 7) const;
+        MediumDecV2 SqrtOf(const int& precision = 7) const;
 
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
@@ -4363,7 +4274,7 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        inline MediumDecV2 UnsignedSqrtOf(const int& precision = 7) {
+        MediumDecV2 UnsignedSqrtOf(const int& precision = 7) {
             return UnsignedSqrt(*this, precision);
         }
 
@@ -4387,7 +4298,7 @@ public:
         static MediumDecV2 Int64Pow(const MediumDecV2& tValue, const signed __int64& expValue)
 		{ return IntPowV1<MediumDecV2>(tValue, expValue); }
 
-        inline MediumDecV2 UnsignedNegIntPower(const MediumDecV2& tValue, const unsigned int& expValue)
+        MediumDecV2 UnsignedNegIntPower(const MediumDecV2& tValue, const unsigned int& expValue)
 		{ return UnsignedNegIntPowerV1<MediumDecV2>(tValue, expValue); }
 
 
@@ -4395,18 +4306,18 @@ public:
         /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        inline MediumDecV2 UIntPowOf(const unsigned int& expValue) const
+        MediumDecV2 UIntPowOf(const unsigned int& expValue) const
         { return UIntPow(*this, expValue); }
-        inline MediumDecV2 UInt64PowOf(const unsigned __int64& expValue) const
+        MediumDecV2 UInt64PowOf(const unsigned __int64& expValue) const
         { return UInt64Pow(*this, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        inline MediumDecV2 IntPowOf(const signed int& expValue) const
+        MediumDecV2 IntPowOf(const signed int& expValue) const
         { return IntPow(*this, expValue); }
-        inline MediumDecV2 Int64PowOf(const signed __int64& expValue) const
+        MediumDecV2 Int64PowOf(const signed __int64& expValue) const
         { return Int64Pow(*this, expValue); }
 
         static MediumDecV2 UnsignedMirroredIntPow(const MediumDecV2& tValue, const MirroredInt& expValue)
@@ -4435,9 +4346,8 @@ protected:
                 VariantType result =  MediumDec::NthRootV1(tValue, n, precision);
                 result.DecimalHalf.Flags = 3;
                 return result;
-            }
+            } else
         #endif
-            else
                 return MediumDec::NthRootV1(tValue, n, precision);
         }
 
@@ -4459,7 +4369,7 @@ public:
         /// <param name="precision">Precision level (smaller = more precise)</param>
         static MediumDecV2 NthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision = MediumDecV2::JustAboveZero);
 
-        inline MediumDecV2 NthRootOf(const unsigned int& n, const MediumDecV2& precision = MediumDecV2::JustAboveZero) const;
+        MediumDecV2 NthRootOf(const unsigned int& n, const MediumDecV2& precision = MediumDecV2::JustAboveZero) const;
 
         //Alternative formula version of NthRoot
         static MediumDecV2 AlternativeNthRoot(const MediumDecV2& tValue, const unsigned int& n, const MediumDecV2& precision = MediumDecV2::FiveBillionth);
@@ -4486,7 +4396,7 @@ protected:
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
 		template<MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType FractionalPowV2(const VariantType& value, const signed int& expNum, const unsigned int& expDenom)
+        VariantType FractionalPowV2(const VariantType& value, const signed int& expNum, const unsigned int& expDenom)
 		{
 			auto targetVal = IntPowOf(expNum);
 			auto CalcVal = MediumDecVariant::NthRoot(targetVal, expDenom);
@@ -4498,7 +4408,7 @@ protected:
 		/// (Doesn't modify owner object)
         /// </summary>
 		template<MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType UnsignedPowOfV1(const auto& expValue)
+        VariantType UnsignedPowOfV1(const auto& expValue)
 		{
 			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
 			if(expValue.IntHalf.Value==0)
@@ -4515,7 +4425,7 @@ protected:
 		/// (Doesn't modify owner object)
         /// </summary>
 		template<MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType PowOfV1(const auto& expValue)
+        VariantType PowOfV1(const auto& expValue)
 		{
 			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
 			if (expValue.IntHalf.IsNegative()){//Negative Exponent
@@ -4543,14 +4453,14 @@ public:
         /// Calculate to power of expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-        inline MediumDecV2 UnsignedPowOf(const auto& expValue)
+        MediumDecV2 UnsignedPowOf(const auto& expValue)
 		{ return UnsignedPowOfV1(expValue); }
 
         /// <summary>
         /// Calculate to power of expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-        inline MediumDecV2 PowOf(const auto& expValue)
+        MediumDecV2 PowOf(const auto& expValue)
 		{ return PowOfV1(expValue); }
 
 	#pragma endregion Pow and Sqrt Functions
@@ -4644,7 +4554,7 @@ protected:
 
 		//Common natural log calculations for range one to two
 		template<MediumDecVariant VariantType=MediumDecV2>
-        inline VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
+        VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
         {
             VariantType base = *this - 1;        // Base of the numerator; exponent will be explicit
             bool posSign = true;             // Used to swap the sign of each term
@@ -4697,9 +4607,9 @@ protected:
         /// <returns>MediumDec variant</returns>
         template<MediumDecVariant VariantType = MediumDecV2>
         #if defined(AltNum_UseCustomLnAccuracy)
-        inline VariantType LnOfV1(const VariantType& threshold = VariantType::FiveMillionth) const
+        VariantType LnOfV1(const VariantType& threshold = VariantType::FiveMillionth) const
         #else
-        inline VariantType LnOfV1() const
+        VariantType LnOfV1() const
         #endif
         {//Negative values for natural log return value of LnV1(-value) * i
             //if (value <= 0) {}else//Error if equal or less than 0
@@ -4749,9 +4659,9 @@ protected:
         /// <returns>MediumDec</returns>
         template<MediumDecVariant VariantType = MediumDecV2>
         #if defined(AltNum_UseCustomLnAccuracy)
-        inline VariantType Log10OfV1(const VariantType& threshold = VariantType::FiveMillionth) const
+        VariantType Log10OfV1(const VariantType& threshold = VariantType::FiveMillionth) const
         #else
-        inline VariantType Log10OfV1() const
+        VariantType Log10OfV1() const
         #endif
         {
             if (IsOne())

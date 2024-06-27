@@ -58,43 +58,43 @@ namespace BlazesRusCode
         }
 
         //Fix for C2678 error on assignment
-        inline void SetValueV2(const FlaggedInt& rValue);
+        void SetValueV2(const FlaggedInt& rValue);
 
-        inline void SetValue(const unsigned int& value=0, const unsigned int& isAltRep=0);
+        void SetValue(const unsigned int& value=0, const unsigned int& isAltRep=0);
 
     #pragma endregion class_constructors
 
     #pragma region Check_if_value
 
-        inline bool IsAlternative() const;
+        bool IsAlternative() const;
 
-		inline bool IsNormal();
+		bool IsNormal();
 
-		inline void SwitchToAlternative();
+		void SwitchToAlternative();
 
-		inline void SwitchToNormal();
+		void SwitchToNormal();
 
         //Is at zero value
-        inline bool IsAtZero() const;
+        bool IsAtZero() const;
 
         //Is not at zero value
-        inline bool IsNotAtZero() const;
+        bool IsNotAtZero() const;
 
         //Is at one value
-        inline bool IsAtOne() const;
+        bool IsAtOne() const;
 
         //Is at neither zero or negative one
-        inline bool IsNotOne() const;
+        bool IsNotOne() const;
 
-		inline bool IsEven() const;
+		bool IsEven() const;
 
-		inline bool IsOdd() const;
+		bool IsOdd() const;
 
     #pragma endregion Check_if_value
 
 #pragma region StringOperations
 
-		inline void ReadString(const std::string& value);
+		void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlaggedInt"/> class from string literal
@@ -108,9 +108,9 @@ namespace BlazesRusCode
         /// <param name="tValue">The value.</param>
         FlaggedInt(const std::string& Value);
 
-        inline std::string ToString() const;
+        std::string ToString() const;
 
-        inline std::string ToDetailedString(const PartialInt& DecHalf) const;
+        std::string ToDetailedString(const PartialInt& DecHalf) const;
 
         explicit operator std::string();
 

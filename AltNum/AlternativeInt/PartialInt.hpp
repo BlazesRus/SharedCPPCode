@@ -60,48 +60,48 @@ namespace BlazesRusCode
         }
 
         //Fix for C2678 error on assignment
-        inline void SetValueV2(const PartialInt& rValue);
+        void SetValueV2(const PartialInt& rValue);
 
-        inline void SetValue(unsigned int value=0, unsigned int flags=0);
+        void SetValue(unsigned int value=0, unsigned int flags=0);
 
     #pragma endregion class_constructors
 
     #pragma region Check_if_value
 
-		inline bool IsNormalVariant() const;
+		bool IsNormalVariant() const;
 
-		inline bool IsPiVariant() const;
+		bool IsPiVariant() const;
 
-		inline bool IsEVariant() const;
+		bool IsEVariant() const;
 
-		inline bool IsIVariant() const;
+		bool IsIVariant() const;
 
-		inline void SwitchToNormal();
+		void SwitchToNormal();
 
-		inline void SwitchToPiVariant();
+		void SwitchToPiVariant();
 
-		inline void SwitchToEVariant();
+		void SwitchToEVariant();
 
-		inline void SwitchToIVariant();
+		void SwitchToIVariant();
 
         //Is at zero value
-        inline bool IsAtZero() const;
+        bool IsAtZero() const;
 
         //Is not at zero value
-        inline bool IsNotAtZero() const;
+        bool IsNotAtZero() const;
 
         //Is at one value
-        inline bool IsAtOne() const;
+        bool IsAtOne() const;
 
-		inline bool IsEven() const;
+		bool IsEven() const;
 
-		inline bool IsOdd() const;
+		bool IsOdd() const;
 
     #pragma endregion Check_if_value
 
 	#pragma region StringOperations
 
-		inline void ReadString(const std::string& value);
+		void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PartialInt"/> class from string literal
@@ -198,7 +198,7 @@ protected:
         /// Returns the value at zero
         /// </summary>
         /// <returns>MirroredInt</returns>
-        inline static PartialInt ZeroValue();
+        static PartialInt ZeroValue();
 
 public:
 
@@ -207,40 +207,40 @@ public:
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        inline static unsigned int const DecimalOverflow = 1000000000;
+        static unsigned int const DecimalOverflow = 1000000000;
 
 	//#if defined(AltNum_EnablePiRep)
         //Pi*Value representation(when DecimalHalf.Flags==1)
-        inline static const unsigned int PiRep = 1;
+        static const unsigned int PiRep = 1;
 	//#endif
     //
 	//#if defined(AltNum_EnableERep)
         //e*Value representation(DecimalHalf.Flags==2)
-        inline static const unsigned int ERep = 2;
+        static const unsigned int ERep = 2;
 	//#endif
     //
 	//#if defined(AltNum_EnableIRep)
         //e*Value representation(DecimalHalf.Flags==3)
-        inline static const unsigned int IRep = 3;
+        static const unsigned int IRep = 3;
 	//#endif
     //
 	//#if defined(AltNum_EnableInfinityRep)
         //When DecimalHalf.Value equals this value, it represents infinity (sign of IntHalf determines if either negative or positive inifity)
-		inline static const unsigned int InfinityRep = 1073741805;
+		static const unsigned int InfinityRep = 1073741805;
 	//#endif
     //
 	//#if defined(AltNum_EnableApproaching)
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from right towards left (IntHalf.0..01)
-        inline static const unsigned int ApproachingBottomRep = 1073741806;
+        static const unsigned int ApproachingBottomRep = 1073741806;
         //When DecimalHalf.Value equals this value, it represents Approaching IntHalf from left towards right (IntHalf.9..9)
-		inline static const unsigned int ApproachingTopRep = 1073741807;
+		static const unsigned int ApproachingTopRep = 1073741807;
 	//#endif
     //
 	//#if defined(AltNum_EnableApproachingDivided)
         //When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value-1
-        inline static const unsigned int ApproachingMidLeftRep = 1073741808;
+        static const unsigned int ApproachingMidLeftRep = 1073741808;
 		//When DecimalHalf.Value equals this value, the DecimalHalf part equals DecimalOverflow/ExtraRep.Value+1
-		inline static const unsigned int ApproachingMidRightRep = 1073741809;
+		static const unsigned int ApproachingMidRightRep = 1073741809;
 	//#endif
 
 #endif

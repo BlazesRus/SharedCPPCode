@@ -98,7 +98,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);AltDec_EnableInfinityRep;MixedDec_EnableInfinityRep;MixedDec_EnablePIRep;AltNum_UseRepTypeClass</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);AltDec_EnableInfinityRep;MixedDec_EnableInfinityRep;MixedDec_EnablePIRep;AltNum_UseRepTypeClass;AltNum_EnableERep;AltNum_EnableIRep</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -118,7 +118,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass;AltNum_EnableERep;AltNum_EnableIRep</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -135,7 +135,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass;AltNum_EnableERep;AltNum_EnableIRep</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostDir);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -152,7 +152,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IndexedIniData_AddAltDecSupport;%(PreprocessorDefinitions);Blazes_EnableCalculusExtras;AltNum_UseRepTypeClass;AltNum_EnableERep;AltNum_EnableIRep</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(BoostRoot);$(SharedCode);$(ParallelMap);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -182,6 +182,7 @@
     <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
+    <ClCompile Include="..\AltNum\MediumDecV2\RepTypeOp.cpp" />
     <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
     <ClCompile Include="..\AltNum\RepType.cpp" />
     <ClCompile Include="MediumDecV2Tests.cpp" />

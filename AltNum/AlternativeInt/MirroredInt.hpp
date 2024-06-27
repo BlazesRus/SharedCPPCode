@@ -77,28 +77,28 @@ namespace BlazesRusCode
         }
 
         //Fix for C2678 error on assignment
-        inline void SetValueV2(const MirroredInt& rValue);
+        void SetValueV2(const MirroredInt& rValue);
 
-        inline void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
 
-        inline void SetSignedValue(const signed int& val=0);
+        void SetSignedValue(const signed int& val=0);
 
     #pragma endregion class_constructors
 
     #pragma region Negative_Status
 
-		inline bool IsNegative() const;
+		bool IsNegative() const;
 
-		inline bool IsPositive() const;
+		bool IsPositive() const;
 
-        inline void SetAsPositive();
+        void SetAsPositive();
 
-        inline void SetAsNegative();
+        void SetAsNegative();
 
         /// <summary>
         /// Swaps the negative status.
         /// </summary>
-        inline void SwapNegativeStatus();
+        void SwapNegativeStatus();
 
         MirroredInt operator-() const
         { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
@@ -108,35 +108,35 @@ namespace BlazesRusCode
     #pragma region Check_if_value
 
         //Set as zero without changing sign(including negative zero)
-        inline void SetAsZeroVal();
+        void SetAsZeroVal();
 
         //Return value as real number(negative zero counts as zero)
-        inline int GetValue() const;
+        int GetValue() const;
 
-        inline void SetAsZero();
+        void SetAsZero();
 
-        inline void SetAsNegativeZero();
+        void SetAsNegativeZero();
 
         //Is at either zero or negative zero
-		inline bool IsAtZeroInt() const;
+		bool IsAtZeroInt() const;
 
         //Is at neither zero or negative zero
-		inline bool IsNotAtZeroInt() const;
+		bool IsNotAtZeroInt() const;
 
         //Is at either zero or negative one
-		inline bool IsAtOneInt() const;
+		bool IsAtOneInt() const;
 
         //Is at neither zero or negative one
-		inline bool IsNotAtOneInt() const;
+		bool IsNotAtOneInt() const;
 
-		inline bool IsEven() const;
+		bool IsEven() const;
 
-		inline bool IsOdd() const;
+		bool IsOdd() const;
 
-		inline bool IsZero() const;
+		bool IsZero() const;
 
         //Returns copy of value as Absolute value
-        inline MirroredInt Abs() const;
+        MirroredInt Abs() const;
 
         void ApplyAbs();
 
@@ -144,7 +144,7 @@ namespace BlazesRusCode
 
 	#pragma region StringOperations
 
-		inline void ReadString(const std::string& value);
+		void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal

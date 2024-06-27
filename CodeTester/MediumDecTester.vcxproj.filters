@@ -105,6 +105,9 @@
     <ClCompile Include="..\AltNum\RepType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\AltNum\MediumDecV2\RepTypeOp.cpp">
+      <Filter>Source Files\AltNum\MediumDecV2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DLLAPI.h">
