@@ -32,7 +32,13 @@ inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValu
 
 inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
 {
-	DivOpSameRep_CatchAll(rValue, RepType::ApproachingTop);
+	//9.999 999 999 999 999/0.999 999 999 999 999 = 10.000000000000009000000000000009000000000000009000000000000009000000000000009000000000000009
+    if(rValue.IntHalf.Value==0){
+		DecimalHalf.Value = ApproachingBottomRep;
+		++IntHalf.Value;
+	}
+    else
+	    DivOpSameRep_CatchAll(rValue, RepType::ApproachingTop);
 }
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
