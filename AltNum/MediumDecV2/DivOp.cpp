@@ -2,39 +2,21 @@
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 
-/*
-void MediumDecV2::DivOp_CatchAllOp(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
-{
-    lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
-	auto RValue = rValue.ConvertAsNormType(RRep.ConvertFromNormalRep(rValue.GetFlags()));
-	lValue.BasicUnsignedDivOp(RValue);
-}
-
-void MediumDecV2::DivOp_CatchAllOpV2(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
-{
-    lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	lValue.BasicUnsignedDivOp(RValue);
-}
-
-void MediumDecV2::DivOp_SameRepCatchAll(const MediumDecV2& rValue, const RepType& LRep)
-{
+inline void MediumDecV2::DivOpSameRep_CatchAll(const MediumDecV2& rValue, const RepType& LRep)
+{/*
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep);
-	lValue.BasicUnsignedDivOp(RValue);
+	lValue.BasicUnsignedDivOp(RValue);*/
 }
 
-void MediumDecV2::DivOp_SameRepCatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
-{
+inline void MediumDecV2::DivOpSameRep_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
+{/*
     lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
 	auto RValue = rValue.ConvertAsNormType(LRep.ConvertFromNormalRep(rValue.GetFlags()));
-	lValue.BasicUnsignedDivOp(RValue);
+	lValue.BasicUnsignedDivOp(RValue);*/
 }
 
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-
-void MediumDecV2::DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
+inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValue)
 {
     if(lValue.IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
@@ -42,21 +24,19 @@ void MediumDecV2::DivOp_SameRep_ApproachingBottom(const MediumDecV2& rValue)
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
-		SameRepCatchAll(lValue, rValue, RepType::ApproachingBottom);
+		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
 #endif
 	else
-		SameRepCatchAll(lValue, rValue, RepType::ApproachingBottom);
+		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
 }
 
-void MediumDecV2::DivOp_SameRep_ApproachingTop(const MediumDecV2& rValue)
+inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
 {
-	SameRepCatchAll(lValue, rValue, RepType::ApproachingTop);
+	DivOpSameRep_CatchAll(rValue, RepType::ApproachingTop);
 }
-*/
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 {
-/*
 	#if defined(AltNum_EnableInfinityRep)
 	if(DecimalHalf.Value==InfinityRep){
 		if(rValue.DecimalHalf.Value==InfinityRep)
@@ -73,7 +53,7 @@ void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 		#endif
 		#if defined(AltNum_EnableInfinityPowers)
 			if(IntHalf.Value==1)
-				SetAsZero();//Techically should maybe be indeterminate but normally can not have even larger infinity anyway
+				SetAsZero();
 			else
 				--IntHalf.Value;
 		#elif defined(AltNum_EnableIndeterminateForms)
@@ -137,102 +117,78 @@ void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 					BasicUnsignedDivOp(rValue);
 					break;
                 break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
+
     #if defined(AltNum_EnableApproaching)
                 case RepTypeEnum::ApproachingBottom:
-					SameRep_ApproachingBottom(*this, rValue);
+					DivOpSameRep_ApproachingBottom(rValue);
                     break;
                 case RepTypeEnum::ApproachingTop:
-					SameRep_ApproachingTop(*this, rValue);
+					DivOpSameRep_ApproachingTop(rValue);
 	                break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
+    #endif
+    #if defined(MediumDecV2_EnableUndefinedButInRange)
+                case RepType::UndefinedButInRange:
+                    throw "Operation not supported at moment."; break;
+                    break;
     #endif
                 default:
-                    throw "Operation not supported at moment.";
+                    throw "Operation not supported at moment."; break;
 				}
 			}
 			else
-			{
-				switch(RRep)
-				{
+            {
+                switch(LRep)
+                {
 					case RepTypeEnum::NormalType:
 					{
-						switch(LRep)
+						switch(RRep)
 						{
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingBottom:
-								if(IntHalf.Value!=0)
-									BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
-								break;
-							//case RepTypeEnum::ApproachingTop:
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								BasicUnsignedDivOp(rValue); break;
-						}
-					}
-					break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
+                            default:
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
+        #if defined(AltNum_EnableApproaching)
 					case RepTypeEnum::ApproachingBottom:
-					{
-						switch(LRep)
+                    {
+						switch(RRep)
 						{
-							case RepTypeEnum::NormalType:
-								//Add Code
-								break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingTop:
-								//Add Code
-								break;
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								BasicUnsignedDivOp(rValue); break;
-						}
-					}
-					break;
+					        case RepTypeEnum::NormalType:
+                                if(IntHalf.Value!=0){
+                                    ConvertToNormType(LRep);
+                                    BasicUnsignedDivOp(rValue);
+                                }
+                                break;
+                            default:
+                                ConvertToNormType(LRep);
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
 					case RepTypeEnum::ApproachingTop:
-					{
-						switch(LRep)
+                    {
+						switch(RRep)
 						{
-							case RepTypeEnum::NormalType:
-								//Add Code
-								break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingBottom:
-								//Add Code
-								break;
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								//Add Code
-								break;
-						}
-					}
-					break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #endif
-                default:
-                    throw "Operation not supported";
-				}
-			}
-		}
-		else
-		{
+					        case RepTypeEnum::NormalType:
+                                if(IntHalf.Value!=0){
+                                    ConvertToNormType(LRep);
+                                    BasicUnsignedDivOp(rValue);
+                                }
+                                break;
+                            default:
+                                ConvertToNormType(LRep);
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
+        #endif
+                    default:
+                        throw "Operation not supported"; break;
+                }
+            }
+        }
+        else
+        {
 			if(LRep==RRep)
 			{
 				switch(LRep)
@@ -240,113 +196,85 @@ void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
                 case RepTypeEnum::NormalType:
 					BasicUnsignedDivOp(rValue);
 					break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
     #if defined(AltNum_EnableApproaching)
                 case RepTypeEnum::ApproachingBottom:
-					SameRep_ApproachingBottom(*this, rValue);
+					DivOpSameRep_ApproachingBottom(*this, rValue);
                     break;
                 case RepTypeEnum::ApproachingTop:
-					SameRep_ApproachingTop(*this, rValue);
+					DivOpSameRep_ApproachingTop(*this, rValue);
 	                break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
     #endif
                 default:
                     throw "Operation not supported";
 				}
-				switch(rValue.DecimalHalf.Flags)
-				{
-					case 1:
-						BasicUnsignedDivOp(PiNum); break;
-					case 2:
-						BasicUnsignedDivOp(ENum); break;
-					case 3:
-						SwapNegativeStatus();
-						DecimalHalf.Flags = 3;
-						break;
-					default: break;
-				}
 			}
-			else
-			{
-				switch(RRep)
-				{
+            else
+            {
+                switch(LRep)
+                {
 					case RepTypeEnum::NormalType:
 					{
-						switch(LRep)
+						switch(RRep)
 						{
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingBottom:
-								if(IntHalf.Value!=0)
-									BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
-								break;
-							//case RepTypeEnum::ApproachingTop:
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								BasicUnsignedDivOp(rValue); break;
-						}
-					}
-					break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
+                            default:
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
+        #if defined(AltNum_EnableApproaching)
 					case RepTypeEnum::ApproachingBottom:
-					{
-						switch(LRep)
+                    {
+						switch(RRep)
 						{
-							case RepTypeEnum::NormalType:
-								//Add Code
-								break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingTop:
-								//Add Code
-								break;
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								BasicUnsignedDivOp(rValue); break;
-						}
-					}
-					break;
+					        case RepTypeEnum::NormalType:
+                                if(IntHalf.Value!=0){
+                                    ConvertToNormType(LRep);
+                                    BasicUnsignedDivOp(rValue);
+                                }
+                                break;
+                            default:
+                                ConvertToNormType(LRep);
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
 					case RepTypeEnum::ApproachingTop:
-					{
-						switch(LRep)
+                    {
+						switch(RRep)
 						{
-							case RepTypeEnum::NormalType:
-								//Add Code
-								break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #if defined(AltNum_EnableApproaching)
-							case RepTypeEnum::ApproachingBottom:
-								//Add Code
-								break;
-	#endif
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-							default:
-								//Add Code
-								break;
-						}
-					}
-					break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
-    #endif
-                default:
-                    throw "Operation not supported";
-				}
-			}
-		}
-	}
-*/
+					        case RepTypeEnum::NormalType:
+                                if(IntHalf.Value!=0){
+                                    ConvertToNormType(LRep);
+                                    BasicUnsignedDivOp(rValue);
+                                }
+                                break;
+                            default:
+                                ConvertToNormType(LRep);
+                                BasicUnsignedDivOp(rValue.ConvertAsNormType(RRep));
+                                break;
+                        }
+                    } break;
+        #endif
+                    default:
+                        throw "Operation not supported"; break;
+                }
+            }
+            switch(rValue.DecimalHalf.Flags)
+            {
+            	case 1:
+            		BasicUnsignedDivOp(PiNum); break;
+            	case 2:
+            		BasicUnsignedDivOp(ENum); break;
+            	case 3:
+            		SwapNegativeStatus();
+                                if(GetFlags()==1)
+                                    BasicUnsignedMultOp(PiNum);
+                                else if(GetFlags()==2)
+                                    BasicUnsignedMultOp(ENum);
+            		DecimalHalf.Flags = 3;
+            		break;
+            	default: break;
+            }
+        }
+    }
 }
-

@@ -141,29 +141,16 @@ public:
             return MediumDecV2(intVal,decVal);
         }
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
         inline void SetValue(const MediumDecV2& rValue)
         {
             IntHalf = rValue.IntHalf;
             DecimalHalf = rValue.DecimalHalf;
         }
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
         inline void SetMediumDecValue(const MediumDec& rValue)
         {
             IntHalf = rValue.IntHalf;
             DecimalHalf = rValue.DecimalHalf;
-        }
-
-        inline unsigned int GetFlags() const
-        {
-            return DecimalHalf.Flags;
         }
 
     #pragma endregion class_constructors
@@ -191,13 +178,6 @@ public:
 
 
     #pragma region Check_if_value
-
-        //Detect if at exactly zero
-        inline bool IsZero() const
-        {
-            return DecimalHalf == 0 && IntHalf.Value == 0;
-        }
-
     #pragma endregion Check_if_value
 
     #pragma region Const Representation values

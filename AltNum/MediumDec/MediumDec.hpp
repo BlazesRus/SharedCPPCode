@@ -52,6 +52,11 @@ namespace BlazesRusCode
 			return IntHalf.GetValue();
         }
 
+        unsigned int GetFlags() const
+        {
+            return DecimalHalf.Flags;
+        }
+
     #pragma endregion DigitStorage
 
         /// <summary>
