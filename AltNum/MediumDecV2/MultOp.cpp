@@ -25,6 +25,26 @@ void MediumDecV2::MultOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const
 
 void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 {
+	if(IsZero())
+        return;
+    else if(rValue.IsZero()){
+        SetAsZero();
+        return;
+    }
+	#if defined(AltNum_EnableInfinityRep)
+    else if(DecimalHalf.Value==InfinityRep){
+        if(rValue.GetFlags()==3){
+            if(GetFlags()==3){
+                SwapNegativeStatus();
+                SetFlags(0);
+            } else
+                SetFlags(3);
+        }
+        return;
+    } else if(rValue.DecimalHalf.Value==InfinityRep)
+        //Add Code here later
+    }
+    #endif
 	RepType LRep = GetNormRepType();
 	RepType RRep = rValue.GetNormRepType();
 	if(DecimalHalf.Flags==rValue.DecimalHalf.Flags)//Same flag category
