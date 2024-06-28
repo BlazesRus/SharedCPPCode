@@ -42,7 +42,14 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
         }
         return;
     } else if(rValue.DecimalHalf.Value==InfinityRep)
-        //Add Code here later
+        SetAsInfinityVal();
+        if(rValue.GetFlags()==3){
+            if(GetFlags()==3){
+                SwapNegativeStatus();
+                SetFlags(0);
+            } else
+                SetFlags(3);
+        }
     }
     #endif
 	RepType LRep = GetNormRepType();
