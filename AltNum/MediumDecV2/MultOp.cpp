@@ -50,36 +50,63 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
             } else
                 SetFlags(3);
         }
+		return;
     }
     #endif
 	RepType LRep = GetNormRepType();
 	RepType RRep = rValue.GetNormRepType();
+	if(LRep==RRep)
+	{
+		switch(LRep)
+		{
+			case RepTypeEnum::NormalType:{
+				BasicUnsignedMultOp(rValue);
+			} break;
+    #if defined(AltNum_EnableApproaching)
+                case RepTypeEnum::ApproachingBottom:
+
+                    break;
+                case RepTypeEnum::ApproachingTop:
+
+	                break;
+    #endif
+    #if defined(AltDec_EnableUndefinedButInRange)
+                case RepType::UndefinedButInRange:
+                    throw "Operation not supported at moment."; break;
+    #endif
+                default:
+                    throw "Operation not supported at moment."; break;
+		}
+
+	}
+	else
+	{
+		switch(LRep)
+		{
+			case RepTypeEnum::NormalType:{
+			} break;
+    #if defined(AltNum_EnableApproaching)
+			case RepTypeEnum::ApproachingBottom:{
+
+			}	break;
+			case RepTypeEnum::ApproachingTop:{
+
+			} break;
+    #endif
+		}
+	}
 	if(DecimalHalf.Flags==rValue.DecimalHalf.Flags)//Same flag category
 	{
-		if(LRep==RRep)
-		{
-			switch(DecimalHalf.Flags)
-			{
-				case 1:
-				BasicUnsignedMultOp(PiNum); break;
-				case 2:
-				BasicUnsignedMultOp(ENum); break;
-				case 3:
-				SwapNegativeStatus(); DecimalHalf.Flags = 0;
-				break;
-			}
-			switch(LRep)
-			{
-				case RepTypeEnum::NormalType:{
-					BasicUnsignedMultOp(rValue);
-				}
-				break;
-			}
-
-		}
-		else
-		{
-		}
+        switch(DecimalHalf.Flags)
+        {
+            case 1:
+                UnsignedMultOp(PiNum); break;
+            case 2:
+                UnsignedMultOp(ENum); break;
+            case 3:
+                SwapNegativeStatus(); DecimalHalf.Flags = 0;
+                break;
+        }
 	}
 	else//Separate flag category
 	{
