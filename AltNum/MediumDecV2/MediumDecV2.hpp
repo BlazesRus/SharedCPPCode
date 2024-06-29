@@ -1158,12 +1158,12 @@ protected:
         }
 
 public:
-#if defined(AltNum_UseRepTypeAsClass)
+	#if defined(AltNum_UseRepTypeAsClass)
         void ConvertToNormfromEnum(const RepTypeEnum& repType)
         {
             ConvertToNormTypeV3<MediumDecV2>(*this, repType);
         }
-#endif
+	#endif
 
 
         //Returns value as normal type or INum representation
@@ -1210,12 +1210,76 @@ public:
             return Res;
         }
 
+        //Converts to version that can have basic operations applied(Including Fractions but excluding mixed fractions)
+		template<MediumDecVariant VariantType=MediumDecV2>
+        static void ConvertFromAbtractV3(VariantType& lValue, const RepTypeEnum& repType)
+        {
+            switch (repType)
+            {
+	#if defined(AltNum_EnableInfinityRep)
+			case RepTypeEnum::Infinity:
+				lValue.IntHalf = IsPositive()?MaxIntHalf:MinIntHalf;
+				lValue.DecimalHalf = 999999999;
+				break;
+	#endif
+	#if defined(AltNum_EnableApproaching)
+			case RepTypeEnum::ApproachingBottom:
+		#if defined(AltNum_EnablePiRep)
+           case RepTypeEnum::ApproachingBottomPi:
+		#endif
+		#if defined(AltNum_EnableERep)
+           case RepTypeEnum::ApproachingBottomE:
+		#endif
+		#if defined(AltNum_EnableIRep)
+           case RepTypeEnum::ApproachingBottomI:
+		#endif
+				lValue.DecimalHalf = 1;
+				break;
+			case RepTypeEnum::ApproachingTop:
+		#if defined(AltNum_EnablePiRep)
+           case RepTypeEnum::ApproachingTopPi:
+		#endif
+		#if defined(AltNum_EnableERep)
+           case RepTypeEnum::ApproachingTopE:
+		#endif
+		#if defined(AltNum_EnableIRep)
+           case RepTypeEnum::ApproachingTopI:
+		#endif
+				lValue.DecimalHalf = 999999999;
+				break;
+	#endif
+            default:
+                break;
+            }
+        }
+
+protected:
+
+        template<MediumDecVariant VariantType=MediumDecV2>
+        VariantType ConvertFromAbtractAsOtherV1(VariantType lValue, const RepType& repType) const
+        {
+            return ConvertFromAbtractV3<MediumDecV2>(Res, repType);
+        }
+		
+public:
+
+
+        void ConvertFromAbtractAsOther(const RepType& repType)
+        {
+            ConvertFromAbtractAsOtherV1(*this, repType);
+        }
+
+        void ConvertFromAbtract(const RepType& repType)
+        {
+            ConvertFromAbtractV3(*this, repType);
+        }
+
 	#if defined(AltNum_EnablePiRep)||defined(AltNum_EnableERep)
-#if defined(AltNum_UseRepTypeAsClass)
+		#if defined(AltNum_UseRepTypeAsClass)
         RepType ConvertToNormalEquivalantV2(const RepTypeEnum& repType)
-#else
+		#else
         RepType ConvertToNormalEquivalant(const RepType& repType)
-#endif
+		#endif
         {
 			switch(repType)
 			{
@@ -1264,21 +1328,21 @@ public:
 			}
 		}
 
-#if defined(AltNum_UseRepTypeAsClass)
+		#if defined(AltNum_UseRepTypeAsClass)
         RepType ConvertToNormalEquivalant(const RepType& repType)
         {
             ConvertToNormalEquivalantV2(repType.Value);
         }
-#endif
+		#endif
 
-#if defined(AltNum_UseRepTypeAsClass)
+		#if defined(AltNum_UseRepTypeAsClass)
         template<MediumDecVariant VariantType=MediumDecV2>
         static std::pair<VariantType, RepType> ConvertAsNormalEquivalantV2(VariantType tValue, const RepTypeEnum& repType)
         {
             RepType convertedRep = tValue.ConvertToNormalEquivalantV2(repType);
             return std::make_pair(tValue, convertedRep);
 		}
-#endif
+		#endif
 
         template<MediumDecVariant VariantType=MediumDecV2>
         static std::pair<VariantType, RepType> ConvertAsNormalEquivalantV1(VariantType tValue, const RepType& repType)
@@ -1287,13 +1351,13 @@ public:
             return std::make_pair(tValue, convertedRep);
 		}
 
-#if defined(AltNum_UseRepTypeAsClass)
+		#if defined(AltNum_UseRepTypeAsClass)
 		//Returns std::pair of tValue and RepType
         std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalantFromEnum(const RepTypeEnum& repType) const
         {
             return ConvertAsNormalEquivalantV2(*this, repType);
 		}
-#endif
+		#endif
 
 		//Returns std::pair of tValue and RepType
         std::pair<MediumDecV2, RepType> ConvertAsNormalEquivalant(const RepType& repType) const
@@ -2203,6 +2267,16 @@ public:
 
 protected:
 		void UnsignedDivOp_RValueIntSwitch(const MediumDecV2& rValue);
+
+private:
+
+		void DivOpSameRep_CatchAll(const MediumDecV2& rValue, const RepType& LRep);
+		
+		void DivOpSameRep_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
+		
+		void DivOpSameRep_ApproachingBottom(const MediumDecV2& rValue);
+
+		void DivOpSameRep_ApproachingTop(const MediumDecV2& rValue);
 
 public:
 
