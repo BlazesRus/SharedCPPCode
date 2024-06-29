@@ -1,27 +1,31 @@
 #include "MediumDecV2.hpp"
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
-/*
-void MediumDecV2::MultOp_CatchAllOp(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+
+inline void MediumDecV2::MultOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
 {
-    lValue.ConvertToNormType(LRep);
+    ConvertFromAbtract(LRep);
 	auto RValue = rValue.ConvertAsNormType(RRep);
 	lValue.BasicUnsignedMultOp(RValue);
 }
 
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
+inline void MediumDecV2::MultOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
+{
+    ConvertFromAbtract(LRep);
+	auto RValue = rValue.ConvertAsNormType(LRep);
+	lValue.BasicUnsignedMultOp(RValue);
+}
 
-void MediumDecV2::MultOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::MultOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
 
-void MediumDecV2::MultOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::MultOpSameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
-*/
+
 
 void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 {
@@ -63,19 +67,17 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 				BasicUnsignedMultOp(rValue);
 			} break;
     #if defined(AltNum_EnableApproaching)
-                case RepTypeEnum::ApproachingBottom:
-
-                    break;
-                case RepTypeEnum::ApproachingTop:
-
-	                break;
+            case RepTypeEnum::ApproachingBottom:
+				MultOpSameRep_ApproachingBottom(rValue); break;
+            case RepTypeEnum::ApproachingTop:
+				MultOpSameRep_ApproachingTop(rValue); break;
     #endif
     #if defined(AltDec_EnableUndefinedButInRange)
-                case RepType::UndefinedButInRange:
-                    throw "Operation not supported at moment."; break;
+            case RepType::UndefinedButInRange:
+                throw "Operation not supported at moment."; break;
     #endif
-                default:
-                    throw "Operation not supported at moment."; break;
+            default:
+                throw "Operation not supported at moment."; break;
 		}
 
 	}
@@ -84,13 +86,26 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 		switch(LRep)
 		{
 			case RepTypeEnum::NormalType:{
+                switch(RRep)
+                {
+                    default:
+                        MultOp_CatchAll(rValue, LRep, RRep); break;
+                }
 			} break;
     #if defined(AltNum_EnableApproaching)
 			case RepTypeEnum::ApproachingBottom:{
-
+                switch(RRep)
+                {
+                    default:
+                        MultOp_CatchAll(rValue, LRep, RRep); break;
+                }
 			}	break;
-			case RepTypeEnum::ApproachingTop:{
-
+			case RepTypeEnum::ApproachingTop:
+                switch(RRep)
+                {
+                    default:
+                        MultOp_CatchAll(rValue, LRep, RRep); break;
+                }
 			} break;
     #endif
 		}

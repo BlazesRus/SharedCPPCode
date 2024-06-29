@@ -2,19 +2,26 @@
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 
-inline void MediumDecV2::DivOpSameRep_CatchAll(const MediumDecV2& rValue, const RepType& LRep)
+inline void MediumDecV2::DivOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+{
+    ConvertFromAbtract(LRep);
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	lValue.BasicUnsignedDivOp(RValue);
+}
+
+inline void MediumDecV2::DivOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
 {
     ConvertFromAbtract(LRep);
 	auto RValue = rValue.ConvertAsNormType(LRep);
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-inline void MediumDecV2::DivOpSameRep_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
-{
-    ConvertFromAbtract(LRep);
-	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
-	BasicUnsignedDivOp(RValue);
-}
+//inline void MediumDecV2::DivOp_CatchAllV3(const MediumDecV2& rValue, const RepType& LRep)
+//{
+//    ConvertFromAbtract(LRep);
+//	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
+//	BasicUnsignedDivOp(RValue);
+//}
 
 inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValue)
 {
@@ -24,10 +31,10 @@ inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValu
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
-		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
 #endif
 	else
-		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
 }
 
 inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
@@ -38,7 +45,7 @@ inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
 		++IntHalf.Value;
 	}
     else
-	    DivOpSameRep_CatchAll(rValue, RepType::ApproachingTop);
+	    DivOp_CatchAll(rValue, RepType::ApproachingTop);
 }
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)

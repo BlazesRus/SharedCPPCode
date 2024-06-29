@@ -2,18 +2,39 @@
 using MediumDecV2 = BlazesRusCode::MediumDecV2;
 using RepType = BlazesRusCode::RepType;
 
-void MediumDecV2::AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
+inline void MediumDecV2::AddOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep)
+{
+    ConvertToNormTypeFromOther(LRep);
+	auto RValue = rValue.ConvertToNormTypeFromOther(RRep);
+	lValue.BasicUnsignedAddOp(RValue);
+}
+
+inline void MediumDecV2::AddOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep)
+{
+    ConvertToNormTypeFromOther(LRep);
+	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
+	lValue.BasicUnsignedAddOp(RValue);
+}
+
+void MediumDecV2::AddOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
 
-void MediumDecV2::AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
+void MediumDecV2::AddOpSameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
 {
 
 }
 
 void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 {
+    if(rValue.IsZero())
+        return;
+    else if(IsZero()){
+        SetValue(rValue); return;
+    }
+	#if defined(AltNum_EnableInfinityRep)
+    #endif
 	RepType LRep = GetNormRepType();
 	RepType RRep = rValue.GetNormRepType();
 	if(DecimalHalf.Flags==rValue.DecimalHalf.Flags)//Same flag category
@@ -26,17 +47,13 @@ void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 				BasicUnsignedAddOp(rValue);
 				break;
 			break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
 #if defined(AltNum_EnableApproaching)
 			case RepTypeEnum::ApproachingBottom:
-				AddOp_SameRep_ApproachingBottom(rValue, LRep);
+				AddOpSameRep_ApproachingBottom(rValue, LRep);
 				break;
 			case RepTypeEnum::ApproachingTop:
-				AddOp_SameRep_ApproachingTop(rValue, LRep);
+				AddOpSameRep_ApproachingTop(rValue, LRep);
 				break;
-#pragma region AltDecVariantExclusive
-#pragma endregion AltDecVariantExclusive
 #endif
 			default:
 				throw "Operation not supported at moment.";
@@ -44,22 +61,39 @@ void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 		}
 		else
 		{
+    		switch(LRep)
+    		{
+    			case RepTypeEnum::NormalType:{
+                    switch(RRep)
+                    {
+                        default:
+                            MultOp_CatchAll(rValue, LRep, RRep); break;
+                    }
+    			} break;
+        #if defined(AltNum_EnableApproaching)
+    			case RepTypeEnum::ApproachingBottom:{
+                    switch(RRep)
+                    {
+                        default:
+                            MultOp_CatchAll(rValue, LRep, RRep); break;
+                    }
+    			}	break;
+    			case RepTypeEnum::ApproachingTop:{
+                    switch(RRep)
+                    {
+                        default:
+                            MultOp_CatchAll(rValue, LRep, RRep); break;
+                    }
+    			} break;
+        #endif
+    		}
 		}
 	}
-	else//Separate Categories
+	else//Separate Flag Categories
 	{
-		if(rValue.DecimalHalf.Flags==3){
-			if(IsZero())
-				SetValue(rValue);
-			else
+		if(rValue.DecimalHalf.Flags==3||DecimalHalf.Flags==3){
 				throw "Complex number operations not enabled yet.";
-		} else if(DecimalHalf.Flags==3){
-			if(rValue.IsZero())
-				SetValue(rValue);
-			else
-				throw "Complex number operations not enabled yet.";
-		} else
-		{
-		}
+        else
+            AddOp_CatchAll(rValue, LRep, RRep);
 	}
 }

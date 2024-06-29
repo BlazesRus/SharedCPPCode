@@ -2270,9 +2270,9 @@ protected:
 
 private:
 
-		void DivOpSameRep_CatchAll(const MediumDecV2& rValue, const RepType& LRep);
+		void DivOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep);
 		
-		void DivOpSameRep_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
+		void DivOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
 		
 		void DivOpSameRep_ApproachingBottom(const MediumDecV2& rValue);
 
@@ -2760,10 +2760,10 @@ protected:
             if(rValue.IsNegative())
             {
                 lValue.SwapNegativeStatus();
-                lValue.UnsignedMultOp(-rValue);
+                lValue.BasicUnsignedMultOp(-rValue);
             }
             else
-                lValue.UnsignedMultOp(rValue);
+                lValue.BasicUnsignedMultOp(rValue);
         }
 
 public:
@@ -2800,7 +2800,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         MediumDecV2 BasicMultiplyByUnsigned(const MediumDecV2& rValue) const
-        { MediumDecV2 lValue = *this; return lValue.UnsignedMultOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicUnsignedMultOperation(rValue); }
 
 		/// <summary>
         /// Basic Multiplication operation that ignores special decimal status
@@ -2808,7 +2808,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         MediumDecV2 BasicMultiplyBy(const MediumDecV2& rValue) const
-        { MediumDecV2 lValue = *this; return lValue.MultOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicMultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
@@ -3025,6 +3025,18 @@ public:
         const MediumDecV2 MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
         const MediumDecV2 MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
         const MediumDecV2 MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
+
+private:
+
+		void MultOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep);
+		
+		void MultOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
+		
+		void MultOpSameRep_ApproachingBottom(const MediumDecV2& rValue);
+
+		void MultOpSameRep_ApproachingTop(const MediumDecV2& rValue);
+
+public:
 
 		/// <summary>
         /// Unsigned Multiplication operation that ignores special decimal status
@@ -3911,7 +3923,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         const MediumDecV2 BasicAddByUnsigned(const MediumDecV2& rValue)
-        { MediumDecV2 lValue = *this; return lValue.UnsignedAddOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicUnsignedAddOperation(rValue); }
 
 		/// <summary>
         /// Basic addition operation that ignores special decimal status
@@ -3919,7 +3931,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         const MediumDecV2 BasicAddBy(const MediumDecV2& rValue)
-        { MediumDecV2 lValue = *this; return lValue.AddOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicAddOperation(rValue); }
 
 	#pragma endregion Basic_addition
 
@@ -3956,7 +3968,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         const MediumDecV2 BasicSubtractByUnsigned(const MediumDecV2& rValue)
-        { MediumDecV2 lValue = *this; return lValue.UnsignedSubOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicUnsignedSubOperation(rValue); }
 
 		/// <summary>
         /// Basic subtraction operation that ignores special decimal status
@@ -3964,7 +3976,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         const MediumDecV2 BasicSubtractBy(const MediumDecV2& rValue)
-        { MediumDecV2 lValue = *this; return lValue.SubOperation(rValue); }
+        { MediumDecV2 lValue = *this; return lValue.BasicSubOperation(rValue); }
 
 	#pragma endregion Basic_subtraction
 
@@ -3988,13 +4000,21 @@ public:
 
 private:
 
-		void AddOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
+		void AddOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep);
+		
+		void AddOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
+		
+		void AddOpSameRep_ApproachingBottom(const MediumDecV2& rValue);
 
-		void AddOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+		void AddOpSameRep_ApproachingTop(const MediumDecV2& rValue);
+		
+		void SubOp_CatchAll(const MediumDecV2& rValue, const RepType& LRep, const RepType& RRep);
+		
+		void SubOp_CatchAllV2(const MediumDecV2& rValue, const RepType& LRep);
+		
+		void SubOpSameRep_ApproachingBottom(const MediumDecV2& rValue);
 
-		void SubOp_SameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep);
-
-		void SubOp_SameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep);
+		void SubOpSameRep_ApproachingTop(const MediumDecV2& rValue);
 
 public:
 

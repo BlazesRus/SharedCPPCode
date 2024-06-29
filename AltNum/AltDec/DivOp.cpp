@@ -2,18 +2,18 @@
 using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::RepType;
 
-inline void AltDec::DivOpSameRep_CatchAll(const AltDec& rValue, const RepType& LRep)
+inline void AltDec::DivOp_CatchAll(const AltDec& rValue, const RepType& LRep, const RepType& RRep)
+{
+    ConvertFromAbtract(LRep);
+	auto RValue = rValue.ConvertAsNormType(RRep);
+	lValue.BasicUnsignedDivOp(RValue);
+}
+
+inline void AltDec::DivOp_CatchAllV2(const AltDec& rValue, const RepType& LRep)
 {
     ConvertFromAbtract(LRep);
 	auto RValue = rValue.ConvertAsNormType(LRep);
 	lValue.BasicUnsignedDivOp(RValue);
-}
-
-inline void AltDec::DivOpSameRep_CatchAllV2(const AltDec& rValue, const RepType& LRep)
-{
-    ConvertFromAbtract(LRep);
-	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
-	BasicUnsignedDivOp(RValue);
 }
 
 inline void AltDec::DivOpSameRep_ApproachingBottom(const AltDec& rValue)
@@ -24,10 +24,10 @@ inline void AltDec::DivOpSameRep_ApproachingBottom(const AltDec& rValue)
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
-		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
 #endif
 	else
-		DivOpSameRep_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
 }
 
 inline void AltDec::DivOpSameRep_ApproachingTop(const AltDec& rValue)
@@ -47,7 +47,7 @@ inline void AltDec::DivOpSameRep_ApproachingTop(const AltDec& rValue)
 	else
 		CatchAllDivisionV2(rValue, LRep);
 #else
-	DivOpSameRep_CatchAll(rValue, RepType::ApproachingTop);
+	DivOp_CatchAll(rValue, RepType::ApproachingTop);
 #endif
 }
 
