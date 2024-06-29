@@ -3,17 +3,17 @@ using AltDec = BlazesRusCode::AltDec;
 using RepType = BlazesRusCode::RepType;
 
 inline void AltDec::DivOpSameRep_CatchAll(const AltDec& rValue, const RepType& LRep)
-{/*
-    lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
+{
+    ConvertFromAbtract(LRep);
 	auto RValue = rValue.ConvertAsNormType(LRep);
-	lValue.BasicUnsignedDivOp(RValue);*/
+	lValue.BasicUnsignedDivOp(RValue);
 }
 
 inline void AltDec::DivOpSameRep_CatchAllV2(const AltDec& rValue, const RepType& LRep)
-{/*
-    lValue.ConvertToNormType(LRep.ConvertFromNormalRep(lValue.GetFlags()));
-	auto RValue = rValue.ConvertAsNormType(LRep.ConvertFromNormalRep(rValue.GetFlags()));
-	lValue.BasicUnsignedDivOp(RValue);*/
+{
+    ConvertFromAbtract(LRep);
+	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
+	BasicUnsignedDivOp(RValue);
 }
 
 inline void AltDec::DivOpSameRep_ApproachingBottom(const AltDec& rValue)
