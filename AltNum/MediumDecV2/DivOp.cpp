@@ -31,10 +31,10 @@ inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValu
 #if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
 #else
-		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAllV2(rValue, RepType::ApproachingBottom);
 #endif
 	else
-		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
+		DivOp_CatchAllV2(rValue, RepType::ApproachingBottom);
 }
 
 inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
@@ -45,7 +45,7 @@ inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
 		++IntHalf.Value;
 	}
     else
-	    DivOp_CatchAll(rValue, RepType::ApproachingTop);
+	    DivOp_CatchAllV2(rValue, RepType::ApproachingTop);
 }
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
