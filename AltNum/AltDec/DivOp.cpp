@@ -51,16 +51,53 @@ inline void AltDec::DivOpSameRep_ApproachingTop(const AltDec& rValue)
 #endif
 }
 
+inline void AltDec::DivOpSameRep_ApproachingMidLeft(const AltDec& rValue)
+{
+	if (ExtraRep.Value == rValue.ExtraRep.Value)
+	{// 0.249..9 / 0.249..9 = 1
+		if (IntValue.Value == rValue.IntValue.Value)
+		{
+			IntValue = IsNegative()?-1:1; DecimalHalf = 0; ExtraRep = 0;
+		}
+		else if (IntValue == NegativeRep && rValue.IntValue == 0)
+		{
+			IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
+		}
+		else
+		{
+			CatchAllDivisionV2(rValue, LRep);//Just convert into normal numbers for now
+		}
+	}
+	else
+	{
+		CatchAllDivisionV2(rValue, LRep);//Just convert into normal numbers for now
+	}
+}
+
+inline void AltDec::DivOpSameRep_ApproachingMidRight(const AltDec& rValue)
+{
+	if (ExtraRep.Value == rValue.ExtraRep.Value)
+	{//0.50..1 / 0.50..1 = 1
+		if (IntValue.Value == rValue.IntValue.Value)
+		{
+			IntValue = IsNegative()?-1:1; DecimalHalf = 0; ExtraRep = 0;
+		}
+		else
+		{
+			CatchAllDivisionV2(rValue, LRep);//Just convert into normal numbers for now
+		}
+	}
+	else
+	{
+		CatchAllDivisionV2(rValue, LRep);//Just convert into normal numbers for now
+	}
+}
+
 #if defined(AltNum_EnableFractionals)
 void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
-/*	//((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
+	//((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
 	//((AltDecBase(IntHalf,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntHalf,rValue.DecimalHalf)))
-	if (rValue < 0)
-	{
-		rValue *= -1;
-		SwapNegativeStatus();
-	}
 	if (rValue.DecimalHalf == 0)
 	{
 		BasicUIntMultOp(rValue.ExtraRep);
@@ -77,8 +114,6 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 		BasicUIntMultOp(rValue.ExtraRep);
 		BasicUnsignedDivOp(rValue);
 	}
-*/    
-	//Add Code Here
 }
 #endif
 

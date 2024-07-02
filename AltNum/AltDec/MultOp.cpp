@@ -10,105 +10,137 @@ void CatchAllOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
 	BasicUnsignedMultOp(RValue);
 }
 
-void RightSideOp(const auto& rValue, const RepType& RRep)
+void CatchAllOpV2(const auto& rValue, const RepType& RRep)
 {
 	auto RValue = rValue.ConvertAsNormType(RRep);
 	BasicUnsignedMultOp(RValue);
 }
 
-#pragma region AltDecVariantExclusive
-
-#if defined(AltNum_EnablePiRep)
-
-//Convert right side down to Pi representation and then perform operation
-void RightSidePiOp(const auto& rValue, const RepType& RRep)
+inline void AltDec::MultOpSameRep_ApproachingBottom(const AltDec& rValue)
 {
-	auto RValue = rValue.ConvertToPiRep(RRep);
-	BasicUnsignedMultOp(RValue);
-    BasicUnsignedMultOp(PiNum);
+	if (IntValue < 0)
+	{
+		if (rValue.IntValue == 0)//-1.0..1 * 0.0..1
+			IntValue = NegativeRep;
+		else//-1.0..1 * 2.0..1
+			IntValue *= rValue.IntValue;
+	}
+	else if (IntValue != NegativeRep||IntValue!=0)
+	{
+		if (rValue.IntValue == 0)//1.0..1 * 0.0..1
+			IntValue = 0;
+		else//1.0..1 * 2.0..1
+			IntValue *= rValue.IntValue;
+	}
 }
 
-//Convert left side down to Pi representation and right side down to normal
-//and then perform operation
-void LeftSidePiOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+inline void AltDec::MultOpSameRep_ApproachingTop(const AltDec& rValue)
 {
-	ConvertToPiRep(LRep);
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
-}
-#endif
-
-#if defined(AltNum_EnableERep)
-
-//Convert right side down to e representation and then perform operation
-void RightSideEOp(const auto& rValue, const RepType& RRep)
-{
-	auto RValue = rValue.ConvertToERep(RRep);
-	BasicUnsignedMultOp(RValue);
-    BasicUnsignedMultOp(ENum);
+	CatchAllOpV2(rValue,RepTypeEnum::ApproachingTop);
 }
 
-//Convert left side down to e representation and right side down to normal
-//and then perform operation
-void LeftSideEOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
+inline void AltDec::MultOpSameRep_ApproachingMidLeft(const AltDec& rValue)
 {
-	ConvertToERep(LRep);
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
-}
-#endif
-
-#if defined(AltNum_EnableIRep)
-//Convert right side down to i representation and then perform operation
-void RightSideIOp(const auto& rValue, const RepType& RRep)
-{
-	auto RValue = rValue.ConvertToIRep(RRep);
-	BasicUnsignedMultOp(RValue);
-    DecimalHalf.Flags = 3;
-}
-
-//Convert left side down to i representation and right side down to normal
-//and then perform operation
-void LeftSideIOp(const auto& rValue, const RepType& LRep, const RepType& RRep)
-{
-	ConvertToIRep(LRep);
-	auto RValue = rValue.ConvertAsNormType(RRep);
-	BasicUnsignedMultOp(RValue);
-}
-#endif
-
-void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
-{
-    //Add Code Here
-}
-
-void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
-{
-    //Add Code Here
+	if (rValue.IntValue.Value == 0)
+	{
+		//-0.49..9 * 0.49..9 =  ~-0.249..9 (IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
+		//0.49..9 * 0.49..9(IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:2)
+		// =  ~0.249..9 (IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:4)
+		// 0.249..9 * 0.249..9 = ~0.06249..9(IntValue:0 DecimalHalf:ApproachingrValue.Rep ExtraRep:16)
+		if (IntValue == 0 || IntValue == NegativeRep)
+			ExtraRep *= rValue.ExtraRep;
+		else
+		{//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+			CatchAllOpV2(rValue, RepTypeEnum::ApproachingMidLeft);
+		}
+	}
+	else
+	{//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+		bool IsNegative = IntValue<0;
+		if (IsNegative)
+			IntValue = IntValue == NegativeRep:0 ? -IntValue;
+		int XZ = IntValue * rValue.IntValue;
+		AltDec XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntValue;
+		AltDec YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntValue;
+		AltDec YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rValue.ExtraRep);
+		XV += XZ;
+		XV += YZ + YV;
+		if (IsNegative)
+			IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+		DecimalHalf = XV.DecimalHalf;
+		ExtraRep = XV.ExtraRep;
+	}
 }
 
-void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+inline void AltDec::MultOpSameRep_ApproachingMidRight(const AltDec& rValue)
 {
-    //Add Code Here
+	if (rValue.IntValue.Value == 0)
+	{
+		if (IntValue == 0 || IntValue == NegativeRep)
+			ExtraRep *= rValue.ExtraRep;
+		else
+		{//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+			CatchAllOpV2(rValue, RepTypeEnum::ApproachingMidRight);
+		}
+	}
+	else
+	{//X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
+		bool IsNegative = IntValue<0;
+		if (IsNegative)
+			IntValue = IntValue == NegativeRep:0 ? -IntValue;
+		int XZ = IntValue * rValue.IntValue;
+		AltDec XV = SetAsApproachingMid(0, rValue.ExtraRep) * IntValue;
+		AltDec YZ = SetAsApproachingMid(0, ExtraRep) * rValue.IntValue;
+		AltDec YV = SetAsApproachingMid(0, ExtraRep) * SetAsApproachingMid(0, rValue.ExtraRep);
+		XV += XZ;
+		XV += YZ + YV;
+		if (IsNegative)
+			IntValue = XV.IntValue == 0 ? NegativeRep : -XV.IntValue;
+		DecimalHalf = XV.DecimalHalf;
+		ExtraRep = XV.ExtraRep;
+	}
 }
 
-#if defined(AltNum_EnableWithinMinMaxRange)
+inline void AltDec::MultOpSameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+{
+	//((AltDec(IntValue,DecimalHalf))/ExtraRep) * (AltDec(rValue.IntValue,rValue.DecimalHalf))/rValue.ExtraRep) = 
+	//((AltDec(IntValue,DecimalHalf))*AltDec(rValue.IntValue,rValue.DecimalHalf)))/(ExtraRep*rValue.ExtraRep)
+	BasicUnsignedMultOp(rValue);
+	ExtraRep *= rValue.ExtraRep;
+}
+
+inline void AltDec::MultOpSameRep_PowerOf(const auto& rValue, const RepType& LRep)
+{
+	if(IntValue==rValue.IntValue&&DecimalHalf==rValue.DecimalHalf)
+		ExtraRep += rValue.ExtraRep;
+	else
+		CatchAllOpV2(rValue,RepTypeEnum::ApproachingTop);
+}
+
+inline void AltDec::MultOpSameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+{
+	//IntValue.Value + (DecimalHalf.Value/ExtraRep.Value)
+	int LeftSideNum;
+	if (IntValue.Value == 0)
+		LeftSideNum = DecimalHalf.Value;
+	else
+		LeftSideNum = IntValue.Value * ExtraRep.Value + DecimalHalf;
+	int RightSideNum = rValue.IntValue == 0 ? rValue.DecimalHalf.Value : rValue.IntValue.Value * rValue.ExtraRep.Value + rValue.DecimalHalf.Value;
+	//Becomes NumByDiv now
+	IntValue.Value = LeftSideNum * RightSideNum;
+	DecimalHalf = 0;
+	ExtraRep.Value = ExtraRep.Value * rValue.ExtraRep.Value;
+}
+
+/*#if defined(AltNum_EnableWithinMinMaxRange)
 void SameRep_WithinMinMaxRange
-{
-	throw "WithinMinMaxRange code not adjusted yet to changes in code.";
+{//Update this code later
+	if (rValue.DecimalHalf == InfinityRep)
+		DecimalHalf = InfinityRep;
+	else
+		BasicUnsignedMultOp(rValue);
 }
-#endif
-#pragma endregion AltDecVariantExclusive
-
-void SameRep_ApproachingBottom(const auto& rValue)
-{
-    //Add Code Here
-}
-
-void SameRep_ApproachingTop(const auto& rValue)
-{
-    //Add Code Here
-}
+#endif*/
 
 void NormalToNormalOperation(const auto& rValue, const RepType& LRep, const RepType& RRep)
 {
