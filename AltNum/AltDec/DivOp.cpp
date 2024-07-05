@@ -16,23 +16,24 @@ inline void AltDec::DivOp_CatchAllV2(const AltDec& rValue, const RepType& LRep)
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
+#if defined(AltNum_EnableApproaching)
 inline void AltDec::DivOpSameRep_ApproachingBottom(const AltDec& rValue)
 {
     if(lValue.IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
 	else if(rValue.IntHalf.Value==0)//2.0..01/0.0..01 = infinity
-#if defined(AltNum_EnableInfinity)
+	#if defined(AltNum_EnableInfinity)
 		SetAsInfinityVal();
-#else
+	#else
 		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
-#endif
+	#endif
 	else
 		DivOp_CatchAll(rValue, RepType::ApproachingBottom);
 }
 
 inline void AltDec::DivOpSameRep_ApproachingTop(const AltDec& rValue)
 {
-#if defined(AltNum_EnableApproachingDivided)
+	#if defined(AltNum_EnableApproachingDivided)
 	//0.9..9/2.9..9 = ~0.9..9/3 (not quite that but close enough)
     if(IntHalf.Value==0){
 		DecimalHalf.Value = ApproachingMidLeftRep;
@@ -46,11 +47,13 @@ inline void AltDec::DivOpSameRep_ApproachingTop(const AltDec& rValue)
 	//5.99999999999999999999999999999999999999999999/0.99999999999999999999999999999999999999999999 = 6.0000000000000000000000000000000000000000000500000000000000000000000000000000000000000005
 	else
 		CatchAllDivisionV2(rValue, LRep);
-#else
+	#else
 	DivOp_CatchAll(rValue, RepType::ApproachingTop);
-#endif
+	#endif
 }
+#endif
 
+#if defined(AltNum_EnableApproachingDivided)
 inline void AltDec::DivOpSameRep_ApproachingMidLeft(const AltDec& rValue)
 {
 	if (ExtraRep.Value == rValue.ExtraRep.Value)
@@ -92,9 +95,10 @@ inline void AltDec::DivOpSameRep_ApproachingMidRight(const AltDec& rValue)
 		CatchAllDivisionV2(rValue, LRep);//Just convert into normal numbers for now
 	}
 }
+#endif
 
 #if defined(AltNum_EnableFractionals)
-void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
+inline void AltDec::DivOpSameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 {
 	//((AltDecBase(IntHalf,DecimalHalf))/ExtraRep) / (AltDecBase(rValue.IntHalf,rValue.DecimalHalf))/rValue.ExtraRep) = 
 	//((AltDecBase(IntHalf,DecimalHalf))* rValue.ExtraRep/ExtraRep) /(AltDecBase(rValue.IntHalf,rValue.DecimalHalf)))
@@ -118,7 +122,7 @@ void SameRep_NumByDiv(const auto& rValue, const RepType& LRep)
 #endif
 
 #if defined(AltNum_EnablePowerOfRepresentation)
-void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
+inline void AltDec::DivOpSameRep_PowerOf(const auto& rValue, const RepType& LRep)
 {
 	if(IntHalf==rValue.IntHalf&&DecimalHalf==rValue.DecimalHalf){//(1.5Pi^4)/(1.5Pi^2)=(1.5Pi^2)
 	#if defined(AltNum_EnableNegativePowerRep)
@@ -138,7 +142,8 @@ void SameRep_PowerOf(const auto& rValue, const RepType& LRep)
 }
 #endif
 
-void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
+#if defined(AltNum_EnableMixedFractional)
+inline void AltDec::DivOpSameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 {
 /*	int rvDivisor = -rValue.ExtraRep;
 	//=LeftSideNum*rValue.ExtraRep / RightSideNum;
@@ -170,6 +175,11 @@ void SameRep_MixedFrac(const auto& rValue, const RepType& LRep)
 	}*/
     //Add Code Here
 }
+#endif
+
+#define AltNum_LoadingRepToRep
+#include "RepToRepDivOp.ipp"
+#undef AltNum_LoadingRepToRep
 
 void AltDec::UnsignedDivOp(const AltDec& rValue)
 {
