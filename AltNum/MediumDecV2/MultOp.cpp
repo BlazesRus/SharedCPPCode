@@ -16,16 +16,39 @@ inline void MediumDecV2::MultOp_CatchAllV2(const MediumDecV2& rValue, const RepT
 	lValue.BasicUnsignedMultOp(RValue);
 }
 
+#if defined(AltNum_EnableApproaching)
+
 void MediumDecV2::MultOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
-
+	if(IntValue.Value!=0)
+	{
+		if (rValue.IntValue == 0)//1.0..1 * 0.0..1
+			IntValue = IntValue < 0?NegativeRep:0;
+		else//1.0..1 * 2.0..1
+			IntValue *= rValue.IntValue;
+	}
+	else if (rValue.IntValue == 0)
+	{//5.0..01 x 0.0..01 = 0.0..01
+		IntValue = IntValue < 0?NegativeRep:0;
+	}
 }
 
 void MediumDecV2::MultOpSameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
-{
-
+{//0.9..9 x 0.9..9 = ~0.9..9
+//1.999999999999999999999999999999999 x 1.999999999999999999999999999999999 = 3.999999999999999999999999999999996000000000000000000000000000000001 (~3.9..9 - 0.0..03)
+//1.999999999999999999999999999999999 x 0.999999999999999999999999999999999 = 1.999999999999999999999999999999997000000000000000000000000000000001
+//3.999999999999999999999999999999999 x 0.999999999999999999999999999999999 = 3.999999999999999999999999999999995000000000000000000000000000000001
+	if(IntValue.Value!=0)
+	{	//1.9..9 * 0.9..9 = ~1.9..9
+		if (rValue.IntValue != 0){ //1.0..1 * 2.0..1
+			++IntValue *= rValue.IntValue+1;
+			--IntValue;
+		}
+	}
 }
 
+
+#endif
 
 void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 {
@@ -70,7 +93,7 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
             case RepTypeEnum::ApproachingBottom:
 				MultOpSameRep_ApproachingBottom(rValue); break;
             case RepTypeEnum::ApproachingTop:
-				MultOpSameRep_ApproachingTop(rValue); break;
+				MultOp_CatchAllV2(rValue, RepTypeEnum::ApproachingTop); break;
     #endif
     #if defined(AltDec_EnableUndefinedButInRange)
             case RepType::UndefinedButInRange:
@@ -93,21 +116,16 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
                 }
 			} break;
     #if defined(AltNum_EnableApproaching)
-			case RepTypeEnum::ApproachingBottom:{
-                switch(RRep)
-                {
-                    default:
-                        MultOp_CatchAll(rValue, LRep, RRep); break;
-                }
-			}	break;
+			case RepTypeEnum::ApproachingBottom:
+                if(IntValue.Value!=0)
+					MultOp_CatchAll(rValue, LRep, RRep);
+			break;
 			case RepTypeEnum::ApproachingTop:
-                switch(RRep)
-                {
-                    default:
-                        MultOp_CatchAll(rValue, LRep, RRep); break;
-                }
-			} break;
+				MultOp_CatchAll(rValue, LRep, RRep);
+			break;
     #endif
+            default:
+                throw "Operation not supported at moment."; break;
 		}
 	}
 	if(DecimalHalf.Flags==rValue.DecimalHalf.Flags)//Same flag category

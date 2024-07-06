@@ -16,16 +16,20 @@ inline void MediumDecV2::DivOp_CatchAllV2(const MediumDecV2& rValue, const RepTy
 	lValue.BasicUnsignedDivOp(RValue);
 }
 
-//inline void MediumDecV2::DivOp_CatchAllV3(const MediumDecV2& rValue, const RepType& LRep)
-//{
-//    ConvertFromAbtract(LRep);
-//	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
-//	BasicUnsignedDivOp(RValue);
-//}
+/*
+inline void MediumDecV2::DivOp_CatchAllV3(const MediumDecV2& rValue, const RepType& LRep)
+{
+	ConvertFromAbtract(LRep);
+	auto RValue = rValue.ConvertToNormTypeFromOther(LRep);
+	BasicUnsignedDivOp(RValue);
+}
+*/
+
+#if defined(AltNum_EnableApproaching)
 
 inline void MediumDecV2::DivOpSameRep_ApproachingBottom(const MediumDecV2& rValue)
 {
-    if(lValue.IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
+    if(IntHalf.Value==0)//0.0..01/2.0..01 = ~0.0..01
 		return;
 	else if(rValue.IntHalf.Value==0)//2.0..01/0.0..01 = infinity
 #if defined(AltNum_EnableInfinity)
@@ -47,6 +51,8 @@ inline void MediumDecV2::DivOpSameRep_ApproachingTop(const MediumDecV2& rValue)
     else
 	    DivOp_CatchAllV2(rValue, RepType::ApproachingTop);
 }
+
+#endif
 
 void MediumDecV2::UnsignedDivOp(const MediumDecV2& rValue)
 {

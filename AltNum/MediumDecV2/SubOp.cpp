@@ -16,6 +16,8 @@ inline void MediumDecV2::SubOp_CatchAllV2(const MediumDecV2& rValue, const RepTy
 	BasicUnsignedSubOp(RValue);
 }
 
+#if defined(AltNum_EnableApproaching)
+
 void MediumDecV2::SubOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 	if (IntValue == NegativeRep)
@@ -161,6 +163,8 @@ void MediumDecV2::SubOpSameRep_ApproachingTop(const MediumDecV2& rValue, const R
 		}
 	}
 }
+
+#endif
 
 void MediumDecV2::UnsignedSubOp(const MediumDecV2& rValue)
 {

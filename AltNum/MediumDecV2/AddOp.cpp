@@ -16,6 +16,8 @@ inline void MediumDecV2::AddOp_CatchAllV2(const MediumDecV2& rValue, const RepTy
 	lValue.BasicUnsignedAddOp(RValue);
 }
 
+#if defined(AltNum_EnableApproaching)
+
 void MediumDecV2::AddOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
 	if (IntValue == NegativeRep)
@@ -172,6 +174,8 @@ void MediumDecV2::AddOpSameRep_ApproachingTop(const MediumDecV2& rValue, const R
 		}
 	}
 }
+
+#endif
 
 void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 {
