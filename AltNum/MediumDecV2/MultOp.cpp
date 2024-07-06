@@ -41,8 +41,8 @@ void MediumDecV2::MultOpSameRep_ApproachingTop(const MediumDecV2& rValue, const 
 	if(IntValue.Value!=0)
 	{	//1.9..9 * 0.9..9 = ~1.9..9
 		if (rValue.IntValue != 0){ //1.0..1 * 2.0..1
-			++IntValue *= rValue.IntValue+1;
-			--IntValue;
+			++IntValue.Value *= rValue.IntValue.Value+1;
+			--IntValue.Value;
 		}
 	}
 }
