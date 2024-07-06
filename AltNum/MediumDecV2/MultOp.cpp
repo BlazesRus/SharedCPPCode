@@ -22,12 +22,12 @@ void MediumDecV2::MultOpSameRep_ApproachingBottom(const MediumDecV2& rValue, con
 {
 	if(IntValue.Value!=0)
 	{
-		if (rValue.IntValue == 0)//1.0..1 * 0.0..1
+		if (rValue.IntHalf == 0)//1.0..1 * 0.0..1
 			IntValue = IntValue < 0?NegativeRep:0;
 		else//1.0..1 * 2.0..1
-			IntValue *= rValue.IntValue;
+			IntValue *= rValue.IntHalf;
 	}
-	else if (rValue.IntValue == 0)
+	else if (rValue.IntHalf == 0)
 	{//5.0..01 x 0.0..01 = 0.0..01
 		IntValue = IntValue < 0?NegativeRep:0;
 	}
@@ -40,8 +40,8 @@ void MediumDecV2::MultOpSameRep_ApproachingTop(const MediumDecV2& rValue, const 
 //3.999999999999999999999999999999999 x 0.999999999999999999999999999999999 = 3.999999999999999999999999999999995000000000000000000000000000000001
 	if(IntValue.Value!=0)
 	{	//1.9..9 * 0.9..9 = ~1.9..9
-		if (rValue.IntValue != 0){ //1.0..1 * 2.0..1
-			++IntValue.Value *= rValue.IntValue.Value+1;
+		if (rValue.IntHalf != 0){ //1.0..1 * 2.0..1
+			++IntValue.Value *= rValue.IntHalf.Value+1;
 			--IntValue.Value;
 		}
 	}

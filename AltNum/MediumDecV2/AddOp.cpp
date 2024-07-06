@@ -20,157 +20,149 @@ inline void MediumDecV2::AddOp_CatchAllV2(const MediumDecV2& rValue, const RepTy
 
 void MediumDecV2::AddOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
-	if (IntValue == NegativeRep)
+	if (IntHalf == NegativeRep)
 	{
-		if (rValue.IntValue == 0)//-0.0..1 + 0.0..1 = 0
+		if (rValue.IntHalf == MirroredInt::Zero)//-0.0..1 + 0.0..1 = 0
 			SetAsZero();
-		else if (rValue.IntValue == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
-		{/*Do Nothing*/
-		}
-		else if (rValue.IntValue < 0)//-0.0..1 - 1.0..1 = -1.0..1
+		//else if (rValue.IntHalf == NegativeRep)//-0.0..1 - 0.0..1 = -0.0..1
+		else if (rValue.IsNegative())//-0.0..1 - 1.0..1 = -1.0..1
 		{
-			IntValue = rValue.IntValue;
+			if(rValue.IntHalf!=0)
+				IntHalf = rValue.IntHalf;
 		}
 		else//-0.0..1 + 5.0..1 = 5
 		{
 			DecimalHalf.Value = 0;
-			IntValue = rValue.IntValue;
+			IntHalf = rValue.IntHalf;
 		}
 	}
-	if (IntValue == 0)
+	else if (IntHalf == MirroredInt::Zero)
 	{
-		if (rValue.IntValue == 0)//0.0..1 + 0.0..1 = 0.0..1
-		{/*Do Nothing*/
-		}
-		else if (rValue.IntValue == NegativeRep)//0.0..1 - 0.0..1 = 0
+		//if (rValue.IntHalf == MirroredInt::Zero)//0.0..1 + 0.0..1 = 0.0..1
+		if (rValue.IntHalf == NegativeRep)//0.0..1 - 0.0..1 = 0
 			SetAsZero();
-		else if (rValue.IntValue < 0)//0.0..1 - 1.0..1 = -1
+		else if (rValue.IsNegative())//0.0..1 - 1.0..1 = -1
 		{
 			DecimalHalf.Value = 0;
-			IntValue = rValue.IntValue;
+			IntHalf = rValue.IntHalf;
 		}
-		else//0.0..1 + 5.0..1 = 5.0..1
+		else if (rValue.IntHalf != MirroredInt::Zero)//0.0..1 + 5.0..1 = 5.0..1
 		{
-			IntValue = rValue.IntValue;
+			IntHalf = rValue.IntHalf;
 		}
 	}
-	else if (IntValue < 0)
+	else if (IsNegative())
 	{
-		if (rValue.IntValue == 0)//-1.0..1 + 0.0..1  = -1
+		if (rValue.IntHalf == MirroredInt::Zero)//-1.0..1 + 0.0..1  = -1
 			DecimalHalf.Value = 0;
-		else if (rValue.IntValue == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
-		{/*Do Nothing*/
-		}
-		else if (IntValue == -rValue.IntValue)//-1.01 + 1.01
+		//else if (rValue.IntHalf == NegativeRep)//-1.0..1 - 0.0..1 = -1.0..1
+		else if (IntHalf == -rValue.IntHalf)//-1.01 + 1.01
 			SetAsZero();
-		else if (rValue.IntValue < 0)//-1.0..1 - 2.0..1
-		{
-			IntValue += rValue.IntValue;
-		}
-		else//-1.0..1 + 2.0..1 = 1
+		else if (rValue.IsNegative()){//-1.0..1 - 2.0..1
+			if(rValue.IntHalf!=0)
+				IntHalf += rValue.IntHalf;
+		} else//-1.0..1 + 2.0..1 = 1
 		{
 			DecimalHalf.Value = 0;
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
 	}
 	else
 	{
-		if (rValue.IntValue == 0)//1.0..1 + 0.0..1
-		{/*Do Nothing*/
-		}
-		else if (rValue.IntValue == NegativeRep)//1.0..1 - 0.0..1
+		//if (rValue.IntHalf == MirroredInt::Zero)//1.0..1 + 0.0..1
+		if (rValue.IntHalf == NegativeRep)//1.0..1 - 0.0..1
 			DecimalHalf.Value = 0;
-		else if (IntValue == -rValue.IntValue)//1.0..1 - 1.0..1
+		else if (IntHalf == -rValue.IntHalf)//1.0..1 - 1.0..1
 			SetAsZero();
-		else if (rValue.IntValue < 0)// 1.0..1  - 2.0..1
+		else if (rValue.IsNegative())// 1.0..1  - 2.0..1
 		{
 			DecimalHalf.Value = 0;
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
-		else//1.0..1 + 1.0..1
+		else if (rValue.IntHalf == MirroredInt::Zero)//1.0..1 + 1.0..1
 		{
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
 	}
 }
 
 void MediumDecV2::AddOpSameRep_ApproachingTop(const MediumDecV2& rValue, const RepType& LRep)
 {
-	if (IntValue == NegativeRep)
+	if (IntHalf == NegativeRep)
 	{
-		if (rValue.IntValue == 0)//-0.9..9 + 0.9..9 = 0
+		if (rValue.IntHalf == 0)//-0.9..9 + 0.9..9 = 0
 			SetAsZero();
-		else if (rValue.IntValue == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
-			IntValue = -1;
-		else if (rValue.IntValue < 0)//-0.9..9 - 1.9..9 = -2.9..8
+		else if (rValue.IntHalf == NegativeRep)//-0.9..9 - 0.9..9 = -1.9..8
+			IntHalf = -1;
+		else if (rValue.IntHalf < 0)//-0.9..9 - 1.9..9 = -2.9..8
 		{
-			IntValue = rValue.IntValue - 1;
+			IntHalf = rValue.IntHalf - 1;
 		}
 		else//-0.9..9 + 5.9..9 = 5
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
-			IntValue = rValue.IntValue;
+			IntHalf = rValue.IntHalf;
 		}
 	}
-	if (IntValue == 0)
+	else if (IntHalf == MirroredInt::Zero)
 	{
-		if (rValue.IntValue == 0)//0.9..9 + 0.9..9 = 1.9..8
-			IntValue = 1;
-		else if (rValue.IntValue == NegativeRep)//0.9..9 - 0.9..9 = 0
+		if (rValue.IntHalf == MirroredInt::Zero)//0.9..9 + 0.9..9 = 1.9..8
+			IntHalf = 1;
+		else if (rValue.IntHalf == NegativeRep)//0.9..9 - 0.9..9 = 0
 			SetAsZero();
-		else if (rValue.IntValue < 0)//0.9..9 - 1.9..9 = -1
+		else if (rValue.IsNegative())//0.9..9 - 1.9..9 = -1
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
-			IntValue = rValue.IntValue;
+			IntHalf = rValue.IntHalf;
 		}
 		else//0.9..9 + 5.9..9 = 6.9..8
 		{
-			IntValue = rValue.IntValue + 1;
+			IntHalf = rValue.IntHalf + 1;
 		}
 	}
-	else if (IntValue < 0)
+	else if (IsNegative())
 	{
-		if (rValue.IntValue == 0)//-1.9..9 + 0.9..9  = -1
+		if (rValue.IntHalf == MirroredInt::Zero)//-1.9..9 + 0.9..9  = -1
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
 		}
-		else if (rValue.IntValue == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
-			IntValue += rValue.IntValue;
-		else if (IntValue == -rValue.IntValue)//-1.9..9 + 1.9..9
+		else if (rValue.IntHalf == NegativeRep)//-1.9..9 - 0.9..9 = -2.9..9
+			IntHalf += rValue.IntHalf;
+		else if (IntHalf.Value == rValue.Value && Sign!=rValue.Sign)//-1.9..9 + 1.9..9
 			SetAsZero();
-		else if (rValue.IntValue < 0)//-1.9..9 - 2.9..9
+		else if (rValue.IsNegative())//-1.9..9 - 2.9..9
 		{
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
 		else//-1.9..9 + 2.9..9
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
 	}
 	else
 	{
-		if (rValue.IntValue == 0)//1.9..9 + 0.9..9 = 2.9..8
+		if (rValue.IntHalf == MirroredInt::Zero)//1.9..9 + 0.9..9 = 2.9..8
 		{
-			if (IntValue == -1)
-				IntValue = NegativeRep;
+			if (IntHalf == -1)
+				IntHalf = NegativeRep;
 			else
-				++IntValue;
+				++IntHalf;
 		}
-		else if (rValue.IntValue == NegativeRep)//1.9..9 - 0.9..9
+		else if (rValue.IntHalf == NegativeRep)//1.9..9 - 0.9..9
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
 		}
-		else if (IntValue == -rValue.IntValue)//1.9..9 - 1.9..9
+		else if (IntHalf == -rValue.IntHalf)//1.9..9 - 1.9..9
 			SetAsZero();
-		else if (rValue.IntValue < 0)// 1.9..9  - 2.9..9
+		else if (rValue.IntHalf < 0)// 1.9..9  - 2.9..9
 		{
 			DecimalHalf.Value = 0; ExtraRep = 0;
-			IntValue += rValue.IntValue;
+			IntHalf += rValue.IntHalf;
 		}
 		else//1.9..9 + 1.9..9 = 3.9..8
 		{
-			IntValue += rValue.IntValue + 1;
+			IntHalf += rValue.IntHalf + 1;
 		}
 	}
 }
@@ -229,7 +221,7 @@ void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 							if(IsNegative())//-1.0..01 + 0.9..9
 								AddOp_CatchAll(rValue, LRep, RRep);
 							else {//1.0..1 + 5.9..9 = 7
-								IntValue = rValue.IntValue+1;
+								IntHalf = rValue.IntHalf+1;
 								DecimalHalf = 0;
 							}
 							break;
@@ -244,7 +236,7 @@ void MediumDecV2::UnsignedAddOp(const MediumDecV2& rValue)
 							if(IsNegative())
 								AddOp_CatchAll(rValue, LRep, RRep);
 							else {
-								IntValue.Value = rValue.IntValue.Value+1;
+								IntHalf.Value = rValue.IntHalf.Value+1;
 								DecimalHalf = 0;
 							}
 							break;

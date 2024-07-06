@@ -58,11 +58,11 @@ inline void AltDec::DivOpSameRep_ApproachingMidLeft(const AltDec& rValue)
 {
 	if (ExtraRep.Value == rValue.ExtraRep.Value)
 	{// 0.249..9 / 0.249..9 = 1
-		if (IntValue.Value == rValue.IntValue.Value)
+		if (IntValue.Value == rValue.IntHalf.Value)
 		{
 			IntValue = IsNegative()?-1:1; DecimalHalf = 0; ExtraRep = 0;
 		}
-		else if (IntValue == NegativeRep && rValue.IntValue == 0)
+		else if (IntValue == NegativeRep && rValue.IntHalf == 0)
 		{
 			IntValue = -1; DecimalHalf = 0; ExtraRep = 0;
 		}
@@ -81,7 +81,7 @@ inline void AltDec::DivOpSameRep_ApproachingMidRight(const AltDec& rValue)
 {
 	if (ExtraRep.Value == rValue.ExtraRep.Value)
 	{//0.50..1 / 0.50..1 = 1
-		if (IntValue.Value == rValue.IntValue.Value)
+		if (IntValue.Value == rValue.IntHalf.Value)
 		{
 			IntValue = IsNegative()?-1:1; DecimalHalf = 0; ExtraRep = 0;
 		}
