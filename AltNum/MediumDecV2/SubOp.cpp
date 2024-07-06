@@ -218,6 +218,14 @@ void MediumDecV2::UnsignedSubOp(const MediumDecV2& rValue)
     			case RepTypeEnum::ApproachingBottom:{
                     switch(RRep)
                     {
+						case RepTypeEnum::ApproachingTop:
+							if(IsNegative()){//-1.0..1 - 5.9..9 = -7
+								IntValue.Value = rValue.IntValue.Value+1;
+								DecimalHalf = 0;
+							}
+							else
+								SubOp_CatchAll(rValue, LRep, RRep);
+							break;
                         default:
                             SubOp_CatchAll(rValue, LRep, RRep); break;
                     }
@@ -225,11 +233,21 @@ void MediumDecV2::UnsignedSubOp(const MediumDecV2& rValue)
     			case RepTypeEnum::ApproachingTop:{
                     switch(RRep)
                     {
+						case RepTypeEnum::ApproachingBottom:
+							if(IsNegative()){
+								IntValue.Value = rValue.IntValue.Value+1;
+								DecimalHalf = 0;
+							}
+							else
+								SubOp_CatchAll(rValue, LRep, RRep);
+							break;
                         default:
                             SubOp_CatchAll(rValue, LRep, RRep); break;
                     }
     			} break;
         #endif
+				default:
+					throw "Operation not supported at moment.";
     		}
 		}
 	}
