@@ -25,4 +25,10 @@ namespace BlazesRusCode
     {
 	
     };
+	
+	//Base class for AltDec and MediumDec identify class as unsigned MediumDec variant
+    class DLL_API UnsignedAltNumBase
+    {
+	
+    };
 }

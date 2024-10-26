@@ -18,31 +18,28 @@
 #include <compare>//used for C++20 feature of spaceship operator
 #include "..\Concepts\MediumDecVariantConcept.hpp"
 
-
-#include "..\AlternativeInt\MirroredInt.hpp"
 #include "..\AlternativeInt\PartialInt.hpp"
 
-using MirroredInt = BlazesRusCode::MirroredInt;
 using PartialInt = BlazesRusCode::PartialInt;
 
 namespace BlazesRusCode
 {
-    class MediumDec;
+    class MediumUDec;
 
     /// <summary>
-    /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
-    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
+    /// Unsigned version of MediumDec
+    /// Represents +- 4294967295.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
     /// (8 bytes worth of Variable Storage inside class for each instance)
-	/// </summary>    class DLL_API MediumDec : public AltNumBase//AltNumBase is used as base class to identify as MediumDec variant
+	/// </summary>
+    class DLL_API MediumUDec : public UnsignedAltNumBase//UnsignedAltNumBase is used as base class to identify as MediumUDec variant
     {
     public:
     #pragma region DigitStorage
 
         /// <summary>
-        /// Stores whole half of number(Including positive/negative status)
-		/// (in the case of infinity is used to determine if positive vs negative infinity)
+        /// Stores whole half of number
         /// </summary>
-        MirroredInt IntHalf;
+        unsigned int IntHalf;
 
         /// <summary>
         /// Stores decimal section info and other special info
@@ -50,9 +47,9 @@ namespace BlazesRusCode
         PartialInt DecimalHalf;
 
 		//Return IntHalf as signed int
-        inline signed int GetIntHalf() const
+        inline unsigned int GetIntHalf() const
         {
-			return IntHalf.GetValue();
+			return IntHalf;
         }
 
         inline unsigned int GetFlags() const
@@ -77,36 +74,31 @@ namespace BlazesRusCode
         /// </summary>
         static unsigned _int64 const DecimalOverflowX = 1000000000;
 
-        /// <summary>
-        /// tValue when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
-        /// </summary>
-        static MirroredInt const NegativeRep;
-
     #pragma region class_constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDec(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+        MediumUDec(const unsigned int& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+        MediumUDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
         }
 
-        MediumDec& operator=(const MediumDec& rhs)
+        MediumUDec& operator=(const MediumUDec& rhs)
         {
             // Check for self-assignment
             if (this == &rhs)      // Same object?
@@ -115,7 +107,7 @@ namespace BlazesRusCode
             return *this;
         }
 
-        MediumDec& operator=(const signed int& rhs)
+        MediumUDec& operator=(const signed int& rhs)
         {
             IntHalf = rhs; DecimalHalf = 0;
             return *this;
@@ -125,30 +117,30 @@ namespace BlazesRusCode
         /// Creates class from derived class into this class
         /// (subscript operator of [])
         /// </summary>
-        template<MediumDecVariant VariantType>
-        MediumDec operator[](VariantType variantValue) const
+        template<MediumUDecVariant VariantType>
+        MediumUDec operator[](VariantType variantValue) const
         {
-            MediumDec newSelf = MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+            MediumUDec newSelf = MediumUDec(variantValue.IntHalf, variantValue.DecimalHalf);
             return newSelf;
         }
 
         //Fix for C2440 error during static template class
-        static MediumDec Initialize(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+        static MediumUDec Initialize(const unsigned int& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
-            return MediumDec(intVal,decVal);
+            return MediumUDec(intVal,decVal);
         }
 
         //Fix for C2440 error during static template class
-        static MediumDec InitializeV2(const signed int& intVal, const PartialInt& decVal = PartialInt::Zero)
+        static MediumUDec InitializeV2(const signed int& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
-            return MediumDec(intVal,decVal);
+            return MediumUDec(intVal,decVal);
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetValue(const MediumDec& rValue)
+        void SetValue(const MediumUDec& rValue)
         {
             IntHalf = rValue.IntHalf;
             DecimalHalf.SetValueV2(rValue.DecimalHalf);
@@ -171,9 +163,9 @@ namespace BlazesRusCode
         /// Negative Unary Operator(Flips negative status)
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <returns>MediumDec</returns>
-        MediumDec operator-() const
-        { MediumDec self = *this; self.SwapNegativeStatus(); return self; }
+        /// <returns>MediumUDec</returns>
+        MediumUDec operator-() const
+        { MediumUDec self = *this; self.SwapNegativeStatus(); return self; }
 
     #pragma endregion Negative_Status
 
@@ -189,7 +181,7 @@ namespace BlazesRusCode
 		//Set as +-1 while keeping current sign
         void SetAsOneVal();
 
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
+        void SetAsValues(const unsigned int& intVal = unsigned int::Zero, const PartialInt& decVal = PartialInt::Zero);
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const;
@@ -272,7 +264,7 @@ public:
         /// <summary>
         /// Sets the value at "0.005"
         /// </summary>
-        /// <returns>MediumDec</returns>
+        /// <returns>MediumUDec</returns>
         void  SetValueToFiveThousandth();
 
         /// <summary>
@@ -311,212 +303,212 @@ public:
     #pragma region ValueDefines
 public:
 
-        static MediumDec AlmostOneValue();
+        static MediumUDec AlmostOneValue();
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
         /// (Stored as 3.141592654)
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec PiNumValue();
+        /// <returns>MediumUDec</returns>
+        static MediumUDec PiNumValue();
 
         //100,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec HundredMilPiNumValue();
+        static MediumUDec HundredMilPiNumValue();
 
         //10,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec TenMilPiNumValue();
+        static MediumUDec TenMilPiNumValue();
 
         //1,000,000xPi(Rounded to 9th decimal digit)
-        static MediumDec OneMilPiNumValue();
+        static MediumUDec OneMilPiNumValue();
 
         //10xPi(Rounded to 9th decimal digit)
-        static MediumDec TenPiNumValue();
+        static MediumUDec TenPiNumValue();
 
-        static MediumDec ENumValue();
+        static MediumUDec ENumValue();
 
-        static MediumDec ZeroValue();
-
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec OneValue();
+        static MediumUDec ZeroValue();
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec TwoValue();
+        /// <returns>MediumUDec</returns>
+        static MediumUDec OneValue();
+
+        /// <summary>
+        /// Returns the value at one
+        /// </summary>
+        /// <returns>MediumUDec</returns>
+        static MediumUDec TwoValue();
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec NegativeOneValue();
+        /// <returns>MediumUDec</returns>
+        static MediumUDec NegativeOneValue();
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static MediumDec Point5Value();
+        /// <returns>MediumUDec</returns>
+        static MediumUDec Point5Value();
 
-        static MediumDec JustAboveZeroValue();
+        static MediumUDec JustAboveZeroValue();
 
-        static MediumDec OneMillionthValue();
+        static MediumUDec OneMillionthValue();
 
-        static MediumDec FiveThousandthValue();
+        static MediumUDec FiveThousandthValue();
 
-        static MediumDec FiveMillionthValue();
+        static MediumUDec FiveMillionthValue();
 
-        static MediumDec TenMillionthValue();
+        static MediumUDec TenMillionthValue();
 
-        static MediumDec OneHundredMillionthValue();
+        static MediumUDec OneHundredMillionthValue();
 
-        static MediumDec FiveBillionthValue();
+        static MediumUDec FiveBillionthValue();
 
-        static MediumDec LN10Value();
+        static MediumUDec LN10Value();
 
-        static MediumDec LN10DivValue();
+        static MediumUDec LN10DivValue();
 
-        static MediumDec TwiceLN10DivValue();
+        static MediumUDec TwiceLN10DivValue();
 
-        static MediumDec MinimumValue();
+        static MediumUDec MinimumValue();
 
-        static MediumDec MaximumValue();
+        static MediumUDec MaximumValue();
 
-        static MediumDec NegativePointFiveValue();
+        static MediumUDec NegativePointFiveValue();
 
-		static MediumDec PointOneValue();
+		static MediumUDec PointOneValue();
 
-        static const MediumDec NegativePointFive;
+        static const MediumUDec NegativePointFive;
 
-        static const MediumDec AlmostOne;
+        static const MediumUDec AlmostOne;
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec PiNum;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec PiNum;
 
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec ENum;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec ENum;
 
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) Representation
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec Pi;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec Pi;
 
         /// <summary>
         /// Euler's number (Non-Alternative Representation)
         /// Irrational number equal to about (1 + 1/n)^n
         /// (about 2.71828182845904523536028747135266249775724709369995)
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec E;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec E;
 
         /// <summary>
         /// Returns the value at zero
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec Zero;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec Zero;
 
         /// <summary>
         /// Returns the value at one
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec One;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec One;
 
         /// <summary>
         /// Returns the value at two
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec Two;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec Two;
 
         /// <summary>
         /// Returns the value at 0.5
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec PointFive;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec PointFive;
 
         /// <summary>
         /// Returns the value at digit one more than zero (0.000000001)
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec JustAboveZero;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec JustAboveZero;
 
         /// <summary>
         /// Returns the value at .000000005
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec FiveBillionth;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec FiveBillionth;
 
         /// <summary>
         /// Returns the value at .000001000
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec OneMillionth;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec OneMillionth;
 
         /// <summary>
         /// Returns the value at "0.005"
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec FiveThousandth;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec FiveThousandth;
 
         /// <summary>
         /// Returns the value at .000000010
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec OneGMillionth;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec OneGMillionth;
 
         //0e-7
-        static const MediumDec TenMillionth;
+        static const MediumUDec TenMillionth;
 
         /// <summary>
         /// Returns the value at "0.000005"
         /// </summary>
-        static const MediumDec FiveMillionth;
+        static const MediumUDec FiveMillionth;
 
         /// <summary>
         /// Returns the value at negative one
         /// </summary>
-        /// <returns>MediumDec</returns>
-        static const MediumDec NegativeOne;
+        /// <returns>MediumUDec</returns>
+        static const MediumUDec NegativeOne;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State tValue that can store
         /// (-2147483647.999999999)
         /// </summary>
-        static const MediumDec Minimum;
+        static const MediumUDec Minimum;
 
         /// <summary>
         /// Returns value of highest non-infinite/Special Decimal State tValue that can store
         /// (2147483647.999999999)
         /// </summary>
-        static const MediumDec Maximum;
+        static const MediumUDec Maximum;
 
         /// <summary>
         /// 2.3025850929940456840179914546844
         /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
         /// </summary>
-        static const MediumDec LN10;
+        static const MediumUDec LN10;
 
         /// <summary>
         /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static const MediumDec LN10Div;
+        static const MediumUDec LN10Div;
 
         /// <summary>
         /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
         /// </summary>
-        static const MediumDec TwiceLN10Div;
+        static const MediumUDec TwiceLN10Div;
 
-        static const MediumDec PointOne;
+        static const MediumUDec PointOne;
 
     #pragma endregion ValueDefines
 
@@ -529,16 +521,16 @@ public:
         void ReadString(const std::string& Value);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class from string literal
         /// </summary>
         /// <param name="strVal">The value.</param>
-        MediumDec(const char* strVal);
+        MediumUDec(const char* strVal);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const std::string& Value);
+        MediumUDec(const std::string& Value);
 
 public:
 
@@ -607,38 +599,38 @@ public:
     #if defined(AltNum_EnableFloatingConversion)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const float& tValue){ this->SetFloatVal(tValue); }
+        MediumUDec(const float& tValue){ this->SetFloatVal(tValue); }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const double& tValue){ this->SetDoubleVal(tValue); }
+        MediumUDec(const double& tValue){ this->SetDoubleVal(tValue); }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const long double& tValue){ this->SetDecimalVal(tValue); }
+        MediumUDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
 	#endif
 
-        MediumDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed __int64& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned char& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed char& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned short& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed short& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned int& Value){ this->SetUIntVal(Value); }
+        MediumUDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
+        MediumUDec(const signed __int64& Value){ this->SetIntVal(Value); }
+        MediumUDec(const unsigned char& Value){ this->SetUIntVal(Value); }
+        MediumUDec(const signed char& Value){ this->SetIntVal(Value); }
+        MediumUDec(const unsigned short& Value){ this->SetUIntVal(Value); }
+        MediumUDec(const signed short& Value){ this->SetIntVal(Value); }
+        MediumUDec(const unsigned int& Value){ this->SetUIntVal(Value); }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
+        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        MediumDec(const bool& Value){ this->SetBoolVal(Value); }
+        MediumUDec(const bool& Value){ this->SetBoolVal(Value); }
 
     #pragma endregion ConvertFromOtherTypes
 
@@ -647,19 +639,19 @@ public:
     #if defined(AltNum_EnableFloatingConversion)
 
         /// <summary>
-        /// MediumDec Variant to float explicit conversion
+        /// MediumUDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         float toFloat() const;
 
         /// <summary>
-        /// MediumDec Variant to double explicit conversion
+        /// MediumUDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         double toDouble() const;
 
         /// <summary>
-        /// MediumDec Variant to long double explicit conversion
+        /// MediumUDec Variant to long double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         long double toDecimal() const;
@@ -667,13 +659,13 @@ public:
     #endif
 
         /// <summary>
-        /// MediumDec Variant to int explicit conversion
+        /// MediumUDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         int toInt() const { return IntHalf.GetValue(); }
 
         /// <summary>
-        /// MediumDec Variant to int explicit conversion
+        /// MediumUDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
@@ -683,19 +675,19 @@ public:
     #if defined(AltNum_EnableFloatingConversion)
 
         /// <summary>
-        /// MediumDec Variant to float explicit conversion
+        /// MediumUDec Variant to float explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator float() { return toFloat(); }
 
         /// <summary>
-        /// MediumDec Variant to double explicit conversion
+        /// MediumUDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator double() { return toDouble(); }
 
         /// <summary>
-        /// MediumDec Variant to decimal explicit conversion
+        /// MediumUDec Variant to decimal explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator long double() { return toDecimal(); }
@@ -703,49 +695,49 @@ public:
     #endif
 
         /// <summary>
-        /// MediumDec Variant to int explicit conversion
+        /// MediumUDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed int() { return toInt(); }
 
         /// <summary>
-        /// MediumDec Variant to uint explicit conversion
+        /// MediumUDec Variant to uint explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return toUInt(); }
 
         /// <summary>
-        /// MediumDec Variant to int64 explicit conversion
+        /// MediumUDec Variant to int64 explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed __int64() { return toInt(); }
 
         /// <summary>
-        /// MediumDec Variant to ubyte explicit conversion
+        /// MediumUDec Variant to ubyte explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned char() { return toUInt(); }
 
         /// <summary>
-        /// MediumDec Variant to byte explicit conversion
+        /// MediumUDec Variant to byte explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed char() { return toInt(); }
 
         /// <summary>
-        /// MediumDec Variant to ushort explicit conversion
+        /// MediumUDec Variant to ushort explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned short() { return toUInt(); }
 
         /// <summary>
-        /// MediumDec Variant to short explicit conversion
+        /// MediumUDec Variant to short explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator signed short() { return toInt(); }
 
         /// <summary>
-        /// MediumDec Variant to bool explicit conversion
+        /// MediumUDec Variant to bool explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator bool() { return toBool(); }
@@ -755,7 +747,7 @@ public:
     #pragma region Comparison Operators
 protected:
 		//Compare only as if in NormalType representation mode
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
 		std::strong_ordering BasicComparisonV1(const VariantType& that) const
 		{
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
@@ -767,7 +759,7 @@ protected:
 				return DecimalHalfCmp;
 		}
 
-		std::strong_ordering BasicComparison(const MediumDec& that) const
+		std::strong_ordering BasicComparison(const MediumUDec& that) const
 		{
             return BasicComparisonV1(that);
         }
@@ -796,7 +788,7 @@ protected:
 
 public:
 
-		std::strong_ordering operator<=>(const MediumDec& that) const
+		std::strong_ordering operator<=>(const MediumUDec& that) const
 		{//return BasicComparison(that);
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
@@ -817,7 +809,7 @@ public:
 			return BasicIntComparison(that);
 		}
 
-		bool operator==(const MediumDec& that) const
+		bool operator==(const MediumUDec& that) const
 		{
 			if (IntHalf!=that.IntHalf)
 				return false;
@@ -826,7 +818,7 @@ public:
             return true;
 		}
 
-		bool operator!=(const MediumDec& that) const
+		bool operator!=(const MediumUDec& that) const
 		{
 			if (IntHalf!=that.IntHalf)
 				return true;
@@ -916,7 +908,7 @@ public:
 protected:
 
         /// <summary>
-        /// Basic division operation between MediumDec Variant and unsigned Integer value
+        /// Basic division operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -958,7 +950,7 @@ protected:
         { IntDivOpV1(rValue); return *this; }
 
         /// <summary>
-        /// Basic division operation between MediumDec Variant and unsigned Integer value
+        /// Basic division operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -968,7 +960,7 @@ protected:
         { auto self = *this; return self.UIntDivOperationV1(rValue); }
 
         /// <summary>
-        /// Basic division operation between MediumDec Variant and Integer value
+        /// Basic division operation between MediumUDec Variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -991,27 +983,27 @@ public:
         void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
         void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
 
-        MediumDec& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDec& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        MediumDec& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDec& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        MediumDec& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDec& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        MediumDec& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
-        MediumDec& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
+        MediumUDec& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
+        MediumUDec& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
+        MediumUDec& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
+        MediumUDec& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
 
-        const MediumDec DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDec DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        const MediumDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDec DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
+        const MediumUDec DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
+        const MediumUDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
 
-        const MediumDec UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDec UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
 
-        const MediumDec DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDec DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        const MediumDec DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
-        const MediumDec DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
+        const MediumUDec DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
+        const MediumUDec DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
 
@@ -1024,7 +1016,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         bool UnsignedPartialDivOpV1(const VariantType& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
@@ -1045,7 +1037,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void UnsignedDivOpV1(const VariantType& rValue)
 		{
 			if(DecimalHalf==0)
@@ -1114,7 +1106,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void DivOpV1(const VariantType& rValue)
         {
             if(rValue.IsNegative())
@@ -1126,7 +1118,7 @@ protected:
                 UnsignedDivOp(rValue);
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType UnsignedDivisionV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.UnsignedDivOpV1(rValue); return lValue;
@@ -1140,28 +1132,28 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const MediumDec& rValue){ return UnsignedPartialDivOpV1(rValue); }
+        bool UnsignedPartialDivOp(const MediumUDec& rValue){ return UnsignedPartialDivOpV1(rValue); }
 
 		/// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void UnsignedDivOp(const MediumDec& rValue){ UnsignedDivOpV1(rValue); }
+        void UnsignedDivOp(const MediumUDec& rValue){ UnsignedDivOpV1(rValue); }
 
 		/// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        void DivOp(const MediumDec& rValue){ DivOpV1(rValue); }
+        void DivOp(const MediumUDec& rValue){ DivOpV1(rValue); }
 
 		/// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec& UnsignedDivOperation(const MediumDec& rValue)
+        MediumUDec& UnsignedDivOperation(const MediumUDec& rValue)
 		{ UnsignedDivOp(rValue); return *this; }
 
 		/// <summary>
@@ -1169,7 +1161,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec& DivOperation(const MediumDec& rValue)
+        MediumUDec& DivOperation(const MediumUDec& rValue)
 		{ DivOp(rValue); return *this; }
 
 		/// <summary>
@@ -1177,16 +1169,16 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec DivideByUnsigned(const MediumDec& rValue) const
-        { MediumDec lValue = *this; return lValue.UnsignedDivOperation(rValue); }
+        MediumUDec DivideByUnsigned(const MediumUDec& rValue) const
+        { MediumUDec lValue = *this; return lValue.UnsignedDivOperation(rValue); }
 
 		/// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec DivideBy(const MediumDec& rValue) const
-        { MediumDec lValue = *this; return lValue.DivOperation(rValue); }
+        MediumUDec DivideBy(const MediumUDec& rValue) const
+        { MediumUDec lValue = *this; return lValue.DivOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Division Operations
 
@@ -1197,7 +1189,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        /// <returns>MediumDec&</returns>
+        /// <returns>MediumUDec&</returns>
         void DivideByTwo();
 
         /// <summary>
@@ -1205,72 +1197,72 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        /// <returns>MediumDec&</returns>
+        /// <returns>MediumUDec&</returns>
         void DivideByFour();
 
         //Return copy of result divided by two
-        MediumDec DividedByTwo() const;
+        MediumUDec DividedByTwo() const;
 
         //Return copy of result divided by four
-        MediumDec DividedByFour() const;
+        MediumUDec DividedByFour() const;
 
         /// <summary>
         /// /= operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec& lValue, const MediumDec& rValue) { return lValue.DivOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator/=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.DivOperation(rValue); }
 
         /// <summary>
-        /// *= operation between MediumDec variant and Integer rValue.
+        /// *= operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator/=(MediumDec& lValue, const signed int& rValue) { return lValue.IntDivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const signed __int64& rValue) { return lValue.Int64DivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const unsigned int& rValue) { return lValue.UIntDivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64DivOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator/=(MediumUDec& lValue, const signed int& rValue) { return lValue.IntDivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const signed __int64& rValue) { return lValue.Int64DivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const unsigned int& rValue) { return lValue.UIntDivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64DivOperation(rValue); }
 
-        friend MediumDec& operator/=(MediumDec& lValue, const signed char& rValue) { return lValue.Int8DivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const signed short& rValue) { return lValue.Int16DivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const unsigned char& rValue) { return lValue.UInt8DivOperation(rValue); }
-        friend MediumDec& operator/=(MediumDec& lValue, const unsigned short& rValue) { return lValue.UInt16DivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const signed char& rValue) { return lValue.Int8DivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const signed short& rValue) { return lValue.Int16DivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const unsigned char& rValue) { return lValue.UInt8DivOperation(rValue); }
+        friend MediumUDec& operator/=(MediumUDec& lValue, const unsigned short& rValue) { return lValue.UInt16DivOperation(rValue); }
 
         /// <summary>
         /// Division operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator/(MediumDec lValue, const MediumDec& rValue) { return lValue.DivideBy(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator/(MediumUDec lValue, const MediumUDec& rValue) { return lValue.DivideBy(rValue); }
 
         /// <summary>
-        /// Division operation between MediumDec variant and Integer rValue.
+        /// Division operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator/(MediumDec lValue, const signed int& rValue) { return lValue.IntDivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const signed __int64& rValue) { return lValue.Int64DivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const unsigned int& rValue) { return lValue.UIntDivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const unsigned __int64& rValue) { return lValue.UInt64DivOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator/(MediumUDec lValue, const signed int& rValue) { return lValue.IntDivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const signed __int64& rValue) { return lValue.Int64DivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const unsigned int& rValue) { return lValue.UIntDivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const unsigned __int64& rValue) { return lValue.UInt64DivOperation(rValue); }
 
-        friend MediumDec operator/(MediumDec lValue, const signed char& rValue) { return lValue.Int8DivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const signed short& rValue) { return lValue.Int16DivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const unsigned char& rValue) { return lValue.UInt8DivOperation(rValue); }
-        friend MediumDec operator/(MediumDec lValue, const unsigned short& rValue) { return lValue.UInt16DivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const signed char& rValue) { return lValue.Int8DivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const signed short& rValue) { return lValue.Int16DivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const unsigned char& rValue) { return lValue.UInt8DivOperation(rValue); }
+        friend MediumUDec operator/(MediumUDec lValue, const unsigned short& rValue) { return lValue.UInt16DivOperation(rValue); }
 
-        friend MediumDec operator/(const signed int& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const signed __int64& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const unsigned int& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const unsigned __int64& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const signed int& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const signed __int64& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const unsigned int& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const unsigned __int64& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
 
-        friend MediumDec operator/(const signed char& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const signed short& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const unsigned char& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
-        friend MediumDec operator/(const unsigned short& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const signed char& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const signed short& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const unsigned char& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
+        friend MediumUDec operator/(const unsigned short& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).DivideBy(rValue); }
 
 	#pragma endregion Other Division Operations
 
@@ -1281,7 +1273,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
+        /// <returns>MediumUDec</returns>
         template<IntegerType IntType=int>
         void PartialUIntMultOpV1(const IntType& rValue)
         {
@@ -1365,26 +1357,26 @@ protected:
         { IntMultOpV1(Value); return *this; }
 
 		/// <summary>
-        /// Basic multiplication operation between MediumDec variant and unsigned Integer value
+        /// Basic multiplication operation between MediumUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        const MediumDec MultiplyByUIntV1(const IntType& rValue)
+        const MediumUDec MultiplyByUIntV1(const IntType& rValue)
         { auto self = *this; return self.UIntMultOperationV1(rValue); }
 
 		/// <summary>
-        /// Basic multiplication operation between MediumDec variant and Integer value
+        /// Basic multiplication operation between MediumUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=signed int>
-        const MediumDec MultiplyByIntV1(const IntType& rValue)
+        const MediumUDec MultiplyByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntMultOperationV1(rValue); }
 
-        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=unsigned int>
+        template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType=unsigned int>
         static VariantType UIntMultiplicationV1(VariantType lValue, const IntType& rValue)
         { return lValue.UIntMultOperationV1(rValue); }
 
@@ -1402,27 +1394,27 @@ public:
         void UInt16MultOp(const unsigned short& rValue) { UIntMultOpV1(rValue); }
         void Int16MultOp(const signed short& rValue) { IntMultOpV1(rValue); }
 
-        MediumDec& UIntMultOperation(const unsigned int& rValue) { return UIntMultOperationV1(rValue); }
-        MediumDec& IntMultOperation(const signed int& rValue) { return IntMultOperationV1(rValue); }
-        MediumDec& UInt64MultOperation(const unsigned __int64& rValue) { return UIntMultOperationV1(rValue); }
-        MediumDec& Int64MultOperation(const signed __int64& rValue) { return IntMultOperationV1(rValue); }
-        MediumDec& UInt8MultOperation(const unsigned char& rValue) { return UIntMultOperationV1(rValue); }
-        MediumDec& Int8MultOperation(const signed char& rValue) { return IntMultOperationV1(rValue); }
-        MediumDec& UInt16MultOperation(const unsigned short& rValue) { return UIntMultOperationV1(rValue); }
-        MediumDec& Int16MultOperation(const signed short& rValue) { return IntMultOperationV1(rValue); }
+        MediumUDec& UIntMultOperation(const unsigned int& rValue) { return UIntMultOperationV1(rValue); }
+        MediumUDec& IntMultOperation(const signed int& rValue) { return IntMultOperationV1(rValue); }
+        MediumUDec& UInt64MultOperation(const unsigned __int64& rValue) { return UIntMultOperationV1(rValue); }
+        MediumUDec& Int64MultOperation(const signed __int64& rValue) { return IntMultOperationV1(rValue); }
+        MediumUDec& UInt8MultOperation(const unsigned char& rValue) { return UIntMultOperationV1(rValue); }
+        MediumUDec& Int8MultOperation(const signed char& rValue) { return IntMultOperationV1(rValue); }
+        MediumUDec& UInt16MultOperation(const unsigned short& rValue) { return UIntMultOperationV1(rValue); }
+        MediumUDec& Int16MultOperation(const signed short& rValue) { return IntMultOperationV1(rValue); }
 
-        const MediumDec MultiplyByUInt(const unsigned int& rValue) { return MultiplyByUIntV1(rValue); }
-        const MediumDec MultiplyByInt(const signed int& rValue) { return MultiplyByIntV1(rValue); }
-        const MediumDec MultiplyByUInt64(const unsigned __int64& rValue) { return MultiplyByUIntV1(rValue); }
-        const MediumDec MultiplyByInt64(const signed __int64& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumUDec MultiplyByUInt(const unsigned int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec MultiplyByInt(const signed int& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumUDec MultiplyByUInt64(const unsigned __int64& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec MultiplyByInt64(const signed __int64& rValue) { return MultiplyByIntV1(rValue); }
 
-        const MediumDec UnsignedMultiplyByInt(const signed int& rValue) { return MultiplyByUIntV1(rValue); }
-        const MediumDec UnsignedMultiplyByInt64(const signed __int64& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec UnsignedMultiplyByInt(const signed int& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec UnsignedMultiplyByInt64(const signed __int64& rValue) { return MultiplyByUIntV1(rValue); }
 
-        const MediumDec MultiplyByUInt8(const unsigned char& rValue) { return MultiplyByUIntV1(rValue); }
-        const MediumDec MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
-        const MediumDec MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
-        const MediumDec MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumUDec MultiplyByUInt8(const unsigned char& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec MultiplyByInt8(const signed char& rValue) { return MultiplyByIntV1(rValue); }
+        const MediumUDec MultiplyByUInt16(const unsigned short& rValue) { return MultiplyByUIntV1(rValue); }
+        const MediumUDec MultiplyByInt16(const signed short& rValue) { return MultiplyByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
@@ -1430,11 +1422,11 @@ public:
 protected:
 
 		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumUDec
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void UnsignedMultOpV1(const VariantType& rValue)
 		{
             if (DecimalHalf == 0)
@@ -1601,7 +1593,7 @@ protected:
 			#endif
 		}
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void MultOpV1(const VariantType& rValue)
         {
             if(rValue.IsNegative())
@@ -1613,7 +1605,7 @@ protected:
                 UnsignedMultOp(rValue);
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType UnsignedMultiplicationV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.UnsignedMultOpV1(rValue); return lValue;
@@ -1622,20 +1614,20 @@ protected:
 public:
 
 		/// <summary>
-        /// Basic multiplication operation that ignores special decimal status with unsigned MediumDec
+        /// Basic multiplication operation that ignores special decimal status with unsigned MediumUDec
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        void UnsignedMultOp(const MediumDec& rValue){ UnsignedMultOpV1(rValue); }
+        void UnsignedMultOp(const MediumUDec& rValue){ UnsignedMultOpV1(rValue); }
 
-        void MultOp(const MediumDec& rValue){ MultOpV1(rValue); }
+        void MultOp(const MediumUDec& rValue){ MultOpV1(rValue); }
 
 		/// <summary>
         /// Basic unsigned multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec& UnsignedMultOperation(const MediumDec& rValue)
+        MediumUDec& UnsignedMultOperation(const MediumUDec& rValue)
         { UnsignedMultOp(rValue); return *this; }
 
 		/// <summary>
@@ -1643,7 +1635,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec& MultOperation(const MediumDec& rValue)
+        MediumUDec& MultOperation(const MediumUDec& rValue)
 		{ MultOp(rValue); return *this; }
 
 		/// <summary>
@@ -1651,16 +1643,16 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec MultiplyByUnsigned(const MediumDec& rValue) const
-        { MediumDec lValue = *this; return lValue.UnsignedMultOperation(rValue); }
+        MediumUDec MultiplyByUnsigned(const MediumUDec& rValue) const
+        { MediumUDec lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
 		/// <summary>
         /// Basic multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec MultiplyBy(const MediumDec& rValue) const
-        { MediumDec lValue = *this; return lValue.MultOperation(rValue); }
+        MediumUDec MultiplyBy(const MediumUDec& rValue) const
+        { MediumUDec lValue = *this; return lValue.MultOperation(rValue); }
 
 	#pragma endregion NormalRep AltNum Multiplication Operations
 
@@ -1683,66 +1675,66 @@ public:
         void MultiplyByFour();
 
         //Return copy of result divided by two
-        MediumDec MultipliedByTwo() const;
+        MediumUDec MultipliedByTwo() const;
 
         //Return copy of result divided by four
-        MediumDec MultipliedByFour() const;
+        MediumUDec MultipliedByFour() const;
 
         /// <summary>
         /// *= operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator*=(MediumDec& lValue, const MediumDec& rValue) { return lValue.MultOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator*=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.MultOperation(rValue); }
 
         /// <summary>
-        /// *= operation between MediumDec variant and Integer rValue.
+        /// *= operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        friend MediumDec& operator*=(MediumDec& lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
 
-        friend MediumDec& operator*=(MediumDec& lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
-        friend MediumDec& operator*=(MediumDec& lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
+        friend MediumUDec& operator*=(MediumUDec& lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
 
         /// <summary>
         /// Multiplication operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator*(MediumDec lValue, const MediumDec& rValue) { return lValue.MultOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator*(MediumUDec lValue, const MediumUDec& rValue) { return lValue.MultOperation(rValue); }
 
         /// <summary>
-        /// Multiplication operation between MediumDec variant and Integer rValue.
+        /// Multiplication operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        friend MediumDec operator*(MediumDec lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const signed int& rValue) { return lValue.IntMultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const signed __int64& rValue) { return lValue.Int64MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const unsigned int& rValue) { return lValue.UIntMultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const unsigned __int64& rValue) { return lValue.UInt64MultOperation(rValue); }
 
-        friend MediumDec operator*(MediumDec lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
-        friend MediumDec operator*(MediumDec lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const signed char& rValue) { return lValue.Int8MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const signed short& rValue) { return lValue.Int16MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const unsigned char& rValue) { return lValue.UInt8MultOperation(rValue); }
+        friend MediumUDec operator*(MediumUDec lValue, const unsigned short& rValue) { return lValue.UInt16MultOperation(rValue); }
 
-        friend MediumDec operator*(signed int lValue, MediumDec rValue)  { return rValue.IntMultOperation(lValue); }
-        friend MediumDec operator*(signed __int64 lValue, MediumDec& rValue)  { return rValue.Int64MultOperation(lValue); }
-        friend MediumDec operator*(unsigned int lValue, MediumDec& rValue)  { return rValue.UIntMultOperation(lValue); }
-        friend MediumDec operator*(unsigned __int64 lValue, MediumDec& rValue)  { return rValue.UInt64MultOperation(lValue); }
+        friend MediumUDec operator*(signed int lValue, MediumUDec rValue)  { return rValue.IntMultOperation(lValue); }
+        friend MediumUDec operator*(signed __int64 lValue, MediumUDec& rValue)  { return rValue.Int64MultOperation(lValue); }
+        friend MediumUDec operator*(unsigned int lValue, MediumUDec& rValue)  { return rValue.UIntMultOperation(lValue); }
+        friend MediumUDec operator*(unsigned __int64 lValue, MediumUDec& rValue)  { return rValue.UInt64MultOperation(lValue); }
 
-        friend MediumDec operator*(signed char lValue, MediumDec& rValue)  { return rValue.Int8MultOperation(lValue); }
-        friend MediumDec operator*(signed short lValue, MediumDec& rValue)  { return rValue.Int16MultOperation(lValue); }
-        friend MediumDec operator*(unsigned char lValue, MediumDec& rValue)  { return rValue.UInt8MultOperation(lValue); }
-        friend MediumDec operator*(unsigned short lValue, MediumDec& rValue)  { return rValue.UInt16MultOperation(lValue); }
+        friend MediumUDec operator*(signed char lValue, MediumUDec& rValue)  { return rValue.Int8MultOperation(lValue); }
+        friend MediumUDec operator*(signed short lValue, MediumUDec& rValue)  { return rValue.Int16MultOperation(lValue); }
+        friend MediumUDec operator*(unsigned char lValue, MediumUDec& rValue)  { return rValue.UInt8MultOperation(lValue); }
+        friend MediumUDec operator*(unsigned short lValue, MediumUDec& rValue)  { return rValue.UInt16MultOperation(lValue); }
 
 	#pragma endregion Other multiplication operations
 
@@ -1750,7 +1742,7 @@ public:
 protected:
 
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and unsigned Integer value
+        /// Basic addition operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1769,7 +1761,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and Integer value
+        /// Basic addition operation between MediumUDec Variant and Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1796,7 +1788,7 @@ protected:
         { IntAddOpV1(rValue); return *this; }
 
 		/// <summary>
-        ///  addition operation between MediumDec variant and unsigned Integer value
+        ///  addition operation between MediumUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1806,7 +1798,7 @@ protected:
         { auto self = *this; return self.UIntAddOperationV1(rValue); }
 
 		/// <summary>
-        /// Basic addition operation between MediumDec variant and Integer value
+        /// Basic addition operation between MediumUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1818,20 +1810,20 @@ protected:
 public:
 
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and unsigned MirroredInt
+        /// Basic addition operation between MediumUDec Variant and unsigned unsigned int
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredAddOp(const MirroredInt& rValue);
+        void UnsignedMirroredAddOp(const unsigned int& rValue);
 
         /// <summary>
-        /// Basic addition operation between MediumDec Variant and MirroredInt
+        /// Basic addition operation between MediumUDec Variant and unsigned int
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void MirroredAddOp(const MirroredInt& rValue);
+        void MirroredAddOp(const unsigned int& rValue);
 
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
@@ -1840,33 +1832,33 @@ public:
 
         void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
-        MediumDec& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
-        MediumDec& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
-        MediumDec& UIntAddOperation(const unsigned int& rValue);
-        MediumDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
+        MediumUDec& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
+        MediumUDec& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
+        MediumUDec& UIntAddOperation(const unsigned int& rValue);
+        MediumUDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
 
-        MediumDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
-        MediumDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
 
-        MediumDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
-        MediumDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
-        MediumDec AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
-        MediumDec AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
 
         void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
         void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
         void IntAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
         void Int64AddOp(const signed __int64& rValue) { IntAddOpV1(rValue); }
 
-        MediumDec& Int8AddOperation(const signed char& rValue) { return IntAddOperationV1(rValue); }
-        MediumDec& Int16AddOperation(const signed short& rValue) { return IntAddOperationV1(rValue); }
-        MediumDec& IntAddOperation(const signed int& rValue) { return IntAddOperationV1(rValue); }
-        MediumDec& Int64AddOperation(const signed __int64& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& Int8AddOperation(const signed char& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& Int16AddOperation(const signed short& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& IntAddOperation(const signed int& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& Int64AddOperation(const signed __int64& rValue) { return IntAddOperationV1(rValue); }
 
-        MediumDec AddByInt8(const signed char rValue) { return AddByIntV1(rValue); }
-        MediumDec AddByInt16(const signed short& rValue) { return AddByIntV1(rValue); }
-        MediumDec AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
-        MediumDec AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
+        MediumUDec AddByInt8(const signed char rValue) { return AddByIntV1(rValue); }
+        MediumUDec AddByInt16(const signed short& rValue) { return AddByIntV1(rValue); }
+        MediumUDec AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
+        MediumUDec AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
 
 	#pragma endregion NormalRep Integer Addition Operations
 
@@ -1874,7 +1866,7 @@ public:
 protected:
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value
+        /// Basic Subtraction operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1893,7 +1885,7 @@ protected:
         }
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and Integer value
+        /// Basic Subtraction operation between MediumUDec Variant and Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1920,7 +1912,7 @@ protected:
         { IntSubOpV1(rValue); return *this; }
 
 		/// <summary>
-        /// Basic Subtraction operation between MediumDec variant and unsigned Integer value
+        /// Basic Subtraction operation between MediumUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1930,7 +1922,7 @@ protected:
         { auto self = *this; return self.UIntSubOperationV1(rValue); }
 
 		/// <summary>
-        /// Basic Subtraction operation between MediumDec variant and Integer value
+        /// Basic Subtraction operation between MediumUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1942,24 +1934,24 @@ protected:
 public:
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned MirroredInt
+        /// Basic Subtraction operation between MediumUDec Variant and unsigned unsigned int
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredSubOp(const MirroredInt& rValue);
+        void UnsignedMirroredSubOp(const unsigned int& rValue);
 
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and MirroredInt
+        /// Basic Subtraction operation between MediumUDec Variant and unsigned int
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void MirroredSubOp(const MirroredInt& rValue);
+        void MirroredSubOp(const unsigned int& rValue);
 
         void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         /// <summary>
-        /// Basic Subtraction operation between MediumDec Variant and unsigned Integer value
+        /// Basic Subtraction operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1975,28 +1967,28 @@ public:
         void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
         void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
 
-        MediumDec& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
-        MediumDec& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
-        MediumDec& UIntSubOperation(const unsigned int& rValue);
-        MediumDec& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
+        MediumUDec& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
+        MediumUDec& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
+        MediumUDec& UIntSubOperation(const unsigned int& rValue);
+        MediumUDec& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
 
-        MediumDec UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
-        MediumDec UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
 
-        MediumDec SubtractByUInt8(const unsigned char& rValue) { return SubtractByUIntV1(rValue); }
-        MediumDec SubtractByUInt16(const unsigned short& rValue) { return SubtractByUIntV1(rValue); }
-        MediumDec SubtractByUInt(const unsigned int& rValue) { return SubtractByUIntV1(rValue); }
-        MediumDec SubtractByUInt64(const unsigned __int64& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec SubtractByUInt8(const unsigned char& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec SubtractByUInt16(const unsigned short& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec SubtractByUInt(const unsigned int& rValue) { return SubtractByUIntV1(rValue); }
+        MediumUDec SubtractByUInt64(const unsigned __int64& rValue) { return SubtractByUIntV1(rValue); }
 
-        MediumDec& Int8SubOperation(const signed char& rValue) { return IntSubOperationV1(rValue); }
-        MediumDec& Int16SubOperation(const signed short& rValue) { return IntSubOperationV1(rValue); }
-        MediumDec& IntSubOperation(const signed int& rValue) { return IntSubOperationV1(rValue); }
-        MediumDec& Int64SubOperation(const signed __int64& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& Int8SubOperation(const signed char& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& Int16SubOperation(const signed short& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& IntSubOperation(const signed int& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& Int64SubOperation(const signed __int64& rValue) { return IntSubOperationV1(rValue); }
 
-        MediumDec SubtractByInt8(const signed char rValue) { return SubtractByIntV1(rValue); }
-        MediumDec SubtractByInt16(const signed short& rValue) { return SubtractByIntV1(rValue); }
-        MediumDec SubtractByInt(const signed int& rValue) { return SubtractByIntV1(rValue); }
-        MediumDec SubtractByInt64(const signed __int64& rValue) { return SubtractByIntV1(rValue); }
+        MediumUDec SubtractByInt8(const signed char rValue) { return SubtractByIntV1(rValue); }
+        MediumUDec SubtractByInt16(const signed short& rValue) { return SubtractByIntV1(rValue); }
+        MediumUDec SubtractByInt(const signed int& rValue) { return SubtractByIntV1(rValue); }
+        MediumUDec SubtractByInt64(const signed __int64& rValue) { return SubtractByIntV1(rValue); }
 
 	#pragma endregion NormalRep Integer Subtraction Operations
 
@@ -2008,7 +2000,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void UnsignedAddOpV1(const VariantType& rValue)
         {
 			if(rValue.DecimalHalf==0)
@@ -2017,7 +2009,7 @@ protected:
             {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf += rValue.IntHalf;
-                if (signBeforeOp==MirroredInt::NegativeSign)
+                if (signBeforeOp==unsigned int::NegativeSign)
                 {
 					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
 						if(IntHalf.Value==0)
@@ -2061,7 +2053,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void AddOpV1(const VariantType& rValue)
         {
             if (rValue.DecimalHalf == 0)
@@ -2070,7 +2062,7 @@ protected:
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf += rValue.IntHalf;
 
-                if (signBeforeOp==MirroredInt::NegativeSign){
+                if (signBeforeOp==unsigned int::NegativeSign){
 					if(rValue.IsPositive()){
 						if(DecimalHalf.Value==rValue.DecimalHalf.Value){
 							if(IntHalf.Value==0)
@@ -2141,7 +2133,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void UnsignedSubOpV1(const VariantType& rValue)
         {
             if (rValue.DecimalHalf == 0)
@@ -2149,7 +2141,7 @@ protected:
 			else {
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf -= rValue.IntHalf;
-                if (signBeforeOp==MirroredInt::NegativeSign){//-5 - B
+                if (signBeforeOp==unsigned int::NegativeSign){//-5 - B
 					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
                     if (decResult == DecimalOverflow){//-5.4 - 5.6
                         --IntHalf;
@@ -2187,7 +2179,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void SubOpV1(const VariantType& rValue)
         {
 			if(rValue.DecimalHalf==0)
@@ -2196,7 +2188,7 @@ protected:
 			{
 				int signBeforeOp = IntHalf.Sign;
 				IntHalf -= rValue.IntHalf;
-                if (signBeforeOp==MirroredInt::NegativeSign)
+                if (signBeforeOp==unsigned int::NegativeSign)
 				{
 					if(rValue.IsPositive())
 					{
@@ -2265,13 +2257,13 @@ protected:
 			}
 		}
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType UnsignedAdditionV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.UnsignedAddOpV1(rValue); return lValue;
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType UnsignedSubtractionV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.UnsignedSubOpV1(rValue); return lValue;
@@ -2284,35 +2276,35 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void UnsignedAddOp(const MediumDec& rValue){ UnsignedAddOpV1(rValue); }
+        void UnsignedAddOp(const MediumUDec& rValue){ UnsignedAddOpV1(rValue); }
 
 	    /// <summary>
         /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void AddOp(const MediumDec& rValue){ AddOpV1(rValue); }
+        void AddOp(const MediumUDec& rValue){ AddOpV1(rValue); }
 
 	    /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void UnsignedSubOp(const MediumDec& rValue){ UnsignedSubOpV1(rValue); }
+        void UnsignedSubOp(const MediumUDec& rValue){ UnsignedSubOpV1(rValue); }
 
 	    /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void SubOp(const MediumDec& rValue){ SubOpV1(rValue); }
+        void SubOp(const MediumUDec& rValue){ SubOpV1(rValue); }
 
         //Basic addition operation
-        MediumDec& UnsignedAddOperation(const MediumDec& rValue)
+        MediumUDec& UnsignedAddOperation(const MediumUDec& rValue)
         { UnsignedAddOp(rValue); return *this; }
 
         //Basic addition operation
-        MediumDec& AddOperation(const MediumDec& rValue)
+        MediumUDec& AddOperation(const MediumUDec& rValue)
         { AddOp(rValue); return *this; }
 
 		/// <summary>
@@ -2320,23 +2312,23 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec AddByUnsigned(const MediumDec& rValue)
-        { MediumDec lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
+        MediumUDec AddByUnsigned(const MediumUDec& rValue)
+        { MediumUDec lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
 
 		/// <summary>
         /// Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec AddBy(const MediumDec& rValue)
-        { MediumDec lValue = *this; return lValue.AddOperation(rValue); } const
+        MediumUDec AddBy(const MediumUDec& rValue)
+        { MediumUDec lValue = *this; return lValue.AddOperation(rValue); } const
 
         //Basic subtraction operation
-        MediumDec& UnsignedSubOperation(const MediumDec& rValue)
+        MediumUDec& UnsignedSubOperation(const MediumUDec& rValue)
         { UnsignedSubOp(rValue); return *this; }
 
         //Basic subtraction operation
-        MediumDec& SubOperation(const MediumDec& rValue)
+        MediumUDec& SubOperation(const MediumUDec& rValue)
         { SubOp(rValue); return *this; }
 
 		/// <summary>
@@ -2344,16 +2336,16 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec SubtractByUnsigned(const MediumDec& rValue)
-        { MediumDec lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
+        MediumUDec SubtractByUnsigned(const MediumUDec& rValue)
+        { MediumUDec lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
 
 		/// <summary>
         /// Basic Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumDec SubtractBy(const MediumDec& rValue)
-        { MediumDec lValue = *this; return lValue.SubOperation(rValue); } const
+        MediumUDec SubtractBy(const MediumUDec& rValue)
+        { MediumUDec lValue = *this; return lValue.SubOperation(rValue); } const
 
     #pragma endregion NormalRep AltNum Addition/Subtraction Operations
 
@@ -2364,56 +2356,56 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator+=(MediumDec& lValue, const MediumDec& rValue) { return lValue.AddOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator+=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.AddOperation(rValue); }
 
         /// <summary>
-        /// += operation between MediumDec variant and Integer rValue.
+        /// += operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        friend MediumDec& operator+=(MediumDec& lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
 
-        friend MediumDec& operator+=(MediumDec& lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
-        friend MediumDec& operator+=(MediumDec& lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
+        friend MediumUDec& operator+=(MediumUDec& lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
 
         /// <summary>
         /// Addition operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator+(MediumDec lValue, const MediumDec& rValue) { return lValue.AddOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator+(MediumUDec lValue, const MediumUDec& rValue) { return lValue.AddOperation(rValue); }
 
         /// <summary>
-        /// Addition operation between MediumDec variant and Integer rValue.
+        /// Addition operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="self">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        friend MediumDec operator+(MediumDec lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const signed int& rValue) { return lValue.IntAddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const signed __int64& rValue) { return lValue.Int64AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const unsigned int& rValue) { return lValue.UIntAddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const unsigned __int64& rValue) { return lValue.UInt64AddOperation(rValue); }
 
-        friend MediumDec operator+(MediumDec lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
-        friend MediumDec operator+(MediumDec lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const signed char& rValue) { return lValue.Int8AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const signed short& rValue) { return lValue.Int16AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const unsigned char& rValue) { return lValue.UInt8AddOperation(rValue); }
+        friend MediumUDec operator+(MediumUDec lValue, const unsigned short& rValue) { return lValue.UInt16AddOperation(rValue); }
 
-        friend MediumDec operator+(const signed int& lValue, MediumDec rValue)  { return rValue.IntAddOperation(lValue); }
-        friend MediumDec operator+(const signed __int64& lValue, MediumDec rValue)  { return rValue.Int64AddOperation(lValue); }
-        friend MediumDec operator+(const unsigned int& lValue, MediumDec rValue)  { return rValue.UIntAddOperation(lValue); }
-        friend MediumDec operator+(const unsigned __int64& lValue, MediumDec rValue)  { return rValue.UInt64AddOperation(lValue); }
+        friend MediumUDec operator+(const signed int& lValue, MediumUDec rValue)  { return rValue.IntAddOperation(lValue); }
+        friend MediumUDec operator+(const signed __int64& lValue, MediumUDec rValue)  { return rValue.Int64AddOperation(lValue); }
+        friend MediumUDec operator+(const unsigned int& lValue, MediumUDec rValue)  { return rValue.UIntAddOperation(lValue); }
+        friend MediumUDec operator+(const unsigned __int64& lValue, MediumUDec rValue)  { return rValue.UInt64AddOperation(lValue); }
 
-        friend MediumDec operator+(const signed char& lValue, MediumDec rValue)  { return rValue.Int8AddOperation(lValue); }
-        friend MediumDec operator+(const signed short& lValue, MediumDec rValue)  { return rValue.Int16AddOperation(lValue); }
-        friend MediumDec operator+(const unsigned char& lValue, MediumDec rValue)  { return rValue.UInt8AddOperation(lValue); }
-        friend MediumDec operator+(const unsigned short& lValue, MediumDec rValue)  { return rValue.UInt16AddOperation(lValue); }
+        friend MediumUDec operator+(const signed char& lValue, MediumUDec rValue)  { return rValue.Int8AddOperation(lValue); }
+        friend MediumUDec operator+(const signed short& lValue, MediumUDec rValue)  { return rValue.Int16AddOperation(lValue); }
+        friend MediumUDec operator+(const unsigned char& lValue, MediumUDec rValue)  { return rValue.UInt8AddOperation(lValue); }
+        friend MediumUDec operator+(const unsigned short& lValue, MediumUDec rValue)  { return rValue.UInt16AddOperation(lValue); }
 
 	#pragma endregion Other addition operations
 
@@ -2424,65 +2416,65 @@ public:
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec& lValue, const MediumDec& rValue) { return lValue.SubOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator-=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.SubOperation(rValue); }
 
         /// <summary>
-        /// -= operation between MediumDec variant and Integer rValue.
+        /// -= operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec& operator-=(MediumDec& lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec& operator-=(MediumUDec& lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
 
-        friend MediumDec& operator-=(MediumDec& lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
-        friend MediumDec& operator-=(MediumDec& lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
+        friend MediumUDec& operator-=(MediumUDec& lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
 
         /// <summary>
         /// Subtraction operation
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator-(MediumDec lValue, const MediumDec& rValue) { return lValue.SubOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator-(MediumUDec lValue, const MediumUDec& rValue) { return lValue.SubOperation(rValue); }
 
         /// <summary>
-        /// Subtraction operation between MediumDec variant and Integer rValue.
+        /// Subtraction operation between MediumUDec variant and Integer rValue.
         /// </summary>
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
-        /// <returns>MediumDec</returns>
-        friend MediumDec operator-(MediumDec lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
+        /// <returns>MediumUDec</returns>
+        friend MediumUDec operator-(MediumUDec lValue, const signed int& rValue) { return lValue.IntSubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const signed __int64& rValue) { return lValue.Int64SubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const unsigned int& rValue) { return lValue.UIntSubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const unsigned __int64& rValue) { return lValue.UInt64SubOperation(rValue); }
 
-        friend MediumDec operator-(MediumDec lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
-        friend MediumDec operator-(MediumDec lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const signed char& rValue) { return lValue.Int8SubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const signed short& rValue) { return lValue.Int16SubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const unsigned char& rValue) { return lValue.UInt8SubOperation(rValue); }
+        friend MediumUDec operator-(MediumUDec lValue, const unsigned short& rValue) { return lValue.UInt16SubOperation(rValue); }
 
-        friend MediumDec operator-(const signed int& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const signed __int64& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const unsigned int& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const unsigned __int64& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const signed int& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const signed __int64& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const unsigned int& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const unsigned __int64& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
 
-        friend MediumDec operator-(const signed char& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const signed short& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const unsigned char& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
-        friend MediumDec operator-(const unsigned short& lValue, const MediumDec& rValue) { return ((MediumDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const signed char& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const signed short& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const unsigned char& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
+        friend MediumUDec operator-(const unsigned short& lValue, const MediumUDec& rValue) { return ((MediumUDec)lValue).SubtractBy(rValue); }
 
 	#pragma endregion Other subtraction operations
 
 	#pragma region Modulus Operations
 	protected:
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void UnsignedModulusOpV1(const VariantType& rValue)
         {
             if(DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0)
@@ -2493,7 +2485,7 @@ public:
             }
         }
 
-        template<MediumDecVariant VariantType=MediumDec>
+        template<MediumUDecVariant VariantType=MediumUDec>
         void ModulusOpV1(const VariantType& rValue)
         {
             if (rValue.IsNegative()) {
@@ -2548,23 +2540,23 @@ public:
                 UInt64ModulusOp(rValue);
         }
 
-        void UnsignedModulusOp(const MediumDec& rValue){ UnsignedModulusOpV1(rValue); }
+        void UnsignedModulusOp(const MediumUDec& rValue){ UnsignedModulusOpV1(rValue); }
 
-        void ModulusOp(const MediumDec& rValue){ ModulusOpV1(rValue); }
+        void ModulusOp(const MediumUDec& rValue){ ModulusOpV1(rValue); }
 
-		MediumDec& UnsignedModulusOperation(const MediumDec& rValue){
+		MediumUDec& UnsignedModulusOperation(const MediumUDec& rValue){
 			UnsignedModulusOp(rValue); return *this;
 		}
 
-		MediumDec& ModulusOperation(const MediumDec& rValue){
+		MediumUDec& ModulusOperation(const MediumUDec& rValue){
 			ModulusOp(rValue); return *this;
 		}
 
-        friend MediumDec& operator%=(MediumDec& lValue, const MediumDec& rValue) { return lValue.ModulusOperation(rValue); }
-        friend MediumDec& operator%=(MediumDec& lValue, const signed int& rValue) { lValue.IntModulusOp(rValue); return lValue; }
-        friend MediumDec& operator%=(MediumDec& lValue, const unsigned int& rValue) { lValue.UIntModulusOp(rValue); return lValue; }
-        friend MediumDec& operator%=(MediumDec& lValue, const unsigned __int64& rValue) { lValue.UInt64ModulusOp(rValue); return lValue;}
-        friend MediumDec& operator%=(MediumDec& lValue, const signed __int64& rValue) { lValue.Int64ModulusOp(rValue); return lValue;}
+        friend MediumUDec& operator%=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.ModulusOperation(rValue); }
+        friend MediumUDec& operator%=(MediumUDec& lValue, const signed int& rValue) { lValue.IntModulusOp(rValue); return lValue; }
+        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned int& rValue) { lValue.UIntModulusOp(rValue); return lValue; }
+        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned __int64& rValue) { lValue.UInt64ModulusOp(rValue); return lValue;}
+        friend MediumUDec& operator%=(MediumUDec& lValue, const signed __int64& rValue) { lValue.Int64ModulusOp(rValue); return lValue;}
 
 	#pragma region Modulus Operations
 
@@ -2573,13 +2565,13 @@ public:
     /*
     #if defined(AltNum_EnableBitwiseOverride)
         /// <summary>
-        /// Bitwise XOR Operation Between MediumDec and Integer tValue
+        /// Bitwise XOR Operation Between MediumUDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
+        /// <returns>MediumUDec</returns>
         template<IntegerType IntType=signed int>
-        friend MediumDec operator^(MediumDec self, IntType tValue)
+        friend MediumUDec operator^(MediumUDec self, IntType tValue)
         {
             if (self.DecimalHalf == 0) { self.IntHalf ^= tValue; return self; }
             else
@@ -2600,13 +2592,13 @@ public:
         }
 
         /// <summary>
-        /// Bitwise Or Operation Between MediumDec and Integer tValue
+        /// Bitwise Or Operation Between MediumUDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
+        /// <returns>MediumUDec</returns>
         template<IntegerType IntType=signed int>
-        friend MediumDec operator|(MediumDec self, IntType tValue)
+        friend MediumUDec operator|(MediumUDec self, IntType tValue)
         {
             if (self.DecimalHalf == 0) { self.IntHalf |= tValue; return self; }
             else
@@ -2632,30 +2624,30 @@ public:
     /*
     #pragma region Floating Operator Overrides
 
-        friend MediumDec operator+(const MediumDec& self, const float& tValue) { return self + (MediumDec)tValue; }
-        friend MediumDec operator-(const MediumDec& self, const float& tValue) { return self - (MediumDec)tValue; }
-        friend MediumDec operator*(const MediumDec& self, const float& tValue) { return self * (MediumDec)tValue; }
-        friend MediumDec operator/(const MediumDec& self, const float& tValue) { return self / (MediumDec)tValue; }
+        friend MediumUDec operator+(const MediumUDec& self, const float& tValue) { return self + (MediumUDec)tValue; }
+        friend MediumUDec operator-(const MediumUDec& self, const float& tValue) { return self - (MediumUDec)tValue; }
+        friend MediumUDec operator*(const MediumUDec& self, const float& tValue) { return self * (MediumUDec)tValue; }
+        friend MediumUDec operator/(const MediumUDec& self, const float& tValue) { return self / (MediumUDec)tValue; }
 
-        friend MediumDec operator+(const float& tValue, const MediumDec& self) { return (MediumDec)tValue + self; }
-        friend MediumDec operator-(const float& tValue, const MediumDec& self) { return (MediumDec)tValue - self; }
-        friend MediumDec operator*(const float& tValue, const MediumDec& self) { return (MediumDec)tValue * self; }
-        friend MediumDec operator/(const float& tValue, const MediumDec& self) { return (MediumDec)tValue / self; }
+        friend MediumUDec operator+(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue + self; }
+        friend MediumUDec operator-(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue - self; }
+        friend MediumUDec operator*(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue * self; }
+        friend MediumUDec operator/(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue / self; }
 
-        friend MediumDec operator+(const MediumDec& self, const double& tValue) { return self + (MediumDec)tValue; }
-        friend MediumDec operator-(const MediumDec& self, const double& tValue) { return self - (MediumDec)tValue; }
-        friend MediumDec operator*(const MediumDec& self, const double& tValue) { return self * (MediumDec)tValue; }
-        friend MediumDec operator/(const MediumDec& self, const double& tValue) { return self / (MediumDec)tValue; }
+        friend MediumUDec operator+(const MediumUDec& self, const double& tValue) { return self + (MediumUDec)tValue; }
+        friend MediumUDec operator-(const MediumUDec& self, const double& tValue) { return self - (MediumUDec)tValue; }
+        friend MediumUDec operator*(const MediumUDec& self, const double& tValue) { return self * (MediumUDec)tValue; }
+        friend MediumUDec operator/(const MediumUDec& self, const double& tValue) { return self / (MediumUDec)tValue; }
 
-        friend MediumDec operator+(const MediumDec& self, const long double& tValue) { return self + (MediumDec)tValue; }
-        friend MediumDec operator-(const MediumDec& self, const long double& tValue) { return self - (MediumDec)tValue; }
-        friend MediumDec operator*(const MediumDec& self, const long double& tValue) { return self * (MediumDec)tValue; }
-        friend MediumDec operator/(const MediumDec& self, const long double& tValue) { return self / (MediumDec)tValue; }
+        friend MediumUDec operator+(const MediumUDec& self, const long double& tValue) { return self + (MediumUDec)tValue; }
+        friend MediumUDec operator-(const MediumUDec& self, const long double& tValue) { return self - (MediumUDec)tValue; }
+        friend MediumUDec operator*(const MediumUDec& self, const long double& tValue) { return self * (MediumUDec)tValue; }
+        friend MediumUDec operator/(const MediumUDec& self, const long double& tValue) { return self / (MediumUDec)tValue; }
 
-        friend MediumDec operator+(const long double& tValue, const MediumDec& self) { return (MediumDec)tValue + self; }
-        friend MediumDec operator-(const long double& tValue, const MediumDec& self) { return (MediumDec)tValue - self; }
-        friend MediumDec operator*(const long double& tValue, const MediumDec& self) { return (MediumDec)tValue * self; }
-        friend MediumDec operator/(const long double& tValue, const MediumDec& self) { return (MediumDec)tValue / self; }
+        friend MediumUDec operator+(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue + self; }
+        friend MediumUDec operator-(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue - self; }
+        friend MediumUDec operator*(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue * self; }
+        friend MediumUDec operator/(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue / self; }
 
     #pragma endregion Floating Operator Overrides
     */
@@ -2664,62 +2656,62 @@ public:
     #pragma region Other Operators
 
         /// <summary>
-        /// ++MediumDec Operator
+        /// ++MediumUDec Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator ++()
+        /// <returns>MediumUDec &</returns>
+        MediumUDec& operator ++()
         {
             if (DecimalHalf == 0)
                 ++IntHalf;
-            else if (IntHalf == MirroredInt::NegativeZero)
-                IntHalf = MirroredInt::Zero;
+            else if (IntHalf == unsigned int::NegativeZero)
+                IntHalf = unsigned int::Zero;
             else
                 ++IntHalf;
             return *this;
         }
 
         /// <summary>
-        /// ++MediumDec Operator
+        /// ++MediumUDec Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator --()
+        /// <returns>MediumUDec &</returns>
+        MediumUDec& operator --()
         {
             if (DecimalHalf == 0)
                 --IntHalf;
-            else if (IntHalf == MirroredInt::Zero)
-                IntHalf = MirroredInt::NegativeZero;
+            else if (IntHalf == unsigned int::Zero)
+                IntHalf = unsigned int::NegativeZero;
             else
                 --IntHalf;
             return *this;
         }
 
         /// <summary>
-        /// MediumDec Variant++ Operator
+        /// MediumUDec Variant++ Operator
         /// </summary>
-        /// <returns>MediumDec</returns>
-        MediumDec operator ++(int)
+        /// <returns>MediumUDec</returns>
+        MediumUDec operator ++(int)
         {
-            MediumDec tmp(*this);
+            MediumUDec tmp(*this);
             ++* this;
             return tmp;
         }
 
         /// <summary>
-        /// MediumDec Variant-- Operator
+        /// MediumUDec Variant-- Operator
         /// </summary>
-        /// <returns>MediumDec</returns>
-        MediumDec operator --(int)
+        /// <returns>MediumUDec</returns>
+        MediumUDec operator --(int)
         {
-            MediumDec tmp(*this);
+            MediumUDec tmp(*this);
             --* this;
             return tmp;
         }
 
         /// <summary>
-        /// MediumDec Variant* Operator
+        /// MediumUDec Variant* Operator
         /// </summary>
-        /// <returns>MediumDec &</returns>
-        MediumDec& operator *()
+        /// <returns>MediumUDec &</returns>
+        MediumUDec& operator *()
         {
             return *this;
         }
@@ -2738,7 +2730,7 @@ protected://Using templating as static function instead as fix for *this pointer
         ///<summary>
         /// Returns a copy of the number converted into non-negative version
         ///</summary>
-        template<MediumDecVariant VariantType = MediumDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         static VariantType AbsV1(VariantType tValue){
             tValue.ApplyAbs(); return tValue;
         }
@@ -2748,12 +2740,12 @@ public:
         /// <summary>
         /// Forces Number into non-negative
         /// </summary>
-        static MediumDec Abs(const MediumDec& tValue);
+        static MediumUDec Abs(const MediumUDec& tValue);
 
         /// <summary>
         /// Returns a copy of the number converted into non-negative version
         /// </summary>
-        MediumDec AbsOf() const { return Abs(*this); }
+        MediumUDec AbsOf() const { return Abs(*this); }
 
         /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
@@ -2763,10 +2755,10 @@ public:
 
 protected:
 
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType CeilV1(const VariantType& tValue)
         {
-			if(tValue.IntHalf==MirroredInt::NegativeZero)
+			if(tValue.IntHalf==unsigned int::NegativeZero)
 				return VariantType::One;
             else if (tValue.DecimalHalf != 0)
 				return VariantType(tValue.IntHalf+1);
@@ -2779,7 +2771,7 @@ protected:
         /// </summary>
         /// <param name="tValue">The target value to apply on.</param>
         /// <param name="precision">The precision.</param>
-        template<MediumDecVariant VariantType = MediumDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         static VariantType FloorV1(const VariantType& tValue, const int& precision = 0)
         {
 			unsigned int decimalRes = tValue.DecimalHalf.Value;
@@ -2795,13 +2787,13 @@ protected:
             case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
-			if(decimalRes==0&&tValue.IntHalf==MirroredInt::NegativeZero)
+			if(decimalRes==0&&tValue.IntHalf==unsigned int::NegativeZero)
 				return VariantType();
 			else
 				return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
         }
 
-        template<MediumDecVariant VariantType = MediumDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         const VariantType TruncOfV1() const
         {
             return VariantType(IntHalf == NegativeRep?0:IntHalf, 0);
@@ -2813,39 +2805,39 @@ public:
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
-		static MediumDec Ceil(const MediumDec& tValue) { return CeilV1<MediumDec>(tValue); }
+		static MediumUDec Ceil(const MediumUDec& tValue) { return CeilV1<MediumUDec>(tValue); }
 
         ///<summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
-		MediumDec CeilOf() const { return Ceil(*this); }
+		MediumUDec CeilOf() const { return Ceil(*this); }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
-        /// <returns>MediumDec&</returns>
+        /// <returns>MediumUDec&</returns>
         signed int FloorIntOf() const;
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
-        /// <returns>MediumDec&</returns>
-		static signed int FloorInt(const MediumDec& tValue) { return tValue.FloorIntOf(); }
+        /// <returns>MediumUDec&</returns>
+		static signed int FloorInt(const MediumUDec& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
-        /// <returns>MediumDec&</returns>
+        /// <returns>MediumUDec&</returns>
         int CeilIntOf() const;
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
-        /// <returns>MediumDec&</returns>
-		static signed int CeilInt(const MediumDec& tValue) { return tValue.CeilIntOf(); }
+        /// <returns>MediumUDec&</returns>
+		static signed int CeilInt(const MediumUDec& tValue) { return tValue.CeilIntOf(); }
 
-		static MediumDec Trunc(const MediumDec& tValue);
+		static MediumUDec Trunc(const MediumUDec& tValue);
 
 	#pragma endregion Truncation Functions
 
@@ -2856,7 +2848,7 @@ protected:
         /// Perform square root on this instance.
         /// (Code other than switch statement adjusted from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        template<MediumDecVariant VariantType = MediumDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         static VariantType UnsignedSqrtV1(VariantType value, const int& precision=7)
         {
             if (value.DecimalHalf == 0)
@@ -2941,7 +2933,7 @@ protected:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        template<MediumDecVariant VariantType = MediumDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
         {
             if(value.IsNegative())
@@ -2954,12 +2946,12 @@ public:
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        static MediumDec Sqrt(const auto& value, const int& precision = 7);
+        static MediumUDec Sqrt(const auto& value, const int& precision = 7);
 
         /// <summary>
         /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
-        MediumDec SqrtOf(const int& precision = 7) const;
+        MediumUDec SqrtOf(const int& precision = 7) const;
 
 protected:
         /// <summary>
@@ -2967,7 +2959,7 @@ protected:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=unsigned int>
+        template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType=unsigned int>
         static VariantType UIntPowV1(const VariantType& tValue, const IntType& expValue)
         {
             if (expValue == 1)
@@ -2978,7 +2970,7 @@ protected:
             {
                 VariantType result = tValue;
                 if(tValue.IsNegative()&&(expValue&1)==1)
-                    result.IntHalf.Sign = MirroredInt::PositiveSign;
+                    result.IntHalf.Sign = unsigned int::PositiveSign;
                 result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 return result;
             }
@@ -2999,7 +2991,7 @@ protected:
                     self.UnsignedMultOp(self); // Change x to x^2
                 }
                 if(IsNegative)
-                    result.IntHalf.Sign = MirroredInt::NegativeSign;
+                    result.IntHalf.Sign = unsigned int::NegativeSign;
                 return result;
             }
         }
@@ -3009,7 +3001,7 @@ protected:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        template<MediumDecVariant VariantType=MediumDec, IntegerType IntType=signed int>
+        template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType=signed int>
         static VariantType IntPowV1(const VariantType& tValue, const IntType& expValue)
         {
             if (expValue < 0)//Negative Pow
@@ -3019,7 +3011,7 @@ protected:
                 {
                     VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
                     if(tValue.IsNegative()&&(exp&1)==1)
-                        result.IntHalf.Sign = MirroredInt::PositiveSign;
+                        result.IntHalf.Sign = unsigned int::PositiveSign;
                     return result;
                 }
                 else
@@ -3039,14 +3031,14 @@ protected:
                         self.UnsignedMultOp(self); //  Change x to x^2
                     }
                     if(IsNegative)
-                        result.IntHalf.Sign = MirroredInt::NegativeSign;
+                        result.IntHalf.Sign = unsigned int::NegativeSign;
                 }
             }
             else
                 return UIntPowV1(tValue, expValue);
         }
 
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
 		static VariantType UnsignedNegIntPowerV1(const VariantType& tValue, const unsigned int& expValue)
 		{
 			unsigned int exp = expValue;
@@ -3065,7 +3057,7 @@ protected:
                 self.UnsignedMultOp(self); // Change x to x^2
 			}
 			if(IsNegative)
-				result.IntHalf.Sign = MirroredInt::NegativeSign;
+				result.IntHalf.Sign = unsigned int::NegativeSign;
             return result;
 		}
 
@@ -3076,51 +3068,51 @@ public:
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue)
-        { return IntPowV1<MediumDec>(tValue, expValue); }
-        static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue)
-        { return UIntPowV1<MediumDec>(tValue, expValue); }
+        static MediumUDec UIntPow(const MediumUDec& tValue, const unsigned int& expValue)
+        { return IntPowV1<MediumUDec>(tValue, expValue); }
+        static MediumUDec UInt64Pow(const MediumUDec& tValue, const unsigned __int64& expValue)
+        { return UIntPowV1<MediumUDec>(tValue, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
         /// </summary>
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
-        static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue)
-		{ return IntPowV1<MediumDec>(tValue, expValue); }
-        static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue)
-		{ return IntPowV1<MediumDec>(tValue, expValue); }
+        static MediumUDec IntPow(const MediumUDec& tValue, const signed int& expValue)
+		{ return IntPowV1<MediumUDec>(tValue, expValue); }
+        static MediumUDec Int64Pow(const MediumUDec& tValue, const signed __int64& expValue)
+		{ return IntPowV1<MediumUDec>(tValue, expValue); }
 
-        MediumDec UnsignedNegIntPower(const MediumDec& tValue, const unsigned int& expValue)
-		{ return UnsignedNegIntPowerV1<MediumDec>(tValue, expValue); }
+        MediumUDec UnsignedNegIntPower(const MediumUDec& tValue, const unsigned int& expValue)
+		{ return UnsignedNegIntPowerV1<MediumUDec>(tValue, expValue); }
 
 
         /// <summary>
         /// Applies Power of operation (for unsigned integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        MediumDec UIntPowOf(const unsigned int& expValue) const
+        MediumUDec UIntPowOf(const unsigned int& expValue) const
         { return UIntPow(*this, expValue); }
-        MediumDec UInt64PowOf(const unsigned __int64& expValue) const
+        MediumUDec UInt64PowOf(const unsigned __int64& expValue) const
         { return UInt64Pow(*this, expValue); }
 
         /// <summary>
         /// Applies Power of operation (for signed integer exponents)
         /// </summary>
         /// <param name="expValue">The exponent value.</param>
-        MediumDec IntPowOf(const signed int& expValue) const
+        MediumUDec IntPowOf(const signed int& expValue) const
         { return IntPow(*this, expValue); }
-        MediumDec Int64PowOf(const signed __int64& expValue) const
+        MediumUDec Int64PowOf(const signed __int64& expValue) const
         { return Int64Pow(*this, expValue); }
 
 protected:
 
-        template<MediumDecVariant VariantType=MediumDec>
-        static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
+        template<MediumUDecVariant VariantType=MediumUDec>
+        static VariantType Unsignedunsigned intPowV1(const VariantType& tValue, const unsigned int& expValue)
         { return UIntPowV1<VariantType>(tValue, expValue.Value); }
 
-        template<MediumDecVariant VariantType=MediumDec>
-        static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
+        template<MediumUDecVariant VariantType=MediumUDec>
+        static VariantType unsigned intPowV1(const VariantType& tValue, const unsigned int& expValue)
         {
             if (expValue < 0)//Negative Pow
                 return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
@@ -3130,18 +3122,18 @@ protected:
 
 public:
 
-        static MediumDec UnsignedMirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
-        {   return UnsignedMirroredIntPowV1<MediumDec>(tValue, expValue); }
+        static MediumUDec Unsignedunsigned intPow(const MediumUDec& tValue, const unsigned int& expValue)
+        {   return Unsignedunsigned intPowV1<MediumUDec>(tValue, expValue); }
 
-        static MediumDec MirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
-        {   return MirroredIntPowV1<MediumDec>(tValue, expValue); }
+        static MediumUDec unsigned intPow(const MediumUDec& tValue, const unsigned int& expValue)
+        {   return unsigned intPowV1<MediumUDec>(tValue, expValue); }
 
 protected:
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
@@ -3175,7 +3167,7 @@ protected:
         /// <param name="tValue">The target value(radicand) to perform operation on.</param>
         /// <param name="nValue">The nth root degree value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             if (tValue.IsNegative())
@@ -3183,8 +3175,8 @@ protected:
             return UnsignedNthRootV1(tValue, n, precision);
         }
 
-		template<MediumDecVariant VariantType=MediumDec>
-        static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision)
+		template<MediumUDecVariant VariantType=MediumUDec>
+        static VariantType unsigned intRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             if(n.IsNegative())
             {
@@ -3208,7 +3200,7 @@ protected:
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType NthRootV2(const VariantType& tValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth)
         {
 			if(n==0)
@@ -3228,7 +3220,7 @@ protected:
 
 public:
 
-        static MediumDec UnsignedNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero);
+        static MediumUDec UnsignedNthRoot(const MediumUDec& tValue, const unsigned int& n, const MediumUDec& precision = MediumUDec::JustAboveZero);
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
@@ -3236,14 +3228,14 @@ public:
         /// <param name="tValue">The target value(radicand) to perform operation on.</param>
         /// <param name="nValue">The nth root degree value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-        static MediumDec NthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero)
+        static MediumUDec NthRoot(const MediumUDec& tValue, const unsigned int& n, const MediumUDec& precision = MediumUDec::JustAboveZero)
         {
-	        return NthRootV1<MediumDec>(tValue, n, precision);
+	        return NthRootV1<MediumUDec>(tValue, n, precision);
         }
 
-        MediumDec NthRootOf(const unsigned int& n, const MediumDec& precision = MediumDec::JustAboveZero) const;
+        MediumUDec NthRootOf(const unsigned int& n, const MediumUDec& precision = MediumUDec::JustAboveZero) const;
 
-        static MediumDec AlternativeNthRoot(const MediumDec& tValue, const unsigned int& n, const MediumDec& precision = MediumDec::FiveBillionth);
+        static MediumUDec AlternativeNthRoot(const MediumUDec& tValue, const unsigned int& n, const MediumUDec& precision = MediumUDec::FiveBillionth);
 
 protected:
 
@@ -3252,11 +3244,11 @@ protected:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType FractionalPowV1(const auto& value, const boost::rational<unsigned int>& Frac)
 		{
 			VariantType targetVal = UIntPowOf(Frac.numerator());
-			VariantType CalcVal = MediumDecVariant::NthRoot(targetVal, Frac.denominator());
+			VariantType CalcVal = MediumUDecVariant::NthRoot(targetVal, Frac.denominator());
 			return CalcVal;
 		}
 
@@ -3266,11 +3258,11 @@ protected:
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         const VariantType FractionalPowV2(const VariantType& value, const signed int& expNum, const unsigned int& expDenom)
 		{
 			auto targetVal = IntPowOf(expNum);
-			auto CalcVal = MediumDecVariant::NthRoot(targetVal, expDenom);
+			auto CalcVal = MediumUDecVariant::NthRoot(targetVal, expDenom);
 			return CalcVal;
 		}
 
@@ -3278,10 +3270,10 @@ protected:
         /// Calculate to power of unsigned expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         const VariantType UnsignedPowOfV1(const auto& expValue)
 		{
-			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
+			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumUDecVariant::DecimalOverflow);
 			if(expValue.IntHalf.Value==0)
 				return FractionalPowV1(Frac);
 			else {
@@ -3295,10 +3287,10 @@ protected:
         /// Calculate to power of expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         const VariantType PowOfV1(const auto& expValue)
 		{
-			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumDecVariant::DecimalOverflow);
+			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumUDecVariant::DecimalOverflow);
 			if (expValue.IntHalf.IsNegative()){//Negative Exponent
 				if(expValue.IntHalf.Value==0)
 					return VariantType::One/FractionalPowV1(Frac);
@@ -3324,14 +3316,14 @@ public:
         /// Calculate to power of expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-        MediumDec UnsignedPowOf(const auto& expValue)
+        MediumUDec UnsignedPowOf(const auto& expValue)
 		{ return UnsignedPowOfV1(expValue); }
 
         /// <summary>
         /// Calculate to power of expValue
 		/// (Doesn't modify owner object)
         /// </summary>
-        MediumDec PowOf(const auto& expValue)
+        MediumUDec PowOf(const auto& expValue)
 		{ return PowOfV1(expValue); }
 
 	#pragma endregion Pow and Sqrt Functions
@@ -3344,7 +3336,7 @@ protected:
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>VariantType</returns>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType ExpV1(const VariantType& x)
         {
             /*
@@ -3404,7 +3396,7 @@ protected:
         }
 
 		//Common log calculations for when value is between 0 and one
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
 		VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
 		{
 			VariantType TotalRes = (*this - 1)/ (*this + 1);
@@ -3424,7 +3416,7 @@ protected:
 		}
 
 		//Common natural log calculations for range one to two
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         const VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
         {
             VariantType base = *this - 1;        // Base of the numerator; exponent will be explicit
@@ -3446,7 +3438,7 @@ protected:
         }
 
 		//Common log calculations for when value is greater than one
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
 		VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
 		{
 			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
@@ -3464,7 +3456,7 @@ protected:
 			return TotalRes;
 		}
 
-		template<MediumDecVariant VariantType=MediumDec, IntegerType IntType = unsigned int>
+		template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType = unsigned int>
 		static VariantType LogGreaterRangeIntPart02(const IntType& value, const VariantType& AccuracyLevel=VariantType::JustAboveZero)
 		{
 			VariantType tValue = VariantType(value);
@@ -3475,8 +3467,8 @@ protected:
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>MediumDec variant</returns>
-        template<MediumDecVariant VariantType = MediumDec>
+        /// <returns>MediumUDec variant</returns>
+        template<MediumUDecVariant VariantType = MediumUDec>
         #if defined(AltNum_UseCustomLnAccuracy)
         const VariantType LnOfV1(const VariantType& threshold = VariantType::FiveMillionth) const
         #else
@@ -3486,7 +3478,7 @@ protected:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (IsOne())
                 return VariantType::Zero;
-            if (IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if (IntHalf == unsigned int::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
                 return LogZeroRangePart02(threshold).MultipliedByTwo();
@@ -3494,7 +3486,7 @@ protected:
                 return LogZeroRangePart02().MultipliedByTwo();
                 #endif
             }
-            else if (IntHalf == MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (IntHalf == unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 #if defined(AltNum_UseCustomLnAccuracy)
                 return LnOfOneSection(threshold);
@@ -3516,8 +3508,8 @@ protected:
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>MediumDec variant</returns>
-        template<MediumDecVariant VariantType = MediumDec>
+        /// <returns>MediumUDec variant</returns>
+        template<MediumUDecVariant VariantType = MediumUDec>
         static VariantType LnV1(const VariantType& value)
         {
             return value.LnOfV1();
@@ -3527,8 +3519,8 @@ protected:
         /// Log Base 10 of tValue
         /// </summary>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
-        template<MediumDecVariant VariantType = MediumDec>
+        /// <returns>MediumUDec</returns>
+        template<MediumUDecVariant VariantType = MediumUDec>
         #if defined(AltNum_UseCustomLnAccuracy)
         static VariantType Log10V1(const VariantType& lValue, const VariantType& threshold = VariantType::FiveMillionth)
         #else
@@ -3549,7 +3541,7 @@ protected:
             }
             #endif
             const VariantType lnMultiplier = VariantType::InitializeV2(0, LN10Div_DecSection);
-            if (lValue.IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if (lValue.IntHalf == unsigned int::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
                 VariantType result = lValue.LogZeroRangePart02(threshold); return result.MultiplyByUnsigned(lnMultiplier);
@@ -3557,7 +3549,7 @@ protected:
                 VariantType result = lValue.LogZeroRangePart02(); return result.MultiplyByUnsigned(lnMultiplier);
                 #endif
             }
-            else if (lValue.IntHalf == MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (lValue.IntHalf == unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 #if defined(AltNum_UseCustomLnAccuracy)
                 VariantType result = lValue.LnOfOneSection(threshold); return result.MultiplyByUnsigned(lnMultiplier);
@@ -3579,8 +3571,8 @@ protected:
         /// Log Base 10 of tValue(integer value variant)
         /// </summary>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
-		template<MediumDecVariant VariantType=MediumDec, IntegerType IntType = unsigned int>
+        /// <returns>MediumUDec</returns>
+		template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType = unsigned int>
         static VariantType Log10OfIntV1(const IntType& value)
         {
             if (value == 1)
@@ -3607,8 +3599,8 @@ protected:
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
-        /// <returns>MediumDec Variant</returns>
-		template<MediumDecVariant VariantType=MediumDec>
+        /// <returns>MediumUDec Variant</returns>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType LogV1(const VariantType& value, const VariantType& baseVal)
         {
             if (value == VariantType::One)
@@ -3623,7 +3615,7 @@ protected:
         /// <param name="tValue">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>VariantType</returns>
-		template<MediumDecVariant VariantType=MediumDec, IntegerType IntType = unsigned int>
+		template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType = unsigned int>
         static VariantType LogOfIntV1(const VariantType& value, const IntType& baseVal)
         {
             //Calculate Base log first
@@ -3656,7 +3648,7 @@ protected:
                 }
                 return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyByUnsigned(lnMultiplier)):VariantType::Initialize(9, 0)/baseTotalRes;
             }
-			if(value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
+			if(value.IntHalf==unsigned int::Zero)//Not tested this block but should work
 			{
                 VariantType TotalRes = value.LogZeroRangePart02();
 				if(lnMultLog)
@@ -3664,7 +3656,7 @@ protected:
 				else
 					return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
 			}
-            else if (value.IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            else if (value.IntHalf==unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
 				if(lnMultLog)
 					return value.LnOfOneSection()/baseTotalRes;
@@ -3687,31 +3679,31 @@ public:
         /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec Exp(const MediumDec& x) { return ExpV1(x); }
+        /// <returns>MediumUDec</returns>
+        static MediumUDec Exp(const MediumUDec& x) { return ExpV1(x); }
 
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
         /// </summary>
         /// <param name="value">The target value.</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec Ln(const MediumDec& value)
+        /// <returns>MediumUDec</returns>
+        static MediumUDec Ln(const MediumUDec& value)
         { return LnV1(value); }
 
         /// <summary>
         /// Log Base 10 of tValue
         /// </summary>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec Log10(const MediumDec& value)
+        /// <returns>MediumUDec</returns>
+        static MediumUDec Log10(const MediumUDec& value)
         { return Log10V1(value); }
 
         /// <summary>
         /// Log Base 10 of tValue(integer value variant)
         /// </summary>
         /// <param name="tValue">The value.</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec Log10OfInt(const unsigned int& value)
+        /// <returns>MediumUDec</returns>
+        static MediumUDec Log10OfInt(const unsigned int& value)
         { return Log10OfIntV1(value); }
 
         /// <summary>
@@ -3720,8 +3712,8 @@ public:
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
-        /// <returns>MediumDec Variant</returns>
-        static MediumDec Log(const MediumDec& value, const MediumDec& baseVal)
+        /// <returns>MediumUDec Variant</returns>
+        static MediumUDec Log(const MediumUDec& value, const MediumUDec& baseVal)
         { return LogV1(value, baseVal); }
 
         /// <summary>
@@ -3730,8 +3722,8 @@ public:
         /// </summary>
         /// <param name="tValue">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
-        /// <returns>MediumDec</returns>
-        static MediumDec LogOfInt(const MediumDec& value, const unsigned int& baseVal)
+        /// <returns>MediumUDec</returns>
+        static MediumUDec LogOfInt(const MediumUDec& value, const unsigned int& baseVal)
         { return LogOfIntV1(value, baseVal); }
 
 	#pragma endregion Log Functions
@@ -3744,7 +3736,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType SinV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
@@ -3766,7 +3758,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType CosV1(const VariantType& tValue)
         {
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
@@ -3788,7 +3780,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType TanV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
@@ -3814,7 +3806,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType ATanV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
@@ -3844,7 +3836,7 @@ protected:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType ArcTan2V1(const VariantType& y, const VariantType& x)
         {
             VariantType coeff_1 = VariantType::PiNum.DividedByFour();
@@ -3868,7 +3860,7 @@ protected:
                 return angle;
         }
 
-    	template<MediumDecVariant VariantType=MediumDec>
+    	template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType NormalizeForTrig(VariantType tValue)
         {
             if (tValue.IsNegative())
@@ -3897,7 +3889,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType SinFromAngleV1(const VariantType& tValue)
         {
 			VariantType lValue = NormalizeForTrig(tValue);
@@ -3924,7 +3916,7 @@ protected:
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
-                        return MediumDec::SinV1<VariantType>(Radius);
+                        return MediumUDec::SinV1<VariantType>(Radius);
                         break;
                 }
             }
@@ -3932,7 +3924,7 @@ protected:
             {
                 //Angle as Radian
                 VariantType Radius = PiNum * lValue / 180;
-                return MediumDec::SinV1<VariantType>(Radius);
+                return MediumUDec::SinV1<VariantType>(Radius);
             }
         }
 
@@ -3941,7 +3933,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType CosFromAngleV1(const VariantType& tValue)
         {
 			VariantType lValue = NormalizeForTrig(tValue);
@@ -3968,7 +3960,7 @@ protected:
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
-                        return MediumDec::CosV1<VariantType>(Radius);
+                        return MediumUDec::CosV1<VariantType>(Radius);
                         break;
                 }
             }
@@ -3976,7 +3968,7 @@ protected:
             {
                 //Angle as Radian
                 VariantType Radius = PiNum * lValue / 180;
-                return MediumDec::CosV1<VariantType>(Radius);
+                return MediumUDec::CosV1<VariantType>(Radius);
             }
         }
 
@@ -3985,7 +3977,7 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<MediumDecVariant VariantType=MediumDec>
+		template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType TanFromAngleV1(const VariantType& tValue)
         {
 			VariantType lValue = NormalizeForTrig(tValue);
@@ -4004,12 +3996,12 @@ protected:
                         return VariantType::Minimum;//Negative Infinity
                         break;
                     default:
-                        return MediumDec::TanV1<VariantType>(PiNum * lValue / 180);
+                        return MediumUDec::TanV1<VariantType>(PiNum * lValue / 180);
                         break;
                 }
             }
             else
-                return MediumDec::TanV1<VariantType>(PiNum * lValue / 180);
+                return MediumUDec::TanV1<VariantType>(PiNum * lValue / 180);
         }
 
 public:
@@ -4019,67 +4011,67 @@ public:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-        static MediumDec Sin(const MediumDec& tValue)
-        { return SinV1<MediumDec>(tValue); }
+        static MediumUDec Sin(const MediumUDec& tValue)
+        { return SinV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Get cosine from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
-        static MediumDec Cos(const MediumDec& tValue)
-        { return CosV1<MediumDec>(tValue); }
+        static MediumUDec Cos(const MediumUDec& tValue)
+        { return CosV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Get Tan from value in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
-        static MediumDec Tan(const MediumDec& tValue)
-        { return TanV1<MediumDec>(tValue); }
+        static MediumUDec Tan(const MediumUDec& tValue)
+        { return TanV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Gets Inverse Tangent from tValue in Radians
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The tValue in Radians.</param>
-        static MediumDec ATan(const MediumDec& tValue)
-        { return ATanV1<MediumDec>(tValue); }
+        static MediumUDec ATan(const MediumUDec& tValue)
+        { return ATanV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Get Sin from value of angle.
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-        static MediumDec SinFromAngle(const MediumDec& tValue)
-        { return SinFromAngleV1<MediumDec>(tValue); }
+        static MediumUDec SinFromAngle(const MediumUDec& tValue)
+        { return SinFromAngleV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Get Cos() from value of Angle
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-        static MediumDec CosFromAngle(const MediumDec& tValue)
-        { return CosFromAngleV1<MediumDec>(tValue); }
+        static MediumUDec CosFromAngle(const MediumUDec& tValue)
+        { return CosFromAngleV1<MediumUDec>(tValue); }
 
         /// <summary>
         /// Get Tangent from value in Degrees (SlopeInPercent:http://communityviz.city-explained.com/communityviz/s360webhelp4-2/formulas/function_library/atan_function.htm)
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-        static MediumDec TanFromAngle(const MediumDec& tValue)
-        { return TanFromAngleV1<MediumDec>(tValue); }
+        static MediumUDec TanFromAngle(const MediumUDec& tValue)
+        { return TanFromAngleV1<MediumUDec>(tValue); }
 
-		MediumDec SinOf()
+		MediumUDec SinOf()
         { return Sin(*this); }
 
-		MediumDec CosOf()
+		MediumUDec CosOf()
         { return Cos(*this); }
 
-		MediumDec TanOf()
+		MediumUDec TanOf()
         { return Tan(*this); }
 
-		MediumDec ATanOf()
+		MediumUDec ATanOf()
         { return ATan(*this);; }
 
         /// <summary>
@@ -4090,8 +4082,8 @@ public:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-        static MediumDec ArcTan2(const MediumDec& y, const MediumDec& x)
-        { return ArcTan2V1<MediumDec>(y, x); }
+        static MediumUDec ArcTan2(const MediumUDec& y, const MediumUDec& x)
+        { return ArcTan2V1<MediumUDec>(y, x); }
 
     #pragma endregion Trigonomic Functions
     };
