@@ -20,16 +20,16 @@ inline void MediumDecV2::MultOp_CatchAllV2(const MediumDecV2& rValue, const RepT
 
 void MediumDecV2::MultOpSameRep_ApproachingBottom(const MediumDecV2& rValue, const RepType& LRep)
 {
-	if(IntValue.Value!=0)
+	if(IntHalf.Value!=0)
 	{
 		if (rValue.IntHalf == 0)//1.0..1 * 0.0..1
-			IntValue = IntValue < 0?NegativeRep:0;
+			IntHalf = IntHalf < 0?NegativeRep:0;
 		else//1.0..1 * 2.0..1
-			IntValue *= rValue.IntHalf;
+			IntHalf *= rValue.IntHalf;
 	}
 	else if (rValue.IntHalf == 0)
 	{//5.0..01 x 0.0..01 = 0.0..01
-		IntValue = IntValue < 0?NegativeRep:0;
+		IntHalf = IntHalf < 0?NegativeRep:0;
 	}
 }
 
@@ -38,11 +38,11 @@ void MediumDecV2::MultOpSameRep_ApproachingTop(const MediumDecV2& rValue, const 
 //1.999999999999999999999999999999999 x 1.999999999999999999999999999999999 = 3.999999999999999999999999999999996000000000000000000000000000000001 (~3.9..9 - 0.0..03)
 //1.999999999999999999999999999999999 x 0.999999999999999999999999999999999 = 1.999999999999999999999999999999997000000000000000000000000000000001
 //3.999999999999999999999999999999999 x 0.999999999999999999999999999999999 = 3.999999999999999999999999999999995000000000000000000000000000000001
-	if(IntValue.Value!=0)
+	if(IntHalf.Value!=0)
 	{	//1.9..9 * 0.9..9 = ~1.9..9
 		if (rValue.IntHalf != 0){ //1.0..1 * 2.0..1
-			++IntValue.Value *= rValue.IntHalf.Value+1;
-			--IntValue.Value;
+			++IntHalf.Value *= rValue.IntHalf.Value+1;
+			--IntHalf.Value;
 		}
 	}
 }
@@ -117,7 +117,7 @@ void MediumDecV2::UnsignedMultOp(const MediumDecV2& rValue)
 			} break;
     #if defined(AltNum_EnableApproaching)
 			case RepTypeEnum::ApproachingBottom:
-                if(IntValue.Value!=0)
+                if(IntHalf.Value!=0)
 					MultOp_CatchAll(rValue, LRep, RRep);
 			break;
 			case RepTypeEnum::ApproachingTop:
