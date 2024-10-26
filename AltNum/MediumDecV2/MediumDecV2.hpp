@@ -23,7 +23,11 @@ namespace BlazesRusCode
 {
     class MediumDecV2;
 
-    //Reduced version of MediumDecV2 result for modulus result and other stuff
+    /// <summary>
+    /// Alternative Non-Integer number representation with focus on accuracy and partially speed within certain range
+    /// Represents +- 2147483647.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
+    /// (8 bytes worth of Variable Storage inside class for each instance)
+	/// </summary>
     class DLL_API MediumDecV2 : public MediumDec
     {
 	#if defined(AltNum_UseBuiltinVirtualTable)//Experimental VTable code
