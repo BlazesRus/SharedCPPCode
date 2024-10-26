@@ -218,41 +218,23 @@ namespace BlazesRusCode
         
         /// <summary>
         /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
+        /// (Stored as 3.1416)
         /// </summary>
         /// <returns>TinyUDec</returns>
         static TinyUDec PiNumValue()
         {
-            return TinyUDec(3, 141592654);
-        }
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        static TinyUDec HundredMilPiNumVal()
-        {
-            return TinyUDec(314159265, 358979324);
-        }
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        static TinyUDec TenMilPiNumVal()
-        {
-            return TinyUDec(31415926, 535897932);
-        }
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        static TinyUDec OneMilPiNumVal()
-        {
-            return TinyUDec(3141592, 653589793);
+            return TinyUDec(3, 1416);
         }
 
         //10xPi(Rounded to 9th decimal digit)
         static TinyUDec TenPiNumVal()
         {
-            return TinyUDec(31, 415926536);
+            return TinyUDec(31, 4159);
         }
         
         static TinyUDec ENumValue()
         {
-            return TinyUDec(2, 718281828);
+            return TinyUDec(2, 7183);
         }
         
         static TinyUDec ZeroValue()
@@ -296,7 +278,7 @@ namespace BlazesRusCode
         /// <returns>TinyUDec</returns>
         static TinyUDec Point5Value()
         {
-            TinyUDec NewSelf = TinyUDec(0, 500000000);
+            TinyUDec NewSelf = TinyUDec(0, 5000);
             return NewSelf;
         }
 
@@ -306,45 +288,15 @@ namespace BlazesRusCode
             return NewSelf;
         }
 
-        static TinyUDec OneMillionthValue()
-        {
-            TinyUDec NewSelf = TinyUDec(0, 1000);
-            return NewSelf;
-        }
-
         static TinyUDec FiveThousandthValue()
-        {
-            TinyUDec NewSelf = TinyUDec(0, 5000000);
-            return NewSelf;
-        }
-
-        static TinyUDec FiveMillionthValue()
         {
             TinyUDec NewSelf = TinyUDec(0, 5000);
             return NewSelf;
         }
 
-        static TinyUDec TenMillionthValue()
-        {
-            TinyUDec NewSelf = TinyUDec(0, 100);
-            return NewSelf;
-        }
-
-        static TinyUDec OneHundredMillionthValue()
-        {
-            TinyUDec NewSelf = TinyUDec(0, 10);
-            return NewSelf;
-        }
-
-        static TinyUDec FiveBillionthValue()
-        {
-            TinyUDec NewSelf = TinyUDec(0, 5);
-            return NewSelf;
-        }
-
         static TinyUDec LN10Value()
         {
-            return TinyUDec(2, 302585093);
+            return TinyUDec(2, 3026);
         }
 
         static TinyUDec TenthLN10Value()
@@ -354,7 +306,7 @@ namespace BlazesRusCode
 
         static TinyUDec FifthLN10Value()
         {
-            return TinyUDec(0, 868588964);
+            return TinyUDec(0, 8686);
         }
         
     #if defined(AltNum_EnableNil)
@@ -366,12 +318,12 @@ namespace BlazesRusCode
 
         static TinyUDec MinimumValue()
         {
-            return TinyUDec(2147483647, 999999999);
+            return TinyUDec(0, 0);
         }
 
         static TinyUDec MaximumValue()
         {
-            return TinyUDec(2147483647, 999999999);
+            return TinyUDec(255, 9999);
         }
 public:
         static TinyUDec AlmostOne;
