@@ -28,7 +28,7 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Unsigned version of MediumDec
-    /// Represents +- 4294967295.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
+    /// Represents 4294967295.999999999 with 100% consistency of accuracy for most operations as long as don't get too small
     /// (8 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API MediumUDec : public UnsignedAltNumBase//UnsignedAltNumBase is used as base class to identify as MediumUDec variant

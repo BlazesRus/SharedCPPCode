@@ -292,7 +292,7 @@ void BlazesRusCode::MediumDec::SetAsOneVal()
 
 void BlazesRusCode::MediumDec::SetAsValues(const MirroredInt& intVal, const PartialInt& decVal)
 {
-	IntHalf = 0; DecimalHalf = 0;
+	IntHalf = intVal; DecimalHalf = decVal;
 }
 
 bool BlazesRusCode::MediumDec::IsAtZeroInt() const

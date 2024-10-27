@@ -255,37 +255,37 @@ void BlazesRusCode::MediumUDec::SetAsOne()
 
 void BlazesRusCode::MediumUDec::SetAsOneVal()
 {
-	IntHalf.Value = 1; DecimalHalf = 0;
+	IntHalf = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::MediumUDec::SetAsValues(const unisigned int& intVal, const PartialInt& decVal)
+void BlazesRusCode::MediumUDec::SetAsValues(const unsigned int& intVal, const PartialInt& decVal)
 {
-	IntHalf = 0; DecimalHalf = 0;
+	IntHalf = intVal; DecimalHalf = decVal;
 }
 
 bool BlazesRusCode::MediumUDec::IsAtZeroInt() const
 {
-	return IntHalf.Value == 0;
+	return IntHalf == 0;
 }
 
 bool BlazesRusCode::MediumUDec::IsNotAtZeroInt() const
 {
-	return IntHalf.Value != 0;
+	return IntHalf != 0;
 }
 
 bool BlazesRusCode::MediumUDec::IsAtOneInt() const
 {
-	return IntHalf.Value == 1;
+	return IntHalf == 1;
 }
 
 bool BlazesRusCode::MediumUDec::IsNotAtOneInt() const
 {
-	return IntHalf.Value != 1;
+	return IntHalf != 1;
 }
 
 bool BlazesRusCode::MediumUDec::IsZero() const
 {
-	return DecimalHalf == 0 && IntHalf.Value == 0;
+	return DecimalHalf == 0 && IntHalf == 0;
 }
 
 bool BlazesRusCode::MediumUDec::IsOne() const
@@ -293,19 +293,9 @@ bool BlazesRusCode::MediumUDec::IsOne() const
 	return DecimalHalf == 0 && IntHalf == MirroredInt::One;
 }
 
-bool BlazesRusCode::MediumUDec::IsNegOne() const
-{
-	return DecimalHalf == 0 && IntHalf == MirroredInt::NegativeOne;
-}
-
 bool BlazesRusCode::MediumUDec::IsOneVal() const
 {
-	return DecimalHalf == 0 && IntHalf.Value == 1;
-}
-
-bool BlazesRusCode::MediumUDec::IsOneVariantVal() const
-{
-	return DecimalHalf.Value == 0 && IntHalf.Value == 1;
+	return DecimalHalf == 0 && IntHalf == 1;
 }
 
 #pragma endregion Check_if_value
@@ -333,17 +323,17 @@ float BlazesRusCode::MediumUDec::toFloat() const
 	float Value;
 	if (IntHalf.IsNegative())
 	{
-		Value = (float)-IntHalf.Value;
+		Value = (float)-IntHalf;
 		if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
 	}
 	else
 	{
-		Value = (float)IntHalf.Value;
+		Value = (float)IntHalf;
 		if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-	if (IntHalf.Value == 0)//Exponent is negative
+	if (IntHalf == 0)//Exponent is negative
 	{
 		//To-Do:Add code here
 	}
@@ -361,17 +351,17 @@ double BlazesRusCode::MediumUDec::toDouble() const
 	double Value;
 	if (IntHalf < 0)
 	{
-		Value = (double)-IntHalf.Value;
+		Value = (double)-IntHalf;
 		if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
 	}
 	else
 	{
-		Value = (double)IntHalf.Value;
+		Value = (double)IntHalf;
 		if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-	if (IntHalf.Value == 0)//Exponent is negative
+	if (IntHalf == 0)//Exponent is negative
 	{
 		//To-Do:Add code here
 	}
@@ -389,17 +379,17 @@ long double BlazesRusCode::MediumUDec::toDecimal() const
 	long double Value;
 	if (IntHalf < 0)
 	{
-		Value = (long double)-IntHalf.Value;
+		Value = (long double)-IntHalf;
 		if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
 	}
 	else
 	{
-		Value = (long double)IntHalf.Value;
+		Value = (long double)IntHalf;
 		if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
-	if (IntHalf.Value == 0)//Exponent is negative
+	if (IntHalf == 0)//Exponent is negative
 	{
 		//To-Do:Add code here
 	}
@@ -423,10 +413,10 @@ long double BlazesRusCode::MediumUDec::toDecimal() const
 
 void BlazesRusCode::MediumUDec::DivideByTwo()
 {
-	if (DecimalHalf == 0 && (IntHalf.Value & 1) == 1)//Check if number is odd
+	if (DecimalHalf == 0 && (IntHalf & 1) == 1)//Check if number is odd
 		UIntDivOp(2);
 	else
-		IntHalf.Value /= 2;
+		IntHalf /= 2;
 }
 
 void BlazesRusCode::MediumUDec::DivideByFour()
@@ -434,8 +424,8 @@ void BlazesRusCode::MediumUDec::DivideByFour()
 	//Checking if divisible by 4 based on
 	//https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
 	//checking if divible by 8 equals (((n >> 3) << 3) == n)
-	if (DecimalHalf == 0 && (((IntHalf.Value >> 2) << 2) == IntHalf.Value))//Check if number can be perfectly divided by 4
-		IntHalf.Value /= 4;
+	if (DecimalHalf == 0 && (((IntHalf >> 2) << 2) == IntHalf))//Check if number can be perfectly divided by 4
+		IntHalf /= 4;
 	else
 		UIntDivOp(4);
 }
@@ -595,7 +585,7 @@ void BlazesRusCode::MediumUDec::ReadString(const std::string& Value)
 		TempInt02 = (TempInt * VariableConversionFunctions::PowerOfTens[PlaceNumber]);
 		if (StringChar != '0')
 		{
-			IntHalf.Value += TempInt02;
+			IntHalf += TempInt02;
 		}
 		PlaceNumber--;
 	}
@@ -761,7 +751,7 @@ void BlazesRusCode::MediumUDec::SetIntVal(const int& Value)
 	if (Value<0)
 	{
 		IntHalf.Sign = MirroredInt::NegativeSign;
-		IntHalf.Value = -Value;
+		IntHalf = -Value;
 	}
 	else
 		IntHalf = Value;
