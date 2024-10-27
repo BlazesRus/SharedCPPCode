@@ -81,10 +81,14 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        SmallDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0)
+        SmallDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0, const bool isPositive = true)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
+			if(isPositive)
+				Sign = PositiveSign;
+			else
+				Sign = NegativeSign;
         }
 
         SmallDec& operator=(const SmallDec& rhs)
@@ -93,24 +97,23 @@ namespace BlazesRusCode
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
             IntHalf = rhs.IntHalf; DecimalHalf = rhs.DecimalHalf;
+			Sign = rhs.Sign;
             return *this;
         }
 
         SmallDec& operator=(const signed int& rhs)
         {
-            IntHalf = rhs; DecimalHalf = 0;
+			if(rhs.Sign==PositiveSign)
+			{
+				IntHalf = rhs; DecimalHalf = 0;
+				Sign = PositiveSign;
+			}
+			else
+			{
+				IntHalf = -rhs; DecimalHalf = 0;
+				Sign = NegativeSign;
+			}
             return *this;
-        }
-
-        /// <summary>
-        /// Creates class from derived class into this class
-        /// (subscript operator of [])
-        /// </summary>
-        template<SmallDecVariant VariantType>
-        SmallDec operator[](VariantType variantValue) const
-        {
-            SmallDec newSelf = SmallDec(variantValue.IntHalf, variantValue.DecimalHalf);
-            return newSelf;
         }
 
         //Fix for C2440 error during static template class
@@ -209,81 +212,12 @@ namespace BlazesRusCode
     #pragma endregion RangeLimits
 
     #pragma region ValueSetters
-protected://Work around for not allowing to use incomplete class statics during forming of class
-        static const unsigned int LN10Div_DecSection = 434294482;
-        static const unsigned int TwiceLN10Div_DecSection = 868588964;
-
 public:
-
-        /// <summary>
-        /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        void  SetValueToPiNum();
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToHundredMilPiNum();
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenMilPiNum();
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToOneMilPiNum();
-
-        //10xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenPiNum();
-
-        /// <summary>
-        /// Euler's number rounded to 9th digit(2.718281828)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        void  SetValueToENum();
 
         //Sets value to value at 0.5
         void  SetValueToPoint5();
 
         void  SetValueToJustAboveZero();
-
-        /// <summary>
-        /// Sets the value at .000001000
-        /// </summary>
-        void  SetValueToOneMillionth();
-
-        /// <summary>
-        /// Sets the value at "0.005"
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        void  SetValueToFiveThousandth();
-
-        /// <summary>
-        /// Sets the value at "0.000005"
-        /// </summary>
-        void  SetValueToFiveMillionth();
-
-        //0e-7
-        void  SetValueToTenMillionth();
-
-        /// <summary>
-        /// Sets the value to .000000010
-        /// </summary>
-        void  SetValueToOneHundredMillionth();
-
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        void  SetValueToLN10();
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToLN10Div();
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToTwiceLN10Div();
 
         void SetValueToPointOne();
 
@@ -293,27 +227,6 @@ public:
 public:
 
         static SmallDec AlmostOneValue();
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static SmallDec PiNumValue();
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        static SmallDec HundredMilPiNumValue();
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        static SmallDec TenMilPiNumValue();
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        static SmallDec OneMilPiNumValue();
-
-        //10xPi(Rounded to 9th decimal digit)
-        static SmallDec TenPiNumValue();
-
-        static SmallDec ENumValue();
 
         static SmallDec ZeroValue();
 
@@ -343,24 +256,6 @@ public:
 
         static SmallDec JustAboveZeroValue();
 
-        static SmallDec OneMillionthValue();
-
-        static SmallDec FiveThousandthValue();
-
-        static SmallDec FiveMillionthValue();
-
-        static SmallDec TenMillionthValue();
-
-        static SmallDec OneHundredMillionthValue();
-
-        static SmallDec FiveBillionthValue();
-
-        static SmallDec LN10Value();
-
-        static SmallDec LN10DivValue();
-
-        static SmallDec TwiceLN10DivValue();
-
         static SmallDec MinimumValue();
 
         static SmallDec MaximumValue();
@@ -372,34 +267,6 @@ public:
         static const SmallDec NegativePointFive;
 
         static const SmallDec AlmostOne;
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec PiNum;
-
-        /// <summary>
-        /// Euler's number (Non-Alternative Representation)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec ENum;
-
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) Representation
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec Pi;
-
-        /// <summary>
-        /// Euler's number (Non-Alternative Representation)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec E;
 
         /// <summary>
         /// Returns the value at zero
@@ -432,38 +299,6 @@ public:
         static const SmallDec JustAboveZero;
 
         /// <summary>
-        /// Returns the value at .000000005
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec FiveBillionth;
-
-        /// <summary>
-        /// Returns the value at .000001000
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec OneMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.005"
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec FiveThousandth;
-
-        /// <summary>
-        /// Returns the value at .000000010
-        /// </summary>
-        /// <returns>SmallDec</returns>
-        static const SmallDec OneGMillionth;
-
-        //0e-7
-        static const SmallDec TenMillionth;
-
-        /// <summary>
-        /// Returns the value at "0.000005"
-        /// </summary>
-        static const SmallDec FiveMillionth;
-
-        /// <summary>
         /// Returns the value at negative one
         /// </summary>
         /// <returns>SmallDec</returns>
@@ -480,22 +315,6 @@ public:
         /// (2147483647.999999999)
         /// </summary>
         static const SmallDec Maximum;
-
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        static const SmallDec LN10;
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static const SmallDec LN10Div;
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        static const SmallDec TwiceLN10Div;
 
         static const SmallDec PointOne;
 
@@ -736,8 +555,7 @@ public:
     #pragma region Comparison Operators
 protected:
 		//Compare only as if in NormalType representation mode
-		template<SmallDecVariant VariantType=SmallDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
+		std::strong_ordering BasicComparisonV1(const SmallDec& that) const
 		{
 			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
 				return IntHalfCmp;
@@ -834,23 +652,23 @@ public:
 			return false;
 		}
 
-		bool operator==(const signed int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
-
-		bool operator!=(const signed int& that) const
-		{
-			if (IntHalf!=that)
-				return true;
-			if (DecimalHalf!=0)
-				return true;
-			return false;
-		}
+//		bool operator==(const signed int& that) const
+//		{
+//			if (IntHalf!=that)
+//				return false;
+//			if (DecimalHalf!=0)
+//				return false;
+//			return true;
+//		}
+//
+//		bool operator!=(const signed int& that) const
+//		{
+//			if (IntHalf!=that)
+//				return true;
+//			if (DecimalHalf!=0)
+//				return true;
+//			return false;
+//		}
 
     #pragma endregion Comparison Operators
 
