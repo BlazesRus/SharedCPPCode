@@ -1,20 +1,19 @@
-﻿#include "SmallDec.hpp"
-using SmallDec = BlazesRusCode::SmallDec;
+﻿#include "SmallUDec.hpp"
+using SmallUDec = BlazesRusCode::SmallUDec;
 
 #pragma region ValueSetters
 
-void BlazesRusCode::SmallDec::SetValueToPoint5()
+void BlazesRusCode::SmallUDec::SetValueToPoint5()
 {
 	IntHalf = 0; DecimalHalf = 50;
 }
 
-void BlazesRusCode::SmallDec::SetValueToJustAboveZero()
+void BlazesRusCode::SmallUDec::SetValueToJustAboveZero()
 {
 	IntHalf = 0; DecimalHalf = 1;
 }
 
-
-void BlazesRusCode::SmallDec::SetValueToPointOne()
+void BlazesRusCode::SmallUDec::SetValueToPointOne()
 {
 	IntHalf = 0; DecimalHalf = 10;
 }
@@ -23,171 +22,131 @@ void BlazesRusCode::SmallDec::SetValueToPointOne()
 
 #pragma region ValueDefines
 
-SmallDec BlazesRusCode::SmallDec::AlmostOneValue()
+SmallUDec BlazesRusCode::SmallUDec::AlmostOneValue()
 {
 	return SmallDec(0, 99);
 }
 
-SmallDec BlazesRusCode::SmallDec::ZeroValue()
+SmallUDec BlazesRusCode::SmallUDec::ZeroValue()
 {
-	return SmallDec();
+	return SmallUDec();
 }
 
-SmallDec BlazesRusCode::SmallDec::OneValue()
+SmallUDec BlazesRusCode::SmallUDec::OneValue()
 {
-	return SmallDec(1);
+	return SmallUDec(1);
 }
 
-SmallDec BlazesRusCode::SmallDec::TwoValue()
+SmallUDec BlazesRusCode::SmallUDec::TwoValue()
 {
-	return SmallDec(2);
+	return SmallUDec(2);
 }
 
-SmallDec BlazesRusCode::SmallDec::NegativeOneValue()
+SmallUDec BlazesRusCode::SmallUDec::Point5Value()
 {
-	return SmallDec(1,0,false);
+	return SmallUDec(0, 50);
 }
 
-SmallDec BlazesRusCode::SmallDec::Point5Value()
+SmallUDec BlazesRusCode::SmallUDec::JustAboveZeroValue()
 {
-	return SmallDec(0, 50);
+	return SmallUDec(0, 1);
 }
 
-SmallDec BlazesRusCode::SmallDec::JustAboveZeroValue()
+SmallUDec BlazesRusCode::SmallUDec::MinimumValue()
 {
-	return SmallDec(0, 1);
+	return SmallUDec(0, 0);
 }
 
-SmallDec BlazesRusCode::SmallDec::MinimumValue()
+SmallUDec BlazesRusCode::SmallUDec::MaximumValue()
 {
-	return SmallDec(16777215, 99, false);
+	return SmallUDec(33554431, 99);
 }
 
-SmallDec BlazesRusCode::SmallDec::MaximumValue()
+SmallUDec BlazesRusCode::SmallUDec::PointOneValue()
 {
-	return SmallDec(16777215, 99);
-}
-
-SmallDec BlazesRusCode::SmallDec::NegativePointFiveValue()
-{
-	return SmallDec(0, 50, false);
-}
-
-SmallDec BlazesRusCode::SmallDec::PointOneValue()
-{
-	return SmallDec(0, 10);
+	return SmallUDec(0, 10);
 }
 
 #pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
 
-const SmallDec SmallDec::AlmostOne = SmallDec::AlmostOneValue();
-const SmallDec SmallDec::One = SmallDec::OneValue();
-const SmallDec SmallDec::Two = SmallDec::TwoValue();
-const SmallDec SmallDec::NegativeOne = SmallDec::NegativeOneValue();
-const SmallDec SmallDec::Zero = SmallDec::ZeroValue();
-const SmallDec SmallDec::PointFive = SmallDec::Point5Value();
-const SmallDec SmallDec::JustAboveZero = SmallDec::JustAboveZeroValue();
+const SmallUDec SmallUDec::AlmostOne = SmallUDec::AlmostOneValue();
+const SmallUDec SmallUDec::One = SmallUDec::OneValue();
+const SmallUDec SmallUDec::Two = SmallUDec::TwoValue();
+const SmallUDec SmallUDec::Zero = SmallUDec::ZeroValue();
+const SmallUDec SmallUDec::PointFive = SmallUDec::Point5Value();
+const SmallUDec SmallUDec::JustAboveZero = SmallUDec::JustAboveZeroValue();
 
-const SmallDec SmallDec::Minimum = SmallDec::MinimumValue();
-const SmallDec SmallDec::Maximum = SmallDec::MaximumValue();
+const SmallUDec SmallUDec::Minimum = SmallUDec::MinimumValue();
+const SmallUDec SmallUDec::Maximum = SmallUDec::MaximumValue();
 
-const SmallDec SmallDec::NegativePointFive = SmallDec::NegativePointFiveValue();
-const SmallDec SmallDec::PointOne = SmallDec::PointOneValue();
+const SmallUDec SmallUDec::PointOne = SmallUDec::PointOneValue();
 #pragma endregion ValueDefine Source
-
-#pragma region Negative_Status
-
-bool BlazesRusCode::SmallDec::IsPositive() const
-{
-	return IntHalf.IsPositive();
-}
-
-bool BlazesRusCode::SmallDec::IsNegative() const
-{
-	return IntHalf.IsNegative();
-}
-
-void BlazesRusCode::SmallDec::SwapNegativeStatus()
-{
-	Sign ^= 1;
-}
-
-#pragma endregion Negative_Status
 
 #pragma region Check_if_value
 
-void BlazesRusCode::SmallDec::SetAsZero()
+void BlazesRusCode::SmallUDec::SetAsZero()
 {
 	IntHalf = 0; DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetAsOne()
+void BlazesRusCode::SmallUDec::SetAsOne()
 {
 	IntHalf = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetAsOneVal()
+void BlazesRusCode::SmallUDec::SetAsOneVal()
 {
 	IntHalf.Value = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetAsValues(const signed int& intVal, const PartialInt& decVal)
+void BlazesRusCode::SmallUDec::SetAsValues(const unsigned int& intVal, const PartialInt& decVal)
 {
-    if(intVal<0)
-    {
-        IntHalf = -intVal; DecimalHalf = decVal;
-        Sign = NegativeSign;
-    }
-    else
-    {
-        IntHalf = intVal; DecimalHalf = decVal;
-        Sign = PositiveSign;
-    }
+	IntHalf = intVal; DecimalHalf = decVal;
 }
 
-bool BlazesRusCode::SmallDec::IsAtZeroInt() const
+bool BlazesRusCode::SmallUDec::IsAtZeroInt() const
 {
 	return IntHalf.Value == 0;
 }
 
-bool BlazesRusCode::SmallDec::IsNotAtZeroInt() const
+bool BlazesRusCode::SmallUDec::IsNotAtZeroInt() const
 {
 	return IntHalf.Value != 0;
 }
 
-bool BlazesRusCode::SmallDec::IsAtOneInt() const
+bool BlazesRusCode::SmallUDec::IsAtOneInt() const
 {
 	return IntHalf.Value == 1;
 }
 
-bool BlazesRusCode::SmallDec::IsNotAtOneInt() const
+bool BlazesRusCode::SmallUDec::IsNotAtOneInt() const
 {
 	return IntHalf.Value != 1;
 }
 
-bool BlazesRusCode::SmallDec::IsZero() const
+bool BlazesRusCode::SmallUDec::IsZero() const
 {
 	return DecimalHalf == 0 && IntHalf.Value == 0;
 }
 
-bool BlazesRusCode::SmallDec::IsOne() const
+bool BlazesRusCode::SmallUDec::IsOne() const
 {
 	return DecimalHalf == 0 && IntHalf == MirroredInt::One;
 }
 
-bool BlazesRusCode::SmallDec::IsNegOne() const
+bool BlazesRusCode::SmallUDec::IsNegOne() const
 {
 	return DecimalHalf == 0 && IntHalf == MirroredInt::NegativeOne;
 }
 
-bool BlazesRusCode::SmallDec::IsOneVal() const
+bool BlazesRusCode::SmallUDec::IsOneVal() const
 {
 	return DecimalHalf == 0 && IntHalf.Value == 1;
 }
 
-bool BlazesRusCode::SmallDec::IsOneVariantVal() const
+bool BlazesRusCode::SmallUDec::IsOneVariantVal() const
 {
 	return DecimalHalf.Value == 0 && IntHalf.Value == 1;
 }
@@ -196,14 +155,14 @@ bool BlazesRusCode::SmallDec::IsOneVariantVal() const
 
 #pragma region RangeLimits
 
-void BlazesRusCode::SmallDec::SetAsMaximum()
+void BlazesRusCode::SmallUDec::SetAsMaximum()
 {
-	IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999;
+	IntHalf = 4294967295; DecimalHalf = 999999999;
 }
 
-void BlazesRusCode::SmallDec::SetAsMinimum()
+void BlazesRusCode::SmallUDec::SetAsMinimum()
 {
-	IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999;
+	IntHalf = 0; DecimalHalf = 0;
 }
 
 #pragma endregion RangeLimits
@@ -211,7 +170,7 @@ void BlazesRusCode::SmallDec::SetAsMinimum()
 #pragma region ConvertToOtherTypes
 
     #if defined(AltNum_EnableFloatingConversion)
-float BlazesRusCode::SmallDec::toFloat() const
+float BlazesRusCode::SmallUDec::toFloat() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	float Value;
@@ -239,7 +198,7 @@ float BlazesRusCode::SmallDec::toFloat() const
 	#endif
 }
 
-double BlazesRusCode::SmallDec::toDouble() const
+double BlazesRusCode::SmallUDec::toDouble() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	double Value;
@@ -267,7 +226,7 @@ double BlazesRusCode::SmallDec::toDouble() const
 	#endif
 }
 
-long double BlazesRusCode::SmallDec::toDecimal() const
+long double BlazesRusCode::SmallUDec::toDecimal() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	long double Value;
@@ -305,7 +264,7 @@ long double BlazesRusCode::SmallDec::toDecimal() const
 
 #pragma region Other Division Operations
 
-void BlazesRusCode::SmallDec::DivideByTwo()
+void BlazesRusCode::SmallUDec::DivideByTwo()
 {
 	if (DecimalHalf == 0 && (IntHalf.Value & 1) == 1)//Check if number is odd
 		UIntDivOp(2);
@@ -313,7 +272,7 @@ void BlazesRusCode::SmallDec::DivideByTwo()
 		IntHalf.Value /= 2;
 }
 
-void BlazesRusCode::SmallDec::DivideByFour()
+void BlazesRusCode::SmallUDec::DivideByFour()
 {
 	//Checking if divisible by 4 based on
 	//https://www.geeksforgeeks.org/check-number-divisible-8-using-bitwise-operators/
@@ -324,15 +283,15 @@ void BlazesRusCode::SmallDec::DivideByFour()
 		UIntDivOp(4);
 }
 
-SmallDec BlazesRusCode::SmallDec::DividedByTwo() const
+SmallUDec BlazesRusCode::SmallUDec::DividedByTwo() const
 {
-	SmallDec result = *this; result.DivideByTwo();
+	SmallUDec result = *this; result.DivideByTwo();
 	return result;
 }
 
-SmallDec BlazesRusCode::SmallDec::DividedByFour() const
+SmallUDec BlazesRusCode::SmallUDec::DividedByFour() const
 {
-	SmallDec result = *this; result.DivideByFour();
+	SmallUDec result = *this; result.DivideByFour();
 	return result;
 }
 
@@ -340,26 +299,26 @@ SmallDec BlazesRusCode::SmallDec::DividedByFour() const
 
 #pragma region Other multiplication operations
 
-void BlazesRusCode::SmallDec::MultiplyByTwo()
+void BlazesRusCode::SmallUDec::MultiplyByTwo()
 {
 	UIntMultOp(2);
 }
 
-void BlazesRusCode::SmallDec::MultiplyByFour()
+void BlazesRusCode::SmallUDec::MultiplyByFour()
 {
 	UIntMultOp(4);
 }
 
 
-SmallDec BlazesRusCode::SmallDec::MultipliedByTwo() const
+SmallUDec BlazesRusCode::SmallUDec::MultipliedByTwo() const
 {
-	SmallDec result = *this; result.UIntMultOp(2);
+	SmallUDec result = *this; result.UIntMultOp(2);
 	return result;
 }
 
-SmallDec BlazesRusCode::SmallDec::MultipliedByFour() const
+SmallUDec BlazesRusCode::SmallUDec::MultipliedByFour() const
 {
-	SmallDec result = *this; result.UIntMultOp(4);
+	SmallUDec result = *this; result.UIntMultOp(4);
 	return result;
 }
 
@@ -368,104 +327,39 @@ SmallDec BlazesRusCode::SmallDec::MultipliedByFour() const
 
 #pragma region NormalRep Integer Addition Operations
 
-void SmallDec::UnsignedMirroredAddOp(const MirroredInt& rValue)
+void SmallUDec::UIntAddOp(const unsigned int& rValue)
 {
-	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingUnsignedAddOp(rValue);
-	else {
-		int signBeforeOp = IntHalf.Sign;
-		IntHalf += rValue.Value;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
+	IntHalf += rValue;
 }
 
-void SmallDec::MirroredAddOp(const MirroredInt& rValue)
+SmallUDec& BlazesRusCode::SmallUDec::UIntAddOperation(const unsigned int& rValue)
 {
-	if (DecimalHalf.Value == 0) {
-		IntHalf.NRepSkippingAddOp(rValue);
-	}
-	else {
-		int signBeforeOp = IntHalf.Sign;
-		IntHalf += rValue;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
-}
-
-void SmallDec::UIntAddOp(const unsigned int& rValue)
-{
-	{
-		if (DecimalHalf.Value == 0)
-			IntHalf.NRepSkippingUnsignedAddOp(rValue);
-		else {
-			int signBeforeOp = IntHalf.Sign;
-			IntHalf += rValue;
-			if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-				DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-		}
-	}
-}
-
-SmallDec& BlazesRusCode::SmallDec::UIntAddOperation(const unsigned int& rValue)
-{
-	UIntAddOp(rValue); return *this;
+	IntHalf += rValue; return *this;
 }
 
 #pragma endregion NormalRep Integer Addition Operations
 
 #pragma region NormalRep Integer Subtraction Operations
 
-void BlazesRusCode::SmallDec::UnsignedMirroredSubOp(const MirroredInt& rValue)
+void BlazesRusCode::SmallUDec::UIntSubOp(const unsigned int& rValue)
 {
-	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingUnsignedSubOp(rValue);
-	else {
-		int signBeforeOp = IntHalf.Sign;
-		IntHalf -= rValue.Value;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
+	IntHalf -= rValue;
 }
 
-void BlazesRusCode::SmallDec::MirroredSubOp(const MirroredInt& rValue)
+SmallUDec& BlazesRusCode::SmallUDec::UIntSubOperation(const unsigned int& rValue)
 {
-	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingSubOp(rValue);
-	else {
-		unsigned int signBeforeOp = IntHalf.Sign;
-		IntHalf += rValue;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
-}
-
-void BlazesRusCode::SmallDec::UIntSubOp(const unsigned int& rValue)
-{
-	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingUnsignedSubOp(rValue);
-	else {
-		unsigned int signBeforeOp = IntHalf.Sign;
-		IntHalf -= rValue;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf = DecimalOverflow - DecimalHalf;
-	}
-}
-
-SmallDec& BlazesRusCode::SmallDec::UIntSubOperation(const unsigned int& rValue)
-{
-	UIntSubOp(rValue); return *this;
+	IntHalf -= rValue; return *this;
 }
 
 #pragma endregion NormalRep Integer Subtraction Operations
 
 #pragma region Truncation Functions
 
-SmallDec BlazesRusCode::SmallDec::Abs(const SmallDec& tValue) {
-	return AbsV1<SmallDec>(tValue);
+SmallUDec BlazesRusCode::SmallUDec::Abs(const SmallUDec& tValue) {
+	return AbsV1<SmallUDec>(tValue);
 }
 
-void BlazesRusCode::SmallDec::ApplyFloorOf(const int& precision)
+void BlazesRusCode::SmallUDec::ApplyFloorOf(const int& precision)
 {
 	switch (precision)
 	{
@@ -487,7 +381,7 @@ void BlazesRusCode::SmallDec::ApplyFloorOf(const int& precision)
 		IntHalf = 0;
 }
 
-signed int BlazesRusCode::SmallDec::FloorIntOf() const
+signed int BlazesRusCode::SmallUDec::FloorIntOf() const
 {
 	if (DecimalHalf == 0)
 		return GetIntHalf();
@@ -497,7 +391,7 @@ signed int BlazesRusCode::SmallDec::FloorIntOf() const
 		return GetIntHalf() - 1;
 }
 
-int BlazesRusCode::SmallDec::CeilIntOf() const
+int BlazesRusCode::SmallUDec::CeilIntOf() const
 {
 	if (DecimalHalf == 0)
 		return GetIntHalf();
@@ -507,13 +401,13 @@ int BlazesRusCode::SmallDec::CeilIntOf() const
 		return GetIntHalf() + 1;
 }
 
-SmallDec BlazesRusCode::SmallDec::Trunc(const SmallDec& tValue) { return tValue.TruncOfV1<SmallDec>(); }
+SmallUDec BlazesRusCode::SmallUDec::Trunc(const SmallUDec& tValue) { return tValue.TruncOfV1<SmallUDec>(); }
 
 #pragma endregion Truncation Functions
 
 #pragma region String Commands
 
-void BlazesRusCode::SmallDec::ReadString(const std::string& Value)
+void BlazesRusCode::SmallUDec::ReadString(const std::string& Value)
 {
 	IntHalf = 0; DecimalHalf = 0;
 
@@ -562,18 +456,18 @@ void BlazesRusCode::SmallDec::ReadString(const std::string& Value)
 	}
 }
 
-BlazesRusCode::SmallDec::SmallDec(const char* strVal)
+BlazesRusCode::SmallUDec::SmallUDec(const char* strVal)
 {
 	std::string Value = strVal;
 	this->ReadString(Value);
 }
 
-BlazesRusCode::SmallDec::SmallDec(const std::string& Value)
+BlazesRusCode::SmallUDec::SmallUDec(const std::string& Value)
 {
 	this->ReadString(Value);
 }
 
-std::string BlazesRusCode::SmallDec::ToString()
+std::string BlazesRusCode::SmallUDec::ToString()
 {
 	std::string Value = std::string(IntHalf);
 	if (DecimalHalf != 0)
@@ -584,7 +478,7 @@ std::string BlazesRusCode::SmallDec::ToString()
 	return Value;
 }
 
-std::string BlazesRusCode::SmallDec::ToFullString()
+std::string BlazesRusCode::SmallUDec::ToFullString()
 {
 	std::string Value = std::string(IntHalf);
 	if (DecimalHalf != 0)
@@ -617,7 +511,7 @@ std::string BlazesRusCode::SmallDec::ToFullString()
 #pragma region ConvertFromOtherTypes
 
     #if defined(AltNum_EnableFloatingConversion)
-void BlazesRusCode::SmallDec::SetFloatVal(const float& Value)
+void BlazesRusCode::SmallUDec::SetFloatVal(const float& Value)
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	float lValue = Value;
@@ -644,7 +538,7 @@ void BlazesRusCode::SmallDec::SetFloatVal(const float& Value)
 	#endif
 }
 
-void BlazesRusCode::SmallDec::SetDoubleVal(const double& Value)
+void BlazesRusCode::SmallUDec::SetDoubleVal(const double& Value)
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	double lValue = Value;
@@ -671,7 +565,7 @@ void BlazesRusCode::SmallDec::SetDoubleVal(const double& Value)
 	#endif
 }
 
-void BlazesRusCode::SmallDec::SetDecimalVal(const long double& Value)
+void BlazesRusCode::SmallUDec::SetDecimalVal(const long double& Value)
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	long double lValue = Value;
@@ -699,13 +593,13 @@ void BlazesRusCode::SmallDec::SetDecimalVal(const long double& Value)
 }
 	#endif
 
-void BlazesRusCode::SmallDec::SetBoolVal(const bool& Value)
+void BlazesRusCode::SmallUDec::SetBoolVal(const bool& Value)
 {
 	IntHalf = Value == false ? 0 : 1;
 	DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetIntVal(const int& Value)
+void BlazesRusCode::SmallUDec::SetIntVal(const int& Value)
 {
 	if (Value<0)
 	{
@@ -717,7 +611,7 @@ void BlazesRusCode::SmallDec::SetIntVal(const int& Value)
 	DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetUIntVal(const unsigned int& Value)
+void BlazesRusCode::SmallUDec::SetUIntVal(const unsigned int& Value)
 {
 	IntHalf = Value;
 	DecimalHalf = 0;
@@ -727,28 +621,28 @@ void BlazesRusCode::SmallDec::SetUIntVal(const unsigned int& Value)
 
 #pragma region Pow and Sqrt Functions
 
-SmallDec BlazesRusCode::SmallDec::Sqrt(const auto& value, const int& precision)
+SmallUDec BlazesRusCode::SmallUDec::Sqrt(const auto& value, const int& precision)
 {
-	return SqrtV1<SmallDec>(value, precision);
+	return SqrtV1<SmallUDec>(value, precision);
 }
 
-SmallDec BlazesRusCode::SmallDec::SqrtOf(const int& precision) const {
+SmallUDec BlazesRusCode::SmallUDec::SqrtOf(const int& precision) const {
 	return Sqrt(*this, precision);
 }
 
-SmallDec BlazesRusCode::SmallDec::UnsignedNthRoot(const SmallDec& tValue, const unsigned int& n, const SmallDec& precision)
+SmallUDec BlazesRusCode::SmallUDec::UnsignedNthRoot(const SmallUDec& tValue, const unsigned int& n, const SmallUDec& precision)
 {
-	return UnsignedNthRootV1<SmallDec>(tValue, n, precision);
+	return UnsignedNthRootV1<SmallUDec>(tValue, n, precision);
 }
 
-SmallDec BlazesRusCode::SmallDec::NthRootOf(const unsigned int& n, const SmallDec& precision) const
+SmallUDec BlazesRusCode::SmallUDec::NthRootOf(const unsigned int& n, const SmallUDec& precision) const
 {
 	return NthRoot(*this, n, precision);
 }
 
-SmallDec BlazesRusCode::SmallDec::AlternativeNthRoot(const SmallDec& tValue, const unsigned int& n, const SmallDec& precision)
+SmallUDec BlazesRusCode::SmallUDec::AlternativeNthRoot(const SmallUDec& tValue, const unsigned int& n, const SmallUDec& precision)
 {
-	return NthRootV2<SmallDec>(tValue, n, precision);
+	return NthRootV2<SmallUDec>(tValue, n, precision);
 }
 
 #pragma endregion Pow and Sqrt Functions

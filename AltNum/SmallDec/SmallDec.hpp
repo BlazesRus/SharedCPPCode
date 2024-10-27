@@ -40,7 +40,7 @@ namespace BlazesRusCode
 		unsigned int Sign:1;
 
         /// <summary>
-        /// Stores whole half of number (value range 0-16777215;Bitfield uses 25 bytes)
+        /// Stores whole half of number (value range 0-16777215;Bitfield uses 24 bytes)
         /// </summary>
         unsigned int IntHalf:24;
 
