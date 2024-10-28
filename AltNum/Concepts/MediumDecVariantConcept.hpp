@@ -7,15 +7,20 @@
 
 namespace BlazesRusCode
 {//https://en.cppreference.com/w/cpp/concepts/derived_from
-    //MediumDec Variant (concept)
-	//derived from info at https://en.cppreference.com/w/cpp/concepts/derived_from
-	//is base of info at https://en.cppreference.com/w/cpp/types/is_base_of
+
+    /// <summary>
+    /// MediumDec Variant (concept)
+    /// derived from info at https://en.cppreference.com/w/cpp/concepts/derived_from
+    /// is base of info at https://en.cppreference.com/w/cpp/types/is_base_of
+	/// </summary>
 	template<typename T>
     concept MediumDecVariant = std::is_base_of<AltNumBase, T>::value;
 	
-    //unsigned MediumDec Variant (concept)
-	//derived from info at https://en.cppreference.com/w/cpp/concepts/derived_from
-	//is base of info at https://en.cppreference.com/w/cpp/types/is_base_of
+    /// <summary>
+    /// MediumUDec unsigned Variant (concept)
+    /// derived from info at https://en.cppreference.com/w/cpp/concepts/derived_from
+    /// is base of info at https://en.cppreference.com/w/cpp/types/is_base_of
+	/// </summary>
 	template<typename T>
     concept MediumUDecVariant = std::is_base_of<UnsignedAltNumBase, T>::value;
 }
