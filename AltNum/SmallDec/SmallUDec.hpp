@@ -37,18 +37,18 @@ namespace BlazesRusCode
         /// </summary>
         unsigned int DecimalHalf:7;
 
-		//Return IntHalf as unsigned int
+        //Return IntHalf as unsigned int
         inline unsigned int GetIntHalf() const
         {
-			return IntHalf;
+            return IntHalf;
         }
 
-		//Return DecimalHalf as unsigned char
+        //Return DecimalHalf as unsigned char
         inline unsigned char GetDecHalf() const
         {
-			return DecimalHalf;
+            return DecimalHalf;
         }
-		
+        
     #pragma endregion DigitStorage
 
         /// <summary>
@@ -125,40 +125,18 @@ namespace BlazesRusCode
 
     #pragma endregion class_constructors
 
-    #pragma region Negative_Status
-
-        bool IsPositive() const;
-
-        bool IsNegative() const;
-
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus();
-
-        /// <summary>
-        /// Negative Unary Operator(Flips negative status)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <returns>SmallUDec</returns>
-        SmallUDec operator-() const
-        { SmallUDec self = *this; self.SwapNegativeStatus(); return self; }
-
-    #pragma endregion Negative_Status
-
-
     #pragma region Check_if_value
 
-		//Set value as exactly zero
+        //Set value as exactly zero
         void SetAsZero();
 
-		//Set value as exactly one
+        //Set value as exactly one
         void SetAsOne();
 
-		//Set as +-1 while keeping current sign
+        //Set as +-1 while keeping current sign
         void SetAsOneVal();
 
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
+        void SetAsValues(const unsigned int& intVal = 0, const unsigned short& decVal = 0);
 
         //Is at either zero or negative zero IntHalf of AltNum
         bool IsAtZeroInt() const;
@@ -170,15 +148,15 @@ namespace BlazesRusCode
         bool IsNotAtOneInt() const;
 
         //Detect if at exactly zero(only overridden with MixedDec)
-		bool IsZero() const;
+        bool IsZero() const;
 
-		bool IsOne() const;
+        bool IsOne() const;
 
-		bool IsNegOne() const;
+        bool IsNegOne() const;
 
-		bool IsOneVal() const;
+        bool IsOneVal() const;
 
-		bool IsOneVariantVal() const;
+        bool IsOneVariantVal() const;
 
     #pragma endregion Check_if_value
 
@@ -355,7 +333,7 @@ public:
 
         static SmallUDec NegativePointFiveValue();
 
-		static SmallUDec PointOneValue();
+        static SmallUDec PointOneValue();
 
         static const SmallUDec NegativePointFive;
 
@@ -553,7 +531,7 @@ public:
         /// <param name="tValue">The value.</param>
         void SetDecimalVal(const long double& tValue);
 
-	#endif
+    #endif
 
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
@@ -593,7 +571,7 @@ public:
         /// <param name="tValue">The value.</param>
         SmallUDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
-	#endif
+    #endif
 
         SmallUDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
         SmallUDec(const signed __int64& Value){ this->SetIntVal(Value); }
@@ -723,26 +701,26 @@ public:
 
     #pragma region Comparison Operators
 protected:
-		//Compare only as if in NormalType representation mode
-		template<SmallUDecVariant VariantType=SmallUDec>
-		std::strong_ordering BasicComparisonV1(const VariantType& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
+        //Compare only as if in NormalType representation mode
+        template<SmallUDecVariant VariantType=SmallUDec>
+        std::strong_ordering BasicComparisonV1(const VariantType& that) const
+        {
+            if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+                return IntHalfCmp;
+            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+                return DecimalHalfCmp;
+        }
 
-		std::strong_ordering BasicComparison(const SmallUDec& that) const
-		{
+        std::strong_ordering BasicComparison(const SmallUDec& that) const
+        {
             return BasicComparisonV1(that);
         }
 
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicUIntComparison(const int& that) const
+        //Compare only as if in NormalType representation mode
+        std::strong_ordering BasicUIntComparison(const int& that) const
         {
             if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
                 return IntHalfCmp;
@@ -752,93 +730,93 @@ protected:
                 return DecimalHalfCmp;
         }
 
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
+        //Compare only as if in NormalType representation mode
+        std::strong_ordering BasicIntComparison(const int& that) const
         {
-	        if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-		        return IntHalfCmp;
-	        //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-	        unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-	        if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-		        return DecimalHalfCmp;
+            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+                return IntHalfCmp;
+            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
+            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+                return DecimalHalfCmp;
         }
 
 public:
 
-		std::strong_ordering operator<=>(const SmallUDec& that) const
-		{//return BasicComparison(that);
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			//Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-			unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-			unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-			if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
+        std::strong_ordering operator<=>(const SmallUDec& that) const
+        {//return BasicComparison(that);
+            if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+                return IntHalfCmp;
+            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+                return DecimalHalfCmp;
+        }
 
-		std::strong_ordering operator<=>(const unsigned int& that) const
-		{
-			return BasicUIntComparison(that);
-		}
+        std::strong_ordering operator<=>(const unsigned int& that) const
+        {
+            return BasicUIntComparison(that);
+        }
 
-		std::strong_ordering operator<=>(const signed int& that) const
-		{
-			return BasicIntComparison(that);
-		}
+        std::strong_ordering operator<=>(const signed int& that) const
+        {
+            return BasicIntComparison(that);
+        }
 
-		bool operator==(const SmallUDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.DecimalHalf)
-				return false;
+        bool operator==(const SmallUDec& that) const
+        {
+            if (IntHalf!=that.IntHalf)
+                return false;
+            if (DecimalHalf!=that.DecimalHalf)
+                return false;
             return true;
-		}
+        }
 
-		bool operator!=(const SmallUDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return true;
-			if (DecimalHalf!=that.DecimalHalf)
-				return true;
+        bool operator!=(const SmallUDec& that) const
+        {
+            if (IntHalf!=that.IntHalf)
+                return true;
+            if (DecimalHalf!=that.DecimalHalf)
+                return true;
             return false;
-		}
+        }
 
-		bool operator==(const unsigned int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
+        bool operator==(const unsigned int& that) const
+        {
+            if (IntHalf!=that)
+                return false;
+            if (DecimalHalf!=0)
+                return false;
+            return true;
+        }
 
-		bool operator!=(const unsigned int& that) const
-		{
-			if (IntHalf!=that)
-				return true;
-			if (DecimalHalf!=0)
-				return true;
-			return false;
-		}
+        bool operator!=(const unsigned int& that) const
+        {
+            if (IntHalf!=that)
+                return true;
+            if (DecimalHalf!=0)
+                return true;
+            return false;
+        }
 
-		bool operator==(const signed int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
+        bool operator==(const signed int& that) const
+        {
+            if (IntHalf!=that)
+                return false;
+            if (DecimalHalf!=0)
+                return false;
+            return true;
+        }
 
-		bool operator!=(const signed int& that) const
-		{
-			if (IntHalf!=that)
-				return true;
-			if (DecimalHalf!=0)
-				return true;
-			return false;
-		}
+        bool operator!=(const signed int& that) const
+        {
+            if (IntHalf!=that)
+                return true;
+            if (DecimalHalf!=0)
+                return true;
+            return false;
+        }
 
     #pragma endregion Comparison Operators
 
@@ -857,8 +835,8 @@ protected:
 
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-		    IntHalf.Value = (unsigned int)IntHalfRes;
-			DecimalHalf.Value = (unsigned int)DecimalRes;
+            IntHalf.Value = (unsigned int)IntHalfRes;
+            DecimalHalf.Value = (unsigned int)DecimalRes;
         }
 
         template<IntegerType IntType=signed int>
@@ -901,7 +879,7 @@ protected:
                 return;
             PartialUIntDivOpV1(Value);
             if (IntHalf == 0 && DecimalHalf == 0)
-				DecimalHalf = 1;//Prevent Dividing into nothing
+                DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
         template<IntegerType IntType=signed int>
@@ -915,7 +893,7 @@ protected:
                 return;
             PartialIntDivOpV1(Value);
             if (IntHalf == 0 && DecimalHalf == 0)
-				DecimalHalf = 1;//Prevent Dividing into nothing
+                DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
         template<IntegerType IntType=unsigned int>
@@ -984,10 +962,10 @@ public:
 
     #pragma endregion NormalRep Integer Division Operations
 
-	#pragma region NormalRep AltNum Division Operations
+    #pragma region NormalRep AltNum Division Operations
 protected:
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
@@ -1001,7 +979,7 @@ protected:
 
             unsigned _int64 IntHalfRes = SelfRes / ValueRes;
             unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-			IntHalf.Value = (unsigned int) IntHalfRes;
+            IntHalf.Value = (unsigned int) IntHalfRes;
             DecimalHalf.Value = DecimalRes;
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
@@ -1009,66 +987,66 @@ protected:
                 return false;
         }
 
-		/// <summary>
+        /// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         template<SmallUDecVariant VariantType=SmallUDec>
         void UnsignedDivOpV1(const VariantType& rValue)
-		{
-			if(DecimalHalf==0)
-			{
-				if(rValue.DecimalHalf==0)
-				{
-					switch(rValue.IntHalf.Value)
-					{
-						case 2:
-							if((IntHalf.Value&1)==1)//Check if number is odd
-								UIntDivOp(2);
-							else
-								IntHalf.Value /= 2;
-							break;
-						case 4:
-							if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
-								IntHalf.Value /= 4;
-							else
-								UIntDivOp(4);
-							break;
-						case 8:
-							if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
-								IntHalf.Value /= 8;
-							else
-								UIntDivOp(4);
-							break;
-						case 16:
-							if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
-								IntHalf.Value /= 16;
-							else
-								UIntDivOp(4);
-							break;
-						case 32:
-							if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
-								IntHalf.Value /= 32;
-							else
-								UIntDivOp(4);
-							break;
+        {
+            if(DecimalHalf==0)
+            {
+                if(rValue.DecimalHalf==0)
+                {
+                    switch(rValue.IntHalf.Value)
+                    {
+                        case 2:
+                            if((IntHalf.Value&1)==1)//Check if number is odd
+                                UIntDivOp(2);
+                            else
+                                IntHalf.Value /= 2;
+                            break;
+                        case 4:
+                            if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
+                                IntHalf.Value /= 4;
+                            else
+                                UIntDivOp(4);
+                            break;
+                        case 8:
+                            if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
+                                IntHalf.Value /= 8;
+                            else
+                                UIntDivOp(4);
+                            break;
+                        case 16:
+                            if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
+                                IntHalf.Value /= 16;
+                            else
+                                UIntDivOp(4);
+                            break;
+                        case 32:
+                            if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
+                                IntHalf.Value /= 32;
+                            else
+                                UIntDivOp(4);
+                            break;
                         case 0:
                             throw "Target rValue can not be divided by zero";
                             break;
-						default:
-							UIntDivOp(rValue.IntHalf.Value);
-							break;
-					}
-				}
+                        default:
+                            UIntDivOp(rValue.IntHalf.Value);
+                            break;
+                    }
+                }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
                 else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
-				        DecimalHalf.Value = 1;
+                        DecimalHalf.Value = 1;
 #else
                 else
                     UnsignedPartialDivOp(rValue);
 #endif
-			}
+            }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
             else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
                 DecimalHalf.Value = 1;
@@ -1076,9 +1054,9 @@ protected:
             else
                 UnsignedPartialDivOp(rValue);
 #endif
-		}
+        }
 
-		/// <summary>
+        /// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
@@ -1103,7 +1081,7 @@ protected:
 
 public:
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned division operation(main code block)
         /// Return true if divide into zero
         /// (Modifies owner object)
@@ -1111,37 +1089,37 @@ public:
         /// <param name="rValue.">The rValue</param>
         bool UnsignedPartialDivOp(const SmallUDec& rValue){ return UnsignedPartialDivOpV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         void UnsignedDivOp(const SmallUDec& rValue){ UnsignedDivOpV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         void DivOp(const SmallUDec& rValue){ DivOpV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         SmallUDec& UnsignedDivOperation(const SmallUDec& rValue)
-		{ UnsignedDivOp(rValue); return *this; }
+        { UnsignedDivOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         SmallUDec& DivOperation(const SmallUDec& rValue)
-		{ DivOp(rValue); return *this; }
+        { DivOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1149,7 +1127,7 @@ public:
         SmallUDec DivideByUnsigned(const SmallUDec& rValue) const
         { SmallUDec lValue = *this; return lValue.UnsignedDivOperation(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1157,9 +1135,9 @@ public:
         SmallUDec DivideBy(const SmallUDec& rValue) const
         { SmallUDec lValue = *this; return lValue.DivOperation(rValue); }
 
-	#pragma endregion NormalRep AltNum Division Operations
+    #pragma endregion NormalRep AltNum Division Operations
 
-	#pragma region Other Division Operations
+    #pragma region Other Division Operations
 
         /// <summary>
         /// Simplified division by 2 operation(to reduce cost of operations)
@@ -1241,11 +1219,11 @@ public:
         friend SmallUDec operator/(const unsigned char& lValue, const SmallUDec& rValue) { return ((SmallUDec)lValue).DivideBy(rValue); }
         friend SmallUDec operator/(const unsigned short& lValue, const SmallUDec& rValue) { return ((SmallUDec)lValue).DivideBy(rValue); }
 
-	#pragma endregion Other Division Operations
+    #pragma endregion Other Division Operations
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
-		/// <summary>
+        /// <summary>
         /// Partial version of UIntMultOpV1 without zero checks
         /// (Modifies owner object)
         /// </summary>
@@ -1257,7 +1235,7 @@ protected:
             if (DecimalHalf == 0)
                 IntHalf.Value *= rValue;
             else
-			{
+            {
                 __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
@@ -1269,14 +1247,14 @@ protected:
                 }
                 else
                 {
-					IntHalf.Value = 0;
+                    IntHalf.Value = 0;
                     DecimalHalf.Value = (unsigned int)SRep;
                 }
             }
         }
 
-		//Partial version of BasicIntMultOpV1 without zero checks
-		//Modifies owner object
+        //Partial version of BasicIntMultOpV1 without zero checks
+        //Modifies owner object
         template<IntegerType IntType=signed int>
         void PartialIntMultOpV1(const IntType& rValue)
         {
@@ -1322,7 +1300,7 @@ protected:
             }
             else if (IsZero())
                 return;
-			PartialIntMultOpV1(Value);
+            PartialIntMultOpV1(Value);
         }
 
         template<IntegerType IntType=unsigned int>
@@ -1333,7 +1311,7 @@ protected:
         auto& IntMultOperationV1(const IntType& Value)
         { IntMultOpV1(Value); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation between SmallUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1343,7 +1321,7 @@ protected:
         const SmallUDec MultiplyByUIntV1(const IntType& rValue)
         { auto self = *this; return self.UIntMultOperationV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation between SmallUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1395,26 +1373,26 @@ public:
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
-	#pragma region NormalRep AltNum Multiplication Operations
+    #pragma region NormalRep AltNum Multiplication Operations
 protected:
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation that ignores special decimal status with unsigned SmallUDec
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<SmallUDecVariant VariantType=SmallUDec>
         void UnsignedMultOpV1(const VariantType& rValue)
-		{
+        {
             if (DecimalHalf == 0)
             {
                 if (IntHalf.Value == 1)
                 {
-					if(IntHalf.IsNegative())
-						IntHalf = -rValue.IntHalf;
-					else
-						IntHalf = rValue.IntHalf;
-					DecimalHalf = rValue.DecimalHalf;
+                    if(IntHalf.IsNegative())
+                        IntHalf = -rValue.IntHalf;
+                    else
+                        IntHalf = rValue.IntHalf;
+                    DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
                     IntHalf *= rValue.IntHalf;
@@ -1436,7 +1414,7 @@ protected:
                             DecimalHalf.Value = 1;
                     #elif !defined(AltNum_AllowNegativeZero)
                         if(DecimalHalf==0){
-							SetAsZero(); return; }
+                            SetAsZero(); return; }
                     #endif
                         IntHalf.Value = 0;
                         return;
@@ -1454,9 +1432,9 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                     if (DecimalHalf == 0)
                         DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
+                #elif !defined(AltNum_AllowNegativeZero)
                     if(DecimalHalf==0){
-						SetAsZero(); return; }
+                        SetAsZero(); return; }
                 #endif
                     return;
                 }
@@ -1469,7 +1447,7 @@ protected:
                         SRep -= OverflowVal * DecimalOverflowX;
                         IntHalf.Value = OverflowVal;
                         DecimalHalf.Value = (signed int)SRep;
-						return;
+                        return;
                     }
                     else
                     {
@@ -1477,9 +1455,9 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                         if(DecimalHalf==0)
                             DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
+                #elif !defined(AltNum_AllowNegativeZero)
                         if(DecimalHalf==0){
-							SetAsZero(); return; }
+                            SetAsZero(); return; }
                 #endif
                         return;
                     }
@@ -1506,14 +1484,14 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
+                #elif !defined(AltNum_AllowNegativeZero)
                         if(DecimalHalf==0){
-							SetAsZero(); return; }
+                            SetAsZero(); return; }
                 #endif
                         }
                         IntHalf.Value = 0;
                     }
-				    return;
+                    return;
                 }
                 else if (rValue.IntHalf == 0)
                 {
@@ -1535,9 +1513,9 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf.Value = 1;
-				#elif !defined(AltNum_AllowNegativeZero)
+                #elif !defined(AltNum_AllowNegativeZero)
                         if(DecimalHalf==0){
-							SetAsZero(); return; }
+                            SetAsZero(); return; }
                 #endif
                         }
                         IntHalf.Value = 0;
@@ -1561,14 +1539,14 @@ protected:
                     DecimalHalf.Value = (unsigned int)IntegerRep;
                 }
             }
-			#if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
+            #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf.Value = 1;
-			#elif !defined(AltNum_AllowNegativeZero)
+            #elif !defined(AltNum_AllowNegativeZero)
             if(DecimalHalf==0)
-				SetAsZero();
-			#endif
-		}
+                SetAsZero();
+            #endif
+        }
 
         template<SmallUDecVariant VariantType=SmallUDec>
         void MultOpV1(const VariantType& rValue)
@@ -1590,7 +1568,7 @@ protected:
 
 public:
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation that ignores special decimal status with unsigned SmallUDec
         /// (Modifies owner object)
         /// </summary>
@@ -1599,7 +1577,7 @@ public:
 
         void MultOp(const SmallUDec& rValue){ MultOpV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
@@ -1607,15 +1585,15 @@ public:
         SmallUDec& UnsignedMultOperation(const SmallUDec& rValue)
         { UnsignedMultOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         SmallUDec& MultOperation(const SmallUDec& rValue)
-		{ MultOp(rValue); return *this; }
+        { MultOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1623,7 +1601,7 @@ public:
         SmallUDec MultiplyByUnsigned(const SmallUDec& rValue) const
         { SmallUDec lValue = *this; return lValue.UnsignedMultOperation(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1631,9 +1609,9 @@ public:
         SmallUDec MultiplyBy(const SmallUDec& rValue) const
         { SmallUDec lValue = *this; return lValue.MultOperation(rValue); }
 
-	#pragma endregion NormalRep AltNum Multiplication Operations
+    #pragma endregion NormalRep AltNum Multiplication Operations
 
-	#pragma region Other multiplication operations
+    #pragma region Other multiplication operations
 
         /// <summary>
         /// Simplified multiplication by 2 operation(to reduce cost of operations)
@@ -1713,9 +1691,9 @@ public:
         friend SmallUDec operator*(unsigned char lValue, SmallUDec& rValue)  { return rValue.UInt8MultOperation(lValue); }
         friend SmallUDec operator*(unsigned short lValue, SmallUDec& rValue)  { return rValue.UInt16MultOperation(lValue); }
 
-	#pragma endregion Other multiplication operations
+    #pragma endregion Other multiplication operations
 
-	#pragma region NormalRep Integer Addition Operations
+    #pragma region NormalRep Integer Addition Operations
 protected:
 
         /// <summary>
@@ -1727,14 +1705,14 @@ protected:
         template<IntegerType IntType=unsigned int>
         void UIntAddOpV1(const IntType& rValue)
         {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUIntAddOp(rValue);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf.UIntAddOp(rValue);
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
+            if(DecimalHalf.Value==0)
+                IntHalf.NRepSkippingUIntAddOp(rValue);
+            else {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf.UIntAddOp(rValue);
+                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+            }
         }
 
         /// <summary>
@@ -1746,14 +1724,14 @@ protected:
         template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingIntegerAddOp(rValue);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue;
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
+            if(DecimalHalf.Value==0)
+                IntHalf.NRepSkippingIntegerAddOp(rValue);
+            else {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf += rValue;
+                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+            }
         }
 
         template<IntegerType IntType=unsigned int>
@@ -1764,7 +1742,7 @@ protected:
         auto& IntAddOperationV1(const IntType& rValue)
         { IntAddOpV1(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         ///  addition operation between SmallUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1774,7 +1752,7 @@ protected:
         auto AddByUIntV1(const IntType& rValue) const
         { auto self = *this; return self.UIntAddOperationV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic addition operation between SmallUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1837,9 +1815,9 @@ public:
         SmallUDec AddByInt(const signed int& rValue) { return AddByIntV1(rValue); }
         SmallUDec AddByInt64(const signed __int64& rValue) { return AddByIntV1(rValue); }
 
-	#pragma endregion NormalRep Integer Addition Operations
+    #pragma endregion NormalRep Integer Addition Operations
 
-	#pragma region NormalRep Integer Subtraction Operations
+    #pragma region NormalRep Integer Subtraction Operations
 protected:
 
         /// <summary>
@@ -1851,14 +1829,14 @@ protected:
         template<IntegerType IntType=unsigned int>
         void UIntSubOpV1(const IntType& rValue)
         {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingUIntSubOp(rValue);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf.UIntSubOp(rValue);
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
+            if(DecimalHalf.Value==0)
+                IntHalf.NRepSkippingUIntSubOp(rValue);
+            else {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf.UIntSubOp(rValue);
+                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+            }
         }
 
         /// <summary>
@@ -1870,14 +1848,14 @@ protected:
         template<IntegerType IntType=signed int>
         void IntSubOpV1(const IntType& rValue)
         {
-			if(DecimalHalf.Value==0)
-				IntHalf.NRepSkippingIntegerSubOp(rValue);
-			else {
-				unsigned int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue;
-				if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-					DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-			}
+            if(DecimalHalf.Value==0)
+                IntHalf.NRepSkippingIntegerSubOp(rValue);
+            else {
+                unsigned int signBeforeOp = IntHalf.Sign;
+                IntHalf -= rValue;
+                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+            }
         }
 
         template<IntegerType IntType=unsigned int>
@@ -1888,7 +1866,7 @@ protected:
         auto& IntSubOperationV1(const IntType& rValue)
         { IntSubOpV1(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic Subtraction operation between SmallUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1898,7 +1876,7 @@ protected:
         auto SubtractByUIntV1(const IntType& rValue)
         { auto self = *this; return self.UIntSubOperationV1(rValue); }
 
-		/// <summary>
+        /// <summary>
         /// Basic Subtraction operation between SmallUDec variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
@@ -1967,7 +1945,7 @@ public:
         SmallUDec SubtractByInt(const signed int& rValue) { return SubtractByIntV1(rValue); }
         SmallUDec SubtractByInt64(const signed __int64& rValue) { return SubtractByIntV1(rValue); }
 
-	#pragma endregion NormalRep Integer Subtraction Operations
+    #pragma endregion NormalRep Integer Subtraction Operations
 
     #pragma region NormalRep AltNum Addition/Subtraction Operations
 protected:
@@ -1980,52 +1958,52 @@ protected:
         template<SmallUDecVariant VariantType=SmallUDec>
         void UnsignedAddOpV1(const VariantType& rValue)
         {
-			if(rValue.DecimalHalf==0)
+            if(rValue.DecimalHalf==0)
                 UnsignedMirroredAddOp(rValue.IntHalf);
-			else
+            else
             {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntHalf;
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf += rValue.IntHalf;
                 if (signBeforeOp==MirroredInt::NegativeSign)
                 {
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
-						if(IntHalf.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					}
+                    if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
+                        if(IntHalf.Value==0)
+                            SetAsZero();
+                        else
+                            DecimalHalf.Value = 0;
+                    }
                     else if(rValue.DecimalHalf.Value>DecimalHalf.Value)
                     {
-						++IntHalf;
-						if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
-							DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+                        ++IntHalf;
+                        if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
+                            DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
                         else//-1.6 + .7 = -0.9
-							DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
-					} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
-						DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
-					else
-						DecimalHalf.Value -= rValue.DecimalHalf.Value;
+                            DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+                    } else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
+                        DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
+                    else
+                        DecimalHalf.Value -= rValue.DecimalHalf.Value;
                 } else {
-					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
-					if(decResult==DecimalOverflow){//5.4 + 4.6
-						++IntHalf;
-						if(IntHalf.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					} else if(decResult>DecimalOverflow){//5.4 + 4.7
-						++IntHalf;
-						DecimalHalf.Value = decResult - DecimalOverflow;
-					}
-					else if(signBeforeOp!=IntHalf.Sign)
-						DecimalHalf.Value = DecimalOverflow - decResult;
-					else
-						DecimalHalf.Value = decResult;
+                    unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                    if(decResult==DecimalOverflow){//5.4 + 4.6
+                        ++IntHalf;
+                        if(IntHalf.Value==0)
+                            SetAsZero();
+                        else
+                            DecimalHalf.Value = 0;
+                    } else if(decResult>DecimalOverflow){//5.4 + 4.7
+                        ++IntHalf;
+                        DecimalHalf.Value = decResult - DecimalOverflow;
+                    }
+                    else if(signBeforeOp!=IntHalf.Sign)
+                        DecimalHalf.Value = DecimalOverflow - decResult;
+                    else
+                        DecimalHalf.Value = decResult;
                 }
-			}
-		}
+            }
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
@@ -2035,29 +2013,29 @@ protected:
         {
             if (rValue.DecimalHalf == 0)
                 MirroredAddOp(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf += rValue.IntHalf;
+            else {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf += rValue.IntHalf;
 
                 if (signBeforeOp==MirroredInt::NegativeSign){
-					if(rValue.IsPositive()){
-						if(DecimalHalf.Value==rValue.DecimalHalf.Value){
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-							++IntHalf;
-							if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
-								DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-							else//-1.6 + .7 = -0.9
-								DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
-						} else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
-							DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
-						else
-							DecimalHalf.Value -= rValue.DecimalHalf.Value;
-					} else {
-						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                    if(rValue.IsPositive()){
+                        if(DecimalHalf.Value==rValue.DecimalHalf.Value){
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+                            ++IntHalf;
+                            if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
+                                DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+                            else//-1.6 + .7 = -0.9
+                                DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
+                        } else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
+                            DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
+                        else
+                            DecimalHalf.Value -= rValue.DecimalHalf.Value;
+                    } else {
+                        unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
                         if (decResult == DecimalOverflow) {//-5.4 + - 5.6
                             --IntHalf;
                             if (IntHalf.Value == 0)
@@ -2065,47 +2043,47 @@ protected:
                             else
                                 DecimalHalf.Value = 0;
                         } else if (decResult > DecimalOverflow) {//-5.4 - 5.7 = -11.1
-							--IntHalf;
-							DecimalHalf.Value = decResult - DecimalOverflow;
-						} else//-5.2 - 5.2 = -10.4
-							DecimalHalf.Value = decResult;
-					}
+                            --IntHalf;
+                            DecimalHalf.Value = decResult - DecimalOverflow;
+                        } else//-5.2 - 5.2 = -10.4
+                            DecimalHalf.Value = decResult;
+                    }
                 } else {
-					if(rValue.IsPositive()){
-						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
-						if(decResult==DecimalOverflow){//5.5 + 4.5 = 10
-							++IntHalf;
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(decResult>DecimalOverflow){//5.5 + 4.6 = 10.1
-							++IntHalf;
-							DecimalHalf.Value = decResult - DecimalOverflow;
-						} else//5.4 + 5.3 = 10.7
-							DecimalHalf.Value = decResult;
-					} else {
-						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -5.5
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-							--IntHalf;
-							if(signBeforeOp!=IntHalf.Sign)//4.3 - 5.4 = -1.1
-								DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-							else//4.3 - 2.4 = 1.9
-								DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
-						} else if(signBeforeOp!=IntHalf.Sign)//5.4 + - 6.3 = -0.9
-							DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4
-						else//4.4 + -2.3 = 2.1
-							DecimalHalf.Value -= rValue.DecimalHalf.Value;
-					}
+                    if(rValue.IsPositive()){
+                        unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                        if(decResult==DecimalOverflow){//5.5 + 4.5 = 10
+                            ++IntHalf;
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(decResult>DecimalOverflow){//5.5 + 4.6 = 10.1
+                            ++IntHalf;
+                            DecimalHalf.Value = decResult - DecimalOverflow;
+                        } else//5.4 + 5.3 = 10.7
+                            DecimalHalf.Value = decResult;
+                    } else {
+                        if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -5.5
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+                            --IntHalf;
+                            if(signBeforeOp!=IntHalf.Sign)//4.3 - 5.4 = -1.1
+                                DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+                            else//4.3 - 2.4 = 1.9
+                                DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+                        } else if(signBeforeOp!=IntHalf.Sign)//5.4 + - 6.3 = -0.9
+                            DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 + 3 - 4
+                        else//4.4 + -2.3 = 2.1
+                            DecimalHalf.Value -= rValue.DecimalHalf.Value;
+                    }
                 }
-			}
-		}
+            }
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
@@ -2115,11 +2093,11 @@ protected:
         {
             if (rValue.DecimalHalf == 0)
                 UnsignedMirroredSubOp(rValue.IntHalf);
-			else {
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue.IntHalf;
+            else {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf -= rValue.IntHalf;
                 if (signBeforeOp==MirroredInt::NegativeSign){//-5 - B
-					unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                    unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
                     if (decResult == DecimalOverflow){//-5.4 - 5.6
                         --IntHalf;
                         if (IntHalf.Value == 0)
@@ -2127,31 +2105,31 @@ protected:
                         else
                             DecimalHalf.Value = 0;
                     } else if (decResult > DecimalOverflow) {//-5.4 - 5.7 = -11.1
-						--IntHalf;
-						DecimalHalf.Value = decResult - DecimalOverflow;
-					} else//-5.2 - 5.2 = -10.4
-						DecimalHalf.Value = decResult;
+                        --IntHalf;
+                        DecimalHalf.Value = decResult - DecimalOverflow;
+                    } else//-5.2 - 5.2 = -10.4
+                        DecimalHalf.Value = decResult;
                 } else {//5.XX - B
-					if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
-						if(IntHalf.Value==0)
-							SetAsZero();
-						else
-							DecimalHalf.Value = 0;
-					} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-						--IntHalf;
-						if(signBeforeOp!=IntHalf.Sign)//5.4 - 5.7 = -0.3
-							DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-						else//5.4 - 3.6 = 1.8
-							DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
-					} else if(signBeforeOp!=IntHalf.Sign)//5.3 - 7.2 = -1.9
-						DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
-					else//5.4 - 5.3 = 0.1
-						DecimalHalf.Value -= rValue.DecimalHalf.Value;
+                    if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
+                        if(IntHalf.Value==0)
+                            SetAsZero();
+                        else
+                            DecimalHalf.Value = 0;
+                    } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+                        --IntHalf;
+                        if(signBeforeOp!=IntHalf.Sign)//5.4 - 5.7 = -0.3
+                            DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+                        else//5.4 - 3.6 = 1.8
+                            DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+                    } else if(signBeforeOp!=IntHalf.Sign)//5.3 - 7.2 = -1.9
+                        DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
+                    else//5.4 - 5.3 = 0.1
+                        DecimalHalf.Value -= rValue.DecimalHalf.Value;
                 }
-			}
-		}
+            }
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
@@ -2159,47 +2137,47 @@ protected:
         template<SmallUDecVariant VariantType=SmallUDec>
         void SubOpV1(const VariantType& rValue)
         {
-			if(rValue.DecimalHalf==0)
+            if(rValue.DecimalHalf==0)
                 MirroredSubOp(rValue.IntHalf);
-			else
-			{
-				int signBeforeOp = IntHalf.Sign;
-				IntHalf -= rValue.IntHalf;
+            else
+            {
+                int signBeforeOp = IntHalf.Sign;
+                IntHalf -= rValue.IntHalf;
                 if (signBeforeOp==MirroredInt::NegativeSign)
-				{
-					if(rValue.IsPositive())
-					{
-						unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
-						if(decResult==DecimalOverflow){//-5.4 - 5.6
-							--IntHalf;
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(decResult>DecimalOverflow){//-5.4 - 5.7 = -11.1
-							--IntHalf;
-							DecimalHalf.Value = decResult - DecimalOverflow;
-						} else//-5.2 - 5.2 = -10.4
-							DecimalHalf.Value = decResult;
-					} else {
-						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//-5.4 - -4.4
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-							++IntHalf;
-							if(signBeforeOp!=IntHalf.Sign)//-5.4 - -6.5 = 1.1
-								DecimalHalf = DecimalOverflow - DecimalHalf.Value - rValue.DecimalHalf;
-							else//-5.4 - -4.5 = -0.9 == -5.4 + 4.5
-								DecimalHalf.Value += rValue.DecimalHalf.Value;
-						} else if(signBeforeOp!=IntHalf.Sign)//-5.4 - -7.3 = 1.9
-							DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;
-						else//-5.4 - -3.3 = -2.1
-							DecimalHalf.Value -= rValue.DecimalHalf.Value;
-					}
+                {
+                    if(rValue.IsPositive())
+                    {
+                        unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                        if(decResult==DecimalOverflow){//-5.4 - 5.6
+                            --IntHalf;
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(decResult>DecimalOverflow){//-5.4 - 5.7 = -11.1
+                            --IntHalf;
+                            DecimalHalf.Value = decResult - DecimalOverflow;
+                        } else//-5.2 - 5.2 = -10.4
+                            DecimalHalf.Value = decResult;
+                    } else {
+                        if(DecimalHalf.Value==rValue.DecimalHalf.Value){//-5.4 - -4.4
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
+                            ++IntHalf;
+                            if(signBeforeOp!=IntHalf.Sign)//-5.4 - -6.5 = 1.1
+                                DecimalHalf = DecimalOverflow - DecimalHalf.Value - rValue.DecimalHalf;
+                            else//-5.4 - -4.5 = -0.9 == -5.4 + 4.5
+                                DecimalHalf.Value += rValue.DecimalHalf.Value;
+                        } else if(signBeforeOp!=IntHalf.Sign)//-5.4 - -7.3 = 1.9
+                            DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;
+                        else//-5.4 - -3.3 = -2.1
+                            DecimalHalf.Value -= rValue.DecimalHalf.Value;
+                    }
                 } else {
-					if(rValue.IsPositive()){
+                    if(rValue.IsPositive()){
                         if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 - 5.5 = 10
                             if (IntHalf.Value == 0)
                                 SetAsZero();
@@ -2217,22 +2195,22 @@ protected:
                             DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
                         else//5.4 - 5.3 = 0.1
                             DecimalHalf.Value -= rValue.DecimalHalf.Value;
-					} else {
-						if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
-							++IntHalf;
-							if(IntHalf.Value==0)
-								SetAsZero();
-							else
-								DecimalHalf.Value = 0;
-						} else if(rValue.DecimalHalf.Value>DecimalHalf.Value){//5.4 - -5.7 = 11.1
-							++IntHalf;
-							DecimalHalf.Value = DecimalHalf.Value + rValue.DecimalHalf.Value - DecimalOverflow;
-						} else//5.4 - -5.3 = 10.7
-							DecimalHalf.Value += rValue.DecimalHalf.Value;
-					}
+                    } else {
+                        if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - -5.5 = 11
+                            ++IntHalf;
+                            if(IntHalf.Value==0)
+                                SetAsZero();
+                            else
+                                DecimalHalf.Value = 0;
+                        } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){//5.4 - -5.7 = 11.1
+                            ++IntHalf;
+                            DecimalHalf.Value = DecimalHalf.Value + rValue.DecimalHalf.Value - DecimalOverflow;
+                        } else//5.4 - -5.3 = 10.7
+                            DecimalHalf.Value += rValue.DecimalHalf.Value;
+                    }
                 }
-			}
-		}
+            }
+        }
 
         template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType UnsignedAdditionV1(VariantType lValue, const VariantType& rValue)
@@ -2255,21 +2233,21 @@ public:
         /// <param name="rValue.">The right side rValue</param>
         void UnsignedAddOp(const SmallUDec& rValue){ UnsignedAddOpV1(rValue); }
 
-	    /// <summary>
+        /// <summary>
         /// Basic addition Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
         void AddOp(const SmallUDec& rValue){ AddOpV1(rValue); }
 
-	    /// <summary>
+        /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
         void UnsignedSubOp(const SmallUDec& rValue){ UnsignedSubOpV1(rValue); }
 
-	    /// <summary>
+        /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
@@ -2284,7 +2262,7 @@ public:
         SmallUDec& AddOperation(const SmallUDec& rValue)
         { AddOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Unsigned Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -2292,7 +2270,7 @@ public:
         SmallUDec AddByUnsigned(const SmallUDec& rValue)
         { SmallUDec lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
 
-		/// <summary>
+        /// <summary>
         /// Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -2308,7 +2286,7 @@ public:
         SmallUDec& SubOperation(const SmallUDec& rValue)
         { SubOp(rValue); return *this; }
 
-		/// <summary>
+        /// <summary>
         /// Basic unsigned Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -2316,7 +2294,7 @@ public:
         SmallUDec SubtractByUnsigned(const SmallUDec& rValue)
         { SmallUDec lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
 
-		/// <summary>
+        /// <summary>
         /// Basic Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -2326,7 +2304,7 @@ public:
 
     #pragma endregion NormalRep AltNum Addition/Subtraction Operations
 
-	#pragma region Other addition operations
+    #pragma region Other addition operations
 
         /// <summary>
         /// += operation
@@ -2384,9 +2362,9 @@ public:
         friend SmallUDec operator+(const unsigned char& lValue, SmallUDec rValue)  { return rValue.UInt8AddOperation(lValue); }
         friend SmallUDec operator+(const unsigned short& lValue, SmallUDec rValue)  { return rValue.UInt16AddOperation(lValue); }
 
-	#pragma endregion Other addition operations
+    #pragma endregion Other addition operations
 
-	#pragma region Other subtraction operations
+    #pragma region Other subtraction operations
 
         /// <summary>
         /// -= operation
@@ -2446,10 +2424,10 @@ public:
         friend SmallUDec operator-(const unsigned char& lValue, const SmallUDec& rValue) { return ((SmallUDec)lValue).SubtractBy(rValue); }
         friend SmallUDec operator-(const unsigned short& lValue, const SmallUDec& rValue) { return ((SmallUDec)lValue).SubtractBy(rValue); }
 
-	#pragma endregion Other subtraction operations
+    #pragma endregion Other subtraction operations
 
-	#pragma region Modulus Operations
-	protected:
+    #pragma region Modulus Operations
+    protected:
 
         template<SmallUDecVariant VariantType=SmallUDec>
         void UnsignedModulusOpV1(const VariantType& rValue)
@@ -2473,7 +2451,7 @@ public:
                 UnsignedModulusOp(rValue);
         }
 
-	public:
+    public:
 
         void UIntModulusOp(const unsigned int& rValue)
         {
@@ -2498,9 +2476,9 @@ public:
         void UInt64ModulusOp(const unsigned __int64& rValue)
         {
             if(DecimalHalf.Value==0){
-				unsigned __int64 result = IntHalf.Value;
+                unsigned __int64 result = IntHalf.Value;
                 result %= rValue;
-				IntHalf.Value = (unsigned int) result;
+                IntHalf.Value = (unsigned int) result;
             } else {
                 auto divRes = DivideByUIntV1(rValue);
                 UnsignedSubOp(divRes.MultiplyByUInt64(rValue));
@@ -2521,13 +2499,13 @@ public:
 
         void ModulusOp(const SmallUDec& rValue){ ModulusOpV1(rValue); }
 
-		SmallUDec& UnsignedModulusOperation(const SmallUDec& rValue){
-			UnsignedModulusOp(rValue); return *this;
-		}
+        SmallUDec& UnsignedModulusOperation(const SmallUDec& rValue){
+            UnsignedModulusOp(rValue); return *this;
+        }
 
-		SmallUDec& ModulusOperation(const SmallUDec& rValue){
-			ModulusOp(rValue); return *this;
-		}
+        SmallUDec& ModulusOperation(const SmallUDec& rValue){
+            ModulusOp(rValue); return *this;
+        }
 
         friend SmallUDec& operator%=(SmallUDec& lValue, const SmallUDec& rValue) { return lValue.ModulusOperation(rValue); }
         friend SmallUDec& operator%=(SmallUDec& lValue, const signed int& rValue) { lValue.IntModulusOp(rValue); return lValue; }
@@ -2535,9 +2513,9 @@ public:
         friend SmallUDec& operator%=(SmallUDec& lValue, const unsigned __int64& rValue) { lValue.UInt64ModulusOp(rValue); return lValue;}
         friend SmallUDec& operator%=(SmallUDec& lValue, const signed __int64& rValue) { lValue.Int64ModulusOp(rValue); return lValue;}
 
-	#pragma region Modulus Operations
+    #pragma region Modulus Operations
 
-	#pragma region Bitwise Operations
+    #pragma region Bitwise Operations
     //Update code later
     /*
     #if defined(AltNum_EnableBitwiseOverride)
@@ -2596,7 +2574,7 @@ public:
         }
     #endif
     */
-	#pragma endregion Bitwise Operations
+    #pragma endregion Bitwise Operations
 
     /*
     #pragma region Floating Operator Overrides
@@ -2695,7 +2673,7 @@ public:
 
     #pragma endregion Other Operators
 
-	#pragma region Truncation Functions
+    #pragma region Truncation Functions
 
         /// <summary>
         /// Forces Number into non-negative
@@ -2732,15 +2710,15 @@ public:
 
 protected:
 
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType CeilV1(const VariantType& tValue)
         {
-			if(tValue.IntHalf==MirroredInt::NegativeZero)
-				return VariantType::One;
+            if(tValue.IntHalf==MirroredInt::NegativeZero)
+                return VariantType::One;
             else if (tValue.DecimalHalf != 0)
-				return VariantType(tValue.IntHalf+1);
+                return VariantType(tValue.IntHalf+1);
             else
-				return tValue;
+                return tValue;
         }
 
         /// <summary>
@@ -2751,7 +2729,7 @@ protected:
         template<SmallUDecVariant VariantType = SmallUDec>
         static VariantType FloorV1(const VariantType& tValue, const int& precision = 0)
         {
-			unsigned int decimalRes = tValue.DecimalHalf.Value;
+            unsigned int decimalRes = tValue.DecimalHalf.Value;
             switch (precision)
             {
             case 8: decimalRes /= 10; decimalRes *= 10; break;
@@ -2764,10 +2742,10 @@ protected:
             case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
-			if(decimalRes==0&&tValue.IntHalf==MirroredInt::NegativeZero)
-				return VariantType();
-			else
-				return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
+            if(decimalRes==0&&tValue.IntHalf==MirroredInt::NegativeZero)
+                return VariantType();
+            else
+                return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
         }
 
         template<SmallUDecVariant VariantType = SmallUDec>
@@ -2782,13 +2760,13 @@ public:
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
-		static SmallUDec Ceil(const SmallUDec& tValue) { return CeilV1<SmallUDec>(tValue); }
+        static SmallUDec Ceil(const SmallUDec& tValue) { return CeilV1<SmallUDec>(tValue); }
 
         ///<summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         ///</summary>
         /// <param name="tValue">Variable to apply method on</param>
-		SmallUDec CeilOf() const { return Ceil(*this); }
+        SmallUDec CeilOf() const { return Ceil(*this); }
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
@@ -2800,7 +2778,7 @@ public:
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-		static signed int FloorInt(const SmallUDec& tValue) { return tValue.FloorIntOf(); }
+        static signed int FloorInt(const SmallUDec& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
@@ -2812,13 +2790,13 @@ public:
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-		static signed int CeilInt(const SmallUDec& tValue) { return tValue.CeilIntOf(); }
+        static signed int CeilInt(const SmallUDec& tValue) { return tValue.CeilIntOf(); }
 
-		static SmallUDec Trunc(const SmallUDec& tValue);
+        static SmallUDec Trunc(const SmallUDec& tValue);
 
-	#pragma endregion Truncation Functions
+    #pragma endregion Truncation Functions
 
-	#pragma region Pow and Sqrt Functions
+    #pragma region Pow and Sqrt Functions
 protected:
 
         /// <summary>
@@ -2953,7 +2931,7 @@ protected:
             }
             else
             {
-				IntType exp = expValue;
+                IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
                 bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
                 VariantType self = tValue.AbsOf();
@@ -3015,28 +2993,28 @@ protected:
                 return UIntPowV1(tValue, expValue);
         }
 
-		template<SmallUDecVariant VariantType=SmallUDec>
-		static VariantType UnsignedNegIntPowerV1(const VariantType& tValue, const unsigned int& expValue)
-		{
-			unsigned int exp = expValue;
-			//Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-			//Switches from negative to positive if exp is odd number
-			bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+        template<SmallUDecVariant VariantType=SmallUDec>
+        static VariantType UnsignedNegIntPowerV1(const VariantType& tValue, const unsigned int& expValue)
+        {
+            unsigned int exp = expValue;
+            //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+            //Switches from negative to positive if exp is odd number
+            bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
             VariantType self = tValue.AbsOf();
-			VariantType result = VariantType::One;
-			while (exp > 0)
-			{
-				// If expValue is odd, divide self with result
-				if ((exp & 1) == 1)
+            VariantType result = VariantType::One;
+            while (exp > 0)
+            {
+                // If expValue is odd, divide self with result
+                if ((exp & 1) == 1)
                     result.UnsignedDivOp(self);
-				// n must be even now
-				exp = exp >> 1; // y = y/2
+                // n must be even now
+                exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
-			}
-			if(IsNegative)
-				result.IntHalf.Sign = MirroredInt::NegativeSign;
+            }
+            if(IsNegative)
+                result.IntHalf.Sign = MirroredInt::NegativeSign;
             return result;
-		}
+        }
 
 public:
 
@@ -3056,12 +3034,12 @@ public:
         /// <param name="tValue">The target value to perform power of operation.</param>
         /// <param name="expValue">The exponent value.</param>
         static SmallUDec IntPow(const SmallUDec& tValue, const signed int& expValue)
-		{ return IntPowV1<SmallUDec>(tValue, expValue); }
+        { return IntPowV1<SmallUDec>(tValue, expValue); }
         static SmallUDec Int64Pow(const SmallUDec& tValue, const signed __int64& expValue)
-		{ return IntPowV1<SmallUDec>(tValue, expValue); }
+        { return IntPowV1<SmallUDec>(tValue, expValue); }
 
         SmallUDec UnsignedNegIntPower(const SmallUDec& tValue, const unsigned int& expValue)
-		{ return UnsignedNegIntPowerV1<SmallUDec>(tValue, expValue); }
+        { return UnsignedNegIntPowerV1<SmallUDec>(tValue, expValue); }
 
 
         /// <summary>
@@ -3110,7 +3088,7 @@ protected:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
@@ -3144,7 +3122,7 @@ protected:
         /// <param name="tValue">The target value(radicand) to perform operation on.</param>
         /// <param name="nValue">The nth root degree value.</param>
         /// <param name="precision">Precision level (smaller = more precise)</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             if (tValue.IsNegative())
@@ -3152,7 +3130,7 @@ protected:
             return UnsignedNthRootV1(tValue, n, precision);
         }
 
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision)
         {
             if(n.IsNegative())
@@ -3177,13 +3155,13 @@ protected:
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
         /// </summary>
         /// <param name="n">The n value to apply with root.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType NthRootV2(const VariantType& tValue, const unsigned int& n, const VariantType& Precision = VariantType::FiveBillionth)
         {
-			if(n==0)
-				throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
+            if(n==0)
+                throw "Can't return results of zeroth root";//Negative roots require imaginary numbers to support
             unsigned int nMinus1 = n - 1;
-			VariantType OneByN = VariantType::One/n;
+            VariantType OneByN = VariantType::One/n;
             VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
             InitialX1 += UnsignedDivisionV1(tValue, tValue.UIntPowOf(nMinus1));
             VariantType x[2] = { InitialX1, tValue };
@@ -3207,7 +3185,7 @@ public:
         /// <param name="precision">Precision level (smaller = more precise)</param>
         static SmallUDec NthRoot(const SmallUDec& tValue, const unsigned int& n, const SmallUDec& precision = SmallUDec::JustAboveZero)
         {
-	        return NthRootV1<SmallUDec>(tValue, n, precision);
+            return NthRootV1<SmallUDec>(tValue, n, precision);
         }
 
         SmallUDec NthRootOf(const unsigned int& n, const SmallUDec& precision = SmallUDec::JustAboveZero) const;
@@ -3221,13 +3199,13 @@ protected:
         /// </summary>
         /// <param name="value">The target value.</param>
         /// <param name="Frac">The exponent value to raise the value to power of.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType FractionalPowV1(const auto& value, const boost::rational<unsigned int>& Frac)
-		{
-			VariantType targetVal = UIntPowOf(Frac.numerator());
-			VariantType CalcVal = SmallUDecVariant::NthRoot(targetVal, Frac.denominator());
-			return CalcVal;
-		}
+        {
+            VariantType targetVal = UIntPowOf(Frac.numerator());
+            VariantType CalcVal = SmallUDecVariant::NthRoot(targetVal, Frac.denominator());
+            return CalcVal;
+        }
 
         /// <summary>
         /// Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
@@ -3235,77 +3213,77 @@ protected:
         /// <param name="value">The target value.</param>
         /// <param name="expNum">The numerator of the exponent value.</param>
         /// <param name="expDenom">The denominator of the exponent value.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         const VariantType FractionalPowV2(const VariantType& value, const signed int& expNum, const unsigned int& expDenom)
-		{
-			auto targetVal = IntPowOf(expNum);
-			auto CalcVal = SmallUDecVariant::NthRoot(targetVal, expDenom);
-			return CalcVal;
-		}
+        {
+            auto targetVal = IntPowOf(expNum);
+            auto CalcVal = SmallUDecVariant::NthRoot(targetVal, expDenom);
+            return CalcVal;
+        }
 
         /// <summary>
         /// Calculate to power of unsigned expValue
-		/// (Doesn't modify owner object)
+        /// (Doesn't modify owner object)
         /// </summary>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         const VariantType UnsignedPowOfV1(const auto& expValue)
-		{
-			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, SmallUDecVariant::DecimalOverflow);
-			if(expValue.IntHalf.Value==0)
-				return FractionalPowV1(Frac);
-			else {
-				VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
-				CalcVal *= FractionalPowV1(Frac);
-				return CalcVal;
-			}
-		}
+        {
+            boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, SmallUDecVariant::DecimalOverflow);
+            if(expValue.IntHalf.Value==0)
+                return FractionalPowV1(Frac);
+            else {
+                VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+                CalcVal *= FractionalPowV1(Frac);
+                return CalcVal;
+            }
+        }
 
         /// <summary>
         /// Calculate to power of expValue
-		/// (Doesn't modify owner object)
+        /// (Doesn't modify owner object)
         /// </summary>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         const VariantType PowOfV1(const auto& expValue)
-		{
-			boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, SmallUDecVariant::DecimalOverflow);
-			if (expValue.IntHalf.IsNegative()){//Negative Exponent
-				if(expValue.IntHalf.Value==0)
-					return VariantType::One/FractionalPowV1(Frac);
-				else {
-					VariantType CalcVal = One / UIntPowOf(expValue.IntHalf.Value);
-					CalcVal /= FractionalPowV1(Frac);
-					return CalcVal;
-				}
-			} else {
-				if(expValue.IntHalf.Value==0)
-					return FractionalPowV1(Frac);
-				else {
-					VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
-					CalcVal *= FractionalPowV1(Frac);
-					return CalcVal;
-				}
-			}
-		}
+        {
+            boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, SmallUDecVariant::DecimalOverflow);
+            if (expValue.IntHalf.IsNegative()){//Negative Exponent
+                if(expValue.IntHalf.Value==0)
+                    return VariantType::One/FractionalPowV1(Frac);
+                else {
+                    VariantType CalcVal = One / UIntPowOf(expValue.IntHalf.Value);
+                    CalcVal /= FractionalPowV1(Frac);
+                    return CalcVal;
+                }
+            } else {
+                if(expValue.IntHalf.Value==0)
+                    return FractionalPowV1(Frac);
+                else {
+                    VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+                    CalcVal *= FractionalPowV1(Frac);
+                    return CalcVal;
+                }
+            }
+        }
 
 public:
 
         /// <summary>
         /// Calculate to power of expValue
-		/// (Doesn't modify owner object)
+        /// (Doesn't modify owner object)
         /// </summary>
         SmallUDec UnsignedPowOf(const auto& expValue)
-		{ return UnsignedPowOfV1(expValue); }
+        { return UnsignedPowOfV1(expValue); }
 
         /// <summary>
         /// Calculate to power of expValue
-		/// (Doesn't modify owner object)
+        /// (Doesn't modify owner object)
         /// </summary>
         SmallUDec PowOf(const auto& expValue)
-		{ return PowOfV1(expValue); }
+        { return PowOfV1(expValue); }
 
-	#pragma endregion Pow and Sqrt Functions
+    #pragma endregion Pow and Sqrt Functions
 
-	#pragma region Log Functions
+    #pragma region Log Functions
 protected:
 
         /// <summary>
@@ -3313,7 +3291,7 @@ protected:
         /// </summary>
         /// <param name="x">The value to apply the exponential function to.</param>
         /// <returns>VariantType</returns>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType ExpV1(const VariantType& x)
         {
             /*
@@ -3372,28 +3350,28 @@ protected:
             return tn;
         }
 
-		//Common log calculations for when value is between 0 and one
-		template<SmallUDecVariant VariantType=SmallUDec>
-		VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
-		{
-			VariantType TotalRes = (*this - 1)/ (*this + 1);
-			VariantType WSquared = TotalRes * TotalRes;
-			VariantType LastPow = -TotalRes;
-			int WPow = 3;
-			VariantType AddRes;
+        //Common log calculations for when value is between 0 and one
+        template<SmallUDecVariant VariantType=SmallUDec>
+        VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
+        {
+            VariantType TotalRes = (*this - 1)/ (*this + 1);
+            VariantType WSquared = TotalRes * TotalRes;
+            VariantType LastPow = -TotalRes;
+            int WPow = 3;
+            VariantType AddRes;
 
-			do
-			{
-				LastPow *= WSquared;
-				AddRes = LastPow / WPow;
-				TotalRes -= AddRes;
-				WPow += 2;
-			} while (AddRes > VariantType::JustAboveZero);
-			return TotalRes;
-		}
+            do
+            {
+                LastPow *= WSquared;
+                AddRes = LastPow / WPow;
+                TotalRes -= AddRes;
+                WPow += 2;
+            } while (AddRes > VariantType::JustAboveZero);
+            return TotalRes;
+        }
 
-		//Common natural log calculations for range one to two
-		template<SmallUDecVariant VariantType=SmallUDec>
+        //Common natural log calculations for range one to two
+        template<SmallUDecVariant VariantType=SmallUDec>
         const VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
         {
             VariantType base = *this - 1;        // Base of the numerator; exponent will be explicit
@@ -3414,31 +3392,31 @@ protected:
             return result;
         }
 
-		//Common log calculations for when value is greater than one
-		template<SmallUDecVariant VariantType=SmallUDec>
-		VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
-		{
-			//Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-			VariantType TotalRes = (*this - 1) / (*this + 1);
-			VariantType LastPow = TotalRes;
-			VariantType WSquared = TotalRes * TotalRes;
-			VariantType AddRes;
-			int WPow = 3;
-			do
-			{
-				LastPow *= WSquared;
-				AddRes = LastPow / WPow;
-				TotalRes += AddRes; WPow += 2;
-			} while (AddRes > AccuracyLevel);
-			return TotalRes;
-		}
+        //Common log calculations for when value is greater than one
+        template<SmallUDecVariant VariantType=SmallUDec>
+        VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
+        {
+            //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
+            VariantType TotalRes = (*this - 1) / (*this + 1);
+            VariantType LastPow = TotalRes;
+            VariantType WSquared = TotalRes * TotalRes;
+            VariantType AddRes;
+            int WPow = 3;
+            do
+            {
+                LastPow *= WSquared;
+                AddRes = LastPow / WPow;
+                TotalRes += AddRes; WPow += 2;
+            } while (AddRes > AccuracyLevel);
+            return TotalRes;
+        }
 
-		template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
-		static VariantType LogGreaterRangeIntPart02(const IntType& value, const VariantType& AccuracyLevel=VariantType::JustAboveZero)
-		{
-			VariantType tValue = VariantType(value);
-			return tValue.LogGreaterRangePart02(AccuracyLevel);
-		}
+        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
+        static VariantType LogGreaterRangeIntPart02(const IntType& value, const VariantType& AccuracyLevel=VariantType::JustAboveZero)
+        {
+            VariantType tValue = VariantType(value);
+            return tValue.LogGreaterRangePart02(AccuracyLevel);
+        }
 
         /// <summary>
         /// Natural log (Equivalent to Log_E(value))
@@ -3549,7 +3527,7 @@ protected:
         /// </summary>
         /// <param name="tValue">The value.</param>
         /// <returns>SmallUDec</returns>
-		template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
+        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
         static VariantType Log10OfIntV1(const IntType& value)
         {
             if (value == 1)
@@ -3577,7 +3555,7 @@ protected:
         /// <param name="value">The value.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>SmallUDec Variant</returns>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType LogV1(const VariantType& value, const VariantType& baseVal)
         {
             if (value == VariantType::One)
@@ -3592,7 +3570,7 @@ protected:
         /// <param name="tValue">The value.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>VariantType</returns>
-		template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
+        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
         static VariantType LogOfIntV1(const VariantType& value, const IntType& baseVal)
         {
             //Calculate Base log first
@@ -3625,28 +3603,28 @@ protected:
                 }
                 return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyByUnsigned(lnMultiplier)):VariantType::Initialize(9, 0)/baseTotalRes;
             }
-			if(value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
-			{
+            if(value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
+            {
                 VariantType TotalRes = value.LogZeroRangePart02();
-				if(lnMultLog)
-					return TotalRes.DivideByUnsigned(baseTotalRes);
-				else
-					return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
-			}
+                if(lnMultLog)
+                    return TotalRes.DivideByUnsigned(baseTotalRes);
+                else
+                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
+            }
             else if (value.IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
-				if(lnMultLog)
-					return value.LnOfOneSection()/baseTotalRes;
-				else
-					return (value.LnOfOneSection().MultipliedByTwo())/ baseTotalRes;
+                if(lnMultLog)
+                    return value.LnOfOneSection()/baseTotalRes;
+                else
+                    return (value.LnOfOneSection().MultipliedByTwo())/ baseTotalRes;
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 VariantType TotalRes = value.LogGreaterRangePart02();
-				if(lnMultLog)
-					return TotalRes.DivideByUnsigned(baseTotalRes);
-				else
-					return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
+                if(lnMultLog)
+                    return TotalRes.DivideByUnsigned(baseTotalRes);
+                else
+                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
             }
         }
 
@@ -3703,7 +3681,7 @@ public:
         static SmallUDec LogOfInt(const SmallUDec& value, const unsigned int& baseVal)
         { return LogOfIntV1(value, baseVal); }
 
-	#pragma endregion Log Functions
+    #pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
 protected:
@@ -3713,19 +3691,19 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType SinV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
-			unsigned int expTotal;
-			bool AddToResult = false;
+            unsigned int expTotal;
+            bool AddToResult = false;
             for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
-				expTotal = 2 * i + 1;
-				if(AddToResult)
-					SinValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
-				else
-					SinValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
+                expTotal = 2 * i + 1;
+                if(AddToResult)
+                    SinValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
+                else
+                    SinValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return SinValue;
         }
@@ -3735,19 +3713,19 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType CosV1(const VariantType& tValue)
         {
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
-			unsigned int expTotal;
-			bool AddToResult = false;
+            unsigned int expTotal;
+            bool AddToResult = false;
             for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
-				expTotal = 2 * i;
-				if(AddToResult)
-					CosValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
-				else
-					CosValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
+                expTotal = 2 * i;
+                if(AddToResult)
+                    CosValue += VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
+                else
+                    CosValue -= VariantType::UIntPow(tValue, expTotal) / VariableConversionFunctions::Fact(expTotal);
             }
             return CosValue;
         }
@@ -3757,23 +3735,23 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType TanV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
-			unsigned int sinExp; unsigned int cosExp;
-			bool AddToResult = false;
+            unsigned int sinExp; unsigned int cosExp;
+            bool AddToResult = false;
             for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
-				sinExp = 2 * i + 1; cosExp = 2 * i;
-				if(AddToResult){
-					SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
-				} else{
-					SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
-				}
+                sinExp = 2 * i + 1; cosExp = 2 * i;
+                if(AddToResult){
+                    SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+                    CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
+                } else{
+                    SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+                    CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
+                }
             }
             return SinValue / CosValue;
         }
@@ -3783,24 +3761,24 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The value in Radians.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType ATanV1(const VariantType& tValue)
         {
             VariantType SinValue = VariantType::One  / VariableConversionFunctions::Fact(1);
             VariantType CosValue = VariantType::One / VariableConversionFunctions::Fact(0);
             //Angle as Radian
-			unsigned int sinExp; unsigned int cosExp;
-			bool AddToResult = false;
+            unsigned int sinExp; unsigned int cosExp;
+            bool AddToResult = false;
             for (unsigned int i = 1; i < 7; ++i&&AddToResult==!AddToResult)
             {
-				sinExp = 2 * i + 1; cosExp = 2 * i;
-				if(AddToResult){
-					SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
-				} else{
-					SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
-					CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
-				}
+                sinExp = 2 * i + 1; cosExp = 2 * i;
+                if(AddToResult){
+                    SinValue += VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+                    CosValue += VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
+                } else{
+                    SinValue -= VariantType::UIntPow(tValue, sinExp) / VariableConversionFunctions::Fact(sinExp);
+                    CosValue -= VariantType::UIntPow(tValue, cosExp) / VariableConversionFunctions::Fact(cosExp);
+                }
             }
             return CosValue / SinValue;
         }
@@ -3813,7 +3791,7 @@ protected:
         /// </summary>
         /// <param name="y">The y.</param>
         /// <param name="X">The x.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType ArcTan2V1(const VariantType& y, const VariantType& x)
         {
             VariantType coeff_1 = VariantType::PiNum.DividedByFour();
@@ -3858,7 +3836,7 @@ protected:
             {
                 tValue.IntHalf.Value %= 360;
             }
-			return tValue;
+            return tValue;
         }
 
         /// <summary>
@@ -3866,10 +3844,10 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType SinFromAngleV1(const VariantType& tValue)
         {
-			VariantType lValue = NormalizeForTrig(tValue);
+            VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
                 switch(lValue.IntHalf.Value)
@@ -3910,10 +3888,10 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType CosFromAngleV1(const VariantType& tValue)
         {
-			VariantType lValue = NormalizeForTrig(tValue);
+            VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
                 switch(lValue.IntHalf.Value)
@@ -3954,10 +3932,10 @@ protected:
         /// Formula code based on answer from https://stackoverflow.com/questions/38917692/sin-cos-funcs-without-math-h
         /// </summary>
         /// <param name="tValue">The target value in degrees to perform operation on.</param>
-		template<SmallUDecVariant VariantType=SmallUDec>
+        template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType TanFromAngleV1(const VariantType& tValue)
         {
-			VariantType lValue = NormalizeForTrig(tValue);
+            VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
                 switch(lValue.IntHalf.Value)
@@ -4039,16 +4017,16 @@ public:
         static SmallUDec TanFromAngle(const SmallUDec& tValue)
         { return TanFromAngleV1<SmallUDec>(tValue); }
 
-		SmallUDec SinOf()
+        SmallUDec SinOf()
         { return Sin(*this); }
 
-		SmallUDec CosOf()
+        SmallUDec CosOf()
         { return Cos(*this); }
 
-		SmallUDec TanOf()
+        SmallUDec TanOf()
         { return Tan(*this); }
 
-		SmallUDec ATanOf()
+        SmallUDec ATanOf()
         { return ATan(*this);; }
 
         /// <summary>

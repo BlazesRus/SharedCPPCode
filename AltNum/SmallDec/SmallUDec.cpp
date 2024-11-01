@@ -52,11 +52,6 @@ SmallUDec BlazesRusCode::SmallUDec::JustAboveZeroValue()
 	return SmallUDec(0, 1);
 }
 
-SmallUDec BlazesRusCode::SmallUDec::MinimumValue()
-{
-	return SmallUDec(0, 0);
-}
-
 SmallUDec BlazesRusCode::SmallUDec::MaximumValue()
 {
 	return SmallUDec(33554431, 99);
@@ -78,7 +73,7 @@ const SmallUDec SmallUDec::Zero = SmallUDec::ZeroValue();
 const SmallUDec SmallUDec::PointFive = SmallUDec::Point5Value();
 const SmallUDec SmallUDec::JustAboveZero = SmallUDec::JustAboveZeroValue();
 
-const SmallUDec SmallUDec::Minimum = SmallUDec::MinimumValue();
+const SmallUDec SmallUDec::Minimum = SmallUDec::ZeroValue();
 const SmallUDec SmallUDec::Maximum = SmallUDec::MaximumValue();
 
 const SmallUDec SmallUDec::PointOne = SmallUDec::PointOneValue();
@@ -101,7 +96,7 @@ void BlazesRusCode::SmallUDec::SetAsOneVal()
 	IntHalf.Value = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallUDec::SetAsValues(const unsigned int& intVal, const PartialInt& decVal)
+void BlazesRusCode::SmallUDec::SetAsValues(const unsigned int& intVal, const unsigned short& decVal)
 {
 	IntHalf = intVal; DecimalHalf = decVal;
 }
@@ -157,7 +152,7 @@ bool BlazesRusCode::SmallUDec::IsOneVariantVal() const
 
 void BlazesRusCode::SmallUDec::SetAsMaximum()
 {
-	IntHalf = 4294967295; DecimalHalf = 999999999;
+	IntHalf = 4294967295; DecimalHalf = 99;
 }
 
 void BlazesRusCode::SmallUDec::SetAsMinimum()
@@ -174,16 +169,9 @@ float BlazesRusCode::SmallUDec::toFloat() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	float Value;
-	if (IntHalf.IsNegative())
-	{
-		Value = (float)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-	}
-	else
-	{
-		Value = (float)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-	}
+	Value = (float)IntHalf.Value;
+	if (DecimalHalf != 0)
+        Value += ((float)DecimalHalf * 0.01f);
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 	if (IntHalf.Value == 0)//Exponent is negative
@@ -202,16 +190,9 @@ double BlazesRusCode::SmallUDec::toDouble() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	double Value;
-	if (IntHalf < 0)
-	{
-		Value = (double)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-	}
-	else
-	{
-		Value = (double)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-	}
+	Value = (double)IntHalf.Value;
+	if (DecimalHalf != 0)
+        Value += ((double)DecimalHalf * 0.01);
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 	if (IntHalf.Value == 0)//Exponent is negative
@@ -230,16 +211,9 @@ long double BlazesRusCode::SmallUDec::toDecimal() const
 {
 	#if defined(AltNum_UseLegacyFloatingConversion)
 	long double Value;
-	if (IntHalf < 0)
-	{
-		Value = (long double)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
-	}
-	else
-	{
-		Value = (long double)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
-	}
+	Value = (long double)IntHalf.Value;
+	if (DecimalHalf != 0)
+        Value += ((long double)DecimalHalf * 0.01L);
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
 	if (IntHalf.Value == 0)//Exponent is negative

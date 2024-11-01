@@ -133,7 +133,7 @@ void BlazesRusCode::SmallDec::SetAsOneVal()
 	IntHalf.Value = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallDec::SetAsValues(const signed int& intVal, const PartialInt& decVal)
+void BlazesRusCode::SmallDec::SetAsValues(const signed int& intVal, const unsigned short& decVal)
 {
     if(intVal<0)
     {
@@ -198,12 +198,12 @@ bool BlazesRusCode::SmallDec::IsOneVariantVal() const
 
 void BlazesRusCode::SmallDec::SetAsMaximum()
 {
-	IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999;
+	IntHalf = MirroredInt::Maximum; DecimalHalf = 99;
 }
 
 void BlazesRusCode::SmallDec::SetAsMinimum()
 {
-	IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999;
+	IntHalf = MirroredInt::Minimum; DecimalHalf = 99;
 }
 
 #pragma endregion RangeLimits
@@ -218,12 +218,14 @@ float BlazesRusCode::SmallDec::toFloat() const
 	if (IntHalf.IsNegative())
 	{
 		Value = (float)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
+		if (DecimalHalf != 0)
+            Value -= ((float)DecimalHalf * 0.01f);
 	}
 	else
 	{
 		Value = (float)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
+		if (DecimalHalf != 0)
+            Value += ((float)DecimalHalf * 0.01f);
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
@@ -246,12 +248,14 @@ double BlazesRusCode::SmallDec::toDouble() const
 	if (IntHalf < 0)
 	{
 		Value = (double)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
+		if (DecimalHalf != 0)
+            Value -= ((double)DecimalHalf * 0.01);
 	}
 	else
 	{
 		Value = (double)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
+		if (DecimalHalf != 0)
+            Value += ((double)DecimalHalf * 0.01);
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
@@ -274,12 +278,14 @@ long double BlazesRusCode::SmallDec::toDecimal() const
 	if (IntHalf < 0)
 	{
 		Value = (long double)-IntHalf.Value;
-		if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
+		if (DecimalHalf != 0)
+            Value -= ((long double)DecimalHalf * 0.01L);
 	}
 	else
 	{
 		Value = (long double)IntHalf.Value;
-		if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
+		if (DecimalHalf != 0)
+            Value += ((long double)DecimalHalf * 0.01L);
 	}
 	return Value;
 	#else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
@@ -368,40 +374,15 @@ SmallDec BlazesRusCode::SmallDec::MultipliedByFour() const
 
 #pragma region NormalRep Integer Addition Operations
 
-void SmallDec::UnsignedMirroredAddOp(const MirroredInt& rValue)
-{
-	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingUnsignedAddOp(rValue);
-	else {
-		int signBeforeOp = IntHalf.Sign;
-		IntHalf += rValue.Value;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
-}
-
-void SmallDec::MirroredAddOp(const MirroredInt& rValue)
-{
-	if (DecimalHalf.Value == 0) {
-		IntHalf.NRepSkippingAddOp(rValue);
-	}
-	else {
-		int signBeforeOp = IntHalf.Sign;
-		IntHalf += rValue;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
-			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-	}
-}
-
 void SmallDec::UIntAddOp(const unsigned int& rValue)
 {
 	{
 		if (DecimalHalf.Value == 0)
-			IntHalf.NRepSkippingUnsignedAddOp(rValue);
+			NRepSkippingUnsignedAddOp(rValue);
 		else {
-			int signBeforeOp = IntHalf.Sign;
+			int signBeforeOp = Sign;
 			IntHalf += rValue;
-			if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+			if (signBeforeOp != Sign)//Invert the decimal section
 				DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 		}
 	}
@@ -419,11 +400,11 @@ SmallDec& BlazesRusCode::SmallDec::UIntAddOperation(const unsigned int& rValue)
 void BlazesRusCode::SmallDec::UnsignedMirroredSubOp(const MirroredInt& rValue)
 {
 	if (DecimalHalf.Value == 0)
-		IntHalf.NRepSkippingUnsignedSubOp(rValue);
+		NRepSkippingUnsignedSubOp(rValue);
 	else {
-		int signBeforeOp = IntHalf.Sign;
+		int signBeforeOp = Sign;
 		IntHalf -= rValue.Value;
-		if (signBeforeOp != IntHalf.Sign)//Invert the decimal section
+		if (signBeforeOp != Sign)//Invert the decimal section
 			DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
 	}
 }
