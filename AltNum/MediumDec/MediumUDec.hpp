@@ -730,10 +730,7 @@ protected:
         {
             if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf.Value <=> that.DecimalHalf.Value; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
@@ -742,8 +739,9 @@ protected:
             return BasicComparisonV1(that);
         }
 
+/*
         //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicUIntComparison(const int& that) const
+        std::strong_ordering BasicUIntComparison(const unsigned int& that) const
         {
             if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
                 return IntHalfCmp;
@@ -754,7 +752,7 @@ protected:
         }
 
         //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicIntComparison(const int& that) const
+        std::strong_ordering BasicIntComparison(const signed int& that) const
         {
             if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
                 return IntHalfCmp;
@@ -763,6 +761,7 @@ protected:
             if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
+*/
 
 public:
 
@@ -770,10 +769,7 @@ public:
         {//return BasicComparison(that);
             if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf.Value <=> that.DecimalHalf.Value; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
@@ -847,7 +843,7 @@ public:
 protected:
 
         template<IntegerType IntType=unsigned int>
-        void PartialUIntDivOpV1(const IntType& rValue)
+        void PartialIntDivOpV1(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
@@ -862,26 +858,12 @@ protected:
             DecimalHalf.Value = (unsigned int)DecimalRes;
         }
 
-        template<IntegerType IntType=signed int>
-        void PartialIntDivOpV1(const IntType& Value)
-        {
-            if(Value<0)
-            {
-                SwapNegativeStatus();
-                PartialUIntDivOp(-Value);
-            }
-            else
-                PartialUIntDivOp(Value);
-        }
-
 public:
-        void PartialUIntDivOp(const unsigned int& rValue) { PartialUIntDivOpV1(rValue); }
-        void PartialIntDivOp(const signed int& rValue) { PartialIntDivOpV1(rValue); }
-        void PartialUInt64DivOp(const unsigned int& rValue) { PartialUIntDivOpV1(rValue); }
-        void PartialInt64DivOp(const signed __int64& rValue) { PartialIntDivOpV1(rValue); }
+        void PartialIntDivOp(const unsigned int& rValue) { PartialIntDivOpV1(rValue); }
+        void PartialUInt64DivOp(const unsigned int& rValue) { PartialIntDivOpV1(rValue); }
 
-        void UnsignedPartialIntDivOp(const signed int& rValue) { PartialUIntDivOpV1(rValue); }
-        void UnsignedPartialInt64DivOp(const signed __int64& rValue) { PartialUIntDivOpV1(rValue); }
+        void PartialIntDivOp(const signed int& rValue) { PartialIntDivOpV1(rValue); }
+        void PartialInt64DivOp(const signed __int64& rValue) { PartialIntDivOpV1(rValue); }
 
 protected:
 
@@ -900,7 +882,7 @@ protected:
             }
             else if (IsZero())
                 return;
-            PartialUIntDivOpV1(Value);
+            PartialIntDivOpV1(Value);
             if (IntHalf == 0 && DecimalHalf == 0)
                 DecimalHalf = 1;//Prevent Dividing into nothing
         }
