@@ -470,15 +470,15 @@ public:
         /// SmallDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toInt() const { return IntHalf.GetValue(); }
+        signed int toInt() const { return IsNegative():-((int)IntHalf)? IntHalf; }
 
         /// <summary>
         /// SmallDec Variant to int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
-        int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
+        unsigned int toUInt() const { return IsNegative()()?0:IntHalf; }
 
-        bool toBool() const { return IntHalf.IsZero() ? false : true; }
+        bool toBool() const { return IntHalf==0 ? false : true; }
 
     #if defined(AltNum_EnableFloatingConversion)
 
