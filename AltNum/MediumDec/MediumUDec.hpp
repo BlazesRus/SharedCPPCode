@@ -874,20 +874,6 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        void UIntDivOpV1(const IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOpV1(Value);
-            if (IntHalf == 0 && DecimalHalf == 0)
-                DecimalHalf = 1;//Prevent Dividing into nothing
-        }
-
-        template<IntegerType IntType=signed int>
         void IntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
@@ -902,10 +888,6 @@ protected:
         }
 
         template<IntegerType IntType=unsigned int>
-        auto& UIntDivOperationV1(const IntType& rValue)
-        { UIntDivOpV1(rValue); return *this; }
-
-        template<IntegerType IntType=unsigned int>
         auto& IntDivOperationV1(const IntType& rValue)
         { IntDivOpV1(rValue); return *this; }
 
@@ -916,53 +898,38 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        const auto DivideByUIntV1(const IntType& rValue)
-        { auto self = *this; return self.UIntDivOperationV1(rValue); }
-
-        /// <summary>
-        /// Basic division operation between MediumUDec Variant and Integer value
-        /// that ignores special representation status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        template<IntegerType IntType=signed int>
         const auto DivideByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntDivOperationV1(rValue); }
 
 public:
 
-        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
+        void UIntDivOp(const unsigned int& rValue) { IntDivOpV1(rValue); }
         void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { IntDivOpV1(rValue); }
         void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        void UnsignedIntegerDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
-
-        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
+        void UInt8DivOp(const unsigned char& rValue) { IntDivOpV1(rValue); }
         void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { IntDivOpV1(rValue); }
         void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
 
-        MediumUDec& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& UIntDivOperation(const unsigned int& rValue) { return IntDivOperationV1(rValue); }
         MediumUDec& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        MediumUDec& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& UInt64DivOperation(const unsigned __int64& rValue) { return IntDivOperationV1(rValue); }
         MediumUDec& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        MediumUDec& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& UInt8DivOperation(const unsigned char& rValue) { return IntDivOperationV1(rValue); }
         MediumUDec& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        MediumUDec& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        MediumUDec& UInt16DivOperation(const unsigned short& rValue) { return IntDivOperationV1(rValue); }
         MediumUDec& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
 
-        const MediumUDec DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByUInt(const unsigned int& rValue) { return DivideByIntV1(rValue); }
         const MediumUDec DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        const MediumUDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByIntV1(rValue); }
         const MediumUDec DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
 
-        const MediumUDec UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        const MediumUDec UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
-
-        const MediumUDec DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByUInt8(const unsigned char& rValue) { return DivideByIntV1(rValue); }
         const MediumUDec DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        const MediumUDec DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const MediumUDec DivideByUInt16(const unsigned short& rValue) { return DivideByIntV1(rValue); }
         const MediumUDec DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
@@ -977,7 +944,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         template<MediumUDecVariant VariantType=MediumUDec>
-        bool UnsignedPartialDivOpV1(const VariantType& rValue)
+        bool PartialDivOpV1(const VariantType& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
             unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
@@ -998,7 +965,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         template<MediumUDecVariant VariantType=MediumUDec>
-        void UnsignedDivOpV1(const VariantType& rValue)
+        void DivOpV1(const VariantType& rValue)
         {
             if(DecimalHalf==0)
             {
@@ -1078,12 +1045,6 @@ protected:
                 UnsignedDivOp(rValue);
         }
 
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType UnsignedDivisionV1(VariantType lValue, const VariantType& rValue)
-        {
-            lValue.UnsignedDivOpV1(rValue); return lValue;
-        }
-
 public:
 
         /// <summary>
@@ -1092,14 +1053,14 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const MediumUDec& rValue){ return UnsignedPartialDivOpV1(rValue); }
+        bool UnsignedPartialDivOp(const MediumUDec& rValue){ return PartialDivOpV1(rValue); }
 
         /// <summary>
         /// Unsigned division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void UnsignedDivOp(const MediumUDec& rValue){ UnsignedDivOpV1(rValue); }
+        void UnsignedDivOp(const MediumUDec& rValue){ DivOpV1(rValue); }
 
         /// <summary>
         /// Basic division operation that ignores special decimal status
@@ -2192,7 +2153,7 @@ public:
             if(DecimalHalf.Value==0)
                 IntHalf %= rValue;
             else {
-                auto divRes = DivideByUIntV1(rValue);
+                auto divRes = DivideByIntV1(rValue);
                 SubOp(divRes.MultiplyByUInt(rValue));
             }
         }
@@ -2204,7 +2165,7 @@ public:
                 result %= rValue;
                 IntHalf = (unsigned int) result;
             } else {
-                auto divRes = DivideByUIntV1(rValue);
+                auto divRes = DivideByIntV1(rValue);
                 SubOp(divRes.MultiplyByUInt64(rValue));
             }
         }
@@ -2632,8 +2593,6 @@ protected:
             else if (tValue.DecimalHalf == 0 && tValue.IntHalf.Value == 10)
             {
                 VariantType result = tValue;
-                if(tValue.IsNegative()&&(expValue&1)==1)
-                    result.IntHalf.Sign = unsigned int::PositiveSign;
                 result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 return result;
             }
@@ -2653,8 +2612,6 @@ protected:
                     exp = exp >> 1; // y = y/2
                     self.UnsignedMultOp(self); // Change x to x^2
                 }
-                if(IsNegative)
-                    result.IntHalf.Sign = unsigned int::NegativeSign;
                 return result;
             }
         }
@@ -2673,8 +2630,6 @@ protected:
                 if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && expValue >= -9)
                 {
                     VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
-                    if(tValue.IsNegative()&&(exp&1)==1)
-                        result.IntHalf.Sign = unsigned int::PositiveSign;
                     return result;
                 }
                 else
@@ -2719,8 +2674,6 @@ protected:
                 exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
             }
-            if(IsNegative)
-                result.IntHalf.Sign = unsigned int::NegativeSign;
             return result;
         }
 
@@ -2770,34 +2723,11 @@ public:
 
 protected:
 
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType Unsignedunsigned intPowV1(const VariantType& tValue, const unsigned int& expValue)
-        { return UIntPowV1<VariantType>(tValue, expValue.Value); }
-
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType unsigned intPowV1(const VariantType& tValue, const unsigned int& expValue)
-        {
-            if (expValue < 0)//Negative Pow
-                return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
-            else
-                return UIntPowV1<VariantType>(tValue, expValue.Value);
-        }
-
-public:
-
-        static MediumUDec Unsignedunsigned intPow(const MediumUDec& tValue, const unsigned int& expValue)
-        {   return Unsignedunsigned intPowV1<MediumUDec>(tValue, expValue); }
-
-        static MediumUDec unsigned intPow(const MediumUDec& tValue, const unsigned int& expValue)
-        {   return unsigned intPowV1<MediumUDec>(tValue, expValue); }
-
-protected:
-
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
         template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
+        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
             VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;

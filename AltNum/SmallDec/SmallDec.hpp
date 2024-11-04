@@ -2777,7 +2777,7 @@ protected:
             {
                 VariantType result = tValue;
                 if(tValue.IsNegative()&&(expValue&1)==1)
-                    result.IntHalf.Sign = MirroredInt::PositiveSign;
+                    result.Sign = PositiveSign;
                 result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 return result;
             }
@@ -2798,7 +2798,7 @@ protected:
                     self.UnsignedMultOp(self); // Change x to x^2
                 }
                 if(IsNegative)
-                    result.IntHalf.Sign = MirroredInt::NegativeSign;
+                    result.Sign = NegativeSign;
                 return result;
             }
         }
@@ -2818,7 +2818,7 @@ protected:
                 {
                     VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
                     if(tValue.IsNegative()&&(exp&1)==1)
-                        result.IntHalf.Sign = MirroredInt::PositiveSign;
+                        result.Sign = PositiveSign;
                     return result;
                 }
                 else
@@ -2864,7 +2864,7 @@ protected:
                 self.UnsignedMultOp(self); // Change x to x^2
 			}
 			if(IsNegative)
-				result.IntHalf.Sign = MirroredInt::NegativeSign;
+				result.Sign = NegativeSign;
             return result;
 		}
 
@@ -2911,29 +2911,6 @@ public:
         { return IntPow(*this, expValue); }
         SmallDec Int64PowOf(const signed __int64& expValue) const
         { return Int64Pow(*this, expValue); }
-
-protected:
-
-        template<SmallDecVariant VariantType=SmallDec>
-        static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-        { return UIntPowV1<VariantType>(tValue, expValue.Value); }
-
-        template<SmallDecVariant VariantType=SmallDec>
-        static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-        {
-            if (expValue < 0)//Negative Pow
-                return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
-            else
-                return UIntPowV1<VariantType>(tValue, expValue.Value);
-        }
-
-public:
-
-        static SmallDec UnsignedMirroredIntPow(const SmallDec& tValue, const MirroredInt& expValue)
-        {   return UnsignedMirroredIntPowV1<SmallDec>(tValue, expValue); }
-
-        static SmallDec MirroredIntPow(const SmallDec& tValue, const MirroredInt& expValue)
-        {   return MirroredIntPowV1<SmallDec>(tValue, expValue); }
 
 protected:
 

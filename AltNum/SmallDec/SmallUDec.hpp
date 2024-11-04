@@ -2924,8 +2924,6 @@ protected:
             else if (tValue.DecimalHalf == 0 && tValue.IntHalf.Value == 10)
             {
                 VariantType result = tValue;
-                if(tValue.IsNegative()&&(expValue&1)==1)
-                    result.IntHalf.Sign = MirroredInt::PositiveSign;
                 result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
                 return result;
             }
@@ -2945,8 +2943,6 @@ protected:
                     exp = exp >> 1; // y = y/2
                     self.UnsignedMultOp(self); // Change x to x^2
                 }
-                if(IsNegative)
-                    result.IntHalf.Sign = MirroredInt::NegativeSign;
                 return result;
             }
         }
@@ -2965,8 +2961,6 @@ protected:
                 if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && expValue >= -9)
                 {
                     VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
-                    if(tValue.IsNegative()&&(exp&1)==1)
-                        result.IntHalf.Sign = MirroredInt::PositiveSign;
                     return result;
                 }
                 else
@@ -3011,8 +3005,6 @@ protected:
                 exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
             }
-            if(IsNegative)
-                result.IntHalf.Sign = MirroredInt::NegativeSign;
             return result;
         }
 
@@ -3059,29 +3051,6 @@ public:
         { return IntPow(*this, expValue); }
         SmallUDec Int64PowOf(const signed __int64& expValue) const
         { return Int64Pow(*this, expValue); }
-
-protected:
-
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-        { return UIntPowV1<VariantType>(tValue, expValue.Value); }
-
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-        {
-            if (expValue < 0)//Negative Pow
-                return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
-            else
-                return UIntPowV1<VariantType>(tValue, expValue.Value);
-        }
-
-public:
-
-        static SmallUDec UnsignedMirroredIntPow(const SmallUDec& tValue, const MirroredInt& expValue)
-        {   return UnsignedMirroredIntPowV1<SmallUDec>(tValue, expValue); }
-
-        static SmallUDec MirroredIntPow(const SmallUDec& tValue, const MirroredInt& expValue)
-        {   return MirroredIntPowV1<SmallUDec>(tValue, expValue); }
 
 protected:
 
