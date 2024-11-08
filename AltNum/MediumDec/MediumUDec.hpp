@@ -2285,6 +2285,9 @@ public:
         /// <returns>MediumUDec &</returns>
         MediumUDec& operator ++()
         {
+        #if defined(AltNum_PreventUnsignedUnderflowCheck)
+            ++IntHalf;
+        #else
             if (DecimalHalf == 0)
                 ++IntHalf;
             else if (IntHalf == 0)
@@ -2292,6 +2295,7 @@ public:
             else
                 ++IntHalf;
             return *this;
+        #endif
         }
 
         /// <summary>
@@ -2300,12 +2304,16 @@ public:
         /// <returns>MediumUDec &</returns>
         MediumUDec& operator --()
         {
+        #if defined(AltNum_PreventUnsignedUnderflowCheck)
+            --IntHalf;
+        #else
             if (DecimalHalf == 0)
                 --IntHalf;
             else if (IntHalf == 0)
                 throw("Unsigned underflow");
             else
                 --IntHalf;
+        #endif
             return *this;
         }
 
