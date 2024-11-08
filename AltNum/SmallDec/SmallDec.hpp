@@ -2468,12 +2468,23 @@ public:
         /// <returns>SmallDec &</returns>
         SmallDec& operator ++()
         {
-            if (DecimalHalf == 0)
-                ++IntHalf;
-            else if (IntHalf == MirroredInt::NegativeZero)
-                IntHalf = MirroredInt::Zero;
+                
+            if(IsNegative())
+            {
+                if (IntHalf == 0)
+                {
+                }
+                else
+                    --IntHalf;
+            }
             else
-                ++IntHalf;
+            {
+                if (IntHalf == 0)
+                {
+                }
+                else
+                    ++IntHalf;
+            }
             return *this;
         }
 
@@ -2483,12 +2494,22 @@ public:
         /// <returns>SmallDec &</returns>
         SmallDec& operator --()
         {
-            if (DecimalHalf == 0)
-                --IntHalf;
-            else if (IntHalf == MirroredInt::Zero)
-                IntHalf = MirroredInt::NegativeZero;
+            if(IsNegative())
+            {
+                if (IntHalf == 0)
+                {
+                }
+                else
+                    ++IntHalf;
+            }
             else
-                --IntHalf;
+            {
+                if (IntHalf == 0)
+                {
+                }
+                else
+                    --IntHalf;
+            }
             return *this;
         }
 
