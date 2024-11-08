@@ -2287,8 +2287,8 @@ public:
         {
             if (DecimalHalf == 0)
                 ++IntHalf;
-            else if (IntHalf == unsigned int::NegativeZero)
-                IntHalf = unsigned int::Zero;
+            else if (IntHalf == 0)
+                IntHalf = 1;
             else
                 ++IntHalf;
             return *this;
@@ -2302,8 +2302,8 @@ public:
         {
             if (DecimalHalf == 0)
                 --IntHalf;
-            else if (IntHalf == unsigned int::Zero)
-                IntHalf = unsigned int::NegativeZero;
+            else if (IntHalf == 0)
+                throw("Unsigned underflow");
             else
                 --IntHalf;
             return *this;

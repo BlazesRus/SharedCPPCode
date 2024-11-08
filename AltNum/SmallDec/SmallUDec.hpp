@@ -2618,8 +2618,8 @@ public:
         {
             if (DecimalHalf == 0)
                 ++IntHalf;
-            else if (IntHalf == MirroredInt::NegativeZero)
-                IntHalf = MirroredInt::Zero;
+            else if (IntHalf == 0)
+                IntHalf = 1;
             else
                 ++IntHalf;
             return *this;
@@ -2633,8 +2633,8 @@ public:
         {
             if (DecimalHalf == 0)
                 --IntHalf;
-            else if (IntHalf == MirroredInt::Zero)
-                IntHalf = MirroredInt::NegativeZero;
+            else if (IntHalf == 0)
+                throw("Unsigned underflow");
             else
                 --IntHalf;
             return *this;
