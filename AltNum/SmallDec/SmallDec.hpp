@@ -2473,18 +2473,19 @@ public:
             {
                 if (IntHalf == 0)
                 {
+                    IntHalf = 1;
+                    Sign = PositiveSign;
+                }
+                else if(IntHalf==1&&DecimalHalf==0)
+                {
+                    IntHalf = 0;
+                    Sign = PositiveSign;
                 }
                 else
                     --IntHalf;
             }
             else
-            {
-                if (IntHalf == 0)
-                {
-                }
-                else
-                    ++IntHalf;
-            }
+                ++IntHalf;
             return *this;
         }
 
@@ -2495,17 +2496,13 @@ public:
         SmallDec& operator --()
         {
             if(IsNegative())
-            {
-                if (IntHalf == 0)
-                {
-                }
-                else
-                    ++IntHalf;
-            }
+                ++IntHalf;
             else
             {
                 if (IntHalf == 0)
                 {
+                    IntHalf = 1;
+                    Sign = PositiveSign;
                 }
                 else
                     --IntHalf;
