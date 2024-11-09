@@ -2684,33 +2684,6 @@ public:
     #pragma region Truncation Functions
 
         /// <summary>
-        /// Forces Number into non-negative
-        /// </summary>
-        void ApplyAbs(){ IntHalf.ApplyAbs(); }
-
-protected://Using templating as static function instead as fix for *this pointer not updating when used in other classes
-
-        ///<summary>
-        /// Returns a copy of the number converted into non-negative version
-        ///</summary>
-        template<SmallUDecVariant VariantType = SmallUDec>
-        static VariantType AbsV1(VariantType tValue){
-            tValue.ApplyAbs(); return tValue;
-        }
-
-public:
-
-        /// <summary>
-        /// Forces Number into non-negative
-        /// </summary>
-        static SmallUDec Abs(const SmallUDec& tValue);
-
-        /// <summary>
-        /// Returns a copy of the number converted into non-negative version
-        /// </summary>
-        SmallUDec AbsOf() const { return Abs(*this); }
-
-        /// <summary>
         /// Returns floored value with all fractional digits after specified precision cut off.
         /// </summary>
         /// <param name="precision">precision level of digits to cut off</param>
