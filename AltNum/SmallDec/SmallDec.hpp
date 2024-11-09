@@ -2977,26 +2977,6 @@ protected:
             return UnsignedNthRootV1(tValue, n, precision);
         }
 
-		template<SmallDecVariant VariantType=SmallDec>
-        static VariantType MirroredIntRootV1(const VariantType& tValue, const MirroredInt& n, const VariantType& precision)
-        {
-            if(n.IsNegative())
-            {
-                switch(n.Value)
-                {
-                    case 2:
-                        return VariantType::One/NthRootV1(tValue, 2, precision); break;
-                    case 1:
-                        return VariantType::One/tValue; break;
-                    default:
-                        throw "Negative nth root of n less than 2 requires complex numbers to support result.";
-                        break;
-                }
-            }
-            else
-                NthRootV1(tValue, n.Value, precision);
-        }
-
         /// <summary>
         /// Get the (n)th Root
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
@@ -3280,7 +3260,7 @@ protected:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (IsOne())
                 return VariantType::Zero;
-            if (IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+            if (IntHalf == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
                 return LogZeroRangePart02(threshold).MultipliedByTwo();

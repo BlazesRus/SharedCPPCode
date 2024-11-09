@@ -2749,26 +2749,6 @@ protected:
             return UnsignedNthRootV1(tValue, n, precision);
         }
 
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType unsigned intRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
-        {
-            if(n.IsNegative())
-            {
-                switch(n.Value)
-                {
-                    case 2:
-                        return VariantType::One/NthRootV1(tValue, 2, precision); break;
-                    case 1:
-                        return VariantType::One/tValue; break;
-                    default:
-                        throw "Negative nth root of n less than 2 requires complex numbers to support result.";
-                        break;
-                }
-            }
-            else
-                NthRootV1(tValue, n.Value, precision);
-        }
-
         /// <summary>
         /// Get the (n)th Root
         /// Code based mostly from https://rosettacode.org/wiki/Nth_root#C.23
@@ -3052,15 +3032,9 @@ protected:
             //if (value <= 0) {}else//Error if equal or less than 0
             if (IsOne())
                 return VariantType::Zero;
-            if (IntHalf == unsigned int::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogZeroRangePart02(threshold).MultipliedByTwo();
-                #else
-                return LogZeroRangePart02().MultipliedByTwo();
-                #endif
-            }
-            else if (IntHalf == unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
+            if (IntHalf == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
+                throw("Unsigned class can't return negative numbers);
+            else if (IntHalf == 1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 #if defined(AltNum_UseCustomLnAccuracy)
                 return LnOfOneSection(threshold);
