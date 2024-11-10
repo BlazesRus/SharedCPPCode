@@ -17,6 +17,8 @@
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
 
+#include "SmallDecVariantConcept.hpp"
+
 namespace BlazesRusCode
 {
     class SmallUDec;
@@ -102,13 +104,7 @@ namespace BlazesRusCode
         }
 
         //Fix for C2440 error during static template class
-        static SmallUDec Initialize(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
-        {
-            return SmallUDec(intVal,decVal);
-        }
-
-        //Fix for C2440 error during static template class
-        static SmallUDec InitializeV2(const signed int& intVal, const PartialInt& decVal = PartialInt::Zero)
+        static SmallUDec Initialize(const unsigned int& intVal, const unsigned char& decVal = 0)
         {
             return SmallUDec(intVal,decVal);
         }
@@ -120,7 +116,7 @@ namespace BlazesRusCode
         void SetValue(const SmallUDec& rValue)
         {
             IntHalf = rValue.IntHalf;
-            DecimalHalf.SetValueV2(rValue.DecimalHalf);
+            DecimalHalf = rValue.DecimalHalf;
         }
 
     #pragma endregion class_constructors
@@ -993,7 +989,7 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         template<SmallUDecVariant VariantType=SmallUDec>
-        void UnsignedDivOpV1(const VariantType& rValue)
+        void DivOpV1(const VariantType& rValue)
         {
             if(DecimalHalf==0)
             {
@@ -1067,16 +1063,16 @@ protected:
             if(rValue.IsNegative())
             {
                 SwapNegativeStatus();
-                UnsignedDivOp(-rValue);
+                DivOp(-rValue);
             }
             else
-                UnsignedDivOp(rValue);
+                DivOp(rValue);
         }
 
         template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType UnsignedDivisionV1(VariantType lValue, const VariantType& rValue)
         {
-            lValue.UnsignedDivOpV1(rValue); return lValue;
+            lValue.DivOpV1(rValue); return lValue;
         }
 
 public:
@@ -1094,7 +1090,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void UnsignedDivOp(const SmallUDec& rValue){ UnsignedDivOpV1(rValue); }
+        void DivOp(const SmallUDec& rValue){ DivOpV1(rValue); }
 
         /// <summary>
         /// Basic division operation that ignores special decimal status
@@ -1109,7 +1105,7 @@ public:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         SmallUDec& UnsignedDivOperation(const SmallUDec& rValue)
-        { UnsignedDivOp(rValue); return *this; }
+        { DivOp(rValue); return *this; }
 
         /// <summary>
         /// Basic division operation that ignores special decimal status
@@ -2955,7 +2951,7 @@ protected:
                     {
                         // If expValue is odd, multiply self with result
                         if ((exp & 1) == 1)
-                            result.UnsignedDivOp(self);
+                            result.DivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
                         self.UnsignedMultOp(self); //  Change x to x^2
@@ -2981,7 +2977,7 @@ protected:
             {
                 // If expValue is odd, divide self with result
                 if ((exp & 1) == 1)
-                    result.UnsignedDivOp(self);
+                    result.DivOp(self);
                 // n must be even now
                 exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
@@ -3104,8 +3100,6 @@ protected:
         }
 
 public:
-
-        static SmallUDec UnsignedNthRoot(const SmallUDec& tValue, const unsigned int& n, const SmallUDec& precision = SmallUDec::JustAboveZero);
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code

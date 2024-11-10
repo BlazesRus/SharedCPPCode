@@ -17,6 +17,8 @@
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
 
+#include "SmallDecVariantConcept.hpp"
+
 namespace BlazesRusCode
 {
     class SmallDec;
@@ -117,9 +119,9 @@ namespace BlazesRusCode
         }
 
         //Fix for C2440 error during static template class
-        static SmallDec Initialize(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+        static SmallDec Initialize(const unsigned int& intVal, const PartialInt& decVal = PartialInt::Zero, bool signVal=PositiveSign)
         {
-            return SmallDec(intVal,decVal);
+            return SmallDec(intVal,decVal,signVal);
         }
 
         //Fix for C2440 error during static template class

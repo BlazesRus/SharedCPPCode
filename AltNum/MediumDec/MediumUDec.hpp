@@ -16,9 +16,10 @@
 #include <cstddef>
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
-#include "..\Concepts\MediumDecVariantConcept.hpp"
 
 #include "..\AlternativeInt\PartialInt.hpp"
+
+#include "..\Concepts\MediumDecVariantConcept.hpp"
 
 using PartialInt = BlazesRusCode::PartialInt;
 
@@ -126,12 +127,6 @@ namespace BlazesRusCode
 
         //Fix for C2440 error during static template class
         static MediumUDec Initialize(const unsigned int& intVal, const PartialInt& decVal = PartialInt::Zero)
-        {
-            return MediumUDec(intVal,decVal);
-        }
-
-        //Fix for C2440 error during static template class
-        static MediumUDec InitializeV2(const signed int& intVal, const PartialInt& decVal = PartialInt::Zero)
         {
             return MediumUDec(intVal,decVal);
         }
@@ -2773,8 +2768,6 @@ protected:
         }
 
 public:
-
-        static MediumUDec UnsignedNthRoot(const MediumUDec& tValue, const unsigned int& n, const MediumUDec& precision = MediumUDec::JustAboveZero);
 
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
