@@ -5,7 +5,6 @@
 #pragma once
 
 #include "SmallDecPreprocessors.h"
-//#include "..\VirtualTableBase.hpp"//Virtual Structure for the class to make sure can override virtually
 
 #include <string>
 #include <cmath>
@@ -17,7 +16,8 @@
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
 
-#include "SmallDecVariantConcept.hpp"
+#include "SmallDecVariant.hpp"
+#include "..\Concepts\IntegerConcept.hpp"
 
 namespace BlazesRusCode
 {
@@ -171,81 +171,12 @@ namespace BlazesRusCode
     #pragma endregion RangeLimits
 
     #pragma region ValueSetters
-protected://Work around for not allowing to use incomplete class statics during forming of class
-        static const unsigned int LN10Div_DecSection = 434294482;
-        static const unsigned int TwiceLN10Div_DecSection = 868588964;
-
 public:
-
-        /// <summary>
-        /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        void  SetValueToPiNum();
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToHundredMilPiNum();
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenMilPiNum();
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToOneMilPiNum();
-
-        //10xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenPiNum();
-
-        /// <summary>
-        /// Euler's number rounded to 9th digit(2.718281828)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        void  SetValueToENum();
 
         //Sets value to value at 0.5
         void  SetValueToPoint5();
 
         void  SetValueToJustAboveZero();
-
-        /// <summary>
-        /// Sets the value at .000001000
-        /// </summary>
-        void  SetValueToOneMillionth();
-
-        /// <summary>
-        /// Sets the value at "0.005"
-        /// </summary>
-        /// <returns>SmallUDec</returns>
-        void  SetValueToFiveThousandth();
-
-        /// <summary>
-        /// Sets the value at "0.000005"
-        /// </summary>
-        void  SetValueToFiveMillionth();
-
-        //0e-7
-        void  SetValueToTenMillionth();
-
-        /// <summary>
-        /// Sets the value to .000000010
-        /// </summary>
-        void  SetValueToOneHundredMillionth();
-
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        void  SetValueToLN10();
-
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToLN10Div();
-
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToTwiceLN10Div();
 
         void SetValueToPointOne();
 
@@ -703,38 +634,38 @@ protected:
         {
             if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf.Value; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
-        std::strong_ordering BasicComparison(const SmallUDec& that) const
+        std::strong_ordering BasicComparison(const MediumUDec& that) const
         {
             return BasicComparisonV1(that);
         }
 
         //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicUIntComparison(const int& that) const
+        std::strong_ordering BasicUIntComparison(const unsigned int& that) const
         {
             if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
         //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicIntComparison(const int& that) const
+        std::strong_ordering BasicIntComparison(const signed int& that) const
         {
-            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+            if (that < 0) {
+                auto IntHalfCmp = 0 <=> 1;
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
+            }
+            else
+            {
+                if (auto IntHalfCmp = IntHalf <=> (unsigned int)that; IntHalfCmp != 0)
+                    return IntHalfCmp;
+                if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
+                    return DecimalHalfCmp;
+            }
         }
 
 public:
@@ -865,7 +796,7 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        void UIntDivOpV1(const IntType& Value)
+        void IntDivOpV1(const IntType& Value)
         {
             if (Value == 0)
             {
@@ -878,24 +809,6 @@ protected:
                 DecimalHalf = 1;//Prevent Dividing into nothing
         }
 
-        template<IntegerType IntType=signed int>
-        void IntDivOpV1(const IntType& Value)
-        {
-            if (Value == 0)
-            {
-                throw "Target value can not be divided by zero";
-            }
-            else if (IsZero())
-                return;
-            PartialIntDivOpV1(Value);
-            if (IntHalf == 0 && DecimalHalf == 0)
-                DecimalHalf = 1;//Prevent Dividing into nothing
-        }
-
-        template<IntegerType IntType=unsigned int>
-        auto& UIntDivOperationV1(const IntType& rValue)
-        { UIntDivOpV1(rValue); return *this; }
-
         template<IntegerType IntType=unsigned int>
         auto& IntDivOperationV1(const IntType& rValue)
         { IntDivOpV1(rValue); return *this; }
@@ -907,53 +820,43 @@ protected:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
-        const auto DivideByUIntV1(const IntType& rValue)
-        { auto self = *this; return self.UIntDivOperationV1(rValue); }
-
-        /// <summary>
-        /// Basic division operation between SmallUDec Variant and Integer value
-        /// that ignores special representation status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        template<IntegerType IntType=signed int>
         const auto DivideByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntDivOperationV1(rValue); }
 
 public:
 
-        void UIntDivOp(const unsigned int& rValue) { UIntDivOpV1(rValue); }
+        void UIntDivOp(const unsigned int& rValue) { IntDivOpV1(rValue); }
         void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-        void UInt64DivOp(const unsigned __int64& rValue) { UIntDivOpV1(rValue); }
+        void UInt64DivOp(const unsigned __int64& rValue) { IntDivOpV1(rValue); }
         void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
 
-        void UnsignedIntegerDivOp(const signed int& rValue) { UIntDivOpV1(rValue); }
+        void UnsignedIntegerDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
 
-        void UInt8DivOp(const unsigned char& rValue) { UIntDivOpV1(rValue); }
+        void UInt8DivOp(const unsigned char& rValue) { IntDivOpV1(rValue); }
         void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-        void UInt16DivOp(const unsigned short& rValue) { UIntDivOpV1(rValue); }
+        void UInt16DivOp(const unsigned short& rValue) { IntDivOpV1(rValue); }
         void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
 
-        SmallUDec& UIntDivOperation(const unsigned int& rValue) { return UIntDivOperationV1(rValue); }
+        SmallUDec& UIntDivOperation(const unsigned int& rValue) { return IntDivOperationV1(rValue); }
         SmallUDec& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-        SmallUDec& UInt64DivOperation(const unsigned __int64& rValue) { return UIntDivOperationV1(rValue); }
+        SmallUDec& UInt64DivOperation(const unsigned __int64& rValue) { return IntDivOperationV1(rValue); }
         SmallUDec& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-        SmallUDec& UInt8DivOperation(const unsigned char& rValue) { return UIntDivOperationV1(rValue); }
+        SmallUDec& UInt8DivOperation(const unsigned char& rValue) { return IntDivOperationV1(rValue); }
         SmallUDec& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-        SmallUDec& UInt16DivOperation(const unsigned short& rValue) { return UIntDivOperationV1(rValue); }
+        SmallUDec& UInt16DivOperation(const unsigned short& rValue) { return IntDivOperationV1(rValue); }
         SmallUDec& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
 
-        const SmallUDec DivideByUInt(const unsigned int& rValue) { return DivideByUIntV1(rValue); }
+        const SmallUDec DivideByUInt(const unsigned int& rValue) { return DivideByIntV1(rValue); }
         const SmallUDec DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-        const SmallUDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByUIntV1(rValue); }
+        const SmallUDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByIntV1(rValue); }
         const SmallUDec DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
 
-        const SmallUDec UnsignedDivideByInt(const signed int& rValue) { return DivideByUIntV1(rValue); }
-        const SmallUDec UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByUIntV1(rValue); }
+        const SmallUDec UnsignedDivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
+        const SmallUDec UnsignedDivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
 
-        const SmallUDec DivideByUInt8(const unsigned char& rValue) { return DivideByUIntV1(rValue); }
+        const SmallUDec DivideByUInt8(const unsigned char& rValue) { return DivideByIntV1(rValue); }
         const SmallUDec DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-        const SmallUDec DivideByUInt16(const unsigned short& rValue) { return DivideByUIntV1(rValue); }
+        const SmallUDec DivideByUInt16(const unsigned short& rValue) { return DivideByIntV1(rValue); }
         const SmallUDec DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
     #pragma endregion NormalRep Integer Division Operations
@@ -2454,7 +2357,7 @@ public:
             if(DecimalHalf.Value==0)
                 IntHalf.Value %= rValue;
             else {
-                auto divRes = DivideByUIntV1(rValue);
+                auto divRes = DivideByIntV1(rValue);
                 UnsignedSubOp(divRes.MultiplyByUInt(rValue));
             }
         }
@@ -2476,7 +2379,7 @@ public:
                 result %= rValue;
                 IntHalf.Value = (unsigned int) result;
             } else {
-                auto divRes = DivideByUIntV1(rValue);
+                auto divRes = DivideByIntV1(rValue);
                 UnsignedSubOp(divRes.MultiplyByUInt64(rValue));
             }
         }

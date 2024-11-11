@@ -8,16 +8,16 @@
 namespace BlazesRusCode
 {//https://en.cppreference.com/w/cpp/concepts/derived_from
 
-	//Base class for AltDec and SmallDec identify class as SmallDec variant
+    //Base class for AltDec and SmallDec identify class as SmallDec variant
     class DLL_API SmallNumBase
     {
-	
+    
     };
-	
-	//Base class for AltDec and SmallUDec identify class as SmallUDec variant
+    
+    //Base class for AltDec and SmallUDec identify class as SmallUDec variant
     class DLL_API SmallUNumBase
     {
-	
+    
     };
 
     /// <summary>

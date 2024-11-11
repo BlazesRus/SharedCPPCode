@@ -17,7 +17,8 @@
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
 
-#include "SmallDecVariantConcept.hpp"
+#include "SmallDecVariant.hpp"
+#include "..\Concepts\IntegerConcept.hpp"
 
 namespace BlazesRusCode
 {

@@ -19,7 +19,7 @@
 
 #include "..\AlternativeInt\PartialInt.hpp"
 
-#include "..\Concepts\MediumDecVariantConcept.hpp"
+#include "..\Concepts\MediumDecVariant.hpp"
 
 using PartialInt = BlazesRusCode::PartialInt;
 
@@ -734,29 +734,30 @@ protected:
             return BasicComparisonV1(that);
         }
 
-/*
         //Compare only as if in NormalType representation mode
         std::strong_ordering BasicUIntComparison(const unsigned int& that) const
         {
             if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf.Value <=> 0; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
         //Compare only as if in NormalType representation mode
         std::strong_ordering BasicIntComparison(const signed int& that) const
         {
-            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+            if (that < 0) {
+                auto IntHalfCmp = 0 <=> 1;
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
+            }
+            else
+            {
+                if (auto IntHalfCmp = IntHalf <=> (unsigned int)that; IntHalfCmp != 0)
+                    return IntHalfCmp;
+                if (auto DecimalHalfCmp = DecimalHalf.Value <=> 0; DecimalHalfCmp != 0)
+                    return DecimalHalfCmp;
+            }
         }
-*/
 
 public:
 

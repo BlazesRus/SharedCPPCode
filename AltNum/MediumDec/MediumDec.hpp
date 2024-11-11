@@ -16,7 +16,7 @@
 #include <cstddef>
 #include <concepts>//C++20 feature
 #include <compare>//used for C++20 feature of spaceship operator
-#include "..\Concepts\MediumDecVariantConcept.hpp"
+#include "..\Concepts\MediumDecVariant.hpp"
 
 
 #include "..\AlternativeInt\MirroredInt.hpp"
