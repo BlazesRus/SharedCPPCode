@@ -82,18 +82,7 @@ namespace BlazesRusCode
         /// </summary>
         /// <param name="intVal">The whole number based half of the representation</param>
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumUDec(const unsigned int& intVal, const PartialInt& decVal = PartialInt::Zero)
-        {
-            IntHalf = intVal;
-            DecimalHalf = decVal;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
-        /// </summary>
-        /// <param name="intVal">The whole number based half of the representation</param>
-        /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
-        MediumUDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+        MediumUDec(const unsigned int& intVal=0, const PartialInt& decVal = PartialInt::Zero)
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
@@ -170,11 +159,7 @@ namespace BlazesRusCode
 
         bool IsOne() const;
 
-        bool IsNegOne() const;
-
         bool IsOneVal() const;
-
-        bool IsOneVariantVal() const;
 
     #pragma endregion Check_if_value
 
@@ -314,12 +299,6 @@ public:
         static MediumUDec TwoValue();
 
         /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>MediumUDec</returns>
-        static MediumUDec NegativeOneValue();
-
-        /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>MediumUDec</returns>
@@ -348,8 +327,6 @@ public:
         static MediumUDec MinimumValue();
 
         static MediumUDec MaximumValue();
-
-        static MediumUDec NegativePointFiveValue();
 
         static MediumUDec PointOneValue();
 
@@ -590,20 +567,6 @@ public:
         MediumUDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
     #endif
-
-        MediumUDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
-        MediumUDec(const signed __int64& Value){ this->SetIntVal(Value); }
-        MediumUDec(const unsigned char& Value){ this->SetUIntVal(Value); }
-        MediumUDec(const signed char& Value){ this->SetIntVal(Value); }
-        MediumUDec(const unsigned short& Value){ this->SetUIntVal(Value); }
-        MediumUDec(const signed short& Value){ this->SetIntVal(Value); }
-        MediumUDec(const unsigned int& Value){ this->SetUIntVal(Value); }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumUDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumUDec(const bool& Value){ this->SetBoolVal(Value); }
 
     #pragma endregion ConvertFromOtherTypes
 
@@ -1759,22 +1722,6 @@ protected:
         { auto self = *this; return self.IntSubOperationV1(rValue); }
 
 public:
-
-        /// <summary>
-        /// Basic Subtraction operation between MediumUDec Variant and unsigned unsigned int
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredSubOp(const unsigned int& rValue);
-
-        /// <summary>
-        /// Basic Subtraction operation between MediumUDec Variant and unsigned int
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void MirroredSubOp(const unsigned int& rValue);
 
         void UInt8SubOp(const unsigned char& rValue) { IntSubOpV1(rValue); }
         /// <summary>
