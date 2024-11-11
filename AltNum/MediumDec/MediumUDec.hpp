@@ -330,8 +330,6 @@ public:
 
         static MediumUDec PointOneValue();
 
-        static const MediumUDec NegativePointFive;
-
         static const MediumUDec AlmostOne;
 
         /// <summary>
@@ -423,12 +421,6 @@ public:
         /// Returns the value at "0.000005"
         /// </summary>
         static const MediumUDec FiveMillionth;
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>MediumUDec</returns>
-        static const MediumUDec NegativeOne;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State tValue that can store
@@ -906,7 +898,7 @@ protected:
         bool PartialDivOpV1(const VariantType& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
+            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf.Value;
 
             unsigned _int64 IntHalfRes = SelfRes / ValueRes;
             unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
@@ -971,19 +963,19 @@ protected:
                     }
                 }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-                else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
+                else if (PartialDivOp(rValue))//Prevent Dividing into nothing
                         DecimalHalf.Value = 1;
 #else
                 else
-                    UnsignedPartialDivOp(rValue);
+                    PartialDivOp(rValue);
 #endif
             }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-            else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
+            else if (PartialDivOp(rValue))//Prevent Dividing into nothing
                 DecimalHalf.Value = 1;
 #else
             else
-                UnsignedPartialDivOp(rValue);
+                PartialDivOp(rValue);
 #endif
         }
 
@@ -1012,7 +1004,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const MediumUDec& rValue){ return PartialDivOpV1(rValue); }
+        bool PartialDivOp(const MediumUDec& rValue){ return PartialDivOpV1(rValue); }
 
         /// <summary>
         /// Unsigned division operation that ignores special decimal status
@@ -1622,55 +1614,78 @@ public:
 protected:
 
         /// <summary>
-        /// Basic addition operation between MediumUDec Variant and unsigned Integer value
+        /// Basic addition operation between variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
+        void UIntAddOpV1(const IntType& rValue)
+        {
+            IntHalf += rValue;
+        }
+
+        /// <summary>
+        /// Basic addition operation between variant and Integer value
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
-            if (DecimalHalf.Value == 0)
-                IntHalf += rValue;
-            else
-                IntHalf.UIntAddOp(rValue);
+            IntHalf += rValue;
         }
 
         template<IntegerType IntType=unsigned int>
+        auto& UIntAddOperationV1(const IntType& rValue)
+        { UIntAddOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=signed int>
         auto& IntAddOperationV1(const IntType& rValue)
         { IntAddOpV1(rValue); return *this; }
 
         /// <summary>
-        ///  addition operation between MediumUDec variant and unsigned Integer value
+        ///  addition operation between variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
         auto AddByUIntV1(const IntType& rValue) const
+        { auto self = *this; return self.UIntAddOperationV1(rValue); }
+
+        /// <summary>
+        /// Basic addition operation between variant and Integer value
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto AddByIntV1(const IntType& rValue) const
         { auto self = *this; return self.IntAddOperationV1(rValue); }
 
 public:
 
-        void UInt8AddOp(const unsigned char& rValue) { IntAddOpV1(rValue); }
-        void UInt16AddOp(const unsigned short& rValue) { IntAddOpV1(rValue); }
+        void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
+        void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
         void UIntAddOp(const unsigned int& rValue);
-        void UInt64AddOp(const unsigned __int64& rValue) { IntAddOpV1(rValue); }
+        void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
 
-        void UnsignedIntegerAddOp(const signed int& rValue) { IntAddOpV1(rValue); }
+        void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
-        MediumUDec& UInt8AddOperation(const unsigned char& rValue) { return IntAddOperationV1(rValue); }
-        MediumUDec& UInt16AddOperation(const unsigned short& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
+        MediumUDec& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
         MediumUDec& UIntAddOperation(const unsigned int& rValue);
-        MediumUDec& UInt64AddOperation(const unsigned __int64& rValue) { return IntAddOperationV1(rValue); }
+        MediumUDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
 
-        MediumUDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
-        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt(const signed int& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return UAddByUIntV1(rValue); }
 
-        MediumUDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
-        MediumUDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
-        MediumUDec AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
-        MediumUDec AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt8(const unsigned char& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec AddByUInt16(const unsigned short& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec AddByUInt(const unsigned int& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec AddByUInt64(const unsigned __int64& rValue) { return UAddByUIntV1(rValue); }
 
         void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
         void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
@@ -2670,7 +2685,7 @@ protected:
                 // value by newton's method
 
                 xK = xPre * nMinus1;
-                xK += UnsignedDivisionV1(tValue, UIntPowV1(xPre, nMinus1));
+                xK += DivisionV1(tValue, UIntPowV1(xPre, nMinus1));
                 xK /= n;
                 delX = VariantType::Abs(xK - xPre);
                 xPre = xK;
@@ -2705,12 +2720,12 @@ protected:
             unsigned int nMinus1 = n - 1;
             VariantType OneByN = VariantType::One/n;
             VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
-            InitialX1 += UnsignedDivisionV1(tValue, tValue.UIntPowOf(nMinus1));
+            InitialX1 += DivisionV1(tValue, tValue.UIntPowOf(nMinus1));
             VariantType x[2] = { InitialX1, tValue };
             while (Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = OneByN * ((x[1]*nMinus1) + UnsignedDivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
+                x[0] = OneByN * ((x[1]*nMinus1) + DivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
             }
             return x[0];
         }

@@ -24,7 +24,7 @@ namespace BlazesRusCode
     class SmallUDec;
 
     //Used to store value range between 0 - 33554431.99 for things like receipts
-    class DLL_API SmallUDec
+    class DLL_API SmallUDec : SmallUNumBase
     {
     public:
     #pragma region DigitStorage
@@ -148,11 +148,7 @@ namespace BlazesRusCode
 
         bool IsOne() const;
 
-        bool IsNegOne() const;
-
         bool IsOneVal() const;
-
-        bool IsOneVariantVal() const;
 
     #pragma endregion Check_if_value
 
@@ -187,27 +183,6 @@ public:
 
         static SmallUDec AlmostOneValue();
 
-        /// <summary>
-        /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec PiNumValue();
-
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        static SmallUDec HundredMilPiNumValue();
-
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        static SmallUDec TenMilPiNumValue();
-
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        static SmallUDec OneMilPiNumValue();
-
-        //10xPi(Rounded to 9th decimal digit)
-        static SmallUDec TenPiNumValue();
-
-        static SmallUDec ENumValue();
-
         static SmallUDec ZeroValue();
 
         /// <summary>
@@ -223,12 +198,6 @@ public:
         static SmallUDec TwoValue();
 
         /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec NegativeOneValue();
-
-        /// <summary>
         /// Returns the value at 0.5
         /// </summary>
         /// <returns>SmallUDec</returns>
@@ -236,33 +205,11 @@ public:
 
         static SmallUDec JustAboveZeroValue();
 
-        static SmallUDec OneMillionthValue();
-
-        static SmallUDec FiveThousandthValue();
-
-        static SmallUDec FiveMillionthValue();
-
-        static SmallUDec TenMillionthValue();
-
-        static SmallUDec OneHundredMillionthValue();
-
-        static SmallUDec FiveBillionthValue();
-
-        static SmallUDec LN10Value();
-
-        static SmallUDec LN10DivValue();
-
-        static SmallUDec TwiceLN10DivValue();
-
         static SmallUDec MinimumValue();
 
         static SmallUDec MaximumValue();
 
-        static SmallUDec NegativePointFiveValue();
-
         static SmallUDec PointOneValue();
-
-        static const SmallUDec NegativePointFive;
 
         static const SmallUDec AlmostOne;
 
@@ -355,12 +302,6 @@ public:
         /// Returns the value at "0.000005"
         /// </summary>
         static const SmallUDec FiveMillionth;
-
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        /// <returns>SmallUDec</returns>
-        static const SmallUDec NegativeOne;
 
         /// <summary>
         /// Returns value of lowest non-infinite/Special Decimal State tValue that can store
@@ -500,20 +441,6 @@ public:
 
     #endif
 
-        SmallUDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
-        SmallUDec(const signed __int64& Value){ this->SetIntVal(Value); }
-        SmallUDec(const unsigned char& Value){ this->SetUIntVal(Value); }
-        SmallUDec(const signed char& Value){ this->SetIntVal(Value); }
-        SmallUDec(const unsigned short& Value){ this->SetUIntVal(Value); }
-        SmallUDec(const signed short& Value){ this->SetIntVal(Value); }
-        SmallUDec(const unsigned int& Value){ this->SetUIntVal(Value); }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SmallUDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        SmallUDec(const bool& Value){ this->SetBoolVal(Value); }
-
     #pragma endregion ConvertFromOtherTypes
 
     #pragma region ConvertToOtherTypes
@@ -583,7 +510,7 @@ public:
         explicit operator signed int() { return toInt(); }
 
         /// <summary>
-        /// SmallUDec Variant to uint explicit conversion
+        /// SmallUDec Variant to unsigned int explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned int() { return toUInt(); }
@@ -595,7 +522,7 @@ public:
         explicit operator signed __int64() { return toInt(); }
 
         /// <summary>
-        /// SmallUDec Variant to ubyte explicit conversion
+        /// SmallUDec Variant to unsigned byte explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned char() { return toUInt(); }
@@ -607,7 +534,7 @@ public:
         explicit operator signed char() { return toInt(); }
 
         /// <summary>
-        /// SmallUDec Variant to ushort explicit conversion
+        /// SmallUDec Variant to unsigned short explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator unsigned short() { return toUInt(); }
@@ -868,15 +795,15 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side value</param>
         template<SmallUDecVariant VariantType=SmallUDec>
-        bool UnsignedPartialDivOpV1(const VariantType& rValue)
+        bool PartialDivOpV1(const VariantType& rValue)
         {
             unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
+            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
 
             unsigned _int64 IntHalfRes = SelfRes / ValueRes;
             unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntHalf.Value = (unsigned int) IntHalfRes;
-            DecimalHalf.Value = DecimalRes;
+            IntHalf = (unsigned int) IntHalfRes;
+            DecimalHalf = DecimalRes;
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
             else
@@ -936,41 +863,24 @@ protected:
                     }
                 }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-                else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
-                        DecimalHalf.Value = 1;
+                else if (PartialDivOp(rValue))//Prevent Dividing into nothing
+                        DecimalHalf = 1;
 #else
                 else
-                    UnsignedPartialDivOp(rValue);
+                    PartialDivOp(rValue);
 #endif
             }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
-            else if (UnsignedPartialDivOp(rValue))//Prevent Dividing into nothing
-                DecimalHalf.Value = 1;
+            else if (PartialDivOp(rValue))//Prevent Dividing into nothing
+                DecimalHalf = 1;
 #else
             else
-                UnsignedPartialDivOp(rValue);
+                PartialDivOp(rValue);
 #endif
         }
 
-        /// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
         template<SmallUDecVariant VariantType=SmallUDec>
-        void DivOpV1(const VariantType& rValue)
-        {
-            if(rValue.IsNegative())
-            {
-                SwapNegativeStatus();
-                DivOp(-rValue);
-            }
-            else
-                DivOp(rValue);
-        }
-
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType UnsignedDivisionV1(VariantType lValue, const VariantType& rValue)
+        static VariantType DivisionV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.DivOpV1(rValue); return lValue;
         }
@@ -983,7 +893,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The rValue</param>
-        bool UnsignedPartialDivOp(const SmallUDec& rValue){ return UnsignedPartialDivOpV1(rValue); }
+        bool PartialDivOp(const SmallUDec& rValue){ return PartialDivOpV1(rValue); }
 
         /// <summary>
         /// Unsigned division operation that ignores special decimal status
@@ -1593,7 +1503,7 @@ public:
 protected:
 
         /// <summary>
-        /// Basic addition operation between SmallUDec Variant and unsigned Integer value
+        /// Basic addition operation between SmallUDec variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1601,18 +1511,14 @@ protected:
         template<IntegerType IntType=unsigned int>
         void UIntAddOpV1(const IntType& rValue)
         {
-            if(DecimalHalf.Value==0)
-                IntHalf.NRepSkippingUIntAddOp(rValue);
-            else {
-                int signBeforeOp = IntHalf.Sign;
+            if (DecimalHalf.Value == 0)
+                IntHalf += rValue;
+            else
                 IntHalf.UIntAddOp(rValue);
-                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-            }
         }
 
         /// <summary>
-        /// Basic addition operation between SmallUDec Variant and Integer value
+        /// Basic addition operation between SmallUDec variant and Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
@@ -1620,14 +1526,10 @@ protected:
         template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
-            if(DecimalHalf.Value==0)
-                IntHalf.NRepSkippingIntegerAddOp(rValue);
-            else {
-                int signBeforeOp = IntHalf.Sign;
+            if (DecimalHalf.Value == 0)
                 IntHalf += rValue;
-                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
-            }
+            else
+                IntHalf.UIntAddOp(rValue);
         }
 
         template<IntegerType IntType=unsigned int>
@@ -2938,7 +2840,7 @@ protected:
                 // value by newton's method
 
                 xK = xPre * nMinus1;
-                xK += UnsignedDivisionV1(tValue, UIntPowV1(xPre, nMinus1));
+                xK += DivisionV1(tValue, UIntPowV1(xPre, nMinus1));
                 xK /= n;
                 delX = VariantType::Abs(xK - xPre);
                 xPre = xK;
@@ -2973,12 +2875,12 @@ protected:
             unsigned int nMinus1 = n - 1;
             VariantType OneByN = VariantType::One/n;
             VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
-            InitialX1 += UnsignedDivisionV1(tValue, tValue.UIntPowOf(nMinus1));
+            InitialX1 += DivisionV1(tValue, tValue.UIntPowOf(nMinus1));
             VariantType x[2] = { InitialX1, tValue };
             while (Abs(x[0] - x[1]) > Precision)
             {
                 x[1] = x[0];
-                x[0] = OneByN * ((x[1]*nMinus1) + UnsignedDivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
+                x[0] = OneByN * ((x[1]*nMinus1) + DivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
             }
             return x[0];
         }
