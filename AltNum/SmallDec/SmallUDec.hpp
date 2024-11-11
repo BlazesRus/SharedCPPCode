@@ -638,7 +638,7 @@ protected:
                 return DecimalHalfCmp;
         }
 
-        std::strong_ordering BasicComparison(const MediumUDec& that) const
+        std::strong_ordering BasicComparison(const SmallUDec& that) const
         {
             return BasicComparisonV1(that);
         }
@@ -674,10 +674,7 @@ public:
         {//return BasicComparison(that);
             if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
                 return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
                 return DecimalHalfCmp;
         }
 
@@ -1662,22 +1659,6 @@ protected:
         { auto self = *this; return self.IntAddOperationV1(rValue); }
 
 public:
-
-        /// <summary>
-        /// Basic addition operation between SmallUDec Variant and unsigned MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void UnsignedMirroredAddOp(const MirroredInt& rValue);
-
-        /// <summary>
-        /// Basic addition operation between SmallUDec Variant and MirroredInt
-        /// that ignores special representation status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue">The right side value</param>
-        void MirroredAddOp(const MirroredInt& rValue);
 
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
