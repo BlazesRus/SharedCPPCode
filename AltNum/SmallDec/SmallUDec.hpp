@@ -1765,38 +1765,38 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void UnsignedAddOp(const SmallUDec& rValue){ AddOpV1(rValue); }
+        void AddOp(const SmallUDec& rValue){ AddOpV1(rValue); }
 
         /// <summary>
         /// Basic subtraction Operation
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void UnsignedSubOp(const SmallUDec& rValue){ SubOpV1(rValue); }
+        void SubOp(const SmallUDec& rValue){ SubOpV1(rValue); }
 
         //Basic addition operation
-        SmallUDec& UnsignedAddOperation(const SmallUDec& rValue)
-        { UnsignedAddOp(rValue); return *this; }
+        SmallUDec& AddOperation(const SmallUDec& rValue)
+        { AddOp(rValue); return *this; }
 
         /// <summary>
         /// Unsigned Addition operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        SmallUDec AddByUnsigned(const SmallUDec& rValue)
-        { SmallUDec lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
+        SmallUDec AddBy(const SmallUDec& rValue)
+        { SmallUDec lValue = *this; return lValue.AddOperation(rValue); } const
 
         //Basic subtraction operation
-        SmallUDec& UnsignedSubOperation(const SmallUDec& rValue)
-        { UnsignedSubOp(rValue); return *this; }
+        SmallUDec& SubOperation(const SmallUDec& rValue)
+        { SubOp(rValue); return *this; }
 
         /// <summary>
         /// Basic unsigned Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        SmallUDec SubtractByUnsigned(const SmallUDec& rValue)
-        { SmallUDec lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
+        SmallUDec SubtractBy(const SmallUDec& rValue)
+        { SmallUDec lValue = *this; return lValue.SubOperation(rValue); } const
 
     #pragma endregion NormalRep AltNum Addition/Subtraction Operations
 
@@ -1926,25 +1926,14 @@ public:
     protected:
 
         template<SmallUDecVariant VariantType=SmallUDec>
-        void UnsignedModulusOpV1(const VariantType& rValue)
-        {
-            if(DecimalHalf==0&&rValue.DecimalHalf==0)
-                IntHalf.Value %= rValue.IntHalf.Value;
-            else {
-                auto divRes = DivideBy(rValue);
-                UnsignedSubOp(divRes.MultiplyByUnsigned(rValue));
-            }
-        }
-
-        template<SmallUDecVariant VariantType=SmallUDec>
         void ModulusOpV1(const VariantType& rValue)
         {
-            if (rValue.IsNegative()) {
-                SwapNegativeStatus();
-                UnsignedModulusOp(-rValue);
+            if(DecimalHalf==0&&rValue.DecimalHalf==0)
+                IntHalf %= rValue.IntHalf;
+            else {
+                auto divRes = DivideBy(rValue);
+                SubOp(divRes.MultiplyByUnsigned(rValue));
             }
-            else
-                UnsignedModulusOp(rValue);
         }
 
     public:
@@ -1952,19 +1941,17 @@ public:
         void UIntModulusOp(const unsigned int& rValue)
         {
             if(DecimalHalf==0)
-                IntHalf.Value %= rValue;
+                IntHalf %= rValue;
             else {
                 auto divRes = DivideByIntV1(rValue);
-                UnsignedSubOp(divRes.MultiplyByUInt(rValue));
+                SubOp(divRes.MultiplyByUInt(rValue));
             }
         }
 
         void IntModulusOp(const signed int& rValue)
         {
-            if (rValue<0) {
-                SwapNegativeStatus();
-                UIntModulusOp(-rValue);
-            }
+            if (rValue < 0)
+                throw("Negative number operation not supported by unsigned version.");
             else
                 UIntModulusOp(rValue);
         }
@@ -1977,21 +1964,19 @@ public:
                 IntHalf.Value = (unsigned int) result;
             } else {
                 auto divRes = DivideByIntV1(rValue);
-                UnsignedSubOp(divRes.MultiplyByUInt64(rValue));
+                SubOp(divRes.MultiplyByUInt64(rValue));
             }
         }
 
         void Int64ModulusOp(const signed __int64& rValue)
         {
-            if (rValue<0) {
-                SwapNegativeStatus();
-                UInt64ModulusOp(-rValue);
-            }
+            if (rValue < 0)
+                throw("Negative number operation not supported by unsigned version.");
             else
                 UInt64ModulusOp(rValue);
         }
 
-        void UnsignedModulusOp(const SmallUDec& rValue){ UnsignedModulusOpV1(rValue); }
+        void UnsignedModulusOp(const SmallUDec& rValue){ ModulusOpV1(rValue); }
 
         void ModulusOp(const SmallUDec& rValue){ ModulusOpV1(rValue); }
 
@@ -2190,9 +2175,7 @@ protected:
         template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType CeilV1(const VariantType& tValue)
         {
-            if(tValue.IntHalf==MirroredInt::NegativeZero)
-                return VariantType::One;
-            else if (tValue.DecimalHalf != 0)
+            if (tValue.DecimalHalf != 0)
                 return VariantType(tValue.IntHalf+1);
             else
                 return tValue;
@@ -2219,16 +2202,13 @@ protected:
             case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
-            if(decimalRes==0&&tValue.IntHalf==MirroredInt::NegativeZero)
-                return VariantType();
-            else
-                return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
+            return VariantType(tValue.IntHalf, decimalRes);
         }
 
         template<SmallUDecVariant VariantType = SmallUDec>
         const VariantType TruncOfV1() const
         {
-            return VariantType(IntHalf == NegativeRep?0:IntHalf, 0);
+            return VariantType(IntHalf, 0);
         }
 
 public:

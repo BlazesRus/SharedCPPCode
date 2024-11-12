@@ -1865,13 +1865,6 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        void UnsignedAddOp(const MediumUDec& rValue){ AddOpV1(rValue); }
-
-        /// <summary>
-        /// Basic addition Operation
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side rValue</param>
         void AddOp(const MediumUDec& rValue){ AddOpV1(rValue); }
 
         /// <summary>
@@ -1882,10 +1875,6 @@ public:
         void SubOp(const MediumUDec& rValue){ SubOpV1(rValue); }
 
         //Basic addition operation
-        MediumUDec& UnsignedAddOperation(const MediumUDec& rValue)
-        { UnsignedAddOp(rValue); return *this; }
-
-        //Basic addition operation
         MediumUDec& AddOperation(const MediumUDec& rValue)
         { AddOp(rValue); return *this; }
 
@@ -1894,20 +1883,8 @@ public:
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        MediumUDec AddByUnsigned(const MediumUDec& rValue)
-        { MediumUDec lValue = *this; return lValue.UnsignedAddOperation(rValue); } const
-
-        /// <summary>
-        /// Addition operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
         MediumUDec AddBy(const MediumUDec& rValue)
         { MediumUDec lValue = *this; return lValue.AddOperation(rValue); } const
-
-        //Basic subtraction operation
-        MediumUDec& UnsignedSubOperation(const MediumUDec& rValue)
-        { SubOp(rValue); return *this; }
 
         //Basic subtraction operation
         MediumUDec& SubOperation(const MediumUDec& rValue)
@@ -1915,14 +1892,6 @@ public:
 
         /// <summary>
         /// Basic unsigned Subtraction operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        MediumUDec SubtractByUnsigned(const MediumUDec& rValue)
-        { MediumUDec lValue = *this; return lValue.UnsignedSubOperation(rValue); } const
-
-        /// <summary>
-        /// Basic Subtraction operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
@@ -2060,7 +2029,7 @@ public:
         void ModulusOpV1(const VariantType& rValue)
         {
             if(DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0)
-                IntHalf.Value %= rValue.IntHalf.Value;
+                IntHalf %= rValue.IntHalf;
             else {
                 auto divRes = DivideBy(rValue);
                 SubOp(divRes.MultiplyByUnsigned(rValue));
@@ -2069,7 +2038,7 @@ public:
 
     public:
 
-        void IntModulusOp(const unsigned int& rValue)
+        void UIntModulusOp(const unsigned int& rValue)
         {
             if(DecimalHalf.Value==0)
                 IntHalf %= rValue;
@@ -2079,7 +2048,15 @@ public:
             }
         }
 
-        void Int64ModulusOp(const unsigned __int64& rValue)
+        void IntModulusOp(const signed int& rValue)
+        {
+            if (rValue < 0)
+                throw("Negative number operation not supported by unsigned version.");
+            else
+                UIntModulusOp(rValue);
+        }
+
+        void UInt64ModulusOp(const unsigned __int64& rValue)
         {
             if(DecimalHalf.Value==0){
                 unsigned __int64 result = IntHalf;
@@ -2091,6 +2068,14 @@ public:
             }
         }
 
+        void Int64ModulusOp(const signed __int64& rValue)
+        {
+            if (rValue < 0)
+                throw("Negative number operation not supported by unsigned version.");
+            else
+                UInt64ModulusOp(rValue);
+        }
+
         void ModulusOp(const MediumUDec& rValue){ ModulusOpV1(rValue); }
 
         MediumUDec& ModulusOperation(const MediumUDec& rValue){
@@ -2099,71 +2084,14 @@ public:
 
         friend MediumUDec& operator%=(MediumUDec& lValue, const MediumUDec& rValue) { return lValue.ModulusOperation(rValue); }
         friend MediumUDec& operator%=(MediumUDec& lValue, const signed int& rValue) { lValue.IntModulusOp(rValue); return lValue; }
-        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned int& rValue) { lValue.IntModulusOp(rValue); return lValue; }
-        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned __int64& rValue) { lValue.Int64ModulusOp(rValue); return lValue;}
+        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned int& rValue) { lValue.UIntModulusOp(rValue); return lValue; }
+        friend MediumUDec& operator%=(MediumUDec& lValue, const unsigned __int64& rValue) { lValue.UInt64ModulusOp(rValue); return lValue;}
         friend MediumUDec& operator%=(MediumUDec& lValue, const signed __int64& rValue) { lValue.Int64ModulusOp(rValue); return lValue;}
 
     #pragma region Modulus Operations
 
     #pragma region Bitwise Operations
-    //Update code later
-    /*
-    #if defined(AltNum_EnableBitwiseOverride)
-        /// <summary>
-        /// Bitwise XOR Operation Between MediumUDec and Integer tValue
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="tValue">The value.</param>
-        /// <returns>MediumUDec</returns>
-        template<IntegerType IntType=signed int>
-        friend MediumUDec operator^(MediumUDec self, IntType tValue)
-        {
-            if (self.DecimalHalf == 0) { self.IntHalf ^= tValue; return self; }
-            else
-            {
-                bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = tValue < 0;
-                if (SelfIsNegative && self.IntHalf == NegativeRep)
-                {
-                    self.IntHalf = (0 & tValue) * -1;
-                    self.DecimalHalf ^= tValue;
-                }
-                else
-                {
-                    self.IntHalf ^= tValue; self.DecimalHalf ^= tValue;
-                }
-            }
-            return self;
-        }
 
-        /// <summary>
-        /// Bitwise Or Operation Between MediumUDec and Integer tValue
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="tValue">The value.</param>
-        /// <returns>MediumUDec</returns>
-        template<IntegerType IntType=signed int>
-        friend MediumUDec operator|(MediumUDec self, IntType tValue)
-        {
-            if (self.DecimalHalf == 0) { self.IntHalf |= tValue; return self; }
-            else
-            {
-                bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = tValue < 0;
-                if (SelfIsNegative && self.IntHalf == NegativeRep)
-                {
-                    self.IntHalf = (0 & tValue) * -1;
-                    self.DecimalHalf |= tValue;
-                }
-                else
-                {
-                    self.IntHalf |= tValue; self.DecimalHalf |= tValue;
-                }
-            }
-            return self;
-        }
-    #endif
-    */
     #pragma endregion Bitwise Operations
 
     /*
@@ -2284,10 +2212,8 @@ protected:
         template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType CeilV1(const VariantType& tValue)
         {
-            if(tValue.IntHalf==unsigned int::NegativeZero)
-                return VariantType::One;
-            else if (tValue.DecimalHalf != 0)
-                return VariantType(tValue.IntHalf+1);
+            if (tValue.DecimalHalf != 0)
+                return VariantType(tValue.IntHalf + 1);
             else
                 return tValue;
         }
@@ -2313,16 +2239,13 @@ protected:
             case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
-            if(decimalRes==0&&tValue.IntHalf==unsigned int::NegativeZero)
-                return VariantType();
-            else
-                return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
+            return VariantType(tValue.IntHalf, PartialInt(decimalRes,tValue.DecimalHalf.Flags));
         }
 
         template<MediumUDecVariant VariantType = MediumUDec>
         const VariantType TruncOfV1() const
         {
-            return VariantType(IntHalf == NegativeRep?0:IntHalf, 0);
+            return VariantType(IntHalf, 0);
         }
 
 public:
