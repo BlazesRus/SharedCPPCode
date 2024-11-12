@@ -979,21 +979,10 @@ protected:
 #endif
         }
 
-        /// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        template<MediumUDecVariant VariantType=MediumUDec>
-        void DivOpV1(const VariantType& rValue)
+        template<MediumUDecVariant VariantType = MediumUDec>
+        static VariantType DivisionV1(VariantType lValue, const VariantType& rValue)
         {
-            if(rValue.IsNegative())
-            {
-                SwapNegativeStatus();
-                UnsignedDivOp(-rValue);
-            }
-            else
-                UnsignedDivOp(rValue);
+            lValue.DivOpV1(rValue); return lValue;
         }
 
 public:
@@ -1011,25 +1000,10 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        void UnsignedDivOp(const MediumUDec& rValue){ DivOpV1(rValue); }
-
-        /// <summary>
-        /// Basic division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
         void DivOp(const MediumUDec& rValue){ DivOpV1(rValue); }
 
         /// <summary>
         /// Basic unsigned division operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        MediumUDec& UnsignedDivOperation(const MediumUDec& rValue)
-        { UnsignedDivOp(rValue); return *this; }
-
-        /// <summary>
-        /// Basic division operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
@@ -1038,14 +1012,6 @@ public:
 
         /// <summary>
         /// Basic unsigned division operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        MediumUDec DivideByUnsigned(const MediumUDec& rValue) const
-        { MediumUDec lValue = *this; return lValue.UnsignedDivOperation(rValue); }
-
-        /// <summary>
-        /// Basic division operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
@@ -1634,7 +1600,13 @@ protected:
         template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
-            IntHalf += rValue;
+            if (rValue < 0) {
+                if ((unsigned int)(-rValue) > IntHalf)
+                    throw("Underflow error into non-supported negative number.");
+                IntHalf += rValue;
+            }
+            else
+                IntHalf += rValue;
         }
 
         template<IntegerType IntType=unsigned int>
@@ -1679,13 +1651,13 @@ public:
         MediumUDec& UIntAddOperation(const unsigned int& rValue);
         MediumUDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
 
-        MediumUDec UnsignedAddByInt(const signed int& rValue) { return UAddByUIntV1(rValue); }
-        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
 
-        MediumUDec AddByUInt8(const unsigned char& rValue) { return UAddByUIntV1(rValue); }
-        MediumUDec AddByUInt16(const unsigned short& rValue) { return UAddByUIntV1(rValue); }
-        MediumUDec AddByUInt(const unsigned int& rValue) { return UAddByUIntV1(rValue); }
-        MediumUDec AddByUInt64(const unsigned __int64& rValue) { return UAddByUIntV1(rValue); }
+        MediumUDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt(const unsigned int& rValue) { return AddByUIntV1(rValue); }
+        MediumUDec AddByUInt64(const unsigned __int64& rValue) { return AddByUIntV1(rValue); }
 
         void Int8AddOp(const signed char& rValue) { IntAddOpV1(rValue); }
         void Int16AddOp(const signed short& rValue) { IntAddOpV1(rValue); }
@@ -1708,18 +1680,31 @@ public:
 protected:
 
         /// <summary>
-        /// Basic Subtraction operation between MediumUDec Variant and unsigned Integer value
+        /// Basic Subtraction operation between variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
+        void UIntSubOpV1(const IntType& rValue)
+        {
+            if(rValue>IntHalf)
+                throw("Underflow error into non-existant negative number.");
+            IntHalf -= rValue;
+        }
+
+        /// <summary>
+        /// Basic Subtraction operation between variant and Integer value
+        /// that ignores special representation status
+        /// (Modifies owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=int>
         void IntSubOpV1(const IntType& rValue)
         {
-            if(DecimalHalf.Value==0)
-                IntHalf -= rValue;
-            else 
-                IntHalf.UIntSubOp(rValue);
+            if(rValue>(signed IntType)IntHalf)
+                throw("Underflow error into non-existant negative number.");
+            IntHalf -= rValue;
         }
 
         template<IntegerType IntType=unsigned int>
@@ -1736,9 +1721,20 @@ protected:
         auto SubtractByUIntV1(const IntType& rValue)
         { auto self = *this; return self.IntSubOperationV1(rValue); }
 
+        /// <summary>
+        /// Basic Subtraction operation between MediumUDec variant and Integer value
+        /// that ignores special representation status
+        /// (Doesn't modify owner object)
+        /// </summary>
+        /// <param name="rValue">The right side value</param>
+        template<IntegerType IntType=signed int>
+        auto SubtractByIntV1(const IntType& rValue)
+        { auto self = *this; return self.IntSubOperationV1(rValue); }
+
+
 public:
 
-        void UInt8SubOp(const unsigned char& rValue) { IntSubOpV1(rValue); }
+        void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         /// <summary>
         /// Basic Subtraction operation between MediumUDec Variant and unsigned Integer value
         /// that ignores special representation status
@@ -1746,20 +1742,20 @@ public:
         /// </summary>
         /// <param name="rValue">The right side value</param>
         void UIntSubOp(const unsigned int& rValue);
-        void UInt16SubOp(const unsigned short& rValue) { IntSubOpV1(rValue); }
-        void UInt64SubOp(const unsigned __int64& rValue) { IntSubOpV1(rValue); }
+        void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
+        void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
-        void UnsignedIntegerSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
+        void UnsignedIntegerSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
 
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
         void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
         void Int64SubOp(const signed __int64& rValue) { IntSubOpV1(rValue); }
 
-        MediumUDec& UInt8SubOperation(const unsigned char& rValue) { return IntSubOperationV1(rValue); }
-        MediumUDec& UInt16SubOperation(const unsigned short& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
+        MediumUDec& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
         MediumUDec& UIntSubOperation(const unsigned int& rValue);
-        MediumUDec& UInt64SubOperation(const unsigned __int64& rValue) { return IntSubOperationV1(rValue); }
+        MediumUDec& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
 
         MediumUDec UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
         MediumUDec UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
@@ -2099,7 +2095,7 @@ public:
             if(DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0)
                 IntHalf.Value %= rValue.IntHalf.Value;
             else {
-                auto divRes = DivideByUnsigned(rValue);
+                auto divRes = DivideBy(rValue);
                 SubOp(divRes.MultiplyByUnsigned(rValue));
             }
         }
@@ -2582,7 +2578,7 @@ protected:
                     {
                         // If expValue is odd, multiply self with result
                         if ((exp & 1) == 1)
-                            result.UnsignedDivOp(self);
+                            result.DivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
                         self.UnsignedMultOp(self); //  Change x to x^2
@@ -2608,7 +2604,7 @@ protected:
             {
                 // If expValue is odd, divide self with result
                 if ((exp & 1) == 1)
-                    result.UnsignedDivOp(self);
+                    result.DivOp(self);
                 // n must be even now
                 exp = exp >> 1; // y = y/2
                 self.UnsignedMultOp(self); // Change x to x^2
@@ -3156,9 +3152,9 @@ protected:
             {
                 VariantType TotalRes = value.LogZeroRangePart02();
                 if(lnMultLog)
-                    return TotalRes.DivideByUnsigned(baseTotalRes);
+                    return TotalRes.DivideBy(baseTotalRes);
                 else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
+                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
             }
             else if (value.IntHalf==unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -3171,9 +3167,9 @@ protected:
             {
                 VariantType TotalRes = value.LogGreaterRangePart02();
                 if(lnMultLog)
-                    return TotalRes.DivideByUnsigned(baseTotalRes);
+                    return TotalRes.DivideBy(baseTotalRes);
                 else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideByUnsigned(baseTotalRes);
+                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
             }
         }
 
