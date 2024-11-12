@@ -1689,7 +1689,7 @@ protected:
         void UIntSubOpV1(const IntType& rValue)
         {
             if(rValue>IntHalf)
-                throw("Underflow error into non-existant negative number.");
+                throw("Underflow error into non-existent negative number.");
             IntHalf -= rValue;
         }
 
@@ -1703,7 +1703,7 @@ protected:
         void IntSubOpV1(const IntType& rValue)
         {
             if(rValue>(signed IntType)IntHalf)
-                throw("Underflow error into non-existant negative number.");
+                throw("Underflow error into non-existent negative number.");
             IntHalf -= rValue;
         }
 
@@ -1785,51 +1785,31 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumUDecVariant VariantType=MediumUDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         void AddOpV1(const VariantType& rValue)
         {
-            if(rValue.DecimalHalf==0)
-                UnsignedMirroredAddOp(rValue.IntHalf);
+            if (rValue.DecimalHalf == 0)
+                IntHalf += rValue.IntHalf;
             else
             {
-                int signBeforeOp = IntHalf.Sign;
                 IntHalf += rValue.IntHalf;
-                if (signBeforeOp==unsigned int::NegativeSign)
-                {
-                    if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 + -4.5
-                        if(IntHalf.Value==0)
-                            SetAsZero();
-                        else
-                            DecimalHalf.Value = 0;
-                    }
-                    else if(rValue.DecimalHalf.Value>DecimalHalf.Value)
-                    {
-                        ++IntHalf;
-                        if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.7 = 1.1
-                            DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-                        else//-1.6 + .7 = -0.9
-                            DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;//10-7+6 = 9
-                    } else if(signBeforeOp!=IntHalf.Sign)//-1.6 + 2.5 = 0.9
-                        DecimalHalf.Value = DecimalOverflow + rValue.DecimalHalf.Value - DecimalHalf.Value;//10 - (6-5) == 10
+
+                unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+                if (decResult == DecimalOverflow) {//5.4 + 4.6
+                    ++IntHalf;
+                    if (IntHalf.Value == 0)
+                        SetAsZero();
                     else
-                        DecimalHalf.Value -= rValue.DecimalHalf.Value;
-                } else {
-                    unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
-                    if(decResult==DecimalOverflow){//5.4 + 4.6
-                        ++IntHalf;
-                        if(IntHalf.Value==0)
-                            SetAsZero();
-                        else
-                            DecimalHalf.Value = 0;
-                    } else if(decResult>DecimalOverflow){//5.4 + 4.7
-                        ++IntHalf;
-                        DecimalHalf.Value = decResult - DecimalOverflow;
-                    }
-                    else if(signBeforeOp!=IntHalf.Sign)
-                        DecimalHalf.Value = DecimalOverflow - decResult;
-                    else
-                        DecimalHalf.Value = decResult;
+                        DecimalHalf.Value = 0;
                 }
+                else if (decResult > DecimalOverflow) {//5.4 + 4.7
+                    ++IntHalf;
+                    DecimalHalf.Value = decResult - DecimalOverflow;
+                }
+                else if (signBeforeOp != IntHalf.Sign)
+                    DecimalHalf.Value = DecimalOverflow - decResult;
+                else
+                    DecimalHalf.Value = decResult;
             }
         }
 
@@ -1838,49 +1818,36 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side rValue</param>
-        template<MediumUDecVariant VariantType=MediumUDec>
+        template<MediumUDecVariant VariantType = MediumUDec>
         void SubOpV1(const VariantType& rValue)
         {
             if (rValue.DecimalHalf == 0)
-                UnsignedMirroredSubOp(rValue.IntHalf);
-            else {
-                int signBeforeOp = IntHalf.Sign;
                 IntHalf -= rValue.IntHalf;
-                if (signBeforeOp==unsigned int::NegativeSign){//-5 - B
-                    unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
-                    if (decResult == DecimalOverflow){//-5.4 - 5.6
-                        --IntHalf;
-                        if (IntHalf.Value == 0)
-                            SetAsZero();
-                        else
-                            DecimalHalf.Value = 0;
-                    } else if (decResult > DecimalOverflow) {//-5.4 - 5.7 = -11.1
-                        --IntHalf;
-                        DecimalHalf.Value = decResult - DecimalOverflow;
-                    } else//-5.2 - 5.2 = -10.4
-                        DecimalHalf.Value = decResult;
-                } else {//5.XX - B
-                    if(DecimalHalf.Value==rValue.DecimalHalf.Value){//5.5 - 5.5 = 10
-                        if(IntHalf.Value==0)
-                            SetAsZero();
-                        else
-                            DecimalHalf.Value = 0;
-                    } else if(rValue.DecimalHalf.Value>DecimalHalf.Value){
-                        --IntHalf;
-                        if(signBeforeOp!=IntHalf.Sign)//5.4 - 5.7 = -0.3
-                            DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
-                        else//5.4 - 3.6 = 1.8
-                            DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
-                    } else if(signBeforeOp!=IntHalf.Sign)//5.3 - 7.2 = -1.9
-                        DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
-                    else//5.4 - 5.3 = 0.1
-                        DecimalHalf.Value -= rValue.DecimalHalf.Value;
+            else {
+                IntHalf -= rValue.IntHalf;
+                //5.XX - B
+                if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 - 5.5 = 10
+                    if (IntHalf.Value == 0)
+                        SetAsZero();
+                    else
+                        DecimalHalf.Value = 0;
                 }
+                else if (rValue.DecimalHalf.Value > DecimalHalf.Value) {
+                    --IntHalf;
+                    if (signBeforeOp != IntHalf.Sign)//5.4 - 5.7 = -0.3
+                        DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+                    else//5.4 - 3.6 = 1.8
+                        DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+                }
+                else if (signBeforeOp != IntHalf.Sign)//5.3 - 7.2 = -1.9
+                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
+                else//5.4 - 5.3 = 0.1
+                    DecimalHalf.Value -= rValue.DecimalHalf.Value;
             }
         }
 
         template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType UnsignedAdditionV1(VariantType lValue, const VariantType& rValue)
+        static VariantType AdditionV1(VariantType lValue, const VariantType& rValue)
         {
             lValue.AddOpV1(rValue); return lValue;
         }
