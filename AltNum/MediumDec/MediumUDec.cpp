@@ -306,7 +306,8 @@ void BlazesRusCode::MediumUDec::SetAsMinimum()
 
 #pragma region ConvertToOtherTypes
 
-    #if defined(AltNum_EnableFloatingConversion)
+#if defined(AltNum_EnableFloatingConversion)
+
 float BlazesRusCode::MediumUDec::toFloat() const
 {
     #if defined(AltNum_UseLegacyFloatingConversion)
@@ -366,7 +367,8 @@ long double BlazesRusCode::MediumUDec::toDecimal() const
     return 0.0L;//Placeholder
     #endif
 }
-    #endif
+
+#endif
 
 #pragma endregion ConvertToOtherTypes
 

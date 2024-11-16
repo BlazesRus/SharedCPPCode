@@ -145,7 +145,8 @@ void BlazesRusCode::SmallUDec::SetAsMinimum()
 
 #pragma region ConvertToOtherTypes
 
-    #if defined(AltNum_EnableFloatingConversion)
+#if defined(AltNum_EnableFloatingConversion)
+
 float BlazesRusCode::SmallUDec::toFloat() const
 {
     float Value = (float)IntHalf;
@@ -156,7 +157,6 @@ float BlazesRusCode::SmallUDec::toFloat() const
 
 double BlazesRusCode::SmallUDec::toDouble() const
 {
-    #if defined(AltNum_UseLegacyFloatingConversion)
     double Value = (double)IntHalf;
     if (DecimalHalf != 0)
         Value += ((double)DecimalHalf * 0.01);
@@ -166,14 +166,14 @@ double BlazesRusCode::SmallUDec::toDouble() const
 
 long double BlazesRusCode::SmallUDec::toDecimal() const
 {
-    #if defined(AltNum_UseLegacyFloatingConversion)
     long double Value = (long double)IntHalf;
     if (DecimalHalf != 0)
         Value += ((long double)DecimalHalf * 0.0L);
 
     return Value;
 }
-    #endif
+
+#endif
 
 #pragma endregion ConvertToOtherTypes
 
