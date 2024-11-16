@@ -1699,7 +1699,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        template<IntegerType IntType=int>
+        template<IntegerType IntType=signed int>
         void IntSubOpV1(const IntType& rValue)
         {
             if(rValue>(signed IntType)IntHalf)
@@ -1708,21 +1708,25 @@ protected:
         }
 
         template<IntegerType IntType=unsigned int>
+        auto& UIntSubOperationV1(const IntType& rValue)
+        { UIntSubOpV1(rValue); return *this; }
+
+        template<IntegerType IntType=signed int>
         auto& IntSubOperationV1(const IntType& rValue)
         { IntSubOpV1(rValue); return *this; }
 
         /// <summary>
-        /// Basic Subtraction operation between MediumUDec variant and unsigned Integer value
+        /// Basic Subtraction operation between variant and unsigned Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
         template<IntegerType IntType=unsigned int>
         auto SubtractByUIntV1(const IntType& rValue)
-        { auto self = *this; return self.IntSubOperationV1(rValue); }
+        { auto self = *this; return self.UIntSubOperationV1(rValue); }
 
         /// <summary>
-        /// Basic Subtraction operation between MediumUDec variant and Integer value
+        /// Basic Subtraction operation between variant and Integer value
         /// that ignores special representation status
         /// (Doesn't modify owner object)
         /// </summary>
@@ -1731,12 +1735,11 @@ protected:
         auto SubtractByIntV1(const IntType& rValue)
         { auto self = *this; return self.IntSubOperationV1(rValue); }
 
-
 public:
 
         void UInt8SubOp(const unsigned char& rValue) { UIntSubOpV1(rValue); }
         /// <summary>
-        /// Basic Subtraction operation between MediumUDec Variant and unsigned Integer value
+        /// Basic Subtraction operation between variant and unsigned Integer value
         /// that ignores special representation status
         /// (Modifies owner object)
         /// </summary>

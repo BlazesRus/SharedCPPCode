@@ -253,11 +253,6 @@ void BlazesRusCode::MediumUDec::SetAsOne()
     IntHalf = 1; DecimalHalf = 0;
 }
 
-void BlazesRusCode::MediumUDec::SetAsOneVal()
-{
-    IntHalf = 1; DecimalHalf = 0;
-}
-
 void BlazesRusCode::MediumUDec::SetAsValues(const unsigned int& intVal, const PartialInt& decVal)
 {
     IntHalf = intVal; DecimalHalf = decVal;
@@ -293,11 +288,6 @@ bool BlazesRusCode::MediumUDec::IsOne() const
     return DecimalHalf == 0 && IntHalf == MirroredInt::One;
 }
 
-bool BlazesRusCode::MediumUDec::IsOneVal() const
-{
-    return DecimalHalf == 0 && IntHalf == 1;
-}
-
 #pragma endregion Check_if_value
 
 #pragma region RangeLimits
@@ -320,17 +310,9 @@ void BlazesRusCode::MediumUDec::SetAsMinimum()
 float BlazesRusCode::MediumUDec::toFloat() const
 {
     #if defined(AltNum_UseLegacyFloatingConversion)
-    float Value;
-    if (IntHalf.IsNegative())
-    {
-        Value = (float)-IntHalf;
-        if (DecimalHalf != 0) { Value -= ((float)DecimalHalf * 0.000000001f); }
-    }
-    else
-    {
-        Value = (float)IntHalf;
-        if (DecimalHalf != 0) { Value += ((float)DecimalHalf * 0.000000001f); }
-    }
+    float Value = (float)IntHalf;
+    if (DecimalHalf != 0)
+        Value += ((float)DecimalHalf * 0.000000001f);
     return Value;
     #else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     if (IntHalf == 0)//Exponent is negative
@@ -348,17 +330,9 @@ float BlazesRusCode::MediumUDec::toFloat() const
 double BlazesRusCode::MediumUDec::toDouble() const
 {
     #if defined(AltNum_UseLegacyFloatingConversion)
-    double Value;
-    if (IntHalf < 0)
-    {
-        Value = (double)-IntHalf;
-        if (DecimalHalf != 0) { Value -= ((double)DecimalHalf * 0.000000001); }
-    }
-    else
-    {
-        Value = (double)IntHalf;
-        if (DecimalHalf != 0) { Value += ((double)DecimalHalf * 0.000000001); }
-    }
+    double Value = (double)IntHalf;
+    if (DecimalHalf != 0)
+        Value += ((double)DecimalHalf * 0.000000001);
     return Value;
     #else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     if (IntHalf == 0)//Exponent is negative
@@ -376,17 +350,9 @@ double BlazesRusCode::MediumUDec::toDouble() const
 long double BlazesRusCode::MediumUDec::toDecimal() const
 {
     #if defined(AltNum_UseLegacyFloatingConversion)
-    long double Value;
-    if (IntHalf < 0)
-    {
-        Value = (long double)-IntHalf;
-        if (DecimalHalf != 0) { Value -= ((long double)DecimalHalf * 0.000000001L); }
-    }
-    else
-    {
-        Value = (long double)IntHalf;
-        if (DecimalHalf != 0) { Value += ((long double)DecimalHalf * 0.000000001L); }
-    }
+    long double Value = (long double)IntHalf;
+    if (DecimalHalf != 0)
+        Value += ((long double)DecimalHalf * 0.000000001L);
     return Value;
     #else//Convert number to "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     if (IntHalf == 0)//Exponent is negative
@@ -501,10 +467,6 @@ MediumUDec& BlazesRusCode::MediumUDec::UIntSubOperation(const unsigned int& rVal
 #pragma endregion NormalRep Integer Subtraction Operations
 
 #pragma region Truncation Functions
-
-MediumUDec BlazesRusCode::MediumUDec::Abs(const MediumUDec& tValue) {
-    return AbsV1<MediumUDec>(tValue);
-}
 
 void BlazesRusCode::MediumUDec::ApplyFloorOf(const int& precision)
 {
@@ -775,11 +737,6 @@ MediumUDec BlazesRusCode::MediumUDec::Sqrt(const auto& value, const int& precisi
 
 MediumUDec BlazesRusCode::MediumUDec::SqrtOf(const int& precision) const {
     return Sqrt(*this, precision);
-}
-
-MediumUDec BlazesRusCode::MediumUDec::UnsignedNthRoot(const MediumUDec& tValue, const unsigned int& n, const MediumUDec& precision)
-{
-    return UnsignedNthRootV1<MediumUDec>(tValue, n, precision);
 }
 
 MediumUDec BlazesRusCode::MediumUDec::NthRootOf(const unsigned int& n, const MediumUDec& precision) const

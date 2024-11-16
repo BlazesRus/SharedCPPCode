@@ -97,25 +97,6 @@ const SmallDec SmallDec::NegativePointFive = SmallDec::NegativePointFiveValue();
 const SmallDec SmallDec::PointOne = SmallDec::PointOneValue();
 #pragma endregion ValueDefine Source
 
-#pragma region Negative_Status
-
-bool BlazesRusCode::SmallDec::IsPositive() const
-{
-	return IntHalf.IsPositive();
-}
-
-bool BlazesRusCode::SmallDec::IsNegative() const
-{
-	return IntHalf.IsNegative();
-}
-
-void BlazesRusCode::SmallDec::SwapNegativeStatus()
-{
-	Sign ^= 1;
-}
-
-#pragma endregion Negative_Status
-
 #pragma region Check_if_value
 
 void BlazesRusCode::SmallDec::SetAsZero()
@@ -126,11 +107,6 @@ void BlazesRusCode::SmallDec::SetAsZero()
 void BlazesRusCode::SmallDec::SetAsOne()
 {
 	IntHalf = 1; DecimalHalf = 0;
-}
-
-void BlazesRusCode::SmallDec::SetAsOneVal()
-{
-	IntHalf.Value = 1; DecimalHalf = 0;
 }
 
 void BlazesRusCode::SmallDec::SetAsValues(const signed int& intVal, const unsigned short& decVal)
@@ -715,11 +691,6 @@ SmallDec BlazesRusCode::SmallDec::Sqrt(const auto& value, const int& precision)
 
 SmallDec BlazesRusCode::SmallDec::SqrtOf(const int& precision) const {
 	return Sqrt(*this, precision);
-}
-
-SmallDec BlazesRusCode::SmallDec::UnsignedNthRoot(const SmallDec& tValue, const unsigned int& n, const SmallDec& precision)
-{
-	return UnsignedNthRootV1<SmallDec>(tValue, n, precision);
 }
 
 SmallDec BlazesRusCode::SmallDec::NthRootOf(const unsigned int& n, const SmallDec& precision) const

@@ -1599,7 +1599,7 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        template<IntegerType IntType=int>
+        template<IntegerType IntType=signed int>
         void IntSubOpV1(const IntType& rValue)
         {
             if(rValue>(signed IntType)IntHalf)
