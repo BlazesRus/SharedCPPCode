@@ -124,7 +124,7 @@ bool BlazesRusCode::SmallUDec::IsZero() const
 
 bool BlazesRusCode::SmallUDec::IsOne() const
 {
-    return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+    return DecimalHalf == 0 && IntHalf == 1;
 }
 
 #pragma endregion Check_if_value
@@ -280,41 +280,26 @@ void BlazesRusCode::SmallUDec::ApplyFloorOf(const int& precision)
     switch (precision)
     {
     case 8: DecimalHalf.Value /= 10; DecimalHalf.Value *= 10; break;
-    case 7: DecimalHalf.Value /= 100; DecimalHalf.Value *= 100; break;
-    case 6: DecimalHalf.Value /= 1000; DecimalHalf.Value *= 1000; break;
-    case 5: DecimalHalf.Value /= 10000; DecimalHalf.Value *= 10000; break;
-    case 4: DecimalHalf.Value /= 100000; DecimalHalf.Value *= 100000; break;
-    case 3: DecimalHalf.Value /= 1000000; DecimalHalf.Value *= 1000000; break;
-    case 2: DecimalHalf.Value /= 10000000; DecimalHalf.Value *= 10000000; break;
-    case 1: DecimalHalf.Value /= 100000000; DecimalHalf.Value *= 100000000; break;
-    case 0:
+    default:
         DecimalHalf = 0;
         break;
-    default:
-        break;
     }
-    if (IntHalf == MirroredInt::NegativeZero && DecimalHalf == 0)
-        IntHalf = 0;
 }
 
-signed int BlazesRusCode::SmallUDec::FloorIntOf() const
+unsigned int BlazesRusCode::SmallUDec::FloorIntOf() const
 {
     if (DecimalHalf == 0)
-        return GetIntHalf();
-    else if (IntHalf == MirroredInt::NegativeZero)
-        return -1;
+        return IntHalf;
     else
-        return GetIntHalf() - 1;
+        return IntHalf - 1;
 }
 
-int BlazesRusCode::SmallUDec::CeilIntOf() const
+unsigned int BlazesRusCode::SmallUDec::CeilIntOf() const
 {
     if (DecimalHalf == 0)
-        return GetIntHalf();
-    else if (IntHalf == MirroredInt::NegativeZero)
-        return 0;
+        return IntHalf;
     else
-        return GetIntHalf() + 1;
+        return IntHalf + 1;
 }
 
 SmallUDec BlazesRusCode::SmallUDec::Trunc(const SmallUDec& tValue) { return tValue.TruncOfV1<SmallUDec>(); }
@@ -340,8 +325,6 @@ void BlazesRusCode::SmallUDec::ReadString(const std::string& Value)
             if (ReadingDecimal) { DecimalBuffer += StringChar; }
             else { WholeNumberBuffer += StringChar; }
         }
-        else if (StringChar == '-')
-            IntHalf.Sign = 0;
         else if (StringChar == '.')
             ReadingDecimal = true;
         else if (StringChar != ' ')
@@ -385,7 +368,7 @@ BlazesRusCode::SmallUDec::SmallUDec(const std::string& Value)
 
 std::string BlazesRusCode::SmallUDec::ToString()
 {
-    std::string Value = std::string(IntHalf);
+    std::string Value = VariableConversionFunctions::UIntToStringConversion(IntHalf);
     if (DecimalHalf != 0)
     {
         Value += ".";
@@ -396,15 +379,22 @@ std::string BlazesRusCode::SmallUDec::ToString()
 
 std::string BlazesRusCode::SmallUDec::ToFullString()
 {
-    std::string Value = std::string(IntHalf);
+    std::string Value = VariableConversionFunctions::UIntToStringConversion(IntHalf);
     if (DecimalHalf != 0)
     {
         unsigned __int8 CurrentDigit;
         Value += ".";
-        bool HasDigitsUsed = false;
-        unsigned int CurrentSection = DecimalHalf.Value;
-        for (__int8 Index = 8; Index >= 0; --Index)
+        if (DecimalHalf > 0)
         {
+            unsigned __int8 CurrentSection = DecimalHalf;
+            CurrentDigit = CurrentSection / 10;
+            CurrentSection -= CurrentDigit * 10;
+            Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
+            Value += VariableConversionFunctions::DigitAsChar(CurrentSection);
+        }
+        else
+            Value += "00";
+
             if (CurrentSection > 0)
             {
                 CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
@@ -417,7 +407,7 @@ std::string BlazesRusCode::SmallUDec::ToFullString()
     }
     else
     {
-        Value += ".000000000";
+        Value += ".00";
     }
     return Value;
 }
@@ -515,19 +505,7 @@ void BlazesRusCode::SmallUDec::SetBoolVal(const bool& Value)
     DecimalHalf = 0;
 }
 
-void BlazesRusCode::SmallUDec::SetIntVal(const int& Value)
-{
-    if (Value<0)
-    {
-        IntHalf.Sign = MirroredInt::NegativeSign;
-        IntHalf = -Value;
-    }
-    else
-        IntHalf = Value;
-    DecimalHalf = 0;
-}
-
-void BlazesRusCode::SmallUDec::SetUIntVal(const unsigned int& Value)
+void BlazesRusCode::SmallUDec::SetIntVal(const unsigned int& Value)
 {
     IntHalf = Value;
     DecimalHalf = 0;

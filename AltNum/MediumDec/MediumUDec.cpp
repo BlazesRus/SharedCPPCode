@@ -285,7 +285,7 @@ bool BlazesRusCode::MediumUDec::IsZero() const
 
 bool BlazesRusCode::MediumUDec::IsOne() const
 {
-    return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+    return DecimalHalf == 0 && IntHalf == 1;
 }
 
 #pragma endregion Check_if_value
@@ -488,28 +488,22 @@ void BlazesRusCode::MediumUDec::ApplyFloorOf(const int& precision)
     default:
         break;
     }
-    if (IntHalf == MirroredInt::NegativeZero && DecimalHalf == 0)
-        IntHalf = 0;
 }
 
-signed int BlazesRusCode::MediumUDec::FloorIntOf() const
+unsigned int BlazesRusCode::MediumUDec::FloorIntOf() const
 {
     if (DecimalHalf == 0)
-        return GetIntHalf();
-    else if (IntHalf == MirroredInt::NegativeZero)
-        return -1;
+        return IntHalf;
     else
-        return GetIntHalf() - 1;
+        return IntHalf - 1;
 }
 
-int BlazesRusCode::MediumUDec::CeilIntOf() const
+unsigned int BlazesRusCode::MediumUDec::CeilIntOf() const
 {
     if (DecimalHalf == 0)
-        return GetIntHalf();
-    else if (IntHalf == MirroredInt::NegativeZero)
-        return 0;
+        return IntHalf;
     else
-        return GetIntHalf() + 1;
+        return IntHalf + 1;
 }
 
 MediumUDec BlazesRusCode::MediumUDec::Trunc(const MediumUDec& tValue) { return tValue.TruncOfV1<MediumUDec>(); }
@@ -535,8 +529,6 @@ void BlazesRusCode::MediumUDec::ReadString(const std::string& Value)
             if (ReadingDecimal) { DecimalBuffer += StringChar; }
             else { WholeNumberBuffer += StringChar; }
         }
-        else if (StringChar == '-')
-            IntHalf.Sign = 0;
         else if (StringChar == '.')
             ReadingDecimal = true;
         else if (StringChar != ' ')
@@ -580,7 +572,7 @@ BlazesRusCode::MediumUDec::MediumUDec(const std::string& Value)
 
 std::string BlazesRusCode::MediumUDec::ToString()
 {
-    std::string Value = std::string(IntHalf);
+    std::string Value = VariableConversionFunctions::UIntToStringConversion(IntHalf);
     if (DecimalHalf != 0)
     {
         Value += ".";
@@ -591,7 +583,7 @@ std::string BlazesRusCode::MediumUDec::ToString()
 
 std::string BlazesRusCode::MediumUDec::ToFullString()
 {
-    std::string Value = std::string(IntHalf);
+    std::string Value = VariableConversionFunctions::UIntToStringConversion(IntHalf);
     if (DecimalHalf != 0)
     {
         unsigned __int8 CurrentDigit;
@@ -710,19 +702,7 @@ void BlazesRusCode::MediumUDec::SetBoolVal(const bool& Value)
     DecimalHalf = 0;
 }
 
-void BlazesRusCode::MediumUDec::SetIntVal(const int& Value)
-{
-    if (Value<0)
-    {
-        IntHalf.Sign = MirroredInt::NegativeSign;
-        IntHalf = -Value;
-    }
-    else
-        IntHalf = Value;
-    DecimalHalf = 0;
-}
-
-void BlazesRusCode::MediumUDec::SetUIntVal(const unsigned int& Value)
+void BlazesRusCode::MediumUDec::SetIntVal(const unsigned int& Value)
 {
     IntHalf = Value;
     DecimalHalf = 0;

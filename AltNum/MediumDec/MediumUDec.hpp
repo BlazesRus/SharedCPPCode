@@ -530,13 +530,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetIntVal(const int& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetUIntVal(const unsigned int& Value);
+        void SetIntVal(const unsigned int& Value);
 
     #if defined(AltNum_EnableFloatingConversion)
 
@@ -2269,25 +2263,25 @@ public:
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumUDec&</returns>
-        signed int FloorIntOf() const;
+        unsigned int FloorIntOf() const;
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>MediumUDec&</returns>
-        static signed int FloorInt(const MediumUDec& tValue) { return tValue.FloorIntOf(); }
+        static unsigned int FloorInt(const MediumUDec& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumUDec&</returns>
-        int CeilIntOf() const;
+        unsigned int CeilIntOf() const;
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>MediumUDec&</returns>
-        static signed int CeilInt(const MediumUDec& tValue) { return tValue.CeilIntOf(); }
+        static unsigned int CeilInt(const MediumUDec& tValue) { return tValue.CeilIntOf(); }
 
         static MediumUDec Trunc(const MediumUDec& tValue);
 
@@ -2878,7 +2872,7 @@ protected:
             if (IsOne())
                 return VariantType::Zero;
             if (IntHalf == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
-                throw("Unsigned class can't return negative numbers);
+                throw("Unsigned class can't return negative numbers");
             else if (IntHalf == 1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 #if defined(AltNum_UseCustomLnAccuracy)
